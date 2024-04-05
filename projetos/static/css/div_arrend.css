@@ -6,10 +6,17 @@
 	margin-bottom: 12px;
 	max-width: 100%;
 	width: 800px;
-    padding: 8px;
+  padding: 8px;
 }
 
 .div_arredondado > div {
 	display: block;
 	max-width: 100%;
+}
+
+.pintern {
+  border: 1px solid grey;
+  display:block;
+  margin: 8px 0px 0px 0px;
+  background-color: #FAFAF3;
 }

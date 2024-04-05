@@ -22,6 +22,7 @@
 
     table, th, td {border: 1px solid lightgrey;}
     tr:nth-child(even) {background-color: #f2f2f2;}
+    tr:nth-child(odd) {background-color: #f9f9f9;}
     ul {padding-left: 28px;}
 
   </style>
@@ -133,7 +134,7 @@
         <span id="med_interm_calc"></span>
         <script>
           for (var key in intermediaria.dict) {
-            if(intermediaria.dict[key].avaliacoes>0) $('#med_aval').append(intermediaria.dict[key].texto());
+            if(intermediaria.dict[key].avaliacoes>0) $("#med_aval").append(intermediaria.dict[key].nota_texto());
           }
           $("#med_interm_calc").html(intermediaria.media_calculada());
         </script>
@@ -198,7 +199,7 @@
         <span id="med_final_calc"></span>
         <script>
           for (var key in final.dict) {
-            if(final.dict[key].avaliacoes>0) $('#med_final').append(final.dict[key].texto());
+            if(final.dict[key].avaliacoes>0) $("#med_final").append(final.dict[key].texto());
           }
           $("#med_final_calc").html(final.media_calculada());
         </script>
@@ -263,7 +264,7 @@
         <span id="med_falconi_calc"></span>
         <script>
           for (var key in falconi.dict) {
-            if(falconi.dict[key].avaliacoes>0) $('#med_falconi').append(falconi.dict[key].texto());
+            if(falconi.dict[key].avaliacoes>0) $("#med_falconi").append(falconi.dict[key].texto());
           }
           $("#med_falconi_calc").html(falconi.media_calculada());
         </script>

@@ -884,7 +884,7 @@ class Banca(models.Model):
             peso += float(avaliacao.peso)
         
         for objetivo in objetivos:
-            objetivos[objetivo] = converte_conceitos(objetivos[objetivo]/pesos[objetivo])
+            objetivos[objetivo] = (objetivos[objetivo]/pesos[objetivo], converte_conceitos(objetivos[objetivo]/pesos[objetivo]))
 
         avaliacao = {}
         avaliacao["objetivos"] = objetivos

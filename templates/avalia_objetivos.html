@@ -43,6 +43,18 @@
       return (descricao)
     }
 
+    nota_texto() {
+      let descricao = ""
+      descricao += "<li>"
+      descricao += this.titulo
+      descricao += ": "
+      descricao += this.nota().toPrecision(3)
+      descricao += " ("
+      descricao += this.media()
+      descricao += ")</li>"
+      return (descricao)
+    }
+
   }
 
   class Banca { 
