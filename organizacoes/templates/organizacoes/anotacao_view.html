@@ -51,7 +51,7 @@
         <option disabled selected value> -- selecione tipo de contato -- </option>
       {% endif %}
       {% for retorno in TIPO_DE_RETORNO %}
-        {% ifchanged retorno.2 %}{% if not forloop.first %}</optgroup>{% endif %}<optgroup label="{{retorno.2}}">{% endifchanged %}
+        {% ifchanged retorno.2 %}{% if not forloop.first %}</optgroup>{% endif %}<optgroup label="{% if retorno.2 %}{{retorno.2}}{% else %}-----------{% endif %}">{% endifchanged %}
         <option value="{{retorno.0}}" {% if anotacao and anotacao.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{retorno.1}}</option>
       {% endfor %}
       {% if TIPO_DE_RETORNO %}

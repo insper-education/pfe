@@ -91,7 +91,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     else:
         data_hora = datetime.datetime.now()
 
-    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2], x[1]))
+    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
 
     context = {
         "organizacao": organizacao,
@@ -500,7 +500,7 @@ def organizacoes_prospect(request):
     contato = []
     organizacoes = []
 
-    periodo = 60
+    periodo = 90
     if request.is_ajax() and "periodo" in request.POST:
         periodo = int(request.POST["periodo"])*30  # periodo vem em meses
 
@@ -537,6 +537,8 @@ def organizacoes_prospect(request):
     total_disponiveis = sum(disponiveis)
     total_submetidas = sum(submetidas)
 
+    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
+
     context = {
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
@@ -546,6 +548,7 @@ def organizacoes_prospect(request):
         "semestre": semestre,
         "filtro": "todas",
         "cursos": Curso.objects.all().order_by("id"),
+        "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
         }
     return render(request, "organizacoes/organizacoes_prospectadas.html", context)
 

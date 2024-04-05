@@ -953,12 +953,12 @@ class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text="Data e hora da comunicação") # hora ordena para dia
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text='Organização parceira')
-    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                              related_name='professor_orientador', help_text='quem fez a anotação')
-    texto = models.TextField(max_length=2000, help_text='Anotação')
+                                    help_text="Organização parceira")
+    autor = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                              related_name="professor_orientador", help_text="quem fez a anotação")
+    texto = models.TextField(max_length=2000, help_text="Anotação")
 
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
         (0, "Contactada para enviar proposta", "Prospecção"),

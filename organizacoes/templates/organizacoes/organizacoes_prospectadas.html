@@ -19,6 +19,10 @@
       line-height: 1.2 !important;
     }
     .show-hide {cursor: pointer;}
+    .special {
+      font-style: italic;
+      font-weight: bold !important;
+    }
   </style>
 
 {% endblock %}
@@ -33,38 +37,41 @@
        href="{% url 'anotacao' %}"
        data-url="{% url 'anotacao' %}">&#10133;</a></small>
   </span>
-
-  <br>
-  <label for="periodo">Período:</label>
-  <select id="periodo" class="periodo" data-tableId="OrganizacoesTable">
-    <option value="1">1 mês</option>
-    <option value="2" selected>2 mêses</option>
-    <option value="3">3 mêses</option>
-    <option value="6">6 mêses</option>
-    <option value="12">12 mêses</option>
-    <option value="9999">tudo</option>
-  </select>
-
-  <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
-    <span class="sr-only">Carregando...</span>
+  
+  <div class="container" style="margin: 0px; padding: 0px;">
+    <div class="row align-items-start justify-content-start mb-1">
+      <div class="ml-3 form-inline">
+        <div class="input-group input-group-sm mt-1">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
+          </div>
+          <select id="periodo" class="periodo to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
+            <option value="1">1 mês</option>
+            <option value="2">2 mêses</option>
+            <option value="3" selected>3 mêses</option>
+            <option value="6">6 mêses</option>
+            <option value="12">12 mêses</option>
+            <option value="9999">tudo</option>
+          </select>
+        </div>
+        &nbsp;&nbsp;&nbsp;<div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
+          <span class="sr-only">Carregando...</span>
+        </div>&nbsp;&nbsp;&nbsp;
+        <div class="input-group input-group-sm mt-1">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filter">Filtrar</label>
+          </div>
+          <select id="filter" class="filter selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
+            <option value="todas">todas contactadas</option>
+            {% for retorno in TIPO_DE_RETORNO %}
+              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special" value="{{retorno.2}}">{{retorno.2}}</option>"{% else %}    <option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+              <option value="{{retorno.0}}">{{retorno.1}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
-
-  &nbsp;&nbsp;&nbsp;
-
-  <label for="filter">Filtrar:</label>
-  <select id="filter" class="filter" data-tableId="OrganizacoesTable">
-    <option value="todas">todas contactadas</option>
-    <option value="contactadas" {% if filtro == "todas contactadas" %}selected="selected"{% endif %}>todas em contato</option>
-    <option value="0" {% if filtro == "sem retorno" %}selected="selected"{% endif %}>sem retorno</option>
-    <option value="1" {% if filtro == "interessadas" %}selected="selected"{% endif %}>interessadas</option>
-    <option value="2" {% if filtro == "confirmadas" %}selected="selected"{% endif %}>confirmadas</option>
-    <option value="3" {% if filtro == "recusaram" %}selected="selected"{% endif %}>recusaram</option>
-    <option value="4" {% if filtro == "notificada" %}selected="selected"{% endif %}>notificada</option>
-    <option value="5" {% if filtro == "sem_grupo" %}selected="selected"{% endif %}>sem grupo</option>
-    <option value="6" {% if filtro == "documentada" %}selected="selected"{% endif %}>documentada</option>
-  </select>
-
-  <br>
 
   <div id="atualizar">
 
@@ -402,8 +409,20 @@
         if( filterValue == "todas" || filterValue == $(el).attr("data-type") ) {
             $(el).show();
         }
-        else if( filterValue == "contactadas" && $(el).attr("data-type") > 0 ) {
+        else if( filterValue == "Contratação") {
+          if(["6", "12", "13"].includes($(el).attr("data-type"))) {
             $(el).show();
+          }
+        }
+        else if( filterValue == "Prospecção") {
+          if(["0", "1", "2", "3", "4", "5"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+        else if( filterValue == "Relatório") {
+          if(["7", "10", "11"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
         }
       });
     }
