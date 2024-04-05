@@ -331,9 +331,11 @@ def relatorios_publicos(request, edicao=None):
         }
 
     else:
-        context = {"edicoes": get_edicoes(Projeto)[0],}
-        if edicao:
-            context["selecionada"] = edicao
+
+        context = {
+            "edicoes": get_edicoes(Projeto)[0],
+            "selecionada": edicao,
+            }
     
     return render(request, "documentos/relatorios_publicos.html", context)
 

@@ -8,6 +8,10 @@
 {% block head %}
 
   {% load static %}
+
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
   {% include "tabelas_includes.html" %}
   <style>
     td {padding: 8px;}
@@ -39,7 +43,22 @@
   </span>
 
   {% include "edicoes.html" %}
-  {% comment %} {% include "informacoes.html" %} {% endcomment %}
+  
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterLingua" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Línguas</span><span lang="en">Languages</span></span></label>
+          </div>
+          <select id="filterLingua" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
+                  title="Nada selecionado"
+                  multiple>
+            <option selected="selected" title="portugues" value="portugues">Português</option>
+            <option selected="selected" title="ingles" value="ingles">Inglês</option>
+          </select>
+      </div>
+    </div>
+  </div>
   
   <div class="atualizar">
 
@@ -62,7 +81,7 @@
 
           {% if relatorio.link or relatorio.documento and relatorio.projeto %}
 
-            <tr class="item  {% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
+            <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
               <td>
                 {% if relatorio.projeto %}
                   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -166,6 +185,22 @@
   </div>
 
   <script>
+
+    $("#filterLingua").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      table = $("#RelatoriosTable").DataTable();
+      $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+          if(table) {
+            // Somente mostra elemento selecionado
+            var val = $("#filterLingua").selectpicker("val");
+            console.log(val);
+            return(val.includes($(table.row(dataIndex).node()).attr("data-lingua")));
+          }
+        }
+     );
+     table.draw();
+    });
+
     function carrega_pagina() {
       if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
         table = $("#RelatoriosTable").dataTable();
@@ -177,6 +212,7 @@
           table.on("draw.dt", function() {
             esconde_lingua();
           });
+
         }
       }
       esconde_lingua();

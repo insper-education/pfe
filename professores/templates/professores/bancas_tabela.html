@@ -23,12 +23,11 @@
 
   {% include "edicoes.html" %}
 
-
   <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Avaliador</span></label>
+            <label class="to_label input-group-text" for="avaliador" onClick="recarregar_pagina()"><span class="to_hide">Avaliador</span></label>
           </div>
           <select id="avaliador" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
@@ -89,12 +88,12 @@
 
   <script>
     $("#avaliador").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $('#BancasTable').DataTable();
+      table = $("#BancasTable").DataTable();
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
           if(table) {
             {% comment %} Somente mostra elemento selecionado {% endcomment %}
-            var val = $('#avaliador').selectpicker('val');
+            var val = $("#avaliador").selectpicker("val");
             return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
           }
         }
