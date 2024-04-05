@@ -225,8 +225,6 @@ def ajax_bancas(request):
     return HttpResponse("Erro.", status=401)    
 
 
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_banca(request):

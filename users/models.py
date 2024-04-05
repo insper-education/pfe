@@ -288,7 +288,7 @@ class Aluno(models.Model):
         objetivos = ObjetivosDeAprendizagem.objects.all()
         for objetivo in objetivos:
             bancas = avaliacoes.filter(objetivo=objetivo).\
-                order_by('avaliador', '-momento')
+                order_by("avaliador", "-momento")
             if bancas:
                 lista_objetivos[objetivo] = {}
             for banca in bancas:
@@ -309,8 +309,8 @@ class Aluno(models.Model):
         val_objetivos = {}
         pes_total = 0
         for obj in lista_objetivos:
-            val = 0
-            pes = 0
+            val = 0.0
+            pes = 0.0
             count = 0
             if lista_objetivos[obj]:
                 for avali in lista_objetivos[obj]:
@@ -325,7 +325,9 @@ class Aluno(models.Model):
 
                     if eh_banca:
                         # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
-                        valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
+                        # valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
+                        # NÃO USAR MAIS ISSO PARA NÃO TER INCONSISTÊNCIAS DE NOTAS
+                        valor = float(valor)
                     else:
                         valor = float(valor)
 
@@ -341,8 +343,8 @@ class Aluno(models.Model):
             return 0, None, None
 
         # média dos objetivos
-        val = 0
-        pes = 0
+        val = 0.0
+        pes = 0.0
         for obj in val_objetivos:
             if pes_total == 0:  # Deve ser Banca Falconi
                 val += val_objetivos[obj][0]
