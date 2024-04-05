@@ -4,7 +4,6 @@
     Data: 12 de Janeiro de 2024
 {% endcomment %}
 
-
 {% load static %}
 {% load get_field %}
 
@@ -117,7 +116,7 @@
                   {% endfor %}
                 </select>
                 <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
-                      accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+                  {% include "formatos_suportados.html" %}>
               </div>
             </div>
             

@@ -147,9 +147,7 @@
             <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
 
             <label class="topico" for="arquivo">Anexos
-            <input id="arquivo" name="arquivo" 
-            accept="application/zip, application/x-zip, application/x-zip-compressed, .zip, .rar, .7zip, text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv"
-            type="file">
+            <input id="arquivo" name="arquivo" {% include "formatos_suportados.html" %} type="file">
             <small class="obs">arquivo que contenha informações adicionais para os estudantes analisarem sobre o projeto (opcional)</small>
             </label>
             {% if proposta.anexo %}

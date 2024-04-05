@@ -176,7 +176,7 @@
         <label for="arquivo" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
         <div class="col2">
           <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
-                accept="text/plain, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv">
+            {% include "formatos_suportados.html" %}>
           {% if documentos %}
             <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
             <small>Arquivo atual: {% include "documentos.html" %}</small>
