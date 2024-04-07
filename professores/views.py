@@ -2141,7 +2141,7 @@ def relato_avaliar(request, projeto_id, evento_id):
     projeto = get_object_or_404(Projeto, pk=projeto_id)
     evento = get_object_or_404(Evento, pk=evento_id)
 
-    evento_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=evento.endDate).order_by('endDate').last()
+    evento_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=evento.endDate).order_by("endDate").last()
     
     alocacoes = Alocacao.objects.filter(projeto=projeto)
 
@@ -2149,14 +2149,11 @@ def relato_avaliar(request, projeto_id, evento_id):
     for alocacao in alocacoes:
         relatos.append(Relato.objects.filter(alocacao=alocacao,
                                     momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
-                                    momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by('momento').last() )
+                                    momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by("momento").last() )
                                     # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
 
     # Só o próprio orientador pode editar uma avaliação
-    if request.user == projeto.orientador.user:
-        editor = True
-    else:
-        editor = False
+    editor = request.user == projeto.orientador.user
 
     exame = Exame.objects.get(titulo="Relato Quinzenal")
 
@@ -2200,14 +2197,6 @@ def relato_avaliar(request, projeto_id, evento_id):
                 obs.observacoes_orientador = observacoes
                 obs.save()
 
-            # Verificando se há feedbacks
-            # for relato in relatos:
-            #     if relato:
-            #         feedback = request.POST.get("feedback" + str(relato.id), None)
-            #         if feedback and feedback != "":
-            #             relato.feedback = feedback
-            #             relato.save()
-
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):
 
@@ -2224,7 +2213,6 @@ def relato_avaliar(request, projeto_id, evento_id):
                                                 momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                                 momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by("momento").last() )
                                                 # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
-
 
                 # Manda mensagem para coordenadores
                 corpo_email = "<b>-- OBSERVAÇÕES DE ANOTAÇÃO QUINZENAL REALIZADA PELO PROFESSOR --</b><br>\n<br>\n"
@@ -2258,23 +2246,17 @@ def relato_avaliar(request, projeto_id, evento_id):
             return HttpResponseNotFound("<h1>Erro na edição do relato!</h1>")
 
     else:  # GET
-        
-        # Identifica que uma avaliação já foi realizada anteriormente
 
         obs = Observacao.objects.filter(projeto=projeto,
                                         momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                         momento__lte=evento.endDate + datetime.timedelta(days=1),
                                         exame=exame).last()  # (200, "Relato Quinzenal"),
-                                        # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
-        if obs:
-            observacoes = obs.observacoes_orientador
-        else:
-            observacoes = None
+                                        # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
 
         context = {
             "editor": editor,
             "projeto": projeto,
-            "observacoes": observacoes,
+            "observacoes": obs.observacoes_orientador if obs else None,
             "alocacoes_relatos": zip(alocacoes, relatos),
             "evento": evento,
             "Observacao": Observacao,
