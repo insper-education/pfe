@@ -64,15 +64,15 @@
 
     <label for="data">
       <span style="display:inline-block; width:7.5ex; text-align:right;">Data:</span>
-      <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}">
+      <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
     </label>
     <br><br>
 
     <label for="tipo">
       <span style="display:inline-block; width:7.5ex; text-align:right;">Tipo:</span>
       <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
-      data-live-search="true" data-width="560px">
-          <option selected value> -- selecione tipo de certificado -- </option>
+      data-live-search="true" data-width="560px" required>
+          <option disabled selected value> -- selecione tipo de certificado -- </option>
           {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
           {% for tipo in TIPO_DE_CERTIFICADO %}
             {% if tipo %}
@@ -91,7 +91,7 @@
     <br><br>
 
     <label for="documento">Certificado:</label> 
-    <input id="documento" type="file" name="documento" accept="*">
+    <input id="documento" type="file" name="documento" accept="*" required>
     <br><br>
 
     <input type="submit" class="btn btn-primary" value="Cadastrar Certificado">

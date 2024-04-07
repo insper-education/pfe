@@ -248,35 +248,29 @@ def edita_aviso(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def carregar_certificado(request):
     """Carrega certificado na base de dados."""
-    if request.method == 'POST':
+    if request.method == "POST":
         if "usuario" in request.POST and "tipo" in request.POST and "documento" in request.FILES:
 
             certificado = Certificado.create()
 
             usuario_id = request.POST.get("usuario", None)
-            if usuario_id:
-                usuario = get_object_or_404(PFEUser, id=usuario_id)
-                certificado.usuario = usuario
-
-            projeto_id = request.POST.get('projeto', None)
-            if projeto_id:
-                projeto = get_object_or_404(Projeto, id=projeto_id)
-                certificado.projeto = projeto
+            certificado.usuario = get_object_or_404(PFEUser, id=usuario_id) if usuario_id else None
+                
+            projeto_id = request.POST.get("projeto", None)
+            certificado.projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
 
             if "data" in request.POST:
                 try:
-                    certificado.data = dateutil.parser\
-                        .parse(request.POST["data"])
+                    certificado.data = dateutil.parser.parse(request.POST["data"])
                 except (ValueError, OverflowError):
                     certificado.data = datetime.date.today()
+            else:
+                certificado.data = datetime.date.today()
 
             tipo = request.POST.get("tipo", None)
-            if tipo:
-                certificado.tipo_de_certificado = int(tipo)
+            certificado.tipo_de_certificado = int(tipo) if tipo else None
 
             certificado.observacao = request.POST.get("observacao", None)
-
-            certificado.save()
 
             if "documento" in request.FILES:
                 documento = simple_upload(request.FILES["documento"],
@@ -285,10 +279,20 @@ def carregar_certificado(request):
 
             certificado.save()
 
+            mensagem = "Certificado inserido na base de dados."
+            mensagem += "<br><b>Usuário</b>: " + str(certificado.usuario)
+            mensagem += "<br><b>Projeto</b>: " + str(certificado.projeto)
+            mensagem += "<br><b>Data</b>: " + str(certificado.data)
+            mensagem += "<br><b>Tipo</b>: " + str(certificado.tipo_de_certificado)
+            if certificado.observacao:
+                mensagem += "<br><b>Observação</b>: " + str(certificado.observacao)
+            
+            mensagem += "<br><b>Documento</b>: " + str(certificado.documento)
+
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": "Certificado inserido na base de dados.",
+                "mensagem": mensagem,
             }
 
         else:
@@ -299,7 +303,7 @@ def carregar_certificado(request):
                 "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
             }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     projetos = Projeto.objects.all()
     usuarios = PFEUser.objects.all()
@@ -310,7 +314,7 @@ def carregar_certificado(request):
         "usuarios": usuarios,
     }
 
-    return render(request, 'operacional/carregar_certificado.html', context)
+    return render(request, "operacional/carregar_certificado.html", context)
 
 
 @login_required
