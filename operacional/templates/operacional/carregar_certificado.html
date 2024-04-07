@@ -12,9 +12,7 @@
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
-    textarea {
-      max-width:100%;
-    }
+    textarea {max-width:100%;}
   </style>
 
 {% endblock %}
@@ -37,7 +35,7 @@
           {% for usuario in usuarios %}
             {% if usuario %}
               <option value="{{usuario.id}}" data-projeto="{{usuario.aluno.alocacao_set.last.projeto.id}}" {% if usuario.id == alocacao.aluno.id %}selected{% endif %}>
-              {{usuario.get_full_name}}
+              {{usuario}}
             </option>  
             {% endif %}
           {% endfor %}
