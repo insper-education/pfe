@@ -75,7 +75,9 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
         data = {
             "data": anotacao_obj.momento.strftime("%d/%m/%y"),
-            "autor": str(anotacao_obj.autor.get_full_name().split()[0]),
+            "data_full": anotacao_obj.momento.strftime("%d/%m/%Y"),
+            "autor_nome": str(anotacao_obj.autor.get_full_name().split(' ', 1)[0]),
+            "autor_sobrenome": str(anotacao_obj.autor.get_full_name().split(' ', 1)[1]),
             "anotacao_id": anotacao_obj.id,
             "atualizado": True,
         }
