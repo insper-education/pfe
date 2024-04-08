@@ -12,7 +12,10 @@
   <script src="{% static 'js/w3.js' %}"></script>
 
   <style>
-    thead {background-color: #BEE5EB;}
+    th {
+      cursor:pointer;
+      text-align: center;
+    }
     th, td {
       padding-left: 4px;
       padding-right: 4px;
@@ -30,21 +33,21 @@
   <span class="titulo">Exames e Pesos</span>
 
   <div class="atualizar">
-    <script> var show = false; </script>
+    <script>var show = false;</script>
 
     <div class="table-responsive">
 
     <table id="ExamesPesosTable">
-      <thead><tr>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(1)')" style="cursor:pointer;" class="text-center">Semestre</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="text-center">Exames</th>
-          <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')" style="cursor:pointer; display: none;" class="text-center">Peso</th>
+      <thead class="table-info"><tr>
+        <th onclick="w3.sortHTML('#ExamesPesosTable', '.item', 'td:nth-child(1)')">Semestre</th>
+        <th>Exames</th>
+        <th style="display: none;">Peso</th>
       </tr></thead>
       <tbody>
-        {% for ano, semestre, composicoes in semestres %}
+        {% for ano, semestre, composicoes in semestres reversed %}
           <script> var peso = 0; </script>
           <tr class="item" id="peso{{forloop.counter0}}">
-            <td class="text-center"> {{ano}}.{{semestre}}</td>
+            <td class="text-center">{{ano}}.{{semestre}}</td>
             <td>
               <ul>
               {% for composicao in composicoes %}
