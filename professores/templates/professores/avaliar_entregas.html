@@ -163,7 +163,7 @@
                   {% include "display_avaliacoes.html" with avaliacoes=item.avaliacoes nota=item.nota observacao=item.observacao com_orientador=True %}
 
                 {% else %}
-                  {% for alocacao, values in item.alocacoes.items %} 
+                  {% for alocacao, values in item.alocacoes.items %}
                     <hr class="linha">
                     <b class="{% if dias_ate > dias %}lightgrey{% endif %} nome_est">&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
                     <ul style="margin-bottom: 0px; padding-left: 32px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>

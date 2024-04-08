@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
+  {% load alocacoes %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   {% comment %} Para plotar os gráficos {% endcomment %}
@@ -330,7 +331,7 @@
   {% if projeto.has_relatos %}  
     <hr>
     <h4>Relatos Quinzenais</h4>
-    {% include "relatos.html" %}
+    {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
   {% endif %}
   {% endif %}
 

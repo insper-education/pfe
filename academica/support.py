@@ -99,7 +99,8 @@ def filtra_entregas(composicoes, projeto, user=None):
             else: # Todos os integrantes do grupo
                 alocacoes = {}
 
-                for alocacao in Alocacao.objects.filter(projeto=projeto):
+                #  Estudantes externos não são avaliados diretamente
+                for alocacao in Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True):
                    
                     # alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
                     documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
