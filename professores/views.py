@@ -2143,7 +2143,7 @@ def relato_avaliar(request, projeto_id, evento_id):
 
     evento_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=evento.endDate).order_by("endDate").last()
     
-    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    alocacoes = Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True)
 
     relatos = []
     for alocacao in alocacoes:
