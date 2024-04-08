@@ -74,7 +74,8 @@
         {% for a in avisos %}
 
           {% if a.class == "Evento" %}
-            <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}" class="linha" data-type="Co Ev">
+            <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
+             class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
               <th scope="row"></th>
               <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
                 <span class="data_longa">{{a.evento.get_data}}</span><span class="data_curta">{{a.evento.get_data|date:"d/m/y"}}</span>
@@ -96,6 +97,7 @@
               {% else %}
                 text-muted
               {% endif %}
+              {% if hoje < a.data %}atual{% endif %}
             "
             data-type="
               {% if a.aviso.coordenacao %}Co{% endif %}
@@ -194,11 +196,15 @@
 
     $(document).ready(function(){
       filtra_data();
-    });
-  
-  </script>
 
-  <script>
+      // Scrolla para a linha do dia
+      var rowPosition = $(".atual").offset().top;
+      var halfWindowHeight = $(window).height() / 2;
+      $("html, body").animate({
+        scrollTop: rowPosition - halfWindowHeight
+      }, 500);
+    });
+
     $(".aviso").change(function () {
 
       var aviso = $(this).prop("name");
