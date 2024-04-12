@@ -21,9 +21,9 @@
         <td>
           {% if feita %}
             {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
-              <span style="color:green">Avaliação de Pares Concluída</span>
+              <span style="color:green">Avaliação de Pares Verificada</span>
             {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
-              <span style="color:green">Avaliação de Pares Concluída</span>
+              <span style="color:green">Avaliação de Pares Verificada</span>
             {% else %}
               <span style="color:brown">Aguardando Confirmação de Orientador</span>
             {% endif %}

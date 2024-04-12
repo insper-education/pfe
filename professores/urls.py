@@ -206,6 +206,10 @@ urlpatterns = [
          views.ver_pares,
          name="ver_pares"),
 
+    path("ver_pares_projeto/<int:projeto_id>/<str:momento>",
+         views.ver_pares_projeto,
+         name="ver_pares_projeto"),
+
      path("ajax_bancas/",
          views.ajax_bancas,
          name="ajax_bancas"),
