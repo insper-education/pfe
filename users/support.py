@@ -29,6 +29,18 @@ def adianta_semestre(ano, semestre):
     return ano, semestre
 
 
+def adianta_semestre_conf(configiuracao):
+    """Adiciona um semestre puxando ano e semestre da configuração."""
+    ano = configiuracao.ano
+    semestre = configiuracao.semestre
+    if semestre == 1:
+        semestre = 2
+    else:
+        ano += 1
+        semestre = 1
+
+    return ano, semestre
+
 def configuracao_estudante_vencida(estudante):
     """Retorna verdade se ainda em tempo de estudante atualizar dados."""
     configuracao = Configuracao.objects.get()

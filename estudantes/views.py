@@ -28,7 +28,7 @@ from projetos.messages import email, message_agendamento, create_message, messag
 
 from users.models import PFEUser, Alocacao, Opcao, OpcaoTemporaria
 
-from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
+from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre, adianta_semestre_conf
 
 from academica.models import Composicao
 from academica.support import filtra_composicoes, filtra_entregas
@@ -38,6 +38,7 @@ from .models import Relato, Pares
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
 from administracao.models import Carta
+from administracao.support import propostas_liberadas
 from documentos.models import TipoDocumento
 
 
@@ -48,6 +49,7 @@ def index_estudantes(request):
 
     context = {
         "configuracao": configuracao,
+        "liberadas_propostas": propostas_liberadas(configuracao),
         "vencido": timezone.now().date() > get_limite_propostas(configuracao)
     }
 
@@ -101,6 +103,9 @@ def index_estudantes(request):
 
     #get_limite_propostas2 return None caso não haja limite
     context["limite_propostas"] = get_limite_propostas2(configuracao)
+
+    context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
+
     
     return render(request, "estudantes/index_estudantes.html", context=context)
 
@@ -630,20 +635,16 @@ def submissao_documento(request):
 def selecao_propostas(request):
     """Exibe todos os projetos para os estudantes aplicarem."""
     configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano
-    semestre = configuracao.semestre
 
     min_props = configuracao.min_props
 
-    liberadas_propostas = configuracao.liberadas_propostas
+    #liberadas_propostas = configuracao.liberadas_propostas
+    liberadas_propostas = propostas_liberadas(configuracao)
 
     # Vai para próximo semestre
-    ano, semestre = adianta_semestre(ano, semestre)
+    ano, semestre = adianta_semestre_conf(configuracao)
 
-    propostas = Proposta.objects\
-        .filter(ano=ano)\
-        .filter(semestre=semestre)\
-        .filter(disponivel=True)
+    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
 
     warnings = ""
 
@@ -668,12 +669,12 @@ def selecao_propostas(request):
                 "area_aluno": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
-        if liberadas_propostas and request.method == 'POST':
+        if liberadas_propostas and request.method == "POST":
             prioridade = {}
             for proposta in propostas:
-                check_values = request.POST.get('selection'+str(proposta.pk),
+                check_values = request.POST.get("selection"+str(proposta.pk),
                                                 "0")
                 prioridade[proposta.pk] = check_values
             for i in range(1, len(propostas)+1):
@@ -723,15 +724,15 @@ def selecao_propostas(request):
                     message = "Erro no envio contacte:lpsoares@insper.edu.br"
 
                 context = {
-                    'message': message,
+                    "message": message,
                     "prazo": get_limite_propostas(configuracao),
                 }
-                return render(request, 'projetos/confirmacao.html', context)
+                return render(request, "projetos/confirmacao.html", context)
 
             context = {
-                'warnings': warnings,
+                "warnings": warnings,
             }
-            return render(request, 'projetos/projetosincompleto.html', context)
+            return render(request, "projetos/projetosincompleto.html", context)
 
         opcoes_temporarias = OpcaoTemporaria.objects.filter(aluno=aluno)
 
@@ -746,19 +747,19 @@ def selecao_propostas(request):
     areas = areas_normais or areas_outras
 
     context = {
-        'liberadas_propostas': liberadas_propostas,
-        'vencido': vencido,
-        'propostas': propostas,
+        "liberadas_propostas": liberadas_propostas,
+        "vencido": vencido,
+        "propostas": propostas,
         "min_props": min_props,
-        'opcoes_temporarias': opcoes_temporarias,
-        'ano': ano,
-        'semestre': semestre,
+        "opcoes_temporarias": opcoes_temporarias,
+        "ano": ano,
+        "semestre": semestre,
         "prazo": get_limite_propostas(configuracao),
         "areas": areas,
-        'warnings': warnings,
+        "warnings": warnings,
         "limite_propostas": get_limite_propostas(configuracao),
     }
-    return render(request, 'estudantes/selecao_propostas.html', context)
+    return render(request, "estudantes/selecao_propostas.html", context)
 
 @login_required
 @transaction.atomic

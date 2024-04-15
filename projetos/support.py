@@ -15,7 +15,6 @@ from django.utils import text
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
-
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
     caminho = ""
@@ -281,7 +280,7 @@ def calcula_objetivos(alocacoes):
         "medias_rfi": medias["rfi"],
         "medias_rfg": medias["rfg"],
         "medias_bf": medias["bf"],
-        'medias_geral': medias_geral,
+        "medias_geral": medias_geral,
         "media_individual": media_individual,
         "media_grupo": media_grupo,
     }

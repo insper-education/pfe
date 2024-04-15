@@ -67,7 +67,7 @@
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           {% if vencido %}
               style="color:grey"
-          {% elif not configuracao.liberadas_propostas %}
+          {% elif not liberadas_propostas %}
               style="color:grey"
           {% endif %}
           href="{% url 'selecao_propostas' %}"
@@ -76,7 +76,7 @@
       {% else %}
           {% if vencido %}
               class="disabled" onclick="showMessage('vencido')" 
-          {% elif not configuracao.liberadas_propostas %}
+          {% elif not liberadas_propostas %}
               class="disabled" onclick="showMessage('liberado')" 
           {% else %}
               href="{% url 'selecao_propostas' %}"
@@ -85,14 +85,13 @@
       >Selecionar Propostas de Projetos</a>
 
       {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
-      <div style="color: red;">Prazo para a seleção das propostas {{ano}}.{{semestre}}:
-        <b>
-        {% if configuracao.liberadas_propostas and limite_propostas %}
-            {{limite_propostas}}
+      <div style="color: red;">
+        {% if liberadas_propostas and limite_propostas %}
+          Prazo para a seleção das propostas {{ano}}.{{semestre}}: <b>{{limite_propostas}}</b>
         {% else %}
-            ainda não liberado
+          Propostas para {{ano}}.{{semestre}} ainda não liberadas, previsão de liberação: <b>{{liberacao_visualizacao}}</b>
         {% endif %}
-        </b>
+        
       </div>
       {% endif %}
     </li>

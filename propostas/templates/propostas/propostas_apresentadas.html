@@ -315,14 +315,12 @@
       </table>
       </div>
 
-      {% if configuracao.liberadas_propostas %}
-        <span>Sistema liberado para estudantes verem propostas de projetos até: {{limite_propostas}}.</span>
+      {% if liberadas_propostas %}
+        <span>Sistema liberado para estudantes verem propostas de projetos até: {{limite_propostas}}. &#x1F7E2;</span>
       {% else %}
-        <span>Sistema ainda não está liberado para estudantes verem propostas de projetos.</span>
+        <span>Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;</span>
       {% endif %}<br>
       
-      <span>Para liberar ou bloquear a visualização de prosposta pelos estudantes vá no menu <a href="{% url 'publicar_propostas' %}">Publicar Propostas</a>.</span> 
-
       <p>&nbsp;</p>
       <strong>Número Total de Propostas Publicadas:</strong> 
         <span id="propostas_publicadas"></span>

@@ -497,7 +497,7 @@ class Proposta(models.Model):
 
     def get_absolute_url(self):
         """Caminho para editar uma proposta."""
-        return reverse('proposta_editar', kwargs={'slug': self.slug})
+        return reverse("proposta_editar", kwargs={"slug": self.slug})
 
     def get_interesses(self):
         interesses = [
@@ -557,8 +557,10 @@ class Configuracao(models.Model):
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text="Separar lista por ponto e virgula")
 
-    liberadas_propostas = models.BooleanField(default=False,
-                                              help_text='Para estudantes visualizarem propostas')
+    ## ISSO PRECISA SER REMOVIDO, AGORA USANDO A DATA DO CALENDARIO PARA LIBERAR AS PROPOSTAS
+    # liberadas_propostas = models.BooleanField(default=False,
+    #                                           help_text='Para estudantes visualizarem propostas')
+    #############################
 
     min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
         help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')

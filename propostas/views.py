@@ -26,8 +26,7 @@ from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 
-from administracao.support import get_limite_propostas, get_data_planejada
-
+from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
@@ -354,6 +353,7 @@ def propostas_apresentadas(request):
                 "disponivel_multidisciplinar": disponivel_multidisciplinar,
                 "vagas": vagas,
                 "limite_propostas": get_limite_propostas(configuracao),
+                "liberadas_propostas": propostas_liberadas(configuracao),
             }
 
         else:
@@ -468,7 +468,7 @@ def proposta_completa(request, primarykey):
         "comite": membros_comite,
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
-        'areast': areas,
+        "areast": areas,
         "procura": procura,
         "cursos": Curso.objects.all().order_by("id"),
         "liberacao_visualizacao": liberacao_visualizacao,
@@ -542,7 +542,8 @@ def proposta_editar(request, slug):
     proposta = get_object_or_404(Proposta, slug=slug)
 
     configuracao = get_object_or_404(Configuracao)
-    liberadas_propostas = configuracao.liberadas_propostas
+    #liberadas_propostas = configuracao.liberadas_propostas
+    liberadas_propostas = propostas_liberadas(configuracao)
 
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
@@ -637,15 +638,15 @@ def publicar_propostas(request):
     """Definir datas de publicação de propostas."""
     configuracao = get_object_or_404(Configuracao)
 
-    #if request.method == "POST":
     if request.is_ajax():
         if request.user.tipo_de_usuario != 4:  # Administrador
             return HttpResponse("Somente coordenadores podem alterar valores de publicação de propostas.", status=401)
-        if "liberadas_propostas" and "min_props" in request.POST:
+        if "min_props" in request.POST:
             data = {"atualizado": True,}
             try:
-                configuracao.liberadas_propostas = request.POST["liberadas_propostas"] == "true"
-                data["liberadas_propostas"] = configuracao.liberadas_propostas
+                #configuracao.liberadas_propostas = request.POST["liberadas_propostas"] == "true"
+                #data["liberadas_propostas"] = configuracao.liberadas_propostas
+                data["liberadas_propostas"] = propostas_liberadas(configuracao)
                 if int(request.POST["min_props"]) != configuracao.min_props:
                     configuracao.min_props = int(request.POST["min_props"])
                     data["min_props"] = configuracao.min_props
@@ -659,7 +660,8 @@ def publicar_propostas(request):
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
     
     context = {
-        "configuracao": configuracao,
+        "liberadas_propostas": propostas_liberadas(configuracao),
+        "min_props": configuracao.min_props,
         "limite_propostas": get_limite_propostas(configuracao),
         "data_planejada": get_data_planejada(configuracao),
     }

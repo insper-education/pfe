@@ -140,7 +140,7 @@
             <small >Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.<br></small>
             <div style="display: flex; margin-top: 8px;">      
               
-              <input type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
+              <input class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
 
               <small style="float: right;"><font color="red">
                 Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.

@@ -5,6 +5,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 13 de Junho de 2023
 """
 
+import datetime
 import dateutil.parser
 
 from django.conf import settings
@@ -54,18 +55,25 @@ def get_limite_propostas2(configuracao):
     return evento.endDate
     
 def get_data_planejada(configuracao):
+    """Retorna a data planejada para a liberação das propostas"""
     if configuracao.semestre == 1:
         evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
     else:
         evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-    # (113, 'Apresentação das propostas de projetos disponíveis para estudantes', 'darkslategray'),
+    # (113, "Apresentação das propostas de projetos disponíveis para estudantes", "darkslategray"),
 
     if evento is not None:
         return evento.endDate
 
     return None
 
-
+def propostas_liberadas(configuracao):
+    """Verifica se as propostas estão liberadas."""
+    hoje = datetime.date.today()
+    liberacao = get_data_planejada(configuracao)
+    if liberacao and hoje >= liberacao:
+            return True
+    return False
 
 def usuario_sem_acesso(request, acessos):
     
