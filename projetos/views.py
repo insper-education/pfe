@@ -126,7 +126,7 @@ def projeto_completo(request, primarykey):
         alocacao = alocacoes.first()
         medias_oo = alocacao.get_medias_oo
 
-        if not (medias_oo['medias_apg'] or medias_oo['medias_afg'] or medias_oo['medias_rig'] or medias_oo['medias_bi'] or medias_oo['medias_rfg'] or medias_oo['medias_bf']):
+        if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
             medias_oo = None
 
     documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True)
@@ -145,7 +145,7 @@ def projeto_completo(request, primarykey):
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
     }
-    return render(request, 'projetos/projeto_completo.html', context=context)
+    return render(request, "projetos/projeto_completo.html", context=context)
 
 
 
@@ -182,7 +182,7 @@ def projeto_organizacao(request, primarykey):
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
     }
-    return render(request, 'projetos/projeto_completo.html', context=context)
+    return render(request, "projetos/projeto_completo.html", context=context)
 
 
 @login_required
@@ -504,7 +504,7 @@ def meuprojeto(request):
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     # Caso seja Professor ou Administrador
     if request.user.tipo_de_usuario in (2, 4):
@@ -545,7 +545,7 @@ def projeto_avancado(request, primarykey):
 
         novo_projeto.save()
 
-    return redirect('projeto_completo', primarykey=novo_projeto.id)
+    return redirect("projeto_completo", primarykey=novo_projeto.id)
 
 
 @login_required
@@ -553,7 +553,7 @@ def projeto_avancado(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
-    with open('projetos/bancos.csv') as csv_file:
+    with open("projetos/bancos.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -650,7 +650,7 @@ def comite(request):
         "cabecalhos": ["Nome", "e-mail", "Lattes", ],
         "titulo": "Comitê PFE",
         }
-    return render(request, 'projetos/comite_pfe.html', context)
+    return render(request, "projetos/comite_pfe.html", context)
 
 
 @login_required
@@ -694,13 +694,13 @@ def lista_feedback(request):
         num_feedbacks.append(numb_feedb)
 
     context = {
-        'feedbacks': feedbacks,
-        'SERVER_URL': settings.SERVER,
-        'loop_anos': edicoes,
-        'num_projetos': num_projetos,
-        'num_feedbacks': num_feedbacks,
+        "feedbacks": feedbacks,
+        "SERVER_URL": settings.SERVER,
+        "loop_anos": edicoes,
+        "num_projetos": num_projetos,
+        "num_feedbacks": num_feedbacks,
     }
-    return render(request, 'projetos/lista_feedback.html', context)
+    return render(request, "projetos/lista_feedback.html", context)
 
 
 @login_required
@@ -787,7 +787,7 @@ def lista_feedback_estudantes(request):
             "titulo": "Listagem de Feedbacks Finais dos Estudantes",
         }
 
-    return render(request, 'projetos/lista_feedback_estudantes.html', context)
+    return render(request, "projetos/lista_feedback_estudantes.html", context)
 
 
 
@@ -808,7 +808,7 @@ def mostra_feedback(request, feedback_id):
     context = {
         "feedback": get_object_or_404(Feedback, id=feedback_id),
     }
-    return render(request, 'projetos/mostra_feedback.html', context)
+    return render(request, "projetos/mostra_feedback.html", context)
 
 
 @login_required
@@ -818,7 +818,7 @@ def mostra_feedback_estudante(request, feedback_id):
     context = {
         "feedback": get_object_or_404(FeedbackEstudante, id=feedback_id),
     }
-    return render(request, 'estudantes/estudante_feedback.html', context)
+    return render(request, "estudantes/estudante_feedback.html", context)
 
 
 @login_required
@@ -939,7 +939,7 @@ def projetos_vs_propostas(request):
         "lingua": configuracao.lingua,
     }
 
-    return render(request, 'projetos/projetos_vs_propostas.html', context)
+    return render(request, "projetos/projetos_vs_propostas.html", context)
 
 
 @login_required
@@ -959,7 +959,7 @@ def analise_notas(request):
 
         if "edicao" in request.POST and "curso" in request.POST:
             if request.POST["edicao"] != "todas":
-                periodo = request.POST['edicao'].split('.')
+                periodo = request.POST["edicao"].split('.')
                 medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
                                                          projeto__semestre=periodo[1])
                 
@@ -1086,20 +1086,20 @@ def analise_notas(request):
         medias_lista = [x.get_media for x in medias_semestre]
 
         # Somente apresenta as médias que esteja completas (pesso = 100%)
-        medias_validas = list(filter(lambda d: d['pesos'] == 1.0, medias_lista))
+        medias_validas = list(filter(lambda d: d["pesos"] == 1.0, medias_lista))
 
         medias = {}
-        medias["ideal"] = len(list(filter(lambda d: d['media'] >= valor["ideal"], medias_validas)))
-        medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d['media'] >= valor["regular"], medias_validas)))
-        medias["inferior"] = len(list(filter(lambda d: d['media'] < valor["regular"], medias_validas)))
+        medias["ideal"] = len(list(filter(lambda d: d["media"] >= valor["ideal"], medias_validas)))
+        medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d["media"] >= valor["regular"], medias_validas)))
+        medias["inferior"] = len(list(filter(lambda d: d["media"] < valor["regular"], medias_validas)))
         medias["total"] = len(medias_validas)
 
         context = {
-            'periodo': periodo,
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
-            'loop_anos': edicoes,
-            'medias': medias,
+            "periodo": periodo,
+            "ano": configuracao.ano,
+            "semestre": configuracao.semestre,
+            "loop_anos": edicoes,
+            "medias": medias,
             "notas": notas,
             "edicoes": edicoes,
             "curso": curso,
@@ -1136,13 +1136,6 @@ def certificacao_falconi(request):
                 projetos = Projeto.objects.filter(ano=periodo[0], semestre=periodo[1])
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-
-        # if 'curso' in request.POST:
-        #     curso = request.POST['curso']
-        #     if curso != 'T':
-        #         medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
-        # else:
-        #     return HttpResponse("Algum erro não identificado.", status=401)
 
         # conceitos = I, D, C, C+, B, B+, A, A+
         conceitos = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -1332,8 +1325,8 @@ def evolucao_notas(request):
         avaliacoes = Avaliacao2.objects.all()
         alocacoes = Alocacao.objects.all()
 
-        if 'curso' in request.POST:
-            curso = request.POST['curso']
+        if "curso" in request.POST:
+            curso = request.POST["curso"]
             if curso != 'T':
                 avaliacoes = avaliacoes.filter(alocacao__aluno__curso2__sigla_curta=curso)
                 alocacoes = alocacoes.filter(aluno__curso2__sigla_curta=curso)
@@ -1366,13 +1359,13 @@ def evolucao_notas(request):
             notas = []
             for edicao in edicoes:
                 notas.append(media(notas_total[edicao]))
-            medias_individuais.append({"curso": {"sigla": "média engenharia", "cor": "000000"}, "media": notas})
+            medias_individuais.append({"curso": {"sigla": "média dos cursos", "cor": "000000"}, "media": notas})
 
 
         ################################
 
 
-        # Para armazenar todas as notas de todos os programas de engenharia
+        # Para armazenar todas as notas de todos os programas
         notas_total = {}
         for edicao in edicoes:
             notas_total[edicao] = []
@@ -1403,7 +1396,7 @@ def evolucao_notas(request):
             notas = []
             for edicao in edicoes:
                 notas.append(media(notas_total[edicao]))
-            medias_gerais.append({"curso": {"sigla": "média engenharia", "cor": "000000"}, "media": notas})
+            medias_gerais.append({"curso": {"sigla": "média dos cursos", "cor": "000000"}, "media": notas})
 
         context = {
             "medias_individuais": medias_individuais,
@@ -1418,7 +1411,7 @@ def evolucao_notas(request):
             "cursos": cursos,
         }
 
-    return render(request, 'projetos/evolucao_notas.html', context)
+    return render(request, "projetos/evolucao_notas.html", context)
 
 
 @login_required
@@ -1430,10 +1423,10 @@ def evolucao_objetivos(request):
 
     if request.is_ajax():
 
-        if 'curso' in request.POST:
-            curso = request.POST['curso']
-            grupo = 'grupo' in request.POST and request.POST["grupo"]=="true"
-            individuais = 'individuais' in request.POST and request.POST["individuais"]=="true"
+        if "curso" in request.POST:
+            curso = request.POST["curso"]
+            grupo = "grupo" in request.POST and request.POST["grupo"]=="true"
+            individuais = "individuais" in request.POST and request.POST["individuais"]=="true"
             so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
 
             if so_finais:
@@ -1552,7 +1545,7 @@ def evolucao_objetivos(request):
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
-    return render(request, 'projetos/evolucao_objetivos.html', context)
+    return render(request, "projetos/evolucao_objetivos.html", context)
 
 
 @login_required
@@ -1600,7 +1593,7 @@ def evolucao_por_objetivo(request):
     if request.is_ajax():
 
         if "curso" in request.POST:
-            curso = request.POST['curso']
+            curso = request.POST["curso"]
             grupo = "grupo" in request.POST and request.POST["grupo"]=="true"
             individuais = "individuais" in request.POST and request.POST["individuais"]=="true"
 
@@ -1670,7 +1663,7 @@ def evolucao_por_objetivo(request):
         mid = []
         high = []
         
-        id_objetivo = request.POST['objetivo']
+        id_objetivo = request.POST["objetivo"]
         objetivo = ObjetivosDeAprendizagem.objects.get(id=id_objetivo)
 
         alocacoes = []
@@ -1704,10 +1697,10 @@ def evolucao_por_objetivo(request):
             "low": low,
             "mid": mid,
             "high": high,
-            'curso': curso,
-            'ano': configuracao.ano,
-            'semestre': configuracao.semestre,
-            'edicoes': edicoes,
+            "curso": curso,
+            "ano": configuracao.ano,
+            "semestre": configuracao.semestre,
+            "edicoes": edicoes,
             "objetivo": objetivo,
             "objetivos": objetivos,
             "estudantes": estudantes,
@@ -1722,7 +1715,7 @@ def evolucao_por_objetivo(request):
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
 
-    return render(request, 'projetos/evolucao_por_objetivo.html', context)
+    return render(request, "projetos/evolucao_por_objetivo.html", context)
 
 
 @login_required
@@ -1741,7 +1734,7 @@ def correlacao_medias_cr(request):
 
         if "edicao" in request.POST:
 
-            curso = request.POST['curso']
+            curso = request.POST["curso"]
 
             if request.POST["edicao"] != "todas":
                 periodo = request.POST["edicao"].split('.')
@@ -1824,13 +1817,13 @@ def editar_projeto(request, primarykey):
             projeto.abstract = abstract
 
         # Realoca orientador
-        orientador_id = request.POST.get('orientador', None)
+        orientador_id = request.POST.get("orientador", None)
         if orientador_id:
             orientador = get_object_or_404(Professor, pk=orientador_id)
             projeto.orientador = orientador
 
         # Realoca coorientador
-        coorientador_id = request.POST.get('coorientador', None)
+        coorientador_id = request.POST.get("coorientador", None)
         if coorientador_id:
             coorientador = get_object_or_404(PFEUser, pk=coorientador_id)
             (reg, _created) = Coorientador.objects.get_or_create(projeto=projeto)
@@ -1844,8 +1837,7 @@ def editar_projeto(request, primarykey):
 
         # Realoca estudantes
         estudantes_ids = []
-        # estudantes = request.POST.get('estudante', None)
-        estudantes = request.POST.getlist('estudante')
+        estudantes = request.POST.getlist("estudante")
         for estudante_id in estudantes:
             if estudante_id:
                 estudantes_ids.append(int(estudante_id))
@@ -1861,12 +1853,12 @@ def editar_projeto(request, primarykey):
                 alocacao.save()
 
         # Define projeto com time misto (estudantes de outras instituições)
-        projeto.time_misto = 'time_misto' in request.POST
+        projeto.time_misto = "time_misto" in request.POST
 
 
         projeto.save()
 
-        return redirect('projeto_completo', primarykey=primarykey)
+        return redirect("projeto_completo", primarykey=primarykey)
 
 
     professores = Professor.objects.all()
@@ -1883,7 +1875,7 @@ def editar_projeto(request, primarykey):
         "estudantes": estudantes,
         "coorientadores": coorientadores,
     }
-    return render(request, 'projetos/editar_projeto.html', context)
+    return render(request, "projetos/editar_projeto.html", context)
 
 
 @login_required

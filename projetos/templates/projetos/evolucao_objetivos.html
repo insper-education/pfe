@@ -92,10 +92,11 @@
                 backgroundColor: "{{media.cor}}",
                 fill: false,
                 spanGaps: true,
+                lineTension: 0,  // para deixar as linhas retas (sem as curvas de bezier)
             },{% endfor %}] 
 
           var config_medias = {
-            type: 'line',
+            type: "line",
             data: {
                 labels: labels,
                 datasets: datasets,
@@ -109,7 +110,7 @@
           }
 
           var config_objetivos = {
-            type: 'horizontalBar',
+            type: "horizontalBar",
             data: {datasets: datasets,},
             options: {
                 legend: { display: true },
