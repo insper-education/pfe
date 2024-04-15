@@ -29,7 +29,8 @@
   <div class="modal-body">
 
     {% if organizacoes and not organizacao %}
-      <label for="organizacao_id">Organizacao:</label>
+      <label for="organizacao_id">Organização:</label>
+      <small><a href="{% url 'cadastrar_organizacao' %}">&#10133;</a></small>
       <select id="organizacao_id" name="organizacao_id" class="form-control selectpicker" title="Selecione uma organização" data-live-search="true" required>
         <option disabled selected value> -- selecione uma organização -- </option>
         {% for organizacao in organizacoes %}
