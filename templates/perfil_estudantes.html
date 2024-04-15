@@ -35,7 +35,7 @@
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
             {% if editavel %}
-                <label style="line-height:0.6em; "><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}1" 
+                <label style="line-height:0.6em; "><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}-1" 
                 {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
             {% else %}
               {% if  curso in proposta.perfil1.all %}&#x2713;{% endif %}
@@ -49,7 +49,7 @@
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
             {% if editavel %}
-                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}2" 
+                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}-2" 
                 {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
             {% else %}
               {% if  curso in proposta.perfil2.all %}&#x2713;{% endif %}
@@ -63,7 +63,7 @@
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
             {% if editavel %}
-                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}3" 
+                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}-3" 
                 {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
             {% else %}
               {% if  curso in proposta.perfil3.all %}&#x2713;{% endif %}
@@ -74,17 +74,17 @@
       </tr>
       <tr>
         {% for curso in cursos %}
-        {% if curso.curso_do_insper %}
-        <td style="text-align:center;">
-          {% if editavel %}
-              <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}4" 
-              {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
-          {% else %}
-            {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
+          {% if curso.curso_do_insper %}
+          <td style="text-align:center;">
+            {% if editavel %}
+                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}-4" 
+                {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
+            {% else %}
+              {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
+            {% endif %}
+          </td>
           {% endif %}
-        </td>
-        {% endif %}
-      {% endfor %}
+        {% endfor %}
       </tr>
     </tbody>
   </table>
@@ -93,47 +93,19 @@
     <script>
 
       function atualiza_colunas() {
-
-        if( $("#alunosC1").is(":checked") && $("#alunosC2").is(":checked") && $("#alunosC3").is(":checked") && $("#alunosC4").is(":checked") ) {
-          $("#alunosC").prop("checked", true); 
-          $("#alunosC").prop("indeterminate", false);
-        } else if( (! $("#alunosC1").is(":checked")) && (! $("#alunosC2").is(":checked")) && (! $("#alunosC3").is(":checked")) && (! $("#alunosC4").is(":checked")) ) {
-          $("#alunosC").prop("checked", false); 
-          $("#alunosC").prop("indeterminate", false);
-        } else {
-          $("#alunosC").prop("indeterminate", true);
-        }
-
-        if( $("#alunosM1").is(":checked") && $("#alunosM2").is(":checked") && $("#alunosM3").is(":checked") && $("#alunosM4").is(":checked") ) {
-          $("#alunosM").prop("checked", true); 
-          $("#alunosM").prop("indeterminate", false);
-        } else if( (! $("#alunosM1").is(":checked")) && (! $("#alunosM2").is(":checked")) && (! $("#alunosM3").is(":checked")) && (! $("#alunosM4").is(":checked")) ) {
-          $("#alunosM").prop("checked", false); 
-          $("#alunosM").prop("indeterminate", false);
-        } else {
-          $("#alunosM").prop("indeterminate", true);
-        }
-
-        if( $("#alunosX1").is(":checked") && $("#alunosX2").is(":checked") && $("#alunosX3").is(":checked") && $("#alunosX4").is(":checked") ) {
-          $("#alunosX").prop("checked", true); 
-          $("#alunosX").prop("indeterminate", false);
-        } else if( (! $("#alunosX1").is(":checked")) && (! $("#alunosX2").is(":checked")) && (! $("#alunosX3").is(":checked")) && (! $("#alunosX4").is(":checked")) ) {
-          $("#alunosX").prop("checked", false);
-          $("#alunosX").prop("indeterminate", false);
-        } else {
-          $("#alunosX").prop("indeterminate", true);
-        }
-
-        if( $("#alunosB1").is(":checked") && $("#alunosB2").is(":checked") && $("#alunosB3").is(":checked") && $("#alunosB4").is(":checked") ) {
-          $("#alunosB").prop("checked", true); 
-          $("#alunosB").prop("indeterminate", false);
-        } else if( (! $("#alunosB1").is(":checked")) && (! $("#alunosB2").is(":checked")) && (! $("#alunosB3").is(":checked")) && (! $("#alunosB4").is(":checked")) ) {
-          $("#alunosB").prop("checked", false);
-          $("#alunosB").prop("indeterminate", false);
-        } else {
-          $("#alunosB").prop("indeterminate", true);
-        }
-
+        {% for curso in cursos %}
+          {% if curso.curso_do_insper %}
+            if( $("#alunos{{curso.sigla_curta}}1").is(":checked") && $("#alunos{{curso.sigla_curta}}2").is(":checked") && $("#alunos{{curso.sigla_curta}}3").is(":checked") && $("#alunos{{curso.sigla_curta}}4").is(":checked") ) {
+              $("#alunos{{curso.sigla_curta}}").prop("checked", true); 
+              $("#alunos{{curso.sigla_curta}}").prop("indeterminate", false);
+            } else if( (! $("#alunos{{curso.sigla_curta}}1").is(":checked")) && (! $("#alunos{{curso.sigla_curta}}2").is(":checked")) && (! $("#alunos{{curso.sigla_curta}}3").is(":checked")) && (! $("#alunos{{curso.sigla_curta}}4").is(":checked")) ) {
+              $("#alunos{{curso.sigla_curta}}").prop("checked", false); 
+              $("#alunos{{curso.sigla_curta}}").prop("indeterminate", false);
+            } else {
+              $("#alunos{{curso.sigla_curta}}").prop("indeterminate", true);
+            }
+          {% endif %}
+        {% endfor %}
       }
 
       atualiza_colunas();
@@ -142,62 +114,44 @@
         atualiza_colunas();
       });
 
-      $("#alunosC").change(function() {
-        if( $("#alunosC").is(":checked") ) {
-          $("#alunosC1").prop("checked", true).change();;
-          $("#alunosC2").prop("checked", true).change();;
-          $("#alunosC3").prop("checked", true).change();;
-          $("#alunosC4").prop("checked", true).change();;
-        } else {
-          $("#alunosC1").prop("checked", false).change();;
-          $("#alunosC2").prop("checked", false).change();;
-          $("#alunosC3").prop("checked", false).change();;
-          $("#alunosC4").prop("checked", false).change();;
-        }
-      });
+      {% for curso in cursos %}
+        {% if curso.curso_do_insper %}
+          $("#alunos{{curso.sigla_curta}}").change(function() {
+            if( $("#alunos{{curso.sigla_curta}}").is(":checked") ) {
+              $("#alunos{{curso.sigla_curta}}1").prop("checked", true).change();;
+              $("#alunos{{curso.sigla_curta}}2").prop("checked", true).change();;
+              $("#alunos{{curso.sigla_curta}}3").prop("checked", true).change();;
+              $("#alunos{{curso.sigla_curta}}4").prop("checked", true).change();;
+            } else {
+              $("#alunos{{curso.sigla_curta}}1").prop("checked", false).change();;
+              $("#alunos{{curso.sigla_curta}}2").prop("checked", false).change();;
+              $("#alunos{{curso.sigla_curta}}3").prop("checked", false).change();;
+              $("#alunos{{curso.sigla_curta}}4").prop("checked", false).change();;
+            }
+          });
+        {% endif %}
+      {% endfor %}
 
-      $('#alunosM').change(function() {
-        if( $("#alunosM").is(":checked") ) {
-          $("#alunosM1").prop("checked", true).change();;
-          $("#alunosM2").prop("checked", true).change();;
-          $("#alunosM3").prop("checked", true).change();;
-          $("#alunosM4").prop("checked", true).change();;
-        } else {
-          $("#alunosM1").prop("checked", false).change();;
-          $("#alunosM2").prop("checked", false).change();;
-          $("#alunosM3").prop("checked", false).change();;
-          $("#alunosM4").prop("checked", false).change();;
-        }
-      });
+      $(".alunos").change(function () {
+        var vaga = $(this).val();
+        var checked = $(this).prop("checked");
 
-      $('#alunosX').change(function() {
-        if( $("#alunosX").is(":checked") ) {
-          $("#alunosX1").prop("checked", true).change();;
-          $("#alunosX2").prop("checked", true).change();;
-          $("#alunosX3").prop("checked", true).change();;
-          $("#alunosX4").prop("checked", true).change();;
-        } else {
-          $("#alunosX1").prop("checked", false).change();;
-          $("#alunosX2").prop("checked", false).change();;
-          $("#alunosX3").prop("checked", false).change();;
-          $("#alunosX4").prop("checked", false).change();;
-        }
+        $.ajax({
+          url: '{% url "validate_alunos" %}',
+          data: {
+            "proposta": {{proposta.id}},
+            "vaga": vaga,
+            "checked": checked,
+          },
+          dataType: "json",
+          success: function (response) {
+            if (response.atualizado) {
+              console.log("Valor atualizado.");
+            }
+          },
+          {% include "ajax_error_function.js" %}
+        });
       });
-
-      $('#alunosB').change(function() {
-        if( $("#alunosB").is(":checked") ) {
-          $("#alunosB1").prop("checked", true).change();;
-          $("#alunosB2").prop("checked", true).change();;
-          $("#alunosB3").prop("checked", true).change();;
-          $("#alunosB4").prop("checked", true).change();;
-        } else {
-          $("#alunosB1").prop("checked", false).change();;
-          $("#alunosB2").prop("checked", false).change();;
-          $("#alunosB3").prop("checked", false).change();;
-          $("#alunosB4").prop("checked", false).change();;
-        }
-      });
-
     </script>
   {% endif %}
 

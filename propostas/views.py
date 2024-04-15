@@ -156,7 +156,7 @@ def mapeamento_estudantes_propostas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
     configuracao = get_object_or_404(Configuracao)
@@ -289,7 +289,7 @@ def procura_propostas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
@@ -366,7 +366,7 @@ def propostas_apresentadas(request):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def propostas_lista(request):
     """Lista todas as propostas de projetos."""
 
@@ -669,11 +669,11 @@ def publicar_propostas(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
-    proposta_id = int(request.GET.get('proposta', None))
-    vaga = request.GET.get("vaga", "  ")
+    proposta_id = int(request.GET.get("proposta", None))
+    vaga = request.GET.get("vaga", " - ").split('-')
     checked = request.GET.get("checked", None) == "true"
 
     try:
@@ -703,7 +703,7 @@ def validate_alunos(request):
 
         proposta.save()
     except Proposta.DoesNotExist:
-        return HttpResponseNotFound('<h1>Proposta não encontrada!</h1>')
+        return HttpResponseNotFound("<h1>Proposta não encontrada!</h1>")
 
     return JsonResponse({"atualizado": True,})
 
@@ -808,7 +808,7 @@ def remover_disciplina(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def projeto_criar(request, proposta_id):
     """Criar projeto de proposta."""
     proposta = get_object_or_404(Proposta, id=proposta_id)

@@ -224,26 +224,6 @@
 
     $(".fechar_proposta").change(fechar_proposta);
 
-    $(".alunos").change(function () {
-      var vaga = $(this).val();
-      var checked = $(this).prop('checked');
-
-      $.ajax({
-        url: '{% url "validate_alunos" %}',
-        data: {
-          'proposta': {{proposta.id}},
-          'vaga': vaga,
-          'checked': checked,
-        },
-        dataType: 'json',
-        success: function (response) {
-          if (response.atualizado) {
-            console.log("Valor atualizado.");
-          }
-        },
-        {% include "ajax_error_function.js" %}
-      });
-    });
   </script>
 
 {% endblock %}
