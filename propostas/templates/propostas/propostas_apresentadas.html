@@ -13,6 +13,8 @@
   {% include "reload.html" %}
 
   <style>
+    .estudantes {font-size: 14px;}
+    td {vertical-align: middle !important;}
 		@media screen and (max-width: 1200px) {
       .estudante-icon:before {
         content: "\1F9D1 \200D \1F393";
@@ -227,7 +229,7 @@
 
               {% for curso in proposta.perfil1.all %}
                 {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}}</span>
+                  <span>{{curso.sigla_curta}} </span>
                 {% if proposta.get_nativamente == curso %}</b>{% endif %}
               {% endfor %}
               
@@ -244,7 +246,7 @@
 
               {% for curso in proposta.perfil2.all %}
                 {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}}</span>
+                  <span>{{curso.sigla_curta}} </span>
                 {% if proposta.get_nativamente == curso %}</b>{% endif %}
               {% endfor %}
 
@@ -261,7 +263,7 @@
 
               {% for curso in proposta.perfil3.all %}
                 {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}}</span>
+                  <span>{{curso.sigla_curta}} </span>
                 {% if proposta.get_nativamente == curso %}</b>{% endif %}
               {% endfor %}
 
@@ -278,7 +280,7 @@
 
               {% for curso in proposta.perfil4.all %}
                 {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}}</span>
+                  <span>{{curso.sigla_curta}} </span>
                 {% if proposta.get_nativamente == curso %}</b>{% endif %}
               {% endfor %}
 
