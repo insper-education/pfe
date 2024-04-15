@@ -1,7 +1,7 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 12 de Novembro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Novembro de 2020
 {% endcomment %}
 
 <style>
@@ -16,7 +16,7 @@
   <small class="obs">Cada linha representa uma vaga que idealmente deve ser preenchida por um estudante dos cursos marcados</small>
   <table>
     <thead>
-      <tr style="background-color: #EEEEEE;">
+      <tr style="background-color: #EEF;">
         <th style="text-align:center;"></th>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
@@ -30,7 +30,7 @@
     </thead>
     <tbody>
       <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
-        <td style="background-color: #EEEEEE; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
+        <td style="background-color: #EEF; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">

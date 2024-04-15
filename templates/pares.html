@@ -1,7 +1,7 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 13 de Dezembro de 2023
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Dezembro de 2023
 {% endcomment %}
 
 {% load static %}
@@ -14,18 +14,18 @@
     <tr style="padding-left: 18px;">
       {% with feita=alocacao|aval_pares:tipo_avaliacao %}
         <td>
-          {% if feita %}<a href="{% url 'ver_pares' alocacao.id tipo_avaliacao %}">{% endif %}
+          {% if feita %}<a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}">{% endif %}
             {{alocacao.aluno}}
           {% if feita %}</a>{% endif %}
         </td>
         <td>
           {% if feita %}
             {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
-              <span style="color:green">Avaliação de Pares Verificada</span>
+              <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">Avaliação de Pares Verificada</a>
             {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
-              <span style="color:green">Avaliação de Pares Verificada</span>
+              <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">Avaliação de Pares Verificada</a>
             {% else %}
-              <span style="color:brown">Aguardando Confirmação de Orientador</span>
+              <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:brown">Aguardando Confirmação de Orientador</a>
             {% endif %}
           {% else %} <span style="color:#DDB300">Aguardando Preenchimento por Estudante </span>
           {% endif %}
