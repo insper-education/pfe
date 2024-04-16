@@ -2150,7 +2150,7 @@ def relato_avaliar(request, projeto_id, evento_id):
         relatos.append(Relato.objects.filter(alocacao=alocacao,
                                     momento__gt=evento_anterior.endDate + datetime.timedelta(days=1),
                                     momento__lte=evento.endDate + datetime.timedelta(days=1)).order_by("momento").last() )
-                                    # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão valo começo do dia
+                                    # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
 
     # Só o próprio orientador pode editar uma avaliação
     editor = request.user == projeto.orientador.user
@@ -2181,7 +2181,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                 if feedback and feedback != "" and feedback != relato.feedback:
                     relato.feedback = feedback
                     relato.momento_avaliacao = datetime.datetime.now()
-                else:
+                elif feedback != relato.feedback:
                     relato.feedback = None
 
                 relato.save()
@@ -2196,6 +2196,14 @@ def relato_avaliar(request, projeto_id, evento_id):
                                                                 exame=exame)  # (200, "Relato Quinzenal"),
                 obs.observacoes_orientador = observacoes
                 obs.save()
+            else:
+                obs = Observacao.objects.filter(projeto=projeto,
+                                          avaliador=request.user,
+                                          momento=evento.endDate,  # data marcada do fim do evento
+                                          exame=exame).last()
+                if obs:
+                    obs.delete()
+                
 
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):
