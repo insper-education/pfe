@@ -1345,6 +1345,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     avaliacao.nota = 10
                 else:
                     avaliacao.nota = 1  # Zero é um problema pois pode ser confundido com não avaliado
+                avaliacao.peso = 0
 
             avaliacao.momento = datetime.datetime.now()
             avaliacao.save()

@@ -267,12 +267,9 @@ def estudantes_notas(request, professor=None):
         if "edicao" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
 
-            # Conta soh alunos
-            alunos_list = Aluno.objects\
-                .order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-            alunos_list = alunos_list.filter(trancado=False)
-
+            alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
+            alunos_list = Aluno.objects.filter(trancado=False)
+            alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             if professor is not None:
                 user = get_object_or_404(PFEUser, pk=request.user.pk)
@@ -299,8 +296,6 @@ def estudantes_notas(request, professor=None):
             # Caso o aluno tenha repetido e esteja fazendo de novo o PFE
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
-
 
             context = {
                 "alunos_list": alunos_list,
