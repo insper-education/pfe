@@ -268,7 +268,6 @@ def estudantes_notas(request, professor=None):
             ano, semestre = map(int, request.POST["edicao"].split('.'))
 
             alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
-            alunos_list = Aluno.objects.filter(trancado=False)
             alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             if professor is not None:
