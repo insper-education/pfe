@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Abril de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load coluna %}
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    thead {
+      background-color: #EEF;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">Blackboard Notas</span>
+
+  {% comment %} {% include "edicoes.html" %}<br> {% endcomment %}
+
+  <div class="atualizar">
+
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    
+      <br>
+      Criar no Blackboard colunas:<br>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome da Coluna</th>
+            <th>Nome da Central de Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for exame in exames %}
+            <tr>
+              <td>{{exame.titulo}}</td>
+              <td>{{exame.sigla}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      Com:<br>
+      - Exibição primária: Pontuação<br>
+      - Pontos possíveis: 10<br>
+
+      <br><br>
+      <b>Código da Coluna</b><br>
+      {% for exame in exames %}
+        <label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}><br>
+      {% endfor %}
+      <br>
+      <button class="btn btn-primary mb-1" type="submit">Download Arquivo</button>
+
+    </form>
+
+  </div>
+
+  <script>
+    function carrega_pagina() {};
+    function carrega_site(){
+      carrega_pagina();
+    };
+    window.onload = carrega_site
+  </script>
+  
+  {% comment %} {% include "edicoes_ajax.html" %} {% endcomment %}
+
+{% endblock %}

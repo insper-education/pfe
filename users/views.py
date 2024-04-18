@@ -32,7 +32,8 @@ from projetos.support import calcula_objetivos
 from administracao.support import get_limite_propostas
 from administracao.models import Carta
 
-from academica.models import Composicao
+from academica.models import Composicao, CodigoColuna
+from academica.support import filtra_composicoes
 
 from operacional.models import Curso
 
@@ -326,36 +327,65 @@ def blackboard_notas(request, anosemestre):
     """Gera notas para o blackboard."""
     ano, semestre = map(int, anosemestre.split('.'))
     
-    dataset = tablib.Dataset()
+    composicoes = filtra_composicoes(Composicao.objects.filter(pesos__isnull=False), ano, semestre)  # (entregavel=True):
+    exames = set()
+    for composicao in composicoes:
+        exames.add(composicao.exame)
 
-    headers=["Nome", "Sobrenome", "Nome do usuário", "BI [Total de pontos: 10 Pontuação]", "BF [Total de pontos: 10 Pontuação]"]
-    dataset.headers = headers
+    if request.method == "POST":
+        colunas = {}
+        for exame in exames:
+            if exame.sigla in request.POST:
+                if request.POST[exame.sigla] == "":
+                    CodigoColuna.objects.filter(exame=exame, ano=ano, semestre=semestre).delete()
+                else:
+                    colunas[exame.sigla], _created = CodigoColuna.objects.get_or_create(exame=exame, ano=ano, semestre=semestre)
+                    colunas[exame.sigla].coluna = request.POST[exame.sigla]
+                    colunas[exame.sigla].save()
 
-    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-    for alocacao in alocacoes:
-        notas = alocacao.get_notas
-        linha = [alocacao.aluno.user.first_name]
-        linha += [alocacao.aluno.user.last_name]
-        linha += [alocacao.aluno.user.username]
-        BI = None
-        BF = None
-        for nota in notas:
-            if nota[0]=="BI":
-                BI = f"{nota[1]:.4f}".replace('.',',')
-            elif nota[0]=="BF":
-                BF = f"{nota[1]:.4f}".replace('.',',')
-        linha += [BI, BF]
-        dataset.append(linha)
-    
+        dataset = tablib.Dataset()
 
-    #response = HttpResponse(dataset.xlsx, content_type='application/ms-excel')
+        headers=["Nome", "Sobrenome", "Nome do usuário"]
+        for coluna in colunas:
+            if coluna and colunas[coluna].coluna:
+                headers.append(coluna + " [Total de pontos: 10 Pontuação] |" + colunas[coluna].coluna)
+
+        dataset.headers = headers
+
+        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__externo__isnull=True)
+        for alocacao in alocacoes:
+            notas = alocacao.get_notas
+            linha = [alocacao.aluno.user.first_name]
+            linha += [alocacao.aluno.user.last_name]
+            linha += [alocacao.aluno.user.username]
+
+            # Convertendo lista de notas para dicionário
+            avaliacao = {}
+            for nota in notas:
+                avaliacao[nota[0]] = nota[1]
+            
+            for coluna in colunas:
+                if coluna in avaliacao:
+                    linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
+            dataset.append(linha)
+
+        csv = dataset.export("csv", quotechar='"', dialect="excel")
+        #csv_with_trailing_commas = csv.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
+        response = HttpResponse(csv, content_type="text/csv")
+        response.write(u"\ufeff".encode("utf-8-sig"))
+
+        response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
+        
+        return response
     
-    response = HttpResponse(dataset.export("csv", quotechar='"', dialect="excel"), content_type="text/csv")
-    response.write(u"\ufeff".encode("utf-8-sig"))
-    
-    response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
-    
-    return response
+    colunas = CodigoColuna.objects.filter(exame__in=exames, ano=ano, semestre=semestre)
+
+    context = {
+        "exames": exames,
+        "colunas": colunas,
+        "anosemestre": anosemestre,
+    }
+    return render(request, "users/blackboard_notas.html", context=context)
     
 
 @login_required

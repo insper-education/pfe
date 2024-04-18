@@ -1156,7 +1156,7 @@ class Entidade(models.Model):
     """Todas as entidades estudantis do Insper."""
 
     nome = models.CharField(max_length=100,
-                            help_text='nome da entidade estudantil')
+                            help_text="nome da entidade estudantil")
 
     def __str__(self):
         return self.nome
@@ -1165,10 +1165,10 @@ class Acompanhamento(models.Model):
     """Acompanhamento das organizacoes parceiras."""
 
     data = models.DateField(default=datetime.date.today, blank=True,
-                            help_text='Data da Resposta')
-    autor = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                              help_text='quem enviou a observação de acompanhamento')
-    texto = models.TextField(max_length=1000, help_text='Feedback Outros')
+                            help_text="Data da Resposta")
+    autor = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text="quem enviou a observação de acompanhamento")
+    texto = models.TextField(max_length=1000, help_text="Feedback Outros")
 
     def __str__(self):
         return str(self.data)
@@ -1184,26 +1184,26 @@ class Feedback(models.Model):
     """Feedback das organizacoes parceiras."""
 
     data = models.DateField(default=datetime.date.today, blank=True,
-                            help_text='Data do Feedback')
+                            help_text="Data do Feedback")
     nome = models.CharField(max_length=120, null=True, blank=True,
-                            help_text='Nome de quem está dando o Feedback')
+                            help_text="Nome de quem está dando o Feedback")
     email = models.EmailField(max_length=80, null=True, blank=True,
-                              help_text='e-mail de quem está dando o Feedback')
+                              help_text="e-mail de quem está dando o Feedback")
     #isso esta bem baguncado
     empresa = models.CharField(max_length=120, null=True, blank=True,
-                               help_text='Empresa de quem está dando o Feedback')
+                               help_text="Empresa de quem está dando o Feedback")
     tecnico = models.TextField(max_length=1000, null=True, blank=True,
-                               help_text='Feedback Técnico')
+                               help_text="Feedback Técnico")
     comunicacao = models.TextField(max_length=1000, null=True, blank=True,
-                                   help_text='Feedback Comunicação')
+                                   help_text="Feedback Comunicação")
     organizacao = models.TextField(max_length=1000, null=True, blank=True,
-                                   help_text='Feedback Organização')
+                                   help_text="Feedback Organização")
     outros = models.TextField(max_length=1000, null=True, blank=True,
-                              help_text='Feedback Outros')
+                              help_text="Feedback Outros")
 
     nps = models.PositiveIntegerField("NPS", null=True, blank=True,
                                       validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                      help_text='Valor Net Promoter Score')
+                                      help_text="Valor Net Promoter Score")
 
     def __str__(self):
         return str(self.data)
@@ -1629,25 +1629,25 @@ class Avaliacao_Velha(models.Model):
     nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
 
     # Somente útil para Bancas
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  help_text='avaliador do projeto')
+    avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="avaliador do projeto")
 
     # Para Bancas e Entregas em Grupo (quando avaliando o grupo inteiro)
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
+                                help_text="projeto que foi avaliado")
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
                                  on_delete=models.SET_NULL,
-                                 related_name='projeto_alocado_avaliacao_velha',
-                                 help_text='relacao de alocação entre projeto e estudante')
+                                 related_name="projeto_alocado_avaliacao_velha",
+                                 help_text="relacao de alocação entre projeto e estudante")
 
-    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_avaliacao_velha',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name="objetivo_avaliacao_velha",
                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                 help_text='Objetivo de Aprendizagem')
+                                 help_text="Objetivo de Aprendizagem")
 
     na = models.BooleanField("Não Avaliado", default=False,
-                             help_text='Caso o avaliador não tenha avaliado esse quesito')
+                             help_text="Caso o avaliador não tenha avaliado esse quesito")
 
     def __str__(self):
         texto = ""

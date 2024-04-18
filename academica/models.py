@@ -120,3 +120,23 @@ class Peso(models.Model):
         if self.objetivo:
             mensagem += str(self.objetivo)
         return mensagem
+
+
+class CodigoColuna(models.Model):
+    """Código da Coluna de nota do Blackboard."""
+
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Tipo de avaliação")
+
+    ano = models.PositiveIntegerField("Ano",
+                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text="Ano das avaliações")
+
+    semestre = models.PositiveIntegerField("Semestre",
+                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text="Semestre das avaliações")
+    
+    coluna = models.TextField("Coluna", max_length=8, null=True, blank=True,
+                                help_text="Coluna de Notas no Blackboard")
+    
+    
