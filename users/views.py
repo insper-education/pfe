@@ -367,6 +367,8 @@ def blackboard_notas(request, anosemestre):
             for coluna in colunas:
                 if coluna in avaliacao:
                     linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
+                else:
+                    linha += [""]
             dataset.append(linha)
 
         csv = dataset.export("csv", quotechar='"', dialect="excel")
