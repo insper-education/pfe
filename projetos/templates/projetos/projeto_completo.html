@@ -336,6 +336,15 @@
   {% endif %}
 
   <hr>
+
+  {% with site=projeto.get_site %}
+  {% if site %}
+    <h4>Site:</h4>
+    &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+    <br><br>
+  {% endif %}
+  {% endwith %}
+
   <h4>Documentos:
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <small class="esconder">

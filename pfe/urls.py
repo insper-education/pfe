@@ -7,12 +7,12 @@ Data: 15 de Maio de 2019
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from projetos import arquivos
+from projetos import arquivos, sites
 
 from .views import *
 
@@ -41,6 +41,9 @@ urlpatterns = [
     path("doc/<str:tipo>", arquivos.doc, name="doc"),
     path("manutencao/", manutencao, name="manutencao"),
     path("migracao/", migracao, name="migracao"),
+    path("upload_site/<int:projeto_id>", sites.upload_site, name="upload_site"),
+    re_path(r'^sites/(?P<projeto_id>\d+)/(?P<path>.*)$', sites.sites, name="sites"),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

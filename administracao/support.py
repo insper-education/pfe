@@ -118,18 +118,18 @@ def registra_organizacao(request, org=None):
         else:
             organizacao.website = "http://" + website.strip()
 
-    organizacao.informacoes = request.POST.get('informacoes', None)
+    organizacao.informacoes = request.POST.get("informacoes", None)
 
-    cnpj = request.POST.get('cnpj', None)
+    cnpj = request.POST.get("cnpj", None)
     if cnpj:
         organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
 
-    organizacao.inscricao_estadual = request.POST.get('inscricao_estadual', None)
-    organizacao.razao_social = request.POST.get('razao_social', None)
-    organizacao.ramo_atividade = request.POST.get('ramo_atividade', None)
+    organizacao.inscricao_estadual = request.POST.get("inscricao_estadual", None)
+    organizacao.razao_social = request.POST.get("razao_social", None)
+    organizacao.ramo_atividade = request.POST.get("ramo_atividade", None)
 
-    if 'logo' in request.FILES:
-        logotipo = simple_upload(request.FILES['logo'],
+    if "logo" in request.FILES:
+        logotipo = simple_upload(request.FILES["logo"],
                                     path=get_upload_path(organizacao, ""))
         organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
 
@@ -279,9 +279,9 @@ def registro_usuario(request, user=None):
             professor.dedicacao = None
             mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
 
-        professor.areas = limpa_texto(request.POST.get('areas', None))
-        professor.website = limpa_texto(request.POST.get('website', None))
-        professor.lattes = limpa_texto(request.POST.get('lattes', None))
+        professor.areas = limpa_texto(request.POST.get("areas", None))
+        professor.website = limpa_texto(request.POST.get("website", None))
+        professor.lattes = limpa_texto(request.POST.get("lattes", None))
 
         professor.save()
 
@@ -311,28 +311,28 @@ def registro_usuario(request, user=None):
 
     elif usuario.tipo_de_usuario == 3:  # Parceiro
 
-        if not hasattr(user, 'parceiro'):
+        if not hasattr(user, "parceiro"):
             parceiro = Parceiro.create(usuario)
         else:
             parceiro = user.parceiro
 
-        parceiro.cargo = request.POST.get('cargo', None)
+        parceiro.cargo = request.POST.get("cargo", None)
         
         try:
-            tmp_pk = int(request.POST['organizacao'])
+            tmp_pk = int(request.POST["organizacao"])
             parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
         except (ValueError, OverflowError, Organizacao.DoesNotExist):
             parceiro.organizacao = None
             mensagem += "Organização não encontrada.<br>"
 
-        parceiro.principal_contato = 'principal_contato' in request.POST
+        parceiro.principal_contato = "principal_contato" in request.POST
 
         parceiro.save()
 
         # Tipos individuais estão obsoletos, usar somente grupos !
         content_type = ContentType.objects.get_for_model(Parceiro)
         permission = Permission.objects.get(
-            codename='change_parceiro',
+            codename="change_parceiro",
             content_type=content_type,
         )
         usuario.user_permissions.add(permission)

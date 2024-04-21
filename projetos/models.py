@@ -322,6 +322,9 @@ class Projeto(models.Model):
     @property
     def get_edicao(self):
         return str(self.ano)+"."+str(self.semestre)
+    
+    def get_site(self):
+        return "/sites/"+str(self.id)+"/" if os.path.exists(settings.SITE_ROOT + "/projeto"+str(self.id)) else None
 
 
 class Proposta(models.Model):

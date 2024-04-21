@@ -44,6 +44,15 @@
           {% endif %}
         {% endwith %}
   
+        {% with site=alocado.projeto.get_site %}
+        {% if site %}
+          <br><br>
+          <h4>Site:</h4>
+          &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+          <br><br>
+        {% endif %}
+        {% endwith %}
+
       {% endif %}
 
       <p>&nbsp;</p>

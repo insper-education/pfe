@@ -116,6 +116,7 @@ def alinhamentos_gerais(request):
     tipo_documento = get_object_or_404(TipoDocumento, nome="Template de Alocação Semanal")
     context = {
         "documento": Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last(),
+        "projeto": Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last(),
     }
     return render(request, "estudantes/alinhamentos_gerais.html", context)
 

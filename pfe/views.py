@@ -19,11 +19,9 @@ def index(request):
     # request.session['num_visits'] = num_visits + 1
     return render(request, "index.html")
 
-
 def manutencao(request):
     """Página de Manutenção do Projeto Final de Engenharia."""
     return render(request, "manutencao.html")
-
 
 def custom_400(request, exception):
     mensagem = "<h1>Bad Request (400)</h1>"

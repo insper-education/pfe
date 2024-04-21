@@ -22,11 +22,9 @@ from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-#from django.http import HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
-#from django.urls import reverse
 
 from axes.models import AccessAttempt, AccessLog
 

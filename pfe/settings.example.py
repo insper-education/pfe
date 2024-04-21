@@ -191,6 +191,7 @@ LOGGING = {
 
 MEDIA_URL = '/<local_dos_arquivos>/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
+SITE_ROOT = os.path.join(BASE_DIR, "<local_dos_arquivos>")
 FILE_UPLOAD_PERMISSIONS = 0o644
 
 # CELERY

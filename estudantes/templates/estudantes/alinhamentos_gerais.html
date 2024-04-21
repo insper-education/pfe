@@ -19,6 +19,14 @@
 
 <h5>&bull;&nbsp;<a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">Alocação Semanal</a></h5><br>
 
-
+{% if projeto.id == 217 %}
+<form {% if projeto %}action="{% url 'upload_site' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label for="zipsite">Site do projeto (opcional):</label>
+  <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not projeto %}disabled{% endif %}>
+  <input class="btn btn-info btn-sm" type="submit" value="Carregar" {% if not projeto %}disabled{% endif %}><br>
+  <small>carrega um arquivo .zip com o site do projeto</small><br>
+</form>
+{% endif %}
 
 {% endblock %}

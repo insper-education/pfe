@@ -10,6 +10,7 @@ import datetime
 import csv
 import dateutil.parser
 import json
+import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -135,6 +136,8 @@ def projeto_completo(request, primarykey):
 
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
 
+    site = "/sites/"+str(projeto.id)+"/" if os.path.exists(settings.SITE_ROOT + "/projeto"+str(projeto.id)) else None
+
     context = {
         "projeto": projeto,
         "alocacoes": alocacoes,
@@ -144,6 +147,7 @@ def projeto_completo(request, primarykey):
         "documentos": documentos,
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
+        "site": site,
     }
     return render(request, "projetos/projeto_completo.html", context=context)
 
