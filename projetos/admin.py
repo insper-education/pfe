@@ -182,19 +182,19 @@ class ProjetoAdmin(admin.ModelAdmin):
 
     list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
     list_filter = (FechadoFilter, "ano", "semestre",)
-    fieldsets = \
-        ((None,
-          {"fields":
-           ("titulo", "titulo_final", "descricao",
-            "avancado", "ano", "semestre",
-            "orientador",
-            "proposta",
-           )
-          }),
-         ("Origem", {
-             "fields": ("organizacao", )
-         }),
-        )
+    # fieldsets = \
+    #     ((None,
+    #       {"fields":
+    #        ("titulo", "titulo_final", "descricao",
+    #         "avancado", "ano", "semestre",
+    #         "orientador",
+    #         "proposta",
+    #        )
+    #       }),
+    #      ("Origem", {
+    #          "fields": ("organizacao", )
+    #      }),
+    #     )
     actions = [dup_projeto]
     search_fields = ["titulo", "organizacao__sigla", ]
 

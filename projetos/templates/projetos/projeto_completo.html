@@ -59,16 +59,23 @@
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
-    <div class="descricao" style="margin-top: 8px;">
+    <div class="resumo" style="margin-top: 8px;">
       <strong>Resumo do Projeto (escrito por estudantes):</strong>
       {{ projeto.resumo|linebreaks }}
     </div><br>
   {% endif %}
 
   {% if projeto.abstract %}
-    <div class="descricao" style="margin-top: 8px;">
+    <div class="abstract" style="margin-top: 8px;">
       <strong>Resumo em Inglês do Projeto (escrito por estudantes):</strong>
       {{ projeto.abstract|linebreaks }}
+    </div><br>
+  {% endif %}
+
+  {% if projeto.palavras_chave %}
+    <div class="palavras_chave" style="margin-top: 8px;">
+      <strong>Palavras-chave (escrito por estudantes):</strong>
+      {{ projeto.palavras_chave|linebreaks }}
     </div><br>
   {% endif %}
 

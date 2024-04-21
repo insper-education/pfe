@@ -101,6 +101,10 @@
           <div class="abstract appres_projeto" style="margin-top: 6px;"><b>Abstract:</b> {{projeto.abstract}}</div>
         {% endif %}
 
+        {% if projeto.palavras_chave %}
+          <div class="palavras_chave appres_projeto" style="margin-top: 6px;"><b>Palavras-chave:</b> {{projeto.palavras_chave}}</div>
+        {% endif %}
+
         {% if projeto.proposta.descricao %}
           <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição da proposta de projeto:</b> {{projeto.proposta.descricao}}</div>
         {% endif %}

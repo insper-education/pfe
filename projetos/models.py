@@ -107,7 +107,7 @@ class Projeto(models.Model):
 
     # REMOVER TITULO, USAR OU GET_TITULO OU TITULO_FINAL
     titulo = models.CharField("Título", max_length=160,
-                              help_text='Título Provisório do projeto')
+                              help_text="Título Provisório do projeto")
     
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True,
@@ -122,7 +122,10 @@ class Projeto(models.Model):
     
     abstract = models.TextField("Abstract", max_length=6000, null=True, blank=True,
                                  help_text="Resumo final em inglês para o projeto criado pelos estudantes")
-
+    
+    palavras_chave = models.CharField("Palavras-chave", max_length=1000, null=True, blank=True,
+                                 help_text="Palavras-chave para os documentos do projeto")
+    
     # CAMPO ANTIGO, MANTIDO SÓ POR HISTÓRICO
     areas = models.TextField("Áreas", max_length=1000,
                              help_text="Áreas da engenharia envolvidas no projeto")
@@ -334,57 +337,57 @@ class Proposta(models.Model):
                             help_text="Slug para o endereço da proposta")
 
     nome = models.CharField("Nome", max_length=127,
-                            help_text='Nome(s) de quem submeteu o projeto')
+                            help_text="Nome(s) de quem submeteu o projeto")
     email = models.CharField("e-mail", max_length=80, null=True, blank=True,
-                             help_text='e-mail(s) de quem está dando o Feedback')
+                             help_text="e-mail(s) de quem está dando o Feedback")
     website = models.URLField("website", max_length=300, null=True, blank=True,
-                              help_text='website da organização')
+                              help_text="website da organização")
 
     nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
-                                        help_text='Nome da Organização/Empresa')
+                                        help_text="Nome da Organização/Empresa")
 
     endereco = models.TextField("Endereço", max_length=400, null=True, blank=True,
-                                help_text='Endereço da Instituiçã')
+                                help_text="Endereço da Instituição")
 
     contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400,
-                                         help_text='Contatos Técnicos')
+                                         help_text="Contatos Técnicos")
 
     contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
                                                 null=True, blank=True,
-                                                help_text='Contatos Administrativos')
+                                                help_text="Contatos Administrativos")
 
     descricao_organizacao = models.TextField("Descrição da Organização", max_length=3000,
                                              null=True, blank=True,
-                                             help_text='Descrição da Organização')
+                                             help_text="Descrição da Organização")
 
     departamento = models.TextField("Descrição do Depart.", max_length=3000, null=True, blank=True,
-                                    help_text='Descrição do departamento que propôs o projeto')
+                                    help_text="Descrição do departamento que propôs o projeto")
 
     titulo = models.CharField("Título", max_length=160,
-                              help_text='Título Provisório do projeto')
+                              help_text="Título Provisório do projeto")
 
     descricao = models.TextField("Descrição", max_length=3000,
-                                 help_text='Descricao da Proposta de Projeto')
+                                 help_text="Descricao da Proposta de Projeto")
 
     expectativas = models.TextField("Expectativas", max_length=3000,
-                                    help_text='Expectativas em relação ao projeto')
+                                    help_text="Expectativas em relação ao projeto")
 
     recursos = models.TextField("Recursos", max_length=1000, null=True, blank=True,
-                                help_text='Recursos a serem disponibilizados aos Alunos')
+                                help_text="Recursos a serem disponibilizados para estudantes")
 
     observacoes = models.TextField("Outras Observações", max_length=3000, null=True, blank=True,
-                                   help_text='Outras Observações')
+                                   help_text="Outras Observações")
 
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
-                             help_text='Documento Anexo')
+                             help_text="Documento Anexo")
 
     # O principal interesse da empresa com o projeto é:
     TIPO_INTERESSE = (
-        (10, 'aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo.'),
-        (20, 'realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado.'),
-        (30, 'iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo.'),
-        (40, 'identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente.'),
-        (50, 'mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto.'),
+        (10, "aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo."),
+        (20, "realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado."),
+        (30, "iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo."),
+        (40, "identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente."),
+        (50, "mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto."),
     )
     aprimorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[0][1])
     realizar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[1][1])
@@ -392,37 +395,29 @@ class Proposta(models.Model):
     identificar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[3][1])
     mentorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[4][1])
     
-    # ESSE ESTA OBSOLETO
-    # tipo_de_interesse = models.PositiveSmallIntegerField(choices=TIPO_INTERESSE,
-    #                                                      null=True, blank=True,
-    #                                                      help_text='O principal interesse da empresa com o projeto é')
-
     internacional = models.BooleanField("Internacional", default=False,
-                                        help_text='Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto')
+                                        help_text="Caso a proposta venha de um parceiro internacional, o que afeta a lingua de comunicação do projeto")
 
     intercambio = models.BooleanField("Intercâmbio", default=False,
-                                        help_text='Caso a proposta venha de um intercâmbio')
+                                        help_text="Caso a proposta venha de um intercâmbio")
 
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
-                                      help_text='Ano que o projeto comeca')
+                                      help_text="Ano que o projeto começa")
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
-                                           help_text='Semestre que o projeto comeca')
+                                           help_text="Semestre que o projeto começa")
 
     organizacao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
-                                    help_text='Organização parceira que propôs projeto')
+                                    help_text="Organização parceira que propôs projeto")
 
     disponivel = models.BooleanField("Disponível", default=False,
-                                     help_text='Se projeto está atualmente disponível para alunos')
+                                     help_text="Se projeto está atualmente disponível para alunos")
 
     autorizado = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                    on_delete=models.SET_NULL,
-                                   help_text='Quem autorizou a ser publicado para os alunos')
-
-    # NAO MAIS USADO
-    # fechada = models.BooleanField(default=False, help_text='Se a proposta virou um projeto')
+                                   help_text="Quem autorizou a ser publicado para os alunos")
 
     perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1")
     perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2")
@@ -430,43 +425,43 @@ class Proposta(models.Model):
     perfil4 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil4")
 
     data = models.DateTimeField(default=datetime.datetime.now,
-                                help_text='data e hora da criação da proposta de projeto')
+                                help_text="Data e hora da criação da proposta de projeto")
 
     colaboracao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
                                     related_name='colaboracao',
-                                    help_text='Organização colaborando para a proposta de projeto')
+                                    help_text="Organização colaborando para a proposta de projeto")
 
 
     # Conformidade de Proposta
 
-    habilidades = models.BooleanField(default=False, help_text='A proposta de projeto requer conhecimentos e habilidades adquiridos em anos anteriores do curso de engenharia?')
+    habilidades = models.BooleanField(default=False, help_text="A proposta de projeto requer conhecimentos e habilidades adquiridos em anos anteriores do curso de engenharia?")
     #Does the project proposal require knowledge and skills acquired from previous years of engineering course work?
 
-    design = models.BooleanField(default=False, help_text='A proposta do projeto exige que os alunos apliquem um processo sistemático de projeto de engenharia para um sistema, componente ou processo para atender às necessidades desejadas?')
+    design = models.BooleanField(default=False, help_text="A proposta do projeto exige que os alunos apliquem um processo sistemático de projeto de engenharia para um sistema, componente ou processo para atender às necessidades desejadas?")
     #Does the project proposal require students to apply a systematic engineering design process for a system, component, or process to meet desired needs?
 
-    realistico = models.BooleanField(default=False, help_text='A proposta do projeto representa uma experiência do mundo real ou da indústria real que é solicitada formalmente por uma organização externa?')
+    realistico = models.BooleanField(default=False, help_text="A proposta do projeto representa uma experiência do mundo real ou da indústria real que é solicitada formalmente por uma organização externa?")
     #Does the project proposal represent a have a real-world or real-industry experience that are formally requested by an external organization?
 
-    normas = models.BooleanField(default=False, help_text='A proposta do projeto tem oportunidade de incorporar padrões de engenharia apropriados que podem ser referenciados posteriormente nos relatórios do projeto?')
+    normas = models.BooleanField(default=False, help_text="A proposta do projeto tem oportunidade de incorporar padrões de engenharia apropriados que podem ser referenciados posteriormente nos relatórios do projeto?")
     #Does the project proposal have opportunity to incorporates appropriate engineering standards that can be further referenced in the project reports?
 
-    restricoes = models.BooleanField(default=False, help_text='A proposta do projeto possui um desafio de design que incorpora várias restrições realistas, como econômica, ambiental, social, política, ética, saúde e segurança, capacidade de fabricação e/ou sustentabilidade?')
+    restricoes = models.BooleanField(default=False, help_text="A proposta do projeto possui um desafio de design que incorpora várias restrições realistas, como econômica, ambiental, social, política, ética, saúde e segurança, capacidade de fabricação e/ou sustentabilidade?")
     #Does the project proposal design challenge incorporate multiple realistic constraints, such as economic, environmental, social, political, ethical, health and safety, manufacturability, and/or sustainability?
 
-    experimentacao = models.BooleanField(default=False, help_text='A proposta do projeto requer experimentação e habilidades práticas?')
+    experimentacao = models.BooleanField(default=False, help_text="A proposta do projeto requer experimentação e habilidades práticas?")
     #Does the project proposal require experimentation and hands-on skills?
 
-    equipe = models.BooleanField(default=False, help_text='A proposta do projeto permite o trabalho em equipe entre alunos de um ou mais cursos de engenharia?')
+    equipe = models.BooleanField(default=False, help_text="A proposta do projeto permite o trabalho em equipe entre alunos de um ou mais cursos de engenharia?")
     #Does the project proposal allow teamwork among students in one or more engineering programs?
 
-    duracao = models.BooleanField(default=False, help_text='A proposta do projeto possui uma complexidade adequada a um semestre letivo (cerca de 4,5 meses)?')
+    duracao = models.BooleanField(default=False, help_text="A proposta do projeto possui uma complexidade adequada a um semestre letivo (cerca de 4,5 meses)?")
     #Does the project proposal complexity is appropriate to one academic semester (around 4.5 months)?
 
-    carga = models.BooleanField(default=False, help_text='A proposta do projeto é de complexidade suficiente para permitir que cada membro da equipe contribua com cerca de 360 horas entre aula, laboratório, reuniões e fora do horário de aula?')
+    carga = models.BooleanField(default=False, help_text="A proposta do projeto é de complexidade suficiente para permitir que cada membro da equipe contribua com cerca de 360 horas entre aula, laboratório, reuniões e fora do horário de aula?")
     #Does the project proposal is sufficient complexity to allow each team member to contribute about 360 hours among class, laboratory, meetings, and outside class time?
 
-    mensuravel = models.BooleanField(default=False, help_text='A proposta do projeto tem objetivos concretos e mensuráveis?')
+    mensuravel = models.BooleanField(default=False, help_text="A proposta do projeto tem objetivos concretos e mensuráveis?")
     #Does the project proposal have concrete and measurable goals?
 
 

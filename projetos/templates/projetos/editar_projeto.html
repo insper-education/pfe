@@ -55,6 +55,11 @@
     >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
+    <label for="palavras_chave">Palavras-chave</label><br>
+    <textarea id="palavras_chave" name="palavras_chave" rows="1" cols="88" maxlength="{% max_length projeto 'palavras_chave' %}"
+    >{% if projeto.palavras_chave %}{{projeto.palavras_chave}}{% endif %}</textarea>
+    <br><br>
+
     <div style="max-width: 560px;">
       <div style="margin-bottom: 6px;">
         <label for="orientador" style="width: 6em;">Orientador(a):</label>

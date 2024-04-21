@@ -389,6 +389,7 @@ def projetos_fechados(request):
             (".titulo_original", "Título original"),
             (".resumo", "Resumo"),
             (".abstract", "Abstract"),
+            (".palavras_chave", "Palavras-chave"),
             (".apresentacao", "Apresentações"),
             (".orientador", "Orientador"),
             (".coorientador", "Coorientador"),
@@ -1812,6 +1813,10 @@ def editar_projeto(request, primarykey):
         abstract = request.POST.get("abstract", None)
         if abstract and abstract != "" and projeto.abstract != abstract:
             projeto.abstract = abstract
+
+        palavras_chave = request.POST.get("palavras_chave", None)
+        if palavras_chave and palavras_chave != "" and projeto.palavras_chave != palavras_chave:
+            projeto.palavras_chave = palavras_chave
 
         # Realoca orientador
         orientador_id = request.POST.get("orientador", None)
