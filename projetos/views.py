@@ -118,7 +118,6 @@ def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
-    opcoes = Opcao.objects.filter(proposta=projeto.proposta)
     conexoes = Conexao.objects.filter(projeto=projeto)
     coorientadores = Coorientador.objects.filter(projeto=projeto)
 
@@ -126,17 +125,12 @@ def projeto_completo(request, primarykey):
     if alocacoes:
         alocacao = alocacoes.first()
         medias_oo = alocacao.get_medias_oo
-
         if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
             medias_oo = None
 
     documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True)
-
     projetos_avancados = Projeto.objects.filter(avancado=projeto)
-
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
-
-    site = "/sites/"+str(projeto.id)+"/" if os.path.exists(settings.SITE_ROOT + "/projeto"+str(projeto.id)) else None
 
     context = {
         "projeto": projeto,
@@ -147,7 +141,6 @@ def projeto_completo(request, primarykey):
         "documentos": documentos,
         "projetos_avancados": projetos_avancados,
         "cooperacoes": cooperacoes,
-        "site": site,
     }
     return render(request, "projetos/projeto_completo.html", context=context)
 

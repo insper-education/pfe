@@ -164,17 +164,20 @@
     {% endif %}
     <br>
     {% if conexoes %}
-      {% comment %} margin-left: 0.5em;  padding-left: 12px;"> {% endcomment %}
       <ul>
       {% for conexao in conexoes %}
         {% if conexao.parceiro.user.is_active %}
           <li>
-            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-              <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
+            {% if conexao.parceiro %}
+              {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
+              {% else %}
+                {{ conexao.parceiro.user.get_full_name }}
+              {% endif %}
+              <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
             {% else %}
-              {{ conexao.parceiro.user.get_full_name }}
+              PARCEIRO NÃO CADASTRADO
             {% endif %}
-            <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
             {% for papel in conexao.get_papeis %}
               <span class="opt_full">[{{papel.0}}]</span>
               <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
@@ -183,17 +186,21 @@
           </li>
         {% else %}
           <li>
+            {% if conexao.parceiro %}
               <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
                 {{ conexao.parceiro.user.get_full_name }}
               </a>
               <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
-              <span  style="color: lightgrey; border: 0px; padding-left: 12px;">
-                {% for papel in conexao.get_papeis %}
-                  <span class="opt_full">[{{papel.0}}]</span>
-                  <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-                {% endfor %}
-                {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-              </span>
+            {% else %}
+              <span style="color: lightgrey;">PARCEIRO NÃO CADASTRADO</span>
+            {% endif %}
+            <span  style="color: lightgrey; border: 0px; padding-left: 12px;">
+              {% for papel in conexao.get_papeis %}
+                <span class="opt_full">[{{papel.0}}]</span>
+                <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+              {% endfor %}
+              {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
+            </span>
           </li>
         {% endif %}        
       {% endfor %}
