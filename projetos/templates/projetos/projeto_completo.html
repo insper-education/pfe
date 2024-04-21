@@ -59,24 +59,24 @@
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
-    <div class="resumo" style="margin-top: 8px;">
+    <br><div class="resumo" style="margin-top: 8px;">
       <strong>Resumo do Projeto (escrito por estudantes):</strong>
       {{ projeto.resumo|linebreaks }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.abstract %}
-    <div class="abstract" style="margin-top: 8px;">
+    <br><div class="abstract" style="margin-top: 8px;">
       <strong>Resumo em Inglês do Projeto (escrito por estudantes):</strong>
       {{ projeto.abstract|linebreaks }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
-    <div class="palavras_chave" style="margin-top: 8px;">
+    <br><div class="palavras_chave" style="margin-top: 8px;">
       <strong>Palavras-chave (escrito por estudantes):</strong>
       {{ projeto.palavras_chave|linebreaks }}
-    </div><br>
+    </div>
   {% endif %}
 
   <hr>
@@ -358,6 +358,17 @@
     <br><br>
   {% endif %}
   {% endwith %}
+  
+  {% if projeto.pastas_do_projeto %}
+    <h4>Pastas do projeto:</h4>
+    <div style="display: flex; align-items: flex-start;">
+      <div>&#128193;&nbsp;</div>
+      <div>
+        {{projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+      </div>
+    </div>
+    <br>
+  {% endif %}
 
   <h4>Documentos:
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}

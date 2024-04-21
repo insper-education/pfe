@@ -101,17 +101,17 @@ def registra_organizacao(request, org=None):
     else:
         organizacao = org
 
-    nome = request.POST.get('nome', None)
+    nome = request.POST.get("nome", None)
     if nome:
         organizacao.nome = nome.strip()
 
-    sigla = request.POST.get('sigla', None)
+    sigla = request.POST.get("sigla", None)
     if sigla:
         organizacao.sigla = sigla.strip()
 
-    organizacao.endereco = request.POST.get('endereco', None)
+    organizacao.endereco = request.POST.get("endereco", None)
 
-    website = request.POST.get('website', None)
+    website = request.POST.get("website", None)
     if website:
         if website[:4] == "http":
             organizacao.website = website.strip()
@@ -138,7 +138,6 @@ def registra_organizacao(request, org=None):
     return organizacao, "", 200
 
 
-
 def registro_usuario(request, user=None):
     """Rotina para cadastrar usuário no sistema."""
     if not user:
@@ -146,7 +145,7 @@ def registro_usuario(request, user=None):
     else:
         usuario = user
 
-    email = request.POST.get('email', None)
+    email = request.POST.get("email", None)
     if email:
         usuario.email = email.strip()
 

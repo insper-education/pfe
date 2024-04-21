@@ -126,9 +126,8 @@ class Projeto(models.Model):
     palavras_chave = models.CharField("Palavras-chave", max_length=1000, null=True, blank=True,
                                  help_text="Palavras-chave para os documentos do projeto")
     
-    # CAMPO ANTIGO, MANTIDO SÓ POR HISTÓRICO
-    areas = models.TextField("Áreas", max_length=1000,
-                             help_text="Áreas da engenharia envolvidas no projeto")
+    pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
+                                help_text="Links de onde se encontrar repositórios com dados dos projeto (para orientador acessar)")
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização parceira que propôs projeto")

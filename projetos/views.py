@@ -1965,3 +1965,26 @@ def reenvia_avisos(request):
     eventos_do_dia()
 
     return redirect("avisos_listar")
+
+
+@login_required
+def upload_pasta_projeto(request, projeto_id):
+    if request.method == "POST":
+
+        if "pastas_do_projeto" in request.POST:
+            
+            pastas_do_projeto = request.POST.get("pastas_do_projeto", None)
+        
+            #configuracao = get_object_or_404(Configuracao)
+            projeto = get_object_or_404(Projeto, id=projeto_id)
+            projeto.pastas_do_projeto = pastas_do_projeto
+            projeto.save()
+
+            mensagem = "Pastas do Projetos armazenadas."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+        
+    return HttpResponse("Invalid request.")

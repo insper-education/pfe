@@ -38,27 +38,46 @@
 
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
-  {% include "tipo_projeto.html" with com_tipo=True %}<br>
+  {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
-    <div class="resumo" style="margin-top: 8px;">
+    <br><div class="resumo" style="margin-top: 8px;">
       <strong>Resumo do Projeto:</strong>
       {{ projeto.resumo|linebreaks }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.abstract %}
-    <div class="abstract" style="margin-top: 8px;">
+    <br><div class="abstract" style="margin-top: 8px;">
       <strong>Resumo em Inglês do Projeto:</strong>
       {{ projeto.abstract|linebreaks }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
-  <div class="palavras_chave" style="margin-top: 8px;">
-    <strong>Palavras-chave:</strong>
-    {{ projeto.palavras_chave|linebreaks }}
-  </div><br>
+    <br><div class="palavras_chave" style="margin-top: 8px;">
+      <strong>Palavras-chave:</strong>
+      {{ projeto.palavras_chave|linebreaks }}
+    </div>
+  {% endif %}
+
+  {% with site=projeto.get_site %}
+  {% if site %}
+    <br><br>
+    <h4>Site:</h4>
+    &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+  {% endif %}
+  {% endwith %}
+  
+  {% if projeto.pastas_do_projeto %}
+    <br><br>
+    <h4>Pastas do projeto:</h4>
+    <div style="display: flex; align-items: flex-start;">
+      <div>&#128193;&nbsp;</div>
+      <div>
+        {{projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+      </div>
+    </div>
   {% endif %}
 
   <hr>

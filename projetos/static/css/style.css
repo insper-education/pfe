@@ -1,3 +1,5 @@
+textarea {max-width:100%;}
+
 .disabled {
   cursor: default;
   text-decoration: none;
