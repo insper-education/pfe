@@ -16,7 +16,9 @@
     if (now > item.expiry + prazo) {
       localStorage.removeItem("filterEdicao");
     } else {
-      $("#filterEdicao").val(filterEdicao).trigger("change");
+      if(filterEdicao != "todas") { // Evita todas pois é muito lento
+        $("#filterEdicao").val(filterEdicao).trigger("change");
+      }
     }
   }
 {% else %}
