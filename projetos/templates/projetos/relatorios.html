@@ -1,34 +1,30 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 4 de Agosto de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Agosto de 2019
 {% endcomment %}
 
 {% block content %}
-
-    <h1> Obsoleto </h1>
-
-    <span class="titulo">Relatórios</span>
-
-    <table>
-        <tr>
-            <td>Projetos</td>
-            <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>
-        </tr>
-        <tr>
-            <td>Estudantes</td>
-            <td><a href="{% url 'relatorio' 'alunos' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'alunos' 'PDF'%}">PDF</a></td>
-        </tr>
-        <tr>
-            <td>Feedbacks</td>
-            <td><a href="{% url 'relatorio' 'feedbacks' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'feedbacks' 'PDF'%}">PDF</a></td>
-        </tr>
-    </table>
-    <a href="{% url 'relatorio_backup'%}">Envia e-mail com todos os relatórios</a>
-    <br>
-    <br>
+  <h1> Obsoleto </h1>
+  <span class="titulo">Relatórios</span>
+  <table>
+    <tr>
+      <td>Projetos</td>
+      <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
+      <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>
+    </tr>
+    <tr>
+      <td>Estudantes</td>
+      <td><a href="{% url 'relatorio' 'alunos' 'HTML'%}">HTML</a></td>
+      <td><a href="{% url 'relatorio' 'alunos' 'PDF'%}">PDF</a></td>
+    </tr>
+    <tr>
+      <td>Feedbacks</td>
+      <td><a href="{% url 'relatorio' 'feedbacks' 'HTML'%}">HTML</a></td>
+      <td><a href="{% url 'relatorio' 'feedbacks' 'PDF'%}">PDF</a></td>
+    </tr>
+  </table>
+  <a href="{% url 'relatorio_backup'%}">Envia e-mail com todos os relatórios</a>
+  <br><br>
 {% endblock %}

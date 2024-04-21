@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 18 de Junho de 2023
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 18 de Junho de 2023
 {% endcomment %}
 
 {% comment %} Fonte: https://github.com/dr5hn/403 {% endcomment %}
 
 <html>
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>403 Forbidden</title>
@@ -41,30 +41,15 @@
             flex-direction: column;
         }
 
-        #app .txt {
-            font-size: 1.8rem;
-        }
+        #app .txt {font-size: 1.8rem;}
 
-        #app .contato {
-            font-size: 0.8rem;
-        }
+        #app .contato {font-size: 0.8rem;}
 
         @keyframes blink {
-            0% {
-                opacity: 0;
-            }
-
-            49% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% {opacity: 0;}
+            49% {opacity: 0;}
+            50% {opacity: 1;}
+            100% {opacity: 1;}
         }
 
         .blink {
@@ -73,20 +58,20 @@
             animation-iteration-count: infinite;
         }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="app">
-        <div>403</div>
-        <div class="txt">
-            Forbidden<span class="blink">_</span>
-        </div>
-        <br>
-        <div class="contato">
-            se acredita haver um problema no acesso, notificar:
-            <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>
-        </div>
+      <div>403</div>
+      <div class="txt">
+        Forbidden<span class="blink">_</span>
+      </div>
+      <br>
+      <div class="contato">
+        se acredita haver um problema no acesso, notificar:
+        <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>
+      </div>
     </div>
-</body>
+  </body>
 
 </html>

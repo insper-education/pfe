@@ -1,100 +1,100 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 23 de Dezembro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Dezembro de 2020
 {% endcomment %}
 
 {% load static %}
 
 {% comment %} Para esconder links {% endcomment %}
 <style>
-    a.desligado {
-        color: inherit;
-        text-decoration: none;
-        pointer-events: none !important;
-        cursor: default;
-    }
+  a.desligado {
+    color: inherit;
+    text-decoration: none;
+    pointer-events: none !important;
+    cursor: default;
+  }
 
-    div.desligado {
-        border: none !important;
-        background-color: transparent !important;
-        display: inline !important;
-        margin-top: 8px !important;
-        margin-bottom: 8px !important;
-        width: fit-content;
-        max-width: fit-content;
-        float: none !important;
-        line-height: 1.0;
-    }
+  div.desligado {
+    border: none !important;
+    background-color: transparent !important;
+    display: inline !important;
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+    width: fit-content;
+    max-width: fit-content;
+    float: none !important;
+    line-height: 1.0;
+  }
 
-    {% comment %} Isso precisa ser mais generico no futuro {% endcomment %}
-    div.desligado > .estudante:before {
-        content:"• ";
-    }
-    
-    .logo_impressoras {
-        float: right;
-        margin-top: 4px;
-        margin-left: 8px;
-    }
+  {% comment %} Isso precisa ser mais generico no futuro {% endcomment %}
+  div.desligado > .estudante:before {
+    content:"• ";
+  }
+  
+  .logo_impressoras {
+    float: right;
+    margin-top: 4px;
+    margin-left: 8px;
+  }
 
-    @media only screen and (max-width: 740px) {
-        .img_impressora {
-            -moz-transform:scale(0.8);
-            -webkit-transform:scale(0.8);
-            transform:scale(0.8);
-        }  
-    }
+  @media only screen and (max-width: 740px) {
+    .img_impressora {
+      -moz-transform:scale(0.8);
+      -webkit-transform:scale(0.8);
+      transform:scale(0.8);
+    }  
+  }
 
 </style>
 
 <div class="logo_impressoras">
-    <img class="img_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
+  <img class="img_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
 </div>
 
 <script>
 
-    {% comment %} Esconde informações para impressão {% endcomment %}
-    document.getElementById("impressora").addEventListener("click", function() {
-        $("#informacoes").hide();
-        $(".logo_impressoras").hide();
-        $(".topnav").hide();
-        $(".imprimir").addClass("desligado");
-        $(".imprimir_div").addClass("desligado");
-        $(".esconder").hide();
-        $(".email").hide();
-        $(".images").hide();
+  {% comment %} Esconde informações para impressão {% endcomment %}
+  document.getElementById("impressora").addEventListener("click", function() {
+      $("#informacoes").hide();
+      $(".logo_impressoras").hide();
+      $(".topnav").hide();
+      $(".imprimir").addClass("desligado");
+      $(".imprimir_div").addClass("desligado");
+      $(".esconder").hide();
+      $(".email").hide();
+      $(".images").hide();
 
-        {% comment %} Renomeia temporariamente a tag href para evitar ser pega no Compy&Paste {% endcomment %}
-        $("a.imprimir[href]").each(function() {
-            var $tag = $(this);
-            $tag.attr({tmp: $tag.attr('href')})
-                .removeAttr('href');
-        });
+      {% comment %} Renomeia temporariamente a tag href para evitar ser pega no Compy&Paste {% endcomment %}
+      $("a.imprimir[href]").each(function() {
+          var $tag = $(this);
+          $tag.attr({tmp: $tag.attr('href')})
+              .removeAttr('href');
+      });
 
-    });
+  });
 
-    $(document).keyup(function(e) {
+  $(document).keyup(function(e) {
+      
+    if (e.key === "Escape") {
         
-        if (e.key === "Escape") {
-            
-            $("#informacoes").show();
-            $(".logo_impressoras").show();
-            $(".topnav").show();
-            $(".imprimir").removeClass("desligado");
-            $(".imprimir_div").removeClass("desligado");
-            $(".esconder").show();
-            $(".email").show();
-            $(".images").show();
+      $("#informacoes").show();
+      $(".logo_impressoras").show();
+      $(".topnav").show();
+      $(".imprimir").removeClass("desligado");
+      $(".imprimir_div").removeClass("desligado");
+      $(".esconder").show();
+      $(".email").show();
+      $(".images").show();
 
-            {% comment %} Recupera a tag href para evitar ser pega no Compy&Paste {% endcomment %}
-            $('a.imprimir[tmp]').each(function() {
-                var $tag = $(this);
-                $tag.attr({href: $tag.attr('tmp')})
-                    .removeAttr('tmp');
-            });
+      {% comment %} Recupera a tag href para evitar ser pega no Compy&Paste {% endcomment %}
+      $("a.imprimir[tmp]").each(function() {
+        var $tag = $(this);
+        $tag.attr({href: $tag.attr("tmp")})
+          .removeAttr("tmp");
+      });
 
-        }
-    });
+    }
+  });
 
 </script>

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 22 de Setembro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Setembro de 2020
 {% endcomment %}
 
 {% block head %}
@@ -19,208 +19,180 @@
 {% endblock %}
 
 {% block content %}
-    <span class="titulo">
+  <span class="titulo">
+    {% if lingua == "pt" %}
+      Organizações, Projetos e Propostas
+    {% else %}
+      Organizations, Projects e Proposals
+    {% endif %}
+  </span>
+
+  <div class="2areas2">
+
+    <div id="canvas-holder">
+
+      <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
+        <canvas id="bar-projetos"></canvas>
+      </div>
+            
+      <small>
         {% if lingua == "pt" %}
-            Organizações, Projetos e Propostas
+          <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
+          <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
         {% else %}
-            Organizations, Projects e Proposals
+          <p>Received <b>{{total_propostas}}</b> project proposals.</p>
+          <p>Carried out <b>{{total_projetos}}</b> projects.</p>
         {% endif %}
-    </span>
+      </small>
+      <br>
 
-    <div class="2areas2">
+      <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
+        <canvas id="bar-organizacoes"></canvas>
+      </div>
+      
+      <small>
+        {% if lingua == "pt" %}
+          <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
+          <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
+          <br><p>Obs: Dados de prospecção são em geral incompletos e baseados apenas nas anotações armazenadas.</p>
+        {% else %}
+          <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
+          <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
+          <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
+        {% endif %}
 
-        <div id="canvas-holder">
-
-            <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
-                <canvas id="bar-projetos"></canvas>
-            </div>
-            
-            <small>
-                {% if lingua == "pt" %}
-                    <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
-                    <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
-                {% else %}
-                    <p>Received <b>{{total_propostas}}</b> project proposals.</p>
-                    <p>Carried out <b>{{total_projetos}}</b> projects.</p>
-                {% endif %}
-            </small>
-            <br>
-
-            <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
-                <canvas id="bar-organizacoes"></canvas>
-            </div>
-            
-            <small>
-                {% if lingua == "pt" %}
-                    <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
-                    <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
-                    <br><p>Obs: Dados de prospecção são em geral incompletos e baseados apenas nas anotações armazenadas.</p>
-                {% else %}
-                    <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
-                    <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
-                    <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
-                {% endif %}
-
-            </small>
-            <br><br>
-
-        </div>
+      </small>
+      <br><br>
 
     </div>
 
-    <script>
+  </div>
 
-        var config_projetos = {
-            type: 'bar',
-            data: {
-              labels: [
-                {% for edicao in edicoes %}
-                    "{{edicao}}",
-                {% endfor %}
+  <script>
+
+    var config_projetos = {
+        type: "bar",
+        data: {
+          labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
+          datasets: [
+            {
+                label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
+                backgroundColor: "#8ebed2",
+                data: [{% for num in num_propostas %}{{num}}, {% endfor %}],
+                projetos: [
+                    {% for proj in nome_propostas %}
+                        [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
+                    {% endfor %}
                 ],
-              datasets: [
-                {
-                    label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
-                    backgroundColor: "#8ebed2",
-                    data: [
-                            {% for num in num_propostas %}
-                                {{num}},
-                            {% endfor %}
-                        ],
-                    projetos: [
-                        {% for proj in nome_propostas %}
-                            [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
-                        {% endfor %}
-                    ],
-                }, 
-                {
-                    label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
-                    backgroundColor: "#656efd",
-                    data: [
-                            {% for num in num_projetos %}
-                                {{num}},
-                            {% endfor %}
-                        ],
-                    projetos: [
-                        {% for proj in nome_projetos %}
-                            [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.get_titulo}}`],{% endfor %}],
-                        {% endfor %}
-                    ],
-                }, 
-              ]
-            },
-            options: {
-                legend: { display: true },
-                title: {
-                    display: true,
-                    text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
-                }, 
-                plugins: {
-                    datalabels: {
-                        color: '#000000',
-                        font: function(context) {
+            }, 
+            {
+                label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
+                backgroundColor: "#656efd",
+                data: [{% for num in num_projetos %}{{num}}, {% endfor %}],
+                projetos: [
+                    {% for proj in nome_projetos %}
+                        [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.get_titulo}}`],{% endfor %}],
+                    {% endfor %}
+                ],
+            }, 
+          ]
+        },
+        options: {
+            legend: { display: true },
+            title: {
+                display: true,
+                text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
+            }, 
+            plugins: {
+                datalabels: {
+                    color: "#000000",
+                    font: function(context) {
 
-                            var dataset_visibeis = context.chart.getVisibleDatasetCount()
-                            var width = context.chart.width;
-                            var size = 1.0;
-                            if(dataset_visibeis>0) {
-                                size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
-                            }
-                            
-                            return {size: size};
+                        var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                        var width = context.chart.width;
+                        var size = 1.0;
+                        if(dataset_visibeis>0) {
+                            size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
                         }
-                    },
-                },
-                tooltips: {
-                    footerFontStyle: 'normal',
-                    callbacks: {
-                      footer: function(tooltipItem, data) {
-                        let value = data.datasets[tooltipItem[0].datasetIndex].projetos[tooltipItem[0].index];
-                        return value
-                      }
+                        
+                        return {size: size};
                     }
-                }
-            }
-        };
-
-        var config_organizacoes = {
-            type: 'bar',
-            data: {
-            labels: [
-                {% for edicao in edicoes %}
-                    "{{edicao}}",
-                {% endfor %}
-                ],
-            datasets: [
-                {
-                    label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
-                    backgroundColor: "#ffe0f0",
-                    data: [
-                            {% for num in org_prospectadas %}
-                                {{num}},
-                            {% endfor %}
-                        ]
-                }, 
-                {
-                    label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
-                    backgroundColor: "#e56883",
-                    data: [
-                            {% for num in org_propostas %}
-                                {{num}},
-                            {% endfor %}
-                        ]
                 },
-                {
-                    label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
-                    backgroundColor: "#f84359",
-                    data: [
-                            {% for num in org_projetos %}
-                                {{num}},
-                            {% endfor %}
-                        ]
-                },
-            ]
             },
-            options: {
-                legend: { display: true },
-                title: {
-                    display: true,
-                    text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
-                },
-                plugins: {
-                    datalabels: {
-                        color: '#000000',
-                        font: function(context) {
-                            var dataset_visibeis = context.chart.getVisibleDatasetCount()
-                            var width = context.chart.width;
-                            var size = 1.0;
-                            if(dataset_visibeis>0) {
-                                size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
-                            }
-                            return {
-                                size: size
-                            };
-                        }
-                    },
-                    
+            tooltips: {
+                footerFontStyle: "normal",
+                callbacks: {
+                  footer: function(tooltipItem, data) {
+                    let value = data.datasets[tooltipItem[0].datasetIndex].projetos[tooltipItem[0].index];
+                    return value
+                  }
                 }
             }
-        };
-
-
-        function carrega_semestre() {  
-            // Chart da quantidade de projetos
-            var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
-            window.projeto = new Chart(bar_projetos, config_projetos);
-
-            // Chart da quantidade de organizacoes
-            var bar_organizacoes = document.getElementById('bar-organizacoes').getContext('2d');
-            window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
         }
+    };
 
-        window.onload = carrega_semestre
-    
-    </script>
+    var config_organizacoes = {
+        type: "bar",
+        data: {
+        labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
+        datasets: [
+            {
+                label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
+                backgroundColor: "#ffe0f0",
+                data: [{% for num in org_prospectadas %}{{num}}, {% endfor %}]
+            }, 
+            {
+                label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
+                backgroundColor: "#e56883",
+                data: [{% for num in org_propostas %}{{num}}, {% endfor %}]
+            },
+            {
+                label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
+                backgroundColor: "#f84359",
+                data: [{% for num in org_projetos %}{{num}}, {% endfor %}]
+            },
+        ]
+        },
+        options: {
+            legend: { display: true },
+            title: {
+                display: true,
+                text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
+            },
+            plugins: {
+                datalabels: {
+                    color: '#000000',
+                    font: function(context) {
+                        var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                        var width = context.chart.width;
+                        var size = 1.0;
+                        if(dataset_visibeis>0) {
+                            size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                        }
+                        return {
+                            size: size
+                        };
+                    }
+                },
+                
+            }
+        }
+    };
+
+
+    function carrega_semestre() {  
+        // Chart da quantidade de projetos
+        var bar_projetos = document.getElementById('bar-projetos').getContext('2d');
+        window.projeto = new Chart(bar_projetos, config_projetos);
+
+        // Chart da quantidade de organizacoes
+        var bar_organizacoes = document.getElementById('bar-organizacoes').getContext('2d');
+        window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
+    }
+
+    window.onload = carrega_semestre
+  
+  </script>
 
 
 {% endblock %}

@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 15 de Maio de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
 {% endcomment %}
 
 {% block content %}
 
-    {% comment %} <span class="titulo">Áreas de Interesse</span>
+  {% comment %} <span class="titulo">Áreas de Interesse</span>
 
-    {% if mensagem %}
-        <h5 class="red-bold">{{mensagem}}</h5>
-    {% endif %}
+  {% if mensagem %}
+      <h5 class="red-bold">{{mensagem}}</h5>
+  {% endif %}
 
-    <form method="post">
-        {% csrf_token %}    
-        {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all %}
-        {% if not vencido %}
-            <button type="submit">Atualizar</button>
-        {% endif %}
-    </form> {% endcomment %}
+  <form method="post">
+      {% csrf_token %}    
+      {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all %}
+      {% if not vencido %}
+          <button type="submit">Atualizar</button>
+      {% endif %}
+  </form> {% endcomment %}
 
 {% endblock %}

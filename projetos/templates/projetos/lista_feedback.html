@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 13 de Janeiro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Janeiro de 2020
 {% endcomment %}
 
 {% block head %}
-    {% load static %}
-    
-    <script src="{% static 'js/w3.js' %}"></script>
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    
-    {% comment %} Para chamar os Tooltips {% endcomment %}
-    <script>{% include "tooltip.js" %}</script>
+  {% load static %}
+  
+  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  
+  {% comment %} Para chamar os Tooltips {% endcomment %}
+  <script>{% include "tooltip.js" %}</script>
 {% endblock %}
 
 {% block content %}

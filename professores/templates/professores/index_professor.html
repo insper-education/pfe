@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 15 de Maio de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
 {% endcomment %}
 
 {% block head %}
@@ -11,28 +11,28 @@
 {% endblock %}
 
 {% block content %}
-    <br>
-    <h5>Alocações</h5>
-    <ul>
-        <li><a href="{% url 'orientacoes_alocadas' %}">Orientações</a></li>
-        <li><a href="{% url 'coorientacoes_alocadas' %}">Coorientações</a></li>
-        <li><a href="{% url 'bancas_alocadas' %}">Bancas</a></li>
-        <li><a href="{% url 'mentorias_alocadas' %}">Mentorias</a></li>
-    </ul>
+  <br>
+  <h5>Alocações</h5>
+  <ul>
+    <li><a href="{% url 'orientacoes_alocadas' %}">Orientações</a></li>
+    <li><a href="{% url 'coorientacoes_alocadas' %}">Coorientações</a></li>
+    <li><a href="{% url 'bancas_alocadas' %}">Bancas</a></li>
+    <li><a href="{% url 'mentorias_alocadas' %}">Mentorias</a></li>
+  </ul>
 
-    <h5>Atividades do Orientador</h5>
-    <ul>
-        <li><a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></li>
-        <li><a href="{% url 'relatos_quinzenais' %}">Relatos Quinzenais</a></li>
-        <li><a href="{% url 'avaliar_entregas'%}">Avaliar Entregas</a></li>
-        <li><a href="{% url 'bancas_index'%}">Agendar Banca</a></li>
-        <li><a href="{% url 'avaliacoes_pares' %}">Avaliação de Pares</a></li>
-    </ul>
+  <h5>Atividades do Orientador</h5>
+  <ul>
+    <li><a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></li>
+    <li><a href="{% url 'relatos_quinzenais' %}">Relatos Quinzenais</a></li>
+    <li><a href="{% url 'avaliar_entregas'%}">Avaliar Entregas</a></li>
+    <li><a href="{% url 'bancas_index'%}">Agendar Banca</a></li>
+    <li><a href="{% url 'avaliacoes_pares' %}">Avaliação de Pares</a></li>
+  </ul>
 
-    <h5>Notas</h5>
-    <ul>
-        <li><a href="{% url 'estudantes_notas' "meus_projetos" %}">Individuais</a></li>
-        <li><a href="{% url 'resultado_meus_projetos' %}">Grupo</a></li>
-    </ul>
+  <h5>Notas</h5>
+  <ul>
+    <li><a href="{% url 'estudantes_notas' "meus_projetos" %}">Individuais</a></li>
+    <li><a href="{% url 'resultado_meus_projetos' %}">Grupo</a></li>
+  </ul>
 
 {% endblock %}

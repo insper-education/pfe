@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 22 de Setembro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Setembro de 2020
 {% endcomment %}
 
 {% block head %}
@@ -24,97 +24,91 @@
 
 {% block content %}
 
-    <span class="titulo">Evolução por Notas/Conceitos</span>
+  <span class="titulo">Evolução por Notas/Conceitos</span>
 
-    <div class="atualizar">
+  <div class="atualizar">
     <div class="container">
 
-        <div style="width:860px;"> 
-            <canvas id="chart-medias"></canvas>
-        </div>
+      <div style="width:860px;"> 
+        <canvas id="chart-medias"></canvas>
+      </div>
 
-    <script>
-    var config_medias = {
-        type: 'line',
-        data: {
-            labels: [
-                {% for edicao in edicoes %}
-                    "{{edicao}}",
-                {% endfor %}
-            ],
-            datasets: [
-                {% for media in medias %}
-                    { 
-                        data: [
-                            {% for nota in media.media %}
-                                {{nota|stringformat:".2f"|unlocalize}},
-                            {% endfor %}
-                        ],
-                        label: "{{media.curso2.sigla_curta}}",
-                        borderColor: "{{media.cor}}",
-                        fill: false,
-                        errorBars: {
-                            '2020.1': [{plus: 0.71, minus: -0.73}, {plus: 0.91, minus: -0.52}],
-                            '2020.2': [{plus: 0.82, minus: -0.61}, {plus: 0.52, minus: -0.82}],
+      <script>
+        var config_medias = {
+            type: "line",
+            data: {
+                labels: [
+                    {% for edicao in edicoes %}
+                        "{{edicao}}",
+                    {% endfor %}
+                ],
+                datasets: [
+                    {% for media in medias %} { 
+                            data: [
+                                {% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}
+                            ],
+                            label: "{{media.curso2.sigla_curta}}",
+                            borderColor: "{{media.cor}}",
+                            fill: false,
+                            errorBars: {
+                                "2020.1": [{plus: 0.71, minus: -0.73}, {plus: 0.91, minus: -0.52}],
+                                "2020.2": [{plus: 0.82, minus: -0.61}, {plus: 0.52, minus: -0.82}],
+                            },
                         },
-                    },
-                {% endfor %}
-                 
-            ]
-        },
-        options: {
-            title: {
-                display: true,
-                text: 'Evolução nos semestres'
-            }, 
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        max: 10
-                    }
-                }]
+                    {% endfor %}
+                    
+                ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Evolução nos semestres"
+                }, 
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }]
+                }
+
             }
+        }
+
+        function carrega_pagina() {  
+          // Chart do média dos alunos
+          var chart_medias = document.getElementById('chart-medias').getContext('2d');
+          window.medias = new Chart(chart_medias, config_medias);
+
+          var ctx = document.getElementById("canvas").getContext("2d");
+          window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+              responsive: true,
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Chart.js Error Bars Plugin"
+              },
+              plugins: {
+                chartJsPluginErrorBars: {
+                  width: "60%",
+                }
+              }
+            },
+          });
 
         }
-    }
+
+        window.onload = carrega_pagina
     
+      </script>
 
-
-    function carrega_pagina() {  
-      // Chart do média dos alunos
-      var chart_medias = document.getElementById('chart-medias').getContext('2d');
-      window.medias = new Chart(chart_medias, config_medias);
-
-    var ctx = document.getElementById("canvas").getContext("2d");
-    window.myBar = new Chart(ctx, {
-      type: 'bar',
-      data: barChartData,
-      options: {
-        responsive: true,
-        legend: {
-          position: 'top',
-        },
-        title: {
-          display: true,
-          text: 'Chart.js Error Bars Plugin'
-        },
-        plugins: {
-          chartJsPluginErrorBars: {
-            width: '60%',
-            //color: 'darkgray'
-          }
-        }
-      },
-    });
-
-    }
-
-    window.onload = carrega_pagina
-  
-  </script>
-
-  </div>
+    </div>
   </div>
 
 {% endblock %}

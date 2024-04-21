@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 4 de Agosto de 2019
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Agosto de 2019
 {% endcomment %}
 
 {% block head %}
 <style>
-    td {
-        padding-right: 6px;
-        padding-left: 6px;
-    }
+  td {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
 </style>
 {% endblock %}
 
@@ -21,102 +21,99 @@
   {% if modo == "relatorios" %}
     <span class="titulo">Exportar Relatórios</span>
     <table>
-        <tr>
-            <td>Propostas</td>
-            <td><a href="{% url 'relatorio' 'propostas' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'propostas' 'PDF'%}">PDF</a></td>
-        </tr>
-        <tr>
-            <td>Projetos</td>
-            <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>
-        </tr>
-        <tr>
-            <td>Estudantes</td>
-            <td><a href="{% url 'relatorio' 'estudantes' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'estudantes' 'PDF'%}">PDF</a></td>
-        </tr>
-        <tr>
-            <td>Feedbacks</td>
-            <td><a href="{% url 'relatorio' 'feedbacks' 'HTML'%}">HTML</a></td>
-            <td><a href="{% url 'relatorio' 'feedbacks' 'PDF'%}">PDF</a></td>
-        </tr>
+      <tr>
+        <td>Propostas</td>
+        <td><a href="{% url 'relatorio' 'propostas' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'propostas' 'PDF'%}">PDF</a></td>
+      </tr>
+      <tr>
+        <td>Projetos</td>
+        <td><a href="{% url 'relatorio' 'projetos' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'projetos' 'PDF'%}">PDF</a></td>
+      </tr>
+      <tr>
+        <td>Estudantes</td>
+        <td><a href="{% url 'relatorio' 'estudantes' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'estudantes' 'PDF'%}">PDF</a></td>
+      </tr>
+      <tr>
+        <td>Feedbacks</td>
+        <td><a href="{% url 'relatorio' 'feedbacks' 'HTML'%}">HTML</a></td>
+        <td><a href="{% url 'relatorio' 'feedbacks' 'PDF'%}">PDF</a></td>
+      </tr>
     </table>
-    <br>
-    <br>
+    <br><br>
   {% endif %}
 
   {% if modo == "dados" %}
     <span class="titulo">Exportar dados</span>
     <table>
-        <tr>
-            <td>Tudo</td>
-            <td></td>
-            <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
-            <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
-        </tr>
-        <tr>
-            <td>Projetos</td>
-            <td><a href="{% url 'export' 'projetos' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'projetos' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'projetos' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Organizações</td>
-            <td><a href="{% url 'export' 'organizacoes' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'organizacoes' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'organizacoes' 'json'%}">JSON</a></td>
-            
-        </tr>
-        <tr>
-            <td>Opções</td>
-            <td><a href="{% url 'export' 'opcoes' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'opcoes' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'opcoes' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Avaliações</td>
-            <td><a href="{% url 'export' 'avaliacoes' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'avaliacoes' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'avaliacoes' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Usuários</td>
-            <td><a href="{% url 'export' 'usuarios' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'usuarios' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'usuarios' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Estudantes</td>
-            <td><a href="{% url 'export' 'alunos' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'alunos' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'alunos' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Professores</td>
-            <td><a href="{% url 'export' 'professores' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'professores' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Parceiros</td>
-            <td><a href="{% url 'export' 'parceiros' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'parceiros' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'parceiros' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Configuração</td>
-            <td><a href="{% url 'export' 'configuracao' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'configuracao' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'configuracao' 'json'%}">JSON</a></td>
-        </tr>
-        <tr>
-            <td>Feedbacks</td>
-            <td><a href="{% url 'export' 'feedbacks' 'csv'%}">CSV</a></td>
-            <td><a href="{% url 'export' 'feedbacks' 'xls'%}">XLS</a></td>
-            <td><a href="{% url 'export' 'feedbacks' 'json'%}">JSON</a></td>
-        </tr>
-
+      <tr>
+        <td>Tudo</td>
+        <td></td>
+        <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
+        <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
+      </tr>
+      <tr>
+        <td>Projetos</td>
+        <td><a href="{% url 'export' 'projetos' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'projetos' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'projetos' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Organizações</td>
+        <td><a href="{% url 'export' 'organizacoes' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'organizacoes' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'organizacoes' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Opções</td>
+        <td><a href="{% url 'export' 'opcoes' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'opcoes' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'opcoes' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Avaliações</td>
+        <td><a href="{% url 'export' 'avaliacoes' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'avaliacoes' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'avaliacoes' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Usuários</td>
+        <td><a href="{% url 'export' 'usuarios' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'usuarios' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'usuarios' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Estudantes</td>
+        <td><a href="{% url 'export' 'alunos' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'alunos' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'alunos' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Professores</td>
+        <td><a href="{% url 'export' 'professores' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'professores' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'professores' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Parceiros</td>
+        <td><a href="{% url 'export' 'parceiros' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'parceiros' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'parceiros' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Configuração</td>
+        <td><a href="{% url 'export' 'configuracao' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'configuracao' 'json'%}">JSON</a></td>
+      </tr>
+      <tr>
+        <td>Feedbacks</td>
+        <td><a href="{% url 'export' 'feedbacks' 'csv'%}">CSV</a></td>
+        <td><a href="{% url 'export' 'feedbacks' 'xls'%}">XLS</a></td>
+        <td><a href="{% url 'export' 'feedbacks' 'json'%}">JSON</a></td>
+      </tr>
     </table>
     <br>
     <br>

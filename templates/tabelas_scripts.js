@@ -1,7 +1,7 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 30 de Janeiro de 2021
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 30 de Janeiro de 2021
 {% endcomment %}
 
 // Atualizar com: $.fn.dataTables.Buttons.stripData

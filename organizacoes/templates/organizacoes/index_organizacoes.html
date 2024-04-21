@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 8 de Março de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 8 de Março de 2020
 {% endcomment %}
 
 {% block content %}
-    <br>
-    <h5>Propostas</h5>
-    <ul>
-        <li><a href="{% url 'proposta_submissao' %}">Submeter Proposta de Projeto</a></li>
-        <li><a href="{% url 'carrega_proposta' %}">Carrega Proposta de Projeto em PDF</a></li>
-        <li><a href="{% url 'parceiro_propostas' %}">Propostas Submetidas</a></li>
-    </ul>
+  <br>
+  <h5>Propostas</h5>
+  <ul>
+    <li><a href="{% url 'proposta_submissao' %}">Submeter Proposta de Projeto</a></li>
+    <li><a href="{% url 'carrega_proposta' %}">Carrega Proposta de Projeto em PDF</a></li>
+    <li><a href="{% url 'parceiro_propostas' %}">Propostas Submetidas</a></li>
+  </ul>
 
-    <h5>Projetos</h5>
-    <ul>
-        <li><a href="{% url 'parceiro_projetos' %}">Lista de Projetos</a></li>
-    </ul>
+  <h5>Projetos</h5>
+  <ul>
+    <li><a href="{% url 'parceiro_projetos' %}">Lista de Projetos</a></li>
+  </ul>
 
-    <h5>Feedbacks</h5>
-    <ul>
-        <li><a href="{% url 'projeto_feedback' %}">Enviar feedback de projeto</a></li>
-    </ul>
+  <h5>Feedbacks</h5>
+  <ul>
+    <li><a href="{% url 'projeto_feedback' %}">Enviar feedback de projeto</a></li>
+  </ul>
     
 {% endblock %}

@@ -1,7 +1,7 @@
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 20 de Janeiro de 2024
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 20 de Janeiro de 2024
 {% endcomment %}
 
 {% load static %}
@@ -47,24 +47,6 @@
   </script>
 {% endif %}
 
-{% comment %} &nbsp;
-Média = 
-{% with media=alocado.get_media %}
-  {% if media.media < 5 %}
-      <span style="color:red">
-  {% endif %}
-  {% if media.pesos != 1 %}
-    <a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
-  {% endif %}
-  {{media.media|floatformat:1}}
-  {% if media.pesos != 1 %}
-    </a>
-  {% endif %}
-  {% if media.media < 5 %}
-      </span>
-  {% endif %}
-{% endwith %} {% endcomment %}
-
 {% if user.tipo_de_usuario == 4 %}
   </a>
 {% endif %}
@@ -82,7 +64,7 @@ Média =
   {% with medias_oo=alocado.get_medias_oo %}
     <script>
         var config_radial_individual{{alocado.id}} = {
-            type: 'radar',
+            type: "radar",
             data: {
                 labels: [
                         {% for key, value in medias_oo.media_individual.items %}
@@ -118,7 +100,7 @@ Média =
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: 'Avaliação Individual'
+                    text: "Avaliação Individual"
                 },
                 scale: {
                     angleLines: {
@@ -174,7 +156,7 @@ Média =
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: 'Avaliação Grupo'
+                    text: "Avaliação Grupo"
                 },
                 scale: {
                     angleLines: {
@@ -230,7 +212,7 @@ Média =
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: 'Avaliação Geral'
+                    text: "Avaliação Geral"
                 },
                 scale: {
                     angleLines: {

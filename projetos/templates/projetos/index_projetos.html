@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 15 de Dezembro de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Dezembro de 2020
 {% endcomment %}
 
 {% block head %}
 {% endblock %}
 
 {% block content %}
-    <br>
-    <h5>Projetos</h5>
-    <ul>
-        <a href="{% url 'projetos_fechados' %}"><li>Listagem Geral</li></a>
-    </ul>
+  <br>
+  <h5>Projetos</h5>
+  <ul>
+    <a href="{% url 'projetos_fechados' %}"><li>Listagem Geral</li></a>
+  </ul>
 
-    <h5>Análises</h5>
-    <ul>
-        <a href="{% url 'projetos_vs_propostas' %}"><li>Organizações, Projetos e Propostas</li></a>
-        <a href="{% url 'filtro_projetos' %}"><li>Filtro para Projetos</li></a>
-    </ul>
+  <h5>Análises</h5>
+  <ul>
+    <a href="{% url 'projetos_vs_propostas' %}"><li>Organizações, Projetos e Propostas</li></a>
+    <a href="{% url 'filtro_projetos' %}"><li>Filtro para Projetos</li></a>
+  </ul>
 
 {% endblock %}

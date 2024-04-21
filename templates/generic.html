@@ -1,71 +1,70 @@
 {% extends "base.html" %}
 {% comment %}
-    Desenvolvido para o Projeto Final de Engenharia
-    Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-    Data: 21 de Abril de 2020
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Abril de 2020
 {% endcomment %}
 
 {% block head %}{% endblock %}
 
 {% block content %}
-    {{mensagem|safe}}
-    
+  {{mensagem|safe}}
+  
+  <br><br>
+
+  {% if voltar %}
+    <a href='javascript:history.back(1)'>Voltar</a><br><br>
+  {% endif %} 
+
+  {% if agendar_banca %}
+    <a href="{% url 'bancas_criar' %}">Agendar outra banca</a><br>
+  {% endif %}
+
+  {% if agendar_dinamica %}
+    <a href="{% url 'dinamicas_criar' %}">Agendar outra mentoria/dinâmica</a><br>
+  {% endif %}
+
+  {% if organizacao %}
+    <a href="{% url 'organizacao_completo' organizacao.id %}">Ver organização cadastrada</a><br>
+    <a href="{% url 'cadastrar_organizacao' %}">Cadastrar outra organização</a><br>
+  {% endif %}
+
+  {% if usuario %}
+    <a href="{% url 'user_detail' usuario.id %}">Ver usuário cadastrado</a><br>
+    <a href="{% url 'cadastrar_usuario' %}">Cadastrar outro usuário</a><br>
+  {% endif %}
+
+  {% if area_aluno %}
+    <a href="{% url 'index_estudantes' %}">Ir para Área dos Estudantes</a><br>
+  {% endif %}
+
+  {% if bancas_index %}
+    <a href="{% url 'bancas_index' %}">Ir para índice das bancas</a><br>
+  {% endif %}
+
+  {% if organizacao_completo %}
+      <a href="{% url 'organizacao_completo' organizacao_completo %}">Ir para organização</a><br>
+  {% endif %}
+
+  {% if organizacoes_lista %}
+    <a href="{% url 'organizacoes_lista' %}">Lista de todas as organizações</a><br>
+  {% endif %}
+
+  {% if organizacoes_prospectadas %}
+    <a href="{% url 'organizacoes_prospect' %}">Lista de organizações prospectadas</a><br>
+  {% endif %}
+
+  {% if propostas_lista %}
+    <a href="{% url 'propostas_apresentadas' %}">Lista de propostas apresentadas</a><br>
+  {% endif %}
+
+  {% if avaliar_entregas %}
+    <a href="{% url 'avaliar_entregas' %}">Voltar para janela de avaliações do semestre</a><br>
+  {% endif %}
+
+  {% if area_principal %}
     <br><br>
-
-    {% if voltar %}
-        <a href='javascript:history.back(1)'>Voltar</a><br><br>
-    {% endif %} 
-
-    {% if agendar_banca %}
-        <a href="{% url 'bancas_criar' %}">Agendar outra banca</a><br>
-    {% endif %}
-
-    {% if agendar_dinamica %}
-        <a href="{% url 'dinamicas_criar' %}">Agendar outra mentoria/dinâmica</a><br>
-    {% endif %}
-
-
-    {% if organizacao %}
-        <a href="{% url 'organizacao_completo' organizacao.id %}">Ver organização cadastrada</a><br>
-        <a href="{% url 'cadastrar_organizacao' %}">Cadastrar outra organização</a><br>
-    {% endif %}
-
-    {% if usuario %}
-        <a href="{% url 'user_detail' usuario.id %}">Ver usuário cadastrado</a><br>
-        <a href="{% url 'cadastrar_usuario' %}">Cadastrar outro usuário</a><br>
-    {% endif %}
-
-    {% if area_aluno %}
-        <a href="{% url 'index_estudantes' %}">Ir para Área dos Estudantes</a><br>
-    {% endif %}
-
-    {% if bancas_index %}
-        <a href="{% url 'bancas_index' %}">Ir para índice das bancas</a><br>
-    {% endif %}
-
-    {% if organizacao_completo %}
-        <a href="{% url 'organizacao_completo' organizacao_completo %}">Ir para organização</a><br>
-    {% endif %}
-
-    {% if organizacoes_lista %}
-        <a href="{% url 'organizacoes_lista' %}">Lista de todas as organizações</a><br>
-    {% endif %}
-
-    {% if organizacoes_prospectadas %}
-        <a href="{% url 'organizacoes_prospect' %}">Lista de organizações prospectadas</a><br>
-    {% endif %}
-
-    {% if propostas_lista %}
-        <a href="{% url 'propostas_apresentadas' %}">Lista de propostas apresentadas</a><br>
-    {% endif %}
-
-    {% if avaliar_entregas %}
-        <a href="{% url 'avaliar_entregas' %}">Voltar para janela de avaliações do semestre</a><br>
-    {% endif %}
-
-    {% if area_principal %}
-        <br><br>
-        <a href="{% url 'index' %}">Voltar para Página Principal</a><br>
-    {% endif %}
+    <a href="{% url 'index' %}">Voltar para Página Principal</a><br>
+  {% endif %}
 
 {% endblock %}
