@@ -359,9 +359,13 @@ def envia_proposta(proposta, enviar=True):
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
-        coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
-        for coordenador in coordenacoes:
-            recipient_list.append(str(coordenador.email))
+
+        # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
+        # for coordenador in coordenacoes:
+        #     recipient_list.append(str(coordenador.email))
+        configuracao = get_object_or_404(Configuracao)
+        recipient_list.append(str(configuracao.coordenacao.user.email))
+
         check = email(subject, recipient_list, message)
         if check != 1:
             message = "<b>Algum problema de conexão, contacte: lpsoares@insper.edu.br</b>"

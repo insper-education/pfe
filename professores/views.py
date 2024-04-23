@@ -2209,10 +2209,13 @@ def relato_avaliar(request, projeto_id, evento_id):
             # Dispara aviso a coordenação caso alguma observação ou estudante com dificuldade
             if avaliacao_negativa and (observacoes != ""):
 
-                coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
                 email_dest = []
-                for coordenador in coordenacoes:
-                    email_dest.append(str(coordenador.email))
+                # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
+                # for coordenador in coordenacoes:
+                #     email_dest.append(str(coordenador.email))
+                configuracao = get_object_or_404(Configuracao)
+                email_dest.append(str(configuracao.coordenacao.user.email))
+                
                 email_dest.append(str(projeto.orientador.user.email))
 
                 # Necessário refazer tabela de relatos e alocacoes para mensagens irem corretas
