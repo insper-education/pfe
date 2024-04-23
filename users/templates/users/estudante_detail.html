@@ -157,7 +157,6 @@
             </a>
             <br>
             
-            
             {% include "display_notas_individuais.html" with notas=alocado.get_notas %}
             <br><br>
 
@@ -187,7 +186,7 @@
                       {{ordem|add:1}}&ordm; - 
                       <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
                       <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                      Não preenchido pelo estudante
+                      Não preenchido por estudante
                     {% endif %}
                     </p>
                 {% endfor %}

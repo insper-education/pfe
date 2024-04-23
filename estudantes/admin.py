@@ -9,7 +9,8 @@ class RelatoAdmin(admin.ModelAdmin):
     list_display = ("momento", "alocacao", "texto", "avaliacao")
     list_filter = ("momento",)
     search_fields = ["alocacao__aluno__user__first_name",
-                     "alocacao__aluno__user__last_name",]
+                     "alocacao__aluno__user__last_name",
+                     "alocacao__aluno__user__username",]
 
 @admin.register(Pares)
 class ParesAdmin(admin.ModelAdmin):

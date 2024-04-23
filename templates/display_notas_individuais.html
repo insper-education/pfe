@@ -6,6 +6,7 @@
 
 {% load static %}
 {% load l10n %}
+<link rel="stylesheet" href="{% static 'css/one_line.css' %}">
 
 {% comment %} Colocar no head da página {% endcomment %}
 {% comment %} <script src="{% static 'js/Chart.min.js' %}"></script> {% endcomment %}
@@ -17,34 +18,45 @@
   var nota = 0.0;
   var peso = 0.0;
 </script>
+
 {% if user.tipo_de_usuario == 4 %}
   <a style="color:black" href="{% url 'edita_notas' alocado.id %}">
 {% endif %}
 {% if notas %}
-  Notas: 
-  {% for aval, nota, peso, descr in notas %}
-    <span style="background-color:#EEF; cursor:pointer;" data-toggle="tooltip" data-html="true" animation="true" 
-    title="{{descr}} | peso={{peso|floatformat:3}}%">
-      {{aval}}={% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
-    </span>
-    {% if peso > 0 %}
+
+<table class="one-line"><tbody>
+  <tr>
+    <td><b>Notas</b></td>
+    {% for aval, nota, peso, descr in notas %}
+    <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
+    title="{{descr}} | peso={% widthratio peso 1 100 %}%">
+      <span class="short">{{aval}}</span><span class="long">{{descr}}</span> = {% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+      {% if peso > 0 %}
       <script>
         nota += {{nota|unlocalize}} * {{peso|unlocalize}};
         peso += {{peso|unlocalize}};
       </script>
     {% endif %}
+  </td>
+    
   {% endfor %}
-  &nbsp;|
-
-  Média = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span>
+  
+  <td>
+  <b>Média = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span></b>
   <script>
     if(peso > 0.0) {
       document.getElementById("media{{alocado.id}}").innerHTML = loc(nota);
       if(peso < 0.99) {
-        document.getElementById("aviso{{alocado.id}}").innerHTML = "(média provisória = " + loc(nota/peso) +  ")";
+        document.getElementById("aviso{{alocado.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc(nota/peso) +  ")</span>";
       }
     }
   </script>
+  </td>
+
+
+  </tr>
+</tbody></table>
+
 {% endif %}
 
 {% if user.tipo_de_usuario == 4 %}
@@ -53,13 +65,13 @@
 
 {% if alocado.peso > 0 %}
   <div class="table-responsive">
-      <div class="row mt-1 justify-content-md-center" style="width: 99%;">
+      <div class="row mt-1" style="width: 99%; justify-content: center;">
           <div style="position: relative; height:203px; width:406px;"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
           <div style="position: relative; height:203px; width:406px;"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
           <div style="position: relative; height:203px; width:406px;"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
       </div>
   </div>
-  <small>Exibição radar supõe mesmo peso para todas as avaliações</small>
+  <small>Obs: Exibição radar supõe mesmo peso para todas as avaliações</small>
 
   {% with medias_oo=alocado.get_medias_oo %}
     <script>

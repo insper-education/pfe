@@ -8,7 +8,8 @@
 {% block head %}
   {% load static %}
   <script>{% include "tooltip.js" %}</script>
-
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <style>
     hr.style-five {
@@ -27,47 +28,68 @@
 
   {% with alocados=aluno.alocacao_set.all.reverse %}
     <span class="titulo">Projeto{% if alocados|length > 1 %}s{% endif %} Alocado{% if alocados|length > 1 %}s{% endif %} </span> 
-    <br>
+
     {% for alocado in alocados %}
 
-      <h5>[{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h5>
-      
+    <div class="div_arredondado_100">
       {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
         Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
       {% else %}
+
         {% include "projeto.html" %}
 
         {% with notas=alocado.get_notas %}
           {% if notas %}
-            <h5>Resultados<br></h5>
-            {% include "display_notas_individuais.html" %}
+            <div>
+              <h5>Resultados</h5>
+              <div style="background: #FFFFFF; padding: 6px;">
+              {% include "display_notas_individuais.html" %}
+              </div>
+            </div>
           {% endif %}
         {% endwith %}
 
         {% with site=alocado.projeto.get_site %}
-        {% if site %}
-          <br><br>
-          <h4>Site:</h4>
-          &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-        {% endif %}
-        {% endwith %}
-        
-        {% if alocado.projeto.pastas_do_projeto %}
-          <br><br>
-          <h4>Pastas do projeto:</h4>
-          <div style="display: flex; align-items: flex-start;">
-            <div>&#128193;&nbsp;</div>
+          {% if site or alocado.projeto.pastas_do_projeto %}
             <div>
-              {{alocado.projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+          {% endif %}
+          {% if site %}
+            <h5>Site</h5>
+            &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+          {% endif %}
+          {% if alocado.projeto.pastas_do_projeto %}
+            <br><br>
+            <h5>Pastas do projeto</h5>
+            <div style="display: flex; align-items: flex-start;">
+              <div>&#128193;&nbsp;</div>
+              <div>
+                {{alocado.projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+              </div>
             </div>
-          </div>
+          {% endif %}
+          {% if site or alocado.projeto.pastas_do_projeto %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% if alocado.projeto.encontro_set.all %}
+        <div>
+          <h5>Mentorias Marcadas<br></h5>
+          <ul>
+            {% for dinamica in alocado.projeto.encontro_set.all %} 
+              <li>
+                {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+                {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
+                {% if dinamica.facilitador %}; com: {{dinamica.facilitador}} {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
         {% endif %}
 
       {% endif %}
 
-      <p>&nbsp;</p>
-      {% if not forloop.last %} <hr class="style-five"> {% endif %}
-      <p>&nbsp;</p>
+      </div>
 
     {% empty %}
       Você não está alocado em nenhum projeto.

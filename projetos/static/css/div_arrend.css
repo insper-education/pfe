@@ -1,17 +1,38 @@
 .div_arredondado {
-	background: #F0F0F0;
-	vertical-align: middle;
-	border: 1px solid grey;
-	border-radius: 6px;
-	margin-bottom: 12px;
-	max-width: 100%;
-	width: 800px;
+  background: #F0F0F0;
+  vertical-align: middle;
+  border: 1px solid grey;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  max-width: 100%;
+  width: 800px;
   padding: 8px;
 }
 
 .div_arredondado > div {
-	display: block;
-	max-width: 100%;
+  display: block;
+  max-width: 100%;
+}
+
+.div_arredondado_100 {
+  background: #F0F0F0;
+  vertical-align: middle;
+  border: 1px solid grey;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  max-width: 100%;
+  width: 100%;
+  padding: 8px;
+}
+
+.div_arredondado_100 > div {
+  display: block;
+  max-width: 100%;
+  border: 1px solid grey;
+  border-radius: 6px;
+  background: #FAFAFA;
+  padding: 8px;
+  margin-bottom: 10px;
 }
 
 .pintern {
@@ -20,3 +41,4 @@
   margin: 8px 0px 0px 0px;
   background-color: #FAFAF3;
 }
+
