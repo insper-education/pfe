@@ -787,7 +787,7 @@ class Banca(models.Model):
                             help_text="Link para transmissão pela internet se houver")
     
     def __str__(self):
-        return self.projeto.get_titulo
+        return self.projeto.get_titulo()
 
     @classmethod
     def create(cls, projeto):

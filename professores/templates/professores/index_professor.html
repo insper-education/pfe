@@ -8,31 +8,37 @@
 {% block head %}
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
+  <style>
+    .item_lista{
+      margin-left: 8px;
+    }
+    .circulo{
+      font-size: 7px;
+      vertical-align: 20%;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
+
   <br>
   <h5>Alocações</h5>
-  <ul>
-    <li><a href="{% url 'orientacoes_alocadas' %}">Orientações</a></li>
-    <li><a href="{% url 'coorientacoes_alocadas' %}">Coorientações</a></li>
-    <li><a href="{% url 'bancas_alocadas' %}">Bancas</a></li>
-    <li><a href="{% url 'mentorias_alocadas' %}">Mentorias</a></li>
-  </ul>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientacoes_alocadas' %}">Orientações</a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientacoes_alocadas' %}">Coorientações</a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_alocadas' %}">Bancas</a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_alocadas' %}">Mentorias</a></div>
+  <br>
 
   <h5>Atividades do Orientador</h5>
-  <ul>
-    <li><a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></li>
-    <li><a href="{% url 'relatos_quinzenais' %}">Relatos Quinzenais</a></li>
-    <li><a href="{% url 'avaliar_entregas'%}">Avaliar Entregas</a></li>
-    <li><a href="{% url 'bancas_index'%}">Agendar Banca</a></li>
-    <li><a href="{% url 'avaliacoes_pares' %}">Avaliação de Pares</a></li>
-  </ul>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></div>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">Relatos Quinzenais</a></div>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_entregas %}</span> <a href="{% url 'avaliar_entregas'%}">Avaliar Entregas</a></div>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=bancas_index %}</span> <a href="{% url 'bancas_index'%}">Agendar Banca</a></div>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacoes_pares %}</span> <a href="{% url 'avaliacoes_pares' %}">Avaliação de Pares</a></div>
+  <br>
 
   <h5>Notas</h5>
-  <ul>
-    <li><a href="{% url 'estudantes_notas' "meus_projetos" %}">Individuais</a></li>
-    <li><a href="{% url 'resultado_meus_projetos' %}">Grupo</a></li>
-  </ul>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_notas' "meus_projetos" %}">Individuais</a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'resultado_meus_projetos' %}">Grupo</a></div>
 
 {% endblock %}

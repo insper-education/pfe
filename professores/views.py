@@ -47,12 +47,168 @@ from academica.support import filtra_composicoes, filtra_entregas
 
 from documentos.models import TipoDocumento
 
+def get_evento(evento_id, configuracao):
+    if configuracao.semestre == 1:
+        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=configuracao.ano, endDate__month__lt=7)
+    else:
+        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=configuracao.ano, endDate__month__gt=6)
+    return eventos.order_by("endDate", "startDate").last()
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def index_professor(request):
     """Mostra página principal do usuário professor."""
-    return render(request, 'professores/index_professor.html')
+
+    configuracao = get_object_or_404(Configuracao)
+    PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
+
+    context = {}
+    if request.user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
+        projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+
+        if projetos:
+
+            # Verifica se todos os projetos do professor orientador têm o plano de orientação
+            tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
+            feito = True
+            for projeto in projetos:
+                feito = feito and Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists()
+            if feito:
+                planos_de_orientacao = 'g'
+            else:
+                evento = get_evento(10, configuracao)  # (10, "Início das aulas", "#FF1010"),
+                if evento and datetime.date.today() < evento.endDate:
+                    planos_de_orientacao = 'b'
+                elif evento and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
+                    planos_de_orientacao = 'r'
+                else:
+                    planos_de_orientacao = 'y'
+            context["planos_de_orientacao"] = planos_de_orientacao
+
+            # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
+            relatos_quinzenais = 'b'
+            for projeto in projetos:
+                for evento, relatos, avaliados in projeto.get_relatos():
+                    if not evento.em_prazo():  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
+                        if relatos:
+                            if avaliados and relatos_quinzenais != 'r' and relatos_quinzenais != 'y':
+                                relatos_quinzenais = 'g'
+                            else:
+                                if evento and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
+                                    relatos_quinzenais = 'r'
+                                else:
+                                    if relatos_quinzenais != 'r':
+                                        relatos_quinzenais = 'y'
+                        else:
+                            if relatos_quinzenais != 'r' and relatos_quinzenais != 'y':
+                                relatos_quinzenais = 'g'
+            context["relatos_quinzenais"] = relatos_quinzenais
+
+            # Verifica se todos os projetos do professor orientador têm as avaliações das entregas
+            avaliar_entregas = 'b'
+            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+            for projeto in projetos:
+                entregas = filtra_entregas(composicoes, projeto)
+                for item in entregas:
+                    dias_passados = datetime.date.today() - item["evento"].endDate
+                    if dias_passados.days > 0:
+                        if item["composicao"].exame.grupo:
+                            for documento in item["documentos"]:
+                                if item["avaliacoes"]:
+                                    diff_entrega = (documento.data - item["avaliacoes"].first().momento)
+                                    if diff_entrega.days > PRAZO:
+                                        avaliar_entregas = 'r'  # Nova avaliação urgente!
+                                    elif diff_entrega.total_seconds() > 0:
+                                        if avaliar_entregas != 'r':
+                                            avaliar_entregas = 'y'  # Nova avaliação pendente!
+                                    else:
+                                        if avaliar_entregas != 'r' and avaliar_entregas != 'y':
+                                            avaliar_entregas = 'g'  # Avaliação feita!
+                                else:
+                                    if dias_passados.days > PRAZO:
+                                        avaliar_entregas = 'r'  # Avaliação urgente!
+                                    else:
+                                        if avaliar_entregas != 'r':
+                                            avaliar_entregas = 'y'  # Avaliação pendente!
+                        else:
+                            for _, values in item["alocacoes"].items():
+                                for documento in values["documentos"]:
+                                    if values["avaliacoes"]:
+                                        diff_entrega = (documento.data - values["avaliacoes"].first().momento)
+                                        if diff_entrega.days > PRAZO:
+                                            avaliar_entregas = 'r'  # Nova avaliação urgente!
+                                        elif diff_entrega.total_seconds() > 0:
+                                            if avaliar_entregas != 'r':
+                                                avaliar_entregas = 'y'  # Nova avaliação pendente!
+                                        else:
+                                            if avaliar_entregas != 'r' and avaliar_entregas != 'y':
+                                                avaliar_entregas = 'g'  # Avaliação feita!
+                                    else:
+                                        if dias_passados.days > PRAZO:
+                                            avaliar_entregas = 'r'  # Avaliação urgente!
+                                        else:
+                                            if avaliar_entregas != 'r':
+                                                avaliar_entregas = 'y'  # Avaliação pendente!
+            context["avaliar_entregas"] = avaliar_entregas
+
+            # Verifica se todos os projetos do professor orientador têm os agendamentos E AVALIAÇÕES COMPLETAS das bancas
+            bancas_index = 'b'
+            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=1).exists()  # (1, 'Intermediária'),
+            evento = get_evento(14, configuracao)  # (14, "Bancas Intermediárias", "#EE82EE"),
+            if evento and (datetime.date.today() - evento.startDate).days > -16:
+                if banca:
+                    bancas_index = 'g'
+                else:
+                    if evento and (datetime.date.today() - evento.startDate).days > -9:
+                        bancas_index = 'r'
+                    else:
+                        bancas_index = 'y'
+            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=0).exists()  # (0, 'Final')
+            evento = get_evento(15, configuracao)  # (15, "Bancas Finais", "#FFFF00"),
+            if evento and (datetime.date.today() - evento.startDate).days > -16:
+                if banca:
+                    bancas_index = 'g'
+                else:
+                    if evento and (datetime.date.today() - evento.startDate).days > -9:
+                        bancas_index = 'r'
+                    else:
+                        bancas_index = 'y'
+            context["bancas_index"] = bancas_index
+
+            # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
+            avaliacoes_pares = 'b'
+            evento = get_evento(31, configuracao)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
+            if evento and (datetime.date.today() - evento.startDate).days > 0:
+                feito = True
+                for projeto in projetos:
+                    for alocacao in Alocacao.objects.filter(projeto=projeto):
+                        if Pares.objects.filter(alocacao_de=alocacao, tipo=0).first():  # Intermediaria
+                            feito = feito and alocacao.avaliacao_intermediaria
+                if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
+                    avaliacoes_pares = 'g'
+                else:
+                    if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
+                        avaliacoes_pares = 'r'
+                    elif avaliacoes_pares != 'r':
+                        avaliacoes_pares = 'y'
+            evento = get_evento(32, configuracao)  #(32, "Avaliação de Pares Final", "#FFC0DB"),
+            if evento and (datetime.date.today() - evento.startDate).days > 0:
+                feito = True
+                for projeto in projetos:
+                    for alocacao in Alocacao.objects.filter(projeto=projeto):
+                        if Pares.objects.filter(alocacao_de=alocacao, tipo=1).first():  # Final
+                            feito = feito and alocacao.avaliacao_final
+                if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
+                    avaliacoes_pares = 'g'
+                else:
+                    if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
+                        avaliacoes_pares = 'r'
+                    elif avaliacoes_pares != 'r':
+                        avaliacoes_pares = 'y'
+            context["avaliacoes_pares"] = avaliacoes_pares
+        
+        
+    return render(request, "professores/index_professor.html", context=context)
 
 
 @login_required
