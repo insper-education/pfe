@@ -89,12 +89,12 @@ def index_professor(request):
             relatos_quinzenais = 'b'
             for projeto in projetos:
                 for evento, relatos, avaliados in projeto.get_relatos():
-                    if not evento.em_prazo():  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
+                    if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                         if relatos:
                             if avaliados and relatos_quinzenais != 'r' and relatos_quinzenais != 'y':
                                 relatos_quinzenais = 'g'
                             else:
-                                if evento and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
+                                if evento and evento.endDate and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
                                     relatos_quinzenais = 'r'
                                 else:
                                     if relatos_quinzenais != 'r':
@@ -110,45 +110,48 @@ def index_professor(request):
             for projeto in projetos:
                 entregas = filtra_entregas(composicoes, projeto)
                 for item in entregas:
-                    dias_passados = datetime.date.today() - item["evento"].endDate
-                    if dias_passados.days > 0:
-                        if item["composicao"].exame.grupo:
-                            for documento in item["documentos"]:
-                                if item["avaliacoes"]:
-                                    diff_entrega = (documento.data - item["avaliacoes"].first().momento)
-                                    if diff_entrega.days > PRAZO:
-                                        avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                    elif diff_entrega.total_seconds() > 0:
-                                        if avaliar_entregas != 'r':
-                                            avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                    else:
-                                        if avaliar_entregas != 'r' and avaliar_entregas != 'y':
-                                            avaliar_entregas = 'g'  # Avaliação feita!
+                    if item["evento"] and item["evento"].endDate:
+                        dias_passados = datetime.date.today() - item["evento"].endDate
+                        if dias_passados.days > 0:
+                            if item["composicao"] and item["composicao"].exame:
+                                if item["composicao"].exame.grupo:
+                                    for documento in item["documentos"]:
+                                        if item["avaliacoes"]:
+                                            diff_entrega = (documento.data - item["avaliacoes"].first().momento)
+                                            if diff_entrega.days > PRAZO:
+                                                avaliar_entregas = 'r'  # Nova avaliação urgente!
+                                            elif diff_entrega.total_seconds() > 0:
+                                                if avaliar_entregas != 'r':
+                                                    avaliar_entregas = 'y'  # Nova avaliação pendente!
+                                            else:
+                                                if avaliar_entregas != 'r' and avaliar_entregas != 'y':
+                                                    avaliar_entregas = 'g'  # Avaliação feita!
+                                        else:
+                                            if dias_passados.days > PRAZO:
+                                                avaliar_entregas = 'r'  # Avaliação urgente!
+                                            else:
+                                                if avaliar_entregas != 'r':
+                                                    avaliar_entregas = 'y'  # Avaliação pendente!
                                 else:
-                                    if dias_passados.days > PRAZO:
-                                        avaliar_entregas = 'r'  # Avaliação urgente!
-                                    else:
-                                        if avaliar_entregas != 'r':
-                                            avaliar_entregas = 'y'  # Avaliação pendente!
-                        else:
-                            for _, values in item["alocacoes"].items():
-                                for documento in values["documentos"]:
-                                    if values["avaliacoes"]:
-                                        diff_entrega = (documento.data - values["avaliacoes"].first().momento)
-                                        if diff_entrega.days > PRAZO:
-                                            avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                        elif diff_entrega.total_seconds() > 0:
-                                            if avaliar_entregas != 'r':
-                                                avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                        else:
-                                            if avaliar_entregas != 'r' and avaliar_entregas != 'y':
-                                                avaliar_entregas = 'g'  # Avaliação feita!
-                                    else:
-                                        if dias_passados.days > PRAZO:
-                                            avaliar_entregas = 'r'  # Avaliação urgente!
-                                        else:
-                                            if avaliar_entregas != 'r':
-                                                avaliar_entregas = 'y'  # Avaliação pendente!
+                                    if item["alocacoes"]:
+                                        for _, values in item["alocacoes"].items():
+                                            for documento in values["documentos"]:
+                                                if values["avaliacoes"]:
+                                                    diff_entrega = (documento.data - values["avaliacoes"].first().momento)
+                                                    if diff_entrega.days > PRAZO:
+                                                        avaliar_entregas = 'r'  # Nova avaliação urgente!
+                                                    elif diff_entrega.total_seconds() > 0:
+                                                        if avaliar_entregas != 'r':
+                                                            avaliar_entregas = 'y'  # Nova avaliação pendente!
+                                                    else:
+                                                        if avaliar_entregas != 'r' and avaliar_entregas != 'y':
+                                                            avaliar_entregas = 'g'  # Avaliação feita!
+                                                else:
+                                                    if dias_passados.days > PRAZO:
+                                                        avaliar_entregas = 'r'  # Avaliação urgente!
+                                                    else:
+                                                        if avaliar_entregas != 'r':
+                                                            avaliar_entregas = 'y'  # Avaliação pendente!
             context["avaliar_entregas"] = avaliar_entregas
 
             # Verifica se todos os projetos do professor orientador têm os agendamentos E AVALIAÇÕES COMPLETAS das bancas
@@ -512,9 +515,9 @@ def bancas_criar(request, data=None):
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi'
-    bancas_intermediaria = eventos.filter(tipo_de_evento=14).last()
-    bancas_finais = eventos.filter(tipo_de_evento=15).last()
-    bancas_falconi = eventos.filter(tipo_de_evento=50).last()
+    bancas_intermediarias = eventos.filter(tipo_de_evento=14)
+    bancas_finais = eventos.filter(tipo_de_evento=15)
+    bancas_falconi = eventos.filter(tipo_de_evento=50)
 
     context = {
         "projetos": projetos,
@@ -525,7 +528,7 @@ def bancas_criar(request, data=None):
         "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi')),
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
-        "bancas_intermediaria": bancas_intermediaria,
+        "bancas_intermediarias": bancas_intermediarias,
         "bancas_finais": bancas_finais,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
@@ -534,14 +537,14 @@ def bancas_criar(request, data=None):
     if data:
         context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
         datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
-        if bancas_finais and bancas_finais.startDate and bancas_finais.endDate:
-            if datar >= bancas_finais.startDate and datar <= bancas_finais.endDate:
+        if bancas_finais and bancas_finais.first().startDate and bancas_finais.last().endDate:
+            if datar >= bancas_finais.first().startDate and datar <= bancas_finais.last().endDate:
                 context["tipob"] = 0
-        if bancas_intermediaria and bancas_intermediaria.startDate and bancas_intermediaria.endDate:
-            if datar >= bancas_intermediaria.startDate and datar <= bancas_intermediaria.endDate:
+        if bancas_intermediarias and bancas_intermediarias.first().startDate and bancas_intermediarias.last().endDate:
+            if datar >= bancas_intermediarias.first().startDate and datar <= bancas_intermediarias.last().endDate:
                 context["tipob"] = 1
-        if bancas_falconi and bancas_falconi.startDate and bancas_falconi.endDate:
-            if datar >= bancas_falconi.startDate and datar <= bancas_falconi.endDate:
+        if bancas_falconi and bancas_falconi.first().startDate and bancas_falconi.last().endDate:
+            if datar >= bancas_falconi.first().startDate and datar <= bancas_falconi.last().endDate:
                 context["tipob"] = 2
         
     return render(request, "professores/bancas_view.html", context)
@@ -591,9 +594,9 @@ def bancas_editar(request, primarykey=None):
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
     # 14, "Banca intermediária" / 15, "Bancas finais" / 50, "Certificação Falconi"
-    bancas_intermediaria = eventos.filter(tipo_de_evento=14).last()
-    bancas_finais = eventos.filter(tipo_de_evento=15).last()
-    bancas_falconi = eventos.filter(tipo_de_evento=50).last()
+    bancas_intermediarias = eventos.filter(tipo_de_evento=14).order_by("startDate")
+    bancas_finais = eventos.filter(tipo_de_evento=15).order_by("startDate")
+    bancas_falconi = eventos.filter(tipo_de_evento=50).order_by("startDate")
 
     context = {
         "projetos": projetos,
@@ -603,7 +606,7 @@ def bancas_editar(request, primarykey=None):
         # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi")), # Para ficar na ordem que desejo
         "falconis": falconis,
-        "bancas_intermediaria": bancas_intermediaria,
+        "bancas_intermediarias": bancas_intermediarias,
         "bancas_finais": bancas_finais,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),

@@ -148,26 +148,26 @@
             var tipo = $(this).val();
             if(tipo == 2) {  // Banca Falconi
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_falconi.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_falconi.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=30;
             } else if(tipo == 1) {  // Banca Intermediária
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_intermediaria.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_intermediaria.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=120;
             } else {  // Banca Final
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_finais.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_finais.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_finais.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_finais.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=120;
             }
