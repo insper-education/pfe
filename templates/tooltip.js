@@ -5,7 +5,11 @@
 {% endcomment %}
 
 {% comment %} Código para apresentar tooltips nos objetos {% endcomment %}
-
-{% comment %} $(document).ready(function(){ {% endcomment %}
-  $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});
-{% comment %} }); {% endcomment %}
+{% comment %} Deixar sempre o document.ready para garantir que o código só será executado após o carregamento completo da página. {% endcomment %}
+$(document).ready(function() {
+  {% if tipo_tooltip == "lento" %}
+    $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window", delay: { "show": 500, "hide": 1000 } });
+  {% else %}
+    $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});
+  {% endif %}
+});

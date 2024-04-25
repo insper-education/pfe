@@ -4,11 +4,11 @@
   Data: 24 de Abril de 2024
 {% endcomment %}
 {% if estado == 'r' %}
-  &#128308;<!-- Red Circle -->
+  <span data-toggle="tooltip" data-html="true" animation="true" title="você está atrasado para concluir esse ponto">&#128308;</span>
 {% elif estado == 'y' %}
-  &#128993;<!-- Yellow Circle -->
+  <span data-toggle="tooltip" data-html="true" animation="true" title="você está no prazo para concluir esse ponto">&#128993;</span>
 {% elif estado == 'g' %}
-  &#128994;<!-- Green Circle -->
+  <span data-toggle="tooltip" data-html="true" animation="true" title="você está em dia com esse ponto">&#128994;</span>
 {% else %}
-  &#9899;<!-- Black Circle -->
+  <span>&#9899;</span>
 {% endif %}
