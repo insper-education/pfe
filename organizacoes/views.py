@@ -405,11 +405,6 @@ def proposta_submissao(request):
 # @login_required
 def carrega_proposta(request):
     """Página para carregar Proposta de Projetos em PDF."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        user = None
-
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
@@ -417,9 +412,9 @@ def carrega_proposta(request):
     email_sub = ""
     parceiro = False
 
-    if user:
+    if request.user and request.user.is_authenticated:
 
-        if user.tipo_de_usuario == 1:  # alunos
+        if request.user.tipo_de_usuario == 1:  # alunos
             mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,
@@ -427,10 +422,10 @@ def carrega_proposta(request):
             }
             return render(request, "generic.html", context=context)
 
-        full_name = user.get_full_name()
-        email_sub = user.email
+        full_name = request.user.get_full_name()
+        email_sub = request.user.email
 
-        parceiro = user.tipo_de_usuario == 3  # parceiro
+        parceiro = request.user.tipo_de_usuario == 3  # parceiro
 
     if request.method == "POST":
 
