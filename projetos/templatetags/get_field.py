@@ -17,6 +17,14 @@ def max_length(instance, field):
     return length
 
 @register.simple_tag()
+def max_length_menos(instance, field, menos):
+    """ Retorna o valor do campo limitado ao tamanho máximo do campo menos um valor"""
+    if instance is None or not hasattr(instance, field):
+        return None
+    length = instance._meta.get_field(field).max_length - menos
+    return length
+
+@register.simple_tag()
 def slice_max_length(instance, field):
     """ Retorna o valor do campo limitado ao tamanho máximo do campo """
     text = getattr(instance, field)
