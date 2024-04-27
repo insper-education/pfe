@@ -7,136 +7,78 @@
 
 {% block head %}
   {% load static %}
-  
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  
-  {% comment %} Para chamar os Tooltips {% endcomment %}
-  <script>{% include "tooltip.js" %}</script>
 {% endblock %}
 
 {% block content %}
 
-  {% url 'projeto_feedback' as feedback_url%}
-
   <span class="titulo">Listagem de Feedbacks das Organizações Parceiras</span>
 
-  Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
-  
-  <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
+  <div>Link para pesquisa: <a href="{% url 'projeto_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'projeto_feedback' %}</a></div><br>
 
   <div class="table-responsive">
-    <table id="FeedbacksTable">
-      <tr>
-        <th>ver</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome</th>
-        <th style="cursor:pointer" class="text-center">e-mail</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
-        <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">NPS</th>
-      </tr>      
+    <table id="FeedbacksTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th>ver</th>
+          <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome</th>
+          <th style="cursor:pointer" class="text-center">e-mail</th>
+          <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
+          <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
+          <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">NPS</th>
+        </tr>
+      </thead>
+      <tbody>
       {% for feedback in feedbacks %} 
         <tr class="item">
-          <td class="text-center">
-            <a href="{% url 'mostra_feedback' feedback.id %}">
-              &#x1f441;
-            </a>
-          </td>
-          <td>
-            {% if feedback.nome %}
-              {{feedback.nome}}
-            {% else %}
-              Anônimo
-            {% endif %}
-          </td>
-          <td>
-            {% if feedback.email %}
-              {{feedback.email}}
-            {% else %}
-              Anônimo
-            {% endif %}
-          </td>
-          <td>
-            {% if feedback.empresa %}
-              {{feedback.empresa}}
-            {% else %}
-              Anônimo
-            {% endif %}
-          </td>
-          <td>
-            {{feedback.data|date:"Y.m.d"}}
-          </td>
-          <td style="text-align:right">
-            {% if feedback.nps %}
-              {{feedback.nps}}
-            {% endif %}
-          </td>
+          <td class="text-center"><a href="{% url 'mostra_feedback' feedback.id %}">&#x1f441;</a></td>
+          <td>{% if feedback.nome %}{{feedback.nome}}{% else %}Anônimo{% endif %}</td>
+          <td>{% if feedback.email %}{{feedback.email}}{% else %}Anônimo{% endif %}</td>
+          <td>{% if feedback.empresa %}{{feedback.empresa}}{% else %}Anônimo{% endif %}</td>
+          <td>{{feedback.data|date:"Y.m.d"}}</td>
+          <td style="text-align:right">{% if feedback.nps %}{{feedback.nps}}{% endif %}</td>
         </tr>
       {% endfor %}
+      </tbody>
     </table>
-  </div>
-  
-  <p>&nbsp;</p>
+  </div><br>
 
-  <div id="canvas-holder">
-      <canvas id="bar-feedbacks"></canvas>
-  </div>
-
+  <div id="canvas-holder"><canvas id="bar-feedbacks"></canvas></div>
 
   <script>
-    
     var config_feedbacks = {
-        type: 'bar',
+        type: "bar",
         data: {
-        labels: [
-            {% for loop in loop_anos %}
-            "{{loop}}.2",
-            "{{loop|add:1}}.1",
-            {% endfor %}
-            ],
-        datasets: [
+          labels: [ {% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
+          datasets: [
             {
-            label: "projetos",
-            backgroundColor: "#Ae4e82",
-            data: [
-                    {% for num in num_projetos %}
-                        {{num}},
-                    {% endfor %}
-                ]
+              label: "projetos",
+              backgroundColor: "#AE4E82",
+              data: [ {% for num in num_projetos %}{{num}}, {% endfor %}]
+            },{
+              label: "feedbacks",
+              backgroundColor: "#15CECD",
+              data: [ {% for num in num_feedbacks %}{{num}}, {% endfor %}]
             }, 
-            {
-            label: "feedbacks",
-            backgroundColor: "#15Cecd",
-            data: [
-                    {% for num in num_feedbacks %}
-                        {{num}},
-                    {% endfor %}
-                ]
-            }, 
-        ]
+          ]
         },
         options: {
-        legend: { display: true },
-        title: {
+          legend: { display: true },
+          title: {
             display: true,
-            text: 'Projetos e Feedbacks'
-        }
+            text: "Projetos e Feedbacks"
+          }
         }
     };
 
-    function carrega_grafico() {  
-      // Chart da quantidade de projetos
-      var bar_feedbacks = document.getElementById('bar-feedbacks').getContext('2d');
+    function carrega_grafico() {  // Chart da quantidade de projetos
+      var bar_feedbacks = document.getElementById("bar-feedbacks").getContext("2d");
       window.projeto = new Chart(bar_feedbacks, config_feedbacks);
     }
 
-    function carrega_pagina() {
-      carrega_grafico();
-    }
-
-    function carrega_site(){
-      carrega_pagina();
-    };
+    function carrega_pagina() {carrega_grafico();}
+    function carrega_site() {carrega_pagina();};
     window.onload = carrega_site
 
   </script>

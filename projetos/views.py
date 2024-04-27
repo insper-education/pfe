@@ -655,46 +655,23 @@ def comite(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
-    configuracao = get_object_or_404(Configuracao)
+    edicoes, _, _ = get_edicoes(Projeto)
+    
+    # primeiro ano foi diferente (edição anual em 2018.2)
+    num_projetos = [Projeto.objects.filter(ano=2018, semestre=2).count()]
+    num_feedbacks = [Feedback.objects.filter(data__range=["2018-06-01", "2019-05-31"]).count()]
 
-    edicoes = range(2018, configuracao.ano+1)
-
-    # PROJETOS
-    num_projetos = []
-    for ano_projeto in edicoes:
-
-        projetos = Projeto.objects.filter(ano=ano_projeto).\
-            filter(semestre=2).\
-            count()
-        num_projetos.append(projetos)
-
-        projetos = Projeto.objects.filter(ano=ano_projeto+1).\
-            filter(semestre=1).\
-            count()
-        num_projetos.append(projetos)
-
-    feedbacks = Feedback.objects.all().order_by("-data")
-    num_feedbacks = []
-
-    # primeiro ano foi diferente
-    numb_feedb = Feedback.objects.filter(data__range=["2018-06-01", "2019-05-31"]).\
-        count()
-    num_feedbacks.append(numb_feedb)
-
-    for ano_projeto in edicoes[1:]:
-        numb_feedb = Feedback.objects.filter(data__range=[str(ano_projeto)+"-06-01",
-                                                          str(ano_projeto)+"-12-31"]).\
-            count()
-        num_feedbacks.append(numb_feedb)
-        numb_feedb = Feedback.objects.filter(data__range=[str(ano_projeto+1)+"-01-01",
-                                                          str(ano_projeto+1)+"-05-31"]).\
-            count()
-        num_feedbacks.append(numb_feedb)
+    for ano, semestre in [edicao.split('.') for edicao in edicoes[1:]]:
+        num_projetos.append(Projeto.objects.filter(ano=ano, semestre=semestre).count())
+        if semestre == '1':
+            faixa = [ano+"-06-01", ano+"-12-31"]
+        else:
+            faixa = [str(int(ano)+1)+"-01-01", str(int(ano)+1)+"-05-31"]
+        num_feedbacks.append(Feedback.objects.filter(data__range=faixa).count())
 
     context = {
-        "feedbacks": feedbacks,
-        "SERVER_URL": settings.SERVER,
-        "loop_anos": edicoes,
+        "feedbacks": Feedback.objects.all().order_by("-data"),
+        "edicoes": edicoes,
         "num_projetos": num_projetos,
         "num_feedbacks": num_feedbacks,
     }
