@@ -316,16 +316,16 @@
       }; 
       
       // Chart da proporção de estudantes por programas
-      var chart_programas = document.getElementById('chart-programas').getContext('2d');
+      var chart_programas = document.getElementById("chart-programas").getContext("2d");
       window.myPie_programas = new Chart(chart_programas, config_programas);
 
       // Chart da proporção de estudantes por gênero
-      var chart_generos = document.getElementById('chart-generos').getContext('2d');
+      var chart_generos = document.getElementById("chart-generos").getContext("2d");
       window.myPie_genero = new Chart(chart_generos, config_generos);
 
       {% if ano == 0 or semestre == 0 %}
         // Chart do totais de estudantes por programa
-        var chart_totais = document.getElementById('total-estudantes').getContext('2d');
+        var chart_totais = document.getElementById("total-estudantes").getContext("2d");
         window.myPie_totais = new Chart(chart_totais, config_totais);
       {% endif %}
 
@@ -333,9 +333,9 @@
 
       function carrega_pagina() {
 
-        if($('#EstudantesTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
+        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
 
-          table = $('#EstudantesTable').dataTable();
+          table = $"#EstudantesTable").dataTable();
 
           if(table) {
             // Hide/Esconde certas colunas

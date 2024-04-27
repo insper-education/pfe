@@ -28,8 +28,8 @@ def custom_400(request, exception):
     if (exception):
         mensagem += str(exception) + "<br>"
     mensagem += "Em caso de dúvida " + settings.CONTATO
-    #t = loader.get_template('400.html')
-    #t.render(Context({'exception_value': value,})
+    #t = loader.get_template("400.html")
+    #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
 @login_required

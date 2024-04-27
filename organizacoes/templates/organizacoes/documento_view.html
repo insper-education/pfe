@@ -272,13 +272,12 @@
         $("#link").prop("required", true);
       }
     });
-    //$inputs.not(this).prop('required', !$(this).val().length);
 
-    $('#link').on('input',function(e){
+    $("#link").on("input",function(e){
       if($(this).val()) {
-        $('#arquivo').prop('required', false);
+        $("#arquivo").prop("required", false);
       } else {
-        $('#arquivo').prop('required', true);
+        $("#arquivo").prop("required", true);
       }
     });
 
@@ -333,7 +332,7 @@
           {% if user.tipo_de_usuario == 4 %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log('error'+request.responseText);
+            console.log("error"+request.responseText);
           {% else %}
             jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
           {% endif %}

@@ -53,7 +53,7 @@ from projetos.resources import UsuariosResource
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 
-from users.support import adianta_semestre
+from users.support import adianta_semestre, adianta_semestre_conf
 
 from propostas.support import ordena_propostas
 
@@ -150,7 +150,7 @@ def cadastrar_organizacao(request, proposta_id=None):
         "organizacao": Organizacao,
     }
     
-    return render(request, 'administracao/cadastra_organizacao.html', context=context)
+    return render(request, "administracao/cadastra_organizacao.html", context=context)
 
 
 @login_required
@@ -192,7 +192,7 @@ def edita_organizacao(request, primarykey):
         "edicao": True,
     }
 
-    return render(request, 'administracao/cadastra_organizacao.html', context=context)
+    return render(request, "administracao/cadastra_organizacao.html", context=context)
 
 
 
@@ -406,7 +406,7 @@ def carrega_arquivo(request, dado):
     elif dado == "avaliacoes":
         resource = Avaliacoes2Resource()
     else:
-        return HttpResponseNotFound('<h1>Tipo de dado não reconhecido!</h1>')
+        return HttpResponseNotFound("<h1>Tipo de dado não reconhecido!</h1>")
 
     # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
     if request.method == "POST":
@@ -428,7 +428,7 @@ def carrega_arquivo(request, dado):
         dataset.load(entradas, format="csv")
         dataset.insert_col(0, col=lambda row: None, header="id")
 
-        result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={'dry_run': True})
+        result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={"dry_run": True})
 
         if result.has_errors():
             mensagem = "Erro ao carregar arquivo." + str(result)
@@ -440,7 +440,7 @@ def carrega_arquivo(request, dado):
 
             return render(request, "generic.html", context=context)
 
-        resource.import_data(dataset, dry_run=False, collect_failed_rows=True, before_import_kwargs={'dry_run': False})  # importa os dados agora
+        resource.import_data(dataset, dry_run=False, collect_failed_rows=True, before_import_kwargs={"dry_run": False})  # importa os dados agora
         
         if hasattr(resource, "registros"):
             string_html = "<b>Importado ({0} registros novos): </b><br>".format(len(resource.registros["novos"]))
@@ -555,9 +555,7 @@ def propor(request):
             propostas = []
 
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-            filter(anoPFE=ano).\
-            filter(semestrePFE=semestre).\
-            filter(trancado=False).\
+            filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\
             order_by(Lower("user__first_name"), Lower("user__last_name"))
         
         # Calcula média dos CRs
@@ -737,7 +735,7 @@ def propor(request):
         }
         return JsonResponse(data)
 
-    return HttpResponseNotFound('Requisição errada')
+    return HttpResponseNotFound("Requisição errada")
 
 
 
@@ -802,18 +800,8 @@ def montar_grupos(request):
                     except Projeto.DoesNotExist:
                         projeto = Projeto.create(proposta)
 
-                    # Usando o titulo da propopoesta como titulo do projeto, ou criando um titulo_final
-                    # if not projeto.titulo:
-                    #     projeto.titulo = proposta.titulo
-
-                    # Estou tirando descrição do projeto
-                    # if not projeto.descricao:
-                    #     projeto.descricao = proposta.descricao
-
                     if not projeto.organizacao:
                         projeto.organizacao = proposta.organizacao
-
-                    # projeto.avancado = None
 
                     projeto.ano = proposta.ano
                     projeto.semestre = proposta.semestre
@@ -845,8 +833,7 @@ def montar_grupos(request):
                         projeto.delete()
 
             if mensagem:
-                request.session["mensagem"] = "Estudantes possuiam alocações com notas:\n"
-                request.session["mensagem"] += mensagem
+                request.session["mensagem"] = "Estudantes possuiam alocações com notas:\n" + mensagem
 
             return redirect("/administracao/selecionar_orientadores/")
 
@@ -862,37 +849,24 @@ def montar_grupos(request):
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"), 
     }
 
-    return render(request, 'administracao/montar_grupos.html', context=context)
+    return render(request, "administracao/montar_grupos.html", context=context)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def selecionar_orientadores(request):
     """Selecionar Orientadores para os Projetos."""
-    configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    ano, semestre = adianta_semestre(ano, semestre)
 
-    mensagem = ""
-    if "mensagem" in request.session:
-        mensagem += request.session["mensagem"]
+    mensagem = request.session["mensagem"] if "mensagem" in request.session else ""
+    if request.user.tipo_de_usuario != 4:  # Checa se usuário é administrador
+        mensagem += "Sua conta não é de administrador, você pode mexer na tela, contudo suas modificações não serão salvas."
 
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-    professores = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
-    orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
-
-    # Checa se usuário é administrador ou professor
-    if request.user.tipo_de_usuario != 4:  # admin
-        mensagem = "Sua conta não é de administrador, "
-        mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+    ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
         "mensagem": mensagem,
-        "projetos": projetos,
-        "orientadores": orientadores,
+        "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
+        "orientadores": PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])  #2prof 4adm,
     }
 
     return render(request, "administracao/selecionar_orientadores.html", context=context)
@@ -901,30 +875,17 @@ def selecionar_orientadores(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def fechar_conexoes(request):
-    """Selecionar Conexões com Organizações."""
-    configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    ano, semestre = adianta_semestre(ano, semestre)
-
-    mensagem = ""
-    if "mensagem" in request.session:
-        mensagem += request.session["mensagem"]
+    """Fechar conexões com Organizações."""
     
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+    mensagem = request.session["mensagem"] if "mensagem" in request.session else ""
+    if request.user.tipo_de_usuario != 4:  # Checa se usuário é administrador
+        mensagem += "Sua conta não é de administrador, você pode mexer na tela, contudo suas modificações não serão salvas."
 
-    professores = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
-    orientadores = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
-
-    # Checa se usuário é administrador ou professor
-    if request.user.tipo_de_usuario != 4:  # admin
-        mensagem = "Sua conta não é de administrador, "
-        mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
+    ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
         "mensagem": mensagem,
-        "projetos": projetos,
+        "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
     }
 
     return render(request, "administracao/fechar_conexoes.html", context=context)
@@ -935,16 +896,12 @@ def fechar_conexoes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def servico(request):
     """Caso servidor esteja em manutenção."""
-    if request.method == 'POST':
-        check_values = request.POST.getlist('selection')
-        if 'manutencao' in check_values:
-            settings.MAINTENANCE_MODE = 1
-        else:
-            settings.MAINTENANCE_MODE = 0
-        return redirect('/administracao')
-
-    context = {'manutencao': settings.MAINTENANCE_MODE, }
-    return render(request, 'administracao/servico.html', context)
+    if request.method == "POST":
+        check_values = request.POST.getlist("selection")
+        settings.MAINTENANCE_MODE = 1 if "manutencao" in check_values else 0
+        return redirect("/administracao")
+    context = {"manutencao": settings.MAINTENANCE_MODE, }
+    return render(request, "administracao/servico.html", context)
 
 
 @login_required
@@ -954,28 +911,14 @@ def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
     if request.user.tipo_de_usuario == 4:  # admin
 
-        # Código a seguir não estritamente necessário mas pode deixar mais seguro
-        administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-
-        if not administrador:
-            return HttpResponse("Administrador não encontrado.", status=401)
-
-        estudante = request.GET.get('estudante', None)
+        estudante = request.GET.get("estudante", None)
         estudante_id = int(estudante[len("estudante"):])
+        estudante = get_object_or_404(Aluno, id=estudante_id)
 
-        proposta = request.GET.get('proposta', None)
+        proposta = request.GET.get("proposta", None)
         proposta_id = int(proposta[len("proposta"):])
-
-        configuracao = get_object_or_404(Configuracao)
-        ano = configuracao.ano
-        semestre = configuracao.semestre
-
-        # Vai para próximo semestre
-        ano, semestre = adianta_semestre(ano, semestre)
-
         proposta = get_object_or_404(Proposta, id=proposta_id)
 
-        estudante = get_object_or_404(Aluno, id=estudante_id)
         estudante.pre_alocacao = proposta
         estudante.save()
 
@@ -984,9 +927,9 @@ def pre_alocar_estudante(request):
         pass
 
     else:
-        return HttpResponseNotFound('<h1>Usuário sem privilérios!</h1>')
+        return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
 
-    return JsonResponse({'atualizado': False,})
+    return JsonResponse({"atualizado": False,})
 
 
 @login_required
@@ -999,21 +942,13 @@ def definir_orientador(request):
         # Código só se usuário é administrador
 
         orientador_get = request.POST.get("orientador", None)
-        orientador_id = None
-        if orientador_get:
-            orientador_id = int(orientador_get[len("orientador"):])
+        orientador_id = int(orientador_get[len("orientador"):]) if orientador_get else None
+        orientador = get_object_or_404(Professor, user_id=orientador_id) if orientador_id else None
 
-        projeto_get = request.POST.get("projeto", None)
-        projeto_id = None
-        if projeto_get:
-            projeto_id = int(projeto_get[len("projeto"):])
-
-        if orientador_id:
-            orientador = get_object_or_404(Professor, user_id=orientador_id)
-        else:
-            orientador = None
-
+        projeto_get = request.POST.get("projeto", None)        
+        projeto_id = int(projeto_get[len("projeto"):]) if projeto_get else None
         projeto = get_object_or_404(Projeto, id=projeto_id)
+
         projeto.orientador = orientador
         projeto.save()
 
@@ -1023,7 +958,7 @@ def definir_orientador(request):
     else:
         return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
 
-    return JsonResponse({"atualizado": False,})
+    return JsonResponse({"atualizado": True,})
 
 
 @login_required
@@ -1033,17 +968,11 @@ def excluir_disciplina(request):
     """Remove Disciplina Recomendada."""
     
     if request.is_ajax() and "disciplina_id" in request.POST:
-
         disciplina_id = int(request.POST["disciplina_id"])
-
         instance = Disciplina.objects.get(id=disciplina_id)
         instance.delete()
 
-        data = {
-            "atualizado": True,
-        }
-
-        return JsonResponse(data)
+        return JsonResponse({"atualizado": True})
 
     return HttpResponseNotFound("Requisição errada")
 
@@ -1089,12 +1018,12 @@ def export(request, modelo, formato):
     databook.add_sheet(dataset)
 
     if formato in ("xls", "xlsx"):
-        response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
+        response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
         formato = "xlsx"
     elif formato == "json":
-        response = HttpResponse(dataset.json, content_type='application/json')
+        response = HttpResponse(dataset.json, content_type="application/json")
     elif formato == "csv":
-        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response = HttpResponse(dataset.csv, content_type="text/csv")
     else:
         mensagem = "Chamada irregular : Formato desconhecido = " + formato
         context = {
@@ -1103,7 +1032,7 @@ def export(request, modelo, formato):
         }
         return render(request, "generic.html", context=context)
 
-    response['Content-Disposition'] = 'attachment; filename="'+modelo+'.'+formato+'"'
+    response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
 
     return response
 
@@ -1153,10 +1082,10 @@ def backup(request, formato):
     """Gera um backup de tudo."""
     databook = create_backup()
     if formato in ("xls", "xlsx"):
-        response = HttpResponse(databook.xlsx, content_type='application/ms-excel')
+        response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
         formato = "xlsx"
     elif formato == "json":
-        response = HttpResponse(databook.json, content_type='application/json')
+        response = HttpResponse(databook.json, content_type="application/json")
     else:
         mensagem = "Chamada irregular : Formato desconhecido = " + formato
         context = {
@@ -1165,7 +1094,7 @@ def backup(request, formato):
         }
         return render(request, "generic.html", context=context)
 
-    response['Content-Disposition'] = 'attachment; filename="backup.'+formato+'"'
+    response["Content-Disposition"] = 'attachment; filename="backup.'+formato+'"'
 
     return response
 
@@ -1175,23 +1104,23 @@ def backup(request, formato):
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
     configuracao = get_object_or_404(Configuracao)
-    context = {'configuracao': configuracao}
+    context = {"configuracao": configuracao}
 
     if modelo == "propostas":
-        context['propostas'] = Proposta.objects.all()
+        context["propostas"] = Proposta.objects.all()
         arquivo = "administracao/relatorio_propostas.html"
 
     elif modelo == "projetos":
-        context['projetos'] = Projeto.objects.all()
+        context["projetos"] = Projeto.objects.all()
         arquivo = "administracao/relatorio_projetos.html"
 
     elif modelo == "estudantes" or modelo == "alunos":
-        context['alunos'] = Aluno.objects.all().filter(anoPFE=configuracao.ano,
+        context["alunos"] = Aluno.objects.all().filter(anoPFE=configuracao.ano,
                                                        semestrePFE=configuracao.semestre)
         arquivo = "administracao/relatorio_alunos.html"
 
     elif modelo == "feedbacks":
-        context['feedbacks'] = Feedback.objects.all()
+        context["feedbacks"] = Feedback.objects.all()
         arquivo = "administracao/relatorio_feedbacks.html"
 
     else:
@@ -1206,7 +1135,7 @@ def relatorio(request, modelo, formato):
 
     if formato in ("pdf", "PDF"):
         pdf = render_to_pdf(arquivo, context)
-        return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+        return HttpResponse(pdf.getvalue(), content_type="application/pdf")
 
     return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1216,9 +1145,9 @@ def relatorio(request, modelo, formato):
 def dados_backup(request, modo):
     """Envia e-mails de backup de segurança."""
     
-    if request.method == 'POST' and 'email' in request.POST and 'sigla' in request.POST:
+    if request.method == "POST" and "email" in request.POST and "sigla" in request.POST:
 
-        subject = 'RELATÓRIOS'
+        subject = "RELATÓRIOS"
         message = "Relatórios"
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [request.POST["email"],]
@@ -1227,19 +1156,19 @@ def dados_backup(request, modo):
         if modo == "relatorios":
             configuracao = get_object_or_404(Configuracao)
             context = {
-                'projetos': Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
-                'alunos': Aluno.objects.filter(anoPFE=configuracao.ano, semestrePFE=configuracao.semestre),
-                'configuracao': configuracao,
+                "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
+                "alunos": Aluno.objects.filter(anoPFE=configuracao.ano, semestrePFE=configuracao.semestre),
+                "configuracao": configuracao,
             }
-            pdf_proj = render_to_pdf('administracao/relatorio_projetos.html', context)
-            pdf_alun = render_to_pdf('administracao/relatorio_alunos.html', context)
-            mail.attach("projetos.pdf", pdf_proj.getvalue(), 'application/pdf')
-            mail.attach("alunos.pdf", pdf_alun.getvalue(), 'application/pdf')
+            pdf_proj = render_to_pdf("administracao/relatorio_projetos.html", context)
+            pdf_alun = render_to_pdf("administracao/relatorio_alunos.html", context)
+            mail.attach("projetos.pdf", pdf_proj.getvalue(), "application/pdf")
+            mail.attach("alunos.pdf", pdf_alun.getvalue(), "application/pdf")
 
         elif modo=="dados":
             databook = create_backup()
-            mail.attach("backup.xlsx", databook.xlsx, 'application/ms-excel')
-            mail.attach("backup.json", databook.json, 'application/json')
+            mail.attach("backup.xlsx", databook.xlsx, "application/ms-excel")
+            mail.attach("backup.json", databook.json, "application/json")
             
         mail.send()
         
@@ -1258,8 +1187,7 @@ def dados_backup(request, modo):
 @permission_required("users.altera_professor", raise_exception=True)
 def logs(request, dias=30):
     """Alguns logs de Admin."""
-    v = usuario_sem_acesso(request, (4,)) # Soh Adm
-    if v: return v  # Prof, Adm
+    usuario_sem_acesso(request, (4,)) # Soh Adm
 
     thirty_days_ago = timezone.now() - datetime.timedelta(days=dias)
     message = "As seguintes alterações foram realizadas pela interface de administrador:<br>"
@@ -1268,8 +1196,7 @@ def logs(request, dias=30):
     for log in LogEntry.objects.filter(action_time__gte=thirty_days_ago):
         message += "&bull; " + str(log.user) + " [" + str(log.action_time) + "]: " + str(log)+"<br>\n"
 
-    message += "<br>"
-    message += "<a href=' " + str(dias+30) + "'>Mostrar último " + str(dias+30) + " dias</a>"
+    message += "<br><a href=' " + str(dias+30) + "'>Mostrar último " + str(dias+30) + " dias</a>"
     
     return HttpResponse(message)
 
@@ -1306,8 +1233,6 @@ def conexoes_estabelecidas(request):
 
     return render(request, "administracao/conexoes_estabelecidas.html", context=context)
 
-    
-
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -1317,16 +1242,9 @@ def bloqueados(request):
         return HttpResponse("Você não tem privilégios")
 
     mes_atras = timezone.now() - datetime.timedelta(days=30)
-    access_attempts = AccessAttempt.objects.all()
-    access_logs = AccessLog.objects.all().filter(attempt_time__gte=mes_atras)
     
     context = {
-        "mensagem": "",
-        "access_logs": access_logs,
-        "access_attempts": access_attempts,
+        "access_logs": AccessLog.objects.all().filter(attempt_time__gte=mes_atras),
+        "access_attempts": AccessAttempt.objects.all(),
     }
-
     return render(request, "administracao/bloqueados.html", context=context)
-
-
-

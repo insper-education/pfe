@@ -315,26 +315,26 @@
 
     function escondePropostas(){
 
-        var propostas = $('.proposta');
+        var propostas = $(".proposta");
         for (var i = 0; i < propostas.length; i++) {
-          qtd_estudantes = $(propostas[i]).children('div').length - 1
+          qtd_estudantes = $(propostas[i]).children("div").length - 1
           if(qtd_estudantes == 0) {
               // VAZIA
-              if($('#vazia').is(":checked")) {
+              if($("#vazia").is(":checked")) {
                 $(propostas[i]).parent().show();
               } else {
                 $(propostas[i]).parent().hide();
               }
           } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
               // Desbalanceadas
-              if($('#desbalanceada').is(":checked")) {
+              if($("#desbalanceada").is(":checked")) {
                 $(propostas[i]).parent().show();
               } else {
                 $(propostas[i]).parent().hide();
               }
           } else {
               // Balanceadas
-              if($('#balanceada').is(":checked")) {
+              if($("#balanceada").is(":checked")) {
                 $(propostas[i]).parent().show();
               } else {
                 $(propostas[i]).parent().hide();
@@ -495,16 +495,15 @@
       var $draggedItem;
 
       $(document).ready(function() {
-        $('.estudante').on('dragstart', dragging);
-        $('.estudante').on('dragend', draggingEnded);
-        $('.proposta').on('dragenter', preventDefault);
-        $('.proposta').on('dragover', preventDefault);
-        $('.proposta').on('drop', dropAluno);
-        $(window).on('unload', salvar_estado );
-
+        $(".estudante").on("dragstart", dragging);
+        $(".estudante").on("dragend", draggingEnded);
+        $(".proposta").on("dragenter", preventDefault);
+        $(".proposta").on("dragover", preventDefault);
+        $(".proposta").on("drop", dropAluno);
+        $(window).on("unload", salvar_estado );
 
         // ORDENA CRs por Projeto
-        $('.proposta').each(function(index, element) {
+        $(".proposta").each(function(index, element) {
           ordenaCR($(this), "div");
         });
 
@@ -728,18 +727,16 @@
     function dragging(e) {
       var target = $(e.target);
       if (target.hasClass("estudante")) {
-      //if (target.attr('class')=="estudante") {
         $draggedItem = target;
-        $draggedItem.addClass('dragging');
-      //} else if (target.parent().attr('class')=="estudante") {
+        $draggedItem.addClass("dragging");
       } else if (target.parent().hasClass("estudante")) {
         $draggedItem = target.parent();
-        $draggedItem.addClass('dragging');
+        $draggedItem.addClass("dragging");
       }
     }
 
     function draggingEnded(e) {
-        $draggedItem.removeClass('dragging');
+        $draggedItem.removeClass("dragging");
         $draggedItem = null
     }
 

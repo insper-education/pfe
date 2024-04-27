@@ -9,12 +9,10 @@ import datetime
 from hashids import Hashids
 
 from django.conf import settings
-
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
-from django.core.exceptions import ValidationError
-
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
@@ -342,9 +340,8 @@ def avaliacao_pares(request, momento):
     """Permite realizar a avaliação de pares."""
     configuracao = get_object_or_404(Configuracao)
 
-    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    if v: return v  # Prof, Adm
-
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    
     estudante = None
     if request.user.tipo_de_usuario == 1:
         estudante = request.user.aluno
@@ -439,9 +436,8 @@ def avaliacao_pares(request, momento):
 @transaction.atomic
 def informacoes_adicionais(request):
     """Perguntas aos estudantes de áreas de interesse, trabalho/entidades/social/familia, telefone."""
-    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    if v: return v  # Prof, Adm
-
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    
     if request.user.tipo_de_usuario == 1:
 
         estudante = request.user.aluno
@@ -513,9 +509,7 @@ def minhas_bancas(request):
 
         bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
         
-        context = {
-            "bancas": bancas,
-            }
+        context = {"bancas": bancas,}
     else:
         context = {"mensagem": "Você não está cadastrado como estudante.",}
     return render(request, "estudantes/minhas_bancas.html", context)
@@ -525,9 +519,8 @@ def minhas_bancas(request):
 @transaction.atomic
 def relato_quinzenal(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    if v: return v  # Prof, Adm
-
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    
     hoje = datetime.date.today()
 
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
@@ -595,9 +588,7 @@ def exames_pesos(request):
         for semestre in range(1, 3):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
-    context = {
-        "semestres": semestres,
-    }
+    context = {"semestres": semestres,}
     return render(request, "academica/exames_pesos.html", context)
 
 
@@ -615,11 +606,8 @@ def submissao_documento(request):
             context["mensagem"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
     else:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
-        if alocacao:
-            projeto = alocacao.projeto
-        else:
-            projeto = None
-
+        projeto = alocacao.projeto if alocacao else None
+        
     if not projeto:
         return HttpResponse("Você não está alocado em um projeto esse semestre.", status=401)
 
@@ -640,10 +628,7 @@ def selecao_propostas(request):
 
     min_props = configuracao.min_props
 
-    #liberadas_propostas = configuracao.liberadas_propostas
     liberadas_propostas = propostas_liberadas(configuracao)
-
-    # Vai para próximo semestre
     ano, semestre = adianta_semestre_conf(configuracao)
 
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
@@ -701,25 +686,20 @@ def selecao_propostas(request):
                             opcoes_tmp = Opcao.objects.filter(aluno=aluno, proposta=proposta)
                             if opcoes_tmp.count() > 1:  # Algum erro isso não deveria ter acontecido
                                 opcoes_tmp.delete()  # apaga tudo e cria um novo
-                                opc = Opcao.objects.create(aluno=aluno,
-                                                           proposta=proposta,
-                                                           prioridade=prio_int)
+                                opc = Opcao.objects.create(aluno=aluno, proposta=proposta, prioridade=prio_int)
                                 opc.save()
                             else:
                                 opc = opcoes_tmp.last()
                                 opc.prioridade = prio_int
                                 opc.save()
 
-                    else:
-                        # Se lista não for vazia
+                    else:  # Se lista não for vazia
+
                         if aluno.opcoes.filter(pk=proposta.pk):
-                            Opcao.objects\
-                                .filter(aluno=aluno, proposta=proposta)\
-                                .delete()
+                            Opcao.objects.filter(aluno=aluno, proposta=proposta).delete()
                 message = create_message(aluno, ano, semestre)
 
                 subject = "Capstone Insper: " + aluno.user.username
-                #recipient_list = ['pfeinsper@gmail.com', aluno.user.email, ]
                 recipient_list = [aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:
@@ -741,9 +721,8 @@ def selecao_propostas(request):
     elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
         opcoes_temporarias = []
 
-    v = usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    if v: return v  # Prof, Adm
-
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    
     areas_normais = AreaDeInteresse.objects.filter(usuario=request.user, area__ativa=True).exists()
     areas_outras = AreaDeInteresse.objects.filter(usuario=request.user, area=None).exists()
     areas = areas_normais or areas_outras
@@ -769,14 +748,14 @@ def opcao_temporaria(request):
     """Ajax para definir opção temporária de seleção de proposta de projeto."""
     try:
         assert request.user.tipo_de_usuario == 1
-        proposta_id = int(request.POST.get('proposta_id', None))
-        prioridade = int(request.POST.get('prioridade', None))
+        proposta_id = int(request.POST.get("proposta_id", None))
+        prioridade = int(request.POST.get("prioridade", None))
         proposta = get_object_or_404(Proposta, id=proposta_id)
     except:
-        return JsonResponse({'atualizado': False}, status=500)
+        return JsonResponse({"atualizado": False}, status=500)
 
     reg, _ = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=request.user.aluno)
     reg.prioridade = prioridade
     reg.save()
 
-    return JsonResponse({'atualizado': True,})
+    return JsonResponse({"atualizado": True,})

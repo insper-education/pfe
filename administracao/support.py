@@ -11,6 +11,7 @@ import dateutil.parser
 from django.conf import settings
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied  # Para erro 400
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -78,6 +79,7 @@ def propostas_liberadas(configuracao):
 def usuario_sem_acesso(request, acessos):
     
     if (not request.user.is_authenticated) or (request.user is None):
+        raise PermissionDenied("Você não está autenticado!")
         mensagem = "Você não está autenticado!"
         context = {
             "area_principal": True,
@@ -86,12 +88,15 @@ def usuario_sem_acesso(request, acessos):
         return render(request, "generic.html", context=context)
 
     if request.user.tipo_de_usuario not in acessos:
+        raise PermissionDenied("Você não tem privilégios de acesso a essa área!")
+    
         mensagem = "Você não tem privilégios de acesso a essa área!"
         context = {
             "area_principal": True,
             "mensagem": mensagem,
         }
-        return render(request, "generic.html", context=context)
+        raise render(request, "generic.html", context=context)
+    
 
 
 def registra_organizacao(request, org=None):

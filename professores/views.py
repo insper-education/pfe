@@ -618,7 +618,7 @@ def bancas_editar(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-    context = {'periodo': periodo_projeto}
+    context = {"periodo": periodo_projeto}
 
     if periodo_projeto == "proximas":
         # Coletando bancas agendadas a partir de hoje

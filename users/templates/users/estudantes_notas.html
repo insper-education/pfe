@@ -170,9 +170,9 @@
       var sum = 0;
       var count = 0;
       var array = [];
-      var all = $('#EstudantesTable > tbody > tr');
+      var all = $("#EstudantesTable > tbody > tr");
       all.each(function() {
-          texto = $('td:eq(4)', this).text().trim().replace(",", ".");
+          texto = $("td:eq(4)", this).text().trim().replace(",", ".");
           nota = parseFloat(texto)
           if(!isNaN(nota)) {
             sum += nota
@@ -194,8 +194,8 @@
       }
       
       function carrega_pagina() {
-        if($('#EstudantesTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $('#EstudantesTable').dataTable();
+        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#EstudantesTable").dataTable();
           if(table) {
             table.fnSetColumnVis( 1, false );  // esconde e-mail
             table.fnSetColumnVis( 2, false );  // esconde Curso
