@@ -1205,8 +1205,7 @@ def logs(request, dias=30):
 @permission_required("users.altera_professor", raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
-    if request.user.tipo_de_usuario != 4:
-        return HttpResponse("Você não tem privilégios")
+    usuario_sem_acesso(request, (4,)) # Soh Adm
     
     mensagem = ""
     sessions = Session.objects.filter(expire_date__gte=timezone.now())

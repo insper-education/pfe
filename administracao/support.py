@@ -25,9 +25,7 @@ from operacional.models import Curso
 
 def limpa_texto(texto):
     """Remove caracteres especiais do texto."""
-    if texto is None:
-        return None
-    return texto.replace("\x00", "\uFFFD")
+    return texto.replace("\x00", "\uFFFD") if texto else None
 
 
 def get_limite_propostas(configuracao):

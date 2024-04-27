@@ -11,7 +11,6 @@ import random
 import datetime
 import tablib
 
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
@@ -29,7 +28,7 @@ from projetos.models import ObjetivosDeAprendizagem, Evento
 from projetos.messages import email
 from projetos.support import calcula_objetivos
 
-from administracao.support import get_limite_propostas
+from administracao.support import get_limite_propostas, usuario_sem_acesso
 from administracao.models import Carta
 
 from academica.models import Composicao, CodigoColuna
@@ -664,12 +663,11 @@ def estudante_detail(request, primarykey):
     if not estudante:
         return HttpResponse("Estudante não encontrado.", status=401)
     alocacoes = Alocacao.objects.filter(aluno=estudante)
-    certificados = Certificado.objects.filter(usuario=estudante.user)
 
     context = calcula_objetivos(alocacoes)
     context["aluno"] = estudante
     context["alocacoes"] = alocacoes
-    context["certificados"] = certificados
+    context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
     context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
     context["areast"] = Area.objects.filter(ativa=True)
 
@@ -705,25 +703,18 @@ def parceiro_detail(request, primarykey=None):
     
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
 
-    conexoes = Conexao.objects.filter(parceiro=parceiro)
-
-    mentorias = Encontro.objects.filter(facilitador=parceiro.user)
-
     bancas = (Banca.objects.filter(membro1=parceiro.user) |
               Banca.objects.filter(membro2=parceiro.user) |
               Banca.objects.filter(membro3=parceiro.user))
 
     bancas = bancas.order_by("startDate")
 
-    # (12, 'Aula PFE', 'lightgreen'),
-    aulas = Evento.objects.filter(tipo_de_evento=12, responsavel=parceiro.user) #.order_by("endDate", "startDate").last()
-
     context = {
         "parceiro": parceiro,
-        "conexoes": conexoes,
-        "mentorias": mentorias,
+        "conexoes": Conexao.objects.filter(parceiro=parceiro),
+        "mentorias": Encontro.objects.filter(facilitador=parceiro.user),
+        "aulas": Evento.objects.filter(tipo_de_evento=12, responsavel=parceiro.user),
         "bancas": bancas,
-        "aulas": aulas,
     }
     return render(request, "users/parceiro_detail.html", context=context)
 
@@ -732,8 +723,7 @@ def parceiro_detail(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def contas_senhas(request, edicao=None):
     """permite selecionar os estudantes para enviar conta e senha."""
-    if request.user.tipo_de_usuario != 4:  # não é admin
-        return HttpResponse("Usuário sem privilégios necessários.", status=403)
+    usuario_sem_acesso(request, (4,)) # Soh Adm
 
     if request.is_ajax():
         if "edicao" in request.POST:
@@ -767,8 +757,7 @@ def contas_senhas(request, edicao=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def envia_contas_senhas(request):
     """Envia conta e senha para todos os estudantes que estão no semestre."""
-    if request.user.tipo_de_usuario != 4:  # não é admin
-        return HttpResponse("Usuário sem privilégios necessários.", status=403)
+    usuario_sem_acesso(request, (4,)) # Soh Adm
 
     configuracao = get_object_or_404(Configuracao)
 

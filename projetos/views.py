@@ -40,6 +40,7 @@ from .support import divide57
 
 from .tasks import avisos_do_dia, eventos_do_dia
 
+from administracao.support import usuario_sem_acesso
 
 
 def get_areas_estudantes(alunos):
@@ -143,11 +144,11 @@ def projeto_completo(request, primarykey):
 @permission_required("projetos.add_proposta", raise_exception=True)
 def projeto_organizacao(request, primarykey):
     """Mostra um projeto por completo."""
+    
+    usuario_sem_acesso(request, (3, 4,)) # Soh Parc Adm
+
     projeto = get_object_or_404(Projeto, pk=primarykey)
     
-    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:
-        return HttpResponse("Algum erro não identificado.", status=401)
-
     organizacao = None
     if hasattr(request.user, "parceiro"):
         organizacao = request.user.parceiro.organizacao
@@ -472,15 +473,7 @@ def bancas_lista(request):
 @login_required
 def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
-
-    # Caso não seja Aluno, Professor ou Administrador (ou seja Parceiro)
-    if request.user.tipo_de_usuario != 1 and request.user.tipo_de_usuario != 2 and request.user.tipo_de_usuario != 4:
-        mensagem = "Você não está cadastrado como aluno ou professor!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, "generic.html", context=context)
+    usuario_sem_acesso(request, (1, 2, 4,)) # Soh Est Parc Adm
 
     # Caso seja Professor ou Administrador
     if request.user.tipo_de_usuario in (2, 4):
@@ -1683,7 +1676,7 @@ def editar_projeto(request, primarykey):
     """Editar Projeto."""
 
     if request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Somente coordenadores podem editar projetos.", status=401)
+        return HttpResponse("Somente administradores podem editar projetos.", status=401)
 
     projeto = Projeto.objects.get(id=primarykey)
 
@@ -1834,14 +1827,9 @@ def acompanhamento_view(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def reenvia_avisos(request):
     """Reenvia avisos do dia."""
-
-    # Caso não seja Administrador
-    if request.user.tipo_de_usuario != 4:
-        return HttpResponse("Você não tem privilégios!", status=401)
-    
+    usuario_sem_acesso(request, (4,)) # Soh Adm
     avisos_do_dia()
     eventos_do_dia()
-
     return redirect("avisos_listar")
 
 

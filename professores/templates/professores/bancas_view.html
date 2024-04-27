@@ -181,7 +181,6 @@
         <span style="display:inline-block; width:5.5ex; text-align:right;">Início:</span>
         <input id="inicio" type="datetime-local" name="inicio" 
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-        {% comment %} min="2018-01-01T00:00" max="2018-12-31T00:00"  {% endcomment %}
         {% if banca %}
           value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
         {% elif data %}

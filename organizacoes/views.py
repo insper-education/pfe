@@ -18,7 +18,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from organizacoes.support import get_form_fields, cria_documento
 
-from administracao.support import limpa_texto
+from administracao.support import limpa_texto, usuario_sem_acesso
 
 from users.support import adianta_semestre, get_edicoes
 from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno, Alocacao
@@ -45,10 +45,7 @@ def index_organizacoes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso para pk
     """Cria um anotação para uma organização parceira."""
-    if organizacao_id:
-        organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    else:
-        organizacao = None
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
 
     if request.is_ajax() and "texto" in request.POST:
 
@@ -93,19 +90,15 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     else:
         data_hora = datetime.datetime.now()
 
-    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
-
     context = {
         "organizacao": organizacao,
-        "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
+        "TIPO_DE_RETORNO": sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1])),
         "data_hora": data_hora,
         "anotacao": anotacao_obj,
         "organizacoes": Organizacao.objects.all(),
     }
 
-    return render(request,
-                  "organizacoes/anotacao_view.html",
-                  context=context)
+    return render(request, "organizacoes/anotacao_view.html", context=context)
 
 
 @login_required
@@ -175,9 +168,7 @@ def adiciona_documento_tipo(request, tipo_nome=None):
 @transaction.atomic
 def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     """Cria um documento pelos estudantes somente."""
-
-    if request.user.tipo_de_usuario != 1:  # Não é Estudante
-        return HttpResponse("Você não possui conta de estudante.", status=403)
+    usuario_sem_acesso(request, (1,)) # Soh Estudantes
 
     configuracao = get_object_or_404(Configuracao)
 
@@ -823,18 +814,13 @@ def seleciona_conexoes(request):
 
         return redirect("projeto_completo", projeto_id)
 
-
-    todos_parceiros = Parceiro.objects.all()
-
-    colaboradores = None
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
-    if cooperacoes:
-        colaboradores = cooperacoes.last().parceiro
+    colaboradores = cooperacoes.last().parceiro if cooperacoes else None
 
     context = {
         "projeto": projeto,
         "parceiros": parceiros,
-        "todos_parceiros": todos_parceiros,
+        "todos_parceiros": Parceiro.objects.all(),
         "colaboradores": colaboradores,
         "Conexao": Conexao,
         }
@@ -847,10 +833,8 @@ def seleciona_conexoes(request):
 def estrelas(request):
     """Ajax para validar estrelas de interesse."""
     organizacao_id = int(request.GET.get("organizacao", None))
-    numero_estrelas = int(request.GET.get("estrelas", 0))
-
     organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-    organizacao.estrelas = numero_estrelas
+    organizacao.estrelas = int(request.GET.get("estrelas", 0))  # numero_estrelas
     organizacao.save()
 
     return JsonResponse({"atualizado": True,})

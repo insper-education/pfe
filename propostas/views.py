@@ -26,7 +26,7 @@ from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 
-from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas
+from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
 
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
@@ -618,8 +618,7 @@ def proposta_editar(request, slug):
 @permission_required("users.altera_professor", raise_exception=True)
 def proposta_remover(request, slug):
     """Remove Proposta do Sistema por slug."""
-    if request.user.tipo_de_usuario != 4:  # admin
-        return HttpResponse("Sem privilégios de Administrador.", status=401)
+    usuario_sem_acesso(request, (4,)) # Soh Adm
 
     proposta = get_object_or_404(Proposta, slug=slug)
     proposta.delete()

@@ -47,6 +47,9 @@ from academica.support import filtra_composicoes, filtra_entregas
 
 from documentos.models import TipoDocumento
 
+from administracao.support import usuario_sem_acesso
+
+
 def get_evento(evento_id, configuracao):
     if configuracao.semestre == 1:
         eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=configuracao.ano, endDate__month__lt=7)
@@ -1428,7 +1431,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     
     projeto = Projeto.objects.get(pk=projeto_id)
     if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
-        return HttpResponseNotFound('<h1>Você não é o orientador desse projeto!</h1>')
+        return HttpResponseNotFound("<h1>Você não é o orientador desse projeto!</h1>")
 
     composicao = Composicao.objects.get(pk=composicao_id)
 
@@ -1436,7 +1439,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     if estudante_id:
         estudante = PFEUser.objects.get(pk=estudante_id)
         if estudante.tipo_de_usuario != 1:
-            return HttpResponseNotFound('<h1>Pessoa avaliada não é estudante!</h1>')
+            return HttpResponseNotFound("<h1>Pessoa avaliada não é estudante!</h1>")
         alocacao = Alocacao.objects.get(projeto=projeto, aluno=estudante.aluno)
 
     objetivos = composicao.pesos.all()
@@ -2805,10 +2808,8 @@ def planos_de_orientacao(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def planos_de_orientacao_todos(request):
     """Formulários com os projetos e planos de orientação dos professores orientadores."""
+    usuario_sem_acesso(request, (4,)) # Soh Parc Adm
 
-    if request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Acesso negado.", status=401)
-    
     if request.is_ajax():
 
         if "edicao" in request.POST:
