@@ -15,6 +15,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.http import HttpResponseNotFound
+from django.core.exceptions import ValidationError
 
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -26,7 +27,7 @@ from .support import cria_area_estudante
 
 from projetos.messages import email, message_agendamento, create_message, message_cancelamento
 
-from users.models import PFEUser, Alocacao, Opcao, OpcaoTemporaria
+from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre, adianta_semestre_conf
 
@@ -461,7 +462,7 @@ def informacoes_adicionais(request):
 
         vencido = configuracao_estudante_vencida(request.user.aluno)
 
-        if (not vencido) and request.method == 'POST':
+        if (not vencido) and request.method == "POST":
 
             cria_area_estudante(request, request.user.aluno)
 
@@ -470,7 +471,19 @@ def informacoes_adicionais(request):
             request.user.aluno.entidade = request.POST.get("entidade", None)
             request.user.aluno.familia = request.POST.get("familia", None)
 
-            request.user.linkedin = request.POST.get("linkedin", None)
+            link = request.POST.get("linkedin", None)
+            if not (link and link.strip()):
+                link = None
+            if link:
+                if link[:4] != "http":
+                    link = "http://" + link
+
+                max_length = PFEUser._meta.get_field("linkedin").max_length
+                if len(link) > max_length:
+                    raise ValidationError("<h1>Erro: link do LinkedIn informado maior que " + str(max_length) + " caracteres.</h1>")
+
+            request.user.linkedin = link
+
             request.user.celular = request.POST.get("celular", None)
 
             request.user.save()
@@ -489,6 +502,8 @@ def informacoes_adicionais(request):
     
     context["entidades"] = Entidade.objects.all()
     context["areast"] = Area.objects.filter(ativa=True)
+    context["Aluno"] = Aluno
+    context["PFEUser"] = PFEUser
 
     return render(request, "estudantes/informacoes_adicionais.html", context)
 
