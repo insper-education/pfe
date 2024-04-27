@@ -12,9 +12,7 @@ from django.conf import settings
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.http import HttpResponseNotFound
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.core.exceptions import ValidationError
 
 from django.shortcuts import render, get_object_or_404
@@ -107,7 +105,6 @@ def index_estudantes(request):
 
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
 
-    
     return render(request, "estudantes/index_estudantes.html", context=context)
 
 
@@ -186,13 +183,7 @@ def encontros_marcar(request):
                 recipient_list.append(alocacao.aluno.user.email)
             
             # coordenadoção
-            # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
-            # for coordenador in coordenacoes:
-            #     recipient_list.append(str(coordenador.email))
             recipient_list.append(str(configuracao.coordenacao.user.email))
-
-            # sempre mandar para a conta do gmail
-            #recipient_list.append("pfeinsper@gmail.com")
 
             message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
@@ -239,7 +230,6 @@ def encontros_cancelar(request, evento_id):
     encontro.projeto = None
     encontro.save()
 
-
     subject = "Dinâmica cancelada"
     recipient_list = []
     alocacoes = Alocacao.objects.filter(projeto=projeto)
@@ -248,9 +238,6 @@ def encontros_cancelar(request, evento_id):
     
     # coordenadoção
     recipient_list.append(str(configuracao.coordenacao.user.email))
-
-    # sempre mandar para a conta do gmail
-    #recipient_list.append("pfeinsper@gmail.com")
 
     message = message_cancelamento(encontro)
     check = email(subject, recipient_list, message)
@@ -264,7 +251,6 @@ def encontros_cancelar(request, evento_id):
         "mensagem": mensagem,
     }
     return render(request, "generic.html", context=context)
-
 
 
 def estudante_feedback_geral(request, usuario):
@@ -285,11 +271,11 @@ def estudante_feedback_geral(request, usuario):
             banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
 
         if not banca_final or (banca_final and hoje <= banca_final.endDate):
-            mensagem = "Fora do período de feedback do PFE!"
+            mensagem = "Fora do período de feedback do Capstone!"
             context = {"mensagem": mensagem,}
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         feedback = FeedbackEstudante.create()
         feedback.estudante = usuario.aluno
         feedback.projeto = projeto
@@ -347,7 +333,7 @@ def estudante_feedback_hashid(request, hashid):
         return estudante_feedback_geral(request, usuario)
 
     except (ValueError, TypeError, PFEUser.DoesNotExist):
-        return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
+        return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
 
 
 @login_required
@@ -419,7 +405,7 @@ def avaliacao_pares(request, momento):
 
                 pares.save()
 
-            return render(request, 'users/atualizado.html',)
+            return render(request, "users/atualizado.html",)
         
         pares = []
         for alocacao in alocacoes:

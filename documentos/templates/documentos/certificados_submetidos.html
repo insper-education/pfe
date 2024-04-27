@@ -153,7 +153,7 @@
           {% with servidor='https://pfe.insper.edu.br' %}
           <a 
           {% nospacesmailto %}href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
-            &amp;subject=PFE%20Insper%20:
+            &amp;subject=Capstone%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}
@@ -178,7 +178,7 @@
           </a>
           /
           <a 
-          {% nospacesmailto %}href="mailto:{{certificado.usuario.email}}?cc={{coordenacao.user.email}}&amp;subject=PFE%20Insper%20:
+          {% nospacesmailto %}href="mailto:{{certificado.usuario.email}}?cc={{coordenacao.user.email}}&amp;subject=Capstone%20Insper%20:
             {% if certificado.tipo_de_certificado == 101 %}
               Orientação de Projeto
             {% elif certificado.tipo_de_certificado == 102 %}

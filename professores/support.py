@@ -112,8 +112,8 @@ def recupera_orientadores_por_semestre(configuracao):
     professores_pfe = []
     periodo = []
 
-    ano = 2018    # Ano de início do PFE
-    semestre = 2  # Semestre de início do PFE
+    ano = 2018    # Ano de início do programa
+    semestre = 2  # Semestre de início do programa
     while True:
         professores = []
         grupos = []

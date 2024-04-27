@@ -26,7 +26,6 @@ from professores.support import recupera_mentorias_técnica
 from projetos.models import Documento, Configuracao, Projeto, Certificado
 from projetos.support import get_upload_path
 
-# from users.models import PFEUser
 from users.support import get_edicoes
 
 from operacional.models import Curso
@@ -66,8 +65,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
                 certificados = Certificado.objects.all()
             else:
                 ano, semestre = request.POST["edicao"].split('.')
-                certificados = Certificado.objects\
-                    .filter(projeto__ano=ano, projeto__semestre=semestre)
+                certificados = Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
             context["certificados"] = certificados
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -88,7 +86,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
     """Atualiza os certificados."""
     configuracao = get_object_or_404(Configuracao)
 
-    (certificado, _created) = \
+    (certificado, _) = \
         Certificado.objects.get_or_create(usuario=usuario,
                                           projeto=projeto,
                                           tipo_de_certificado=tipo_cert)
@@ -156,8 +154,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
-    edicoes, _, _ = get_edicoes(Projeto)
-    context = {"edicoes": edicoes,}
+    context = {"edicoes": get_edicoes(Projeto)[0]}
     return render(request, "documentos/selecao_geracao_certificados.html", context)
 
 
@@ -194,10 +191,7 @@ def gerar_certificados(request):
         tipos.append("O")
         for orientador in orientadores:
             for projeto in orientador[1]:
-                certificado = atualiza_certificado(orientador[0].user,
-                                                   projeto,
-                                                   101,
-                                                   arquivo)
+                certificado = atualiza_certificado(orientador[0].user, projeto, 101, arquivo)
                 if certificado:
                     certificados.append(certificado)
 
@@ -208,10 +202,7 @@ def gerar_certificados(request):
         tipos.append("C")
         for coorientador in coorientadores:
             for projeto in coorientador[1]:
-                certificado = atualiza_certificado(coorientador[0].user,
-                                                   projeto,
-                                                   102,
-                                                   arquivo)
+                certificado = atualiza_certificado(coorientador[0].user, projeto, 102, arquivo)
                 if certificado:
                     certificados.append(certificado)
 
@@ -222,11 +213,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user,
-                                                   banca.projeto,
-                                                   103,
-                                                   arquivo,
-                                                   banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.projeto, 103, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -237,11 +224,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user,
-                                                   banca.projeto,
-                                                   104,
-                                                   arquivo,
-                                                   banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.projeto, 104, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -252,11 +235,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user,
-                                                   banca.projeto,
-                                                   105,
-                                                   arquivo,
-                                                   banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.projeto, 105, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -267,11 +246,7 @@ def gerar_certificados(request):
         tipos.append("MP")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0],
-                                                   banca.projeto,
-                                                   106,
-                                                   arquivo,
-                                                   banca=banca)
+                certificado = atualiza_certificado(membro[0], banca.projeto, 106, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -282,11 +257,7 @@ def gerar_certificados(request):
         tipos.append("MT")
         for membro in membros:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0],
-                                                   banca.projeto,
-                                                   107,
-                                                   arquivo,
-                                                   banca=banca)
+                certificado = atualiza_certificado(membro[0], banca.projeto, 107, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -335,7 +306,7 @@ def relatorios_publicos(request, edicao=None):
         context = {
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada": edicao,
-            }
+        }
     
     return render(request, "documentos/relatorios_publicos.html", context)
 

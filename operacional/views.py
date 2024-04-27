@@ -362,7 +362,7 @@ def plano_aulas(request):
         if "edicao" in request.POST:
             
             ano, semestre = request.POST["edicao"].split('.')
-            eventos = Evento.objects.filter(startDate__year=ano, tipo_de_evento=12)  # 12, 'Aula PFE'
+            eventos = Evento.objects.filter(startDate__year=ano, tipo_de_evento=12)  # 12, "Aula"
 
             if semestre == "1":
                 eventos = eventos.filter(startDate__month__lte=6)

@@ -299,3 +299,31 @@ def cap_name(name):
         else:
             items.append(item.capitalize())
     return ''.join(items)
+
+def media(notas_lista):
+    soma = 0
+    total = 0
+    for i in notas_lista:
+        if i:
+            soma += float(i)
+            total += 1
+    if total == 0:
+        return None
+    return soma / total
+
+# Didide pela proporção de 5 e 7
+def divide57(notas_lista):
+    if notas_lista:
+        valores = [0, 0, 0]
+        for i in notas_lista:
+            if i:
+                if i < 5:
+                    valores[0] += 1
+                elif i > 7:
+                    valores[2] += 1
+                else:
+                    valores[1] += 1
+        return valores
+    else:
+        return [0, 0, 0]
+

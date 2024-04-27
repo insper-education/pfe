@@ -213,7 +213,7 @@ def envia_senha_mensagem(user):
     # Preparando mensagem para enviar para usuário.
     message_email = user.get_full_name() + ",\n\n"
     message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
-    message_email += "Projeto Final - Capstone (antigo PFE)."
+    message_email += "Projeto Final - Capstone."
     message_email += "\n\n"
     message_email += "\tO endereço do servidor é: "
     message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
@@ -225,7 +225,7 @@ def envia_senha_mensagem(user):
     message_email += "\tQualquer dúvida, envie e-mail para: "
     message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
     message_email += "\n\n"
-    message_email += "\t\tatenciosamente, coordenação do Capstone (antigo PFE)\n"
+    message_email += "\t\tatenciosamente, coordenação do Capstone\n"
     message_email = message_email.replace('\n', "<br>\n")
     message_email = message_email.replace('\t', "&nbsp;&nbsp;&nbsp;&nbsp;\t")
 

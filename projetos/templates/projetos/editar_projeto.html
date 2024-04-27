@@ -66,7 +66,7 @@
         <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
                 data-width="81%" data-size="10">
             <option selected value> -- selecione um orientador(a) -- </option>
-            <optgroup label="Comitê PFE">
+            <optgroup label="Comitê Capstone">
             {% for orientador in professores %}
               {% if orientador.user.membro_comite %}
                 <option value="{{orientador.id}}" {% if orientador.id == projeto.orientador.id %}selected{% endif %}>
@@ -120,7 +120,7 @@
             <select class="selectpicker show-tick estudantes" name="estudante" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
             data-live-search="true" data-width="100%">
                 <option selected value> -- selecione estudante -- </option>
-                <optgroup label="Semestre PFE">
+                <optgroup label="Semestre Capstone">
                 {% for estudante in estudantes %}
                   {% if estudante %}
                     <option value="{{estudante.id}}" {% if estudante.id == alocacao.aluno.id %}selected{% endif %}>
@@ -146,7 +146,7 @@
           <select class="selectpicker show-tick estudantes" name="estudante" title="Selecione estudante membro do projeto"
           data-live-search="true" data-width="560px">
               <option selected value> -- selecione estudante -- </option>
-              <optgroup label="Semestre PFE">
+              <optgroup label="Semestre Capstone">
               {% for estudante in estudantes %}
                 {% if estudante %}
                   <option value="{{estudante.id}}">

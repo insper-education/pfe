@@ -114,13 +114,13 @@ def get_edicoes(tipo, anual=False):
         elif tipo == Avaliacao2:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
                 existe = True
-        elif tipo == Relato:  # Relato no sistema do PFE só começaram a ser feitos em 2022.1
+        elif tipo == Relato:  # Relato no sistema do Capstone só começaram a ser feitos em 2022.1
             if ano_tmp < 2022:
                 ano_tmp = 2022
                 semestre_tmp = 1
             if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True
-        elif tipo == Pares:  # Relato no sistema do PFE só começaram a ser feitos em 2022.1
+        elif tipo == Pares:  # Relato no sistema do Capstone só começaram a ser feitos em 2022.1
             if ano_tmp < 2023:
                 ano_tmp = 2023
                 semestre_tmp = 1

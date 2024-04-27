@@ -31,7 +31,7 @@
       <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
       data-live-search="true" data-width="560px">
           <option selected value> -- selecione usuário -- </option>
-          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for usuario in usuarios %}
             {% if usuario %}
               <option value="{{usuario.id}}" data-projeto="{{usuario.aluno.alocacao_set.last.projeto.id}}" {% if usuario.id == alocacao.aluno.id %}selected{% endif %}>
@@ -49,7 +49,7 @@
       <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
       data-live-search="true" data-width="560px">
           <option selected value> -- selecione projeto -- </option>
-          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for projeto in projetos %}
             {% if projeto %}
               <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id %}selected{% endif %}>
@@ -73,7 +73,7 @@
       <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
       data-live-search="true" data-width="560px" required>
           <option disabled selected value> -- selecione tipo de certificado -- </option>
-          {% comment %} <optgroup label="Semestre PFE"> {% endcomment %}
+          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for tipo in TIPO_DE_CERTIFICADO %}
             {% if tipo %}
               <option value="{{tipo.0}}" {% if tipo.0 == alocacao.aluno.id %}selected{% endif %}>

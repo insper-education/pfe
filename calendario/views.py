@@ -122,7 +122,7 @@ def export_calendar(request, event_id):
     cal = Calendar()
     site = Site.objects.get_current()
 
-    cal.add("prodid", "-//PFE//Insper//")
+    cal.add("prodid", "-//Capstone//Insper//")
     cal.add("version", "2.0")
 
     site_token = site.domain.split('.')
@@ -216,7 +216,6 @@ def atualiza_evento(request):
     responsavel = request.POST.get("event-responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
-
     max_length = Documento._meta.get_field("documento").max_length
     if "arquivo" in request.FILES:
 
@@ -263,7 +262,6 @@ def remove_evento(request):
     event_id = int(request.POST.get("id", None))
     evento = get_object_or_404(Evento, id=event_id)    
     evento.delete()
-
     return JsonResponse({"atualizado": True,})
 
 

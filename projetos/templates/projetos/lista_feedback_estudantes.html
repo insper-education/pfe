@@ -6,18 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-  {% load static %}
-  
+  {% load static %}  
   <script src="{% static 'js/w3.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/chartjs-plugin-labels.js' %}"></script>
-  
-  {% include "tabelas_includes.html" %}
-  
-  {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
-
+  {% include "tabelas_includes.html" %}
   <style>
     canvas {background-color: #FAFAFA;}
   </style>
@@ -25,13 +19,9 @@
 
 {% block content %}
 
-  {% url 'estudante_feedback' as feedback_url%}
-
   <span class="titulo">{{titulo}}</span>
 
-  Link para pesquisa: <a href="{{ feedback_url }}">{{ SERVER_URL }}{{ feedback_url }}</a><br><br>
-  
-  <!-- VER: https://stackoverflow.com/questions/53202862/trying-to-sort-tables-with-w3-js-but-its-not-sorting-numbers-properly -->
+  <div>Link para pesquisa: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
 
   {% include "edicoes.html" %}
 
@@ -45,26 +35,22 @@
       var comentarios = [];
     </script>
 
-  {% include "tabelas_top.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
-      {% comment %} <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-      <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Projeto</th>
-      <th onclick="w3.sortHTML('#FeedbacksTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
-      <th class="text-center">Mensagem</th> {% endcomment %}
+    {% include "tabelas_top.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
       {% for estudante, projeto, feedback in alocacoes %}
         <tr class="item">
-          <td style='font-size:80%' data-sort="{{estudante.user.get_full_name}}">
+          <td style="font-size:80%" data-sort="{{estudante.user.get_full_name}}">
             <a href="{% url 'estudante_detail' estudante.id %}">
               {{estudante.user.get_full_name}} {% if estudante.externo %}<span style="color:red">[{{estudante.externo}}]</span>{% endif %}
             </a>
           </td>
-          <td style='font-size:80%'>
+          <td style="font-size:80%">
             {% if projeto %}
               <a href="{% url 'projeto_completo' projeto.id %}">
                 {{projeto}}
               </a>
             {% endif %}
           </td>
-          <td style='font-size:80%'>
+          <td style="font-size:80%">
             {% if feedback %}
               <a href="{% url 'mostra_feedback_estudante' feedback.id %}">
                 {{feedback.momento|date:"Y.m.d"}}
@@ -87,8 +73,7 @@
             <script>comentarios.push(`{{feedback.outros}}`);</script>
           {% endif %}
 
-          <td style='font-size:80%' class="text-center">
-            {% comment %} <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'> {% endcomment %}
+          <td style="font-size:80%" class="text-center">
             <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'>
               e-mail
             </a>
@@ -117,7 +102,7 @@
   <script>
     if(comentarios.length) {
       comentarios.forEach(function(texto, i) {
-        $('#ComentariosTable tr:last').after("<tr><td>" + texto + "</td></tr>");
+        $("#ComentariosTable tr:last").after("<tr><td>" + texto + "</td></tr>");
       })
     } else {
       $("#ComentariosTable").remove();
@@ -137,303 +122,169 @@
 
   <script>
 
-      var config_recomendaria = {     // REFERENTE AO PIE CHART
-        type: 'pie',
-        data: {
-          datasets: [{
-            data: recomendaria,
-            backgroundColor: [
-              "#e74c3c",
-              "#95a5a6",
-              "#34495e",
-            ],
-          }],
-          labels: [
-            'Não recomendo',
-            'Recomendo com ressalvas',
-            'Recomendo fortemente',
-          ]
-        },
-        options: {
-          responsive: true,
-          title: {
-                display: true,
-                text: 'Recomendaria Organização Parceira',
-                position: "top",
-          },
-          legend: {
-            display: false,
-            position: "bottom",
-            labels: {
-              fontColor: "#333",
-              fontSize: 14
-            }
-          },
-          plugins: {
-            labels: [
-              {
-                render: 'label',
-                fontColor: '#000',
-                fontStyle: 'bold',
-                position: 'outside'
-              },
-              {
-                render: 'percentage'
-              }
-            ]
-          }
-        }
-      };
-    
+    var plugins = {
+      labels: [ { render: "label",
+                  fontColor: "#000",
+                  fontStyle: "bold",
+                  position: "outside" },
+                { render: "percentage" } ]
+    }
 
-      var config_primeira_opcao = {     // REFERENTE AO PIE CHART
-        type: 'pie',
-        data: {
-          datasets: [{
-            data: primeira_opcao,
-            backgroundColor: [
-              "#2ecc71",
-              "#3498db",
-              "#9b59b6",
-              "#f1c40f",
-            ],
-          }],
-          labels: [
-            'Sim',
-            'Não',
-          ]
-        },
-        options: {
-          responsive: true,
-          title: {
-                display: true,
-                text: 'Empresa seria uma das primeiras opções',
-                position: "top",
-          },
-          legend: {
-            display: false,
-            position: "bottom",
-            labels: {
-              fontColor: "#333",
-              fontSize: 14
-            }
-          },
-          plugins: {
-            labels: [
-              {
-                render: 'label',
-                fontColor: '#000',
-                fontStyle: 'bold',
-                position: 'outside'
-              },
-              {
-                render: 'percentage'
-              }
-            ]
-          }
-        }
-      };
+    var legend = {
+      display: false,
+      position: "bottom",
+      labels: { fontColor: "#333",
+                fontSize: 14 }
+    }
 
+    var pie_base = {
+      type: "pie",
+      options: {
+        responsive: true,
+        title: { display: true,
+                 position: "top"},
+        legend: legend,
+        plugins: plugins
+      }
+    };
 
-      var config_proposta = {     // REFERENTE AO PIE CHART
-        type: 'pie',
-        data: {
-          datasets: [{
-            data: proposta,
-            backgroundColor: [
-              "#bb79d6",
-              "#f1c40f",
-              "#f10fc4",
-              "#0ff1c4",
-              "#59b69b",
-            ],
-          }],
-          labels: [
-            'Recebi convite e apliquei',
-            'Não recebi convite, mas apliquei',
-            'Recebi convite, mas não apliquei',
-            'Não recebi, nem apliquei',
-            'Não haviam vagas em aberto',
-          ]
-        },
-        options: {
-          responsive: true,
-          title: {
-                display: true,
-                text: 'Recebeu proposta de estágio',
-                position: "top",
-          },
-          legend: {
-            display: false,
-            position: "bottom",
-            labels: {
-              fontColor: "#333",
-              fontSize: 14
-            }
-          },
-          plugins: {
-            labels: [
-              {
-                render: 'label',
-                fontColor: '#000',
-                fontStyle: 'bold',
-                position: 'outside'
-              },
-              {
-                render: 'percentage'
-              }
-            ]
-          }
-        }
-      };
+    var config_recomendaria = Object.assign({}, pie_base, {
+      data: {
+        datasets: [{
+          data: recomendaria,
+          backgroundColor: ["#e74c3c","#95a5a6","#34495e"],
+        }],
+        labels: [
+          "Não recomendo",
+          "Recomendo com ressalvas",
+          "Recomendo fortemente"
+        ]
+      },
+      options: {title: {text: "Recomendaria Organização Parceira"} }
+    });
 
+    var config_primeira_opcao = Object.assign({}, pie_base, {
+      data: {
+        datasets: [{
+          data: primeira_opcao,
+          backgroundColor: ["#2ecc71","#3498db","#9b59b6","#f1c40f"],
+        }],
+        labels: [
+          "Sim",
+          "Não"
+        ]
+      },
+      options: {title: {text: "Primeira Opção"} }
+    });
 
+    var config_proposta = Object.assign({}, pie_base, {
+      data: {
+        datasets: [{
+          data: proposta,
+          backgroundColor: ["#bb79d6", "#f1c40f", "#f10fc4", "#0ff1c4", "#59b69b"],
+        }],
+        labels: [
+          "Recebi convite e apliquei",
+          "Não recebi convite, mas apliquei",
+          "Recebi convite, mas não apliquei",
+          "Não recebi, nem apliquei",
+          "Não haviam vagas em aberto"
+        ]
+      },
+      options: {title: {text: "Recebeu proposta de estágio"} }
+    });
 
-      var config_trabalhando = {     // REFERENTE AO PIE CHART
-        type: 'pie',
-        data: {
-          datasets: [{
-            data: trabalhando,
-            backgroundColor: [
-              "#bb79d6",
-              "#f1c40f",
-              "#f10fc4",
-              "#0ff1c4",
-            ],
-          }],
-          labels: [
-            'Empresa do Projeto do PFE',
-            'Outra',
-            'Ainda não',
-            'Prefiro não responder',
-          ]
-        },
-        options: {
-          responsive: true,
-          title: {
-                display: true,
-                text: 'Onde está trabalhando',
-                position: "top",
-          },
-          legend: {
-            display: false,
-            position: "bottom",
-            labels: {
-              fontColor: "#333",
-              fontSize: 14
-            }
-          },
-          plugins: {
-            labels: [
-              {
-                render: 'label',
-                fontColor: '#000',
-                fontStyle: 'bold',
-                position: 'outside'
-              },
-              {
-                render: 'percentage'
-              }
-            ]
-          }
-        }
-      };
-
+    var config_trabalhando = Object.assign({}, pie_base, {
+      data: {
+        datasets: [{
+          data: trabalhando,
+          backgroundColor: ["#bb79d6","#f1c40f","#f10fc4","#0ff1c4"],
+        }],
+        labels: [
+          "Empresa do Projeto do Capstone",
+          "Outra",
+          "Ainda não",
+          "Prefiro não responder"
+        ]
+      },
+      options: {title: {text: "Onde está trabalhando"} }
+    });
 
     var config_feedbacks = {
-        type: 'bar',
+        type: "bar",
         data: {
-        labels: [
-            {% for loop in loop_anos %}
-              "{{loop}}",
-            {% endfor %}
-            ],
-        datasets: [
-            {
-            label: "estudantes",
-            backgroundColor: "#0E7E32",
-            data: [
-                    {% for num in num_estudantes %}
-                        {{num}},
-                    {% endfor %}
-                ]
+          labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
+          datasets: [{
+              label: "estudantes",
+              backgroundColor: "#0E7E32",
+              data: [{% for num in num_estudantes %}{{num}}, {% endfor %}]
             }, 
             {
-            label: "feedbacks",
-            backgroundColor: "#15Cecd",
-            data: [
-                    {% for num in num_feedbacks %}
-                        {{num}},
-                    {% endfor %}
-                ]
+              label: "feedbacks",
+              backgroundColor: "#15CECD",
+              data: [{% for num in num_feedbacks %} {{num}},{% endfor %} ]
             }, 
-        ]
-        },
+        ]},
         options: {
           legend: { display: true },
           title: {
               display: true,
-              text: 'Estudantes e Feedbacks'
+              text: "Estudantes e Feedbacks"
           },
           plugins: {
-            labels: [
-              {
-                render: 'value',
-                fontColor: '#000',
-                fontStyle: 'bold',
-              }
-            ]
+            labels: [{
+                render: "value",
+                fontColor: "#000",
+                fontStyle: "bold",
+            }]
           }
         }
     };
 
     function carrega_grafico() {  
       // Chart da quantidade de projetos
-      var bar_feedbacks = document.getElementById('bar-feedbacks').getContext('2d');
-      window.projeto = new Chart(bar_feedbacks, config_feedbacks);
+      window.projeto = new Chart(document.getElementById("bar-feedbacks").getContext("2d"), config_feedbacks);
 
       if(recomendaria.some(item => item !== 0)) {
-        $('#chart-recomendaria').append($('<canvas></canvas>'));
-        var context_recomendaria = $("#chart-recomendaria canvas").get(0).getContext('2d'); // REFERENTE AO PIE CHART
-        window.myPie = new Chart(context_recomendaria, config_recomendaria); // REFERENTE AO PIE CHART
+        $("#chart-recomendaria").append($("<canvas></canvas>"));
+        var context_recomendaria = $("#chart-recomendaria canvas").get(0).getContext("2d");
+        window.myPie = new Chart(context_recomendaria, config_recomendaria);
       } else {
         $("#chart-recomendaria").remove();
       }
 
       if(primeira_opcao.some(item => item !== 0)) {
-        $('#chart-primeira_opcao').append($('<canvas></canvas>'));
-        var context_primeira_opcao = $("#chart-primeira_opcao canvas").get(0).getContext('2d'); // REFERENTE AO PIE CHART
-        window.myPie2 = new Chart(context_primeira_opcao, config_primeira_opcao); // REFERENTE AO PIE CHART
+        $("#chart-primeira_opcao").append($("<canvas></canvas>"));
+        var context_primeira_opcao = $("#chart-primeira_opcao canvas").get(0).getContext("2d");
+        window.myPie2 = new Chart(context_primeira_opcao, config_primeira_opcao);
       } else {
         $("#chart-primeira_opcao").remove();
       }
 
       if(proposta.some(item => item !== 0)) {
-        $('#chart-proposta').append($('<canvas></canvas>'));
-        var context_proposta = $("#chart-proposta canvas").get(0).getContext('2d'); // REFERENTE AO PIE CHART
-        window.myPie3 = new Chart(context_proposta, config_proposta); // REFERENTE AO PIE CHART
+        $("#chart-proposta").append($("<canvas></canvas>"));
+        var context_proposta = $("#chart-proposta canvas").get(0).getContext("2d");
+        window.myPie3 = new Chart(context_proposta, config_proposta);
       } else {
         $("#chart-proposta").remove();
       }
 
       if(trabalhando.some(item => item !== 0)) {
-        $('#chart-trabalhando').append($('<canvas></canvas>'));
-        var context_trabalhando = $("#chart-trabalhando canvas").get(0).getContext('2d'); // REFERENTE AO PIE CHART
-        window.myPie4 = new Chart(context_trabalhando, config_trabalhando); // REFERENTE AO PIE CHART
+        $("#chart-trabalhando").append($("<canvas></canvas>"));
+        var context_trabalhando = $("#chart-trabalhando canvas").get(0).getContext("2d");
+        window.myPie4 = new Chart(context_trabalhando, config_trabalhando);
       } else {
         $("#chart-trabalhando").remove();
       }
     }
 
-      function carrega_pagina() {
-        carrega_grafico();
-      };
+      function carrega_pagina() { carrega_grafico(); }
       window.onload = carrega_pagina
 
     </script>
 
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Feedbacks' %}
+  {% include "edicoes_ajax.html" with tabela="Feedbacks" %}
 
 {% endblock %}

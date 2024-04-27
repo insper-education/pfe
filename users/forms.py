@@ -19,7 +19,7 @@ class PFEUserCreationForm(UserCreationForm):
         """Meta para UserCreationForm."""
 
         model = PFEUser
-        fields = ('username', 'email')
+        fields = ("username", "email")
 
 
 class PFEUserChangeForm(UserChangeForm):
@@ -29,7 +29,7 @@ class PFEUserChangeForm(UserChangeForm):
         """Meta para PFEUserChangeForm."""
 
         model = PFEUser
-        fields = ('username', 'email')
+        fields = ("username", "email")
 
 
 class PFEUserForm(forms.ModelForm):
@@ -39,7 +39,7 @@ class PFEUserForm(forms.ModelForm):
         """Meta para PFEUserForm."""
 
         model = PFEUser
-        fields = ('first_name', 'last_name', 'email')
+        fields = ("first_name", "last_name", "email")
 
 
 class AlunoForm(forms.ModelForm):
@@ -49,4 +49,4 @@ class AlunoForm(forms.ModelForm):
         """Meta para AlunoForm."""
 
         model = Aluno
-        fields = ('matricula',)
+        fields = ("matricula",)

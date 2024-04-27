@@ -566,7 +566,7 @@ class Configuracao(models.Model):
         help_text="Tamanho máximo de arquivo em MB")
 
     coordenacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text="responsável pela coordenação do PFE")
+                                    help_text="responsável pela coordenação do Capstone")
 
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua do sistema")

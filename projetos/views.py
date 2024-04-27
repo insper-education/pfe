@@ -10,7 +10,6 @@ import datetime
 import csv
 import dateutil.parser
 import json
-import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -19,10 +18,8 @@ from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao
-from users.models import Parceiro
-from users.support import adianta_semestre
-from users.support import get_edicoes
+from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
+from users.support import adianta_semestre, get_edicoes
 
 from operacional.models import Curso
 
@@ -38,9 +35,12 @@ from .messages import email, message_reembolso
 
 from academica.models import Exame
 
-from .support import simple_upload, calcula_objetivos, cap_name
+from .support import simple_upload, calcula_objetivos, cap_name, media
+from .support import divide57
 
 from .tasks import avisos_do_dia, eventos_do_dia
+
+
 
 def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
@@ -118,8 +118,6 @@ def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
-    conexoes = Conexao.objects.filter(projeto=projeto)
-    coorientadores = Coorientador.objects.filter(projeto=projeto)
 
     medias_oo = None
     if alocacoes:
@@ -128,22 +126,17 @@ def projeto_completo(request, primarykey):
         if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
             medias_oo = None
 
-    documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True)
-    projetos_avancados = Projeto.objects.filter(avancado=projeto)
-    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
-
     context = {
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
-        "conexoes": conexoes,
-        "coorientadores": coorientadores,
-        "documentos": documentos,
-        "projetos_avancados": projetos_avancados,
-        "cooperacoes": cooperacoes,
+        "conexoes": Conexao.objects.filter(projeto=projeto),
+        "coorientadores": Coorientador.objects.filter(projeto=projeto),
+        "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True),
+        "projetos_avancados": Projeto.objects.filter(avancado=projeto),
+        "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
     }
     return render(request, "projetos/projeto_completo.html", context=context)
-
 
 
 @login_required
@@ -162,22 +155,14 @@ def projeto_organizacao(request, primarykey):
     if projeto.proposta.organizacao != organizacao and request.user.tipo_de_usuario != 4:
         return HttpResponse("Algum erro não identificado.", status=401)
 
-    alocacoes = Alocacao.objects.filter(projeto=projeto)
-    conexoes = Conexao.objects.filter(projeto=projeto)
-    coorientadores = Coorientador.objects.filter(projeto=projeto)
-    documentos = Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False)
-
-    projetos_avancados = Projeto.objects.filter(avancado=projeto)
-    cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
-
     context = {
         "projeto": projeto,
-        "alocacoes": alocacoes,
-        "conexoes": conexoes,
-        "coorientadores": coorientadores,
-        "documentos": documentos,
-        "projetos_avancados": projetos_avancados,
-        "cooperacoes": cooperacoes,
+        "alocacoes": Alocacao.objects.filter(projeto=projeto),
+        "conexoes": Conexao.objects.filter(projeto=projeto),
+        "coorientadores": Coorientador.objects.filter(projeto=projeto),
+        "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False),
+        "projetos_avancados": Projeto.objects.filter(avancado=projeto),
+        "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
     }
     return render(request, "projetos/projeto_completo.html", context=context)
 
@@ -204,20 +189,16 @@ def distribuicao_areas(request):
             if request.POST["edicao"] == "todas":
                 todas = True
             else:
-                periodo = request.POST["edicao"].split('.')
-                ano = int(periodo[0])
-                semestre = int(periodo[1])
+                ano, semestre = request.POST["edicao"].split('.')
 
             if tipo == "estudantes" and "curso" in request.POST:
                 curso = request.POST["curso"]
 
         else:
-            return HttpResponse("Erro não identificado (POST incompleto).",
-                                status=401)
+            return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
         if tipo == "estudantes":
             alunos = Aluno.objects.all()
-            
 
             if curso != "T":
                 alunos = alunos.filter(curso2__sigla_curta=curso)
@@ -273,8 +254,7 @@ def distribuicao_areas(request):
             }
 
         else:
-            return HttpResponse("Erro não identificado (não encontrado tipo).",
-                            status=401)
+            return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
 
         return render(request, "projetos/distribuicao_areas.html", context)
 
@@ -303,8 +283,7 @@ def projetos_fechados(request):
                 projetos_filtrados = Projeto.objects.all()
             else:
                 ano, semestre = edicao.split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano,
-                                                            semestre=semestre)
+                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
 
             curso = request.POST["curso"]    
             
@@ -427,8 +406,7 @@ def projetos_lista(request):
                 projetos_filtrados = Projeto.objects.all()
             else:
                 ano, semestre = edicao.split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano,
-                                                            semestre=semestre)
+                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
 
             avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
 
@@ -555,9 +533,7 @@ def carrega_bancos(request):
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            if line_count == 0:
-                pass
-            else:
+            if line_count != 0:
                 # ('Nome: {}; Código {}'.format(row[0],row[1]))
                 banco = Banco.create(nome=row[0], codigo=row[1])
                 banco.save()
@@ -614,14 +590,11 @@ def reembolso_pedir(request):
 
         reembolso.save()
 
-        subject = "Reembolso PFE : " + usuario.username
+        subject = "Reembolso Capstone : " + usuario.username
         recipient_list = configuracao.recipient_reembolso.split(";")
-        # Não estou usando mais, de qualquer forma, acho que não precisa enviar para servidor
-        #recipient_list.append("pfeinsper@gmail.com")  # sempre mandar para a conta do gmail
         recipient_list.append(usuario.email)  # mandar para o usuário que pediu o reembolso
         if projeto:
-            if projeto.orientador:
-                # mandar para o orientador se houver
+            if projeto.orientador:  # mandar para o orientador se houver
                 recipient_list.append(projeto.orientador.user.email)
         message = message_reembolso(usuario, projeto, reembolso, cpf)
         check = email(subject, recipient_list, message)
@@ -646,7 +619,7 @@ def comite(request):
     context = {
         "professores": Professor.objects.filter(user__membro_comite=True),
         "cabecalhos": ["Nome", "e-mail", "Lattes", ],
-        "titulo": "Comitê PFE",
+        "titulo": "Comitê Capstone",
         }
     return render(request, "projetos/comite_pfe.html", context)
 
@@ -692,18 +665,13 @@ def lista_feedback_estudantes(request):
         num_feedbacks = []
         num_estudantes = []
 
-        for edicao in edicoes:
-
-            ano, semestre = edicao.split('.')
-
-            estudantes = Aluno.objects.filter(anoPFE=ano).\
-                filter(semestrePFE=semestre).count()
+        for ano, semestre in [edicao.split('.') for edicao in edicoes]:
+            
+            estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre).count()
             num_estudantes.append(estudantes)
 
-            numb_feedb = todos_feedbacks.filter(projeto__ano=ano).\
-                filter(projeto__semestre=semestre).\
-                values("estudante").distinct().\
-                count()
+            numb_feedb = todos_feedbacks.filter(projeto__ano=ano, projeto__semestre=semestre).\
+                values("estudante").distinct().count()
             num_feedbacks.append(numb_feedb)
 
         estudantes = Aluno.objects.all()
@@ -730,10 +698,7 @@ def lista_feedback_estudantes(request):
                 feedback = todos_feedbacks.filter(projeto=alocacao.projeto,
                                                 estudante=estudante).first()
 
-                if feedback:
-                    feedbacks.append(feedback)
-                else:
-                    feedbacks.append(None)
+                feedbacks.append(feedback if feedback else None)
 
             else:
                 projetos.append(None)
@@ -742,17 +707,12 @@ def lista_feedback_estudantes(request):
 
         alocacoes = zip(estudantes, projetos, feedbacks)
 
-        configuracao = get_object_or_404(Configuracao)
-        coordenacao = configuracao.coordenacao
-
         context = {
-            "SERVER_URL": settings.SERVER,
-            "loop_anos": edicoes,
+            "edicoes": edicoes,
             "num_estudantes": num_estudantes,
             "num_feedbacks": num_feedbacks,
             "alocacoes": alocacoes,
-            "coordenacao": coordenacao,
-            "edicoes": edicoes,
+            "coordenacao": configuracao.coordenacao,
             "cabecalhos": ["Nome", "Projeto", "Data", "Mensagem", ],
         }
 
@@ -770,9 +730,7 @@ def lista_feedback_estudantes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
-    context = {
-        "acompanhamentos": Acompanhamento.objects.all().order_by("-data"),
-    }
+    context = {"acompanhamentos": Acompanhamento.objects.all().order_by("-data")}
     return render(request, "projetos/lista_acompanhamento.html", context)
 
 
@@ -780,19 +738,15 @@ def lista_acompanhamento(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
-    context = {
-        "feedback": get_object_or_404(Feedback, id=feedback_id),
-    }
+    context = {"feedback": get_object_or_404(Feedback, id=feedback_id)}
     return render(request, "projetos/mostra_feedback.html", context)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback_estudante(request, feedback_id):
-    """Detalha os feedbacks das Organizações Parceiras."""
-    context = {
-        "feedback": get_object_or_404(FeedbackEstudante, id=feedback_id),
-    }
+    """Detalha os feedbacks dos Estudantes."""
+    context = {"feedback": get_object_or_404(FeedbackEstudante, id=feedback_id)}
     return render(request, "estudantes/estudante_feedback.html", context)
 
 
@@ -1103,12 +1057,10 @@ def certificacao_falconi(request):
 
     if request.is_ajax():
 
-        periodo = ""
-
         if "edicao" in request.POST:
             if request.POST["edicao"] != "todas":
-                periodo = request.POST["edicao"].split('.')
-                projetos = Projeto.objects.filter(ano=periodo[0], semestre=periodo[1])
+                ano, semestre = request.POST["edicao"].split('.')
+                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1210,33 +1162,6 @@ def certificacao_falconi(request):
 
     return render(request, "projetos/certificacao_falconi.html", context)
 
-
-def media(notas_lista):
-    soma = 0
-    total = 0
-    for i in notas_lista:
-        if i:
-            soma += float(i)
-            total += 1
-    if total == 0:
-        return None
-    return soma / total
-
-# Didide pela proporção de 5 e 7
-def divide57(notas_lista):
-    if notas_lista:
-        valores = [0, 0, 0]
-        for i in notas_lista:
-            if i:
-                if i < 5:
-                    valores[0] += 1
-                elif i > 7:
-                    valores[2] += 1
-                else:
-                    valores[1] += 1
-        return valores
-    else:
-        return [0, 0, 0]
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -1527,7 +1452,6 @@ def evolucao_objetivos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def filtro_projetos(request):
     """Filtra os projetos."""
-    edicoes = []
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -1535,22 +1459,16 @@ def filtro_projetos(request):
                 projetos_filtrados = Projeto.objects.all()
             else:
                 ano, semestre = request.POST["edicao"].split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano,
-                                                            semestre=semestre)
-            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
+                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
             context = {
-                "projetos": projetos,
+                "projetos": projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",),
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
-
-        areas = Area.objects.filter(ativa=True)
-        
         context = {
-            "edicoes": edicoes,
-            "areast": areas,
+            "edicoes": get_edicoes(Projeto)[0],
+            "areast": Area.objects.filter(ativa=True),
         }
 
     return render(request, "projetos/filtra_projetos.html", context)
@@ -1631,8 +1549,6 @@ def evolucao_por_objetivo(request):
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
-
-        # cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
 
         low = []
         mid = []
@@ -1777,11 +1693,6 @@ def editar_projeto(request, primarykey):
         titulo = request.POST.get("titulo", None)
         if titulo and ( projeto.titulo_final or projeto.titulo_final != titulo):
             projeto.titulo_final = titulo
-
-        # Atualiza descrição (NÃO USAR MAIS DESCRIÇÃO EM PROJETO)
-        # descricao = request.POST.get("descricao", None)
-        # if descricao and ( projeto.descricao or projeto.proposta.descricao != descricao):
-        #     projeto.descricao = descricao
             
         resumo = request.POST.get("resumo", None)
         if resumo and resumo != "" and projeto.resumo != resumo:
@@ -1805,14 +1716,13 @@ def editar_projeto(request, primarykey):
         coorientador_id = request.POST.get("coorientador", None)
         if coorientador_id:
             coorientador = get_object_or_404(PFEUser, pk=coorientador_id)
-            (reg, _created) = Coorientador.objects.get_or_create(projeto=projeto)
+            (reg, _) = Coorientador.objects.get_or_create(projeto=projeto)
             reg.usuario = coorientador
             reg.save()
         else:
             coorientadores = Coorientador.objects.filter(projeto=projeto)
             for coorientador in coorientadores:
                 coorientador.delete()
-        
 
         # Realoca estudantes
         estudantes_ids = []
@@ -1834,25 +1744,16 @@ def editar_projeto(request, primarykey):
         # Define projeto com time misto (estudantes de outras instituições)
         projeto.time_misto = "time_misto" in request.POST
 
-
         projeto.save()
 
         return redirect("projeto_completo", primarykey=primarykey)
 
-
-    professores = Professor.objects.all()
-    alocacoes = Alocacao.objects.filter(projeto=projeto)
-
-    estudantes = Aluno.objects.all()
-
-    coorientadores = Coorientador.objects.filter(projeto=projeto)
-
     context = {
         "projeto": projeto,
-        "professores": professores,
-        "alocacoes": alocacoes,
-        "estudantes": estudantes,
-        "coorientadores": coorientadores,
+        "professores": Professor.objects.all(),
+        "alocacoes": Alocacao.objects.filter(projeto=projeto),
+        "estudantes": Aluno.objects.all(),
+        "coorientadores": Coorientador.objects.filter(projeto=projeto),
     }
     return render(request, "projetos/editar_projeto.html", context)
 
@@ -1952,7 +1853,6 @@ def upload_pasta_projeto(request, projeto_id):
             
             pastas_do_projeto = request.POST.get("pastas_do_projeto", None)
         
-            #configuracao = get_object_or_404(Configuracao)
             projeto = get_object_or_404(Projeto, id=projeto_id)
             projeto.pastas_do_projeto = pastas_do_projeto
             projeto.save()

@@ -89,10 +89,6 @@ class PFEUser(AbstractUser):
     observacoes = models.TextField("Observações", max_length=500, blank=True,
                                    help_text="Observações")
 
-    # Aparentemente não sendo usado mais
-    # coordenacao = \
-    #     models.BooleanField("Coordenação", default=False, help_text="caso coordenador do PFE")
-
     pronome_tratamento = models.CharField("Pronome de Tratamento", max_length=8, null=True, blank=True)
 
     nome_social = models.CharField(max_length=150, null=True, blank=True,
@@ -912,7 +908,7 @@ class Administrador(models.Model):
                                 help_text="Assinatura do coordenador")
 
     nome_para_certificados = models.CharField(max_length=128, null=True, blank=True,
-                                           help_text="Nome para assinatura do coordenador do PFE")
+                                           help_text="Nome para assinatura do coordenador do Capstone")
 
     class Meta:
         """Meta para Administrador."""

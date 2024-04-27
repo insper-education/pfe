@@ -39,7 +39,7 @@
     <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}>todos</option>
     <option value="Co" {% if filtro == "Co" %}selected="selected"{% endif %}>Coordenação</option>
     <option value="Op" {% if filtro == "Op" %}selected="selected"{% endif %}>Operacional</option>
-    <option value="Cm" {% if filtro == "Cm" %}selected="selected"{% endif %}>Comitê PFE</option>
+    <option value="Cm" {% if filtro == "Cm" %}selected="selected"{% endif %}>Comitê Capstone</option>
     <option value="Es" {% if filtro == "Es" %}selected="selected"{% endif %}>Estudantes</option>
     <option value="Or" {% if filtro == "Or" %}selected="selected"{% endif %}>Orientadores</option>
     <option value="Og" {% if filtro == "Og" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
@@ -56,7 +56,7 @@
           <small>
             <b>Co</b>: Coordenação;
             <b>Op</b>: Operacional;
-            <b>Cm</b>: Comitê do PFE;
+            <b>Cm</b>: Comitê Capstone;
             <b>Es</b>: Estudantes;
             <b>Or</b>: Orientadores;
             <b>Og</b>: Contatos nas Organizacoes.
@@ -138,7 +138,7 @@
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Equipe Operacional">Op</span>
               {% endif %}
               {% if a.aviso.comite_pfe %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Comite do PFE">Cm</span>
+                <span data-toggle="tooltip" data-html="true" animation="true" title="Comite Capstone">Cm</span>
               {% endif %}
               {% if a.aviso.todos_alunos %}
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Estudantes">Es</span>
