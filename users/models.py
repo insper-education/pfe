@@ -86,7 +86,7 @@ class PFEUser(AbstractUser):
     tipo_lingua = models.PositiveSmallIntegerField("Língua", choices=TIPO_LINGUA, default=1,
                                                    help_text="língua usada para comunicação")
 
-    observacoes = models.TextField("Observações", max_length=500, blank=True,
+    observacoes = models.TextField("Observações", max_length=500, null=True, blank=True,
                                    help_text="Observações")
 
     pronome_tratamento = models.CharField("Pronome de Tratamento", max_length=8, null=True, blank=True)
