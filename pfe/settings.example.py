@@ -179,10 +179,14 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler'
         },
+        'mail_admins': {
+            'level': 'WARNING',  # 'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['file', 'console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True
         },
