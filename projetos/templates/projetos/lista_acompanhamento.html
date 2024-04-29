@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   
   <style>
@@ -33,9 +33,9 @@
   <div class="table-responsive">
   <table id="AcompanhamentoTable"><thead>
     <tr>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
-      <th onclick="w3.sortHTML('#AcompanhamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
+      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
+      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
+      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
       <th class="text-center">Mensagem</th>
     </tr></thead>  
     <tbody> 

@@ -11,7 +11,7 @@
   {% load dictionary %}
   {% load aderencia_aluno %}
 
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
   
   <style>
 
@@ -115,11 +115,11 @@
 
         <thead>
           <tr>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">Estudante</th>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">Curso</small></th>
-            <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">CR</span></th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">Estudante</th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">Curso</small></th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">CR</span></th>
             {% for proposta in propostas %}   
-              <th onclick="w3.sortHTML('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
+              <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
               {% if not proposta.disponivel %}color:lightgray;{% endif %}"
               class="rotate">
                 <div>

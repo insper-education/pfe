@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,15 +19,15 @@
     <table id="BloqueadosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(1)')">username</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">path_info</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(4)')">attempt_time</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">get_data</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">post_data</th>
-          <th onclick="w3.sortHTML('#BloqueadosTable', '.item', 'td:nth-child(5)')">failures_since_start</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(1)')">username</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(5)')">path_info</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(6)')">attempt_time</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(7)')">get_data</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(8)')">post_data</th>
+          <th onclick="sort('#BloqueadosTable', '.item', 'td:nth-child(9)')">failures_since_start</th>
         </tr>
       </thead>
       <tbody>
@@ -62,13 +62,13 @@
     <table id="ConectadosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(1)')">username</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">path_info</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(4)')">attempt_time</th>
-          <th onclick="w3.sortHTML('#ConectadosTable', '.item', 'td:nth-child(5)')">logout_time</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(1)')">username</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(2)')">ip_address</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(3)')">user_agent</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(4)')">http_accept</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(5)')">path_info</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(6)')">attempt_time</th>
+          <th onclick="sort('#ConectadosTable', '.item', 'td:nth-child(7)')">logout_time</th>
         </tr>
       </thead>
       <tbody>

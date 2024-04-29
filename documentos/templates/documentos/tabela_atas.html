@@ -9,7 +9,7 @@
   {% load static %}
   {% load arquivo_tipo %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
 {% endblock %}
 
@@ -40,7 +40,7 @@
     <table id="AtasTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#AtasTable', '.item', 'td:nth-child(1)')">Data</th>
+          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')">Data</th>
           <th>Documento</th>
         </tr>
       </thead>

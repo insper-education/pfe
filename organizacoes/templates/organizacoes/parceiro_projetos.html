@@ -7,8 +7,7 @@
 
 {% block head %}
   {% load static %}
-  {% comment %} <script src="https://www.w3schools.com/lib/w3.js"></script> {% endcomment %}
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -21,8 +20,8 @@
     <table id="ProjetosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-          <th onclick="w3.sortHTML('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+          <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
+          <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
         </tr>
       </thead>
       <tbody>

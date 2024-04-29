@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
   <style>
     th {cursor:pointer; text-align: center;}
@@ -28,8 +28,8 @@
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
       <table id="EstudantesTable"><thead><tr>
             <th>&nbsp;<input type="checkbox" id="todos_estudantes" checked>&nbsp;</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>
         </tr></thead>
         <tbody>
           {% for estudante in estudantes %} 

@@ -516,8 +516,7 @@ def organizacoes_prospect(request):
                     .filter(ano__gt=configuracao.ano).distinct()
 
             submetidas.append(propostas_submetidas.count())
-            disponiveis.append(propostas_submetidas.filter(disponivel=True)
-                                                   .count())
+            disponiveis.append(propostas_submetidas.filter(disponivel=True).count())
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 

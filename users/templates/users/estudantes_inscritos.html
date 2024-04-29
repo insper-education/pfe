@@ -9,7 +9,7 @@
   {% load static %}
   {% load aderencia_aluno %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
 
@@ -33,9 +33,9 @@
         <thead class="table-info">
           <tr>
             <th class="text-center">C</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(3)')">Curso</th>
-            <th onclick="w3.sortHTML('#EstudantesTable', '.item', 'td:nth-child(4)')">CR</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">Curso</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(4)')">CR</th>
           </tr>
         </thead>
         <tbody>

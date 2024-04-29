@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,11 +24,11 @@
       <table id="AulasTable" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
-            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(1)')">Aula (Data)</th>
-            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(2)')">Questão / Problema / Desafio</th>
-            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(3)')">Fundamentos / Conteúdo*</th>
-            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(4)')">Evidências de Aprendizado</th>
-            <th onclick="w3.sortHTML('#AulasTable', '.item', 'td:nth-child(4)')">Programação / Atividades*</th>
+            <th onclick="sort('#AulasTable', '.item', 'td:nth-child(1)')">Aula (Data)</th>
+            <th onclick="sort('#AulasTable', '.item', 'td:nth-child(2)')">Questão / Problema / Desafio</th>
+            <th onclick="sort('#AulasTable', '.item', 'td:nth-child(3)')">Fundamentos / Conteúdo*</th>
+            <th onclick="sort('#AulasTable', '.item', 'td:nth-child(4)')">Evidências de Aprendizado</th>
+            <th onclick="sort('#AulasTable', '.item', 'td:nth-child(4)')">Programação / Atividades*</th>
           </tr>
         </thead>
         <tbody>

@@ -11,7 +11,7 @@
 
   {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
 
   <style>
     #tab_aloc {
@@ -214,10 +214,10 @@
 
         // Ordena a tabela clicando no cabeçalho
         $("#tab_aloc th:nth-child(1)").click(function() {
-          w3.sortHTML("#tab_aloc", ".item", "td:nth-child(1)");
+          sort("#tab_aloc", ".item", "td:nth-child(1)");
         });
         $("#tab_aloc th:nth-child(2)").click(function() {
-          w3.sortHTML("#tab_aloc", ".item", "td:nth-child(2)");
+          sort("#tab_aloc", ".item", "td:nth-child(2)");
         });
 
       }

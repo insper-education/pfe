@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
-  <script src="{% static 'js/w3.js' %}"></script>
+  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -19,11 +19,11 @@
     <table id="UsuariosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(1)')">Usuário</th>
-          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(2)')">Tipo</th>
-          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(3)')">Autenticado</th>
-          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(4)')">Conectado desde</th>
-          <th onclick="w3.sortHTML('#UsuariosTable', '.item', 'td:nth-child(5)')">Permissões</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(1)')">Usuário</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(2)')">Tipo</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(3)')">Autenticado</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(4)')">Conectado desde</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(5)')">Permissões</th>
         </tr>
       </thead>
       <tbody>

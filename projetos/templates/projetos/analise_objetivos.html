@@ -11,7 +11,7 @@
   {% load addstr %}
   {% load l10n %}
 
-  <script src="{% static 'js/w3.js' %}"></script>
+  {% comment %} <script src="{% static 'js/sort.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-annotation.min.js' %}"></script>
@@ -22,16 +22,6 @@
   {% comment %} Para gerar as imagens {% endcomment %}
   <script src="{% static 'js/html2canvas.min.js' %}"></script>
   <script src="{% static 'js/jspdf.min.js' %}"></script>
-
-  {% comment %} <style>
-    .cabecalho {
-      float: left;
-      position: relative;
-      margin-top: 0px;
-      outline-width: 0;
-      background-color: none;
-    }
-  </style> {% endcomment %}
 
 {% endblock %}
 
