@@ -91,7 +91,7 @@ def index_professor(request):
             # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
             relatos_quinzenais = 'b'
             for projeto in projetos:
-                for evento, relatos, avaliados in projeto.get_relatos():
+                for evento, relatos, avaliados, observacoes in projeto.get_relatos():
                     if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                         if relatos:
                             if avaliados and relatos_quinzenais != 'r' and relatos_quinzenais != 'y':

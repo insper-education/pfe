@@ -228,14 +228,26 @@ class Projeto(models.Model):
 
         relatos = []
         avaliados = []  # se o orientador fez alguma avaliação dos relatos
+        observacoes = []  # observações do orientador
+
+        exame = Exame.objects.get(titulo="Relato Quinzenal")
 
         for index in range(len(eventos)):
         
             if not index: # index == 0:
-                relato = Relato.objects.filter(alocacao__projeto=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
+                relato = Relato.objects.filter(alocacao__projeto=self,
+                                               momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
 
+                obs = Observacao.objects.filter(projeto=self, exame=exame,
+                                                momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).last()
             else:
-                relato = Relato.objects.filter(alocacao__projeto=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
+                relato = Relato.objects.filter(alocacao__projeto=self,
+                                               momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
+                                               momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
+
+                obs = Observacao.objects.filter(projeto=self, exame=exame,
+                                                momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
+                                                momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).last()
 
             avaliado = []
             for r in relato:
@@ -243,12 +255,14 @@ class Projeto(models.Model):
                     avaliado.append([True, r.alocacao.aluno])
                 if r.avaliacao == 0:
                     avaliado.append([False, r.alocacao.aluno])
-                    
+
+            relatos.append([u[0] for u in relato.order_by().values("alocacao").distinct().values_list("alocacao_id")])
+
             avaliados.append(avaliado)
 
-            relatos.append([u[0] for u in relato.order_by().values('alocacao').distinct().values_list('alocacao_id')])
+            observacoes.append(obs)
     
-        return zip(eventos, relatos, avaliados)
+        return zip(eventos, relatos, avaliados, observacoes)
 
     @property
     def get_planos_de_orientacao(self):
