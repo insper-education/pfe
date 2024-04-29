@@ -9,6 +9,7 @@ Data: 15 de Dezembro de 2020
 import os
 import datetime
 import dateutil.parser
+import logging
 
 from urllib.parse import quote, unquote
 
@@ -49,6 +50,8 @@ from documentos.models import TipoDocumento
 
 from administracao.support import usuario_sem_acesso
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def get_evento(evento_id, configuracao):
     if configuracao.semestre == 1:
@@ -1282,11 +1285,12 @@ def banca_avaliar(request, slug, documento_id=None):
             recipient_list = [avaliador.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:
-                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
-            subject = 'Avaliação de Banca PFE : {0}'.format(banca.projeto)
+            subject = "Avaliação de Banca PFE : {0}".format(banca.projeto)
             # Intermediária e Final
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
                 recipient_list = [banca.projeto.orientador.user.email, ]
@@ -1294,8 +1298,9 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [coordenacao.user.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:
-                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+            
             resposta = "Avaliação submetida e enviada para:<br>"
             for recipient in recipient_list:
                 resposta += "&bull; {0}<br>".format(recipient)
@@ -1634,21 +1639,23 @@ def informe_bancas(request, tipo):
             .filter(tipo_de_banca=tipo)
 
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         for banca in bancas:
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
-            subject = 'Resultado da Avaliação de Banca PFE : {0}'.format(banca.projeto)
+            subject = "Resultado da Avaliação de Banca PFE : {0}".format(banca.projeto)
 
             recipient_list = [banca.projeto.orientador.user.email, ]
             
             check = email(subject, recipient_list, message)
             if check != 1:
-                message_error = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-                context = {"mensagem": message_error,}
-                return render(request, 'generic.html', context=context)
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                context = {"mensagem": message,}
+                return render(request, "generic.html", context=context)
 
         resposta = "Informe enviado para:<br>"
 

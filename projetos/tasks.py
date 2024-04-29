@@ -8,6 +8,8 @@ Data: 18 de Outubro de 2019
 
 import datetime
 import subprocess
+import logging
+
 from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
@@ -21,6 +23,9 @@ from .models import Aviso, Evento, Configuracao
 from .messages import email, htmlizar
 
 from users.models import Aluno, Professor, PFEUser
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @shared_task
 def backup():
@@ -97,39 +102,49 @@ def avisos_do_dia():
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            verify = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
-            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+            check = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_coordenacoes)
+                logger.error(error_message)
                 
         if aviso.comite_pfe:
             comite = PFEUser.objects.filter(membro_comite=True)
             lista_comite = [obj.email for obj in comite]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            verify = email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
-            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+            check = email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_comite)
+                logger.error(error_message)
                 
         if aviso.todos_alunos:
             estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
             lista_estudantes = [obj.user.email for obj in estudantes]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            verify = email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
-            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+            check = email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_estudantes)
+                logger.error(error_message)
 
         if aviso.todos_orientadores:
             orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
             lista_orientadores = [obj.user.email for obj in orientadores]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            verify = email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
-            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+            check = email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_orientadores)
+                logger.error(error_message)
 
         if aviso.contatos_nas_organizacoes:
             recipient_list += []
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            # verify = email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
-            # if verify != 1: pass # Algum problema de conexão, contacte: lpsoares@insper.edu.br
+            # check = email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
+            # if check != 1:
+            #     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list)
+            #     logger.error(error_message)
                 
 
 def eventos_do_dia():
@@ -161,10 +176,10 @@ def eventos_do_dia():
                     else:
                         message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
                         message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate.strftime("%d/%m/%Y"))
-                    verify = email(subject, recipient_list, message)
-                    if verify != 1:
-                        # Algum problema de conexão, contacte: lpsoares@insper.edu.br
-                        pass
+                    check = email(subject, recipient_list, message)
+                    if check != 1:
+                        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                        logger.error(error_message)
 
 @shared_task
 def envia_aviso():

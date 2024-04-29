@@ -12,6 +12,7 @@ import random
 import tablib
 import axes.utils
 import datetime
+import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -61,6 +62,8 @@ from operacional.models import Curso
 
 from .support import usuario_sem_acesso
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -234,6 +237,8 @@ def envia_senha_mensagem(user):
     recipient_list = [user.email,]
     check = email(subject, recipient_list, message_email)
     if check != 1:
+        error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + message_email + ", recipient_list=" + str(recipient_list)
+        logger.error(error_message)
         mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
         codigo = 400
     else:

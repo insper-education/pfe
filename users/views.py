@@ -10,6 +10,7 @@ import string
 import random
 import datetime
 import tablib
+import logging
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -42,6 +43,9 @@ from .models import Alocacao, OpcaoTemporaria
 from .support import get_edicoes, adianta_semestre
 
 from academica.models import Exame
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @login_required
 def user_detail(request, primarykey):
@@ -807,6 +811,8 @@ def envia_contas_senhas(request):
             recipient_list = [estudante.user.email, ]
             check = email(subject, recipient_list, message_email)
             if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message_email + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
                 mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
 
         context = {

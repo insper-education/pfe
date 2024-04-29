@@ -10,6 +10,7 @@ import datetime
 import csv
 import dateutil.parser
 import json
+import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -42,6 +43,8 @@ from .tasks import avisos_do_dia, eventos_do_dia
 
 from administracao.support import usuario_sem_acesso
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
@@ -592,7 +595,10 @@ def reembolso_pedir(request):
         message = message_reembolso(usuario, projeto, reembolso, cpf)
         check = email(subject, recipient_list, message)
         if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
             message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            
         return HttpResponse(message)
 
     bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")

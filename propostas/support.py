@@ -8,6 +8,7 @@ Data: 15 de Dezembro de 2020
 
 import re           # regular expression (para o import)
 import PyPDF2
+import logging
 
 from django.conf import settings
 from django.utils import html
@@ -23,6 +24,9 @@ from users.support import adianta_semestre
 from administracao.models import Carta
 
 from operacional.models import Curso
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
@@ -360,14 +364,13 @@ def envia_proposta(proposta, enviar=True):
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))
 
-        # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
-        # for coordenador in coordenacoes:
-        #     recipient_list.append(str(coordenador.email))
         configuracao = get_object_or_404(Configuracao)
         recipient_list.append(str(configuracao.coordenacao.user.email))
 
         check = email(subject, recipient_list, message)
         if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
             message = "<b>Algum problema de conexão, contacte: lpsoares@insper.edu.br</b>"
 
     return message

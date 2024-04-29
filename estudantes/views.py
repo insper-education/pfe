@@ -6,6 +6,7 @@ Data: 14 de Dezembro de 2020
 """
 
 import datetime
+import logging
 from hashids import Hashids
 
 from django.conf import settings
@@ -38,6 +39,8 @@ from administracao.models import Carta
 from administracao.support import propostas_liberadas
 from documentos.models import TipoDocumento
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @login_required
 def index_estudantes(request):
@@ -185,8 +188,9 @@ def encontros_marcar(request):
 
             message = message_agendamento(agendado, cancelado)
             check = email(subject, recipient_list, message)
-            # if check != 1:
-            #     message = "Problema no envio, contacte:lpsoares@insper.edu.br"
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
 
             horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
             mensagem = "Dinâmica agendada: " + horario
@@ -239,8 +243,9 @@ def encontros_cancelar(request, evento_id):
 
     message = message_cancelamento(encontro)
     check = email(subject, recipient_list, message)
-    # if check != 1:
-    #     message = "Problema no envio, contacte:lpsoares@insper.edu.br"
+    if check != 1:
+        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+        logger.error(error_message)
 
     horario = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
     mensagem = "Agendamento Cancelado: " + horario
@@ -703,7 +708,9 @@ def selecao_propostas(request):
                 recipient_list = [aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:
-                    message = "Erro no envio contacte:lpsoares@insper.edu.br"
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+                    message = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
 
                 context = {
                     "message": message,
