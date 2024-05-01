@@ -528,6 +528,13 @@ def organizacoes_prospect(request):
 
     TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
 
+    cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    necessarios = []
+    estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
+    for curso in cursos:
+        necessarios.append(estudantes.filter(curso2=curso).count()/4)  # grupos de 4 estudantes
+
+
     context = {
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
@@ -536,7 +543,8 @@ def organizacoes_prospect(request):
         "ano": ano,
         "semestre": semestre,
         "filtro": "todas",
-        "cursos": Curso.objects.all().order_by("id"),
+        "cursos": cursos,
+        "necessarios": necessarios,
         "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
         }
     return render(request, "organizacoes/organizacoes_prospectadas.html", context)

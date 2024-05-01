@@ -7,9 +7,14 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
+
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
+
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
   <style>
     .cursor_pointer{cursor: pointer;}
@@ -77,6 +82,7 @@
 
     <script>
       var cursos_organizacoes = {};
+      var cursos_projetos = {};
     </script>
 
     <div class="table-responsive">
@@ -129,8 +135,8 @@
             </td>
 
             <td style="text-align:center">
-              <small style="white-space: nowrap;">{% for curso in cursos %}{% if curso.curso_do_insper %}<span class="cursor_pointer" id="{{organizacao.id}}{{curso.sigla_curta}}"
-                 onclick="areas('{{organizacao.id}}','{{curso.sigla_curta}}')" {% if not curso in organizacao.area_curso.all %}style="color:lightgray"{% endif %}>{{curso.sigla_curta}}&nbsp;</span>{% endif %}{% endfor %}</small>
+              <small style="white-space: nowrap;">{% for curso in cursos %}<span class="cursor_pointer" id="{{organizacao.id}}{{curso.sigla_curta}}"
+                 onclick="areas('{{organizacao.id}}','{{curso.sigla_curta}}')" {% if not curso in organizacao.area_curso.all %}style="color:lightgray"{% endif %}>{{curso.sigla_curta}}&nbsp;</span>{% endfor %}</small>
             </td>
 
             <td style="text-align:center">
@@ -215,13 +221,24 @@
 
           </tr>
           {% if contato != "---------" %}
-            {% if contato.momento|date:"Ymd" > meses3|date:"Ymd" %}
+            {% comment %} {% if contato.momento|date:"Ymd" > meses3|date:"Ymd" %} {% endcomment %}
               <script>
-                tipo = "{% for curso in organizacao.area_curso.all %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
+                {% with area_cursos=organizacao.area_curso.all%}
+                tipo = "{% for curso in area_cursos %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
                 if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
                 cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
+                
+                if(tipo != "") {
+                  if(tipo in cursos_projetos) {
+                    cursos_projetos[tipo] += {{submetidas}}.0/{{area_cursos.count}}.0;
+                  } else {
+                    cursos_projetos[tipo] = {{submetidas}}.0/{{area_cursos.count}}.0;
+                  }
+                }
+
+                {% endwith %}
               </script>
-            {% endif %}
+            {% comment %} {% endif %} {% endcomment %}
           {% endif %}
 
             </tbody>
@@ -315,12 +332,86 @@
       <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
       <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
         ({{ total_submetidas }})
+        <br><br>
       </a>
+
+      <div class="table-responsive">
+        <div style="position: relative; height:300px; width:500px">
+          <canvas id="projetos"></canvas>
+        </div>
+      </div>
+
+<script>
+
+  var datasets = [{
+      label: "Necessário",
+      backgroundColor: "rgba(255, 190, 190, 0.2)",
+      borderWidth: 1,
+      data: [{% for necessario in necessarios %}{{necessario|unlocalize}}, {% endfor %}],
+      xAxisID: "bar-x-necessario",
+      stack: "Stack 1",
+      barThickness: 80,
+  }]
+
+  for (var key in cursos_projetos) {
+    datasets.push({
+      label: key,
+      backgroundColor: "rgba(54, 162, 235, 1.0)",
+      borderWidth: 1,
+      data: [{% for curso in cursos %}key.includes("{{curso.sigla_curta}}") ? cursos_projetos[key] : 0,{% endfor %}],
+      xAxisID: "bar-x-projetos",
+      stack: "Stack 0",
+      barThickness: 50,
+    });
+  }
+
+  var data = {
+    labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
+    datasets: datasets,
+  };
+  
+  var options = {
+    title: {
+        display: true,
+        text: "Proporção de Projetos",
+        position: "top"
+    },
+    legend: {
+      position: "bottom"
+    },
+    scales: {
+      xAxes: [{
+        stacked: true,
+        id: "bar-x-projetos",
+      }, {
+        display: false,
+        id: "bar-x-necessario",
+        type: "category",
+        gridLines: {offsetGridLines: true},
+        offset: true
+      }],
+      yAxes: [{
+        stacked: true,
+        ticks: {beginAtZero: true},
+      }]
+    }
+  };
+  
+  var ctx = document.getElementById("projetos").getContext("2d");
+  var myBarChart = new Chart(ctx, {
+    type: "bar",
+    data: data,
+    options: options
+  });
+</script>
+
 
       <script>
         // Call numberRows after sorting the table
         $("th").click(function() {numberRows();});
       </script>
+
+
 
   </div>
 
