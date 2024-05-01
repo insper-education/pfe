@@ -14,6 +14,8 @@
   <script>{% include "tooltip.js" %}</script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
     .cursor_pointer{cursor: pointer;}
@@ -41,7 +43,8 @@
     @media (max-width: 1280px) {
       .flex-container {flex-direction: column;}
       .flex-item {width: 100%;}
-    }
+    }  
+    .btn-light {background-color: #FFFFFF;}
   </style>
 
 {% endblock %}
@@ -83,7 +86,7 @@
           <select id="filter" class="filter selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
             <option value="todas">todas contactadas</option>
             {% for retorno in TIPO_DE_RETORNO %}
-              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">{{retorno.2}}</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
               <option value="{{retorno.0}}">{{retorno.1}}</option>
             {% endfor %}
           </select>
@@ -514,8 +517,8 @@
 
     }
 
-    function filtra_data() {  // REFERENTE AO SELETOR DE DATAS
-      var filterValue = $(".filter").val();
+    function filtra_data() {
+      var filterValue = $("#filter").val();
       var row = $(".item"); 
       row.hide();
 
