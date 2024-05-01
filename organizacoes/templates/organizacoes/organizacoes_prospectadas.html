@@ -13,6 +13,7 @@
   <script src="{% static 'js/sort.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
+  
 
   <style>
     .cursor_pointer{cursor: pointer;}
@@ -22,7 +23,7 @@
       line-height: 1.2 !important;
     }
     .show-hide {cursor: pointer;}
-    .special {
+    .special_filter {
       font-style: italic;
       font-weight: bold !important;
     }
@@ -82,7 +83,7 @@
           <select id="filter" class="filter selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
             <option value="todas">todas contactadas</option>
             {% for retorno in TIPO_DE_RETORNO %}
-              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special" value="{{retorno.2}}">{{retorno.2}}</option>"{% else %}    <option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">{{retorno.2}}</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
               <option value="{{retorno.0}}">{{retorno.1}}</option>
             {% endfor %}
           </select>
@@ -266,19 +267,28 @@
       </table>
       </div>
 
+      <div style="margin-top: 10px;">
+      <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
+        ({{ total_submetidas }})
+        <br>
+      </a>
+      <div>
+
       <div class="flex-container">
         <div class="flex-item">
-          <b style="display: inline-block; margin-top: 16px;">Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
-      
-          &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
-          &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
-          &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
-          &nbsp;<span data-type="3" data-color="pink" class="show-hide" style="background-color:pink">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
+          <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px;">
+            <b>Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
+        
+            &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
+            &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
+            &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
+            &nbsp;<span data-type="3" data-color="pink" class="show-hide" style="background-color:pink">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
 
-          &nbsp;<span data-type="4" data-color="yellow" class="show-hide" style="background-color:yellow">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
-          &nbsp;<span data-type="6" data-color="green" class="show-hide" style="background-color:aquamarine">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
-          &nbsp;<span data-type="5" data-color="#e289df" class="show-hide" style="background-color:#e289df">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
-      
+            &nbsp;<span data-type="4" data-color="yellow" class="show-hide" style="background-color:yellow">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
+            &nbsp;<span data-type="6" data-color="green" class="show-hide" style="background-color:aquamarine">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
+            &nbsp;<span data-type="5" data-color="#e289df" class="show-hide" style="background-color:#e289df">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
+          </div>
           <script>
 
             $(".show-hide").click(function() {
@@ -342,18 +352,11 @@
             atualiza_situacoes();
 
           </script>
-          
-          <p>&nbsp;</p>
-          <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
-            ({{ total_submetidas }})
-            <br><br>
-          </a>
         </div>
 
         <div class="flex-item">
           <div class="table-responsive">
-            <div style="position: relative; height:300px; width:600px">
+            <div style="position: relative; height:240px; width:580px">
               <canvas id="projetos"></canvas>
             </div>
           </div>
@@ -415,7 +418,9 @@
             stacked: true,
             ticks: {beginAtZero: true},
           }]
-        }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
       };
       
       var ctx = document.getElementById("projetos").getContext("2d");
