@@ -44,7 +44,10 @@
       .flex-container {flex-direction: column;}
       .flex-item {width: 100%;}
     }  
-    .btn-light {background-color: #FFFFFF;}
+    .btn-light {
+      background-color: #FFFFFF;
+      border-color: #ced4da;
+    }
   </style>
 
 {% endblock %}
@@ -83,7 +86,7 @@
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filter">Filtrar</label>
           </div>
-          <select id="filter" class="filter selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
+          <select id="filter" class="selectpicker filter custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
             <option value="todas">todas contactadas</option>
             {% for retorno in TIPO_DE_RETORNO %}
               {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
