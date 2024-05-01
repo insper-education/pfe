@@ -12,9 +12,7 @@
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
   <script>{% include "tooltip.js" %}</script>
-
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
   <style>
     .cursor_pointer{cursor: pointer;}
@@ -27,6 +25,21 @@
     .special {
       font-style: italic;
       font-weight: bold !important;
+    }
+    .flex-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 1640px;
+      max-width: 100%;
+    }
+    .flex-item {
+      flex: 1;
+      max-width: 100%;
+    }
+    @media (max-width: 1280px) {
+      .flex-container {flex-direction: column;}
+      .flex-item {width: 100%;}
     }
   </style>
 
@@ -251,167 +264,170 @@
       </table>
       </div>
 
-      {% comment %} {% if organizacoes_list %}{% endcomment %}
-
-      <b style="display: inline-block; margin-top: 16px;">Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
-  
-      &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
-      &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
-      &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
-      &nbsp;<span data-type="3" data-color="pink" class="show-hide" style="background-color:pink">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
-
-      &nbsp;<span data-type="4" data-color="yellow" class="show-hide" style="background-color:yellow">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
-      &nbsp;<span data-type="6" data-color="green" class="show-hide" style="background-color:aquamarine">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
-      &nbsp;<span data-type="5" data-color="#e289df" class="show-hide" style="background-color:#e289df">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
-  
-      <script>
-
-        $(".show-hide").click(function() {
-
-          click = $(this);
-          var filterValue = click.attr("data-type");
-
-          var row = $(".item");
-
-          row.each(function(i, el) {
-        
-            if( filterValue == $(el).attr("data-type") ) {
-              if($(el).is(":visible")) {
-                $(el).hide();
-                click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
-              } else {
-                $(el).show();
-                click.css({background: click.attr("data-color") });
-              }
-            }
-          });
-        });
-
-        function preenche_cursos(tipo_de_retorno) {
-
-          mensagem = "";
-          mensagem2 = "";
-          
-          primeiro = true;
-          if (cursos_organizacoes[tipo_de_retorno]) {
-            total=0;
-            for (var key in cursos_organizacoes[tipo_de_retorno]){
-              if(primeiro) primeiro = false; else mensagem2 += ",";
-              sigla_curso = key;
-              if(sigla_curso=="") sigla_curso="?";
-              mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_de_retorno][key];
-              total += cursos_organizacoes[tipo_de_retorno][key];
-            }
-            mensagem += " = ";
-            mensagem += total;
-            mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
-            mensagem += " (" + mensagem2 + " )";
-          }
-          else {
-            return("");
-          }
-
-          return(mensagem);
-        }
-
-        function atualiza_situacoes() {
-          document.getElementById("so_contactados").innerHTML = preenche_cursos(0);
-          document.getElementById("recusados").innerHTML = preenche_cursos(3);
-          document.getElementById("interessados").innerHTML = preenche_cursos(1);
-          document.getElementById("confirmados").innerHTML = preenche_cursos(2);
-          document.getElementById("notificada").innerHTML = preenche_cursos(4);
-          document.getElementById("documentada").innerHTML = preenche_cursos(6);
-          document.getElementById("sem_grupo").innerHTML = preenche_cursos(5);
-        }
-
-        atualiza_situacoes();
-
-      </script>
+      <div class="flex-container">
+        <div class="flex-item">
+          <b style="display: inline-block; margin-top: 16px;">Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
       
-      <p>&nbsp;</p>
-      <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
-        ({{ total_submetidas }})
-        <br><br>
-      </a>
+          &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
+          &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
+          &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
+          &nbsp;<span data-type="3" data-color="pink" class="show-hide" style="background-color:pink">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
 
-      <div class="table-responsive">
-        <div style="position: relative; height:300px; width:500px">
-          <canvas id="projetos"></canvas>
+          &nbsp;<span data-type="4" data-color="yellow" class="show-hide" style="background-color:yellow">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
+          &nbsp;<span data-type="6" data-color="green" class="show-hide" style="background-color:aquamarine">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
+          &nbsp;<span data-type="5" data-color="#e289df" class="show-hide" style="background-color:#e289df">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
+      
+          <script>
+
+            $(".show-hide").click(function() {
+
+              click = $(this);
+              var filterValue = click.attr("data-type");
+
+              var row = $(".item");
+
+              row.each(function(i, el) {
+            
+                if( filterValue == $(el).attr("data-type") ) {
+                  if($(el).is(":visible")) {
+                    $(el).hide();
+                    click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
+                  } else {
+                    $(el).show();
+                    click.css({background: click.attr("data-color") });
+                  }
+                }
+              });
+            });
+
+            function preenche_cursos(tipo_de_retorno) {
+
+              mensagem = "";
+              mensagem2 = "";
+              
+              primeiro = true;
+              if (cursos_organizacoes[tipo_de_retorno]) {
+                total=0;
+                for (var key in cursos_organizacoes[tipo_de_retorno]){
+                  if(primeiro) primeiro = false; else mensagem2 += ",";
+                  sigla_curso = key;
+                  if(sigla_curso=="") sigla_curso="?";
+                  mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_de_retorno][key];
+                  total += cursos_organizacoes[tipo_de_retorno][key];
+                }
+                mensagem += " = ";
+                mensagem += total;
+                mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
+                mensagem += " (" + mensagem2 + " )";
+              }
+              else {
+                return("");
+              }
+
+              return(mensagem);
+            }
+
+            function atualiza_situacoes() {
+              document.getElementById("so_contactados").innerHTML = preenche_cursos(0);
+              document.getElementById("recusados").innerHTML = preenche_cursos(3);
+              document.getElementById("interessados").innerHTML = preenche_cursos(1);
+              document.getElementById("confirmados").innerHTML = preenche_cursos(2);
+              document.getElementById("notificada").innerHTML = preenche_cursos(4);
+              document.getElementById("documentada").innerHTML = preenche_cursos(6);
+              document.getElementById("sem_grupo").innerHTML = preenche_cursos(5);
+            }
+
+            atualiza_situacoes();
+
+          </script>
+          
+          <p>&nbsp;</p>
+          <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
+          <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
+            ({{ total_submetidas }})
+            <br><br>
+          </a>
         </div>
+
+        <div class="flex-item">
+          <div class="table-responsive">
+            <div style="position: relative; height:300px; width:600px">
+              <canvas id="projetos"></canvas>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-<script>
+    <script>
 
-  var datasets = [{
-      label: "Necessário",
-      backgroundColor: "rgba(255, 190, 190, 0.2)",
-      borderWidth: 1,
-      data: [{% for necessario in necessarios %}{{necessario|unlocalize}}, {% endfor %}],
-      xAxisID: "bar-x-necessario",
-      stack: "Stack 1",
-      barThickness: 80,
-  }]
-
-  for (var key in cursos_projetos) {
-    datasets.push({
-      label: key,
-      backgroundColor: "rgba(54, 162, 235, 1.0)",
-      borderWidth: 1,
-      data: [{% for curso in cursos %}key.includes("{{curso.sigla_curta}}") ? cursos_projetos[key] : 0,{% endfor %}],
-      xAxisID: "bar-x-projetos",
-      stack: "Stack 0",
-      barThickness: 50,
-    });
-  }
-
-  var data = {
-    labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
-    datasets: datasets,
-  };
-  
-  var options = {
-    title: {
-        display: true,
-        text: "Proporção de Projetos",
-        position: "top"
-    },
-    legend: {
-      position: "bottom"
-    },
-    scales: {
-      xAxes: [{
-        stacked: true,
-        id: "bar-x-projetos",
-      }, {
-        display: false,
-        id: "bar-x-necessario",
-        type: "category",
-        gridLines: {offsetGridLines: true},
-        offset: true
-      }],
-      yAxes: [{
-        stacked: true,
-        ticks: {beginAtZero: true},
+      var datasets = [{
+          label: "Necessários",
+          backgroundColor: "rgba(255, 190, 190, 0.2)",
+          borderWidth: 1,
+          data: [{% for necessario in necessarios %}{{necessario|unlocalize}}, {% endfor %}],
+          xAxisID: "bar-x-necessario",
+          stack: "Stack 1",
+          barThickness: 80,
       }]
-    }
-  };
-  
-  var ctx = document.getElementById("projetos").getContext("2d");
-  var myBarChart = new Chart(ctx, {
-    type: "bar",
-    data: data,
-    options: options
-  });
-</script>
 
+      for (var key in cursos_projetos) {
+        datasets.push({
+          label: key,
+          backgroundColor: "rgba(50, 150, 255, 1.0)",
+          borderWidth: 1,
+          borderColor: "black",
+          data: [{% for curso in cursos %}key.includes("{{curso.sigla_curta}}") ? cursos_projetos[key] : 0,{% endfor %}],
+          xAxisID: "bar-x-projetos",
+          stack: "Stack 0",
+          barThickness: 50,
+        });
+      }
 
-      <script>
-        // Call numberRows after sorting the table
-        $("th").click(function() {numberRows();});
-      </script>
+      var data = {
+        labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
+        datasets: datasets,
+      };
+      
+      var options = {
+        title: {
+            display: true,
+            text: "Proporção de Projetos Submetidos",
+            position: "top"
+        },
+        legend: {
+          position: "bottom"
+        },
+        scales: {
+          xAxes: [{
+            stacked: true,
+            id: "bar-x-projetos",
+          }, {
+            display: false,
+            id: "bar-x-necessario",
+            type: "category",
+            gridLines: {offsetGridLines: true},
+            offset: true
+          }],
+          yAxes: [{
+            stacked: true,
+            ticks: {beginAtZero: true},
+          }]
+        }
+      };
+      
+      var ctx = document.getElementById("projetos").getContext("2d");
+      var myBarChart = new Chart(ctx, {
+        type: "bar",
+        data: data,
+        options: options
+      });
+    </script>
 
-
+    <script>
+      // Call numberRows after sorting the table
+      $("th").click(function() {numberRows();});
+    </script>
 
   </div>
 
