@@ -295,15 +295,15 @@
           <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px;">
             <b>Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
         
-            &nbsp;<span data-type="0" data-color="lightblue" class="show-hide" style="background-color:lightblue;">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
-            &nbsp;<span data-type="1" data-color="lemonchiffon" class="show-hide" style="background-color:lemonchiffon;">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
-            &nbsp;<span data-type="2" data-color="lightgreen" class="show-hide" style="background-color:lightgreen;">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
-            &nbsp;<span data-type="3" data-color="pink" class="show-hide" style="background-color:pink;">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
+            &nbsp;<span data-type="0" data-color="lightblue" data-hide="false" class="show-hide" style="background-color:lightblue;">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
+            &nbsp;<span data-type="1" data-color="lemonchiffon" data-hide="false" class="show-hide" style="background-color:lemonchiffon;">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
+            &nbsp;<span data-type="2" data-color="lightgreen" data-hide="false" class="show-hide" style="background-color:lightgreen;">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
+            &nbsp;<span data-type="3" data-color="pink" data-hide="false" class="show-hide" style="background-color:pink;">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
 
-            &nbsp;<span data-type="4" data-color="yellow" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
-            &nbsp;<span data-type="6" data-color="green" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
-            &nbsp;<span data-type="5" data-color="#e289df" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
-            &nbsp;<span data-type="254" data-color="#FFFFFF" class="show-hide" style="border: 1px solid black; background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros"></span><br>
+            &nbsp;<span data-type="4" data-color="yellow" data-hide="false" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
+            &nbsp;<span data-type="6" data-color="green" data-hide="false" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
+            &nbsp;<span data-type="5" data-color="#e289df" data-hide="false" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
+            &nbsp;<span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="border: 1px solid black; background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros"></span><br>
           </div>
           <script>
 
@@ -315,19 +315,31 @@
               var row = $(".item");
               
               row.each(function(i, el) {
-                //console.log(filterValue);
-                console.log($(el).attr("data-type"));
-                if( filterValue == $(el).attr("data-type") ) {
-                  console.log($(el).attr("data-type"));
-                  if($(el).is(":visible")) {
+                if( (filterValue > 6) & ($(el).attr("data-type") > 6) ) {
+                  if(click.attr("data-hide") === "false") {
                     $(el).hide();
-                    click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
                   } else {
                     $(el).show();
-                    click.css({background: click.attr("data-color") });
+                  }
+                } else {
+                  if( filterValue == $(el).attr("data-type") ) {
+                    if(click.attr("data-hide") === "false") {
+                      $(el).hide();
+                    } else {
+                      $(el).show();
+                    }
                   }
                 }
               });
+
+              if(click.attr("data-hide") === "false") {
+                click.attr("data-hide", "true");
+                click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
+              } else {
+                click.attr("data-hide", "false");
+                click.css({background: click.attr("data-color") });
+              }
+
             });
 
             function preenche_cursos(tipo_de_retorno) {
