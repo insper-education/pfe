@@ -378,6 +378,7 @@ def envia_proposta(proposta, enviar=True):
 
 def retorna_ternario(propostas, cursos):
     """Função retorna dados para gráfico ternário."""
+    # Na prática não estou usando mais, porém pode ser novamente útil se usar gráficos ternários
     ternario = [] # Lista com todas as propostas
     count = {}
     vagas = {}

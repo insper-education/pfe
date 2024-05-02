@@ -292,43 +292,43 @@ def procura_propostas(request):
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
-
-    ano = configuracao.ano
-    semestre = configuracao.semestre
+    # ano = configuracao.ano
+    # semestre = configuracao.semestre
     edicoes = []
 
     if request.is_ajax():
         if "edicao" in request.POST:
-            edicao = request.POST['edicao']
-            if edicao == 'todas':
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                ano = None
+                semestre = None
                 propostas_filtradas = Proposta.objects.all()
             else:
                 ano, semestre = edicao.split('.')
-                propostas_filtradas = Proposta.objects\
-                    .filter(ano=ano,
-                            semestre=semestre)
+                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
 
-            propostas_filtradas = propostas_filtradas.order_by("ano",
-                                                               "semestre",
-                                                               "organizacao",
-                                                               "titulo", )
-
+            propostas_filtradas = propostas_filtradas.order_by("ano", "semestre", "organizacao", "titulo")
             cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
-
-            vagas, ternario_aprovados = retorna_ternario(propostas_filtradas.filter(disponivel=True), cursos)
-            _, ternario_pendentes = retorna_ternario(propostas_filtradas.filter(disponivel=False), cursos)
 
             dic_organizacoes = {}
             for proposta in propostas_filtradas:
-                if proposta.organizacao and\
-                  proposta.organizacao not in dic_organizacoes:
+                if proposta.organizacao and proposta.organizacao not in dic_organizacoes:
                     dic_organizacoes[proposta.organizacao] = 0
             num_organizacoes = len(dic_organizacoes)
 
             # Contando propostas disponíveis e escolhas
             disponivel_propostas = {}
+            vagas = {}
+            count = {}  # temporaria
+            count_disp = {}  # temporaria
+            prop = {}  # temporaria proporcional
             for curso in cursos:
+                if ano and semestre:
+                    estudantes = Aluno.objects.filter(curso2=curso, anoPFE=ano, semestrePFE=semestre).count()
+                else:
+                    estudantes = Aluno.objects.filter(curso2=curso).count()
                 disponivel_propostas[curso] = [0, 0]
+                vagas[curso] = [0, 0, 0, estudantes]
             disponivel_multidisciplinar = [0, 0]
             for proposta in propostas_filtradas:
                 p = proposta.get_nativamente()
@@ -340,13 +340,24 @@ def propostas_apresentadas(request):
                     if proposta.disponivel:
                         disponivel_multidisciplinar[0] += 1
                     disponivel_multidisciplinar[1] += 1
+                for curso in cursos:
+                    count[curso] = 0
+                    count_disp[curso] = 0
+                    prop[curso] = 0
+                    for i in range(1,5):
+                        perfil = getattr(proposta, "perfil"+str(i)).all()
+                        if curso in perfil: 
+                            count[curso] += 1
+                            if proposta.disponivel:
+                                count_disp[curso] += 1
+                                prop[curso] += 1/perfil.count()
+                    vagas[curso][0] += count[curso]
+                    vagas[curso][1] += count_disp[curso]
+                    vagas[curso][2] += prop[curso]
         
             context = {
                 "propostas": propostas_filtradas,
                 "num_organizacoes": num_organizacoes,
-                "ternario_aprovados": ternario_aprovados,
-                "ternario_pendentes": ternario_pendentes,
-                "configuracao": configuracao,
                 "edicao": edicao,
                 "cursos": cursos,
                 "disponivel_propostas": disponivel_propostas,

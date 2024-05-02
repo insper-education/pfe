@@ -103,7 +103,7 @@
             <script>
         
                 var config_objetivos = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_geral.items %}
@@ -155,33 +155,29 @@
                                         return " ";
                                     }
                                 },
-                                color: '#000',
+                                color: "#000",
                             }
                         },
                         annotation: {
                             annotations: [
                                 {
-                                    type: 'line',
-                                    mode: 'vertical',
-                                    scaleID: 'x-axis-0',
+                                    type: "line",
+                                    mode: "vertical",
+                                    scaleID: "x-axis-0",
                                     value: 5,
-                                    borderColor: 'rgb(225, 12, 12)',
+                                    borderColor: "rgb(225, 12, 12)",
                                     borderWidth: 6,
-                                    label: {
-                                        enabled: false,
-                                        content: 'Test label'
-                                    }
+                                    label: {enabled: false,}
                                 },
                                 {
-                                    type: 'line',
-                                    mode: 'vertical',
-                                    scaleID: 'x-axis-0',
+                                    type: "line",
+                                    mode: "vertical",
+                                    scaleID: "x-axis-0",
                                     value: 7,
-                                    borderColor: 'rgb(12, 225, 12)',
+                                    borderColor: "rgb(12, 225, 12)",
                                     borderWidth: 6,
                                     label: {
                                         enabled: false,
-                                        content: 'Test label'
                                     },
                                 }
                             ]
@@ -208,45 +204,37 @@
                                 return " ";
                             }
                         },
-                        color: '#000',
+                        color: "#000",
                     }
                 };
 
                 var annotation = {
                     annotations: [
                         {
-                            type: 'line',
-                            mode: 'vertical',
-                            scaleID: 'x-axis-0',
+                            type: "line",
+                            mode: "vertical",
+                            scaleID: "x-axis-0",
                             value: 5,
-                            borderColor: 'rgb(225, 12, 12)',
+                            borderColor: "rgb(225, 12, 12)",
                             borderWidth: 3,
-                            label: {
-                                enabled: false,
-                                content: 'Test label'
-                            }
+                            label: {enabled: false,}
                         },
                         {
-                            type: 'line',
-                            mode: 'vertical',
-                            scaleID: 'x-axis-0',
+                            type: "line",
+                            mode: "vertical",
+                            scaleID: "x-axis-0",
                             value: 7,
-                            borderColor: 'rgb(12, 225, 12)',
+                            borderColor: "rgb(12, 225, 12)",
                             borderWidth: 3,
-                            label: {
-                                enabled: false,
-                                content: 'Test label'
-                            },
+                            label: {enabled: false,},
                         }
                     ]
                 }
 
-
-
                 {% comment %} Avaliações Antigas {% endcomment %}
 
                 var config_objetivos_api = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_api.items %}
@@ -288,7 +276,7 @@
                 }
 
                 var config_objetivos_apg = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_apg.items %}
@@ -331,7 +319,7 @@
 
 
                 var config_objetivos_afi = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_afi.items %}
@@ -373,7 +361,7 @@
                 }
 
                 var config_objetivos_afg = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_afg.items %}
@@ -415,7 +403,7 @@
                 }
 
                 var config_objetivos_rii = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_rii.items %}
@@ -457,7 +445,7 @@
                 }
 
                 var config_objetivos_rig = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_rig.items %}
@@ -499,7 +487,7 @@
                 }
 
                 var config_objetivos_bi = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_bi.items %}
@@ -540,10 +528,8 @@
                     }
                 }
 
-
-
                 var config_objetivos_rfi = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_rfi.items %}
@@ -585,7 +571,7 @@
                 }
 
                 var config_objetivos_rfg = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_rfg.items %}
@@ -627,7 +613,7 @@
                 }
 
                 var config_objetivos_bf = {
-                    type: 'horizontalBar',
+                    type: "horizontalBar",
                     data: {
                     labels: [
                         {% for key, value in medias_bf.items %}
@@ -660,7 +646,7 @@
                         legend: { display: false },
                         title: {
                             display: true,
-                            text: 'Banca Final'
+                            text: "Banca Final"
                         },
                         scales: scales,
                         plugins: plugins,

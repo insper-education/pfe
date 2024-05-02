@@ -1,0 +1,57 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 1 de Maio de 2024
+{% endcomment %}
+
+{% load static %}
+{% load l10n %}
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script src="{% static 'js/chartjs-plugin-annotation.min.js' %}"></script>
+{% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
+  
+<div class="container-fluid">
+    <canvas id="bar-chart-horizontal" style="max-height: 300px; max-width:660px;"></canvas>
+</div>
+
+<script>
+  new Chart(document.getElementById("bar-chart-horizontal"), {
+    type: "horizontalBar",
+    data: {
+      labels: [{% for curso in vagas %}"{{curso}}", {% endfor %}],
+      datasets: [{
+          label: "vagas",
+          backgroundColor: [{% for curso in vagas %}"#{{curso.cor}}", {% endfor %}],
+          data: [{% for value in vagas.values %}100*({{value.2|unlocalize}}/{{value.3}}), {% endfor %}],
+      }]
+    },
+    options: {
+      legend: {display: false},
+      title: {
+        display: true,
+        text: "Preenchimento de vagas (%)",
+      },
+      scales: {
+        xAxes: [{
+            ticks: {
+                beginAtZero: true,
+                suggestedMax: 100,
+            }
+        }]
+      },
+      annotation: {
+        annotations: [
+          {
+            type: "line",
+            mode: "vertical",
+            scaleID: "x-axis-0",
+            value: 100,
+            borderColor: "rgb(225, 225, 12)",
+            borderWidth: 6,
+            label: {enabled: false,}
+          }
+        ]
+      }
+    }
+});
+</script>

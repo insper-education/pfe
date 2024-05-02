@@ -4,9 +4,10 @@
   Data: 2 de Outubro de 2023
 {% endcomment %}
 
+{% comment %} Não estou usando no momento pois agora com 4 cursos não faz mais sentido, porém pode ser útil no futuro {% endcomment %}
+
 {% load static %}
 <script charset="UTF-8" src="{% static 'd3/d3.min.js' %}"></script>
-
 
 <style>
     line.axis {
@@ -61,7 +62,8 @@
 </style>
 
 
-
+<h5>Plot de Propostas entre Cursos</h5>
+<div id="plot"></div>
 
 <!-- https://gist.github.com/widged/5780720 -->
 <script>

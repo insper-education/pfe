@@ -34,8 +34,8 @@
           ],
         datasets: [
         {
-          label: 'Opção #1',
-          backgroundColor: 'rgb(0, 250, 0)',
+          label: "Opção #1",
+          backgroundColor: "rgb(0, 250, 0)",
           barPercentage: 0.5,
           data: [
             {% for prioridade in prioridades.0 %} 
@@ -45,8 +45,8 @@
           estudantes: [{% for estudante in estudantes.0 %} "{{estudante}}",{% endfor %}]
         },
         {
-          label: 'Opção #2',
-          backgroundColor: 'rgb(210, 230, 30)',
+          label: "Opção #2",
+          backgroundColor: "rgb(210, 230, 30)",
           barPercentage: 0.5,
           data: [
             {% for prioridade in prioridades.1 %} 
@@ -56,8 +56,8 @@
           estudantes: [{% for estudante in estudantes.1 %} "{{estudante}}",{% endfor %}]
         }, 
         {
-          label: 'Opção #3',
-          backgroundColor: 'rgb(210, 190, 35)',
+          label: "Opção #3",
+          backgroundColor: "rgb(210, 190, 35)",
           barPercentage: 0.5,
           data: [
             {% for prioridade in prioridades.2 %} 
@@ -67,8 +67,8 @@
           estudantes: [{% for estudante in estudantes.2 %} "{{estudante}}",{% endfor %}]
         },
         {
-          label: 'Opção #4',
-          backgroundColor: 'rgb(180, 180, 120)',
+          label: "Opção #4",
+          backgroundColor: "rgb(180, 180, 120)",
           barPercentage: 0.5,
           data: [
             {% for prioridade in prioridades.3 %} 
@@ -78,8 +78,8 @@
           estudantes: [{% for estudante in estudantes.3 %} "{{estudante}}",{% endfor %}]
         },
         {
-          label: 'Opção #5',
-          backgroundColor: 'rgb(180, 200, 160)',
+          label: "Opção #5",
+          backgroundColor: "rgb(180, 200, 160)",
           barPercentage: 0.5,
           data: [
             {% for prioridade in prioridades.4 %} 
@@ -108,9 +108,9 @@
           const labelPositionY = bar._model.y-(bar._model.height/2)
           const labelWidth = ctx.measureText(label).width
 
-          ctx.textBaseline = 'bottom'
-          ctx.textAlign = 'left'
-          ctx.fillStyle = '#000000'
+          ctx.textBaseline = "bottom"
+          ctx.textAlign = "left"
+          ctx.fillStyle = "#000000"
           ctx.font = "12px Open Sans"
           var espaco = 13
           if(counter>9) {
@@ -237,17 +237,17 @@
 
                   // Display, position, and set styles for font
                   tooltipEl.style.opacity = 1.0;
-                  tooltipEl.style.position = 'absolute';
-                  tooltipEl.style.left = position.left + window.pageXOffset + 22 + 'px';
-                  tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
-                  tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
-                  tooltipEl.style.pointerEvents = 'none';
+                  tooltipEl.style.position = "absolute";
+                  tooltipEl.style.left = position.left + window.pageXOffset + 22 + "px";
+                  tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + "px";
+                  tooltipEl.style.padding = tooltipModel.yPadding + "px " + tooltipModel.xPadding + "px";
+                  tooltipEl.style.pointerEvents = "none";
               }
             },
             responsive: true,
 
             maintainAspectRatio: false,
-            legend: {position: 'bottom'},
+            legend: {position: "bottom"},
             scales: {
               xAxes: [{
                 stacked: true,

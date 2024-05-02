@@ -341,20 +341,34 @@
       {% endwith %}
 
       <p>&nbsp;</p>
-      <strong>Vagas para estudantes de:</strong><br>
-      {% for curso, vaga in vagas.items %}
-        &nbsp;&nbsp;{{curso}}: {{vaga}}<br>
-      {% endfor %}
+      <strong>Vagas por curso</strong><br>
+      <table class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th>Curso</th>
+            <th>Vagas</th>
+            <th>V. Disp</th>
+            <th>Propo.</th>
+            <th>Neces.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for curso, vaga in vagas.items %}
+            <tr>
+              <td>{{curso}}</td>
+              <td style="text-align: right;">{{vaga.0}}</td>
+              <td style="text-align: right;">{{vaga.1}}</td>
+              <td style="text-align: right;">{{vaga.2|floatformat:1}}</td>
+              <td style="text-align: right;">{{vaga.3}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <br><br>
 
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-
-    <h5>Plot de Propostas entre Cursos</h5>
-    <div id="plot"></div>
-
+    {% include "plot_barras.html" %}
     {% include "organizacao-modal.html" %}
-
-    {% include "plot.html" %}
 
     {% endif %}
 
