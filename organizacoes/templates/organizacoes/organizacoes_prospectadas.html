@@ -103,6 +103,13 @@
     <script>
       var cursos_organizacoes = {};
       var cursos_projetos = {};
+      var interessados = {};
+      var sondados = {};
+      {% for curso in cursos %}
+        cursos_projetos["{{curso.sigla_curta}}"] = 0;
+        interessados["{{curso.sigla_curta}}"] = 0;
+        sondados["{{curso.sigla_curta}}"] = 0;
+      {% endfor %}
     </script>
 
     <div class="table-responsive">
@@ -132,9 +139,9 @@
               {% if contato.tipo_de_retorno == 0 %}
                 "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 1 %}
-                "background-color:lemonchiffon" {% comment %} (1, 'Enviou proposta de projeto'), {% endcomment %}
+                "background-color:lemonchiffon" {% comment %} (1, 'Interessada em enviar proposta'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 2 %}
-                "background-color:lightgreen" {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
+                "background-color:lightgreen" {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 3 %}
                 "background-color:pink" {% comment %} (3, 'Não vai enviar proposta de projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 4 %}
@@ -250,13 +257,15 @@
                 if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
                 cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
                 
-                if(tipo != "") {
-                  if(tipo in cursos_projetos) {
-                    cursos_projetos[tipo] += {{submetidas}}.0/{{area_cursos.count}}.0;
-                  } else {
-                    cursos_projetos[tipo] = {{submetidas}}.0/{{area_cursos.count}}.0;
-                  }
-                }
+                {% for curso in area_cursos %}
+                  cursos_projetos["{{curso.sigla_curta}}"] += {{submetidas}}.0/{{area_cursos.count}}.0;
+                  {% if contato.tipo_de_retorno == 0 %} {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
+                    sondados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
+                  {% endif %}
+                  {% if contato.tipo_de_retorno == 1 %} {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
+                    interessados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
+                  {% endif %}
+                {% endfor %}
 
                 {% endwith %}
               </script>
@@ -372,28 +381,44 @@
 
     <script>
 
-      var datasets = [{
+      var datasets = [
+        {
+          label: "Interessados",
+          backgroundColor: "lemonchiffon",
+          borderWidth: 1,
+          data: [{% for curso in cursos %}interessados["{{curso.sigla_curta}}"], {% endfor %}],
+          xAxisID: "bar-x-projetos",
+          stack: "Stack 0",
+          barThickness: 30,
+        },
+        {
+          label: "Sondados",
+          backgroundColor: "lightblue",
+          borderWidth: 1,
+          data: [{% for curso in cursos %}sondados["{{curso.sigla_curta}}"], {% endfor %}],
+          xAxisID: "bar-x-projetos",
+          stack: "Stack 0",
+          barThickness: 30,
+        },
+        {
+          label: "Confirmados",
+          backgroundColor: "lightgreen",
+          borderWidth: 1,
+          data: [{% for curso in cursos %}cursos_projetos["{{curso.sigla_curta}}"], {% endfor %}],
+          xAxisID: "bar-x-projetos",
+          stack: "Stack 2",
+          barThickness: 30,
+        },
+        {
           label: "Necessários",
           backgroundColor: "rgba(255, 190, 190, 0.2)",
           borderWidth: 1,
           data: [{% for necessario in necessarios %}{{necessario|unlocalize}}, {% endfor %}],
           xAxisID: "bar-x-necessario",
           stack: "Stack 1",
-          barThickness: 80,
-      }]
-
-      for (var key in cursos_projetos) {
-        datasets.push({
-          label: key,
-          backgroundColor: "rgba(50, 150, 255, 1.0)",
-          borderWidth: 1,
-          borderColor: "black",
-          data: [{% for curso in cursos %}key.includes("{{curso.sigla_curta}}") ? cursos_projetos[key] : 0,{% endfor %}],
-          xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          barThickness: 50,
-        });
-      }
+          barThickness: 90,
+        }
+      ]
 
       var data = {
         labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
