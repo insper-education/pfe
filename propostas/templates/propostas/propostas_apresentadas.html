@@ -151,6 +151,8 @@
             
               <a href="{% url 'proposta_completa' proposta.id %}"
                 target="_blank" rel="noopener noreferrer"
+
+                {% comment %} 
                 data-toggle="tooltip" data-html="true" animation="true" title="
                 {% for opcaop in proposta.opcao_set.all %}
                   {% with alocacoes=opcaop.aluno.alocacao_set %}
@@ -179,7 +181,9 @@
                 {% empty %}
                   Nenhum aluno escolheu essa proposta
                 {% endfor %}
-                "            
+                "
+                {% endcomment %}
+
               >
                 {% if proposta.titulo %}
                   {{proposta.titulo}}
