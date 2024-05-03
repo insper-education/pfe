@@ -482,13 +482,13 @@ def meuprojeto(request):
     if request.user.tipo_de_usuario in (2, 4):
         return redirect("professor_detail", primarykey=request.user.professor.pk)
 
-    # Caso seja um aluno
+    # Caso seja estudante
     context = {
         "aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
     }
 
-    return render(request, "projetos/meuprojeto_aluno.html", context=context)
+    return render(request, "projetos/meuprojeto_estudantes.html", context=context)
 
 
 @login_required

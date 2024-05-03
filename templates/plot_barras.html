@@ -6,6 +6,7 @@
 
 {% load static %}
 {% load l10n %}
+{% load cores %}
 <script src="{% static 'js/Chart.min.js' %}"></script>
 <script src="{% static 'js/chartjs-plugin-annotation.min.js' %}"></script>
 {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
@@ -20,9 +21,17 @@
     data: {
       labels: [{% for curso in vagas %}"{{curso}}", {% endfor %}],
       datasets: [{
-          label: "vagas",
-          backgroundColor: [{% for curso in vagas %}"#{{curso.cor}}", {% endfor %}],
-          data: [{% for value in vagas.values %}100*({{value.2|unlocalize}}/{{value.3}}), {% endfor %}],
+        label: "proporção de vagas disponíveis",
+        backgroundColor: [{% for curso in vagas %}"#{{curso.cor}}", {% endfor %}],
+        data: [{% for value in vagas.values %}100*({{value.3|unlocalize}}/{{value.4}}), {% endfor %}],
+        stack: "Stack 0",
+        {% comment %} xAxisID: "bar-x-disponiveis", {% endcomment %}
+      },{
+        label: "proporção de vagas totais",
+        backgroundColor: [{% for curso in vagas %}"#{{curso.cor|clarear}}60", {% endfor %}],  // Mais brilho e transparência
+        data: [{% for value in vagas.values %}100*({{value.2|unlocalize}}/{{value.4}}), {% endfor %}],
+        stack: "Stack 0",
+        {% comment %} xAxisID: "bar-x-totais", {% endcomment %}
       }]
     },
     options: {
@@ -33,11 +42,12 @@
       },
       scales: {
         xAxes: [{
-            ticks: {
-                beginAtZero: true,
-                suggestedMax: 100,
-            }
-        }]
+          stacked: false,
+          ticks: {
+            beginAtZero: true,
+            suggestedMax: 100,
+          },
+        }],
       },
       annotation: {
         annotations: [
@@ -51,6 +61,17 @@
             label: {enabled: false,}
           }
         ]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label || '';
+            if (label) {label += ': ';}
+            label += Math.round(tooltipItem.xLabel * 100) / 100;
+            label += "%";
+            return label;
+          }
+        }
       }
     }
 });

@@ -350,10 +350,11 @@
         <thead class="table-info">
           <tr>
             <th>Curso</th>
-            <th>Vagas</th>
-            <th>V. Disp</th>
-            <th>Propo.</th>
-            <th>Neces.</th>
+            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais possíveis para estudantes">Vagas</th>
+            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas para estudantes">V. Disp.</th>
+            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais proporcionais para estudantes">P. Vagas</th>
+            <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas proporcionais para estudantes">P. Disp.</th>
+            <th data-toggle="tooltip" data-html="true" animation="true" title="Total de vagas necessárias para o semestre">Neces.</th>
           </tr>
         </thead>
         <tbody>
@@ -363,7 +364,8 @@
               <td style="text-align: right;">{{vaga.0}}</td>
               <td style="text-align: right;">{{vaga.1}}</td>
               <td style="text-align: right;">{{vaga.2|floatformat:1}}</td>
-              <td style="text-align: right;">{{vaga.3}}</td>
+              <td style="text-align: right;">{{vaga.3|floatformat:1}}</td>
+              <td style="text-align: right;">{{vaga.4}}</td>
             </tr>
           {% endfor %}
         </tbody>
