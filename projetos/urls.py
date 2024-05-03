@@ -153,8 +153,8 @@ urlpatterns = [
         views.reenvia_avisos,
         name="reenvia_avisos"),
     
-    path("upload_pasta_projeto/<int:projeto_id>",
-        views.upload_pasta_projeto,
-        name="upload_pasta_projeto"),
+    path("upload_estudantes_projeto/<int:projeto_id>",
+        views.upload_estudantes_projeto,
+        name="upload_estudantes_projeto"),
 
 ]

@@ -33,85 +33,91 @@
           {% if banca.endDate %}
             às {{banca.endDate.time}}
           {% endif %}
-          <br>
-          <b>Tipo:</b> 
-          {% if banca.tipo_de_banca == 0 %}
-            Final
-          {% elif banca.tipo_de_banca == 1 %}
-            Intermediária
-          {% elif banca.tipo_de_banca == 2 %}
-            Certificação Falconi
-          {% endif %}
+          <div>
+            <b>Tipo:</b> 
+            {% if banca.tipo_de_banca == 0 %}
+              Final
+            {% elif banca.tipo_de_banca == 1 %}
+              Intermediária
+            {% elif banca.tipo_de_banca == 2 %}
+              Certificação Falconi
+            {% endif %}
+          </div>
           
           {% if banca.projeto %}
-            <br>
-            <b>Título do Projeto:</b> 
-            <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
-              {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
-                {{banca.projeto.titulo_final}}</a><br>
-                <small>Título original da proposta: 
-                  <a href="{% url 'projeto_detalhes' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
-                </small>
-              {% else %}
-                {{banca.projeto.get_titulo}}</a>
-              {% endif %}
+            <div>
+              <b>Título do Projeto:</b> 
+              <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
+                {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
+                  {{banca.projeto.titulo_final}}</a><br>
+                  
+                  <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">Título original da proposta: 
+                    <a href="{% url 'projeto_detalhes' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
+                  </div>
+                {% else %}
+                  {{banca.projeto.get_titulo}}</a>
+                {% endif %}
+            </div>
           {% endif %}
           
           {% if banca.projeto.organizacao %}
-            <br><b>Organização Parceira:</b> 
+            <div><b>Organização Parceira:</b> 
               {{ banca.projeto.organizacao.nome }}
+            </div>
           {% endif %}
           
           {% if banca.location %}
-            <br><b>Local:</b> {{banca.location}}
+            <div style="margin-top: 0px;"><b>Local:</b> {{banca.location}}</div>
           {% endif %}
         
           {% if banca.projeto.orientador %}
-            <br>
+            <div>
             {% if banca.projeto.proposta.intercambio %}
               <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
             {% else %}
               <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
             {% endif %}
             {{banca.projeto.orientador.user.get_full_name}} <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+            </div>
           {% endif %}
 
-          <br>
-          <b>Membros da Banca:</b>
-          <ol>
-            {% for membro in banca.membros %}
-              <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
-            {% endfor %}
-          </ol>
-
-          {% with avaliacao=banca.get_avaliacoes %}
-            {% if avaliacao.objetivos %}
-              <hr>
-              <b>Média dos Conceitos da Banca:</b><br>
-              {% for objetivo, avaliacao in avaliacao.objetivos.items %}
-                &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao.0}} ({{avaliacao.1}})<br>
+          <div>
+            <b>Membros da Banca:</b>
+            <ol>
+              {% for membro in banca.membros %}
+                <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
               {% endfor %}
-              {% if avaliacao.peso > 0 %}
-                &#10149;<b> Nota final = {{avaliacao.nota|floatformat:2}}</b><br>
-              {% endif %}
-              {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
+            </ol>
 
-              {% if banca.get_observacoes_estudantes %}
-                <b style="display: inline-block; margin-top: 14px;">Observações realizadas pelos membros da banca:</b>
-                
-                  {% for observacao in banca.get_observacoes_estudantes %}
-                    {% if observacao.observacoes_estudantes %}
-                    <div class="pintern" style="padding: 6px;">
-                        <b>{{observacao.avaliador.get_full_name}}</b>:<br>
-                        {{observacao.observacoes_estudantes|linebreaks}}
-                    </div>
-                    {% endif %}
-                  {% endfor %}
-                    
+            {% with avaliacao=banca.get_avaliacoes %}
+              {% if avaliacao.objetivos %}
+                <hr>
+                <b>Média dos Conceitos da Banca:</b><br>
+                {% for objetivo, avaliacao in avaliacao.objetivos.items %}
+                  &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao.0|floatformat:2}} ({{avaliacao.1}})<br>
+                {% endfor %}
+                {% if avaliacao.peso > 0 %}
+                  &#10149;<b> Nota final = {{avaliacao.nota|floatformat:2}}</b><br>
+                {% endif %}
+                {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
+
+                {% if banca.get_observacoes_estudantes %}
+                  <b style="display: inline-block; margin-top: 14px;">Observações realizadas pelos membros da banca:</b>
+                  
+                    {% for observacao in banca.get_observacoes_estudantes %}
+                      {% if observacao.observacoes_estudantes %}
+                      <div class="pintern" style="padding: 6px;">
+                          <b>{{observacao.avaliador.get_full_name}}</b>:<br>
+                          {{observacao.observacoes_estudantes|linebreaks}}
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                      
+                {% endif %}
+    
               {% endif %}
-  
-            {% endif %}
-          {% endwith %}
+            {% endwith %}
+          </div>
 
           
         </div>

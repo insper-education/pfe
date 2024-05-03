@@ -114,12 +114,14 @@ def registra_organizacao(request, org=None):
 
     organizacao.endereco = request.POST.get("endereco", None)
 
-    website = request.POST.get("website", None)
+    website = request.POST.get("website", "").strip()
     if website:
         if website[:4] == "http":
-            organizacao.website = website.strip()
+            organizacao.website = website
         else:
-            organizacao.website = "http://" + website.strip()
+            organizacao.website = "http://" + website
+    else:
+        organizacao.website = None
 
     organizacao.informacoes = request.POST.get("informacoes", None)
 

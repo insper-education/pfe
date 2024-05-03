@@ -27,7 +27,7 @@
       <tbody>
         {% for projeto in projetos %} 
           <tr class="item">
-              <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.titulo}}</a><br></td>
+              <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.get_titulo}}</a><br></td>
               <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
           </tr>
         {% empty %}

@@ -4,6 +4,9 @@
   Data: 10 de Novembro de 2020
 {% endcomment %}
 
+{% load static %}
+{% load get_field %}
+
 <style>
   #logotipo {
     max-height:128px;
@@ -12,30 +15,128 @@
     width:auto;
     float: right;
   }
-
   ul {
     padding-left: 1.4em;
   }
+  textarea {
+    width:100%;
+    max-width:100%;
+  }
+
 </style>
 
 <span style="display: block; margin-bottom: 14px">
   {% if alocado.projeto.titulo_final and alocado.projeto.titulo_final != alocado.projeto.proposta.titulo %}
     <h3>{{alocado.projeto.titulo_final}} [{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h3>
-    <small>&nbsp;&nbsp;&nbsp;&nbsp;Título original da proposta: {{alocado.projeto.proposta.titulo}}</small><br>
+    <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>Título original da proposta</b>: {{alocado.projeto.proposta.titulo}}</small><br>
   {% else %}
     <h3>{{alocado.projeto.get_titulo}} [{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h3>
   {% endif %}
 </span>
 
 <div>
-  <strong>Descrição:</strong> {{alocado.projeto.proposta.descricao|linebreaks|urlize}}<br>
+
+  <form {% if alocado.projeto %}action="{% url 'upload_estudantes_projeto' alocado.projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label for="titulo_final"><strong>Título Final</strong></label><br>
+    <textarea id="titulo_final" name="titulo_final" rows="1" maxlength="{% max_length projeto 'titulo_final' %}"
+    >{% if alocado.projeto.titulo_final %}{{alocado.projeto.titulo_final}}{% endif %}</textarea>
+    <br><br>
+
+
+    <label for="resumo"><strong>Resumo</strong></label><br>
+    <textarea id="resumo" name="resumo" rows="6" maxlength="{% max_length projeto 'resumo' %}"
+    >{% if alocado.projeto.resumo %}{{alocado.projeto.resumo}}{% endif %}</textarea>
+    <br><br>
+
+    <label for="abstract"><strong>Abstract</strong></label><br>
+    <textarea id="abstract" name="abstract" rows="6" maxlength="{% max_length projeto 'abstract' %}"
+    >{% if alocado.projeto.abstract %}{{alocado.projeto.abstract}}{% endif %}</textarea>
+    <br><br>
+
+    <label for="palavras_chave"><strong>Palavras-chave</strong></label><br>
+    <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length projeto 'palavras_chave' %}"
+    >{% if alocado.projeto.palavras_chave %}{{alocado.projeto.palavras_chave}}{% endif %}</textarea>
+    <br>
+    <small>
+      Ao final do semestre, inserir/atualizar o resumo, abstract e palavras-chave para indexação do relatório.
+      Copie diretamente do seu relatório.
+    </small>
+    <div class="text-right">
+      <input class="btn btn-primary btn-sm" type="submit" name="Salvar" value="Salvar" {% if not alocado.projeto %}disabled{% endif %}>
+    </div>
+  </form>
+</div>
+
+
+<div>
+  <form {% if alocado.projeto %}action="{% url 'upload_site_e_pastas' alocado.projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+    <label for="site"><b>Site do projeto (opcional)</b></label>
+    {% with site=alocado.projeto.get_site %}
+    <div class="row">
+      <div class="col-md-6">
+        {% if site %}
+          <i>site estático:</i>
+          <a style="background-color: #FFFFFF; padding: 4px;"
+             href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+          <br>
+        {% else %}
+          <input type="text" size="73" maxlength="{% max_length Projeto "site" %}" 
+                 style="max-width: 95%;" id="site" name="site" {% if alocado.projeto.site %}
+                 value="{{alocado.projeto.site}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
+          <div style="font-size: 12px; line-height:1.0;">site do projeto em repositório externo</div>
+          <br>
+        {% endif %}
+      </div>
+      <div class="col-md-6">
+        <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not alocado.projeto %}disabled{% endif %}>
+        <input class="btn btn-info btn-sm" type="submit" id="Carregar" name="Carregar" value="Carregar" disabled>
+        {% if alocado.projeto %}
+          <script>
+            document.getElementById("zipsite").addEventListener("change", function() {
+              if (this.value) {
+                  document.getElementById("Carregar").disabled = false;
+              } else {
+                  document.getElementById("Carregar").disabled = true;
+              }
+            });
+          </script>
+        {% endif %}
+        {% if site %}
+          <input class="btn btn-danger btn-sm" type="submit" name="Remover" value="Remover" {% if not alocado.projeto %}disabled{% endif %}>
+        {% endif %}
+        <br>
+        <div style="font-size: 12px; line-height:1.0;">carrega um arquivo .zip com um site estático para o projeto</div>
+        <br>
+      </div>
+    </div>
+    {% endwith %}
+    
+
+    <label for="pastas_do_projeto"><strong>Pastas do projeto (opcional)</strong></label><br>
+    <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length projeto 'pastas_do_projeto' %}"
+    >{% if alocado.projeto.pastas_do_projeto %}{{alocado.projeto.pastas_do_projeto}}{% endif %}</textarea>
+    <div style="font-size: 12px; line-height:1.0;">Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado)</div>
+
+    <div class="text-right">
+      <input class="btn btn-primary btn-sm" type="submit" name="Salvar" value="Salvar" {% if not alocado.projeto %}disabled{% endif %}>
+    </div>
+  </form>
+</div>
+
+
+<div>
+  <strong>Descrição da proposta (escrito pela organização parceira):</strong> {{alocado.projeto.proposta.descricao|linebreaks|urlize}}<br>
 
   {% if alocado.projeto.proposta.expectativas %}
-    <strong>Expectativas de resultados/entregas :</strong> {{alocado.projeto.proposta.expectativas|linebreaks|urlize}}<br>
+    <strong>Expectativas de resultados/entregas:</strong> {{alocado.projeto.proposta.expectativas|linebreaks|urlize}}<br>
   {% endif %}
 
   {% if alocado.projeto.proposta.recursos %}
-    <strong>Recursos a serem disponibilizados aos Alunos :</strong> {{ alocado.projeto.proposta.recursos|linebreaks|urlize}}
+    <strong>Recursos a serem disponibilizados aos Estudantes:</strong> {{ alocado.projeto.proposta.recursos|linebreaks|urlize}}
     {% if alocado.projeto.proposta.observacoes %}
       <strong>Outras observações :</strong> {{ alocado.projeto.proposta.observacoes|linebreaks|urlize}}<br>
     {% endif %}

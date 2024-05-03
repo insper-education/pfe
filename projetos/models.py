@@ -106,16 +106,15 @@ class Projeto(models.Model):
     """Dados dos projetos."""
 
     # REMOVER TITULO, USAR OU GET_TITULO OU TITULO_FINAL
-    titulo = models.CharField("Título", max_length=160,
-                              help_text="Título Provisório do projeto")
+    # titulo = models.CharField("Título", max_length=160,
+    #                           help_text="Título Provisório do projeto")
     
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
-                                    blank=True,
-                                    help_text="Título Final do projeto")
+                                    blank=True, help_text="Título Final do projeto")
     
     # REMOVER DESCRICA, USAR OU RESUMO OU ABSTRACT, OU DESCRICAO DA PROPOSTA
-    descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
-                                 help_text="Descricao da proposta do projeto, feito pela organização")
+    # descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
+    #                              help_text="Descricao da proposta do projeto, feito pela organização")
 
     resumo = models.TextField("Resumo", max_length=6000, null=True, blank=True,
                                  help_text="Resumo final para o projeto criado pelos estudantes")
@@ -127,7 +126,7 @@ class Projeto(models.Model):
                                  help_text="Palavras-chave para os documentos do projeto")
     
     pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
-                                help_text="Links de onde se encontrar repositórios com dados dos projeto (para orientador acessar)")
+                                help_text="Links para repositórios com dados/códigos dos projeto (para orientador acessar)")
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização parceira que propôs projeto")
@@ -151,8 +150,13 @@ class Projeto(models.Model):
                                  help_text="Proposta original do projeto")
 
     time_misto = models.BooleanField("Time Misto", default=False,
-                                        help_text="Caso o projeto conte com membros externos a instituição")
+                                     help_text="Caso o projeto conte com membros externos a instituição")
 
+    site = models.URLField("site", max_length=300, null=True, blank=True,
+                           help_text="site do projeto desenvolvido pelos estudantes")
+    
+    atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
+                           help_text="Data da última atualização dos dados do projeto pelos estudantes")
     class Meta:
         ordering = [ "proposta__organizacao", "ano", "semestre"]
         permissions = (("altera_empresa", "Empresa altera valores"),

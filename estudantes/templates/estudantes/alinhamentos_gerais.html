@@ -28,31 +28,4 @@
   <h5><a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">Alocação Semanal</a></h5>
 </div>
 
-{% if projeto.id == 217 %}
-<div class="div_arredondado pintern">
-  <form {% if projeto %}action="{% url 'upload_site' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="zipsite"><b>Site do projeto (opcional)</b></label>
-    <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not projeto %}disabled{% endif %}>
-    <input class="btn btn-info btn-sm" type="submit" value="Carregar" {% if not projeto %}disabled{% endif %}><br>
-    <div style="font-size: 12px; line-height:1.0;">carrega um arquivo .zip com o site do projeto</div>
-  </form>
-</div>
-
-<div class="div_arredondado pintern">
-  <form {% if projeto %}action="{% url 'upload_pasta_projeto' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="pastas_do_projeto"><b>Pasta do Projeto (opcional)</b></label><br>
-    <div style="max-width: 760px;">
-      <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="4" cols="88" maxlength="{% max_length projeto 'pastas_do_projeto' %}"
-      >{% if projeto.pastas_do_projeto %}{{projeto.pastas_do_projeto}}{% endif %}</textarea>
-      <div style="display: flex; justify-content: space-between;">
-        <div style="font-size: 12px; line-height:1.0;">Links de onde se encontrar repositórios com dados dos projeto (para orientador acessar / mantenha privado)</div>
-        <div><input class="btn btn-info btn-sm" type="submit" value="Salvar" {% if not projeto %}disabled{% endif %}></div>
-      </div>
-    </div>
-  </form>
-</div>
-{% endif %}
-
 {% endblock %}

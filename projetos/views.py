@@ -1840,22 +1840,17 @@ def reenvia_avisos(request):
 
 
 @login_required
-def upload_pasta_projeto(request, projeto_id):
+def upload_estudantes_projeto(request, projeto_id):
+
     if request.method == "POST":
+        projeto = get_object_or_404(Projeto, id=projeto_id)
+        projeto.titulo_final = request.POST.get("titulo_final", None)
+        projeto.resumo = request.POST.get("resumo", None)
+        projeto.abstract = request.POST.get("abstract", None)
+        projeto.palavras_chave = request.POST.get("palavras_chave", None)
 
-        if "pastas_do_projeto" in request.POST:
-            
-            pastas_do_projeto = request.POST.get("pastas_do_projeto", None)
-        
-            projeto = get_object_or_404(Projeto, id=projeto_id)
-            projeto.pastas_do_projeto = pastas_do_projeto
-            projeto.save()
+        projeto.atualizacao_estudantes = datetime.datetime.now()
 
-            mensagem = "Pastas do Projetos armazenadas."
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
-        
-    return HttpResponse("Invalid request.")
+        projeto.save()
+
+    return redirect("/projetos/meuprojeto")

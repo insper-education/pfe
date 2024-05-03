@@ -41,7 +41,7 @@ urlpatterns = [
     path("doc/<str:tipo>", arquivos.doc, name="doc"),
     path("manutencao/", manutencao, name="manutencao"),
     path("migracao/", migracao, name="migracao"),
-    path("upload_site/<int:projeto_id>", sites.upload_site, name="upload_site"),
+    path("upload_site_e_pastas/<int:projeto_id>", sites.upload_site_e_pastas, name="upload_site_e_pastas"),
     re_path(r'^sites/(?P<projeto_id>\d+)/(?P<path>.*)$', sites.sites, name="sites"),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
