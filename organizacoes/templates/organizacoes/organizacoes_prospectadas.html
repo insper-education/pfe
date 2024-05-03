@@ -24,7 +24,10 @@
       font-weight: bold;
       line-height: 1.2 !important;
     }
-    .show-hide {cursor: pointer;}
+    .show-hide {
+      cursor: pointer;
+      border: 1px solid black;
+    }
     .special_filter {
       font-style: italic;
       font-weight: bold !important;
@@ -103,12 +106,18 @@
     <script>
       var cursos_organizacoes = {};
       var cursos_projetos = {};
+      var orgs_confirmadas = {};
       var interessados = {};
+      var orgs_interessados = {};
       var sondados = {};
+      var org_sondados = {};
       {% for curso in cursos %}
         cursos_projetos["{{curso.sigla_curta}}"] = 0;
         interessados["{{curso.sigla_curta}}"] = 0;
         sondados["{{curso.sigla_curta}}"] = 0;
+        orgs_confirmadas["{{curso.sigla_curta}}"] = [];
+        orgs_interessados["{{curso.sigla_curta}}"] = [];
+        org_sondados["{{curso.sigla_curta}}"] = [];
       {% endfor %}
     </script>
 
@@ -261,11 +270,14 @@
                 
                 {% for curso in area_cursos %}
                   cursos_projetos["{{curso.sigla_curta}}"] += {{submetidas}}.0/{{area_cursos.count}}.0;
+                  orgs_confirmadas["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
                   {% if contato.tipo_de_retorno == 0 %} {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
                     sondados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
+                    org_sondados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
                   {% endif %}
                   {% if contato.tipo_de_retorno == 1 %} {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
                     interessados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
+                    orgs_interessados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
                   {% endif %}
                 {% endfor %}
 
@@ -303,7 +315,7 @@
             &nbsp;<span data-type="4" data-color="yellow" data-hide="false" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
             &nbsp;<span data-type="6" data-color="green" data-hide="false" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
             &nbsp;<span data-type="5" data-color="#e289df" data-hide="false" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
-            &nbsp;<span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="border: 1px solid black; background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros"></span><br>
+            &nbsp;<span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros"></span><br>
           </div>
           <script>
 
@@ -386,7 +398,7 @@
 
         <div class="flex-item">
           <div class="table-responsive">
-            <div style="position: relative; height:240px; width:580px">
+            <div style="position: relative; height:260px; width:590px">
               <canvas id="projetos"></canvas>
             </div>
           </div>
@@ -399,6 +411,7 @@
       var datasets = [
         {
           label: "Confirmados",
+          organizacoes: orgs_confirmadas,
           backgroundColor: "lightgreen",
           borderColor: "grey",
           borderWidth: 1,
@@ -409,6 +422,7 @@
         },
         {
           label: "Interessados",
+          organizacoes: orgs_interessados,
           backgroundColor: "lemonchiffon",
           borderColor: "grey",
           borderWidth: 1,
@@ -419,6 +433,7 @@
         },
         {
           label: "Sondados",
+          organizacoes: org_sondados,
           backgroundColor: "lightblue",
           borderColor: "grey",
           borderWidth: 1,
@@ -446,7 +461,7 @@
       var options = {
         title: {
             display: true,
-            text: "Proporção de Projetos Submetidos",
+            text: "Previsão de Projetos por Curso",
             position: "top"
         },
         legend: {
@@ -466,7 +481,26 @@
           yAxes: [{
             stacked: true,
             ticks: {beginAtZero: true},
+            scaleLabel: {
+              display: true,
+              labelString: "projetos",
+            }
           }]
+        },
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              var label = data.datasets[tooltipItem.datasetIndex].label || '';
+              if (label) {label += ': ';}
+              label += Math.round(tooltipItem.yLabel * 100) / 100;
+              return label;
+            },
+            afterLabel: function(tooltipItem, data) {
+              var organizacoes = data.datasets[tooltipItem.datasetIndex].organizacoes;
+              if(organizacoes) {return organizacoes[tooltipItem.label];}
+              return "";
+            }
+          }
         },
         responsive: true,
         maintainAspectRatio: false,

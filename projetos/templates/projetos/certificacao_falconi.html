@@ -161,19 +161,19 @@
                 backgroundColor: ["#e6ffcc", "#e6ffcc", "#e6ffcc", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
                 labelColor: "#ffd700b0",
                 data: [{% for conceito in conceitos %} {{conceito|stringformat:".2f"|unlocalize}},{% endfor %}],
-                stack: 'Stack 0',
+                stack: "Stack 0",
               },
               {
                 label: "Destaque Projeto Final de Engenharia FALCONI-INSPER",
                 labelColor: "#c0c0f0b0",
                 data: [{% for conceito in conceitos %} 0,{% endfor %}],
-                stack: 'Stack 0',
+                stack: "Stack 0",
               },
               {
                 label: "Não obteve certificado",
                 labelColor: "#e6ffcc",
                 data: [{% for conceito in conceitos %} 0,{% endfor %}],
-                stack: 'Stack 0',
+                stack: "Stack 0",
               }
             ]
           },
@@ -200,7 +200,7 @@
                     return " ";
                   }
                 },
-                color: '#000',
+                color: "#000",
                 font: function(context) {
                   var width = context.chart.width;
                   var size = Math.round(width / 45);
