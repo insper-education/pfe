@@ -307,7 +307,7 @@ def estudante_feedback_geral(request, usuario):
         context = {
             "mensagem": mensagem,
         }
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "usuario": usuario,

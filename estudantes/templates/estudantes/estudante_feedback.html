@@ -44,11 +44,11 @@
   <form action="" method="post"> {% csrf_token %}  
 
       <label for="nome" class="col-form-label">Nome: </label>
-      {{feedback.estudante.user.get_full_name}}
+      {{usuario.get_full_name}}
       <br>
 
       <label for="projeto" class="col-form-label">Projeto: </label>
-      {{feedback.projeto}}
+      {{projeto}}
       
       <p class="text-danger">Os dados serão tratados como confidênciais.</p>
 
