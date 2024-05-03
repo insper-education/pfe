@@ -38,25 +38,24 @@
 
   <form {% if alocado.projeto %}action="{% url 'upload_estudantes_projeto' alocado.projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
     {% csrf_token %}
-
     <label for="titulo_final"><strong>Título Final</strong></label><br>
-    <textarea id="titulo_final" name="titulo_final" rows="1" maxlength="{% max_length projeto 'titulo_final' %}"
+    <textarea id="titulo_final" name="titulo_final" rows="1" maxlength="{% max_length Projeto 'titulo_final' %}"
     >{% if alocado.projeto.titulo_final %}{{alocado.projeto.titulo_final}}{% endif %}</textarea>
     <br><br>
 
 
     <label for="resumo"><strong>Resumo</strong></label><br>
-    <textarea id="resumo" name="resumo" rows="6" maxlength="{% max_length projeto 'resumo' %}"
+    <textarea id="resumo" name="resumo" rows="6" maxlength="{% max_length Projeto 'resumo' %}"
     >{% if alocado.projeto.resumo %}{{alocado.projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
     <label for="abstract"><strong>Abstract</strong></label><br>
-    <textarea id="abstract" name="abstract" rows="6" maxlength="{% max_length projeto 'abstract' %}"
+    <textarea id="abstract" name="abstract" rows="6" maxlength="{% max_length Projeto 'abstract' %}"
     >{% if alocado.projeto.abstract %}{{alocado.projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
     <label for="palavras_chave"><strong>Palavras-chave</strong></label><br>
-    <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length projeto 'palavras_chave' %}"
+    <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length Projeto 'palavras_chave' %}"
     >{% if alocado.projeto.palavras_chave %}{{alocado.projeto.palavras_chave}}{% endif %}</textarea>
     <br>
     <small>
@@ -117,7 +116,7 @@
     
 
     <label for="pastas_do_projeto"><strong>Pastas do projeto (opcional)</strong></label><br>
-    <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length projeto 'pastas_do_projeto' %}"
+    <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
     >{% if alocado.projeto.pastas_do_projeto %}{{alocado.projeto.pastas_do_projeto}}{% endif %}</textarea>
     <div style="font-size: 12px; line-height:1.0;">Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado)</div>
 

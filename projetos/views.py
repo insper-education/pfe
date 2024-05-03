@@ -486,6 +486,7 @@ def meuprojeto(request):
     context = {
         "aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
+        "Projeto": Projeto,
     }
 
     return render(request, "projetos/meuprojeto_estudantes.html", context=context)
