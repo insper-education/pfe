@@ -12,6 +12,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -739,6 +740,25 @@ def todos_parceiros(request):
         }
 
     return render(request, "organizacoes/todos_parceiros.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def todos_usuarios(request):
+    """Exibe usuários."""
+    usuarios = []
+    if request.is_ajax():                
+        nome = request.POST.get("nome", None)
+        if nome:
+            usuarios = PFEUser.objects.filter(Q(first_name__icontains=nome) | Q(last_name__icontains=nome))
+
+    context = {
+        "usuarios": usuarios,
+        "cabecalhos": ["Nome", "e-mail", "Tipo" ],
+        "titulo": "Todos os Usuários",
+        }
+
+    return render(request, "organizacoes/todos_usuarios.html", context)
 
 
 @login_required

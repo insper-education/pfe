@@ -1,0 +1,60 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 3 de Maio de 2024
+{% endcomment %}
+
+<script>
+
+  var request_ajax = null;
+    
+  var xhrCount = 0;  // Para contar as chamadas e usar somente a última
+
+  function recarregar_pagina() {
+    
+    var seqNumber = ++xhrCount;
+
+    $(".filter").attr("disabled", true);
+    $(".to_label").addClass("label_animado");  
+    var nome = $("#nome").val();
+    
+    request_ajax = $.ajax({
+        type: "POST",
+        //url: "Normalmente a mesma página",
+        data: {
+            nome: nome,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+        },
+        success: function(response){
+          if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
+            $(".atualizar").replaceWith($(".atualizar",response));
+            $(".tooltip-inner").remove();
+            $(".tooltip-arrow").remove();
+            {% include "tooltip.js" %}
+            {% if tabela %}
+              {% include "tabelas_scripts.js" %}
+            {% endif %}
+            {% if graficos %}
+              carrega_graficos();
+            {% endif %}
+            carrega_pagina();
+            $(".to_label").removeClass("label_animado");
+            $(".filter").attr('disabled',false);
+          } // else {% comment %} Ignorando resposta {% endcomment %}
+
+        },
+        {% include "ajax_error_function.js" %}
+    });
+  }
+
+  $(".filter").change(recarregar_pagina);
+
+  // pequeno tempo para select voltar a funcionar
+  function recarregar() {
+      setTimeout(function () {
+              recarregar_pagina();
+      }, 10);
+  }
+  recarregar();
+
+</script>

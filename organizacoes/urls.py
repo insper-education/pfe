@@ -110,6 +110,10 @@ urlpatterns = [
         views.todos_parceiros,
         name="todos_parceiros"),
 
+    path("todos_usuarios/",
+        views.todos_usuarios,
+        name="todos_usuarios"),
+
     path("ajax/estrelas/",
         views.estrelas,
         name="estrelas"),

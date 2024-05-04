@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 3 de Maio de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">{{titulo}}
+    <small class="esconder"><a href="{% url 'cadastrar_usuario' %}">&#10133;</a></small>
+  </span>
+
+  <div id="container_edicao" class="container" style="margin: 0px; padding: 0px;">
+    <div class="row align-items-start justify-content-start mb-1">
+      <div class="ml-3 form-inline">
+        <div class="input-group input-group-sm mt-1">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text filter" for="nome" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Buscar</span><span lang="en" style="display: none;">Search</span></span></label>
+          </div>
+          <input type="text" class="to_hide filter form-control" name="nome" id="nome" placeholder="nome a buscar">
+          <div class="separador input-group-addon"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="atualizar">
+
+    {% include "tabelas_top.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
+      {% for usuario in usuarios %}
+        <tr class="item" {% if not usuario.is_active %} style="color: lightgrey;" {% endif %}>
+          <th scope="row" data-sort="{{usuario.get_full_name}}">
+            <a href="{% url 'user_detail' usuario.id %}"
+              {% if not usuario.is_active %} style="color: LightBlue;" {% endif %}>
+              {{usuario.get_full_name}} 
+            </a>
+          </th>
+          <td>{{usuario.email}}</td>
+          <td>{{usuario.get_tipo_de_usuario_display}}</td>
+        </tr>
+      {% endfor %}
+    </table> 
+    </div> {% comment %} do "tabelas_top.html" {% endcomment %}
+
+    <script>
+      function carrega_pagina() {};
+      function carrega_site(){carrega_pagina();};
+      window.onload = carrega_site
+    </script>
+
+  </div>
+
+  {% include "selecao_ajax.html" with tabela="Usuarios" %}
+
+{% endblock %}
