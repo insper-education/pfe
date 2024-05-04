@@ -27,3 +27,16 @@ def certificado_banca(banca, usuario):
             return documento.documento.url
 
     return None
+
+
+@register.filter
+def certificado_mentoria(mentoria, usuario):
+    """Retorna o certificado de um membro de banca."""
+    certificado = Certificado.objects.filter(usuario=usuario, projeto=mentoria.projeto, tipo_de_certificado=106)  # (106, "Mentoria Profissional"),  # antigo mentor na Falconi
+    
+    if certificado:
+        documento = certificado.last()
+        if documento.documento:
+            return documento.documento.url
+
+    return None
