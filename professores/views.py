@@ -731,7 +731,7 @@ def mentorias_tabela(request):
                     mentorias = Encontro.objects.filter(projeto__ano=ano).filter(projeto__semestre=semestre)
 
             mentores = dict()
-            for mentoria in mentorias:
+            for mentoria in mentorias.filter(projeto__isnull=False):
                 mentores.setdefault(mentoria.facilitador, []).append(mentoria)
 
         context = {"mentores": mentores,}

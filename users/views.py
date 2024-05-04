@@ -692,7 +692,7 @@ def professor_detail(request, primarykey):
                           Banca.objects.filter(membro2=context["professor"].user) |
                           Banca.objects.filter(membro3=context["professor"].user))).order_by("startDate")
     
-    context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user)
+    context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     
     context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
 
