@@ -716,6 +716,35 @@ def bancas_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def mentorias_tabela(request):
+    """Lista todas as mentorias agendadas, conforme periodo pedido."""
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                mentorias = Encontro.objects.all()
+            else:
+                ano, semestre = edicao.split('.')
+                if semestre == "1/2":
+                    mentorias = Encontro.objects.filter(projeto__ano=ano)
+                else:
+                    mentorias = Encontro.objects.filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+
+            mentores = dict()
+            for mentoria in mentorias:
+                mentores.setdefault(mentoria.facilitador, []).append(mentoria)
+
+        context = {"mentores": mentores,}
+
+    else:
+        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        context = {"edicoes": edicoes,}
+
+    return render(request, "professores/mentorias_tabela.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def aulas_tabela(request):
     """Lista todas as aulas agendadas, conforme periodo pedido."""
     if request.is_ajax():

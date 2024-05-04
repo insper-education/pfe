@@ -43,11 +43,8 @@
   
   {% include "avalia_objetivos.html" %}
   
-  {% comment %} <script src="{% static 'js/sort.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
   {% comment %} Para gerar as imagens {% endcomment %}
@@ -354,7 +351,7 @@
                         <span id="med_falconi_calc_{{projeto.id}}"></span>
                         <script>
                         for (var key in falconi.dict) {
-                            if(falconi.dict[key].avaliacoes>0) $('#med_falconi_{{projeto.id}}').append(falconi.dict[key].texto());
+                            if(falconi.dict[key].avaliacoes>0) $("#med_falconi_{{projeto.id}}").append(falconi.dict[key].texto());
                         }
                         </script>
                         </div>
