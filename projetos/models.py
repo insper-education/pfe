@@ -981,7 +981,7 @@ class Anotacao(models.Model):
         (0, "Contactada para enviar proposta", "Prospecção"),
         (1, "Interessada em enviar proposta", "Prospecção"),
         (2, "Enviou proposta de projeto", "Prospecção"),
-        (3, "Não vai enviar proposta de projeto", "Prospecção"),
+        (3, "Não enviará proposta de projeto", "Prospecção"),
         (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)", "Prospecção"),
         (5, "Notificamos que não conseguimos montar projeto", "Prospecção"),
         (6, "Contrato fechado para projeto", "Contratação"),
