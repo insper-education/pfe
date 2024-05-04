@@ -521,7 +521,8 @@ def organizacoes_prospect(request):
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 
-    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else x[3].tipo_de_retorno))
+    # No final jogo para 2 (com proposta submetida) se houver proposta submetida, mesmo que a anotação diga diferente
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if (x[3].tipo_de_retorno < 2 and x[2] > 0) else x[3].tipo_de_retorno ) ))
 
     total_organizacoes = len(organizacoes)
     total_disponiveis = sum(disponiveis)
@@ -534,7 +535,6 @@ def organizacoes_prospect(request):
     estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
     for curso in cursos:
         necessarios.append(estudantes.filter(curso2=curso).count()/4)  # grupos de 4 estudantes
-
 
     context = {
         "organizacoes_list": organizacoes_list,
