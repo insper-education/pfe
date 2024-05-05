@@ -227,6 +227,8 @@ def doc(request, tipo):
     """Acessa arquivos do servidor pelo tipo dele se for publico."""
     tipo_documento = get_object_or_404(TipoDocumento, sigla=tipo)
     documento = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False).order_by("data").last()
+    if documento is None:
+        raise Http404
     path = str(documento.documento).split('/')[-1]
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
     return le_arquivo(request, local_path, path)
