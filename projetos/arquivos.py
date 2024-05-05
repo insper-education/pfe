@@ -22,7 +22,7 @@ from django.http.response import StreamingHttpResponse
 from django.http import Http404
 from django.http import HttpResponse
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from users.models import PFEUser, Alocacao
 from documentos.models import TipoDocumento
@@ -225,8 +225,8 @@ def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usu
 
 def doc(request, tipo):
     """Acessa arquivos do servidor pelo tipo dele se for publico."""
-    tipo_documento = TipoDocumento.objects.get(sigla=tipo)
-    documento = Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last()
+    tipo_documento = get_object_or_404(TipoDocumento, sigla=tipo)
+    documento = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False).order_by("data").last()
     path = str(documento.documento).split('/')[-1]
     local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
     return le_arquivo(request, local_path, path)

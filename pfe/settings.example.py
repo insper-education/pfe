@@ -169,15 +169,23 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] ({asctime}) |{module}|: {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join('pfe.log')
+            'filename': os.path.join('pfe.log'),
+            'formatter': 'verbose',
         },
         'console': {
             'level': 'INFO',
-            'class': 'logging.StreamHandler'
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
         'mail_admins': {
             'level': 'WARNING',  # 'level': 'ERROR',
