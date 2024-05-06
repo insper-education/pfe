@@ -36,7 +36,7 @@
   {% include "edicoes.html" with com_cursos=True %}
 
   <script>
-    $('#filterEdicao').append($("<option>", {
+    $("#filterEdicao").append($("<option>", {
         value: "trancou",
         text: "trancou"
     }));
@@ -201,10 +201,10 @@
         data: {
           datasets: [{
             data: [{% for num in num_estudantes.values %}{{num}},{% endfor %}],
-            backgroundColor: [{% for curso, num in num_estudantes.items %}'#{{curso.cor}}',{% endfor %}],
+            backgroundColor: [{% for curso, num in num_estudantes.items %}"#{{curso.cor}}",{% endfor %}],
             label: "Proporção de cursos entre estudantes"
           }],
-          labels: [{% for curso, num in num_estudantes.items %}'{{curso.nome}} [{% widthratio num total_estudantes 100 %}%]',{% endfor %}]
+          labels: [{% for curso, num in num_estudantes.items %}"{{curso.nome}} [{% widthratio num total_estudantes 100 %}%]",{% endfor %}]
         },
         options: {
           responsive: true,
@@ -223,7 +223,7 @@
 
 
       var config_generos = {
-        type: 'pie',
+        type: "pie",
         data: {
           datasets: [{
             data: [
@@ -231,14 +231,14 @@
               {{ num_alunos_feminino }},
             ],
             backgroundColor: [
-              'rgb(93, 173, 226)',
-              'rgb(175, 122, 197)',
+              "rgb(93, 173, 226)",
+              "rgb(175, 122, 197)",
             ],
-            label: 'Proporção de cursos entre estudantes'
+            label: "Proporção de cursos entre estudantes"
           }],
           labels: [
-            'Masculino [{% widthratio num_alunos_masculino total_estudantes 100 %}%]',
-            'Feminino [{% widthratio num_alunos_feminino total_estudantes 100 %}%]',
+            "Masculino [{% widthratio num_alunos_masculino total_estudantes 100 %}%]",
+            "Feminino [{% widthratio num_alunos_feminino total_estudantes 100 %}%]",
           ]
         },
         options: {
@@ -246,8 +246,8 @@
           maintainAspectRatio: false,
           title: {
             display: true,
-            text: 'Proporção de gêneros entre estudantes',
-            position: 'top'
+            text: "Proporção de gêneros entre estudantes",
+            position: "top"
           },
           legend: {
             display: true,
@@ -261,20 +261,20 @@
       var est = {};
 
       {% for curso in cursos %}
-        est['{{curso.sigla}}']=[];
+        est["{{curso.sigla}}"]=[];
       {% endfor %}
 
       {% for ano,tabela_ano in tabela_alunos.items %}
         {% for semestre,tabela_semetre in tabela_ano.items %}
           labels.push("{{ano}}.{{semestre}}");
           {% for curso in cursos %}
-            est['{{curso.sigla}}'].push({% with qtd=tabela_semetre|dict_key:curso.sigla %}{% if qtd %}{{qtd}}{% else %}0{% endif %}{% endwith %});
+            est["{{curso.sigla}}"].push({% with qtd=tabela_semetre|dict_key:curso.sigla %}{% if qtd %}{{qtd}}{% else %}0{% endif %}{% endwith %});
           {% endfor %}
         {% endfor %}
       {% endfor %}
     
       var config_totais = {
-        type: 'bar',
+        type: "bar",
         data: {
           labels: labels,
           datasets: [
@@ -282,7 +282,7 @@
               {
                 data: est["{{curso.sigla}}"],
                 backgroundColor: "#{{curso.cor}}",
-                label: '{{curso.sigla}}'
+                label: "{{curso.sigla}}"
               },
             {% endfor %}
           ],
@@ -292,15 +292,15 @@
           maintainAspectRatio: false,
           title: {
             display: true,
-            text: 'Estudantes por curso por semestre',
-            position: 'top'
+            text: "Estudantes por curso por semestre",
+            position: "top"
           },
           legend: {
             display: true,
             position: "bottom",
           },
           tooltips: {
-						mode: 'index',
+						mode: "index",
 						intersect: true
 					},
 					responsive: true,
@@ -335,7 +335,7 @@
 
         if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
 
-          table = $"#EstudantesTable").dataTable();
+          table = $("#EstudantesTable").dataTable();
 
           if(table) {
             // Hide/Esconde certas colunas
