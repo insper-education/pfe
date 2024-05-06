@@ -254,8 +254,7 @@ def parceiro_projetos(request):
 
     if hasattr(user, "parceiro"):
         projetos = Projeto.objects\
-            .filter(proposta__organizacao=user.parceiro.organizacao)\
-            .order_by("ano", "semestre", "titulo", )
+            .filter(proposta__organizacao=user.parceiro.organizacao).order_by("ano", "semestre")
     else:
         projetos = projetos
 

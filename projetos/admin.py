@@ -257,7 +257,7 @@ class DocumentoAdmin(admin.ModelAdmin):
 
     list_display = ("tipo_documento", "data", "confidencial", "organizacao", "usuario", "projeto")
     list_filter = ("tipo_documento", "confidencial", "lingua_do_documento", )
-    search_fields = ["projeto__titulo", "projeto__titulo_final",
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "usuario__username", "projeto__organizacao__sigla",]
 
 @admin.register(Banco)
@@ -281,7 +281,7 @@ class BancaAdmin(admin.ModelAdmin):
 
     list_display = ("projeto", "get_orientador", "get_organizacao", "startDate", "slug",)
     list_filter = ("tipo_de_banca", "projeto__ano", "projeto__semestre",)
-    search_fields = ["projeto__titulo", "projeto__organizacao__sigla",]
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "projeto__organizacao__sigla",]
 
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""
@@ -347,7 +347,7 @@ class ConexaoAdmin(admin.ModelAdmin):
     list_display = ("parceiro", "projeto",
                     "gestor_responsavel", "mentor_tecnico", "recursos_humanos", "colaboracao")
     search_fields = ["parceiro__user__first_name", "parceiro__user__last_name",
-                     "projeto__titulo", "projeto__titulo_final",]
+                     "projeto__titulo_final", "projeto__proposta__titulo", "projeto__titulo_final",]
 
 
 @admin.register(Coorientador)
@@ -365,7 +365,7 @@ class EncontroAdmin(admin.ModelAdmin):
 
     list_display = ("startDate", "hora_fim", "projeto", "facilitador", )
     actions = [dup_encontros, dup_encontros_4x, dup_encontros_8x]
-    search_fields = ["projeto__titulo", "projeto__titulo_final", "facilitador__username",]
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo","facilitador__username",]
 
 
 @admin.register(Avaliacao2)
@@ -376,7 +376,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
                     "exame", "avaliador", "projeto", "alocacao")
     ordering = ("momento",)
     list_filter = ("exame", "projeto__ano", "projeto__semestre")
-    search_fields = ["projeto__titulo", "projeto__titulo_final",
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "alocacao__aluno__user__username", "projeto__organizacao__sigla"]
 
 
@@ -388,7 +388,7 @@ class Avaliacao_VelhaAdmin(admin.ModelAdmin):
                     "exame", "avaliador", "projeto", "alocacao")
     ordering = ("momento",)
     list_filter = ("exame", "projeto__ano", "projeto__semestre")
-    search_fields = ["projeto__titulo", "projeto__titulo_final",
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "alocacao__aluno__user__username", "projeto__organizacao__sigla"]
 
 
@@ -407,7 +407,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_display = ("momento", "exame", "avaliador", "projeto", "alocacao")
     ordering = ("momento",)
     list_filter = ("exame", )
-    search_fields = ["projeto__titulo", "projeto__titulo_final", "alocacao__aluno__user__username"]
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "alocacao__aluno__user__username"]
 
 
 @admin.register(Observacao_Velha)
@@ -417,7 +417,7 @@ class Observacao_VelhaAdmin(admin.ModelAdmin):
     list_display = ("momento", "exame", "avaliador", "projeto", "alocacao")
     ordering = ("momento",)
     list_filter = ("exame", )
-    search_fields = ["projeto__titulo", "projeto__titulo_final", "alocacao__aluno__user__username"]
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "alocacao__aluno__user__username"]
 
 @admin.register(Recomendada)
 class RecomendadaAdmin(admin.ModelAdmin):
@@ -436,7 +436,7 @@ class CertificadoAdmin(admin.ModelAdmin):
     ordering = ("data",)
     list_filter = ("tipo_de_certificado", "data", "projeto__ano", "projeto__semestre",)
     search_fields = ["usuario__username", "projeto__organizacao__sigla",
-                     "projeto__titulo", "projeto__titulo_final",]
+                     "projeto__titulo_final", "projeto__proposta__titulo",]
 
 
 @admin.register(Cursada)

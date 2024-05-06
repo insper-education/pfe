@@ -275,10 +275,9 @@ def bancas_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    projetos = Projeto.objects.filter(orientador=request.user.professor)\
-        .order_by("-ano", "-semestre", "titulo")
+    projetos = Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre")
     context = {"projetos": projetos,}
-    return render(request, 'professores/orientacoes_alocadas.html', context=context)
+    return render(request, "professores/orientacoes_alocadas.html", context=context)
 
 
 @login_required
@@ -286,11 +285,9 @@ def orientacoes_alocadas(request):
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     coorientacoes = Coorientador.objects.filter(usuario=request.user)\
-        .order_by("-projeto__ano",
-                  "-projeto__semestre",
-                  "projeto__titulo")
+        .order_by("-projeto__ano", "-projeto__semestre")
     context = {"coorientacoes": coorientacoes,}
-    return render(request, 'professores/coorientacoes_alocadas.html', context=context)
+    return render(request, "professores/coorientacoes_alocadas.html", context=context)
 
 
 @login_required
@@ -2827,7 +2824,7 @@ def ver_pares_projeto(request, projeto_id, momento):
 def planos_de_orientacao(request):
     """Mostra os planos de orientação do professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor)\
-        .order_by("-ano", "-semestre", "titulo")
+        .order_by("-ano", "-semestre")
 
     tipo = TipoDocumento.objects.get(sigla="TPO")  # Template de Plano de Orientação
     template = Documento.objects.filter(tipo_documento=tipo).last()

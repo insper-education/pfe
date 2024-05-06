@@ -104,17 +104,9 @@ class Organizacao(models.Model):
 
 class Projeto(models.Model):
     """Dados dos projetos."""
-
-    # REMOVER TITULO, USAR OU GET_TITULO OU TITULO_FINAL
-    # titulo = models.CharField("Título", max_length=160,
-    #                           help_text="Título Provisório do projeto")
     
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True, help_text="Título Final do projeto")
-    
-    # REMOVER DESCRICA, USAR OU RESUMO OU ABSTRACT, OU DESCRICAO DA PROPOSTA
-    # descricao = models.TextField("Descrição", max_length=3000, null=True, blank=True,
-    #                              help_text="Descricao da proposta do projeto, feito pela organização")
 
     resumo = models.TextField("Resumo", max_length=6000, null=True, blank=True,
                                  help_text="Resumo final para o projeto criado pelos estudantes")

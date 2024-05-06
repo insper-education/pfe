@@ -417,7 +417,7 @@ def projetos_lista(request):
             if not avancados:
                 projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
 
-            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",)
+            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao")
 
             #cabecalhos = ["Projeto", "Estudantes", "Período", "Orientador", "Organização", ]
             cabecalhos = ["Project" ,"Students", "Semester", "Advisor", "Sponsor",]
@@ -509,7 +509,6 @@ def projeto_avancado(request, primarykey):
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
         if projeto.titulo_final:
-            # novo_projeto.titulo = projeto.titulo_final
             novo_projeto.titulo_final = projeto.titulo_final
 
         novo_projeto.avancado = projeto
@@ -1461,7 +1460,7 @@ def filtro_projetos(request):
                 ano, semestre = request.POST["edicao"].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
             context = {
-                "projetos": projetos_filtrados.order_by("ano", "semestre", "organizacao", "titulo",),
+                "projetos": projetos_filtrados.order_by("ano", "semestre", "organizacao"),
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
