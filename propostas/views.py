@@ -323,6 +323,7 @@ def propostas_apresentadas(request):
             count_disp = {}  # temporaria
             prop = {}  # temporaria proporcional
             prop_disp = {}  # temporaria proporcional
+            total_vagas = [0, 0, 0, 0, 0]
             for curso in cursos:
                 if ano and semestre:
                     estudantes = Aluno.objects.filter(curso2=curso, anoPFE=ano, semestrePFE=semestre).count()
@@ -330,6 +331,7 @@ def propostas_apresentadas(request):
                     estudantes = Aluno.objects.filter(curso2=curso).count()
                 disponivel_propostas[curso] = [0, 0]
                 vagas[curso] = [0, 0, 0, 0, estudantes]
+                total_vagas[4] += estudantes
             disponivel_multidisciplinar = [0, 0]
             for proposta in propostas_filtradas:
                 p = proposta.get_nativamente()
@@ -358,6 +360,10 @@ def propostas_apresentadas(request):
                     vagas[curso][1] += count_disp[curso]
                     vagas[curso][2] += prop[curso]
                     vagas[curso][3] += prop_disp[curso]
+                    total_vagas[0] += count[curso]
+                    total_vagas[1] += count_disp[curso]
+                    total_vagas[2] += prop[curso]
+                    total_vagas[3] += prop_disp[curso]
         
             context = {
                 "propostas": propostas_filtradas,
@@ -367,6 +373,7 @@ def propostas_apresentadas(request):
                 "disponivel_propostas": disponivel_propostas,
                 "disponivel_multidisciplinar": disponivel_multidisciplinar,
                 "vagas": vagas,
+                "total_vagas": total_vagas,
                 "limite_propostas": get_limite_propostas(configuracao),
                 "liberadas_propostas": propostas_liberadas(configuracao),
             }
