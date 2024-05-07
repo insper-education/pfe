@@ -43,12 +43,9 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-      <label for="nome" class="col-form-label">Nome: </label>
-      {{usuario.get_full_name}}
-      <br>
+      <label for="nome" class="col-form-label">Nome:</label> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
 
-      <label for="projeto" class="col-form-label">Projeto: </label>
-      {{projeto}}
+      <label for="projeto" class="col-form-label">Projeto:</label> {% if projeto %}{{projeto}}{% endif %}<br>
       
       <p class="text-danger">Os dados serão tratados como confidênciais.</p>
 

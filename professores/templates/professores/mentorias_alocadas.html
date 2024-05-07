@@ -10,7 +10,6 @@
   {% load certificados %}
   <script>{% include "tooltip.js" %}</script>
   
-
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
@@ -40,7 +39,7 @@
 
           <tr class="{{e.periodo}} {% if e.periodo == "Anteriores" %}hidden_tr{% endif %}">
             <td>
-              <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}">
+              <a class="open-modal" class="imprimir" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}">
                 <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
               </a>
               {% if e.projeto  %}
@@ -102,5 +101,6 @@
   
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
+  {% include "janelas-modal.html" %}
 
 {% endblock %}
