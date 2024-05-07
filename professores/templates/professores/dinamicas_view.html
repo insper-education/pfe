@@ -36,7 +36,7 @@
 
       {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
       <div class="container">   
-          <label for="inicio">
+          <label for="inicio" style="margin-right: 2rem;">
           <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
           <input id="inicio"  type="datetime-local" name="inicio"
           {% if encontro %}
@@ -45,10 +45,9 @@
             value="{{data}}T00:00"
           {% endif %}
           required>
-          &nbsp;&nbsp;&nbsp;&nbsp;
           </label>
         
-          <label for="fim">
+          <label for="fim" style="margin-right: 2rem;">
           <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
           <input id="fim"  type="datetime-local" name="fim"
           {% if encontro %}
@@ -58,6 +57,13 @@
           {% endif %} 
           required>
           </label>
+
+          {% if not encontro %}
+          <label for="vezes" style="margin-right: 2rem;">
+            <span style="display:inline-block; width:5.5ex; text-align:right">Vezes:</span>
+            <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
+          </label>
+          {% endif %} 
         
       <script>
         // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce

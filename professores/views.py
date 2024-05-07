@@ -1837,37 +1837,48 @@ def dinamicas_criar(request, data=None):
             try:
                 startDate = dateutil.parser.parse(request.POST["inicio"])
                 endDate = dateutil.parser.parse(request.POST["fim"])
+                diferenca = endDate - startDate
             except (ValueError, OverflowError):
                 return HttpResponse("Erro com data da Dinâmica!")
 
-            encontro = Encontro.create(startDate, endDate)
-
+            vezes = int(request.POST["vezes"])
             local = request.POST.get("local", None)
-            if local:
-                encontro.location = local
+            projeto_id = request.POST.get("projeto", None)
+            if projeto_id and projeto_id != "0":
+                try:
+                    projeto = Projeto.objects.get(id=projeto_id)
+                except Projeto.DoesNotExist:
+                    return HttpResponse("Projeto não encontrado.", status=401)
+            else:
+                projeto = None
+            facilitador_id = request.POST.get("facilitador", None)
+            if facilitador_id and facilitador_id != "0":
+                try:
+                    facilitador = PFEUser.objects.get(id=facilitador_id)
+                except PFEUser.DoesNotExist:
+                    return HttpResponse("Facilitador não encontrado.", status=401)
+            else:
+                facilitador = None
+                    
+            for vez in range(vezes):
 
-            projeto = request.POST.get("projeto", None)
-            if projeto:
-                projeto = int(projeto)
-                if projeto != 0:
-                    try:
-                        encontro.projeto = Projeto.objects.get(id=projeto)
-                    except Projeto.DoesNotExist:
-                        return HttpResponse("Projeto não encontrado.", status=401)
-                else:
-                    encontro.projeto = None
+                encontro = Encontro.create(startDate+(vez*diferenca), endDate+(vez*diferenca))
 
-            facilitador = request.POST.get("facilitador", None)
-            if facilitador:
-                facilitador = int(facilitador)
-                if facilitador != 0:
-                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
-                else:
-                    encontro.facilitador = None
+                if local:
+                    encontro.location = local
 
-            encontro.save()
+                if projeto:
+                    encontro.projeto = projeto
+                    
+                if facilitador:
+                    encontro.facilitador = facilitador
 
-            mensagem = "Dinâmica criada."
+                encontro.save()
+
+            if vezes > 1:
+                mensagem = "Dinâmicas criadas."
+            else:
+                mensagem = "Dinâmica criada."
             
             context = {
                 "atualizado": True,
