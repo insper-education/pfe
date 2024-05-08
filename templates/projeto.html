@@ -177,3 +177,14 @@
     {% endfor %}
   </ul>
 </div>
+
+<script>
+  $(document).ready(function(){	
+    // Ajusta a altura de todas as textareas
+    $("textarea").each(function(){
+      if($(this).is(":visible")) {
+        $(this).css("height", this.scrollHeight + "px");
+      }
+    });
+  });
+</script>

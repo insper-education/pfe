@@ -97,27 +97,32 @@
             <label class="topico" for="endereco">Endereço<br>
             <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)</small>
             </label><br>
-            <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
+            <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.endereco}}</textarea>
             
             <label class="topico" for="contatos_tecnicos">Contatos Técnicos<br>  
             <small class="obs">nome/e-mail/telefone para que estudantes e orientadores entrem em contato a cerca do desenvolvimento do projeto</small>
             </label><br>
-            <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
+            <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_tecnicos}}</textarea>
         
             <label class="topico" for="contatos_adm">Contatos Administrativos<br>     
             <small class="obs">nome/e-mail/telefone para quem devemos entrar em contato para resolver questões contratuais ou RH (opcional)</small>
             </label><br>
-            <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
+            <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.contatos_administrativos}}</textarea>
 
             <label class="topico" for="descricao_organizacao">Informações sobre a instituição/empresa<br>
             <small class="obs">descreva a instituição/empresa para estudantes conhecerem o que ela faz (opcional)</small>
             </label><br>
-            <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
-
+            <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000"
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao_organizacao}}</textarea>
+            
             <label class="topico" for="info_departamento">Informações sobre a departamento<br>
             <small class="obs">descreva o departamento/área para estudantes conhecerem o que ele faz (opcional)</small>
             </label><br>
-            <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
+            <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.departamento}}</textarea>
             <hr>
 
             <label class="topico" for="titulo">Título provisório do projeto<br>
@@ -129,22 +134,26 @@
             <label class="topico" for="desc_projeto">Descrição da Proposta de Projeto<br>
             <small class="obs">para discussão entre professores e que será visualizada pelos estudantes</small>
             </label><br>
-            <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
+            <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required 
+            {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.descricao}}</textarea>
 
             <label class="topico" for="expectativas">Expectativas de resultados/entregas<br>
             <small class="obs">exemplo: protótipos, modelos, ferramentas, estudos, validações, testes, padrões</small>
             </label><br>
-            <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" maxlength="3000" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
+            <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" maxlength="3000" required 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{{proposta.expectativas}}</textarea>
 
             <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
             <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
             </label><br>
-            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
+            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000"
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
 
             <label class="topico" for="observacoes">Outras observações que considere relevante para os estudantes<br>
             <small class="obs">caso desejar apresentar alguma informação adicional aos estudantes (opcional)</small>
             </label><br>
-            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
+            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
 
             <label class="topico" for="arquivo">Anexos
             <input id="arquivo" name="arquivo" {% include "formatos_suportados.html" %} type="file">
@@ -286,5 +295,16 @@
       </div>
     </div>
   </div>
+
+  <script>
+    $(document).ready(function(){	
+      // Ajusta a altura de todas as textareas
+      $("textarea").each(function(){
+        if($(this).is(":visible")) {
+          $(this).css("height", this.scrollHeight + "px");
+        }
+      });
+    });
+  </script>
 
 {% endblock %}
