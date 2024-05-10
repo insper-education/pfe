@@ -1692,24 +1692,20 @@ def editar_projeto(request, primarykey):
         titulo = request.POST.get("titulo", None)
         if titulo and ( projeto.titulo_final or projeto.titulo_final != titulo):
             projeto.titulo_final = titulo
+        else:
+            projeto.titulo_final = None
             
-        resumo = request.POST.get("resumo", None)
-        if resumo and resumo != "" and projeto.resumo != resumo:
-            projeto.resumo = resumo
-
-        abstract = request.POST.get("abstract", None)
-        if abstract and abstract != "" and projeto.abstract != abstract:
-            projeto.abstract = abstract
-
-        palavras_chave = request.POST.get("palavras_chave", None)
-        if palavras_chave and palavras_chave != "" and projeto.palavras_chave != palavras_chave:
-            projeto.palavras_chave = palavras_chave
-
+        projeto.resumo = request.POST.get("resumo", None)
+        projeto.abstract = request.POST.get("abstract", None)
+        projeto.palavras_chave = request.POST.get("palavras_chave", None)
+        
         # Realoca orientador
         orientador_id = request.POST.get("orientador", None)
         if orientador_id:
             orientador = get_object_or_404(Professor, pk=orientador_id)
             projeto.orientador = orientador
+        else:
+            projeto.orientador = None
 
         # Realoca coorientador
         coorientador_id = request.POST.get("coorientador", None)
