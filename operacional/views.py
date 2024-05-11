@@ -34,11 +34,12 @@ from academica.support import filtra_composicoes
 @permission_required("users.altera_professor", raise_exception=True)
 def index_operacional(request):
     """Mostra página principal para equipe operacional."""
-    return render(request, 'operacional/index_operacional.html')
+    context = {"titulo": "Operacional",}
+    return render(request, "operacional/index_operacional.html", context=context)
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação."""
     configuracao = get_object_or_404(Configuracao)
@@ -80,6 +81,7 @@ def avisos_listar(request):
                 })
 
     context = {
+        "titulo": "Avisos",
         "avisos": avisos,
         "hoje" : datetime.date.today(),
         "filtro" : "todos",
@@ -99,6 +101,7 @@ def emails(request):
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
     context = {
+        "titulo": "Listas de e-mails",
         "membros_comite": PFEUser.objects.filter(membro_comite=True),
         "todos_alunos": Aluno.objects.filter(trancado=False),
         "todos_professores": Professor.objects.all(),
@@ -106,7 +109,6 @@ def emails(request):
         "edicoes": edicoes,
         "atual": atual,
         "coordenacao": configuracao.coordenacao,
-        #"administradores": PFEUser.objects.filter(tipo_de_usuario=4),
     }
 
     return render(request, "operacional/emails.html", context=context)
@@ -221,7 +223,7 @@ def trata_aviso(aviso, request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def edita_aviso(request, primarykey):
     """Edita aviso."""
     aviso = get_object_or_404(Aviso, pk=primarykey)
@@ -319,7 +321,7 @@ def carregar_certificado(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def cria_aviso(request):
     """Cria aviso."""
     if request.method == "POST":
@@ -345,7 +347,7 @@ def cria_aviso(request):
 
 @login_required
 @transaction.atomic
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def deleta_aviso(request, primarykey):
     """Apaga aviso."""
     Aviso.objects.filter(id=primarykey).delete()
@@ -381,6 +383,7 @@ def plano_aulas(request):
     
     edicoes, _, _ = get_edicoes(Projeto)
     context = {
+        "titulo": "Plano de Aulas",
         "edicoes": edicoes,
     }
     return render(request, "operacional/plano_aulas.html", context=context)

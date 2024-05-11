@@ -18,8 +18,8 @@
 
   <form method="post" action="{% url 'dados_backup' modo %}"> {% csrf_token %}
 
+  <span class="titulo">{{ titulo }}</span>
   {% if modo == "relatorios" %}
-    <span class="titulo">Exportar Relatórios</span>
     <table>
       <tr>
         <td>Propostas</td>
@@ -46,7 +46,6 @@
   {% endif %}
 
   {% if modo == "dados" %}
-    <span class="titulo">Exportar dados</span>
     <table>
       <tr>
         <td>Tudo</td>

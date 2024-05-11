@@ -47,9 +47,7 @@
 
   <div id="tudo">
 
-        <span class="titulo">Tendência de Áreas de Interesse</span>
-
-        {% comment %} Seletor da edição da pesquisa {% endcomment %}
+        <span class="titulo">{{ titulo }}</span>
         {% include "edicoes.html" with com_cursos=True com_tipos=True %}
         <br>
 

@@ -6,7 +6,7 @@
 {% endcomment %}
 
 {% block content %}
-  <span class="titulo">Carregar dados</span>
+  <span class="titulo">{{ titulo }}</span>
   <a href="{% url 'carrega_arquivo' 'disciplinas' %}"><h5>disciplinas</h5></a>
   <a href="{% url 'carrega_arquivo' 'estudantes' %}"><h5>estudantes</h5></a>
   <a href="{% url 'carrega_arquivo' 'avaliacoes' %}"><h5>avaliações</h5></a>

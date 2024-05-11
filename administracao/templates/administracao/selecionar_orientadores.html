@@ -82,8 +82,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Selecionar Orientadores</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% if mensagem %}
     <span class="red-bold">{{mensagem|safe|linebreaks}}</span>

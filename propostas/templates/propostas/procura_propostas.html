@@ -12,10 +12,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Procura pelas Propostas de Projetos</span>
-
-  {% comment %} Seletor da edição e curso da pesquisa {% endcomment %}
+  <span class="titulo">{{titulo}}</span>
   {% include "edicoes.html" with com_cursos=True %}
 
   <div class="2areas2">

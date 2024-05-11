@@ -21,13 +21,12 @@
         font-size: 1.1rem;
       }
     }
-    
   </style>
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Documentos
+  <span class="titulo">{{ titulo }}
     {% if user.tipo_de_usuario == 4 %}
     <small class="esconder">
       <a

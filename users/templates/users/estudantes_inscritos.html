@@ -16,9 +16,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Estudantes Inscritos</span>
-
+  <span class="titulo">{{titulo}}</span>
   {% include "edicoes.html" with n_todas=True %}
   {% include "informacoes.html" %}
 

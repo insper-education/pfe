@@ -45,8 +45,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Resultado Bancas</span>
+  <span class="titulo">{{titulo}}</span>
 
   <strong>Projeto:</strong>
   [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]

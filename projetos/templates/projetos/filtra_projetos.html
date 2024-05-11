@@ -10,13 +10,8 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Filtro para Projetos</span>
-
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  <span class="titulo">{{ titulo }}</span>
   {% include "edicoes.html" %}
-
-  {% comment %} Seletor para áreas de interesse {% endcomment %}
   {% include "areas.html" with tudo_ligado=True titulo_areas=True not_outras=True com_borda=True %}
   
   <div class="atualizar">

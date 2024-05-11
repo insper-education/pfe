@@ -38,7 +38,10 @@ from documentos.models import TipoDocumento
 @permission_required("projetos.add_proposta", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
-    return render(request, "organizacoes/index_organizacoes.html")
+    contex = {
+        "titulo": "Área dos Parceiros",
+    }
+    return render(request, "organizacoes/index_organizacoes.html", context=contex)
 
 
 @login_required
@@ -233,6 +236,7 @@ def parceiro_propostas(request):
         propostas = None
 
     context = {
+        "titulo": "Propostas de Projetos Submetidas",
         "propostas": propostas,
         "organizacao": user.parceiro.organizacao,
     }
@@ -259,6 +263,7 @@ def parceiro_projetos(request):
         projetos = projetos
 
     context = {
+        "titulo": "Lista de Projetos",
         "projetos": projetos,
         "organizacao": user.parceiro.organizacao,
     }
@@ -366,6 +371,7 @@ def proposta_submissao(request):
     ]
 
     context = {
+        "titulo": "Submissão de Proposta de Projeto",
         "full_name": full_name,
         "email": email_sub,
         "organizacao": organizacao,
@@ -378,7 +384,7 @@ def proposta_submissao(request):
         "contatos_tecnicos": "",
         "contatos_adm": "",
         "info_departamento": "",
-        "titulo": "",
+        "titulo_prop": "",
         "desc_projeto": "",
         "expectativas": "",
         "areast": areas,
@@ -466,6 +472,7 @@ def carrega_proposta(request):
         return render(request, "generic.html", context=context)
 
     context = {
+        "titulo": "Carrega Proposta de Projeto em PDF",
         "full_name": full_name,
         "email": email_sub,
         "parceiro": parceiro,
@@ -536,6 +543,7 @@ def organizacoes_prospect(request):
         necessarios.append(estudantes.filter(curso2=curso).count()/4)  # grupos de 4 estudantes
 
     context = {
+        "titulo": "Prospecção de Organizações",
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
         "total_disponiveis": total_disponiveis,
@@ -621,8 +629,10 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
     """Exibe detalhes das organizações parceiras."""
     if not org:
         return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
+    organizacao = get_object_or_404(Organizacao, id=org)
     context = {
-        "organizacao": get_object_or_404(Organizacao, id=org),
+        "titulo": organizacao.nome,
+        "organizacao": organizacao,
         "cursos": Curso.objects.all().order_by("id"),
     }
     return render(request, "organizacoes/organizacao_completo.html", context=context)
@@ -707,7 +717,9 @@ def projeto_feedback(request):
         context = {"mensagem": "Feedback recebido, obrigado!",}
         return render(request, "generic.html", context=context)
 
-    context = {}
+    context = {
+        "titulo": "Formulário de Feedback das Organizações Parceiras",
+    }
     return render(request, "organizacoes/projeto_feedback.html", context)
 
 

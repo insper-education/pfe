@@ -37,7 +37,7 @@
     <div id="tudo">
     
     <span class="titulo">
-      {% if lingua == "pt" %}Análise por Objetivos de Aprendizado{% else %}Analysis by Learning Goals{% endif %}
+      {% if lingua == "pt" %}{{ titulo }}{% else %}Analysis by Learning Goals{% endif %}
     </span>
 
     {% include "edicoes.html" with com_cursos=True %}

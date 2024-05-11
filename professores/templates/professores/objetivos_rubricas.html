@@ -6,20 +6,14 @@
 {% endcomment %}
 
 {% block head %}
-  
   {% load static %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-
   <link rel="stylesheet" href="{% static 'css/style_botao_lingua.css' %}">
-
 {% endblock %}
 
 {% block content %}
-
   <span class="titulo">
-    <span lang="pt">Objetivos de Aprendizagem</span>
+    <span lang="pt">{{ titulo }}</span>
     <span lang="en">Learning Goals</span>
   </span>
   

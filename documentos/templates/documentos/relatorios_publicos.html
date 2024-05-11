@@ -26,9 +26,6 @@
     }
   </style>
 
-  {% comment %} <script src="{% static 'js/sort.js' %}"></script> {% endcomment %}
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
 
 {% endblock %}
@@ -38,7 +35,7 @@
   <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
 
   <span class="titulo">
-    <span lang="pt">Relatórios Públicos</span>
+    <span lang="pt">{{ titulo }}</span>
     <span lang="en">Public Reports</span>
   </span>
 

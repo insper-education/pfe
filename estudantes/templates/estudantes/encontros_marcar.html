@@ -20,10 +20,8 @@
 {% endblock %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-
-    <span class="titulo">Datas para encontros</span>
+  <form method="post"> {% csrf_token %}
+    <span class="titulo">{{titulo}}</span>
     
     {% if user.tipo_de_usuario == 1 %}
     <h4>Projeto: 
@@ -116,11 +114,11 @@
     {% endif %}
 
 
-  <script>
+    <script>
 
-    window.setInterval("update()", 120000); // 2 minutos
+      window.setInterval("update()", 120000); // 2 minutos
 
-    var update = function() {
+      var update = function() {
         $.ajax({
             type: "GET",
             url: "{% url 'encontros_marcar' %}",
@@ -140,9 +138,9 @@
             },
             {% include "ajax_error_function.js" %}
         });
-    };
+      };
 
-  </script>
+    </script>
 
-</form>
+  </form>
 {% endblock %}

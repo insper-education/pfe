@@ -36,7 +36,10 @@ from .support import envia_proposta, preenche_proposta
 @permission_required("users.altera_professor", raise_exception=True)
 def index_propostas(request):
     """Mostra página principal de Propostas."""
-    return render(request, 'propostas/index_propostas.html')
+    context = {
+        "titulo": "Propostas de Projetos",
+    }
+    return render(request, "propostas/index_propostas.html", context=context)
 
 
 @login_required
@@ -50,8 +53,8 @@ def mapeamento_estudantes_propostas(request):
     edicoes, ano, semestre = get_edicoes(Proposta)
 
     if request.is_ajax():
-        if 'edicao' in request.POST:
-            ano, semestre = request.POST['edicao'].split('.')
+        if "edicao" in request.POST:
+            ano, semestre = request.POST["edicao"].split('.')
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -145,13 +148,12 @@ def mapeamento_estudantes_propostas(request):
         ]
 
         context = {
+            "titulo": "Mapeamento de Propostas por Estudantes",
             "edicoes": edicoes,
             "informacoes": informacoes,
         }
 
-    return render(request,
-                  'propostas/mapeamento_estudante_projeto.html',
-                  context)
+    return render(request, "propostas/mapeamento_estudante_projeto.html", context)
 
 
 @login_required
@@ -267,6 +269,7 @@ def procura_propostas(request):
     edicoes, _, _ = get_edicoes(Proposta)
 
     context = {
+        "titulo": "Procura pelas Propostas de Projetos",
         "tamanho": tamanho,
         "propostas": propostas,
         "prioridades": prioridades,
@@ -382,7 +385,10 @@ def propostas_apresentadas(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Proposta)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": "Propostas de Projetos Apresentadas",
+            "edicoes": edicoes,
+            }
 
     return render(request, "propostas/propostas_apresentadas.html", context)
 
@@ -414,7 +420,10 @@ def propostas_lista(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Proposta)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": "Lista de Propostas",
+            "edicoes": edicoes,
+            }
 
     return render(request, "propostas/propostas_lista.html", context)
 
@@ -482,7 +491,13 @@ def proposta_completa(request, primarykey):
 
     liberacao_visualizacao = Evento.objects.filter(tipo_de_evento=113).last()
 
+    titulo = "Proposta " + str(proposta.ano) + '.' + str(proposta.semestre)
+    if proposta.organizacao:
+        titulo += " [" + proposta.organizacao.sigla + "] "
+    titulo += proposta.titulo
+    
     context = {
+        "titulo": titulo,
         "configuracao": configuracao,
         "proposta": proposta,
         "opcoes": opcoes,
@@ -524,13 +539,19 @@ def proposta_detalhes(request, primarykey):
     procura["4"] = opcoes.filter(prioridade=4).count()
     procura["5"] = opcoes.filter(prioridade=5).count()
 
+    titulo = "Proposta " + str(proposta.ano) + '.' + str(proposta.semestre)
+    if proposta.organizacao:
+        titulo += " [" + proposta.organizacao.sigla + "] "
+    titulo += proposta.titulo
+
     context = {
+        "titulo": titulo,
         "proposta": proposta,
         "procura": procura,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
 
     }
-    return render(request, 'propostas/proposta_detalhes.html', context=context)
+    return render(request, "propostas/proposta_detalhes.html", context=context)
 
 
 # @login_required
@@ -564,7 +585,6 @@ def proposta_editar(request, slug):
     proposta = get_object_or_404(Proposta, slug=slug)
 
     configuracao = get_object_or_404(Configuracao)
-    #liberadas_propostas = configuracao.liberadas_propostas
     liberadas_propostas = propostas_liberadas(configuracao)
 
     configuracao = get_object_or_404(Configuracao)
@@ -618,6 +638,7 @@ def proposta_editar(request, slug):
     interesses = proposta.get_interesses()
 
     context = {
+        "titulo": "Edição de Proposta de Projeto",
         "liberadas_propostas": liberadas_propostas,
         "full_name": proposta.nome,
         "email": proposta.email,
@@ -681,6 +702,7 @@ def publicar_propostas(request):
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
     
     context = {
+        "titulo": "Publicação das Propostas de Projetos",
         "liberadas_propostas": propostas_liberadas(configuracao),
         "min_props": configuracao.min_props,
         "limite_propostas": get_limite_propostas(configuracao),

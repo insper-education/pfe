@@ -33,7 +33,7 @@
 
 {% block content %}
 
-  <span class="titulo">Matérias na Mídia
+  <span class="titulo">{{ titulo }}
     {% if  user.tipo_de_usuario == 4 %}
       <small class="esconder"><a class="open-documento"
         data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"

@@ -19,10 +19,9 @@
 {% endblock %}
 
 {% block content %}
+  <span class="titulo">{{titulo}}</span>
 
-    <span class="titulo">Projetos Coorientados</span>
-
-    <table class="table table-borderless table-sm arredondado"><tbody>
+  <table class="table table-borderless table-sm arredondado"><tbody>
     {% for coorientacao in coorientacoes %}
       {% ifchanged coorientacao.projeto.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}

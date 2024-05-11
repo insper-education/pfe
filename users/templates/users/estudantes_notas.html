@@ -20,12 +20,8 @@
 {% endblock %}
 
 {% block content %}
-  
-  <span class="titulo">Avaliações por Estudante</span>
-
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  <span class="titulo">{{titulo}}</span>
   {% include "edicoes.html" with n_todas=True %}
-  
   {% include "informacoes.html" %}
 
   <div class="atualizar">
