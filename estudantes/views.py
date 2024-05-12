@@ -560,7 +560,26 @@ def relato_quinzenal(request):
             relato = Relato.objects.create(alocacao=alocacao)
             relato.texto = texto_relato
             relato.save()
-            return render(request, "users/atualizado.html",)
+            
+            if prazo:
+                mensagem = "<h5>Relato submetido com sucesso<br><br></h5>"
+            else:
+                mensagem = "<h1 style='color: red;'>Erro na submissão do Relato<br>"
+                mensagem += "Não foi encontrado um prazo de entrega válido para o relato.</h1>"
+
+            mensagem += "<div style='max-width: 1400px; border: 1px solid black; padding: 4px;'>"
+            mensagem += "<b>Horário de recebimento:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
+            mensagem += "<b>Relato:</b> " + texto_relato.replace('\n', "<br>\n") + "<br>"
+            mensagem += "</div>"
+
+            context = {
+                "area_aluno": True,
+                "area_principal": True,
+                "voltar": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+
 
         relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by("endDate").last()
         if not relato_anterior:

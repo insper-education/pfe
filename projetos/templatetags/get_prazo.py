@@ -13,4 +13,7 @@ register = template.Library()
 @register.filter
 def get_prazo(relato):
     """Retorna a data para qual entrega o relato foi feito."""
-    return Evento.objects.filter(tipo_de_evento=20, endDate__gte=relato.momento).order_by("endDate").first().endDate
+    evento = Evento.objects.filter(tipo_de_evento=20, endDate__gte=relato.momento).order_by("endDate").first()
+    if evento:
+        return evento.endDate
+    return None
