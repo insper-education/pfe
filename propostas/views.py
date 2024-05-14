@@ -605,13 +605,14 @@ def proposta_editar(request, slug):
                 proposta.anexo = arquivo[len(settings.MEDIA_URL):]
                 proposta.save()
 
-            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
-                proposta.internacional = True if request.POST.get("internacional", None) else False
-                proposta.intercambio = True if request.POST.get("intercambio", None) else False
-                colaboracao_id = request.POST.get("colaboracao", None)
-                if colaboracao_id:
-                    proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-                proposta.save()
+            if request.user.is_authenticated:
+                if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+                    proposta.internacional = True if request.POST.get("internacional", None) else False
+                    proposta.intercambio = True if request.POST.get("intercambio", None) else False
+                    colaboracao_id = request.POST.get("colaboracao", None)
+                    if colaboracao_id:
+                        proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+                    proposta.save()
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, enviar)
@@ -629,7 +630,7 @@ def proposta_editar(request, slug):
                 "voltar": True,
                 "mensagem": resposta,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         return HttpResponse("Propostas não liberadas para edição.", status=401)
 
