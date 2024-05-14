@@ -68,7 +68,7 @@ def index_professor(request):
     configuracao = get_object_or_404(Configuracao)
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
 
-    context = {}
+    context = {"titulo": "Área dos Professores",}
     if request.user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
         projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
 
@@ -228,7 +228,7 @@ def avaliacoes_pares(request, todos=None):
     if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
-    context = {}
+    context = {"titulo": "Avaliações de Pares"}
 
     if request.user.tipo_de_usuario == 4:  # Administrador
         context["administracao"] = True
@@ -267,7 +267,10 @@ def bancas_alocadas(request):
         bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor)
         bancas = bancas | Banca.objects.filter(projeto__coorientador__usuario=request.user)
 
-    context = {"bancas": bancas.order_by("-startDate"),}
+    context = {
+        "titulo": "Participação em Bancas",
+        "bancas": bancas.order_by("-startDate"),
+        }
     return render(request, "professores/bancas_alocadas.html", context=context)
 
 
@@ -276,7 +279,10 @@ def bancas_alocadas(request):
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre")
-    context = {"projetos": projetos,}
+    context = {
+        "titulo": "Projetos Orientados",
+        "projetos": projetos,
+        }
     return render(request, "professores/orientacoes_alocadas.html", context=context)
 
 
@@ -286,7 +292,10 @@ def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     coorientacoes = Coorientador.objects.filter(usuario=request.user)\
         .order_by("-projeto__ano", "-projeto__semestre")
-    context = {"coorientacoes": coorientacoes,}
+    context = {
+        "titulo": "Projetos Coorientados",
+        "coorientacoes": coorientacoes,
+        }
     return render(request, "professores/coorientacoes_alocadas.html", context=context)
 
 
@@ -296,7 +305,10 @@ def mentorias_alocadas(request):
     """Mostra detalhes sobre o professor."""
     mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
     mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
-    context = {"mentorias": mentorias,}
+    context = {
+        "titulo": "Mentorias Facilitadas",
+        "mentorias": mentorias,
+        }
     return render(request, "professores/mentorias_alocadas.html", context=context)
 
 
@@ -308,6 +320,7 @@ def bancas_index(request):
     dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
 
     context = {
+        "titulo": "Agendar Bancas",
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
@@ -621,7 +634,10 @@ def bancas_editar(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-    context = {"periodo": periodo_projeto}
+    context = {
+        "titulo": "Listagem das Bancas",
+        "periodo": periodo_projeto
+        }
 
     if periodo_projeto == "proximas":
         # Coletando bancas agendadas a partir de hoje
@@ -833,6 +849,7 @@ def banca_ver(request, primarykey):
     documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
 
     context = {
+        "titulo": "Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
         "banca": banca,
         "documentos": documentos,
     }
@@ -1415,6 +1432,7 @@ def banca_avaliar(request, slug, documento_id=None):
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
 
         context = {
+            "titulo": "Formulário Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
             "pessoas": pessoas,
             "membros": membros,
             "objetivos": objetivos,
@@ -1631,6 +1649,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                                                 ).last()
 
         context = {
+            "titulo": "Formulário de Avaliação de Entrega",
             "projeto": projeto,
             "composicao": composicao,
             "estudante": estudante,
@@ -1697,9 +1716,11 @@ def informe_bancas(request, tipo):
 
         return render(request, 'generic.html', context=context)
 
+    tipo = "Finais" if tipo==0 else "Intermediárias"
     context = {
+        "titulo": "Informe de Bancas " + tipo,
         "bancas": bancas,
-        "tipo": "Finais" if tipo==0 else "Intermediárias",
+        "tipo": tipo,
     }
     return render(request, 'professores/informes_bancas.html', context=context)
 
@@ -1804,6 +1825,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
         # Senão é só uma avaliação de objetivo mais antiga
 
     context = {
+        "titulo": "Resultado Bancas",
         "objetivos": objetivos,
         "projeto": projeto,
         "avaliadores_inter": avaliadores_inter,
@@ -1819,7 +1841,10 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by("startDate")
-    context = {"encontros": encontros,}
+    context = {
+        "titulo": "Mentorias",
+        "encontros": encontros,
+        }
     return render(request, "professores/dinamicas_index.html", context)
 
 
@@ -2291,6 +2316,7 @@ def avaliar_entregas(request, todos=None):
             exames.add(composicao.exame)
             
         context = {
+                "titulo": "Avaliar Entregas",
                 "edicoes": get_edicoes(Relato)[0],
                 "tipos_entregas": exames if todos else None,
             }
@@ -2332,6 +2358,7 @@ def relatos_quinzenais(request, todos=None):
 
         edicoes, _, _ = get_edicoes(Relato)
         context = {
+                "titulo": "Relatos Quinzenais",
                 "administracao": True,
                 "edicoes": edicoes,
             }
@@ -2636,6 +2663,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         ]
 
         context = {
+            "titulo": "Resultado dos Projetos",
             "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,
@@ -2709,6 +2737,7 @@ def objetivo_editar(request, primarykey):
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
     context = {
+        "titulo": "Objetivos de Aprendizagem e Rubricas",
         "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
     }
     return render(request, "professores/objetivos_rubricas.html", context)
@@ -2841,6 +2870,7 @@ def planos_de_orientacao(request):
     template = Documento.objects.filter(tipo_documento=tipo).last()
 
     context = {
+        "titulo": "Planos de Orientação",
         "projetos": projetos,
         "configuracao": get_object_or_404(Configuracao),
         "template": template,
@@ -2875,6 +2905,7 @@ def planos_de_orientacao_todos(request):
 
     else:
         context = {
+                "titulo": "Planos de Orientação",
                 "administracao": True,
                 "edicoes": get_edicoes(Projeto)[0],
             }

@@ -105,6 +105,7 @@ def index_estudantes(request):
     context["limite_propostas"] = get_limite_propostas2(configuracao)
 
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
+    context["titulo"] = "Área dos Estudantes"
 
     return render(request, "estudantes/index_estudantes.html", context=context)
 
@@ -114,6 +115,7 @@ def alinhamentos_gerais(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     tipo_documento = get_object_or_404(TipoDocumento, nome="Template de Alocação Semanal")
     context = {
+        "titulo": "Alinhamentos Gerais",
         "documento": Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last(),
         "projeto": Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last(),
     }
@@ -206,6 +208,7 @@ def encontros_marcar(request):
     agendado = encontros.filter(projeto=projeto).last()
 
     context = {
+        "titulo": "Agendar Mentorias",
         "encontros": encontros,
         "projeto": projeto,
         "aviso": aviso,
@@ -310,11 +313,12 @@ def estudante_feedback_geral(request, usuario):
         return render(request, "generic.html", context=context)
 
     context = {
+        "titulo": "Formulário de Feedback dos Estudantes",
         "usuario": usuario,
         "projeto": projeto,
         "mensagem": mensagem,
     }
-    return render(request, 'estudantes/estudante_feedback.html', context)
+    return render(request, "estudantes/estudante_feedback.html", context)
 
 
 
@@ -360,6 +364,10 @@ def avaliacao_pares(request, momento):
     else:  # Final
         prazo, inicio, fim = configuracao_pares_vencida(estudante, 32)
         tipo=1
+
+    context = {
+            "titulo": "Avaliação de Pares" + (" Intermediária" if momento=="intermediaria" else " Final"),
+        }
 
     if request.user.tipo_de_usuario == 1:
         projeto = Projeto.objects\
@@ -415,26 +423,19 @@ def avaliacao_pares(request, momento):
             pares.append(par)
 
         colegas = zip(alocacoes, pares)
+        context["colegas"] = colegas
 
-        context = {
-            "vencido": prazo,
-            "colegas": colegas,
-            "momento": momento,
-            "inicio": inicio,
-            "fim": fim,
-            "configuracao": configuracao,
-        }
     else:  # Supostamente professores
-        context = {
-            "mensagem": "Você não está cadastrado como estudante.",
-            "vencido": prazo,
-            "colegas": [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
-            "momento": momento,
-            "inicio": inicio,
-            "fim": fim,
-            "configuracao": configuracao,
-        }
-    return render(request, 'estudantes/avaliacao_pares.html', context)
+        context["mensagem"] = "Você não está cadastrado como estudante."
+        context["colegas"] = [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
+
+    context["vencido"] = prazo
+    context["momento"] = momento
+    context["inicio"] = inicio
+    context["fim"] = fim
+    context["configuracao"] = configuracao
+    
+    return render(request, "estudantes/avaliacao_pares.html", context)
 
 
 @login_required
@@ -491,6 +492,7 @@ def informacoes_adicionais(request):
     context["areast"] = Area.objects.filter(ativa=True)
     context["Aluno"] = Aluno
     context["PFEUser"] = PFEUser
+    context["titulo"] = "Interesses e Experiências"
 
     return render(request, "estudantes/informacoes_adicionais.html", context)
 
@@ -499,6 +501,7 @@ def informacoes_adicionais(request):
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
     configuracao = Configuracao.objects.get()
+    context = {"titulo": "Minhas Bancas",}
     if request.user.tipo_de_usuario == 1:
         if (request.user.aluno.anoPFE > configuracao.ano) or\
             (request.user.aluno.anoPFE == configuracao.ano and
@@ -514,9 +517,9 @@ def minhas_bancas(request):
 
         bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
         
-        context = {"bancas": bancas,}
+        context["bancas"] = bancas
     else:
-        context = {"mensagem": "Você não está cadastrado como estudante.",}
+        context["mensagem"] = "Você não está cadastrado como estudante."
     return render(request, "estudantes/minhas_bancas.html", context)
 
 
@@ -532,6 +535,7 @@ def relato_quinzenal(request):
     prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by("endDate").first()
 
     context = {
+        "titulo": "Formulário de Relato Quinzenal",
         "prazo": prazo,
         "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
         "Relato": Relato,
@@ -556,7 +560,26 @@ def relato_quinzenal(request):
             relato = Relato.objects.create(alocacao=alocacao)
             relato.texto = texto_relato
             relato.save()
-            return render(request, "users/atualizado.html",)
+            
+            if prazo:
+                mensagem = "<h5>Relato submetido com sucesso<br><br></h5>"
+            else:
+                mensagem = "<h1 style='color: red;'>Erro na submissão do Relato<br>"
+                mensagem += "Não foi encontrado um prazo de entrega válido para o relato.</h1>"
+
+            mensagem += "<div style='max-width: 1400px; border: 1px solid black; padding: 4px;'>"
+            mensagem += "<b>Horário de recebimento:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
+            mensagem += "<b>Relato:</b> " + texto_relato.replace('\n', "<br>\n") + "<br>"
+            mensagem += "</div>"
+
+            context = {
+                "area_aluno": True,
+                "area_principal": True,
+                "voltar": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+
 
         relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by("endDate").last()
         if not relato_anterior:
@@ -593,7 +616,10 @@ def exames_pesos(request):
         for semestre in range(1, 3):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
-    context = {"semestres": semestres,}
+    context = {
+        "titulo": "Exames e Pesos",
+        "semestres": semestres,
+        }
     return render(request, "academica/exames_pesos.html", context)
 
 
@@ -603,7 +629,7 @@ def submissao_documento(request):
 
     configuracao = get_object_or_404(Configuracao)
 
-    context = {}
+    context = {"titulo": "Submissão de Documentos",}
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
@@ -735,6 +761,7 @@ def selecao_propostas(request):
     areas = areas_normais or areas_outras
 
     context = {
+        "titulo": "Seleção de Propostas de Projetos",
         "liberadas_propostas": liberadas_propostas,
         "vencido": vencido,
         "propostas": propostas,

@@ -21,8 +21,8 @@
 {% endblock %}
 
 {% block content %}
-
-    <span class="titulo">Planos de Orientação</span>
+  <span class="titulo">{{titulo}}</span>
+  
     <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
       <i class="far fa-file-alt"></i> {{template.tipo_documento}} (opcional)
     </a><br>

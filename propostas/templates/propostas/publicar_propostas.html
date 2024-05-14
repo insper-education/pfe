@@ -28,11 +28,7 @@
 {% endblock %}
 
 {% block content %}
-
-  {% csrf_token %}
-
-  <span class="titulo">Publicação das Propostas</span>
-  <br>
+  <span class="titulo">{{ titulo }}</span>
   
   <div>
     <span>Data planejada para liberar propostas de projetos para estudantes:</span>

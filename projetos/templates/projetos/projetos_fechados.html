@@ -45,16 +45,10 @@
 {% endblock %}
 
 {% block content %}
-
   {% include "impressora.html" %}
-
-  <span class="titulo">Projetos</span>
-  
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  <span class="titulo">{{ titulo }}</span>
   {% include "edicoes.html" with com_cursos=True com_externos=True%}
-
   {% include "informacoes.html" %}
-
   <br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}

@@ -10,22 +10,18 @@
   {% load tipo_documento %}
   {% load get_field %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-  <style>  
-    textarea {max-width:100%;} // REMOVER ESTA NO STYLE.CSS
-  </style>
 {% endblock %}
 
 {% block content %}
+  <span class="titulo">{{ titulo }}</span>
+  <br>
 
-<span class="titulo">Alinhamentos Gerais</span>
-<br>
+  <div class="div_arredondado pintern">
+    <h5><a href="https://forms.gle/3Qong25KnCYX9QWs9">Levantamento de Expectativa do Capstone</a></h5>
+  </div>
 
-<div class="div_arredondado pintern">
-  <h5><a href="https://forms.gle/3Qong25KnCYX9QWs9">Levantamento de Expectativa do Capstone</a></h5>
-</div>
-
-<div class="div_arredondado pintern">
-  <h5><a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">Alocação Semanal</a></h5>
-</div>
+  <div class="div_arredondado pintern">
+    <h5><a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">Alocação Semanal</a></h5>
+  </div>
 
 {% endblock %}

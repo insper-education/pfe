@@ -82,7 +82,10 @@ def get_areas_propostas(propostas):
 @permission_required("projetos.view_projeto", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
-    return render(request, "projetos/index_projetos.html")
+    context = {
+        "titulo": "Projetos",
+    }
+    return render(request, "projetos/index_projetos.html", context=context)
 
 
 @login_required
@@ -111,7 +114,15 @@ def projeto_detalhes(request, primarykey):
             }
             return render(request, "generic.html", context=context)
 
-    context = {"projeto": projeto,}
+    titulo = str(projeto.ano) + '.' + str(projeto.semestre)
+    if projeto.proposta.organizacao:
+        titulo += " [" + projeto.proposta.organizacao.sigla + "] "
+    titulo += projeto.get_titulo()
+
+    context = {
+        "titulo": titulo,
+        "projeto": projeto,
+        }
 
     return render(request, "projetos/projeto_detalhes.html", context=context)
 
@@ -130,7 +141,13 @@ def projeto_completo(request, primarykey):
         if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
             medias_oo = None
 
+    titulo = str(projeto.ano) + '.' + str(projeto.semestre)
+    if projeto.proposta.organizacao:
+        titulo += " [" + projeto.proposta.organizacao.sigla + "] "
+    titulo += projeto.get_titulo()
+
     context = {
+        "titulo": titulo,
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
@@ -252,6 +269,7 @@ def distribuicao_areas(request):
             areaspfe, outras = get_areas_propostas(propostas_projetos)
 
             context = {
+                "titulo": "Tendência de Áreas de Interesse",
                 "total": propostas_projetos.count(),
                 "areaspfe": areaspfe,
                 "outras": outras,
@@ -264,6 +282,7 @@ def distribuicao_areas(request):
 
     edicoes, _, _ = get_edicoes(Aluno)
     context = {
+        "titulo": "Tendência de Áreas de Interesse",
         "edicoes": edicoes,
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
@@ -389,6 +408,7 @@ def projetos_fechados(request):
         ]
 
         context = {
+            "titulo": "Projetos",
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -484,6 +504,7 @@ def meuprojeto(request):
 
     # Caso seja estudante
     context = {
+        "titulo": "Meu Projeto",
         "aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
         "Projeto": Projeto,
@@ -642,6 +663,7 @@ def lista_feedback(request):
         num_feedbacks.append(Feedback.objects.filter(data__range=faixa).count())
 
     context = {
+        "titulo": "Feedbacks das Organizações Parceiras",
         "feedbacks": Feedback.objects.all().order_by("-data"),
         "edicoes": edicoes,
         "num_projetos": num_projetos,
@@ -717,8 +739,8 @@ def lista_feedback_estudantes(request):
 
     else:
         context = {
+            "titulo": "Feedbacks Finais dos Estudantes",
             "edicoes": edicoes,
-            "titulo": "Listagem de Feedbacks Finais dos Estudantes",
         }
 
     return render(request, "projetos/lista_feedback_estudantes.html", context)
@@ -729,7 +751,10 @@ def lista_feedback_estudantes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
-    context = {"acompanhamentos": Acompanhamento.objects.all().order_by("-data")}
+    context = {
+        "titulo": "Acompanhamentos nas Organizações",  
+        "acompanhamentos": Acompanhamento.objects.all().order_by("-data")
+        }
     return render(request, "projetos/lista_acompanhamento.html", context)
 
 
@@ -851,6 +876,7 @@ def projetos_vs_propostas(request):
         org_prospectadas.append(count_organizacoes)
 
     context = {
+        "titulo": "Organizações, Projetos e Propostas",
         "num_propostas": num_propostas,
         "nome_propostas": nome_propostas,
         "num_projetos": num_projetos,
@@ -1035,6 +1061,7 @@ def analise_notas(request):
 
     else:
         context = {
+            "titulo": "Análise de Notas/Conceitos",
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -1204,6 +1231,7 @@ def analise_objetivos(request):
 
     else:
         context = {
+            "titulo": "Análise por Objetivos de Aprendizado",
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -1306,6 +1334,7 @@ def evolucao_notas(request):
 
     else:
         context = {
+            "titulo": "Evolução por Notas/Conceitos",
             "edicoes": edicoes,
             "cursos": cursos,
         }
@@ -1440,6 +1469,7 @@ def evolucao_objetivos(request):
     else:
 
         context = {
+            "titulo": "Evolução por Objetivos de Aprendizado",
             "edicoes": edicoes,
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
@@ -1466,6 +1496,7 @@ def filtro_projetos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         context = {
+            "titulo": "Filtro para Projetos",
             "edicoes": get_edicoes(Projeto)[0],
             "areast": Area.objects.filter(ativa=True),
         }
@@ -1600,6 +1631,7 @@ def evolucao_por_objetivo(request):
     else:
 
         context = {
+            "titulo": "Evolução por Objetivos de Aprendizado",
             "edicoes": edicoes,
             "objetivos": objetivos,
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
@@ -1669,6 +1701,7 @@ def correlacao_medias_cr(request):
 
     else:
         context = {
+            "titulo": "Correlação entre Médias e CR",
             "edicoes": edicoes,
             "cursos": cursos_insper,
         }

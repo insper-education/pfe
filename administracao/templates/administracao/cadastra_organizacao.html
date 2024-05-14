@@ -32,14 +32,7 @@
 
 {% block content %}
 
-  <span class="titulo">
-    {% if edicao %}
-      Edição
-    {% else %}
-      Cadastro
-    {% endif %}
-    de Organização
-  </span>
+  <span class="titulo">{{ titulo }}</span>
   <br>
 
   <form id="organizacaoform" method="post" style="width: 850px; max-width: 100%;" enctype="multipart/form-data"> {% csrf_token %}

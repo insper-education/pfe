@@ -12,9 +12,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Listagem de Feedbacks das Organizações Parceiras</span>
-
+  <span class="titulo">{{ titulo }}</span>
   <div>Link para pesquisa: <a href="{% url 'projeto_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'projeto_feedback' %}</a></div><br>
 
   <div class="table-responsive">

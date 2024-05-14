@@ -69,14 +69,16 @@ logger = logging.getLogger(__name__)
 @permission_required("users.view_administrador", raise_exception=True)
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
-    return render(request, "administracao/index_admin.html")
+    context = {"titulo": "Área Administrativa",}
+    return render(request, "administracao/index_admin.html", context=context)
 
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    return render(request, "administracao/carregar.html")
+    context = {"titulo": "Carregar Dados",}
+    return render(request, "administracao/carregar.html", context=context)
 
 
 @login_required
@@ -85,6 +87,7 @@ def index_carregar(request):
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados."""
     context = {
+        "titulo": "Cadastro de Disciplina",
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "Disciplina": Disciplina,
     }
@@ -149,6 +152,7 @@ def cadastrar_organizacao(request, proposta_id=None):
         proposta = get_object_or_404(Proposta, id=proposta_id)
 
     context = {
+        "titulo": "Cadastro de Organização",
         "proposta": proposta,
         "organizacao": Organizacao,
     }
@@ -191,12 +195,12 @@ def edita_organizacao(request, primarykey):
         return render(request, "generic.html", context=context)
 
     context = {
+        "titulo": "Edição de Organização",
         "organizacao": organizacao,
         "edicao": True,
     }
 
     return render(request, "administracao/cadastra_organizacao.html", context=context)
-
 
 
 def envia_senha_mensagem(user):
@@ -340,6 +344,8 @@ def cadastrar_usuario(request):
 
         context["mensagem"] = mensagem
 
+    context["titulo"] = "Cadastro de Usuário"
+
     return render(request, "administracao/cadastra_usuario.html", context)
 
 
@@ -398,6 +404,7 @@ def edita_usuario(request, primarykey):
     else:
         return HttpResponse("Erro com tipo de usuário", status=401)
 
+    context["titulo"] = "Edição de Usuário"
     return render(request, "administracao/cadastra_usuario.html", context)
 
 @login_required
@@ -514,6 +521,7 @@ def configurar(request):
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
     
     context = {
+        "titulo": "Configuração do Sistema",
         "configuracao": configuracao,
         "administradores": Administrador.objects.all(),
         "administrador": Administrador,
@@ -536,8 +544,18 @@ def desbloquear_usuarios(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def exportar(request, modo):
     """Exporta dados."""
-    context = {"modo": modo,}
-    return render(request, "administracao/exportar.html", context)
+
+    titulo = "Exportar"
+    if modo == "relatorios":
+        titulo += " Relatórios"
+    elif modo == "dados":
+        titulo += " Dados"
+
+    context = {
+        "titulo": titulo,
+        "modo": modo,
+        }
+    return render(request, "administracao/exportar.html", context=context)
 
 
 @login_required
@@ -847,6 +865,7 @@ def montar_grupos(request):
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
+        "titulo": "Planejamento de Grupos por Proposta",
         "mensagem": mensagem,
         "configuracao": configuracao,
         "propostas": propostas,
@@ -869,6 +888,7 @@ def selecionar_orientadores(request):
     ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
+        "titulo": "Selecionar Orientadores para os Projetos",
         "mensagem": mensagem,
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
         "orientadores": PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])  #2prof 4adm,
@@ -889,6 +909,7 @@ def fechar_conexoes(request):
     ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
+        "titulo": "Selecionar Conexões com Organizações",
         "mensagem": mensagem,
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
     }
@@ -1231,6 +1252,7 @@ def conexoes_estabelecidas(request):
             # mensagem += "; Data = " + str(data) + "<br>\n"
 
     context = {
+        "titulo": "Conexões Abertas",
         "mensagem": mensagem,
         "usuarios": usuarios,
     }
@@ -1248,6 +1270,7 @@ def bloqueados(request):
     mes_atras = timezone.now() - datetime.timedelta(days=30)
     
     context = {
+        "titulo": "Usuários e IPs bloqueados",
         "access_logs": AccessLog.objects.all().filter(attempt_time__gte=mes_atras),
         "access_attempts": AccessAttempt.objects.all(),
     }

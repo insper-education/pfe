@@ -52,8 +52,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Formulário de Relato Quinzenal</span>
+  <span class="titulo">{{titulo}}</span>
   <br>
 
   {% if mensagem %}
@@ -97,12 +96,16 @@
 
         <table>
           <thead><tr><th>
-            {{prazo}} - 
-            <span style="white-space: nowrap;">Situação: 
-              {% if item.avaliacao == -1 %}aguardando avaliação de orientador{% endif %}
-              {% if item.avaliacao == 0 %}<span class="red-bold">desempenho abaixo do esperado</span>{% endif %}
-              {% if item.avaliacao == 1 %}<span class="green-bold">desempenho dentro do esperado</span>{% endif %}
-            </span>
+            {% if prazo %}
+              {{prazo}} -
+              <span style="white-space: nowrap;">Situação: 
+                {% if item.avaliacao == -1 %}aguardando avaliação de orientador{% endif %}
+                {% if item.avaliacao == 0 %}<span class="red-bold">desempenho abaixo do esperado</span>{% endif %}
+                {% if item.avaliacao == 1 %}<span class="green-bold">desempenho dentro do esperado</span>{% endif %}
+              </span>
+            {% else %}
+              Prazo inválido (não visível para orientador)
+            {% endif %}
             {% if item.feedback %}
               {% if item.momento_avaliacao %}
                 <i style="display: block;">Feedback do Orientador: {{item.momento_avaliacao}}</i>

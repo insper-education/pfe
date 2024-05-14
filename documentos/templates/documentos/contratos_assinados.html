@@ -6,24 +6,15 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load tipo_documento %}
-
   {% include "tabelas_includes.html" %}
-
-  {% comment %} Para chamar os Tooltips {% endcomment %}
   <script>{% include "tooltip.js" %}</script>
-
 {% endblock %}
 
 {% block content %}
-
   {% include "impressora.html" %}
-
-  <span class="titulo">Contratos Assinados</span>
-
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  <span class="titulo">{{ titulo }}</span>
   {% include "edicoes.html" %}
   <br>
   

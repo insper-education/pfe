@@ -6,7 +6,6 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load addstr %}
   
@@ -28,10 +27,9 @@
   <div id="tudo">
 
     <span class="titulo">
-        {% if lingua == "pt" %}Análise de Notas/Conceitos{% else %}Grade Analysis{% endif %}
+        {% if lingua == "pt" %}{{ titulo }}{% else %}Grade Analysis{% endif %}
     </span>
 
-    {% comment %} Seletor da edição da pesquisa {% endcomment %}
     {% include "edicoes.html" with com_cursos=True %}
 
     <div class="atualizar">

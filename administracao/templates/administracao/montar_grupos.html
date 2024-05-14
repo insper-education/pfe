@@ -137,11 +137,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Planejamento de Grupos por Proposta</span><br>
+  <span class="titulo">{{ titulo }}</span>
 
   {% if mensagem %}
-    <h5 class="red-bold">{{mensagem|linebreaks}}</h5>
-    <br>
+    <h5 class="red-bold">{{mensagem|linebreaks}}</h5><br>
   {% endif %}
 
   {% if propostas %}

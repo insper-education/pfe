@@ -317,6 +317,7 @@ def estudantes_notas(request, professor=None):
         ]
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
+            "titulo": "Avaliações por Estudante",
             "edicoes": edicoes,
             "informacoes": informacoes,
         }
@@ -441,7 +442,10 @@ def estudantes_objetivos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Aluno)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": "Objetivos de Aprendizagem por Estudante",
+            "edicoes": edicoes,
+            }
 
     return render(request, "users/estudantes_objetivos.html", context=context)
 
@@ -514,6 +518,7 @@ def estudantes_inscritos(request):
         ]
 
         context = {
+            "titulo": "Estudantes Inscritos",
             "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,
@@ -669,6 +674,7 @@ def estudante_detail(request, primarykey):
     alocacoes = Alocacao.objects.filter(aluno=estudante)
 
     context = calcula_objetivos(alocacoes)
+    context["titulo"] = estudante.user.get_full_name()
     context["aluno"] = estudante
     context["alocacoes"] = alocacoes
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
@@ -683,6 +689,7 @@ def estudante_detail(request, primarykey):
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
     context = {"professor": get_object_or_404(Professor, pk=primarykey)}
+    context["titulo"] = context["professor"].user.get_full_name()
 
     context["projetos"] = Projeto.objects.filter(orientador=context["professor"]).order_by("ano", "semestre")
 
@@ -708,7 +715,7 @@ def parceiro_detail(request, primarykey=None):
         return HttpResponse("Parceiro não encontrado.", status=401)
     
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
-
+    
     bancas = (Banca.objects.filter(membro1=parceiro.user) |
               Banca.objects.filter(membro2=parceiro.user) |
               Banca.objects.filter(membro3=parceiro.user))
@@ -716,6 +723,7 @@ def parceiro_detail(request, primarykey=None):
     bancas = bancas.order_by("startDate")
 
     context = {
+        "titulo": parceiro.user.get_full_name(),
         "parceiro": parceiro,
         "conexoes": Conexao.objects.filter(parceiro=parceiro),
         "mentorias": Encontro.objects.filter(facilitador=parceiro.user),

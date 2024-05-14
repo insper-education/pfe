@@ -40,6 +40,7 @@ def index_documentos(request):
     configuracao = get_object_or_404(Configuracao)
     areas = json.loads(configuracao.index_documentos) if configuracao.index_documentos else None
     context = {
+        "titulo": "Documentações",
         "documentos": Documento.objects.all(),
         "areas": areas,
     }
@@ -54,6 +55,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
     context = {
+        "titulo": "Certificados Emitidos",
         "coordenacao": coordenacao,
         "configuracao": configuracao,
     }
@@ -78,6 +80,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
             context["tipos"] = tipos.split(',')
         if gerados:
             context["gerados"] = gerados
+
 
     return render(request, "documentos/certificados_submetidos.html", context)
 
@@ -270,6 +273,7 @@ def materias_midia(request):
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
     documentos = Documento.objects.filter(tipo_documento=tipo_documento)
     context = {
+        "titulo": "Matérias na Mídia",
         "documentos": documentos,
         "tipo": tipo_documento,
         }
@@ -304,6 +308,7 @@ def relatorios_publicos(request, edicao=None):
     else:
 
         context = {
+            "titulo": "Relatórios Públicos",
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada": edicao,
         }
@@ -355,6 +360,7 @@ def tabela_documentos(request):
         ]
 
         context = {
+            "titulo": "Documentação dos Projetos",
             "edicoes": get_edicoes(Projeto)[0],
             "informacoes": informacoes,
             "cursos": cursos_insper,
@@ -370,7 +376,10 @@ def tabela_seguros(request):
     """Exibe tabela com todos os seguros armazenados."""
     tipo_documento = TipoDocumento.objects.get(nome="Seguros")
     seguros = Documento.objects.filter(tipo_documento=tipo_documento)
-    context = {"seguros": seguros,}
+    context = {
+        "titulo": "Seguros Emitidos",
+        "seguros": seguros,
+        }
     return render(request, "documentos/tabela_seguros.html", context)
 
 
@@ -391,6 +400,7 @@ def tabela_atas(request):
         return HttpResponse("Tipo de Documento para Template de Ata do Comitê não encontrado.", status=401)
 
     context = {
+        "titulo": "Atas do Comitê Capstone",
         "atas": atas,
         "template": template,
         "tipo": tipo_ata,
@@ -419,6 +429,9 @@ def contratos_assinados(request):
         }
 
     else:
-        context = {"edicoes": get_edicoes(Projeto)[0],}
+        context = {
+            "titulo": "Contratos Assinados",
+            "edicoes": get_edicoes(Projeto)[0],
+            }
 
     return render(request, "documentos/contratos_assinados.html", context)

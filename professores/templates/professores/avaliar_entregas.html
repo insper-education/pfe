@@ -53,8 +53,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Avaliar Entregas</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with com_entregas=tipos_entregas %}

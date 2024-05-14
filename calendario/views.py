@@ -64,6 +64,7 @@ def get_calendario_context(user=None):
 def calendario(request):
     """Para exibir um calendário de eventos."""
     context = get_calendario_context(request.user)
+    context["titulo"] = "Calendário de Eventos"
 
     if context:
     

@@ -102,6 +102,14 @@ def get_response(file, path, request):
         return HttpResponse(file.read(), content_type="image/png")
     elif path[-3:].lower() == "gif":
         return HttpResponse(file.read(), content_type="image/gif")
+    elif path[-3:].lower() == "bmp":
+        return HttpResponse(file.read(), content_type="image/bmp")
+    elif path[-4:].lower() == "avif":
+        return HttpResponse(file.read(), content_type="image/avif")
+    elif path[-4:].lower() == "webp":
+        return HttpResponse(file.read(), content_type="image/webp")
+    elif path[-4:].lower() == "apng":
+        return HttpResponse(file.read(), content_type="image/apng")
     elif path[-3:].lower() == "tif" or path[-4:].lower() == "tiff":
         return HttpResponse(file.read(), content_type="image/tiff")
     elif path[-3:].lower() == "svg" or path[-4:].lower() == "svgz":

@@ -34,8 +34,7 @@
 {% endblock %}
 
 {% block content %}
-
-  <span class="titulo">Formulário de Feedback dos Estudantes</span>
+  <span class="titulo">{{titulo}}</span>
 
   {% if mensagem %}
     <h5 style="color:red">{{mensagem|safe}}</h5>

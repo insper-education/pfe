@@ -26,14 +26,7 @@
 
 {% block content %}
 
-  <span class="titulo">
-    {% if usuario %}
-      Edição
-    {% else %}
-      Cadastro
-    {% endif %}
-    de Usuário
-  </span>
+  <span class="titulo">{{ titulo }}</span>
   <br>
 
   {% if mensagem %}

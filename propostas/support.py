@@ -241,7 +241,7 @@ def preenche_proposta(request, proposta):
     proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
     proposta.descricao_organizacao = request.POST.get("descricao_organizacao", "")
     proposta.departamento = request.POST.get("info_departamento", "")
-    proposta.titulo = request.POST.get("titulo", "").strip()
+    proposta.titulo = request.POST.get("titulo_prop", "").strip()
 
     proposta.descricao = request.POST.get("desc_projeto", "")
     proposta.expectativas = request.POST.get("expectativas", "")
