@@ -330,6 +330,7 @@ def proposta_submissao(request):
             if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
                 proposta.internacional = True if request.POST.get("internacional", None) else False
                 proposta.intercambio = True if request.POST.get("intercambio", None) else False
+                proposta.empreendendo = True if request.POST.get("empreendendo", None) else False
                 colaboracao_id = request.POST.get("colaboracao", None)
                 if colaboracao_id:
                     proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()

@@ -89,6 +89,12 @@
                     {% if alocacao.projeto.time_misto %}
                       <span style="color:red">(Time Misto)</span>
                     {% endif %}
+                    {% if alocacao.projeto.proposta.empreendendo %}
+                      <span style="color:red">(Empreendendo)</span>
+                    {% endif %}
+                    {% if alocacao.projeto.proposta.colaboracao %}
+                      <span style="color:red">(Em colaboração com: {{ alocacao.projeto.proposta.colaboracao }})</span>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
               {% endif %}

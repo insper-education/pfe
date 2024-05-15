@@ -250,6 +250,11 @@
                   <b>Intercâmbio</b> (estudantes farão projeto no intercâmbio com acompanhamento do Insper)
                 </label><br>
 
+                <label style="font-size: 13px;" for="empreendendo">
+                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="empreendendo" id="empreendendo" {% if proposta.empreendendo %}checked{% endif %}>
+                  <b>Estudantes Empreendendo</b> (proposta de grupo de estudantes regulares empreendendo em próprio projeto)
+                </label><br>
+
                 <label style="font-size: 13px;" for="colaboracao"><b>Colaboração</b> (proposta foi desenvolvida com a colaboração de uma outra organização)</label>:
                 <select name="colaboracao" id="colaboracao" class="selectpicker" data-live-search="true" data-width="100%" data-size="10">
                     <option value=""> -- nenhuma organização -- </option>

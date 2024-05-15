@@ -410,6 +410,9 @@ class Proposta(models.Model):
     intercambio = models.BooleanField("Intercâmbio", default=False,
                                         help_text="Caso a proposta venha de um intercâmbio")
 
+    empreendendo = models.BooleanField("Empreendendo", default=False,
+                                        help_text="Proposta de grupo de estudantes regulares empreendendo em próprio projeto")
+
     # Preenchidos automaticamente
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],

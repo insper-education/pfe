@@ -4,7 +4,7 @@
   Data: 15 de Julho de 2023
 {% endcomment %}
 
-{% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio or projeto.time_misto or projeto.proposta.colaboracao %}
+{% if projeto.avancado or projeto.proposta.internacional or projeto.proposta.intercambio or projeto.time_misto or projeto.proposta.colaboracao or projeto.proposta.empreendendo %}
 
   {% if com_tipo %}<strong>Tipo</strong>: {% endif %}
 
@@ -12,6 +12,7 @@
     {% if projeto.avancado %}(Avançado){% endif %}
     {% if projeto.proposta.internacional %}(Internacional){% endif %}
     {% if projeto.proposta.intercambio %}(Intercâmbio){% endif %}
+    {% if projeto.proposta.empreendendo %}(Empreendendo){% endif %}
     {% if projeto.time_misto %}(Time Misto){% endif %}
     {% if projeto.proposta.colaboracao %}(Em colaboração com: {{ projeto.proposta.colaboracao }}){% endif %}
   </strong>

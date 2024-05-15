@@ -4,7 +4,7 @@
   Data: 15 de Dezembro de 2023
 {% endcomment %}
 
-{% if proposta.internacional or proposta.intercambio or proposta.colaboracao %}
+{% if proposta.internacional or proposta.intercambio or proposta.colaboracao or proposta.empreendendo %}
 
   {% if com_tipo %}
     <p><strong>Tipo</strong>: 
@@ -19,6 +19,9 @@
   {% endif %}
   {% if proposta.colaboracao %}
     {% if descr_short %}CO{% else %}[Em colaboração com: {{ proposta.colaboracao }}]{% endif %}
+  {% endif %}
+  {% if proposta.empreendendo %}
+    {% if descr_short %}E!{% else %}[Empreendendo]{% endif %}
   {% endif %}
   </strong>
 
