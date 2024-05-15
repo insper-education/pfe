@@ -26,13 +26,18 @@
     <strong style="color:red">Proposta Internacional de Projeto, a comunicação do projeto será em inglês.</strong><br>
   {% endif %}
 
-  {% if projeto.proposta.intercambio %}
+  {% if proposta.intercambio %}
     <strong style="color:red">Proposta de Intercâmbio.</strong><br>
   {% endif %}
 
-  {% if projeto.proposta.empreendendo %}
+  {% if proposta.empreendendo %}
     <strong style="color:red">Proposta de grupo de estudantes regulares empreendendo em próprio projeto.</strong><br>
   {% endif %}
+
+  {% if proposta.colaboracao %}
+    <strong style="color:red">Proposta em colaboração com: {{ proposta.colaboracao }}.</strong><br>
+  {% endif %}
+  
 
   <br>
 
