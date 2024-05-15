@@ -290,13 +290,13 @@ def estudantes_notas(request, professor=None):
                 projetos = projetos.filter(orientador=user.professor) | projetos.filter(id__in=coorientacoes)
                 alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
 
-            # Caso o aluno tenha repetido e esteja fazendo de novo o PFE
+            # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
             alunos_semestre = alunos_list\
                 .filter(alocacao__projeto__ano=ano,
                         alocacao__projeto__semestre=semestre)\
                 .distinct()
 
-            # Caso o aluno tenha repetido e esteja fazendo de novo o PFE
+            # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
@@ -817,7 +817,7 @@ def envia_contas_senhas(request):
             message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
 
             # Enviando e-mail com mensagem para usuário.
-            subject = "Conta Capstone (antigo PFE): " + estudante.user.get_full_name()
+            subject = "Conta Capstone: " + estudante.user.get_full_name()
             recipient_list = [estudante.user.email, ]
             check = email(subject, recipient_list, message_email)
             if check != 1:

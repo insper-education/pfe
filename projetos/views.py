@@ -1358,7 +1358,7 @@ def evolucao_objetivos(request):
             so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
 
             if so_finais:
-                # Somenete avaliações finais do PFE
+                # Somenete avaliações finais do Capstone
                 # tipos = [2, 12, 22, 52, 54]
                 exames = Exame.objects.filter(titulo="Banca Final") |\
                          Exame.objects.filter(titulo="Relatório Final de Grupo") |\
@@ -1523,7 +1523,7 @@ def evolucao_por_objetivo(request):
             so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
 
             if so_finais:
-                # Somenete avaliações finais do PFE
+                # Somenete avaliações finais do Capstone
                 # tipos = [2, 12, 22, 52, 54]
                 exames = Exame.objects.filter(titulo="Banca Final") |\
                          Exame.objects.filter(titulo="Relatório Final de Grupo") |\

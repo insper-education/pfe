@@ -648,8 +648,8 @@ def organizacoes_tabela(request):
     organizacoes_pfe = []
     periodo = []
 
-    ano = 2018    # Ano de início do PFE
-    semestre = 2  # Semestre de início do PFE
+    ano = 2018    # Ano de início do Capstone
+    semestre = 2  # Semestre de início do Capstone
     while True:
         organizacoes = []
         grupos = []

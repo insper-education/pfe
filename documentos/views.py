@@ -388,7 +388,7 @@ def tabela_seguros(request):
 def tabela_atas(request):
     """Exibe tabela com todos os seguros armazenados."""
     try:
-        tipo_ata = TipoDocumento.objects.get(nome="Ata do Comitê do PFE")
+        tipo_ata = TipoDocumento.objects.get(nome="Ata do Comitê")
         atas = Documento.objects.filter(tipo_documento=tipo_ata).order_by("-data")
     except TipoDocumento.DoesNotExist:
         return HttpResponse("Tipo de Documento para Ata do Comitê não encontrado.", status=401)

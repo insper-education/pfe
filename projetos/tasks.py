@@ -156,18 +156,14 @@ def eventos_do_dia():
     except Configuracao.DoesNotExist:
         return None
 
-    # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
     recipient_list = []
-    # for coordenador in coordenacoes:
-    #     recipient_list.append(str(coordenador.email))
     recipient_list.append(str(configuracao.coordenacao.user.email))
-
 
     for event in context:
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
             for acao in context[event]:
                 if acao.startDate == datetime.date.today():
-                    subject = "Evento PFE: {0}".format(acao.get_title())
+                    subject = "Evento Capstone: {0}".format(acao.get_title())
                     message = "<b>Evento:</b> {0}".format(acao.get_title())
                     if acao.location:
                         message += "<br>\n<b>Local:</b> {0}".format(acao.location)

@@ -69,7 +69,7 @@ class PFEUser(AbstractUser):
                                help_text='LinkedIn do usuário')
 
     membro_comite = \
-        models.BooleanField("Membro do Comitê", default=False, help_text='caso membro do comitê do PFE')
+        models.BooleanField("Membro do Comitê", default=False, help_text="caso membro do comitê")
 
     GENERO_CHOICES = (
         ('X', "Não Informado"),
@@ -362,7 +362,7 @@ class Aluno(models.Model):
     @property
     def get_edicoes(self):
         """Recuper as notas do Estudante."""
-        edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou PFE Avançado)
+        edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
 
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
 

@@ -1244,7 +1244,7 @@ class FeedbackEstudante(models.Model):
         (3, "Recomendo fortemente"),
     )
     recomendaria = models.PositiveSmallIntegerField(choices=TIPO_RECOMENDARIA, null=True, blank=True,
-                                                    help_text="O quanto você recomendaria fazermos um projeto de Casptone (antigo PFE) nos próximos semestres com a Empresa Parceira?")
+                                                    help_text="O quanto você recomendaria fazermos um projeto de Casptone nos próximos semestres com a Empresa Parceira?")
 
 
     primeira_opcao = models.BooleanField("Primeira Opção", null=True, blank=True,

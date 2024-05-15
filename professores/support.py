@@ -152,8 +152,8 @@ def recupera_coorientadores_por_semestre(configuracao):
     professores_pfe = []
     periodo = []
 
-    ano = 2018    # Ano de início do PFE
-    semestre = 2  # Semestre de início do PFE
+    ano = 2018    # Ano de início do Capstone
+    semestre = 2  # Semestre de início do Capstone
 
     while True:
         professores = []
