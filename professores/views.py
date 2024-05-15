@@ -324,6 +324,7 @@ def bancas_index(request):
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
+        "usuario": request.user,
     }
 
     return render(request, "professores/bancas_index.html", context)
@@ -661,7 +662,7 @@ def bancas_lista(request, periodo_projeto):
             ano = int(periodo[0])
             semestre = int(periodo[1])
         except ValueError:
-            return HttpResponseNotFound('<h1>Erro em!</h1>')
+            return HttpResponseNotFound("<h1>Erro em!</h1>")
 
         bancas = Banca.objects.filter(projeto__ano=ano)\
             .filter(projeto__semestre=semestre).order_by("startDate")
@@ -675,6 +676,8 @@ def bancas_lista(request, periodo_projeto):
 
     edicoes, _, _ = get_edicoes(Projeto)
     context["edicoes"] = edicoes
+
+    context["dias_bancas"] = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
 
     context["informacoes"] = [
             (".local", "local"),
@@ -690,7 +693,7 @@ def bancas_lista(request, periodo_projeto):
             (".sem_agendamento", "sem agendamento"),
         ]
     
-    return render(request, 'professores/bancas_lista.html', context)
+    return render(request, "professores/bancas_lista.html", context)
 
 
 @login_required

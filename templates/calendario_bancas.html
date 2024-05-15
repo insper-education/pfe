@@ -1,0 +1,244 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2024
+{% endcomment %}
+
+{% load static %}
+{% load date_extras %}
+
+<div class="wrap">
+  <div id="calendar"></div>
+</div>
+
+<h4 style="margin: 8px 0 0 0;">Legendas</h4>
+<div class="wrap">  
+  <div class="legenda" style="display: flex;">
+    <div class="legenda-block">
+      <div class="legenda-item" >
+        <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;Bancas Intermediárias</div>
+      </div>
+      <div class="legenda-item">
+        <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;Bancas Finais</div>
+      </div>
+      <div class="legenda-item">
+        <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;Bancas Falconi</div>
+      </div>
+    </div>
+
+    {% if usuario %}
+      <div class="legenda-block">
+        <div class="legenda-item">
+          <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Orientador da Banca</div>
+        </div>
+        <div class="legenda-item" style="margin-top: 8px;">
+          <div class="legenda-texto"><font id="banca_membro" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Membro da Banca</div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script>
+$("#color_banca_intermediaria").css("color", color_banca_intermediaria);
+$("#color_banca_final").css("color", color_banca_final);
+$("#color_banca_falconi").css("color", color_banca_falconi);
+$("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
+$("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
+
+function atualiza(event) {
+  url = "{% url 'ajax_atualiza_banca' %}";
+  data = {
+    "id": event.id,
+    "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+    "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+  }
+  {% include "ajax_default_function.js" %}
+}
+
+var calendar = null;
+
+function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
+
+    var calendarEl = document.getElementById("calendar");
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
+      header: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+      },
+      defaultView: {% if view %}"{{view}}"{% else %}defaultView{% endif %},
+      defaultDate: {% if date %}"{{date}}"{% else %}defaultDate{% endif %},
+      locale: "pt-br",
+      navLinks: true, // can click day/week names to navigate views
+      businessHours: true, // display business hours
+      editable: true,
+      height: "auto",
+      eventTimeFormat: {
+        hour: "2-digit", //2-digit, numeric
+        minute: "2-digit", //2-digit, numeric
+        meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+        hour12: false //true, false
+      },
+      businessHours: [ // Horas indicadas para as bancas
+        {
+          daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
+          startTime: "07:30",
+          endTime: "20:00"
+        },
+      ],
+      eventTextColor: "#FAFAFA",
+      eventRender: function(info) {
+      
+        if (!info.event.allDay) {
+          if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+            let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let nome_orientador = ""
+            if (info.event.extendedProps.orientador) {
+              let orientador = info.event.extendedProps.orientador.split(" ");
+              nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];
+              {% if usuario %}
+                if (info.event.extendedProps.orientador == "{{usuario.get_full_name}}") {
+                  info.el.style.boxShadow = "0 0 3px 4px red";
+                } else {
+                  if ( info.event.extendedProps.membro1 == "{{usuario.get_full_name}}" ||
+                       info.event.extendedProps.membro2 == "{{usuario.get_full_name}}" ||
+                       info.event.extendedProps.membro3 == "{{usuario.get_full_name}}"
+                  ) {
+                    info.el.style.boxShadow = "0 0 3px 4px darkblue";
+                  }
+                }
+              {% endif %}
+            }
+            info.el.innerHTML = "<b>" + time + "</b><br><nobr>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#F6F5A3'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
+          }
+        }              
+      },
+
+      eventSources: [
+      
+        {
+          events:  function(info, successCallback, failureCallback) {
+            $.ajax({
+                url: "{% url 'ajax_bancas' %}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                  "csrfmiddlewaretoken": "{{ csrf_token }}",
+                  start: info.startStr.split('T')[0],
+                  end: info.endStr.split('T')[0],
+                },
+                success: function(response) {
+                    var eventsList = [];
+                    for (const [key, value] of Object.entries(response)) {
+                      eventsList.push({
+                        id: key,
+                        start: value.start,
+                        end: value.end,
+                        organizacao: value.organizacao,
+                        orientador: value.orientador,
+                        local: value.local,
+                        color: value.color,
+                        title: value.title,
+                        membro1: value.membro1,
+                        membro2: value.membro2,
+                        membro3: value.membro3,
+                        description: value.description,
+                        editable: value.editable,
+                      });
+                    }
+                    successCallback(eventsList);
+                },
+                failure : function() {
+                  failureCallback("erro ao recuperar eventos.");
+              }
+            });
+          },
+        },
+
+        {
+          events: [
+          // area onde as bancas podem ser alocadas
+          {% for dias in dias_bancas %} 
+            {
+              // groupId: 'grupo{{dias.id}}',
+              {% with start=dias.startDate %}
+                start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
+              {% endwith %}
+              {% with end=dias.endDate|plus_days:1 %}
+                end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
+              {% endwith %}
+              rendering: "background",
+
+              {% if dias.tipo_de_evento == 15 %} // Banca Final
+                color: color_banca_final,
+                description: "<b>período de bancas finais</b>",
+              {% elif dias.tipo_de_evento == 14 %} // Banca Intermediária 
+                color: color_banca_intermediaria,
+                description: "<b>período de bancas intermediárias</b>",
+              {% elif dias.tipo_de_evento == 50 %} // Banca Falconi
+                color: color_banca_falconi,
+                description: "<b>período de bancas Falconi</b>",
+              {% else %}
+                color: '#777777',
+              {% endif %}
+
+            },
+          {% endfor %}
+          ],
+        }
+      ],
+
+      eventClick: function(event, jsEvent, view) {
+        // Para editar uma banca
+        $(".tooltip").remove();
+        if(event.event.id) {
+          var elem = document.createElement( "span" );
+          $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+          abrir_modal.call(elem, null);
+        }
+      },
+
+      dateClick: function(info) {
+        // Para criar uma nova banca, reproveitando a data clicada
+        $(".tooltip").remove();
+        var elem = document.createElement( "span" );
+        $( elem ).data( "url", "{% url 'bancas_criar' %}");
+        $( elem ).data( "data", info.dateStr);
+        abrir_modal.call(elem, null);
+      },
+
+      eventMouseEnter: function (info) {
+        $(info.el).tooltip({
+              title: info.event.extendedProps.description,
+              html: true,
+        }).tooltip("show");
+      },
+
+      eventDragStart: function(info) {
+        $(".tooltip").remove();
+      },
+      
+      eventResize: function(info) {
+        $(".tooltip").remove();
+        atualiza(info.event);
+      },
+
+      eventDrop: function(info) {
+        $(".tooltip").remove();
+        atualiza(info.event);
+      },
+
+    });
+
+    calendar.render();
+
+}
+
+</script>
+
+{% include "janelas-modal.html" %}

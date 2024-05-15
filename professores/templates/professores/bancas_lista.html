@@ -23,8 +23,11 @@
       margin: 0px 0px 8px 0px;
       padding: 0px 0px 0px 1.5em;
     }
-  
   </style>
+
+  <script>{% include "tooltip.js" %}</script>
+  {% include "heads_calendar.html" %}
+  {% include "cores_bancas.html" %}
 
 {% endblock %}
 
@@ -231,6 +234,11 @@
   {% endif %}
   <p>&nbsp;</p>
 
+  <h4>Calendário</h4>
+  <div id="atualizar">
+    {% include "calendario_bancas.html" %}
+  </div>
+
   <div class="sem_agendamento">
     {% if sem_banca %}
       <br>
@@ -265,6 +273,7 @@
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
       carrega_pagina();
+      montar_calendario();
     };
 
     window.onload = carrega_site
