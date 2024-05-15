@@ -13,9 +13,12 @@ mailto:{% for membro in banca.membros %}{% if com_nome %}{{membro.get_full_name}
 ★ Formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}
 %0D%0A%0D%0A
 {% with relatorio=banca.get_relatorio%}{% if relatorio %}
-Relatório: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}/{{banca.get_relatorio.id}}
-%0D%0A%0D%0A
+Relatório: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}/{{banca.get_relatorio.id}}%0D%0A
 {% endif %}{% endwith %}
+{% with site=banca.projeto.get_site %}{% if site %}
+Site: {{request.scheme}}://{{request.get_host}}{{site}}%0D%0A
+{% endif %}{% endwith %}
+%0D%0A
 Banca {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% else %}Falconi{% endif %}%0D%0A
 Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{banca.startDate.time}}%20às%20{{banca.endDate.time}}%0D%0A
 {% if banca.location %}Local:%20{{banca.location|parse_quote}}%0D%0A{% endif %}

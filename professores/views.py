@@ -849,7 +849,7 @@ def banca_ver(request, primarykey):
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     #elif banca.tipo_de_banca == 2:  # (2, "falconi"),
     
-    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
 
     context = {
         "titulo": "Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
@@ -1432,7 +1432,7 @@ def banca_avaliar(request, slug, documento_id=None):
 
         documentos = None
         if tipo_documento:
-            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
 
         context = {
             "titulo": "Formulário Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
@@ -1464,7 +1464,7 @@ def banca(request, slug):
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     #elif banca.tipo_de_banca == 2:  # (2, "falconi"),
     
-    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("-data")
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
 
     context = {
         "banca": banca,

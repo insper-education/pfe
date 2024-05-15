@@ -63,6 +63,15 @@
 
   {% include "ver_documentos.html" %}
 
+  {% with site=banca.projeto.get_site %}
+  {% if site %}
+    <b>Site:</b><br>
+    <div style="padding-left: 22px;">
+      &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+    </div><br>
+  {% endif %}
+  {% endwith %}
+
   {% if banca.projeto.orientador %}
       {% if banca.projeto.proposta.intercambio %}
         <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>

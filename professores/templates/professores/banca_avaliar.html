@@ -100,7 +100,18 @@
 
       <br>
       {% include "ver_documentos.html" %}
+
+      {% with site=banca.projeto.get_site %}
+      {% if site %}
+        <b>Site:</b><br>
+        <div style="padding-left: 22px;">
+          &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+        </div><br>
+      {% endif %}
+      {% endwith %}
       
+      <br>
+
       {% if orientacoes %}
         <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>
         <span lang="pt">{{orientacoes|safe}}</span>

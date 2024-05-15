@@ -43,10 +43,10 @@
             {% endif %}
             {% endif %}
             {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
-            {% if not forloop.first %}(Versão desatualizada){% endif %}
+            {% ifchanged documento.tipo_documento %}{% else %}(Versão desatualizada){% endifchanged %}
         </li>
         {% empty %}
         Não entregue
         {% endfor %} 
-    </ul><br>
+    </ul>
 {% endif %}
