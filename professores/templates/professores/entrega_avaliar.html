@@ -65,13 +65,10 @@
 
       <br>
       <b lang="pt">Avaliação:</b><b lang="en">Assessment:</b><br>
-      <p style="font-size: 1.8em;">
+      <p style="font-size: 1.3em;">
         &nbsp;&nbsp;
-        <u>{{composicao.exame}}
-          {% if not composicao.exame.grupo %}
-           ({{estudante.get_full_name}})
-          {% endif %}
-        </u>
+        {{composicao.exame}}
+        {% if not composicao.exame.grupo %}({{estudante.get_full_name}}){% endif %}
       </p>
 
       <br>
