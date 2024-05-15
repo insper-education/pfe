@@ -32,7 +32,7 @@ def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
     if campo in campos and "/V" in campos[campo]:
         if isinstance(campos[campo]["/V"], PyPDF2.generic.ByteStringObject):
-            texto = campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip() 
+            texto = campos[campo]["/V"].replace(b'\r', b'\n').decode('ISO-8859-1').strip()
         else:
             texto = campos[campo]["/V"].strip()
         return texto.replace("\x00", "\uFFFD")
@@ -357,9 +357,7 @@ def envia_proposta(proposta, enviar=True):
     message = t.render(Context(context_carta))
     message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
 
-    subject = "Proposta PFE : ({0}.{1} - {2})".format(proposta.ano,
-                                                      proposta.semestre,
-                                                      proposta.titulo)
+    subject = "Proposta Capstone : ({0}.{1} - {2})".format(proposta.ano, proposta.semestre, proposta.titulo)
 
     if enviar:
         recipient_list = list(map(str.strip, re.split(",|;", proposta.email)))

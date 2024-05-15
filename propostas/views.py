@@ -295,8 +295,6 @@ def procura_propostas(request):
 def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
-    # ano = configuracao.ano
-    # semestre = configuracao.semestre
     edicoes = []
 
     if request.is_ajax():
@@ -305,12 +303,11 @@ def propostas_apresentadas(request):
             if edicao == "todas":
                 ano = None
                 semestre = None
-                propostas_filtradas = Proposta.objects.all()
+                propostas_filtradas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo")
             else:
                 ano, semestre = edicao.split('.')
-                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)
+                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre).order_by("organizacao", "titulo")
 
-            propostas_filtradas = propostas_filtradas.order_by("ano", "semestre", "organizacao", "titulo")
             cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
             dic_organizacoes = {}
