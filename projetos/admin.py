@@ -192,27 +192,27 @@ class PropostaAdmin(admin.ModelAdmin):
 
     list_display = ("titulo", "nome", "organizacao", "ano", "semestre", )
     list_filter = ("ano", "semestre", )
-    fieldsets = \
-        ((None,
-          {"fields":
-           ("nome", "email", "nome_organizacao", "website", "endereco", "internacional", "intercambio", "empreendendo"
-            "contatos_tecnicos", "contatos_administrativos",
-            "descricao_organizacao", "departamento",
-            "titulo", "descricao", "expectativas",
-            "recursos", "observacoes",
-            "aprimorar", "realizar", "iniciar", "identificar", "mentorar",
-            "ano", "semestre",
-            "autorizado", "disponivel",
-            "perfil1","perfil2","perfil3","perfil4",
-            "anexo",
-            "slug",
-            "data",
-           )
-          }),
-         ("Origem", {
-             "fields": ("organizacao",)
-         }),
-        )
+    # fieldsets = \
+    #     ((None,
+    #       {"fields":
+    #        ("nome", "email", "nome_organizacao", "website", "endereco", "internacional", "intercambio", "empreendendo",
+    #         "contatos_tecnicos", "contatos_administrativos",
+    #         "descricao_organizacao", "departamento",
+    #         "titulo", "descricao", "expectativas",
+    #         "recursos", "observacoes",
+    #         "aprimorar", "realizar", "iniciar", "identificar", "mentorar",
+    #         "ano", "semestre",
+    #         "autorizado", "disponivel",
+    #         "perfil1","perfil2","perfil3","perfil4",
+    #         "anexo",
+    #         "slug",
+    #         "data",
+    #        )
+    #       }),
+    #      ("Origem", {
+    #          "fields": ("organizacao",)
+    #      }),
+    #     )
     actions = [dup_projeto]
     search_fields = ["titulo", "organizacao__sigla",]
 
