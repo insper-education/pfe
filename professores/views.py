@@ -1404,12 +1404,18 @@ def banca_avaliar(request, slug, documento_id=None):
             orientacoes_en += "In the Final Engineering Project, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper. Falconi signed a document of responsibility to maintain the confidentiality of the information disclosed in the presentations. So <b>external people can only participate in the stands with prior authorization</b>, this includes other students who are not part of the group, family or friends."
             orientacoes_en += "<br>"
 
-        # Carregando dados REST
-        avaliador = request.GET.get('avaliador', '0')
-        try:
-            avaliador = int(avaliador)
-        except ValueError:
-            return HttpResponseNotFound('<h1>Usuário não encontrado!</h1>')
+
+        # Identificando quem seria o avaliador
+        if "avaliador" in request.GET:
+            try:
+                avaliador_id = int(request.GET.get("avaliador", '0'))  # Carregando dados REST
+            except ValueError:
+                return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
+        else:
+            if request.user and request.user.is_authenticated:
+                avaliador_id = request.user.pk
+            else:
+                avaliador_id = None
         
         conceitos = [None]*len(objetivos)
         for i in range(len(objetivos)):
@@ -1442,7 +1448,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "banca": banca,
             "orientacoes": orientacoes,
             "orientacoes_en": orientacoes_en,
-            "avaliador": avaliador,
+            "avaliador": avaliador_id,
             "conceitos": conceitos,
             "documentos": documentos,
             "observacoes_orientador": observacoes_orientador,

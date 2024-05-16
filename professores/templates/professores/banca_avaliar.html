@@ -72,7 +72,7 @@
       {% endif %}
       
       <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b
-      ><select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
+      > <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')"
         >
@@ -89,7 +89,7 @@
 
           <optgroup id="ListaComp" label="Lista Completa">
             {% for pessoa in pessoas %}
-              <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+              <option value="{{pessoa.id}}">
                 {{pessoa.get_full_name}}
               </option>
             {% endfor %}
