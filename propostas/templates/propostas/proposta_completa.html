@@ -201,12 +201,14 @@
       
     function fechar_proposta() {
       var autorizador = $("#autorizador option:selected").attr("value");
-      var disponibilizar = $('input[name=disponibilizar]:checked', '#disponibilizacaoform').val();
+      var disponibilizar = $("input[name=disponibilizar]:checked", "#disponibilizacaoform").val();
 
       var dict = {};
       $(".fechar_proposta").each(function() {
-        dict[$(this).attr("name")] = $(this).is(':checked');
+        dict[$(this).attr("name")] = $(this).is(":checked");
       })
+
+      url = "{% url 'ajax_proposta' proposta.id %}";
 
       data = {
         autorizador: autorizador,

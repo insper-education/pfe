@@ -15,6 +15,11 @@
   <style>
     .estudantes {font-size: 14px;}
     td {vertical-align: middle !important;}
+    .fcol {
+      text-align:center;
+      font-size: large;
+      font-weight: bold;
+    }
 		@media screen and (max-width: 1200px) {
       .estudante-icon:before {
         content: "\1F9D1 \200D \1F393";
@@ -111,22 +116,22 @@
         
           <tr class="item"> 
 
-            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
+            <td class="fcol estados
             {% if proposta.autorizado  %}
-              text-success">&#x2713
+              text-success">&#x2713;
             {% else %}
               text-danger">&#x2718;
             {% endif %}
             </td>
 
             {% if disponivel %}
-              <script>publicados += 1</script>
+              <script>publicados += 1;</script>
             {% endif %}
-            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
+            <td style="cursor:pointer;" class="fcol estados">
               {% if disponivel %}
-                text-success">&#x2713
+                <span class="text-success" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2713;</span>
               {% else %}
-                text-danger">&#x2718;
+                <span class="text-danger" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2718;</span>
               {% endif %}
             </td>
 
@@ -134,9 +139,9 @@
             {% if fechada %}
               <script>fechados += 1</script>
             {% endif %}
-            <td style="text-align:center; font-size: large; font-weight: bold;" class="estados
+            <td class="fcol estados
               {% if fechada  %}
-                text-success">&#x2713
+                text-success">&#x2713;
               {% else %}
                 text-danger">&#x2718;
               {% endif %}
@@ -279,14 +284,12 @@
       <p>&nbsp;</p>
       <strong>Número Total de Propostas Publicadas:</strong> 
         <span id="propostas_publicadas"></span>
-        <script>$("#propostas_publicadas").html(publicados);</script>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
           ({{ propostas.count }})
         </a><br>
       
       <strong>Número Total de Propostas Fechadas:</strong> 
       <span id="propostas_fechadas"></span><br>
-        <script>$("#propostas_fechadas").html(fechados);</script>
       <strong>Número Total de Organizações Participando:</strong> {{num_organizacoes}}<br>
 
       <p>&nbsp;</p>
@@ -331,6 +334,35 @@
       </table>
       
       <br><br>
+
+      <script>
+        $("#propostas_publicadas").html(publicados);
+        $("#propostas_fechadas").html(fechados);
+
+        function disp(proposta_id) {
+          var span = $("#disp" + proposta_id);
+          url = "{% url 'ajax_proposta' %}"+proposta_id;
+          if (span.hasClass("text-success")) {
+            data = {disponibilizar: "nao",};
+            span.removeClass("text-success").addClass("text-danger").html("&#x2718;");
+            publicados -= 1;
+          } else {
+            data = {disponibilizar: "sim",};
+            span.removeClass("text-danger").addClass("text-success").html("&#x2713;");
+            publicados += 1;
+          }
+          $("#propostas_publicadas").html(publicados);
+
+          function success(response){
+            if (!response.atualizado) {
+              console.log("Erro ao disponibilizar proposta.");
+            }
+          };
+
+          {% include "ajax_default_function.js" %}
+          
+        }
+      </script>
 
     {% include "plot_barras.html" %}
     {% include "organizacao-modal.html" %}

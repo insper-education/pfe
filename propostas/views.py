@@ -428,11 +428,15 @@ def propostas_lista(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def proposta_completa(request, primarykey):
-    """Mostra uma proposta por completo."""
-    proposta = get_object_or_404(Proposta, pk=primarykey)
+def ajax_proposta(request, primarykey=None):
+    """Atualiza uma proposta."""
 
+    if primarykey is None:
+        return HttpResponse("Erro não identificado.", status=401)
+    
     if request.is_ajax():
+
+        proposta = get_object_or_404(Proposta, pk=primarykey)
 
         # Troca Conformidade de Proposta
         for dict in request.POST:
@@ -450,16 +454,26 @@ def proposta_completa(request, primarykey):
                 else:
                     proposta.autorizado = PFEUser.objects\
                         .get(pk=int(request.POST["autorizador"]))
-                proposta.disponivel = request.POST["disponibilizar"] == "sim"
-                proposta.save()
             except PFEUser.DoesNotExist:
                 return HttpResponse("Analisador não encontrado.", status=401)
-        else:
-            return HttpResponse("Analisador não encontrado.", status=401)
+        
+        # Disponibiliza proposta
+        if "disponibilizar" in request.POST:
+            proposta.disponivel = request.POST["disponibilizar"] == "sim"
 
+        proposta.save()
         data = {"atualizado": True,}
         return JsonResponse(data)
 
+    return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def proposta_completa(request, primarykey):
+    """Mostra uma proposta por completo."""
+    proposta = get_object_or_404(Proposta, pk=primarykey)
     configuracao = get_object_or_404(Configuracao)
 
     membros_comite = PFEUser.objects.filter(membro_comite=True)
@@ -507,7 +521,7 @@ def proposta_completa(request, primarykey):
         "cursos": Curso.objects.all().order_by("id"),
         "liberacao_visualizacao": liberacao_visualizacao,
     }
-    return render(request, 'propostas/proposta_completa.html', context=context)
+    return render(request, "propostas/proposta_completa.html", context=context)
 
 
 @login_required
@@ -515,7 +529,7 @@ def proposta_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
     
-    if request.user.tipo_de_usuario == 1:  # (1, 'aluno')
+    if request.user.tipo_de_usuario == 1:  # (1, "estudante")
         if not (request.user.aluno.anoPFE == proposta.ano and
                 request.user.aluno.semestrePFE == proposta.semestre):
             return HttpResponse("Usuário não tem permissão de acesso.",
