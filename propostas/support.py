@@ -120,86 +120,46 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
 
 def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
     """Gera lista com propostas ordenados pelos com maior interesse pelos alunos."""
-    prioridades = [[], [], [], [], []]
-    estudantes = [[], [], [], [], []]
+    NIVEIS_OPCOES = 5
+
+    prioridades = [[] for _ in range(NIVEIS_OPCOES)]
+    estudantes = [[] for _ in range(NIVEIS_OPCOES)]
 
     if ano < 2018:
         propostas = Proposta.objects.all()
     else:
-        propostas = Proposta.objects.filter(ano=ano).\
-                                     filter(semestre=semestre)
+        propostas = Proposta.objects.filter(ano=ano, semestre=semestre)
 
     if disponivel:  # somente as propostas disponibilizadas
         propostas = propostas.filter(disponivel=True)
 
-    for proposta in propostas:
+    # Só opções para estudantes nesse ano e semester
+    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
+                                  aluno__anoPFE=ano,
+                                  aluno__semestrePFE=semestre)
 
-        opcoes = Opcao.objects.filter(proposta=proposta)
-
-        # Parte seguinte parece desnecessária
-        opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
-
-        # Só opções para a proposta dos estudantes nesse ano e semester
-        opcoes = opcoes.filter(aluno__anoPFE=proposta.ano).\
-            filter(aluno__semestrePFE=proposta.semestre)
-
-        if curso != 'T':
+    if curso != 'T':
             opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
 
-        count = [0, 0, 0, 0, 0]
-        estudantes_tmp = ["", "", "", "", ""]
-        for opcao in opcoes:
-            if opcao.prioridade == 1:
-                count[0] += 1
-                if estudantes_tmp[0] != "":
-                    estudantes_tmp[0] += "; "
-                estudantes_tmp[0] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
-            elif opcao.prioridade == 2:
-                count[1] += 1
-                if estudantes_tmp[1] != "":
-                    estudantes_tmp[1] += "; "
-                estudantes_tmp[1] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
-            elif opcao.prioridade == 3:
-                count[2] += 1
-                if estudantes_tmp[2] != "":
-                    estudantes_tmp[2] += "; "
-                estudantes_tmp[2] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
-            elif opcao.prioridade == 4:
-                count[3] += 1
-                if estudantes_tmp[3] != "":
-                    estudantes_tmp[3] += "; "
-                estudantes_tmp[3] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
-            elif opcao.prioridade == 5:
-                count[4] += 1
-                if estudantes_tmp[4] != "":
-                    estudantes_tmp[4] += "; "
-                estudantes_tmp[4] += opcao.aluno.user.get_full_name() + ' [' + opcao.aluno.curso2.sigla_curta + ']'
+    for proposta in propostas:
+        # Só opções para a proposta
+        opcoes_prop = opcoes.filter(proposta=proposta)
 
-        prioridades[0].append(count[0])
-        prioridades[1].append(count[1])
-        prioridades[2].append(count[2])
-        prioridades[3].append(count[3])
-        prioridades[4].append(count[4])
+        count = [0] * NIVEIS_OPCOES
+        estudantes_tmp = [""] * NIVEIS_OPCOES
+        for opcao in opcoes_prop:
+            if 1 <= opcao.prioridade <= NIVEIS_OPCOES:
+                index = opcao.prioridade - 1
+                count[index] += 1
+                estudantes_tmp[index] += "; " if estudantes_tmp[index] else ""
+                estudantes_tmp[index] += f"{opcao.aluno.user.get_full_name()} [{opcao.aluno.curso2.sigla_curta}]"
 
-        estudantes[0].append(estudantes_tmp[0])
-        estudantes[1].append(estudantes_tmp[1])
-        estudantes[2].append(estudantes_tmp[2])
-        estudantes[3].append(estudantes_tmp[3])
-        estudantes[4].append(estudantes_tmp[4])
+        for i in range(NIVEIS_OPCOES):
+            prioridades[i].append(count[i])
+            estudantes[i].append(estudantes_tmp[i])
 
-    mylist = zip(propostas,
-                 prioridades[0],
-                 prioridades[1],
-                 prioridades[2],
-                 prioridades[3],
-                 prioridades[4],
-                 estudantes[0],
-                 estudantes[1],
-                 estudantes[2],
-                 estudantes[3],
-                 estudantes[4])
-
-    mylist = sorted(mylist, key=lambda x: (x[1], x[2], x[3], x[4], x[5]), reverse=True)
+    mylist = zip(propostas, *prioridades, *estudantes)
+    mylist = sorted(mylist, key=lambda x: tuple(x[1:len(prioridades)+1]), reverse=True)
 
     return mylist
 

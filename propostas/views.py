@@ -139,16 +139,13 @@ def procura_propostas(request):
     if request.is_ajax():
 
         if "anosemestre" in request.POST:
-
             edicao = request.POST["anosemestre"]
             if edicao == "todas":
                 ano = 0
             else:
                 ano, semestre = map(int, edicao.split('.'))
-
             if "curso" in request.POST:
                 curso = request.POST["curso"]
-
         else:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
