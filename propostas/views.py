@@ -149,21 +149,16 @@ def procura_propostas(request):
         else:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
+    NIVEIS_OPCOES = 5
     mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
-
     propostas = []
-    prioridades = [[], [], [], [], []]
-    estudantes = [[], [], [], [], []]
-
-    if len(mylist) > 0:
-        unzipped_object = zip(*mylist)
-
-        propostas,\
-            prioridades[0], prioridades[1], prioridades[2],\
-            prioridades[3], prioridades[4],\
-            estudantes[0], estudantes[1], estudantes[2],\
-            estudantes[3], estudantes[4]\
-            = list(unzipped_object)
+    prioridades = [[] for _ in range(NIVEIS_OPCOES)]
+    estudantes = [[] for _ in range(NIVEIS_OPCOES)]
+    if mylist:
+        propostas = [item[0] for item in mylist]
+        for i in range(NIVEIS_OPCOES):
+            prioridades[i] = [item[i+1] for item in mylist]
+            estudantes[i] = [item[i+NIVEIS_OPCOES+1] for item in mylist]
 
     # Para procurar as áreas mais procuradas nos projetos
     opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
@@ -184,7 +179,6 @@ def procura_propostas(request):
             opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
         else:
             opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
-
 
     areas = Area.objects.filter(ativa=True)
     areaspfe = {}
