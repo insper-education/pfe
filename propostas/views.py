@@ -150,13 +150,9 @@ def procura_propostas(request):
                 curso = request.POST["curso"]
 
         else:
-            return HttpResponse("Erro não identificado (POST incompleto)",
-                                status=401)
+            return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
-    mylist = ordena_propostas_novo(True,
-                                   ano=ano,
-                                   semestre=semestre,
-                                   curso=curso)
+    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
 
     propostas = []
     prioridades = [[], [], [], [], []]
@@ -174,13 +170,12 @@ def procura_propostas(request):
 
     # Para procurar as áreas mais procuradas nos projetos
     opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
-                                  aluno__trancado=False)
+                                  aluno__trancado=False,
+                                  prioridade=1)
 
     if ano > 0:  # Ou seja não são todos os anos e semestres
-        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre)
-        opcoes = opcoes.filter(proposta__ano=ano, proposta__semestre=semestre)
-
-    opcoes = opcoes.filter(prioridade=1)
+        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
+                               proposta__ano=ano, proposta__semestre=semestre)
 
     # Caso não se deseje todos os cursos, se filtra qual se deseja
     if curso != "T":
@@ -193,13 +188,13 @@ def procura_propostas(request):
         else:
             opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
 
-    areaspfe = {}
+
     areas = Area.objects.filter(ativa=True)
+    areaspfe = {}
     for area in areas:
         count = 0
         for opcao in opcoes:
-            if AreaDeInteresse.objects.filter(proposta=opcao.proposta,
-                                              area=area):
+            if AreaDeInteresse.objects.filter(proposta=opcao.proposta, area=area):
                 count += 1
         areaspfe[area.titulo] = (count, area.descricao)
 
@@ -217,8 +212,8 @@ def procura_propostas(request):
     for curso in cursos:
         disponivel_propostas[curso] = [0, 0]
         aplicando_opcoes[curso] = 0
+            
     disponivel_multidisciplinar = [0, 0]
-    aplicando_multidisciplinar = 0
     for proposta in propostas:
         p = proposta.get_nativamente()
         if isinstance(p, Curso):
@@ -229,6 +224,8 @@ def procura_propostas(request):
             if proposta.disponivel:
                 disponivel_multidisciplinar[0] += 1
             disponivel_multidisciplinar[1] += 1
+
+    aplicando_multidisciplinar = 0
     for opcao in opcoes:
         p = opcao.proposta.get_nativamente()
         if isinstance(p, Curso):
@@ -236,19 +233,23 @@ def procura_propostas(request):
         else:                
             aplicando_multidisciplinar += 1
 
-    edicoes, _, _ = get_edicoes(Proposta)
+    cores_propostas = ["#00FA00", "#D2E61E", "#D2BE23", "#B4B478", "#B4C8A0", "#8B4513"]
+    escolhas = []
+    for i in range(5):
+        escolhas.append({
+            "prioridades": prioridades[i],
+            "estudantes": estudantes[i],
+            "cor": cores_propostas[i],
+        })
 
     context = {
         "titulo": "Procura pelas Propostas de Projetos",
         "tamanho": tamanho,
         "propostas": propostas,
-        "prioridades": prioridades,
+        "escolhas": escolhas,
         "estudantes": estudantes,
-        "ano": ano,
-        "semestre": semestre,
         "areaspfe": areaspfe,
-        "opcoes": opcoes,
-        "edicoes": edicoes,
+        "edicoes": get_edicoes(Proposta)[0],
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
         "disponivel_propostas": disponivel_propostas,

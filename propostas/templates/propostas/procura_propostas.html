@@ -9,6 +9,13 @@
   {% load static %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
+  <style>
+    #chart-container {
+      position: relative;
+      width: 100%;
+      left: 0px;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -17,75 +24,23 @@
 
   <div class="2areas2">
 
-    <div id="chart-container" style="position: relative; height:{{tamanho}}vh; width:100%;position: relative; left: 0px;">
+    <div id="chart-container" style=" height:{{tamanho}}vh;">
       <canvas id="chart-area"></canvas>
     </div>
   
     <script>
 
       var barChartData = {
-        labels: [
-          {% for proposta in propostas %} 
-            "[{{proposta.organizacao.sigla|escapejs}}] {{proposta.titulo}}",
-          {% endfor %}
-          ],
-        datasets: [
-        {
-          label: "Opção #1",
-          backgroundColor: "rgb(0, 250, 0)",
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.0 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.0 %} "{{estudante}}",{% endfor %}]
-        },
-        {
-          label: "Opção #2",
-          backgroundColor: "rgb(210, 230, 30)",
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.1 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.1 %} "{{estudante}}",{% endfor %}]
-        }, 
-        {
-          label: "Opção #3",
-          backgroundColor: "rgb(210, 190, 35)",
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.2 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.2 %} "{{estudante}}",{% endfor %}]
-        },
-        {
-          label: "Opção #4",
-          backgroundColor: "rgb(180, 180, 120)",
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.3 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.3 %} "{{estudante}}",{% endfor %}]
-        },
-        {
-          label: "Opção #5",
-          backgroundColor: "rgb(180, 200, 160)",
-          barPercentage: 0.5,
-          data: [
-            {% for prioridade in prioridades.4 %} 
-              {{prioridade}},
-            {% endfor %}
-          ],
-          estudantes: [{% for estudante in estudantes.4 %} "{{estudante}}",{% endfor %}]
-        }
-        ]
+        labels: [{% for proposta in propostas %}"[{{proposta.organizacao.sigla|escapejs}}] {{proposta.titulo}}", {% endfor %}],
+        datasets:
+        [{% for escolha in escolhas %} {
+              label: "Opção #{{ forloop.counter }}",
+              barPercentage: 0.5,
+              backgroundColor: "{{escolha.cor}}",
+              data: [{% for prioridade in escolha.prioridades %}{{prioridade}}, {% endfor %}],
+              estudantes: [{% for estudante in escolha.estudantes %}"{{estudante}}", {% endfor %}]
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}]
       };
 
       var textos = []
@@ -139,7 +94,7 @@
         const meta = chartInstance.controller.getDatasetMeta(0);
 
         ctx.textAlign = "center";
-        ctx.textBaseline = 'top';
+        ctx.textBaseline = "top";
         ctx.font = "10px Open Sans";
         ctx.fillStyle = "#000000";
 
@@ -192,8 +147,8 @@
 
                   // Create element on first render
                   if (!tooltipEl) {
-                      tooltipEl = document.createElement('div');
-                      tooltipEl.id = 'chartjs-tooltip';
+                      tooltipEl = document.createElement("div");
+                      tooltipEl.id = "chartjs-tooltip";
                       tooltipEl.innerHTML = '<table style="background-color: #050505; border-radius: 8px; border: 0px; padding: 20px; border-spacing: 40px 10px;"></table>';
                       document.body.appendChild(tooltipEl);
                   }
@@ -212,20 +167,20 @@
                   if (tooltipModel.body) {
                       var bodyLines = tooltipModel.body.map(getBody);
 
-                      var innerHtml = '<tbody>';
+                      var innerHtml = "<tbody>";
                       bodyLines.forEach(function(body, i) {
                           var colors = tooltipModel.labelColors[i];
-                          var style = 'background:' + colors.backgroundColor;
-                          style += '; border-color:' + colors.borderColor;
-                          style += '; border-width: 2px';
+                          var style = "background:" + colors.backgroundColor;
+                          style += "; border-color:" + colors.borderColor;
+                          style += "; border-width: 2px";
                           
                           innerHtml += '<tr><td style="padding: 3px; border: 0px; font-size: 9px; height: 8px;"><span style="color:white">' 
                           innerHtml += '&nbsp;<span style="' + style + '">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
-                          innerHtml += "&nbsp;&nbsp;" + body + '</span>&nbsp;</td></tr>';
+                          innerHtml += "&nbsp;&nbsp;" + body + "</span>&nbsp;</td></tr>";
                       });
-                      innerHtml += '</tbody>';
+                      innerHtml += "</tbody>";
 
-                      var tableRoot = tooltipEl.querySelector('table');
+                      var tableRoot = tooltipEl.querySelector("table");
                       tableRoot.innerHTML = innerHtml;
                   }
 
@@ -265,8 +220,8 @@
 
       function chart() {
 
-        var canvasP = document.getElementById('chart-area');
-        var ctx = canvasP.getContext('2d');
+        var canvasP = document.getElementById("chart-area");
+        var ctx = canvasP.getContext("2d");
         
         {% if tamanho > 0 %}
           var histograma = new Chart(ctx, config);
