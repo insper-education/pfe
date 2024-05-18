@@ -6,6 +6,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+from collections import Counter
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -46,11 +48,6 @@ def index_propostas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
-    configuracao = get_object_or_404(Configuracao)
-
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    edicoes, ano, semestre = get_edicoes(Proposta)
 
     if request.is_ajax():
         if "edicao" in request.POST:
@@ -59,31 +56,26 @@ def mapeamento_estudantes_propostas(request):
             return HttpResponse("Algum erro não identificado.", status=401)
 
         lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
-        if lista_propostas:
-            propostas = lista_propostas[0]
-        else:
-            propostas = []
+        propostas = lista_propostas[0] if lista_propostas else []
 
-        alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-            filter(anoPFE=ano).\
-            filter(semestrePFE=semestre).\
-            filter(trancado=False).\
+        alunos = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\
             order_by(Lower("user__first_name"), Lower("user__last_name"))
+        projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
         opcoes = []
         for aluno in alunos:
             opcoes_aluno = []
-            alocacaos = Alocacao.objects.filter(aluno=aluno)
+            opcoes_estudante = Opcao.objects.filter(aluno=aluno, proposta__in=propostas)
+            alocacoes = Alocacao.objects.filter(aluno=aluno, projeto__in=projetos)
+            alocacoes_projetos = {a.projeto for a in alocacoes}
             for proposta in propostas:
-                opcao = Opcao.objects.filter(aluno=aluno, proposta=proposta).last()
+                opcao = next((o for o in opcoes_estudante if o.proposta == proposta), None)
                 if opcao:
                     opcoes_aluno.append(opcao)
                 else:
                     try:
-                        proj = Projeto.objects.get(proposta=proposta,
-                                                   ano=ano,
-                                                   semestre=semestre)
-                        if alocacaos.filter(projeto=proj):
+                        proj = next((p for p in projetos if p.proposta == proposta), None)
+                        if proj and proj in alocacoes_projetos:
                             # Cria uma opção temporaria
                             opc = Opcao()
                             opc.prioridade = 0
@@ -97,47 +89,25 @@ def mapeamento_estudantes_propostas(request):
 
             opcoes.append(opcoes_aluno)
 
-        # checa para empresas repetidas, para colocar um número para cada uma
-        repetidas = {}
-        for proposta in propostas:
-            if proposta.organizacao:
-                if proposta.organizacao.sigla in repetidas:
-                    repetidas[proposta.organizacao.sigla] += 1
-                else:
-                    repetidas[proposta.organizacao.sigla] = 0
-            else:
-                if proposta.nome_organizacao in repetidas:
-                    repetidas[proposta.nome_organizacao] += 1
-                else:
-                    repetidas[proposta.nome_organizacao] = 0
-        repetidas_limpa = {}
-        for repetida in repetidas:
-            if repetidas[repetida] != 0:  # tira zerados
-                repetidas_limpa[repetida] = repetidas[repetida]
+        # Checa para empresas repetidas, para colocar um número para cada uma
+        counter = Counter(proposta.organizacao.sigla if proposta.organizacao else proposta.nome_organizacao for proposta in propostas)
+
+        # Remove as Organizações que aparecem só uma vez
+        repetidas_limpa = {org: count for org, count in counter.items() if count > 1}
+
         proposta_indice = {}
         for proposta in reversed(propostas):
-            if proposta.organizacao:
-                if proposta.organizacao.sigla in repetidas_limpa:
-                    proposta_indice[proposta.id] = \
-                        repetidas_limpa[proposta.organizacao.sigla] + 1
-                    repetidas_limpa[proposta.organizacao.sigla] -= 1
-            else:
-                if proposta.nome_organizacao in repetidas_limpa:
-                    proposta_indice[proposta.id] = \
-                        repetidas_limpa[proposta.nome_organizacao] + 1
-                    repetidas_limpa[proposta.nome_organizacao] -= 1
+            org_name = proposta.organizacao.sigla if proposta.organizacao else proposta.nome_organizacao
+            if org_name in repetidas_limpa:
+                proposta_indice[proposta.id] = repetidas_limpa[org_name] + 1
+                repetidas_limpa[org_name] -= 1
 
         estudantes = zip(alunos, opcoes)
         context = {
             "estudantes": estudantes,
             "propostas": propostas,
-            "configuracao": configuracao,
-            "ano": ano,
-            "semestre": semestre,
-            "loop_anos": range(2018, configuracao.ano+1),
             "proposta_indice": proposta_indice,
-            "edicoes": edicoes,
-            "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+            "cursos": Curso.objects.filter(curso_do_insper=True),
         }
 
     else:
@@ -149,7 +119,7 @@ def mapeamento_estudantes_propostas(request):
 
         context = {
             "titulo": "Mapeamento de Propostas por Estudantes",
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Proposta)[0],
             "informacoes": informacoes,
         }
 

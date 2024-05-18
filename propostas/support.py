@@ -100,29 +100,19 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     except Configuracao.DoesNotExist:
         return None
 
-    if ano == 0:
-        ano = configuracao.ano
-    if semestre == 0:
-        semestre = configuracao.semestre
+    ano = ano or configuracao.ano
+    semestre = semestre or configuracao.semestre
+
+    if disponivel:  # somente as propostas disponibilizadas
+        propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+    else:  # todas as propostas
+        propostas = Proposta.objects.filter(ano=ano, semestre=semestre).order_by("-disponivel")
 
     opcoes_list = []
-    if disponivel:  # somente as propostas disponibilizadas
-        propostas = Proposta.objects.filter(ano=ano).\
-                               filter(semestre=semestre).\
-                               filter(disponivel=True)
-    else:  # todas as propostas
-        propostas = Proposta.objects.filter(ano=ano).\
-                               filter(semestre=semestre)
     for proposta in propostas:
-        opcoes = Opcao.objects.filter(proposta=proposta)
-        opcoes_alunos = opcoes.filter(aluno__user__tipo_de_usuario=1)
-        opcoes_validas = opcoes_alunos.filter(aluno__anoPFE=ano).\
-            filter(aluno__semestrePFE=semestre)
-        count = 0
-        for opcao in opcoes_validas:
-            if opcao.prioridade <= 5:
-                count += 1
+        count = Opcao.objects.filter(proposta=proposta, aluno__anoPFE=ano, aluno__semestrePFE=semestre, prioridade__lte=5).count()
         opcoes_list.append(count)
+
     mylist = zip(propostas, opcoes_list)
     mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
     return mylist

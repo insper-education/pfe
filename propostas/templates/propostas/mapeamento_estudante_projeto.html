@@ -182,7 +182,8 @@
                   </a>
                 </td>
               {% else %}
-                <td>&nbsp;</td>
+                <td></td>
+                {% comment %} <td>&nbsp;</td> {% endcomment %}
               {% endif %}
             {% endfor %}
           </tr>
@@ -207,11 +208,11 @@
       <script>
         {% for proposta in propostas %}
           {% if not proposta.disponivel %}  
-            $('table td:nth-child({{ forloop.counter|add:"3" }})').css('border','dotted 2px gray');
+            $('table td:nth-child({{ forloop.counter|add:"3" }})').css("border","dotted 2px gray");
           {% endif %}
         {% endfor %}
-        $('#MapeamentoTable tr td:nth-child(4)').css('border-left','3px solid black');
-        $('#MapeamentoTable tr > *:nth-child(3)').hide();
+        $("#MapeamentoTable tr td:nth-child(4)").css("border-left","3px solid black");
+        $("#MapeamentoTable tr > *:nth-child(3)").hide();
       </script>
 
     </div>
