@@ -54,7 +54,7 @@
 
     {% if not banca.projeto %}
       <div class="form-group">
-      <label style="margin-top: 12px;" for="projeto">Projeto:</label>
+      <span style="margin-top: 12px;" for="projeto">Projeto:</span>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
       data-width="75%" data-size="5" required
       {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
@@ -92,41 +92,41 @@
 
     Título: 
     <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
-      <label id="titulo" name="titulo">
+      <span id="titulo" name="titulo">
         {% if banca and banca.projeto %}
           {{banca.projeto.get_titulo}}
           {% include "tipo_projeto.html" with projeto=banca.projeto %}
         {% else %}
           Titulo de Projeto não definido
         {% endif %}
-      </label>
+      </span>
     </a>
     <br>
 
     Organização: 
     <a id="organizacao_link" name="organizacao_link" {% if banca and banca.projeto and banca.projeto.organizacao %}href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}"{% endif %}>
-      <label id="organizacao" name="organizacao">
+      <span id="organizacao" name="organizacao">
         {% if banca and banca.projeto and banca.projeto.organizacao %}
           {{banca.projeto.organizacao}}
         {% else %}
           Organização Parceira não definida
         {% endif %}
-      </label>
+      </span>
     </a>
     <br>
     
     Orientador{% if banca and banca.projeto and banca.projeto.orientador.user.genero == "F" %}a{% endif %}: 
     <a id="orientador_link" name="orientador_link" {% if banca and banca.projeto and banca.projeto.orientador %}href="{% url 'professor_detail' banca.projeto.orientador.id %}"{% endif %}>
-      <label id="orientador" name="orientador">
+      <span id="orientador" name="orientador">
         {% if banca and banca.projeto and banca.projeto.orientador %}
           {{banca.projeto.orientador}}
         {% else %}
           Sem identificação de Orientador(a)
         {% endif %}
-      </label>
+      </span>
     </a>
     <br><br>
-    <label hidden id="orientador_id"></label>
+    <span hidden id="orientador_id"></span>
   
     <div style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
@@ -398,6 +398,7 @@
 
     {% comment %} Verifica se mudou de estado {% endcomment %}
     if (botao_anterior != 2) {
+      {% comment %} Consuladores da Falconi {% endcomment %}
       if (tipo == 2) {
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
@@ -408,6 +409,7 @@
       }
     } else {
       if (tipo != 2 || tipo==undefined ) {
+        {% comment %} Professores do Insper {% endcomment %}
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for professor in professores %}
@@ -417,10 +419,10 @@
       }
     }
     botao_anterior = tipo;
-
   }
 
-  $(document).ready(function () {     
+  $(document).ready(function () {
+    carrega_modal();
     $("#projeto").change(function(){
       var titulo = $(this).children(":selected").data("titulo");
       var titulo_link = $(this).children(":selected").data("titulo_link");
@@ -441,12 +443,7 @@
 
     })
   });
-
-  // Atualiza a página quando o popup é aberto
-  $("#popup").on("show.bs.modal", function() {
-    carrega_modal();
-  })
-  
+ 
   $(".tipo_banca").change(carrega_modal);
 
   $("form#criarbancasform").submit(function(e){
