@@ -2275,10 +2275,10 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliar_entregas(request, todos=None):
+def avaliar_entregas(request, selecao=None):
     """Página para fzer e ver avaliação de entregas dos estudantes."""
 
-    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+    if selecao == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
     if request.is_ajax():
@@ -2290,20 +2290,19 @@ def avaliar_entregas(request, todos=None):
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = map(int, edicao.split('.'))
-
-        if todos:
-            if todos == "todos":
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-            else:
+
+        if selecao:
+            if selecao != "todos":
                 try:
-                    projetos = projetos.filter(id=todos)
+                    projetos = projetos.filter(id=selecao)
                 except:
                     return HttpResponse("Erro ao buscar projeto.", status=401)
                 edicao = "nenhuma"
 
         else:
             projetos = projetos.filter(orientador=request.user.professor)
-            projetos = projetos.filter(ano=ano, semestre=semestre)
+            
 
         entregas = []
         for projeto in projetos:
@@ -2327,7 +2326,7 @@ def avaliar_entregas(request, todos=None):
         context = {
                 "titulo": "Avaliar Entregas",
                 "edicoes": get_edicoes(Relato)[0],
-                "tipos_entregas": exames if todos else None,
+                "tipos_entregas": exames if selecao else None,
             }
 
     return render(request, "professores/avaliar_entregas.html", context=context)

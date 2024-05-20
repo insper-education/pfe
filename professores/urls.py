@@ -30,7 +30,7 @@ urlpatterns = [
          views.avaliar_entregas,
          name="avaliar_entregas"),
 
-    path("avaliar_entregas/<str:todos>",
+    path("avaliar_entregas/<str:selecao>",
          views.avaliar_entregas,
          name="avaliar_entregas"),
 
