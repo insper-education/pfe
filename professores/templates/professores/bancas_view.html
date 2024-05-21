@@ -482,11 +482,12 @@
       if (typeof calendar !== "undefined") {
         calendarView = calendar.view.type;
         calendarDate = calendar.getDate();
-        $(target).fadeOut('fast', function() {
+        $(target).fadeOut("fast", function() {
           $.ajax({
             url: url,
+            type: "GET",
             success: function(data,status,jqXHR) {
-                $(target).html($(data).find(selector).addBack(selector).children()).fadeIn('fast');
+                $(target).html($(data).find(selector).addBack(selector).children()).fadeIn("fast");
                 montar_calendario(calendarView, calendarDate);
             }
           });
@@ -503,7 +504,7 @@
       success: function(response){
         $("#submit").hide();
         $("#excluir").hide();
-        $("#modal-body").html(response.mensagem);
+        $("#popup").modal("hide");
         loadContent( "#atualizar", "{% url 'bancas_index' %}", "#atualizar" );
       },
       {% include "ajax_error_function.js" %}

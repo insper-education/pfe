@@ -203,13 +203,13 @@
 
 
     $(document).ready(function () {     
-      $('#projeto').change(function(){
-        var titulo = $(this).children(':selected').data('titulo');
-        var organizacao = $(this).children(':selected').data('organizacao');
-        var orientador = $(this).children(':selected').data('orientador');
-        $('#titulo').text(titulo);
-        $('#organizacao').text(organizacao);
-        $('#orientador').text(orientador);
+      $("#projeto").change(function(){
+        var titulo = $(this).children(":selected").data("titulo");
+        var organizacao = $(this).children(":selected").data("organizacao");
+        var orientador = $(this).children(":selected").data("orientador");
+        $("#titulo").text(titulo);
+        $("#organizacao").text(organizacao);
+        $("#orientador").text(orientador);
       })
     });
 
@@ -259,6 +259,7 @@
       success: function(response){
         $("#submit").hide();
         $("#excluir").hide();
+        //$("#popup").modal("hide");
         $("#modal-body").html(response.mensagem);
       },
       {% include "ajax_error_function.js" %}

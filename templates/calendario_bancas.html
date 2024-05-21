@@ -42,25 +42,25 @@
 </div>
 
 <script>
-$("#color_banca_intermediaria").css("color", color_banca_intermediaria);
-$("#color_banca_final").css("color", color_banca_final);
-$("#color_banca_falconi").css("color", color_banca_falconi);
-$("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
-$("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
+  $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
+  $("#color_banca_final").css("color", color_banca_final);
+  $("#color_banca_falconi").css("color", color_banca_falconi);
+  $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
+  $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
 
-function atualiza(event) {
-  url = "{% url 'ajax_atualiza_banca' %}";
-  data = {
-    "id": event.id,
-    "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
-    "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+  function atualiza(event) {
+    url = "{% url 'ajax_atualiza_banca' %}";
+    data = {
+      "id": event.id,
+      "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+      "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+    }
+    {% include "ajax_default_function.js" %}
   }
-  {% include "ajax_default_function.js" %}
-}
 
-var calendar = null;
+  var calendar = null;
 
-function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
+  function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
 
     var calendarEl = document.getElementById("calendar");
 
@@ -237,7 +237,7 @@ function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
 
     calendar.render();
 
-}
+  }
 
 </script>
 

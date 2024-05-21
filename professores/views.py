@@ -620,7 +620,6 @@ def bancas_editar(request, primarykey=None):
         "professores": professores,
         "banca": banca,
         "Banca": Banca,
-        # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi")), # Para ficar na ordem que desejo
         "falconis": falconis,
         "bancas_intermediarias": bancas_intermediarias,
