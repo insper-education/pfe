@@ -27,8 +27,18 @@
       float: right;
     }
 
-    ul, ol {padding-left: 1.4em;}
+    ul, ol {padding-left: 1.6em;}
 
+    {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
+    ::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+    }
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(0, 0, 0, .5);
+      box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    }
   </style>
 
 {% endblock %}
@@ -175,7 +185,9 @@
       >
     </small>
   </h3>
-  {% include "documentos.html" with documentos=organizacao.documento_set.all %}
+  <div style="overflow-y: auto; max-height: 16em;">
+    {% include "documentos.html" with documentos=organizacao.documento_set.all %}
+  </div>
 
   <hr>
   <h3>Certificados
@@ -185,16 +197,19 @@
       >
     </small>
   </h3>
-  {% for entrada in organizacao.projeto_set.all %}
-    {% include "certificados.html" with certificados=entrada.certificado_set.all %}
-  {% endfor %}
+  <div style="overflow-y: auto; max-height: 16em;">
+    {% for entrada in organizacao.projeto_set.all %}
+      {% include "certificados.html" with certificados=entrada.certificado_set.all %}
+    {% endfor %}
+  </div>
 
-  
-  {% if organizacao.proposta_set.all %}
+  {% with propostas=organizacao.proposta_set.all %}
+  {% if propostas %}
     <hr>
     <h3>Propostas <small class="esconder"><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>
-    <ol>
-      {% for proposta in organizacao.proposta_set.all %}
+    <div style="overflow-y: auto; max-height: 16em;">
+    <ol reversed>
+      {% for proposta in propostas reversed %}
         <a href="{% url 'proposta_completa' proposta.id %}">
           {% with projeto_fechado=proposta.projeto_set.exists %}
           <li>
@@ -206,13 +221,17 @@
         </a>
       {% endfor %}
     </ol>
+    </div>
   {% endif %}
+  {% endwith %}
 
-  {% if organizacao.projeto_set.all %}
+  {% with projetos=organizacao.projeto_set.all %}
+  {% if projetos %}
     <hr>
     <h3>Projetos</h3>
-    <ol>
-      {% for projeto in organizacao.projeto_set.all %}
+    <div style="overflow-y: auto; max-height: 16em;">
+    <ol reversed>
+      {% for projeto in projetos reversed %}
         {% if projeto.alocacao_set.count %}
           <a href="{% url 'projeto_completo' projeto.id %}">
             <li>
@@ -223,7 +242,9 @@
         {% endif %}
       {% endfor %}
     </ol>
+    </div>
   {% endif %}
+  {% endwith %}
   
   <hr>
   <h3>Anotações <small class="esconder">
@@ -235,26 +256,29 @@
     >
   </small></h3>
   
-  <ul id="lista_anotacoes" style="padding-left: 18px;">
-    {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
-      <li>
-        <a
-          class="open-annotation"
-          href="{% url 'anotacao' organizacao.id %}"
-          data-url="{% url 'anotacao' organizacao.id %}"
-          data-anotacao="{{anotacao.id}}"
-        >
-          {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+  <div style="overflow-y: auto; max-height: 16em;">
+    <ul id="lista_anotacoes" style="padding-left: 18px;">
+      {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
+        <li>
+          <a
+            class="open-annotation"
+            href="{% url 'anotacao' organizacao.id %}"
+            data-url="{% url 'anotacao' organizacao.id %}"
+            data-anotacao="{{anotacao.id}}"
+          >
+            {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
   
   <span id="sem_anotacoes" {% if organizacao.anotacao_set.all %}style="visibility: hidden;"{% endif %}>
     Ainda não existem anotações para essa organização.
   </span>
   
   {% if user.tipo_de_usuario == 4 %}
+    <br>
     <a href="{% url 'edita_organizacao' organizacao.id %}">
     <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
     </a>

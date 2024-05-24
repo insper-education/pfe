@@ -36,23 +36,33 @@
       margin-left: 10px;
     }
 
-    ul {padding-left: 1.4em;}
+    ul, ol {padding-left: 1.6em;}
 
+    {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
+    ::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+    }
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(0, 0, 0, .5);
+      box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    }
+    
   </style>
 
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">Projeto Completo</span>
+  <span class="titulo">
+    [{{ projeto.organizacao.nome }}] {{projeto.titulo_final}}<br>
+    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+      <span style="font-size: small; padding-left: 0.7em;"><b>Título original da proposta</b>: {{projeto.proposta.titulo}}</span>
+    {% endif %}
+  </span>
 
-  <strong>Título</strong>:
-  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-    {{projeto.titulo_final}}<br>
-    <small style="display: inline-block; padding-left: 0.7em;"><b>Título original da proposta</b>: {{projeto.proposta.titulo}}</small>
-  {% else %}
-    {{projeto.get_titulo}}
-  {% endif %}<br>
+  
   
   <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
@@ -377,7 +387,9 @@
       </small>
     {% endif %}
   </h4>
-  {% include "documentos.html" %}
+  <div style="overflow-y: auto; max-height: 16em;">
+    {% include "documentos.html" %}
+  </div>
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     <hr>
@@ -388,7 +400,9 @@
         </small>
       {% endif %}
     </h4>
-    {% include "certificados.html" with certificados=projeto.certificado_set.all %}
+    <div style="overflow-y: auto; max-height: 16em;">
+      {% include "certificados.html" with certificados=projeto.certificado_set.all %}
+    </div>
   {% endif %}
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
