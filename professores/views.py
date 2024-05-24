@@ -446,10 +446,24 @@ def ajax_atualiza_dinamica(request):
 
 def mensagem_edicao_banca(banca, atualizada=False):
 
+    subject = "Banca "
+    if banca.tipo_de_banca == 0:
+        subject += "Final "
+    elif banca.tipo_de_banca == 1:
+        subject += "Intermediária "
+    elif banca.tipo_de_banca == 2:
+        subject += "Falconi "
+    subject += "Reagendada" if atualizada else "Agendada"
+    subject += " - Projeto: [" + banca.projeto.proposta.organizacao.nome + "] " + banca.projeto.get_titulo()
+
+    recipient_list = []
+    
     if atualizada:
-        mensagem = "Banca atualizada.<br><br>"
+        mensagem = "Banca Capstone Reagendada.<br><br>"
     else:
-        mensagem = "Banca criada.<br><br>"
+        mensagem = "Banca Capstone Agendada.<br><br>"
+
+    mensagem += "Projeto: " + banca.projeto.get_titulo() + "<br>"
 
     mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
 
@@ -462,31 +476,41 @@ def mensagem_edicao_banca(banca, atualizada=False):
         mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
         mensagem += "</span><br>"
 
-    mensagem += "Envolvidos (nenhuma mensagem está sendo enviada agora):<br><ul>"
+    mensagem += "Envolvidos:<br><ul>"
 
     # Orientador
     if banca.projeto.orientador:
         mensagem += "<li>" + banca.projeto.orientador.user.get_full_name() + " [orientador] "
         mensagem += '<a href="mailto:' + banca.projeto.orientador.user.email + '">&lt;' + banca.projeto.orientador.user.email + "&gt;</a></li>"
-    
+        recipient_list.append(banca.projeto.orientador.user.email)
+
     # coorientadores
     for coorientador in banca.projeto.coorientador_set.all():
         mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
         mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
+        recipient_list.append(banca.projeto.coorientador.usuario.email)
 
     # membros
     for membro in banca.membros():
         mensagem += "<li>" + membro.get_full_name() + " [membro da banca] "
         mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a></li>"
+        recipient_list.append(membro.email)
 
     # estudantes
     for alocacao in banca.projeto.alocacao_set.all():
         mensagem += "<li>" + alocacao.aluno.user.get_full_name()
         mensagem += "[" + str(alocacao.aluno.curso2) + "] "
         mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
-    
+        recipient_list.append(alocacao.aluno.user.email)
+
     mensagem += "</ul>"
 
+    check = email(subject, recipient_list, mensagem)
+    if check != 1:
+        error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+        logger.error(error_message)
+        mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+    
     return mensagem
     
 @login_required
