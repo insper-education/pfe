@@ -444,7 +444,7 @@ def ajax_atualiza_dinamica(request):
     return HttpResponse("Erro.", status=401)    
 
 
-def mensagem_edicao_banca(banca, atualizada=False):
+def mensagem_edicao_banca(banca, atualizada=False, excluida=False):
 
     subject = "Banca "
     if banca.tipo_de_banca == 0:
@@ -453,30 +453,44 @@ def mensagem_edicao_banca(banca, atualizada=False):
         subject += "Intermediária "
     elif banca.tipo_de_banca == 2:
         subject += "Falconi "
-    subject += "Reagendada" if atualizada else "Agendada"
+    
+    if excluida:
+        subject += "Cancelada"
+    else:
+        subject += "Reagendada" if atualizada else "Agendada"
     subject += " - Projeto: [" + banca.projeto.proposta.organizacao.nome + "] " + banca.projeto.get_titulo()
 
-    recipient_list = []
-    
-    if atualizada:
+    if excluida:
+        mensagem = "Banca Capstone Cancelada.<br><br>"
+    elif atualizada:
         mensagem = "Banca Capstone Reagendada.<br><br>"
     else:
         mensagem = "Banca Capstone Agendada.<br><br>"
 
     mensagem += "Projeto: " + banca.projeto.get_titulo() + "<br>"
 
+    if banca.tipo_de_banca == 0:
+        mensagem += "Tipo: Banca Final<br>"
+    elif banca.tipo_de_banca == 1:
+        mensagem += "Tipo: Banca Intermediária<br>"
+    elif banca.tipo_de_banca == 2:
+        mensagem += "Tipo: Banca Falconi<br>"
+    
     mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
 
     LIMITE_DE_SALAS = 2
-    total_bancas = Banca.objects.all().count()
-    nao_intersecta = Banca.objects.filter(Q(endDate__lte=banca.startDate) | Q(startDate__gte=banca.endDate)).count()
-    if (total_bancas - nao_intersecta - 1) >= LIMITE_DE_SALAS:  # -1 para nao contar a propria banca
-        mensagem += "<span style='color: red; font-weight: bold;'>"
-        mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
-        mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
-        mensagem += "</span><br>"
+    if not excluida:
+        total_bancas = Banca.objects.all().count()
+        nao_intersecta = Banca.objects.filter(Q(endDate__lte=banca.startDate) | Q(startDate__gte=banca.endDate)).count()
+        if (total_bancas - nao_intersecta - 1) >= LIMITE_DE_SALAS:  # -1 para nao contar a propria banca
+            mensagem += "<span style='color: red; font-weight: bold;'>"
+            mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
+            mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
+            mensagem += "</span><br>"
 
     mensagem += "Envolvidos:<br><ul>"
+
+    recipient_list = []
 
     # Orientador
     if banca.projeto.orientador:
@@ -499,11 +513,18 @@ def mensagem_edicao_banca(banca, atualizada=False):
     # estudantes
     for alocacao in banca.projeto.alocacao_set.all():
         mensagem += "<li>" + alocacao.aluno.user.get_full_name()
-        mensagem += "[" + str(alocacao.aluno.curso2) + "] "
+        mensagem += " [" + str(alocacao.aluno.curso2) + "] "
         mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
         recipient_list.append(alocacao.aluno.user.email)
 
     mensagem += "</ul>"
+
+    # Adiciona coordenacao e operacaos
+    configuracao = get_object_or_404(Configuracao)
+    if configuracao.coordenacao:
+        recipient_list.append(str(configuracao.coordenacao.user.email))
+    if configuracao.operacao:
+        recipient_list.append(str(configuracao.operacao.user.email))
 
     check = email(subject, recipient_list, mensagem)
     if check != 1:
@@ -606,11 +627,11 @@ def bancas_editar(request, primarykey=None):
         mensagem = ""
         if "atualizar" in request.POST:
             if editar_banca(banca, request):
-                mensagem = mensagem_edicao_banca(banca, True)
+                mensagem = mensagem_edicao_banca(banca, True) # Atualizada
             else:
                 mensagem = "Erro ao Editar banca."
         elif "excluir" in request.POST:
-            mensagem = "Banca excluída!"
+            mensagem = mensagem_edicao_banca(banca, True, True) # Excluida
             if "projeto" in request.POST:
                 banca.delete()
         else:
