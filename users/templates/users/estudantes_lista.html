@@ -110,12 +110,19 @@
             <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
           {% endif %}
           </td>
+
+          <td>
+            {% if aluno.user.celular %}{{ aluno.user.get_celular }}{% endif %}
+          </td>
+
         </tr>
         {% endfor %}
         <caption style="text-align:right"><small>Projetos <u>sublinhados</u> são de Capstone Avançado</small></caption>
       </table>
     </div>
     <br>
+
+
     {{curso}}
     {% if totais.total > 0 %}
       <br><br>
@@ -164,7 +171,7 @@
             {% if curso_sel == 'T' %}
               <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
             {% endif %}
-            </tr>
+          </tr>
         {% endif %}
         </tbody>
       </table>

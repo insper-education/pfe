@@ -66,7 +66,7 @@ class PFEUser(AbstractUser):
                              help_text="Identificação IM, como Skype, Zoom, Teams, etc")
 
     linkedin = models.URLField("LinkedIn", max_length=256, null=True, blank=True,
-                               help_text='LinkedIn do usuário')
+                               help_text="LinkedIn do usuário")
 
     membro_comite = \
         models.BooleanField("Membro do Comitê", default=False, help_text="caso membro do comitê")
@@ -109,6 +109,21 @@ class PFEUser(AbstractUser):
         else:
             texto += self.first_name + ' ' + self.last_name
         return texto.strip()
+
+    def get_celular(self):
+        """Retorna o celular do usuário."""
+        if self.celular:
+            # Se o celular for um número de telefone, retorna ele formatado
+            celular = self.celular.strip()
+            print("Celular: <", celular, ">")
+            if celular[0] != '+':
+                if len(celular) == 11:
+                    celular = "+55 (" + celular[:2] + ") " + celular[2:7] + "-" + celular[7:]
+                elif len(celular) == 9:
+                    celular = "+55 (11) " + celular[:5] + "-" + celular[5:]
+            print("Celular formatado: <", celular, ">")
+            return celular
+        return None
 
     @classmethod
     def create(cls):
