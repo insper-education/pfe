@@ -68,7 +68,7 @@
       <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;">
         <img id="signature" class="signature" alt="Imagem da Assinatura"
             src="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}"></div>
-    </a><br>
+    </a>
 
     <script>
       function atualiza_coordenacao() {
@@ -82,6 +82,18 @@
       $(document).ready($("#coordenacao").change(atualiza_coordenacao));
     </script>
     
+    <br><hr><br>
+
+    <label for="operacao"><span lang="pt">Operação Capstone</span>: </label>
+    <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
+      {% for administrador in administradores %}
+        <option value="{{administrador.id}}" 
+          {% if administrador.id == configuracao.operacao.id %}selected{% endif %}>
+          {{administrador.user.get_full_name}}
+        </option> 
+      {% endfor %}
+    </select>
+    <br>
 
     <br><br>
     <button class="btn btn-primary mb-1" type="submit">Confirmar</button>

@@ -501,12 +501,14 @@ def configurar(request):
                 configuracao.coordenacao = get_object_or_404(Administrador,
                                                              pk=int(request.POST["coordenacao"]))
 
-                #configuracao.coordenador = request.POST["coordenador"]
                 configuracao.coordenacao.nome_para_certificados = request.POST["nome_para_certificados"]
                 if "assinatura" in request.FILES:
                     assinatura = simple_upload(request.FILES["assinatura"],
                                                 path=get_upload_path(configuracao, ""))
                     configuracao.coordenacao.assinatura = assinatura[len(settings.MEDIA_URL):]
+
+                configuracao.operacao = get_object_or_404(Administrador,
+                                                             pk=int(request.POST["operacao"]))
 
                 configuracao.coordenacao.save()
                 configuracao.save()

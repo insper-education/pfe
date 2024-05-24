@@ -440,7 +440,7 @@ class Proposta(models.Model):
                                 help_text="Data e hora da criação da proposta de projeto")
 
     colaboracao = models.ForeignKey(Organizacao, on_delete=models.SET_NULL, null=True, blank=True,
-                                    related_name='colaboracao',
+                                    related_name="colaboracao",
                                     help_text="Organização colaborando para a proposta de projeto")
 
 
@@ -567,11 +567,6 @@ class Configuracao(models.Model):
     recipient_reembolso = models.CharField(max_length=127, blank=True,
                                            help_text="Separar lista por ponto e virgula")
 
-    ## ISSO PRECISA SER REMOVIDO, AGORA USANDO A DATA DO CALENDARIO PARA LIBERAR AS PROPOSTAS
-    # liberadas_propostas = models.BooleanField(default=False,
-    #                                           help_text='Para estudantes visualizarem propostas')
-    #############################
-
     min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
         help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
     
@@ -579,8 +574,13 @@ class Configuracao(models.Model):
         help_text="Tamanho máximo de arquivo em MB")
 
     coordenacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
+                                    related_name="coordenacao",
                                     help_text="responsável pela coordenação do Capstone")
-
+    
+    operacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
+                                 related_name="operacao",
+                                 help_text="responsável pela operação do Capstone")
+    
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua do sistema")
 
@@ -920,21 +920,21 @@ class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto')
+                                help_text="projeto")
     location = models.CharField(blank=True, max_length=280,
-                                help_text='sala em que vai ocorrer a dinâmica')
+                                help_text="sala em que vai ocorrer a dinâmica")
     startDate = models.DateTimeField(default=datetime.datetime.now,
-                                     help_text='Inicio da Dinâmica')
+                                     help_text="Inicio da Dinâmica")
     endDate = models.DateTimeField(default=datetime.datetime.now,
-                                   help_text='Fim da Dinâmica')
-    facilitador = models.ForeignKey('users.PFEUser', null=True, blank=True,
-                                    on_delete=models.SET_NULL, related_name='facilitador',
-                                    help_text='facilitador da dinâmica')
+                                   help_text="Fim da Dinâmica")
+    facilitador = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                    on_delete=models.SET_NULL, related_name="facilitador",
+                                    help_text="facilitador da dinâmica")
 
     def hora_fim(self):
         """Mostra só a hora final do encontro."""
         return self.endDate.strftime("%H:%M")
-    hora_fim.short_description = 'Hora Fim'
+    hora_fim.short_description = "Hora Fim"
 
     def url_location(self):
         """Checa se link."""
@@ -1714,7 +1714,7 @@ class Observacao(models.Model):
                                  help_text="Tipo de avaliação")
     
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text="Data e hora da comunicação") # hora ordena para dia
 
     # Somente útil para Bancas
     avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1730,7 +1730,7 @@ class Observacao(models.Model):
                                  help_text="relacao de alocação entre projeto e estudante")
 
     # Se houver, usando pois no Blackboard alguns estão dessa forma
-    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_observacao',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name="objetivo_observacao",
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text="Objetivo de Aprendizagem")
 
@@ -1766,25 +1766,25 @@ class Observacao_Velha(models.Model):
                                  help_text="Tipo de avaliação")
     
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text="Data e hora da comunicação") # hora ordena para dia
 
     # Somente útil para Bancas
-    avaliador = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                  help_text='avaliador do projeto')
+    avaliador = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="avaliador do projeto")
 
     # Para Bancas e Entregas em Grupo
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi avaliado')
+                                help_text="projeto que foi avaliado")
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True, blank=True,
-                                 on_delete=models.SET_NULL, related_name='observacao_velha_alocado',
-                                 help_text='relacao de alocação entre projeto e estudante')
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
+                                 on_delete=models.SET_NULL, related_name="observacao_velha_alocado",
+                                 help_text="relacao de alocação entre projeto e estudante")
 
     # Se houver, usando pois no Blackboard alguns estão dessa forma
-    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name='objetivo_observacao_velha',
+    objetivo = models.ForeignKey(ObjetivosDeAprendizagem, related_name="objetivo_observacao_velha",
                                  on_delete=models.SET_NULL, null=True, blank=True,
-                                 help_text='Objetivo de Aprendizagem')
+                                 help_text="Objetivo de Aprendizagem")
 
     observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas somente com o orientador do projeto")
@@ -1802,8 +1802,8 @@ class Observacao_Velha(models.Model):
         return "Observação velha tipo : " + str(self.exame)
 
     class Meta:
-        verbose_name = 'Observação Velha'
-        verbose_name_plural = 'Observações Velhas'
+        verbose_name = "Observação Velha"
+        verbose_name_plural = "Observações Velhas"
         
 
 
@@ -1818,11 +1818,11 @@ class Certificado(models.Model):
                             help_text="data do certificado")
 
     TIPO_DE_CERTIFICADO = (  # não mudar a ordem dos números
-        (0, 'Não definido'),
-        (1, 'Estudante destaque'),
-        (2, 'Equipe destaque'),
-        (11, 'Destaque Falconi'),
-        (12, 'Excelência Falconi'),
+        (0, "Não definido"),
+        (1, "Estudante destaque"),
+        (2, "Equipe destaque"),
+        (11, "Destaque Falconi"),
+        (12, "Excelência Falconi"),
         (101, "Orientação de Projeto"),
         (102, "Coorientação de Projeto"),
         (103, "Membro de Banca Intermediária"),
@@ -1834,10 +1834,10 @@ class Certificado(models.Model):
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
     observacao = models.TextField(max_length=256, null=True, blank=True,
-                                  help_text='qualquer observação relevante')
+                                  help_text="qualquer observação relevante")
 
     documento = models.FileField("Documento", upload_to=get_upload_path, null=True, blank=True,
-                                 help_text='Documento Digital')
+                                 help_text="Documento Digital")
 
     # Usar get_tipo_de_certificado_display
     def get_certificado(self):
