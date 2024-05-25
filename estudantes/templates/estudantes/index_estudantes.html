@@ -101,17 +101,18 @@
   <h5>Projeto</h5>
   <ul>
     <li><a
-      {% comment %} Caso Professor {% endcomment %}
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          class="disabled" onclick="showMessage('projeto_professor')"
-      
+      {% comment %} Caso Organização {% endcomment %}
+      {% if user.tipo_de_usuario == 3 %}
+          class="disabled" onclick="showMessage('projeto_organizacao')"
       {% comment %} Caso Estudante {% endcomment %}
-      {% else %}
+      {% elif user.tipo_de_usuario == 1 %}
           {% if not projeto %} 
               class="disabled" onclick="showMessage('projeto')"
           {% else %}
               href="{% url 'meuprojeto' %}"
           {% endif %}
+      {% else %}
+        href="{% url 'meuprojeto' %}"
       {% endif %}
     >Meu Projeto</a></li>
 
@@ -169,7 +170,7 @@
   <div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
   <div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
   <div class="mensagem" id="feedback">Fora do período para o feedback.</div>
-  <div class="mensagem" id="projeto_professor">Professor, para ver seus projetos clique no seu nome na barra de título.</div>
+  <div class="mensagem" id="projeto_organizacao">Area não acessível para organizações.</div>
   
   {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
   <script>

@@ -29,6 +29,10 @@
   {% with alocados=aluno.alocacao_set.all.reverse %}
     <span class="titulo">Projeto{% if alocados|length > 1 %}s{% endif %} Alocado{% if alocados|length > 1 %}s{% endif %} </span> 
 
+    {% if professor %}
+      <h5 style="color: red;">Mostrando como é a tela, usando qualquer estudante de exemplo.<br><br></h5>
+    {% endif %}
+
     {% for alocado in alocados %}
 
     <div class="div_arredondado_100">

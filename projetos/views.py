@@ -498,17 +498,27 @@ def meuprojeto(request):
     """Mostra o projeto do próprio aluno, se for aluno."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Soh Est Parc Adm
 
-    # Caso seja Professor ou Administrador
-    if request.user.tipo_de_usuario in (2, 4):
-        return redirect("professor_detail", primarykey=request.user.professor.pk)
-
-    # Caso seja estudante
     context = {
         "titulo": "Meu Projeto",
-        "aluno": request.user.aluno,
+        #"aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
         "Projeto": Projeto,
     }
+    
+    # Caso seja Professor ou Administrador
+    if request.user.tipo_de_usuario in (2, 4):
+        context["professor"] = request.user.professor
+
+        # Pegando um estudante de um projeto quando orientador
+        projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+        alocacao = Alocacao.objects.filter(projeto=projeto).last()
+        if alocacao:
+            context["aluno"] = alocacao.aluno
+        else:
+            context["aluno"] = None
+    else:
+        # Caso seja estudante
+        context["aluno"] = request.user.aluno
 
     return render(request, "projetos/meuprojeto_estudantes.html", context=context)
 
