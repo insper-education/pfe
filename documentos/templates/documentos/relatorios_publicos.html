@@ -68,6 +68,7 @@
             <th scope="col" class="text-center"><span lang="pt">Estudantes</span><span lang="en">Students</span></th>
             <th scope="col" class="text-center"><span lang="pt">Orientador</span><span lang="en">Advisor</span></th>
             <th scope="col" class="text-center"><span lang="pt">Organização</span><span lang="en">Company</span></th>
+            <th scope="col" class="text-center"><span lang="pt">Banca Final</span><span lang="en">Evaluation Committee</span></th>
             <th scope="col" class="text-center"><span lang="pt">Período</span><span lang="en">Semester</span></th>
             <th scope="col" class="text-center"><span lang="pt">Documento</span><span lang="en">Document</span></th>
             <th scope="col" class="text-center">URLs</th>
@@ -90,7 +91,7 @@
                     </a>
                   {% endif %}
                 {% endif %}
-                {% if relatorio.lingua_do_documento == 0 %}<small lang="pt">(português)</small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en">(english)</small>{% endif %}
+                {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %}
               </td>
 
               <td>
@@ -132,6 +133,28 @@
                     </a>
                   {% endif %}
                 {% endif %}
+              </td>
+
+              <td>
+                <small>
+                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                {% for banca in relatorio.projeto.banca_set.all %}
+                  {% if banca.tipo_de_banca == 0 %}
+                    {% for membro in banca.membros %}
+                      <li>
+                        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                          <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                        {% endif %}
+                        {{membro.get_full_name}}
+                        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                          </a>
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+                </ul>
+                </small>
               </td>
 
               <td style="text-align:center">
@@ -202,8 +225,8 @@
       if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
         table = $("#RelatoriosTable").dataTable();
         if(table) {
-          table.fnSetColumnVis( 4, !($("#filterEdicao").val()!="todas" ));  // esconde Período
-          table.fnSetColumnVis( 6, false );  // esconde longa URL
+          table.fnSetColumnVis( 5, !($("#filterEdicao").val()!="todas" ));  // esconde Período
+          table.fnSetColumnVis( 7, false );  // esconde longa URL
 
           // Callback para acertar o idioma
           table.on("draw.dt", function() {
