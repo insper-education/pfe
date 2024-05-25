@@ -56,7 +56,7 @@
 {% block content %}
 
   <span class="titulo">
-    [{{ projeto.organizacao.nome }}] {{projeto.titulo_final}}<br>
+    [{{ projeto.organizacao.nome }}] {{projeto.get_titulo}}<br>
     {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
       <span style="font-size: small; padding-left: 0.7em;"><b>Título original da proposta</b>: {{projeto.proposta.titulo}}</span>
     {% endif %}
