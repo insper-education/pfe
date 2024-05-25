@@ -618,6 +618,72 @@ def bancas_criar(request, data=None):
     return render(request, "professores/bancas_view.html", context)
 
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def mensagem_email(request, tipo=None, primarykey=None):
+    """Envia mensagens."""
+
+    if tipo == "banca":
+    
+        if primarykey is None:
+            return HttpResponseNotFound("<h1>Erro!</h1>")
+
+        banca = get_object_or_404(Banca, pk=primarykey)
+
+        if request.is_ajax() and request.method == "POST":
+
+            mensagem = ""
+            if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
+                assunto = request.POST["assunto"]
+                para = request.POST["para"]
+                mensagem = request.POST["mensagem"]
+            else:
+                return HttpResponse("Envio não realizado.", status=401)
+
+            recipient_list = para.split(';')
+            recipient_list.append("Luciano Pereira Soares <lpsoares@ginsper.edu.br>")
+
+            check = email(assunto, recipient_list, mensagem)
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+
+            context = {
+                    "atualizado": True,
+                    "mensagem": mensagem,
+                }
+            return JsonResponse(context)
+        
+        para = ""
+        if banca.projeto.orientador:
+            para = banca.projeto.orientador.user.get_full_name() + " <" + banca.projeto.orientador.user.email + ">; "
+        for coorientador in banca.projeto.coorientador_set.all():
+            para += coorientador.get_full_name() + " <" + coorientador.email + ">; "
+        for membro in banca.membros():
+            para += membro.get_full_name() + " <" + membro.email + ">; "
+        para = para[:-2]  # tirando o ultimo "; "
+        
+        subject = "Banca Capstone: [" + banca.projeto.organizacao.nome + "] " +  banca.projeto.get_titulo()
+        
+        context_carta = {
+            "request": request,
+            "banca": banca,
+        }
+        message = render_message("Mensagem Banca", context_carta)
+
+        context = {
+            "assunto": subject,
+            "para": para,
+            "mensagem": message,
+            "url": request.get_full_path(),
+        }
+        return render(request, "professores/mensagem_email.html", context)
+
+    else:
+        return HttpResponseNotFound("<h1>Erro!</h1>")
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_editar(request, primarykey=None):

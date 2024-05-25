@@ -66,6 +66,10 @@ urlpatterns = [
          views.bancas_editar,
          name="bancas_editar"),
 
+    path("mensagem_email/<str:tipo>/<int:primarykey>",
+         views.mensagem_email,
+         name="mensagem_email"),
+
     path("banca_ver/<int:primarykey>",
          views.banca_ver,
          name="banca_ver"),

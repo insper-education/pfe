@@ -36,7 +36,9 @@
       }
 
       $(".modal-content", $popup).load(address, function () {
-        $(".selectpicker").selectpicker();
+        if ($(".selectpicker").length) {
+          $(".selectpicker").selectpicker();
+        }
         $popup.modal("show");
       });
     
@@ -57,7 +59,9 @@
     }
 
     $(".modal-content", $popup).load(address, function () {
-      $(".selectpicker").selectpicker();
+      if ($(".selectpicker").length) {
+        $(".selectpicker").selectpicker();
+      }
       $popup.modal("show");
     });
   });

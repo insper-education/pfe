@@ -1,0 +1,129 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 14 de Dezembro de 2023
+{% endcomment %}
+
+{% load static %}
+{% load get_field %}
+
+{% comment %} <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+<script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/short_full.css' %}"> {% endcomment %}
+
+<style>
+  input, textarea {max-width: 100%;}
+  table, th, td { border: 0px; }
+  {% comment %} 
+  .btn-group.bootstrap-select select {
+    width: 1px !important;
+  }
+  .url_reativo {font-size: 16px;}
+  @media (max-width: 460px) {
+    .url_reativo {font-size: 14px;}
+  }
+  /*Para seleção de projeto não vazar a tela*/
+  .bootstrap-select > .dropdown-menu { 
+    width: 100vw;
+    max-width: fit-content;
+  }
+  label {
+    display: inline;
+  } {% endcomment %}
+</style>
+
+  <form id="enviamensagemform" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+      <h5 id="documentacao" class="modal-title">Mensagem para Banca</h5>    
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div id="modal-body" class="modal-body" style="padding-bottom: 2px;">
+
+      <div class="form-group">
+        <table><tbody>
+          <tr>
+            <td>
+              <label for="assunto">Assunto:</label> 
+            </td>
+            <td>
+              <input id="assunto" name="assunto" type="text" size="256" style="width: 100%;"
+                {% if assunto %}value="{{assunto}}"{% endif %}/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="de">De:</label> 
+            </td>
+            <td>
+              <input id="de" name="de" type="text" size="256" style="width: 100%;" disabled
+                value="pfeinsper@gmail.com"/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="para">Para:</label> 
+            </td>
+            <td>
+              <input id="para" name="para" type="text" size="256" style="width: 100%;"
+                {% if para %}value="{{para}}"{% endif %}/>
+            </td>
+          </tr>
+        </tbody></table>
+        
+        <br>Mensagem:
+        <textarea id="mensagem" name="mensagem" rows="18" cols="256" style="max-width: 100%;"
+          >{% if mensagem %}{{ mensagem }}{% endif %}</textarea>
+
+      </div>
+
+    </div>
+
+    <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
+
+  </div>
+
+  <div id="div_botao" class="modal-footer">
+    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+    <button id="submit" class="btn btn-primary mb-1" type="submit" name="enviar">Enviar</button>
+  </div>
+
+</form>
+
+
+<script>
+
+  $(document).ready(function () {});
+ 
+  $("form#enviamensagemform").submit(function(e){
+    e.preventDefault();
+    
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#enviamensagemform").closest("form");
+    var formData = new FormData(form[0]);
+
+    $.ajax({
+      type: "POST",
+      url: "{{ url }}",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        $("#submit").hide();
+        $("#popup").modal("hide");
+      },
+      {% include "ajax_error_function.js" %}
+    });
+
+    return false;
+
+  });
+        
+</script>

@@ -199,7 +199,11 @@
             <br>
 
             <div class="agendamento" style="margin-top: 8px;">
-              <b>Agendamento</b>: mensagem
+              <b>Mensagem</b>: 
+                <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+                  data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
+                  Servidor
+                </a>    
                 {% with com_nome=True %}
                   <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
                 {% endwith %}          
@@ -215,6 +219,7 @@
             <a href="{% url 'event_ics_export' banca.id %}">
               ics
             </a>
+            
           </div>
 
           <span class="editar esconder" style="float: right;">

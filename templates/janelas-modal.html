@@ -21,7 +21,9 @@
       if(status == "error") {
         alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
       } else {
-        $(".selectpicker").selectpicker();
+        if ($(".selectpicker").length) {
+          $(".selectpicker").selectpicker();
+        }
         $popup.modal("show");
       }
     });
