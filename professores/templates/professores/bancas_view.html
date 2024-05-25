@@ -179,7 +179,7 @@
     <div>
         <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right;">Início:</span>
-        <input id="inicio" type="datetime-local" name="inicio" 
+        <input id="inicio" type="datetime-local" name="inicio" class="horario_banca"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% if banca %}
           value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
@@ -192,7 +192,7 @@
       
         <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
-        <input id="fim" type="datetime-local" name="fim"
+        <input id="fim" type="datetime-local" name="fim" class="horario_banca"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% if banca %}
           value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"
@@ -232,26 +232,40 @@
     </script>
 
     <label for="local">Local:</label> 
-      <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
-      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-      style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
-      {% if banca %}
-        value="{{banca.location}}"
-      {% endif %}
-      />
-    
+    <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
+    {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+    style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
+    {% if banca %}
+      value="{{banca.location}}"
+    {% endif %}
+    />
+    <span id="aviso_local" style="color: red;"></span>
     <br><br>
 
+    {% if banca.location %}
+      <script>
+        $(".horario_banca").change(function() {
+          if($("#local").val()) {
+            $("#aviso_local").html("[Local desatualizado, remover]");
+          }
+        });
+        $("#local").on("input", function() {
+          if(!$("#local").val()) {
+            $("#aviso_local").html("");
+          }
+        });
+      </script>
+    {% endif %}
+
     <label for="link">Link de Vídeo-conferência:</label>
-      <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
-      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-      style="max-width: 100%;" placeholder="somente se necessário"
-      {% if banca %}
-        value="{{banca.link}}"
-      {% endif %} 
-      />
-    <br>
-    <br>
+    <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
+    {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+    style="max-width: 100%;" placeholder="somente se necessário"
+    {% if banca %}
+      value="{{banca.link}}"
+    {% endif %} 
+    />
+    <br><br>
 
     <table>
       <tr>

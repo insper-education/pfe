@@ -475,8 +475,14 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False):
         mensagem += "Tipo: Banca Intermediária<br>"
     elif banca.tipo_de_banca == 2:
         mensagem += "Tipo: Banca Falconi<br>"
-    
-    mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br><br>"
+
+    if banca.location:
+        mensagem += "Local: " + banca.location + "<br>"
+
+    if banca.link:
+        mensagem += "Link: " + banca.link + "<br>"
+
+    mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y das %H:%M") + " às " + banca.endDate.strftime("%H:%M") + "<br><br>"
 
     LIMITE_DE_SALAS = 2
     if not excluida:
