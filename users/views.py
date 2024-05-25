@@ -223,7 +223,7 @@ def estudantes_lista(request):
             num_alunos_masculino = alunos_list.filter(user__genero='M').count()
             num_alunos_feminino = alunos_list.filter(user__genero='F').count()
 
-            cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Linkedin", "Telefone", ]
+            cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Linkedin", "Celular", ]
             
             context = {
                 "alunos_list": alunos_list,

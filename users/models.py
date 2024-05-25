@@ -8,6 +8,7 @@ Data: 15 de Maio de 2019
 """
 
 import datetime
+import re
 from hashids import Hashids
 from urllib.parse import quote
 
@@ -114,14 +115,12 @@ class PFEUser(AbstractUser):
         """Retorna o celular do usuário."""
         if self.celular:
             # Se o celular for um número de telefone, retorna ele formatado
-            celular = self.celular.strip()
-            print("Celular: <", celular, ">")
+            celular =   re.sub(r'[^\d\+]', '', self.celular)
             if celular[0] != '+':
                 if len(celular) == 11:
                     celular = "+55 (" + celular[:2] + ") " + celular[2:7] + "-" + celular[7:]
                 elif len(celular) == 9:
                     celular = "+55 (11) " + celular[:5] + "-" + celular[5:]
-            print("Celular formatado: <", celular, ">")
             return celular
         return None
 
