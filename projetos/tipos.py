@@ -56,6 +56,7 @@ TIPO_EVENTO = (
     (125, "Notificação para organizações dos projetos fechados", "#FFE4B5"),
     (126, "Professores tiram dúvidas das proposta para estudantes", "#FFA07A"),
     (127, "Reunião do comitê para montar grupos de projetos", "#B0E0E6"),
+    (128, "Reunião de Debriefing do Semestre com os Orientadores", "#FFD700"),
 
     (129, "Limite para contrato pronto para assinaturas", "#FF7F50"),
 

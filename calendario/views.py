@@ -44,6 +44,9 @@ def get_calendario_context(user=None):
         else:
             eventos = eventos.filter(startDate__year__lte=configuracao.ano)
 
+    tipos_eventos_sorter = sorted(TIPO_EVENTO, key=lambda x: (x[0]>100, x[1]))
+    tipos_eventos = [list(tipo) + ["Operação"] if tipo[0] > 100 else list(tipo) + ["Acadêmico"] for tipo in tipos_eventos_sorter]
+
     context = {
         "configuracao": configuracao,
         "eventos": eventos.exclude(tipo_de_evento__in=[12, 40, 41, 20, 30]).exclude(tipo_de_evento__gte=100),
@@ -53,7 +56,7 @@ def get_calendario_context(user=None):
         "quinzenais": eventos.filter(tipo_de_evento=20),  # 20, 'Relato Quinzenal'
         "feedbacks": eventos.filter(tipo_de_evento=30),  # 30, 'Feedback dos Estudantes sobre Capstone'
         "coordenacao": Evento.objects.filter(tipo_de_evento__gte=100),  # Eventos da coordenação
-        "tipos_eventos": TIPO_EVENTO,
+        "tipos_eventos": tipos_eventos,
         "Evento": Evento,
     }
 
