@@ -58,7 +58,7 @@
   {% endif %}
 
   {% if banca.projeto %}
-    <br><b>Link formulário de avaliação</b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
+    <br><b>&#9733; Link formulário de avaliação</b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
   {% endif %}
 
   {% include "ver_documentos.html" %}
