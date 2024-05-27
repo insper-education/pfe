@@ -838,12 +838,15 @@ class Banca(models.Model):
         return self.get_tipo_de_banca_display()
     
     def periodo(self):
-        configuracao = get_object_or_404(Configuracao)
-        if self.startDate.year >= configuracao.ano:
-            if configuracao.semestre == 1 and self.startDate.month < 7:
-                return "Atuais"
-            if configuracao.semestre == 2 and self.startDate.month > 7:
-                return "Atuais"
+        # configuracao = get_object_or_404(Configuracao)
+        # if self.startDate.year >= configuracao.ano:
+        #     if configuracao.semestre == 1 and self.startDate.month < 7:
+        #         return "Atuais"
+        #     if configuracao.semestre == 2 and self.startDate.month > 7:
+        #         return "Atuais"
+
+        if datetime.datetime.now() < self.startDate + datetime.timedelta(days=30):
+            return "Atuais"
         return "Anteriores"
     
     def get_observacoes_estudantes(self):
