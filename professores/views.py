@@ -554,7 +554,8 @@ def bancas_criar(request, data=None):
             banca = Banca.create(projeto)
             editar_banca(banca, request)
 
-            mensagem = mensagem_edicao_banca(banca)
+            if "enviar_mensagem" in request.POST:
+                mensagem = mensagem_edicao_banca(banca)
             
             context = {
                 "atualizado": True,
@@ -699,11 +700,13 @@ def bancas_editar(request, primarykey=None):
         mensagem = ""
         if "atualizar" in request.POST:
             if editar_banca(banca, request):
-                mensagem = mensagem_edicao_banca(banca, True) # Atualizada
+                if "enviar_mensagem" in request.POST:
+                    mensagem = mensagem_edicao_banca(banca, True) # Atualizada
             else:
                 mensagem = "Erro ao Editar banca."
         elif "excluir" in request.POST:
-            mensagem = mensagem_edicao_banca(banca, True, True) # Excluida
+            if "enviar_mensagem" in request.POST:
+                mensagem = mensagem_edicao_banca(banca, True, True) # Excluida
             if "projeto" in request.POST:
                 banca.delete()
         else:
