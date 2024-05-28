@@ -444,7 +444,7 @@ def ajax_atualiza_dinamica(request):
     return HttpResponse("Erro.", status=401)    
 
 
-def mensagem_edicao_banca(banca, atualizada=False, excluida=False):
+def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
     subject = "Banca "
     if banca.tipo_de_banca == 0:
@@ -532,11 +532,12 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False):
     if configuracao.operacao:
         recipient_list.append(str(configuracao.operacao.user.email))
 
-    check = email(subject, recipient_list, mensagem)
-    if check != 1:
-        error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-        logger.error(error_message)
-        mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+    if enviar:
+        check = email(subject, recipient_list, mensagem)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
+            mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
     
     return mensagem
     
@@ -554,8 +555,7 @@ def bancas_criar(request, data=None):
             banca = Banca.create(projeto)
             editar_banca(banca, request)
 
-            if "enviar_mensagem" in request.POST:
-                mensagem = mensagem_edicao_banca(banca)
+            mensagem = mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST))
             
             context = {
                 "atualizado": True,
@@ -700,13 +700,11 @@ def bancas_editar(request, primarykey=None):
         mensagem = ""
         if "atualizar" in request.POST:
             if editar_banca(banca, request):
-                if "enviar_mensagem" in request.POST:
-                    mensagem = mensagem_edicao_banca(banca, True) # Atualizada
+                mensagem = mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST)) # Atualizada
             else:
                 mensagem = "Erro ao Editar banca."
         elif "excluir" in request.POST:
-            if "enviar_mensagem" in request.POST:
-                mensagem = mensagem_edicao_banca(banca, True, True) # Excluida
+            mensagem = mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST)) # Excluida
             if "projeto" in request.POST:
                 banca.delete()
         else:
