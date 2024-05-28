@@ -388,8 +388,10 @@
 
     var mensagem = $("#projeto").children(":selected").data("mensagem");
     if(mensagem) { 
-      $("#mensagem").html(mensagem); 
-      $("#submit").prop("disabled",true); // Se há mensagem é que a banca já foi agendada
+      $("#mensagem").html(mensagem);
+      {% if request.user.tipo_de_usuario != 4 %}
+        $("#submit").prop("disabled",true); // Se há mensagem é que a banca já foi agendada
+      {% endif %}
       return;
     }
     $("#mensagem").html("");
