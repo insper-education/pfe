@@ -7,6 +7,13 @@
 {% load static %}
 {% load date_extras %}
 
+<style>
+  .strikeout {
+      text-decoration: line-through;
+      color: #808080;
+  }
+</style>
+
 <div class="wrap">
   <div id="calendar"></div>
 </div>
@@ -15,13 +22,13 @@
 <div class="wrap">  
   <div class="legenda" style="display: flex;">
     <div class="legenda-block">
-      <div class="legenda-item" >
+      <div id="leg_intermediaria" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;Bancas Intermediárias</div>
       </div>
-      <div class="legenda-item">
+      <div id="leg_final" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;Bancas Finais</div>
       </div>
-      <div class="legenda-item">
+      <div id="leg_falconi" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;Bancas Falconi</div>
       </div>
     </div>
@@ -42,12 +49,7 @@
 </div>
 
 <script>
-  $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
-  $("#color_banca_final").css("color", color_banca_final);
-  $("#color_banca_falconi").css("color", color_banca_falconi);
-  $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
-  $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
-
+  
   function atualiza(event) {
     url = "{% url 'ajax_atualiza_banca' %}";
     data = {
@@ -149,6 +151,7 @@
                         membro3: value.membro3,
                         description: value.description,
                         editable: value.editable,
+                        className: value.className,
                       });
                     }
                     successCallback(eventsList);
@@ -238,6 +241,31 @@
     calendar.render();
 
   }
+
+  $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
+  $("#color_banca_final").css("color", color_banca_final);
+  $("#color_banca_falconi").css("color", color_banca_falconi);
+  $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
+  $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
+
+  
+  $("#leg_intermediaria").click(function(){
+    $(this).toggleClass("strikeout");
+    $(".b_intermediaria").toggle();
+    calendar.updateSize();
+  });
+
+  $("#leg_final").click(function(){
+    $(this).toggleClass("strikeout");
+    $(".b_final").toggle();
+    calendar.updateSize();
+  });
+
+  $("#leg_falconi").click(function(){
+    $(this).toggleClass("strikeout");
+    $(".b_falconi").toggle();
+    calendar.updateSize();
+  });
 
 </script>
 

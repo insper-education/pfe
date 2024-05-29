@@ -376,10 +376,13 @@ def ajax_bancas(request):
                 
                 if banca.tipo_de_banca == 0: # Banca Final
                     bancas[banca.id]["color"] = "#74a559"
+                    bancas[banca.id]["className"] = "b_final"
                 elif banca.tipo_de_banca == 1:  # Banca Intermediária
                     bancas[banca.id]["color"] = "#e6b734"
+                    bancas[banca.id]["className"] = "b_intermediaria"
                 elif banca.tipo_de_banca == 2: # Banca Falconi
                     bancas[banca.id]["color"] = "#ff38a6"
+                    bancas[banca.id]["className"] = "b_falconi"
                 else:
                     bancas[banca.id]["color"] = "#777777"
 
