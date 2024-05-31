@@ -1588,9 +1588,16 @@ def banca(request, slug):
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
     elif banca.tipo_de_banca == 0:  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    #elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+    elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+        # Reaproveita o tipo de documento da banca final
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    else:
+        tipo_documento = None
     
-    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
+    if tipo_documento:
+        documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
+    else:
+        documentos = None
 
     context = {
         "banca": banca,

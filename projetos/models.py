@@ -914,10 +914,13 @@ class Banca(models.Model):
         elif self.tipo_de_banca == 1: # Intermediária
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
         elif self.tipo_de_banca == 2:  # Falconi
+            # Reaproveita o tipo de documento da banca final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
         else:
             return None
+        
         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto).order_by("data").last()
+        
         return documento
 
 
