@@ -646,7 +646,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
                 return HttpResponse("Envio não realizado.", status=401)
 
             recipient_list = para.split(';')
-            recipient_list.append("Luciano Pereira Soares <lpsoares@ginsper.edu.br>")
+            recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
 
             check = email(assunto, recipient_list, mensagem)
             if check != 1:
