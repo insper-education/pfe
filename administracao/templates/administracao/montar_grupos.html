@@ -195,7 +195,7 @@
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
-                          {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
+                          #{{ opcaop.prioridade }}
                           </u>
                         {% else %}
                           {% if opcaop.aluno %}
@@ -203,7 +203,7 @@
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
-                          {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
+                          #{{ opcaop.prioridade }}
                         {% endif %}
                       {% else %}
                         {% if opcaop.aluno %}
@@ -211,7 +211,7 @@
                           {CR: {{opcaop.aluno.cr|floatformat:2}}}
                           |{% mede_aderencia opcaop.aluno proposta %}%|
                         {% endif %}
-                        {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
+                        #{{ opcaop.prioridade }}
                       {% endif %}
                       &#10140;&nbsp;<span class="atual{{opcaop.aluno.id}}"></span>
                       <br>
