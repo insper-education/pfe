@@ -43,6 +43,7 @@ psql -U pfe -h localhost < backup.sql
 
 # Backup pelo Django (para windows soh consegui assim)
 python3 manage.py dumpdata --natural-primary --natural-foreign > dump.json
+python3 manage.py flush --no-input
 python3 manage.py loaddata dump.json
 
 # Virtual environment

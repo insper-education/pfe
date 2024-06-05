@@ -14,6 +14,8 @@ import axes.utils
 import datetime
 import logging
 
+from itertools import groupby
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
@@ -777,20 +779,19 @@ def montar_grupos(request):
 
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
 
-    estudantes = Aluno.objects.filter(trancado=False).\
-        filter(anoPFE=ano, semestrePFE=semestre).\
+    estudantes = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre).\
         order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     opcoes = []
+    opcoes_periodo = Opcao.objects.filter(proposta__ano=ano, proposta__semestre=semestre).order_by("prioridade")
     for estudante in estudantes:
-        opcao = Opcao.objects.filter(aluno=estudante).\
-                              filter(proposta__ano=ano, proposta__semestre=semestre).\
-                              order_by("prioridade")
+        opcao = opcoes_periodo.filter(aluno=estudante)
         opcoes.append(opcao)
-
+        
         # Caso haja um pré-alocação de anos anteriores, limpar a pré-alocação
         if estudante.pre_alocacao and estudante.pre_alocacao not in propostas:
             estudante.pre_alocacao = None
+            estudante.save()
 
     estudantes_opcoes = zip(estudantes, opcoes)
 

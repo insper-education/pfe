@@ -488,6 +488,10 @@ class Proposta(models.Model):
         proposta = cls()
         return proposta
 
+    def perfis(self):
+        perfis = [getattr(self, f"perfil{i}") for i in range(1, 5)]
+        return perfis
+
     def __str__(self):
         """Retorno padrão textual."""
         if self.organizacao:

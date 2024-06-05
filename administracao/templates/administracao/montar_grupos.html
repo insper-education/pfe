@@ -234,16 +234,19 @@
 
         </div>
 
-        <div class="esconder" style="width: 1.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
+        <div class="esconder" style="width: 2.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
           <a class="ancora" style="color: #000062;" data-toggle="tooltip" data-html="true" animation="true" title=
-          "{% for rec in proposta.recomendada_set.all %}
+           "{% for rec in proposta.recomendada_set.all %}
             {{rec.disciplina.nome}}<br>
-          {% endfor %}">
-            <tt style="display: block; font-size: smaller;">
-              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil1.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
-              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil2.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
-              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil3.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
-              {% for curso in cursos %}{% if curso.curso_do_insper %}{% if curso in proposta.perfil4.all %}{{curso.sigla_curta}}{% else %}&nbsp;{% endif %}{% endif %}{% endfor %}<br>
+           {% endfor %}">
+            <tt style="display: block; font-size: 8px; white-space: nowrap;">
+              {% nospaces %}
+              {% for perfil in proposta.perfis %}
+                {% for curso in cursos %}
+                  <span style="margin-right: 3px;">{% if curso in perfil.all %}{{curso.sigla_curta}}{% else %}&nbsp;&nbsp;{% endif %}</span>
+                {% endfor %}<br>
+              {% endfor %}
+              {% endnospaces %}
             </tt>
           </a>
         </div>
