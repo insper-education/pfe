@@ -192,23 +192,28 @@
                           <u>
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
+                            {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                            |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
-                          #{{ opcaop.prioridade }}
+                          {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
                           </u>
                         {% else %}
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
+                            {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                            |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
-                          #{{ opcaop.prioridade }}
+                          {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
                         {% endif %}
                       {% else %}
                         {% if opcaop.aluno %}
                           {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
+                          {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                          |{% mede_aderencia opcaop.aluno proposta %}%|
                         {% endif %}
-                        #{{ opcaop.prioridade }}
+                        {% comment %} #{{ opcaop.prioridade }} {% endcomment %}
                       {% endif %}
-                      |{% mede_aderencia opcaop.aluno proposta %}%|
-                      &#10140;&nbsp;<span class='atual{{opcaop.aluno.id}}'></span>
+                      &#10140;&nbsp;<span class="atual{{opcaop.aluno.id}}"></span>
                       <br>
                     {% endwith %}
                   {% empty %}
@@ -388,7 +393,7 @@
         title="
         {% for opcao in opcoes %}
           <b>#{{ opcao.prioridade }} :</b>
-          {{opcao.proposta.titulo}} ({{opcao.proposta.organizacao.nome}})
+          [{{opcao.proposta.organizacao.nome}}] {{opcao.proposta.titulo}}
           |{% mede_aderencia estudante opcao.proposta %}%|<br>
         {% empty %}
           Estudante não escolheu opções de proposta de projetos<br>
@@ -449,7 +454,7 @@
 
         proposta = $("#proposta{{estudante.pre_alocacao.id}}").data("titulo");
         $(".atual{{estudante.id}}").each(function(i, obj) {
-          if($(this).parent().closest('div').attr('id').slice(3) == "{{estudante.pre_alocacao.id}}"){
+          if($(this).parent().closest("div").attr("id").slice(3) == "{{estudante.pre_alocacao.id}}"){
             $(this).html("<u>"+proposta+"</u>");
           } else {
             $(this).html(proposta);
