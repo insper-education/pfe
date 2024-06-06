@@ -114,7 +114,7 @@
 
     .estrela {
       font-size: 1.2em;
-      color: #FF9900;
+      color: #FF8800;
     }
     
     @media screen and (max-width: 800px) {
@@ -275,6 +275,8 @@
       {% for curso in cursos %}
         <b>{{curso.sigla_curta}}</b>: {{curso.nome}} {% if not forloop.last %}|{% endif %}
       {% endfor %}
+      <br>
+      <span class="estrela">&#9733;</span>: Alguma observação sobre a alocação do estudante no projeto
     </small>
   </div>
   <hr style="margin-top: 2px;">
@@ -323,6 +325,11 @@
     <canvas id="chart-area"></canvas>
   </div>
 
+  {% comment %} Senão alguns tooltips dão problema {% endcomment %}
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  
   <script>
 
     function escondePropostas(){
@@ -392,6 +399,7 @@
       tmp_node = `
       <div id="estudante{{estudante.id}}" draggable="true" class="estudante imprimir_div" data-cr="{{estudante.cr}}"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
+      <span id="estr{{estudante.id}}" class="estrela">{% if estudante.estrela %}&#9733;{% endif %}</span>
       <a target="_blank" rel="noopener noreferrer" style="display: inline; white-space: nowrap;"
        class="ancora imprimir" href="{% url 'estudante_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
@@ -405,7 +413,7 @@
         {% endfor %}
         --------------------------------------------------------------------------<br>
         {% if estudante.trabalhou %}
-        <b>Você já trabalhou/trabalha ou estagiou/estagia em alguma empresa (informe situação)?</b><br>
+        <b>Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa (informe situação)?</b><br>
         {{estudante.trabalhou|linebreaks}}<br>{% endif %}
         {% if estudante.social %}
         <b>Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.</b><br>
@@ -417,7 +425,6 @@
         <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>
         {{estudante.familia|linebreaks}}<br>{% endif %}
         ">
-        <span id="estr{{estudante.id}}" class="estrela">{% if estudante.estrela %}&#9733;{% endif %}</span>
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
         <span class="opt_full esconder">CR:&nbsp;</span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
@@ -490,7 +497,6 @@
 
     {% endfor %}
     
-
     </script>
 
     {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
@@ -784,7 +790,7 @@
       }
     }
 
-    </script>
+  </script>
 
 {% comment %} Para o propor grupos automaticamente {% endcomment %}
 {% include "montando_grupos_auto.html" %}
