@@ -254,6 +254,9 @@ class Aluno(models.Model):
     externo = models.CharField("Externo", max_length=40, null=True, blank=True,
                                help_text="Instituição de onde o estudante vem")
 
+    estrela = models.BooleanField(default=False,
+                                   help_text="Algum ponto de observação para a alocação do estudante em um grupo")
+
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):
         """Given a field name, return it's help text."""

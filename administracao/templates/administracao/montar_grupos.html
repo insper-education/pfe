@@ -111,6 +111,11 @@
     .titulo_proposta {
       display: inline;
     }
+
+    .estrela {
+      font-size: 1.2em;
+      color: #FF9900;
+    }
     
     @media screen and (max-width: 800px) {
       .ancora {
@@ -412,6 +417,7 @@
         <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>
         {{estudante.familia|linebreaks}}<br>{% endif %}
         ">
+        <span id="estr{{estudante.id}}" class="estrela">{% if estudante.estrela %}&#9733;{% endif %}</span>
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
         <span class="opt_full esconder">CR:&nbsp;</span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
@@ -455,9 +461,9 @@
         proposta = $("#proposta{{estudante.pre_alocacao.id}}").data("titulo");
         $(".atual{{estudante.id}}").each(function(i, obj) {
           if($(this).parent().closest("div").attr("id").slice(3) == "{{estudante.pre_alocacao.id}}"){
-            $(this).html("<u>"+proposta+"</u>");
+            $(this).html("<u>" + proposta + " #" + opcao[1] + "</u>");
           } else {
-            $(this).html(proposta);
+            $(this).html(proposta + " #" + opcao[1]);
           }
         });
 
@@ -493,9 +499,9 @@
     <script>
 
       function update_tips() {
-        $('.tip').each(function () {
+        $(".tip").each(function () {
             $(this).tooltip(
-            {html: true}).attr('data-original-title', $('#' + $(this).data('tip')).html());
+            {html: true}).attr("data-original-title", $("#" + $(this).data("tip")).html());
         });
       }
     
@@ -504,6 +510,7 @@
       $(document).ready(function() {
         $(".estudante").on("dragstart", dragging);
         $(".estudante").on("dragend", draggingEnded);
+        $(".estudante").on("dblclick", estrela);
         $(".proposta").on("dragenter", preventDefault);
         $(".proposta").on("dragover", preventDefault);
         $(".proposta").on("drop", dropAluno);
@@ -541,9 +548,9 @@
       var desbalanceadas = {};
       var vazias = 0;
 
-      var propostas = $('.proposta');
+      var propostas = $(".proposta");
       for (var i = 0; i < propostas.length; i++) {
-        qtd_estudantes = $(propostas[i]).children('div').length - 1
+        qtd_estudantes = $(propostas[i]).children("div").length - 1
         if(qtd_estudantes == 0) {
           vazias += 1;
         } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
@@ -595,7 +602,7 @@
     }
 
     function colorir_proposta(target) {
-        qtd_estudantes = $(target).children('div').length - 1
+        qtd_estudantes = $(target).children("div").length - 1
         if(qtd_estudantes == 0) {
             $(target).css("background-color", "tomato");
         } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
@@ -618,7 +625,7 @@
         childList: true
     };
 
-    var propostas = $('.proposta');
+    var propostas = $(".proposta");
     for (var i = 0; i < propostas.length; i++) {
         colorir_proposta(propostas[i]);
         observer_proposta.observe(propostas[i], config);
@@ -673,7 +680,6 @@
           else if(opcao[0] == 5) prioridade5 -= 1;
           else prioridade6m -= 1;
 
-          
           if(opcao[1] == "X" || opcao[1] == undefined ) nao_definido += 1;
           else if(opcao[1] == 1) prioridade1 += 1;
           else if(opcao[1] == 2) prioridade2 += 1;
@@ -695,12 +701,12 @@
           if(diff == 0) {diff=1.0;} // Evita divisão por zero
 
           labels = [
-            '#1 ['+parseInt(prioridade1/diff)+'%]',
-            '#2 ['+parseInt(prioridade2/diff)+'%]',
-            '#3 ['+parseInt(prioridade3/diff)+'%]',
-            '#4 ['+parseInt(prioridade4/diff)+'%]',
-            '#5 ['+parseInt(prioridade5/diff)+'%]',
-            '#>=6 ['+parseInt(prioridade6m/diff)+'%]'
+            "#1 ["+parseInt(prioridade1/diff)+"%]",
+            "#2 ["+parseInt(prioridade2/diff)+"%]",
+            "#3 ["+parseInt(prioridade3/diff)+"%]",
+            "#4 ["+parseInt(prioridade4/diff)+"%]",
+            "#5 ["+parseInt(prioridade5/diff)+"%]",
+            "#>=6 ["+parseInt(prioridade6m/diff)+"%]"
           ]
 
           window.myPie.data.datasets[0].data = dados;
@@ -718,7 +724,7 @@
           proposta = final_target.data("titulo");
 
           $("."+atual).each(function(i, obj) {
-            if($(this).parent().closest('div').attr('id').slice(3) == final_target.attr('id').slice(8)){
+            if($(this).parent().closest("div").attr("id").slice(3) == final_target.attr("id").slice(8)){
               $(this).html("<u>"+proposta+"</u>");
             } else {
               $(this).html(proposta);
@@ -749,6 +755,33 @@
 
     function preventDefault(e) {
         e.preventDefault();
+    }
+
+    function estrela_estudante(estudante, estado) {
+      $.ajax({
+        url: "{% url 'estrela_estudante' %}",
+        data: {
+          "estudante": estudante,
+          "estado": estado,
+        },
+        dataType: "JSON",
+        success: function(data) {},
+        {% include "ajax_error_function.js" %}
+      });
+    }
+
+    function estrela(e) {
+      var target = $(e.target).closest(".estudante");
+      estudante_id = target[0].id.slice(9);
+      atual = "#estr" + estudante_id
+      console.log($(atual).html());
+      if($(atual).html() == "") {
+        $(atual).html("&#9733;");
+        estrela_estudante(estudante_id, true);
+      } else {
+        $(atual).html("");
+        estrela_estudante(estudante_id, false);
+      }
     }
 
     </script>

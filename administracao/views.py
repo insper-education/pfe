@@ -964,6 +964,30 @@ def pre_alocar_estudante(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
+def estrela_estudante(request):
+    """Ajax para informar que alocação de estudate pode ter algum ponto de observação."""
+    if request.user.tipo_de_usuario == 4:  # admin
+
+        estudante_id = request.GET.get("estudante", None)
+        estudante = get_object_or_404(Aluno, id=estudante_id)
+
+        estado = request.GET.get("estado", "false") == "true"
+        estudante.estrela = estado
+        estudante.save()
+
+    elif request.user.tipo_de_usuario == 2:  # professor
+        # atualizações não serão salvas
+        pass
+
+    else:
+        return HttpResponseNotFound("<h1>Usuário sem privilérios!</h1>")
+
+    return JsonResponse({"atualizado": False,})
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
 def definir_orientador(request):
     """Ajax para definir orientadores de projetos."""
     
