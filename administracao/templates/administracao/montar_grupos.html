@@ -61,6 +61,7 @@
         display: -ms-flexbox;
         display: flex;
         margin-bottom: 3px;
+        padding-right: 4px;
     }
 
     .estudante {
@@ -81,6 +82,9 @@
         text-overflow: ellipsis;
         overflow: hidden;
         border-radius: 5px;
+    }
+
+    .boxshadow {
         -webkit-box-shadow: 4px 3px 5px 1px rgba(0,0,0,0.35);
         -moz-box-shadow: 4px 3px 5px 1px rgba(0,0,0,0.35);
         box-shadow: 4px 3px 5px 1px rgba(0,0,0,0.35);
@@ -114,7 +118,7 @@
 
     .estrela {
       font-size: 1.2em;
-      color: #FF8800;
+      color: #FF8000;
     }
     
     @media screen and (max-width: 800px) {
@@ -397,7 +401,7 @@
 
     {% for estudante, opcoes in estudantes_opcoes %}
       tmp_node = `
-      <div id="estudante{{estudante.id}}" draggable="true" class="estudante imprimir_div" data-cr="{{estudante.cr}}"
+      <div id="estudante{{estudante.id}}" draggable="true" class="estudante imprimir_div boxshadow" data-cr="{{estudante.cr}}"
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
       <span id="estr{{estudante.id}}" class="estrela">{% if estudante.estrela %}&#9733;{% endif %}</span>
       <a target="_blank" rel="noopener noreferrer" style="display: inline; white-space: nowrap;"

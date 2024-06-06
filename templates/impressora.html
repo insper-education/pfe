@@ -65,11 +65,14 @@
       $(".email").hide();
       $(".images").hide();
 
+      // Remove box-shadow effect from class estudante em montar_grupos
+      $(".estudante").removeClass("boxshadow");
+
       {% comment %} Renomeia temporariamente a tag href para evitar ser pega no Compy&Paste {% endcomment %}
       $("a.imprimir[href]").each(function() {
           var $tag = $(this);
-          $tag.attr({tmp: $tag.attr('href')})
-              .removeAttr('href');
+          $tag.attr({tmp: $tag.attr("href")})
+              .removeAttr("href");
       });
 
   });
@@ -87,6 +90,9 @@
       $(".email").show();
       $(".images").show();
 
+      // Add box-shadow effect from class estudante em montar_grupos
+      $(".estudante").addClass("boxshadow");
+      
       {% comment %} Recupera a tag href para evitar ser pega no Compy&Paste {% endcomment %}
       $("a.imprimir[tmp]").each(function() {
         var $tag = $(this);
