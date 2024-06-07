@@ -48,9 +48,9 @@ def email(subject, recipient_list, message, aviso_automatica=True):
         message += configuracao.msg_email_automatico
         message += "</small>"
 
-    # return send_mail(subject, message, email_from, recipient_list,
-    #                  fail_silently=True, auth_user=auth_user, html_message=message)
-
+    # Removing "\\r\\n' from header 'Subject' to avoid breaking the email
+    subject = subject.replace('\r', '').replace('\n', '')
+    
     send_mail_task.delay(subject, message, email_from, recipient_list,
                          fail_silently=True, auth_user=auth_user, html_message=message)
 
