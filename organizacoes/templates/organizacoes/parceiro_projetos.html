@@ -13,7 +13,14 @@
 {% block content %}
   <span class="titulo">{{ titulo }}</span>
 
-  <b>Organização</b>: {{ organizacao }}<br><br>
+  <b>Organização</b>:
+  {% if organiza %}
+     {{ organizacao }}
+  {% else %}
+    NÃO DEFINIDA
+    (Essa área é para ser usada apenas por usuários de organizações cadastradas no sistema)
+  {% endif %}
+  <br><br>
 
   <div class="table-responsive">
     <table id="ProjetosTable" class="table-bordered table-sm">

@@ -259,13 +259,15 @@ def parceiro_projetos(request):
     if hasattr(user, "parceiro"):
         projetos = Projeto.objects\
             .filter(proposta__organizacao=user.parceiro.organizacao).order_by("ano", "semestre")
+        organizacao = user.parceiro.organizacao
     else:
-        projetos = projetos
+        projetos = None
+        organizacao = None
 
     context = {
         "titulo": "Lista de Projetos",
         "projetos": projetos,
-        "organizacao": user.parceiro.organizacao,
+        "organizacao": organizacao,
     }
     return render(request, "organizacoes/parceiro_projetos.html", context)
 
