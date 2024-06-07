@@ -2453,10 +2453,13 @@ def avaliar_entregas(request, selecao=None):
         exames = set()
         for composicao in Composicao.objects.filter(entregavel=True):
             exames.add(composicao.exame)
-            
+
+        configuracao = get_object_or_404(Configuracao)
+
         context = {
                 "titulo": "Avaliar Entregas",
                 "edicoes": get_edicoes(Relato)[0],
+                "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
                 "tipos_entregas": exames if selecao else None,
             }
 
