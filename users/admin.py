@@ -51,14 +51,14 @@ class PFEUserAdmin(admin.ModelAdmin):
     """Usuário geral ."""
     list_display = ("first_name", "last_name", "username", "email", "genero", "tipo_de_usuario",)
     list_filter = ("tipo_de_usuario", FirstLetterFilter)
-    fieldsets = (
-        (None, {"fields": ("username", "first_name", "last_name", "pronome_tratamento", "nome_social", "email", "tipo_de_usuario",)}),
-        ("Personal info",
-         {"fields": ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
-                     "linkedin", "membro_comite", "genero", "tipo_lingua", "observacoes")}),
-        ("Permissions",
-         {"fields": ("is_active", "is_staff", "is_superuser",)}),
-    )
+    # fieldsets = (
+    #     (None, {"fields": ("username", "first_name", "last_name", "pronome_tratamento", "nome_social", "email", "tipo_de_usuario",)}),
+    #     ("Personal info",
+    #      {"fields": ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
+    #                  "linkedin", "membro_comite", "genero", "tipo_lingua", "observacoes")}),
+    #     ("Permissions",
+    #      {"fields": ("is_active", "is_staff", "is_superuser",)}),
+    # )
     ordering = ("first_name", "last_name")
     search_fields = ["first_name", "last_name", ]
 
@@ -70,19 +70,19 @@ class AlunoAdmin(admin.ModelAdmin):
     ordering = ("user__first_name", "user__last_name", )
     list_filter = ("curso2", FirstLetterFilter, )
     search_fields = ["user__first_name", "user__last_name", ]
-    fieldsets = \
-        ((None,
-          {"fields":
-           ("user",)
-          }),
-         ("Pessoais", {
-             "fields": ("matricula", "curso2", 
-                        #"opcoes", 
-                        "email_pessoal", "anoPFE", 
-                        "semestrePFE", "trancado", "cr", "pre_alocacao", 
-                        "trabalhou", "social", "entidade", "familia", "externo",)
-         }),
-        )
+    # fieldsets = \
+    #     ((None,
+    #       {"fields":
+    #        ("user",)
+    #       }),
+    #      ("Pessoais", {
+    #          "fields": ("matricula", "curso2", 
+    #                     #"opcoes", 
+    #                     "email_pessoal", "anoPFE", 
+    #                     "semestrePFE", "trancado", "cr", "pre_alocacao", 
+    #                     "trabalhou", "social", "entidade", "familia", "externo",)
+    #      }),
+    #     )
 
 
 @admin.register(Alocacao)

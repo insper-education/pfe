@@ -416,6 +416,9 @@
           Estudante não escolheu opções de proposta de projetos<br>
         {% endfor %}
         --------------------------------------------------------------------------<br>
+        {% if estudante.user.observacoes %}
+        <b>OBSERVACÕES:</b><br>
+        {{estudante.user.observacoes|linebreaks}}<br>{% endif %}
         {% if estudante.trabalhou %}
         <b>Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa (informe situação)?</b><br>
         {{estudante.trabalhou|linebreaks}}<br>{% endif %}
