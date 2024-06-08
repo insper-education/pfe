@@ -408,6 +408,25 @@ def tabela_atas(request):
     return render(request, "documentos/tabela_atas.html", context)
 
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def tabela_videos(request):
+    """Exibe tabela com todos os videos produzidos no semestre."""
+    try:
+        tipo_videos = TipoDocumento.objects.get(nome="Vídeo do Semestre")
+        videos = Documento.objects.filter(tipo_documento=tipo_videos).order_by("-data")
+    except TipoDocumento.DoesNotExist:
+        return HttpResponse("Tipo de Documento para Vídeo do Semestre não encontrado.", status=401)
+
+    context = {
+        "titulo": "Tabela de Vídeos Semestrais do Capstone",
+        "documentos": videos,
+        "tipo": tipo_videos,
+    }
+    return render(request, "documentos/tabela_videos.html", context)
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def contratos_assinados(request):

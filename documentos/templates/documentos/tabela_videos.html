@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 8 de Junho de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load arquivo_tipo %}
+  <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
+  <script src="{% static 'js/sort.js' %}"></script>
+  <script>{% include "tooltip.js" %}</script>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">{{ titulo }}
+    {% if user.tipo_de_usuario == 4 %}
+      <small class="esconder">
+        <a
+          class="open-documento" style="cursor:pointer;"
+          data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
+          >&#10133;</a
+        >
+      </small>
+    {% endif %}
+  </span>
+  <br>
+
+  <div class="table-responsive">
+    <table id="AtasTable" class="table-bordered table-sm">
+      <thead class="table-info">
+        <tr>
+          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')">Data</th>
+          <th>Anotação</th>
+          <th>Documento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% regroup documentos by data|date:"DATE_FORMAT" as grouped %}
+        {% for group in grouped %}
+          {% for obj in group.list %}
+            <tr class="item">
+              {% ifchanged %}
+                <td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>
+                <td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.anotacao}}</td>
+              {% endifchanged %}
+              <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
+                {% if obj.documento %}
+                  <a class="btn btn-light btn-outline-info btn-sm tab_botao"
+                    href="{{request.scheme}}://{{request.get_host}}{{obj.documento.url}}" 
+                    target="_blank" rel="noopener noreferrer"
+                    {% if obj.anotacao %}
+                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                    {% endif %}
+                  >{{obj.documento|get_tipo}}</a>
+                {% elif obj.link %}
+                  <a class="btn btn-light btn-outline-info btn-sm tab_botao"
+                    href="{{obj.link}}" 
+                    target="_blank" rel="noopener noreferrer"
+                    {% if obj.anotacao %}
+                      data-toggle="tooltip" data-html="true" animation="true" title="anotação: {{obj.anotacao}}"
+                    {% endif %}
+                  >link</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% empty %}
+          <tr><td colspan="2">Não existem atas disponíveis.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if user.tipo_de_usuario == 4 %}
+    {% include "documento-modal.html" %}
+  {% endif %}
+
+{% endblock %}
