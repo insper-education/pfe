@@ -53,11 +53,12 @@
           {% endif %}
         {% endwith %}
 
-        {% if alocado.projeto.encontro_set.all %}
+        {% with encontros=alocado.projeto.encontro_set.all %}
+        {% if encontros %}
         <div>
           <h5>Mentorias Marcadas<br></h5>
           <ul>
-            {% for dinamica in alocado.projeto.encontro_set.all %} 
+            {% for dinamica in encontros %} 
               <li>
                 {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
                 {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
@@ -67,6 +68,33 @@
           </ul>
         </div>
         {% endif %}
+        {% endwith %}
+
+        {% with certificados=alocado.get_certificados %}
+        {% if certificados %}
+        <div>
+          <h5>Certificados Recebidos<br></h5>
+          <ul>
+            {% for documento in certificados %} 
+              <li>
+                {% if documento.documento and documento.link %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                {% else %}
+                  {% if documento.documento %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
+                  {% endif %}
+                  {% if documento.link %}
+                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                  {% endif %}
+                {% endif %}
+                ({{documento.data}})
+                </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
 
       {% endif %}
 

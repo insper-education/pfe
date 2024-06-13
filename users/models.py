@@ -29,7 +29,7 @@ from django.db.models import F
 
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
-from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
+from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento, Certificado
 from projetos.support import calcula_objetivos, get_upload_path
 
 from operacional.models import Curso
@@ -879,6 +879,12 @@ class Alocacao(models.Model):
             relatos.append(relato)
 
         return zip(eventos, relatos, range(len(eventos)))
+
+    @property
+    def get_certificados(self):
+        """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
+        certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
+        return certificados
 
 
 class Parceiro(models.Model):  # da empresa (não do Insper)
