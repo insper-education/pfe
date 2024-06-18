@@ -44,8 +44,8 @@
             <tr class="item">
               {% ifchanged %}
                 <td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.data|date:"DATE_FORMAT"}}</td>
-                <td style="vertical-align:middle" rowspan="{{ group.list|length }}">{{obj.anotacao}}</td>
               {% endifchanged %}
+              <td style="vertical-align:middle">{% if obj.anotacao %}{{obj.anotacao}}{% endif %}</td>
               <td style="text-align:center; padding: 2px; border-top-style: dotted;{% if not forloop.last %}border-bottom-style: dotted;{% endif %}">
                 {% if obj.documento %}
                   <a class="btn btn-light btn-outline-info btn-sm tab_botao"

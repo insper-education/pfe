@@ -58,9 +58,9 @@ urlpatterns = [
          views.tabela_atas,
          name="tabela_atas"),
 
-     path("tabela_videos/",
-         views.tabela_videos,
-         name="tabela_videos"),
+     path("tabela_imagens/",
+         views.tabela_imagens,
+         name="tabela_imagens"),
 
     path("tabela_documentos/",
          views.tabela_documentos,
