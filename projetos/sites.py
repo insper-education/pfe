@@ -67,7 +67,7 @@ def upload_site_e_pastas(request, projeto_id):
                 MAX_SIZE = configuracao.maxMB_filesize * 1048576
                 with zipfile.ZipFile(zip_file, 'r') as zip_ref:
                     total_size = sum((file.file_size for file in zip_ref.infolist()))
-                    if total_size > MAX_SIZE:
+                    if total_size > MAX_SIZE and request.user.tipo_de_usuario != 4:
                         return HttpResponse("Arquivo descomprimido maior que o limite: " + str(configuracao.maxMB_filesize) + "MB.")
                     site_root = settings.SITE_ROOT + "/projeto"+str(projeto.id)
                     if os.path.exists(site_root):

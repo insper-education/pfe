@@ -166,7 +166,8 @@
             {% endif %}
             <br><br>
 
-            {% if configuracao.maxMB_filesize %}
+            {% if configuracao.maxMB_filesize and user.tipo_de_usuario != 4 %}
+              {% comment %} Administrador pode enviar arquivos maiores que limite. {% endcomment %}
               <script>
                 document.getElementById("arquivo").onchange = function() {
                   if(this.files && this.files[0] && this.files[0].size > {{configuracao.maxMB_filesize}}*1048576){
