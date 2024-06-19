@@ -821,7 +821,8 @@ def bancas_lista(request, periodo_projeto):
         projetos = Projeto.objects.filter(ano=configuracao.ano,
                                           semestre=configuracao.semestre)
         for banca in bancas:
-            projetos = projetos.exclude(id=banca.projeto.id)
+            if banca.projeto:
+                projetos = projetos.exclude(id=banca.projeto.id)
         context["sem_banca"] = projetos
 
     elif periodo_projeto == "todas":
