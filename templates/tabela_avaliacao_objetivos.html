@@ -28,6 +28,8 @@
             </div>
           </th>
         {% endif %}
+
+        {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
           <div class="nav-side">
           <label class="labels" for="objetivo{{objetivo.id}}I">
@@ -38,6 +40,8 @@
           </label>
         </div>
         </th>
+        {% endif %}
+
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="width:18%">
           <div class="nav-side">
           <label class="labels" for="objetivo{{objetivo.id}}D">
@@ -48,6 +52,7 @@
           </label>
         </div>
         </th>
+        
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="width:18%">
           <div class="nav-side">
           <label class="labels" for="objetivo{{objetivo.id}}C">
@@ -56,12 +61,16 @@
             </span>(C)
             <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
           </label>
+          {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
           <label  class="labels" for="objetivo{{objetivo.id}}CX">
             (C+)
             <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
           </label>
+          {% endif %}
         </div>
         </th>
+
+        {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="width:18%">
           <div class="nav-side">
           <label class="labels" for="objetivo{{objetivo.id}}B">
@@ -90,6 +99,7 @@
           </label>
         </div>
         </th>
+        {% endif %}
       </tr>
       <tr>
         {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
@@ -117,11 +127,15 @@
           {% endif %}
 
           {% if individual %}
-            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_individual_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_individual_I_en}}</label></td>
+            {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
+              <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_individual_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_individual_I_en}}</label></td>
+            {% endif %}
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_individual_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_individual_D_en}}</label></td>
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C" lang="pt">{{objetivo.rubrica_final_individual_C}}</label><label for="objetivo{{objetivo.id}}C" lang="en">{{objetivo.rubrica_final_individual_C_en}}</label></td>
-            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_individual_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_individual_B_en}}</label></td>
-            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_individual_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_individual_A_en}}</label></td>
+            {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
+              <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B" lang="pt">{{objetivo.rubrica_final_individual_B}}</label><label for="objetivo{{objetivo.id}}B" lang="en">{{objetivo.rubrica_final_individual_B_en}}</label></td>
+              <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A" lang="pt">{{objetivo.rubrica_final_individual_A}}</label><label for="objetivo{{objetivo.id}}A" lang="en">{{objetivo.rubrica_final_individual_A_en}}</label></td>
+            {% endif %}
           {% else %}
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_final_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_final_I_en}}</label></td>
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D" lang="pt">{{objetivo.rubrica_final_D}}</label><label for="objetivo{{objetivo.id}}D" lang="en">{{objetivo.rubrica_final_D_en}}</label></td>

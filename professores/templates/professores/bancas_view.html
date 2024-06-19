@@ -26,9 +26,7 @@
     width: 100vw;
     max-width: fit-content;
   }
-  label {
-    display: inline;
-  }
+  label {display: inline;}
 </style>
 
   <form id="criarbancasform" method="post" enctype="multipart/form-data">
@@ -53,10 +51,11 @@
     <div id="modal-body" class="modal-body" style="padding-bottom: 2px;">
 
     {% if not banca.projeto %}
-      <div class="form-group">
+      <div id="div_projetos" class="form-group">
       <span style="margin-top: 12px;" for="projeto">Projeto:</span>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-      data-width="75%" data-size="5" required
+      data-width="75%" data-size="5"
+      {% comment %} required {% endcomment %}
       {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
       >
         {% for projeto in projetos %}
@@ -89,6 +88,50 @@
     {% else %}
       <input type="hidden" name="projeto" value="{{banca.projeto.id}}">
     {% endif %}
+
+
+    {% if not banca.alocacao %}
+      <div id="div_alocacoes" class="form-group">
+      <span style="margin-top: 12px;" for="alocacao">Alocação:</span>
+      <select class="selectpicker" name="alocacao" id="alocacao" title="Selecione a alocação"
+      data-width="75%" data-size="5" 
+      {% comment %} required {% endcomment %}
+      {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
+      >
+        {% for alocacao in alocacoes %}
+          {% if alocacao.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
+            <option value="{{alocacao.id}}"
+            style="font-size: 0.75em;{% comment %} {% if alocacao.id in alocacaos_agendados %}color: lightgrey;{% endif %} {% endcomment %}"
+            data-titulo="{{alocacao.projeto.get_titulo}}"
+            data-titulo_link="{% url 'projeto_completo' alocacao.projeto.id %}"
+            data-organizacao="{{alocacao.projeto.organizacao}}"
+            data-organizacao_link="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}"
+            data-orientador="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+            data-orientador_link="{% if alocacao.projeto.orientador %}{% url 'professor_detail' alocacao.projeto.orientador.id %}{% endif %}"
+            data-orientador_id="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador.user.id}}{% else %}0{% endif %}"
+            data-estudante="{{alocacao.aluno}}"
+            data-estudante_link="{% if alocacao.aluno %}{% url 'estudante_detail' alocacao.aluno.id %}{% endif %}"
+            {% if alocacao.id == banca.alocacao.id %} selected {% endif %}
+            data-subtext="[{{alocacao.projeto.organizacao}}] {{alocacao.projeto.get_titulo}}"
+            {% comment %} {% if alocacao.id in projetos_agendados %}data-mensagem="Banca já agendada:
+            {% with banca_agendada=projeto.banca_set.all.0 %}
+              {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
+            {% endwith %}
+            "{% endif %} {% endcomment %}
+            >
+              {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
+              {% comment %} ({{projeto.organizacao}}) {{projeto.get_titulo}} {% endcomment %}
+              {% comment %} {% include "tipo_projeto.html" %} {% endcomment %}
+              {{alocacao.aluno.user.get_full_name}}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      </div>
+    {% else %}
+      <input type="hidden" name="projeto" value="{{banca.projeto.id}}">
+    {% endif %}
+
 
     Título: 
     <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
@@ -125,9 +168,25 @@
         {% endif %}
       </span>
     </a>
-    <br><br>
     <span hidden id="orientador_id"></span>
-  
+    <br>
+    
+    <div id="div_estudante">
+      Estudante: 
+      <a id="estudante_link" name="estudante_link" {% if banca and banca.alocacao and banca.alocacao.aluno %}href="{% url 'estudante_detail' banca.alocacao.aluno.id %}"{% endif %}>
+        <span id="estudante" name="estudante">
+          {% if banca and banca.alocacao and banca.alocacao.aluno %}
+            {{banca.alocacao.aluno}}
+          {% else %}
+            Sem estudante
+          {% endif %}
+        </span>
+      </a>
+      <span hidden id="estudante_id"></span>
+      <br>
+    </div>
+    <br>
+
     <div style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
       {% for numero, texto in TIPO_DE_BANCA %}
@@ -135,7 +194,7 @@
           <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
             {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
             {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}
-            (duração padrão: {% if numero == 2 %}30{% else %}120{% endif %}min)</label>
+            (duração padrão: {% if numero == 2 %}30{% elif numero == 3 %}90{% else %}120{% endif %}min)</label>
             <br>
         </div>
       {% endfor %}
@@ -154,6 +213,14 @@
                 document.getElementById("fim").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=30;
+            } else if(tipo == 3) {  // Banca Probation
+              {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+                document.getElementById("inicio").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
+              {% endif %}
+              minutos=60;
             } else if(tipo == 1) {  // Banca Intermediária
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -330,9 +397,9 @@
 
   <div id="div_botao" class="modal-footer">
 
-
     <small>
-      <input type="checkbox" name="enviar_mensagem" value="sim" checked>
+      <input type="checkbox" name="enviar_mensagem" value="sim" 
+      {% if user.tipo_de_usuario != 4 %}checked{% endif %}>
       Enviar mensagem para envolvidos
     </small>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -420,6 +487,24 @@
     {% comment %} Preenche com as pessoas possíveis conforme o tipo de banca {% endcomment %}
     var tipo = $("input[name='tipo']:checked").val();
 
+    if (tipo == 3) {
+      // Hide div_projetos
+      $("#div_projetos").hide();
+      $("#div_alocacoes").show();
+      $("#div_estudante").show();
+      // Make alocacao required and projeto not required
+      $("#alocacao").prop("required",true);
+      $("#projeto").prop("required",false);
+    } else {
+      // Hide div_alocacoes
+      $("#div_alocacoes").hide();
+      $("#div_projetos").show();
+      $("#div_estudante").hide();
+      // Make projeto required and alocacao not required
+      $("#projeto").prop("required",true);
+      $("#alocacao").prop("required",false);
+    }
+
     {% comment %} Verifica se mudou de estado {% endcomment %}
     if (botao_anterior != 2) {
       {% comment %} Consuladores da Falconi {% endcomment %}
@@ -462,10 +547,32 @@
       $("#orientador").text(orientador);
       $("#orientador_link").attr("href", orientador_link);
       $("#orientador_id").val(orientador_id);
-
       verifica_certo();
-
     })
+
+    // Para banca de Probation
+    $("#alocacao").change(function(){
+      var titulo = $(this).children(":selected").data("titulo");
+      var titulo_link = $(this).children(":selected").data("titulo_link");
+      var organizacao = $(this).children(":selected").data("organizacao");
+      var organizacao_link = $(this).children(":selected").data("organizacao_link");
+      var orientador = $(this).children(":selected").data("orientador");
+      var orientador_link = $(this).children(':selected').data("orientador_link");
+      var orientador_id = $(this).children(':selected').data("orientador_id");
+      var estudante = $(this).children(":selected").data("estudante");
+      var estudante_link = $(this).children(':selected').data("estudante_link");
+      $("#titulo").text(titulo);
+      $("#titulo_link").attr("href", titulo_link);
+      $("#organizacao").text(organizacao);
+      $("#organizacao_link").attr("href", organizacao_link);
+      $("#orientador").text(orientador);
+      $("#orientador_link").attr("href", orientador_link);
+      $("#orientador_id").val(orientador_id);
+      $("#estudante").text(estudante);
+      $("#estudante_link").attr("href", estudante_link);
+      verifica_certo();
+    })
+
   });
  
   $(".tipo_banca").change(carrega_modal);

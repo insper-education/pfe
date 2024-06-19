@@ -285,13 +285,17 @@ class BancaAdmin(admin.ModelAdmin):
 
     def get_orientador(self, obj):
         """Retorna o orientador do projeto da Banca."""
-        return obj.projeto.orientador
+        if obj.projeto and obj.projeto.orientador:
+            return obj.projeto.orientador
+        return None
     get_orientador.short_description = "Orientador"
     get_orientador.admin_order_field = "projeto__orientador"
 
     def get_organizacao(self, obj):
         """Retorna a organização parceira do projeto da Banca."""
-        return obj.projeto.organizacao
+        if obj.projeto and obj.projeto.organizacao:
+            return obj.projeto.organizacao
+        return None
     get_organizacao.short_description = "Organização"
     get_organizacao.admin_order_field = "projeto__organizacao"
     ordering = ("-startDate",)

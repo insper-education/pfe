@@ -31,6 +31,9 @@
       <div id="leg_falconi" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;Bancas Falconi</div>
       </div>
+      <div id="leg_probation" class="legenda-item">
+        <div class="legenda-texto"><font id="color_probation">&#9608;</font>&nbsp;Probation</div>
+      </div>
     </div>
 
     {% if usuario %}
@@ -183,6 +186,9 @@
               {% elif dias.tipo_de_evento == 14 %} // Banca Intermediária 
                 color: color_banca_intermediaria,
                 description: "<b>período de bancas intermediárias</b>",
+              {% elif dias.tipo_de_evento == 18 %} // Probation
+                color: color_probation,
+                description: "<b>período de probation</b>",
               {% elif dias.tipo_de_evento == 50 %} // Banca Falconi
                 color: color_banca_falconi,
                 description: "<b>período de bancas Falconi</b>",
@@ -244,6 +250,7 @@
 
   $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
   $("#color_banca_final").css("color", color_banca_final);
+  $("#color_probation").css("color", color_probation);
   $("#color_banca_falconi").css("color", color_banca_falconi);
   $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
   $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
@@ -258,6 +265,12 @@
   $("#leg_final").click(function(){
     $(this).toggleClass("strikeout");
     $(".b_final").toggle();
+    calendar.updateSize();
+  });
+
+  $("#leg_probation").click(function(){
+    $(this).toggleClass("strikeout");
+    $(".b_probation").toggle();
     calendar.updateSize();
   });
 

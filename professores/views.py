@@ -316,8 +316,8 @@ def mentorias_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request):
     """Menus de bancas e calendario de bancas."""
-    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)'
-    dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
+    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
+    dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
 
     context = {
         "titulo": "Agendar Bancas",
@@ -370,8 +370,31 @@ def ajax_bancas(request):
                         title += "\n• " + banca.projeto.orientador.user.get_full_name() + " (O)"
                     for membro in banca.membros():
                         title += "\n• " + membro.get_full_name()
+                elif banca.alocacao:
+                    bancas[banca.id]["organizacao"] = banca.alocacao.projeto.organizacao.sigla if banca.alocacao.projeto.organizacao else None
+                    bancas[banca.id]["orientador"] = banca.alocacao.projeto.orientador.user.get_full_name() if banca.alocacao.projeto.orientador else None
+                    bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
+                    bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
+                    bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
+
+                    if request.user.tipo_de_usuario == 4:  # Administrador
+                        bancas[banca.id]["editable"] = True
+                    elif banca.alocacao.projeto.orientador and request.user.professor:
+                        bancas[banca.id]["editable"] = banca.alocacao.projeto.orientador == request.user.professor
+                    else:
+                        bancas[banca.id]["editable"] = False
+
+                    title = "Estudante: " + banca.alocacao.aluno.user.get_full_name()
+                    title += " - [" + banca.alocacao.projeto.organizacao.sigla + "] " + banca.alocacao.projeto.get_titulo()
+                    if banca.location:
+                        title += "\nLocal: " + banca.location
+                    title += "\nBanca:"
+                    if banca.alocacao.projeto.orientador:
+                        title += "\n• " + banca.alocacao.projeto.orientador.user.get_full_name() + " (O)"
+                    for membro in banca.membros():
+                        title += "\n• " + membro.get_full_name()
                 else:
-                    title = "Projeto não identificado",
+                    title = "Projeto ou alocação não identificados",
                 bancas[banca.id]["title"] = title
                 
                 if banca.tipo_de_banca == 0: # Banca Final
@@ -383,20 +406,29 @@ def ajax_bancas(request):
                 elif banca.tipo_de_banca == 2: # Banca Falconi
                     bancas[banca.id]["color"] = "#ff38a6"
                     bancas[banca.id]["className"] = "b_falconi"
+                elif banca.tipo_de_banca == 3: # Probation
+                    bancas[banca.id]["color"] = "#FF8C00"
+                    bancas[banca.id]["className"] = "b_probation"
                 else:
                     bancas[banca.id]["color"] = "#777777"
 
                 if banca.projeto:
                     description = "[" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo()
-                    if banca.location:
-                        description += "\n<br>Local: " + banca.location
-                    description += "\n<br>Banca:"
-                    if banca.projeto.orientador:
-                        description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
-                    for membro in banca.membros():
-                        description += "\n<br>&bull; " + membro.get_full_name()
+                elif banca.alocacao:
+                    description = "Estudante: " + banca.alocacao.aluno.user.get_full_name()
+                    description += " - [" + banca.alocacao.projeto.proposta.organizacao.nome + "] " + banca.alocacao.projeto.get_titulo()
                 else:
-                    description = "Projeto não identificado",
+                    description = "Projeto não identificado"
+
+                if banca.location:
+                    description += "\n<br>Local: " + banca.location
+
+                description += "\n<br>Banca:"
+                if banca.projeto and banca.projeto.orientador:
+                    description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
+                for membro in banca.membros():
+                    description += "\n<br>&bull; " + membro.get_full_name()
+
                 bancas[banca.id]["description"] = description
                 
             return JsonResponse(bancas)
@@ -456,12 +488,20 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         subject += "Intermediária "
     elif banca.tipo_de_banca == 2:
         subject += "Falconi "
+    elif banca.tipo_de_banca == 3:
+        subject += "Probation "
     
     if excluida:
         subject += "Cancelada"
     else:
         subject += "Reagendada" if atualizada else "Agendada"
-    subject += " - Projeto: [" + banca.projeto.proposta.organizacao.nome + "] " + banca.projeto.get_titulo()
+
+    if banca.tipo_de_banca == 3:
+        projeto = banca.alocacao.projeto
+        subject += " - Estudante: " + banca.alocacao.aluno.user.get_full_name() + " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
+    else:
+        projeto = banca.projeto
+        subject += " - Projeto: [" + projeto.proposta.organizacao.nome + "] " + projeto.get_titulo()
 
     if excluida:
         mensagem = "Banca Capstone Cancelada.<br><br>"
@@ -470,7 +510,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     else:
         mensagem = "Banca Capstone Agendada.<br><br>"
 
-    mensagem += "Projeto: " + banca.projeto.get_titulo() + "<br>"
+    mensagem += "Projeto: " + projeto.get_titulo() + "<br>"
 
     if banca.tipo_de_banca == 0:
         mensagem += "Tipo: Banca Final<br>"
@@ -478,6 +518,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         mensagem += "Tipo: Banca Intermediária<br>"
     elif banca.tipo_de_banca == 2:
         mensagem += "Tipo: Banca Falconi<br>"
+    elif banca.tipo_de_banca == 3:
+        mensagem += "Tipo: Banca Probation<br>"
 
     if banca.location:
         mensagem += "Local: " + banca.location + "<br>"
@@ -502,16 +544,16 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     recipient_list = []
 
     # Orientador
-    if banca.projeto.orientador:
-        mensagem += "<li>" + banca.projeto.orientador.user.get_full_name() + " [orientador] "
-        mensagem += '<a href="mailto:' + banca.projeto.orientador.user.email + '">&lt;' + banca.projeto.orientador.user.email + "&gt;</a></li>"
-        recipient_list.append(banca.projeto.orientador.user.email)
+    if projeto.orientador:
+        mensagem += "<li>" + projeto.orientador.user.get_full_name() + " [orientador] "
+        mensagem += '<a href="mailto:' + projeto.orientador.user.email + '">&lt;' + projeto.orientador.user.email + "&gt;</a></li>"
+        recipient_list.append(projeto.orientador.user.email)
 
     # coorientadores
-    for coorientador in banca.projeto.coorientador_set.all():
+    for coorientador in projeto.coorientador_set.all():
         mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
         mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
-        recipient_list.append(banca.projeto.coorientador.usuario.email)
+        recipient_list.append(projeto.coorientador.usuario.email)
 
     # membros
     for membro in banca.membros():
@@ -520,7 +562,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         recipient_list.append(membro.email)
 
     # estudantes
-    for alocacao in banca.projeto.alocacao_set.all():
+    for alocacao in projeto.alocacao_set.all():
         mensagem += "<li>" + alocacao.aluno.user.get_full_name()
         mensagem += " [" + str(alocacao.aluno.curso2) + "] "
         mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
@@ -551,26 +593,23 @@ def bancas_criar(request, data=None):
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax() and request.method == "POST":
-        if "projeto" in request.POST:
-            projeto = get_object_or_404(Projeto,
-                                        id=int(request.POST["projeto"]))
 
-            banca = Banca.create(projeto)
-            editar_banca(banca, request)
+        banca = editar_banca(None, request)
+        if banca:
+            mensagem = mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
+        else:
+            return HttpResponse("Banca não registrada, erro geral", status=401)
 
-            mensagem = mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST))
-            
-            context = {
-                "atualizado": True,
-                "mensagem": mensagem,
-            }
-            return JsonResponse(context)
-
-        return HttpResponse("Banca não registrada, erro identificando projeto", status=401)
+        context = {
+            "atualizado": True,
+            "mensagem": mensagem,
+        }
+        return JsonResponse(context)
 
     ano = configuracao.ano
     semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
+    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()
@@ -586,22 +625,25 @@ def bancas_criar(request, data=None):
     else:
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
-    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi'
+    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi' / 18, 'Probation'
     bancas_intermediarias = eventos.filter(tipo_de_evento=14)
     bancas_finais = eventos.filter(tipo_de_evento=15)
+    bancas_probation = eventos.filter(tipo_de_evento=18)
     bancas_falconi = eventos.filter(tipo_de_evento=50)
 
     context = {
         "projetos": projetos,
+        "alocacoes": alocacoes,
         "professores": professores,
         "Banca": Banca,
         # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
         # Para ficar na ordem que desejo
-        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi')),
+        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi'), (3, 'Probation')),
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
         "bancas_intermediarias": bancas_intermediarias,
         "bancas_finais": bancas_finais,
+        "bancas_probation": bancas_probation,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
     }
@@ -618,6 +660,9 @@ def bancas_criar(request, data=None):
         if bancas_falconi and bancas_falconi.first().startDate and bancas_falconi.last().endDate:
             if datar >= bancas_falconi.first().startDate and datar <= bancas_falconi.last().endDate:
                 context["tipob"] = 2
+        if bancas_probation and bancas_probation.first().startDate and bancas_probation.last().endDate:
+            if datar >= bancas_probation.first().startDate and datar <= bancas_probation.last().endDate:
+                context["tipob"] = 3
         
     return render(request, "professores/bancas_view.html", context)
 
@@ -692,6 +737,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
+    configuracao = get_object_or_404(Configuracao)
 
     if primarykey is None:
         return HttpResponseNotFound("<h1>Erro!</h1>")
@@ -719,8 +765,10 @@ def bancas_editar(request, primarykey=None):
             }
         return JsonResponse(context)
     
-    projetos = Projeto.objects.exclude(orientador=None)\
-        .order_by("-ano", "-semestre")
+    ano = configuracao.ano
+    semestre = configuracao.semestre
+    projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
+    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()
@@ -734,17 +782,20 @@ def bancas_editar(request, primarykey=None):
     # 14, "Banca intermediária" / 15, "Bancas finais" / 50, "Certificação Falconi"
     bancas_intermediarias = eventos.filter(tipo_de_evento=14).order_by("startDate")
     bancas_finais = eventos.filter(tipo_de_evento=15).order_by("startDate")
+    bancas_probation = eventos.filter(tipo_de_evento=18).order_by("startDate")
     bancas_falconi = eventos.filter(tipo_de_evento=50).order_by("startDate")
 
     context = {
-        "projetos": projetos,
+        "projetos": projetos,  # Creio que não seja necessário
+        "alocacoes": alocacoes,   # Creio que não seja necessário
         "professores": professores,
         "banca": banca,
         "Banca": Banca,
-        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi")), # Para ficar na ordem que desejo
+        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi"), (3, "Probation")), # Para ficar na ordem que desejo
         "falconis": falconis,
         "bancas_intermediarias": bancas_intermediarias,
         "bancas_finais": bancas_finais,
+        "bancas_probation": bancas_probation,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
     }
@@ -797,7 +848,11 @@ def bancas_lista(request, periodo_projeto):
     edicoes, _, _ = get_edicoes(Projeto)
     context["edicoes"] = edicoes
 
-    context["dias_bancas"] = Evento.objects.filter(tipo_de_evento__in=(14, 15, 50))
+    # (14, "Bancas Intermediárias", "#EE82EE"),
+    # (15, "Bancas Finais", "#FFFF00"),
+    # (18, "Probation", "#B0C4DE"),
+    # (50, "Apresentação para Certificação Falconi", "#FF8C00"),
+    context["dias_bancas"] = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
 
     context["informacoes"] = [
             (".local", "local"),
@@ -970,6 +1025,9 @@ def banca_ver(request, primarykey):
     elif banca.tipo_de_banca == 2:  # (2, "falconi"),
         # Repetindo banca final para falconi
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.tipo_de_banca == 3:  # (3, "probation"),
+        # Repetindo banca final para probation
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
         tipo_documento = TipoDocumento.objects.none()
 
@@ -996,9 +1054,14 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
         message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
         message += "</h3><br><br>"
 
-    message += "<b>Título do Projeto:</b> {0}<br>\n".format(banca.projeto.get_titulo())
-    message += "<b>Organização:</b> {0}<br>\n".format(banca.projeto.organizacao)
-    message += "<b>Orientador:</b> {0}<br>\n".format(banca.projeto.orientador)
+    if banca.tipo_de_banca == 3:
+        projeto = banca.alocacao.projeto
+    else:
+        projeto = banca.projeto
+
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
     message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
     message += "<b>Data da Banca:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
@@ -1279,6 +1342,8 @@ def mensagem_orientador(banca):
         exame = Exame.objects.get(titulo="Banca Intermediária")
     elif banca.tipo_de_banca == 2: #Banca Falconi
         exame = Exame.objects.get(titulo="Falconi")
+    elif banca.tipo_de_banca == 3: #Banca Probation
+        exame = Exame.objects.get(titulo="Probation")
 
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
@@ -1286,7 +1351,7 @@ def mensagem_orientador(banca):
         avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
                                                 objetivo=objetivo,
                                                 exame=exame)\
-                .order_by('avaliador', '-momento')
+                .order_by("avaliador", "-momento")
 
         for avaliacao in avaliacoes:
             if avaliacao.avaliador not in avaliadores:
@@ -1351,8 +1416,8 @@ def banca_avaliar(request, slug, documento_id=None):
             }
             return render(request, "generic.html", context=context)
 
-        if not banca.projeto:
-            return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
+        if banca.projeto is None and banca.alocacao is None:
+            return HttpResponseNotFound("<h1>Banca não registrada corretamente!</h1>")
 
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
@@ -1371,11 +1436,13 @@ def banca_avaliar(request, slug, documento_id=None):
     # ISSO ESTÁ OBSOLETO
     # Subistituir por:     objetivos = composicao.pesos.all()
     objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
-    # Banca(Intermediária, Final) ou Falconi
+    # Banca(Intermediária, Final, Probation) ou Falconi
     if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
         objetivos = objetivos.filter(avaliacao_banca=True)
     elif banca.tipo_de_banca == 2:  # Falconi
         objetivos = objetivos.filter(avaliacao_falconi=True)
+    elif banca.tipo_de_banca == 3:  # Probation
+        objetivos = objetivos.filter(avaliacao_aluno=True)
     else:
         return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
     ####################################################################################
@@ -1392,6 +1459,8 @@ def banca_avaliar(request, slug, documento_id=None):
                 exame = Exame.objects.get(titulo="Banca Final")
             elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
                 exame = Exame.objects.get(titulo="Falconi")
+            elif banca.tipo_de_banca == 3:  # (3, 'probation'),
+                exame = Exame.objects.get(titulo="Probation")
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=banca.projeto,
@@ -1435,6 +1504,11 @@ def banca_avaliar(request, slug, documento_id=None):
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
                     elif exame.titulo == "Falconi":
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
+                    elif exame.titulo == "Probation":
+                        #julgamento[i].peso = julgamento[i].objetivo.peso_banca_probation
+                        julgamento[i].peso = 0.0
+                    else:
+                        julgamento[i].peso = 0.0 
 
                     julgamento[i].na = False
                 julgamento[i].save()
@@ -1464,7 +1538,7 @@ def banca_avaliar(request, slug, documento_id=None):
             # Intermediária e Final
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
                 recipient_list = [banca.projeto.orientador.user.email, ]
-            elif banca.tipo_de_banca == 2:  # Falconi
+            elif banca.tipo_de_banca == 2 or banca.tipo_de_banca == 1:  # Falconi ou Probation
                 recipient_list = [coordenacao.user.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:
@@ -1529,6 +1603,18 @@ def banca_avaliar(request, slug, documento_id=None):
             orientacoes_en += "<br>"
 
 
+        # Probation
+        elif banca.tipo_de_banca == 3:
+            pessoas, membros = professores_membros_bancas(banca)
+            orientacoes += "O estudante em Probation terá <b>20 minutos para a apresentação</b>. Os membros da banca terão depois <b>40 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito da atuação do estudante e fazerem seus comentários."
+            orientacoes += "<br><br>"
+            orientacoes += "A banca poderá perguntar tanto sobre a apresentação, como os relatórios entregues (individual ou de grupo), permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
+            orientacoes += "<br><br>"
+            orientacoes += "Ao final, a banca terá mais <b>20 minutos para ponderar</b>, nesse momento se pede para dispensar o estudante. Cada membro da banca poderá colocar seu veredito sobre o estudante, usando as rubricas a seguir."
+            orientacoes += "<br><br>"
+
+            orientacoes_en += ""
+
         # Identificando quem seria o avaliador
         if "avaliador" in request.GET:
             try:
@@ -1558,14 +1644,27 @@ def banca_avaliar(request, slug, documento_id=None):
             tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
         elif banca.tipo_de_banca == 0:  # (0, 'final'),
             tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-        #elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+        elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
+            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+        elif banca.tipo_de_banca == 3:  # (3, 'probation'),
+            tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+
+        if banca.tipo_de_banca == 3:  # (3, 'probation')
+            projeto = banca.alocacao.projeto
+            sub_titulo = banca.alocacao.aluno.user.get_full_name() + " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+        else:
+            projeto = banca.projeto
+            sub_titulo = " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
 
         documentos = None
         if tipo_documento:
-            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
         context = {
-            "titulo": "Formulário Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
+            "titulo": "Formulário Banca " + banca.get_tipo_de_banca_display() + sub_titulo,
+            "projeto": projeto,
+            "estudante": banca.alocacao.aluno if banca.tipo_de_banca == 3 else None,
+            "individual": True if banca.tipo_de_banca == 3 else False,
             "pessoas": pessoas,
             "membros": membros,
             "objetivos": objetivos,
@@ -1593,6 +1692,9 @@ def banca(request, slug):
     elif banca.tipo_de_banca == 0:  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+        # Reaproveita o tipo de documento da banca final
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.tipo_de_banca == 2:  # (3, "probation"),
         # Reaproveita o tipo de documento da banca final
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
@@ -1877,6 +1979,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
     avaliadores_inter = {}
     avaliadores_final = {}
     avaliadores_falconi = {}
+    avaliadores_probation = {}
 
     for objetivo in objetivos:
 
@@ -1925,6 +2028,22 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
                 avaliadores_falconi[banca.avaliador]["momento"] = banca.momento
             # Senão é só uma avaliação de objetivo mais antiga
 
+        # Bancas Probation
+        exame = Exame.objects.get(titulo="Probation")
+        bancas_probation = Avaliacao2.objects.filter(projeto=projeto,
+                                                     objetivo=objetivo,
+                                                     exame=exame)\
+            .order_by("avaliador", "-momento")
+        
+        for banca in bancas_probation:
+            if banca.avaliador not in avaliadores_probation:
+                avaliadores_probation[banca.avaliador] = {}
+            if objetivo not in avaliadores_probation[banca.avaliador]:
+                avaliadores_probation[banca.avaliador][objetivo] = banca
+                avaliadores_probation[banca.avaliador]["momento"] = banca.momento
+            # Senão é só uma avaliação de objetivo mais antiga
+
+
     # Bancas Intermediárias
     exame = Exame.objects.get(titulo="Banca Intermediária")
     observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
@@ -1964,6 +2083,20 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
             avaliadores_falconi[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
         # Senão é só uma avaliação de objetivo mais antiga
 
+    # Bancas Probation
+    exame = Exame.objects.get(titulo="Probation")
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
+        order_by("avaliador", "-momento")
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores_probation:
+            avaliadores_probation[observacao.avaliador] = {}  # Não devia acontecer isso
+        if "observacoes_estudantes" not in avaliadores_probation[observacao.avaliador]:
+            avaliadores_probation[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
+        if "observacoes_orientador" not in avaliadores_probation[observacao.avaliador]:
+            avaliadores_probation[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
+        # Senão é só uma avaliação de objetivo mais antiga
+
+
     context = {
         "titulo": "Resultado Bancas",
         "objetivos": objetivos,
@@ -1971,6 +2104,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
         "avaliadores_inter": avaliadores_inter,
         "avaliadores_final": avaliadores_final,
         "avaliadores_falconi": avaliadores_falconi,
+        "avaliadores_probation": avaliadores_probation,
     }
 
     return render(request, "professores/conceitos_obtidos.html", context=context)
@@ -2859,14 +2993,14 @@ def objetivo_editar(request, primarykey):
     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
 
     if request.method == "POST":
-        if editar_banca(objetivo, request):
-            mensagem = "Banca editada."
-        else:
-            mensagem = "Erro ao Editar banca."
+        # if editar_objetivo(objetivo, request):
+        #     mensagem = "Banca editada."
+        # else:
+        #     mensagem = "Erro ao Editar banca."
         context = {
             "area_principal": True,
             "bancas_index": True,
-            "mensagem": mensagem,
+            # "mensagem": mensagem,
         }
         return render(request, "generic.html", context=context)
 

@@ -71,9 +71,10 @@
 
   <select class="esconder" id="tipo" onchange="tipo_banca(this)">
     <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} >todos</option>
-    <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %}>intermediária</option>
-    <option value="Final" {% if tipo == "Final" %}selected{% endif %}>final</option>
-    <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>falconi</option>
+    <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %}>Intermediária</option>
+    <option value="Final" {% if tipo == "Final" %}selected{% endif %}>Final</option>
+    <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>Falconi</option>
+    <option value="Probation" {% if tipo == "Probation" %}selected{% endif %}>Probation</option>
   </select>
 
   <br>
@@ -203,7 +204,9 @@
                 <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
                   data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
                   Servidor
-                </a>    
+                </a>
+
+                {% comment %}
                 {% with com_nome=True %}
                   <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
                 {% endwith %}          
@@ -216,6 +219,8 @@
                   <!--&amp;attach='events/{{banca.pk}}'-->
                   SN
                   </a>
+                {% endcomment %}
+                
             <a href="{% url 'event_ics_export' banca.id %}">
               ics
             </a>

@@ -36,13 +36,13 @@
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      {% include "cabecalho_projeto.html" with projeto=banca.projeto %}
+      {% include "cabecalho_projeto.html" with projeto=projeto %}
 
       <b lang="pt">Grupo:</b>
       <b lang="en">Group:</b>
 
       <ul style="padding-left: 34px;">
-        {% for alocacao in banca.projeto.alocacao_set.all %}
+        {% for alocacao in projeto.alocacao_set.all %}
           <li>
             {% comment %} <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{% endcomment %} 
               {{alocacao.aluno.user.get_full_name}}
@@ -58,6 +58,13 @@
         <b lang="pt">Tipo de Banca:</b>
         <b lang="en">Presentation:</b>
         {{ banca.tipo_de_banca|get_banca }}
+        <br>
+      {% endif %}
+
+      {% if estudante %}
+        <b lang="pt">Estudante em Probation:</b>
+        <b lang="en">Student in Probation:</b>
+        {{ estudante.user.get_full_name }}
         <br>
       {% endif %}
 
@@ -101,7 +108,7 @@
       <br>
       {% include "ver_documentos.html" %}
 
-      {% with site=banca.projeto.get_site %}
+      {% with site=projeto.get_site %}
       {% if site %}
         <b>Site:</b><br>
         <div style="padding-left: 22px;">
@@ -121,13 +128,15 @@
 
       {% include "tabela_avaliacao_objetivos.html" %}
 
-      {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-      <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
-             title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
-      </b></label><br>
-      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
-      <br><br>
+      {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
+        {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+        <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+          <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
+        </b></label><br>
+        <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
+        <br><br>
+      {% endif %}
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"

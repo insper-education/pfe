@@ -12,7 +12,7 @@ import dateutil.parser
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 
-from users.models import PFEUser, Professor, Aluno, Parceiro
+from users.models import PFEUser, Professor, Aluno, Parceiro, Alocacao
 from users.support import adianta_semestre
 
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
@@ -20,31 +20,49 @@ from projetos.models import Avaliacao_Velha, Observacao_Velha
 
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
+    
+    if banca is None:
+        banca = Banca.create()
 
-    if "projeto" in request.POST:
-        try:
-            banca.projeto = Projeto.objects.get(id=int(request.POST['projeto']))
-        except Projeto.DoesNotExist:
-            return False
+    if "tipo" in request.POST and request.POST["tipo"] != "":
+        banca.tipo_de_banca = int(request.POST["tipo"])
     else:
         return False
 
+    if banca.tipo_de_banca == 3:  # Banca Probation
+
+        if "alocacao" in request.POST:
+            try:
+                banca.alocacao = Alocacao.objects.get(id=int(request.POST["alocacao"]))
+            except Alocacao.DoesNotExist:
+                return False
+        else:
+            return False
+    else:
+
+        if "projeto" in request.POST:
+            try:
+                banca.projeto = Projeto.objects.get(id=int(request.POST["projeto"]))
+            except Projeto.DoesNotExist:
+                return False
+        else:
+            return False
+
     if "inicio" in request.POST:
         try:
-            banca.startDate = dateutil.parser.parse(request.POST['inicio'])
+            banca.startDate = dateutil.parser.parse(request.POST["inicio"])
         except (ValueError, OverflowError):
             banca.startDate = None
     if "fim" in request.POST:
         try:
-            banca.endDate = dateutil.parser.parse(request.POST['fim'])
+            banca.endDate = dateutil.parser.parse(request.POST["fim"])
         except (ValueError, OverflowError):
             banca.endDate = None
-    if "tipo" in request.POST and request.POST['tipo'] != "":
-        banca.tipo_de_banca = int(request.POST['tipo'])
+
     if "local" in request.POST:
-        banca.location = request.POST['local']
+        banca.location = request.POST["local"]
     if "link" in request.POST:
-        banca.link = request.POST['link']
+        banca.link = request.POST["link"]
 
     try:
         if "membro1" in request.POST and request.POST["membro1"].isnumeric():
@@ -64,7 +82,7 @@ def editar_banca(banca, request):
 
     banca.save()
 
-    return True
+    return banca
 
 
 def professores_membros_bancas(banca=None):
