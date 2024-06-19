@@ -1072,6 +1072,9 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     else:
         message += "Tipo de banca não definido"
 
+    if banca.alocacao:
+        message += "<br><b>Estudante em Probation:</b> {0}<br>\n".format(banca.alocacao.aluno.user.get_full_name())
+
     message += "<br>\n<br>\n"
     message += "<b>Conceitos:</b><br>\n"
     message += "<table style='border: 1px solid black; "
@@ -1345,13 +1348,20 @@ def mensagem_orientador(banca):
     elif banca.tipo_de_banca == 3: #Banca Probation
         exame = Exame.objects.get(titulo="Probation")
 
+    if banca.tipo_de_banca == 3:
+        projeto = banca.alocacao.projeto
+    else:
+        projeto = banca.projeto
+
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
     for objetivo in objetivos:
-        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto,
+        avaliacoes = Avaliacao2.objects.filter(projeto=projeto,
                                                 objetivo=objetivo,
                                                 exame=exame)\
                 .order_by("avaliador", "-momento")
+        if banca.alocacao:
+            avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
 
         for avaliacao in avaliacoes:
             if avaliacao.avaliador not in avaliadores:
@@ -1360,8 +1370,10 @@ def mensagem_orientador(banca):
                 avaliadores[avaliacao.avaliador][objetivo] = avaliacao
                 avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
 
-    observacoes = Observacao.objects.filter(projeto=banca.projeto, exame=exame).\
-        order_by('avaliador', '-momento')
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
+        order_by("avaliador", "-momento")
+    if banca.alocacao:
+        observacoes = observacoes.filter(alocacao=banca.alocacao)
 
     for observacao in observacoes:
         if observacao.avaliador not in avaliadores:
@@ -1422,9 +1434,14 @@ def banca_avaliar(request, slug, documento_id=None):
     except Banca.DoesNotExist:
         return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
 
+    if banca.tipo_de_banca == 3:  # (3, 'probation')
+        projeto = banca.alocacao.projeto
+    else:
+        projeto = banca.projeto
+
     # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
     if documento_id:
-        documento = Documento.objects.get(id=documento_id, projeto=banca.projeto)
+        documento = Documento.objects.get(id=documento_id, projeto=projeto)
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
         diferenca = (datetime.date.today() - banca.endDate.date()).days
@@ -1463,12 +1480,11 @@ def banca_avaliar(request, slug, documento_id=None):
                 exame = Exame.objects.get(titulo="Probation")
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
-            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=banca.projeto,
-                                                              avaliador=avaliador,
-                                                              exame=exame)
-            observacoes_anteriores = Observacao.objects.filter(projeto=banca.projeto, 
-                                                               avaliador=avaliador, 
-                                                               exame=exame)
+            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+            observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+            if banca.alocacao:
+                avaliacoes_anteriores = avaliacoes_anteriores.filter(alocacao=banca.alocacao)
+                observacoes_anteriores = observacoes_anteriores.filter(alocacao=banca.alocacao)
             
             realizada = avaliacoes_anteriores.exists()
 
@@ -1484,7 +1500,9 @@ def banca_avaliar(request, slug, documento_id=None):
 
                 obj_nota = request.POST[aval]
                 conceito = obj_nota.split('.')[1]
-                julgamento[i] = Avaliacao2.create(projeto=banca.projeto)
+                julgamento[i] = Avaliacao2.create(projeto=projeto)
+                if banca.alocacao:
+                    julgamento[i].alocacao = banca.alocacao
                 julgamento[i].avaliador = avaliador
 
                 pk_objetivo = int(obj_nota.split('.')[0])
@@ -1516,16 +1534,29 @@ def banca_avaliar(request, slug, documento_id=None):
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
                ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
-                julgamento_observacoes = Observacao.create(projeto=banca.projeto)
+                julgamento_observacoes = Observacao.create(projeto=projeto)
+                if banca.alocacao:
+                    julgamento_observacoes.alocacao = banca.alocacao
                 julgamento_observacoes.avaliador = avaliador
                 julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
                 julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
                 julgamento_observacoes.exame = exame
                 julgamento_observacoes.save()
 
+
+            subject = "Avaliação de Banca Capstone "
+            if banca.tipo_de_banca == 0:
+                subject += "Banca Final : "
+            elif banca.tipo_de_banca == 1:
+                subject += "Banca Intermediária : " 
+            elif banca.tipo_de_banca == 2:
+                subject += "Banca Falconi : "
+            elif banca.tipo_de_banca == 3:
+                subject += "Probation : " + banca.alocacao.user.get_full_name()
+            subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+            
             # Envio de mensagem para Avaliador
             message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
-            subject = "Avaliação de Banca PFE : {0}".format(banca.projeto)
             recipient_list = [avaliador.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:
@@ -1534,11 +1565,10 @@ def banca_avaliar(request, slug, documento_id=None):
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
-            subject = "Avaliação de Banca PFE : {0}".format(banca.projeto)
             # Intermediária e Final
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-                recipient_list = [banca.projeto.orientador.user.email, ]
-            elif banca.tipo_de_banca == 2 or banca.tipo_de_banca == 1:  # Falconi ou Probation
+                recipient_list = [projeto.orientador.user.email, ]
+            else: # banca.tipo_de_banca == 2 or banca.tipo_de_banca == 3:  # Falconi ou Probation
                 recipient_list = [coordenacao.user.email, ]
             check = email(subject, recipient_list, message)
             if check != 1:
@@ -1650,10 +1680,8 @@ def banca_avaliar(request, slug, documento_id=None):
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
 
         if banca.tipo_de_banca == 3:  # (3, 'probation')
-            projeto = banca.alocacao.projeto
             sub_titulo = banca.alocacao.aluno.user.get_full_name() + " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
         else:
-            projeto = banca.projeto
             sub_titulo = " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
 
         documentos = None
