@@ -1554,7 +1554,7 @@ def banca_avaliar(request, slug, documento_id=None):
             elif banca.tipo_de_banca == 2:
                 subject += "Banca Falconi : "
             elif banca.tipo_de_banca == 3:
-                subject += "Probation : " + banca.alocacao.user.get_full_name()
+                subject += "Probation : " + banca.alocacao.aluno.user.get_full_name()
             subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
             
             # Envio de mensagem para Avaliador
