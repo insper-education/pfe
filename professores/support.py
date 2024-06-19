@@ -23,7 +23,7 @@ def editar_banca(banca, request):
     
     if banca is None:
         banca = Banca.create()
-    print(request.POST)
+
     if "tipo" in request.POST and request.POST["tipo"] != "":
         banca.tipo_de_banca = int(request.POST["tipo"])
     else:

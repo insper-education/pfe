@@ -20,6 +20,8 @@ def certificado_banca(banca, usuario):
         certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.projeto, tipo_de_certificado=103)  # (103, "Membro de Banca Intermediária"),
     elif banca.tipo_de_banca == 2:  # (2, 'Certificação Falconi'),
         certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.projeto, tipo_de_certificado=105)  # (105, "Membro da Banca Falconi"),
+    else:
+        certificado = None
     
     if certificado:
         documento = certificado.last()
