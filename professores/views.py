@@ -1389,6 +1389,7 @@ def mensagem_orientador(banca):
     context_carta = {
         "banca": banca,
         "objetivos": objetivos,
+        "projeto": projeto,
     }
     message = render_message("Informe de Avaliação de Banca", context_carta)
     
