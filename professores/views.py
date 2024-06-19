@@ -836,8 +836,13 @@ def bancas_lista(request, periodo_projeto):
         except ValueError:
             return HttpResponseNotFound("<h1>Erro em!</h1>")
 
-        bancas = Banca.objects.filter(projeto__ano=ano)\
-            .filter(projeto__semestre=semestre).order_by("startDate")
+        bancas_p = Banca.objects.filter(projeto__ano=ano)\
+            .filter(projeto__semestre=semestre)
+
+        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano)\
+            .filter(alocacao__projeto__semestre=semestre)
+
+        bancas = (bancas_p | bancas_a).order_by("startDate")
 
     else:
         projeto = get_object_or_404(Projeto, id=periodo_projeto)
