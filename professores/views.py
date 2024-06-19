@@ -705,15 +705,24 @@ def mensagem_email(request, tipo=None, primarykey=None):
             return JsonResponse(context)
         
         para = ""
-        if banca.projeto.orientador:
-            para = banca.projeto.orientador.user.get_full_name() + " <" + banca.projeto.orientador.user.email + ">; "
-        for coorientador in banca.projeto.coorientador_set.all():
+
+        if banca.tipo_de_banca == 3:
+            projeto = banca.alocacao.projeto
+        else:
+            projeto = banca.projeto
+
+        if projeto and projeto.orientador:
+            para = projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+        for coorientador in projeto.coorientador_set.all():
             para += coorientador.get_full_name() + " <" + coorientador.email + ">; "
         for membro in banca.membros():
             para += membro.get_full_name() + " <" + membro.email + ">; "
         para = para[:-2]  # tirando o ultimo "; "
-        
-        subject = "Banca Capstone: [" + banca.projeto.organizacao.nome + "] " +  banca.projeto.get_titulo()
+
+        if banca.alocacao:
+            subject = "Banca Capstone: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+        else:
+            subject = "Banca Capstone: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
         
         context_carta = {
             "request": request,
