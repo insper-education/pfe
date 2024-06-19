@@ -1538,8 +1538,10 @@ def banca_avaliar(request, slug, documento_id=None):
                 if banca.alocacao:
                     julgamento_observacoes.alocacao = banca.alocacao
                 julgamento_observacoes.avaliador = avaliador
-                julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
-                julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
+                if "observacoes_orientador" in request.POST:
+                    julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
+                if "observacoes_estudantes" in request.POST:
+                    julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
                 julgamento_observacoes.exame = exame
                 julgamento_observacoes.save()
 
