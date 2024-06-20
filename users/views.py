@@ -335,6 +335,7 @@ def blackboard_notas(request, anosemestre):
     exames = set()
     for composicao in composicoes:
         exames.add(composicao.exame)
+    exames.add(Exame.objects.get(sigla="M"))  # Média
 
     if request.method == "POST":
         colunas = {}
@@ -372,7 +373,12 @@ def blackboard_notas(request, anosemestre):
                 if coluna in avaliacao:
                     linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
                 else:
-                    linha += [""]
+                    if coluna == "M":
+                        linha += [f"{alocacao.get_media['media']:.4f}".replace('.',',')]
+                        #linha += ["MMM"]
+                    else:
+                        linha += [""]
+                    
             dataset.append(linha)
 
         csv = dataset.export("csv", quotechar='"', dialect="excel")
