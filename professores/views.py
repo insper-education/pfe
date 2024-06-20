@@ -714,7 +714,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         if projeto and projeto.orientador:
             para = projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
         for coorientador in projeto.coorientador_set.all():
-            para += coorientador.get_full_name() + " <" + coorientador.email + ">; "
+            para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         for membro in banca.membros():
             para += membro.get_full_name() + " <" + membro.email + ">; "
         para = para[:-2]  # tirando o ultimo "; "
