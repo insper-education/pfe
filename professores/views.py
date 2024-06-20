@@ -553,7 +553,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     for coorientador in projeto.coorientador_set.all():
         mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
         mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
-        recipient_list.append(projeto.coorientador.usuario.email)
+        recipient_list.append(coorientador.usuario.email)
 
     # membros
     for membro in banca.membros():
