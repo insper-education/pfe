@@ -41,28 +41,32 @@
               Intermediária
             {% elif banca.tipo_de_banca == 2 %}
               Certificação Falconi
+            {% elif banca.tipo_de_banca == 3 %}
+              Probation
+            {% else %}
+              NÃO IDENTIFICADA
             {% endif %}
           </div>
           
-          {% if banca.projeto %}
+          {% if banca.get_projeto %}
             <div>
               <b>Título do Projeto:</b> 
-              <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
-                {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
-                  {{banca.projeto.titulo_final}}</a><br>
+              <a href="{% url 'projeto_detalhes' banca.get_projeto.id %}">
+                {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
+                  {{banca.get_projeto.titulo_final}}</a><br>
                   
                   <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">Título original da proposta: 
-                    <a href="{% url 'projeto_detalhes' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
+                    <a href="{% url 'projeto_detalhes' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
                   </div>
                 {% else %}
-                  {{banca.projeto.get_titulo}}</a>
+                  {{banca.get_projeto.get_titulo}}</a>
                 {% endif %}
             </div>
           {% endif %}
           
-          {% if banca.projeto.organizacao %}
+          {% if banca.get_projeto.organizacao %}
             <div><b>Organização Parceira:</b> 
-              {{ banca.projeto.organizacao.nome }}
+              {{ banca.get_projeto.organizacao.nome }}
             </div>
           {% endif %}
           
@@ -70,14 +74,14 @@
             <div style="margin-top: 0px;"><b>Local:</b> {{banca.location}}</div>
           {% endif %}
         
-          {% if banca.projeto.orientador %}
+          {% if banca.get_projeto.orientador %}
             <div>
-            {% if banca.projeto.proposta.intercambio %}
-              <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+            {% if banca.get_projeto.proposta.intercambio %}
+              <b>Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
             {% else %}
-              <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+              <b>Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
             {% endif %}
-            {{banca.projeto.orientador.user.get_full_name}} <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+            {{banca.get_projeto.orientador.user.get_full_name}} <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
             </div>
           {% endif %}
 

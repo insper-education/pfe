@@ -92,11 +92,11 @@
         <a href="{% url 'banca_ver' banca.id %}">
           {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %}{% if banca.startDate %}, {{banca.startDate.date}}{% endif %}:
         </a>
-        {% if banca.projeto %}
-          {% if banca.projeto.organizacao %}
-            [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
+        {% if banca.get_projeto %}
+          {% if banca.get_projeto.organizacao %}
+            [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
           {% endif %}
-          <a href="{% url 'projeto_completo' banca.projeto.id %}">{{ banca.projeto.get_titulo }}</a>
+          <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
         {% endif %}
         {% with certificado=banca|certificado_banca:professor.user %}
           {% if certificado %}

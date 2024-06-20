@@ -100,24 +100,31 @@
               <br>
             {% endif %}
 
-            {% if banca.projeto %}
+            {% if banca.get_projeto %}
               <b>Título do Projeto:</b> 
-              <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">
-                {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
-                  {{banca.projeto.titulo_final}}</a><br>
+              <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">
+                {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
+                  {{banca.get_projeto.titulo_final}}</a><br>
                   <small>&nbsp;&nbsp;Título original da proposta: 
-                    <a class="imprimir" href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
+                    <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
                   </small>
                 {% else %}
-                  {{banca.projeto.get_titulo}}</a>
+                  {{banca.get_projeto.get_titulo}}</a>
                 {% endif %}
               <br>
+              {% if banca.get_projeto.organizacao %}
+                <b>Organização:</b> 
+                <a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
+                  {{ banca.get_projeto.organizacao.nome }}
+                </a>
+                <br>
+              {% endif %}
             {% endif %}
-
-            {% if banca.projeto.organizacao %}
-              <b>Organização:</b> 
-              <a class="imprimir" href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-                {{ banca.projeto.organizacao.nome }}
+              
+            {% if banca.alocacao %}
+              <b>Estudante:</b> 
+              <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">
+                {{ banca.alocacao.aluno.user.get_full_name }}
               </a>
               <br>
             {% endif %}
@@ -136,23 +143,23 @@
               </span>
             {% endif %}
 
-            {% if banca.projeto.orientador %}
+            {% if banca.get_projeto.orientador %}
               <div class="orientacao" style="margin-top: 8px;">
               
-                {% if banca.projeto.proposta.intercambio %}
-                  <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+                {% if banca.get_projeto.proposta.intercambio %}
+                  <b>Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
                 {% else %}
-                  <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+                  <b>Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
                 {% endif %}
                 
-                <a class="imprimir" href="{% url 'professor_detail' banca.projeto.orientador.id %}">
-                  {{banca.projeto.orientador.user.get_full_name}} 
+                <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
+                  {{banca.get_projeto.orientador.user.get_full_name}} 
                 </a>
-                <a class="email" href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+                <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
               </div>
             {% endif %}
 
-            {% with coorientadores=banca.projeto.coorientador_set.all %}
+            {% with coorientadores=banca.get_projeto.coorientador_set.all %}
             {% if coorientadores %}
             <div class="orientacao" style="margin-top: 8px;">
               <b>Coorientação:</b>
@@ -187,7 +194,7 @@
             {% endif %}
 
             <div class="grupo" style="margin-top: 8px;">
-              {% include "grupo_estudantes.html" with projeto=banca.projeto %}
+              {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
             </div>
             <br>
             

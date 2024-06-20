@@ -101,19 +101,19 @@ def adicionar_participante_em_evento(ical_event, usuario):
     ical_event.add("attendee", atnd, encode=0)
 
 
-def gera_descricao_banca(banca, alunos):
+def gera_descricao_banca(banca, estudantes):
     """Gera um descrição para colocar no aviso do agendamento."""
-    description = "Banca do Projeto {0}".format(banca.projeto)
+    description = "Banca do Projeto {0}".format(banca.get_projeto())
     if banca.link:
         description += "\n\nLink: {0}".format(banca.link)
-    description += "\n\nOrientador:\n- {0}".format(banca.projeto.orientador)
+    description += "\n\nOrientador:\n- {0}".format(banca.get_projeto().orientador)
     if banca.membros():
         description += "\n\nMembros da Banca:"
     for membro in banca.membros():
         description += "\n- {0}".format(membro.get_full_name())
-    description += "\n\nAlunos:"
-    for aluno in alunos:
-        description += "\n- {0}".format(aluno.user.get_full_name())
+    description += "\n\nEstudantes:"
+    for estudante in estudantes:
+        description += "\n- {0}".format(estudante.user.get_full_name())
     return description
 
 
@@ -137,9 +137,9 @@ def export_calendar(request, event_id):
 
     ical_event["uid"] = "Banca{0}{1}{2}".format(
         banca.startDate.strftime("%Y%m%d%H%M%S"),
-        banca.projeto.pk,
+        banca.get_projeto().pk,
         banca.tipo_de_banca)
-    ical_event.add("summary", "Banca {0}".format(banca.projeto))
+    ical_event.add("summary", "Banca {0}".format(banca.get_projeto()))
     ical_event.add("dtstart", banca.startDate)
     ical_event.add("dtend", banca.endDate)
     ical_event.add("dtstamp", datetime.datetime.now().date())
@@ -155,7 +155,7 @@ def export_calendar(request, event_id):
     for membro in banca.membros():
         adicionar_participante_em_evento(ical_event, membro)
 
-    alunos = Aluno.objects.filter(alocacao__projeto=banca.projeto)\
+    alunos = Aluno.objects.filter(alocacao__projeto=banca.get_projeto())\
         .filter(trancado=False)
 
     for aluno in alunos:

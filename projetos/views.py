@@ -500,7 +500,6 @@ def meuprojeto(request):
 
     context = {
         "titulo": "Meu Projeto",
-        #"aluno": request.user.aluno,
         "configuracao": get_object_or_404(Configuracao),
         "Projeto": Projeto,
     }

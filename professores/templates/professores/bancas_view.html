@@ -134,11 +134,11 @@
 
 
     Título: 
-    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.projeto %}href="{% url 'projeto_completo' banca.projeto.id %}"{% endif %}>
+    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_completo' banca.get_projeto.id %}"{% endif %}>
       <span id="titulo" name="titulo">
-        {% if banca and banca.projeto %}
-          {{banca.projeto.get_titulo}}
-          {% include "tipo_projeto.html" with projeto=banca.projeto %}
+        {% if banca and banca.get_projeto %}
+          {{banca.get_projeto.get_titulo}}
+          {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
         {% else %}
           Titulo de Projeto não definido
         {% endif %}
@@ -147,10 +147,10 @@
     <br>
 
     Organização: 
-    <a id="organizacao_link" name="organizacao_link" {% if banca and banca.projeto and banca.projeto.organizacao %}href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}"{% endif %}>
+    <a id="organizacao_link" name="organizacao_link" {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}"{% endif %}>
       <span id="organizacao" name="organizacao">
-        {% if banca and banca.projeto and banca.projeto.organizacao %}
-          {{banca.projeto.organizacao}}
+        {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}
+          {{banca.get_projeto.organizacao}}
         {% else %}
           Organização Parceira não definida
         {% endif %}
@@ -158,11 +158,11 @@
     </a>
     <br>
     
-    Orientador{% if banca and banca.projeto and banca.projeto.orientador.user.genero == "F" %}a{% endif %}: 
-    <a id="orientador_link" name="orientador_link" {% if banca and banca.projeto and banca.projeto.orientador %}href="{% url 'professor_detail' banca.projeto.orientador.id %}"{% endif %}>
+    Orientador{% if banca and banca.get_projeto and banca.get_projeto.orientador.user.genero == "F" %}a{% endif %}: 
+    <a id="orientador_link" name="orientador_link" {% if banca and banca.get_projeto and banca.get_projeto.orientador %}href="{% url 'professor_detail' banca.get_projeto.orientador.id %}"{% endif %}>
       <span id="orientador" name="orientador">
-        {% if banca and banca.projeto and banca.projeto.orientador %}
-          {{banca.projeto.orientador}}
+        {% if banca and banca.get_projeto and banca.get_projeto.orientador %}
+          {{banca.get_projeto.orientador}}
         {% else %}
           Sem identificação de Orientador(a)
         {% endif %}

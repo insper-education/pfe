@@ -378,7 +378,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
 
     list_display = ("momento", "nota", "peso", "objetivo",
                     "exame", "avaliador", "projeto", "alocacao")
-    ordering = ("momento",)
+    ordering = ("-momento",)
     list_filter = ("exame", "projeto__ano", "projeto__semestre")
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "alocacao__aluno__user__username", "projeto__organizacao__sigla"]

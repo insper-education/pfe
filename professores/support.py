@@ -96,8 +96,8 @@ def professores_membros_bancas(banca=None):
     id_membros = []
 
     if banca:
-        if banca.projeto and banca.projeto.orientador:
-            id_membros.append(banca.projeto.orientador.user.id) # orientador
+        if banca.get_projeto() and banca.get_projeto().orientador:
+            id_membros.append(banca.get_projeto().orientador.user.id) # orientador
         for membro in banca.membros():
             id_membros.append(membro.id)
 

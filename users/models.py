@@ -11,6 +11,7 @@ import datetime
 import re
 from hashids import Hashids
 from urllib.parse import quote
+import logging
 
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -37,6 +38,9 @@ from operacional.models import Curso
 from estudantes.models import Relato
 
 from academica.models import Exame
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários."""
@@ -496,7 +500,7 @@ class Aluno(models.Model):
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
 
         for alocacao in alocacoes:
-
+            
             notas = []  # iniciando uma lista de notas vazia
 
             try:
@@ -611,10 +615,23 @@ class Aluno(models.Model):
                     nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
                     notas.append(("AFG", nota_afg, peso/100 if peso else 0,
                                 "Avaliação Final de Grupo"))
+
+
+                ## PROBATION ##
+                pro = Avaliacao2.objects.filter(alocacao=alocacao,
+                                                exame=Exame.objects.get(sigla="P"))
+
+                if pro:
+                    nota_pro, peso, avaliadores = Aluno.get_banca(self, pro)
+                    notas.append(("P", nota_pro, peso/100 if peso else 0,
+                                 "Probation"))
                     
             except Exame.DoesNotExist:
                 raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
+            if str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre) in edicao:
+                logger.error("Erro, duas alocações no mesmo semestre!")
+                raise ValidationError("<h2>Erro, duas alocações no mesmo semestre!</h2>")
             edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
 
         return edicao

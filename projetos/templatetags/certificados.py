@@ -15,11 +15,11 @@ register = template.Library()
 def certificado_banca(banca, usuario):
     """Retorna o certificado de um membro de banca."""
     if banca.tipo_de_banca == 0:  # (0, 'Final'),
-        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.projeto, tipo_de_certificado=104)  # (104, "Membro de Banca Final"),
+        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_de_certificado=104)  # (104, "Membro de Banca Final"),
     elif banca.tipo_de_banca == 1:  # (1, 'Intermediária'),
-        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.projeto, tipo_de_certificado=103)  # (103, "Membro de Banca Intermediária"),
+        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_de_certificado=103)  # (103, "Membro de Banca Intermediária"),
     elif banca.tipo_de_banca == 2:  # (2, 'Certificação Falconi'),
-        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.projeto, tipo_de_certificado=105)  # (105, "Membro da Banca Falconi"),
+        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_de_certificado=105)  # (105, "Membro da Banca Falconi"),
     else:
         certificado = None
     

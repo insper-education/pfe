@@ -106,12 +106,12 @@
             {{banca.startDate.date}},
           {% endif %}
           </a>
-          {% if banca.projeto %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.get_titulo}}</a>,
+          {% if banca.get_projeto %}
+            <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.get_titulo}}</a>,
           {% endif %}
-          {% if banca.projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-              {{ banca.projeto.organizacao.nome }}
+          {% if banca.get_projeto.organizacao %}
+            <a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
+              {{ banca.get_projeto.organizacao.nome }}
             </a>
           {% endif %}
           {% with certificado=banca|certificado_banca:parceiro.user %}

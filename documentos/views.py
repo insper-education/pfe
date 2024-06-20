@@ -216,7 +216,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.projeto, 103, arquivo, banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 103, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -227,7 +227,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.projeto, 104, arquivo, banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 104, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -238,7 +238,7 @@ def gerar_certificados(request):
         tipos.append("B")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.projeto, 105, arquivo, banca=banca)
+                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 105, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -249,7 +249,7 @@ def gerar_certificados(request):
         tipos.append("MP")
         for membro in membro_banca:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0], banca.projeto, 106, arquivo, banca=banca)
+                certificado = atualiza_certificado(membro[0], banca.get_projeto(), 106, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 
@@ -260,7 +260,7 @@ def gerar_certificados(request):
         tipos.append("MT")
         for membro in membros:
             for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0], banca.projeto, 107, arquivo, banca=banca)
+                certificado = atualiza_certificado(membro[0], banca.get_projeto(), 107, arquivo, banca=banca)
                 if certificado:
                     certificados.append(certificado)
 

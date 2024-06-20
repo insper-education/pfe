@@ -542,7 +542,7 @@ def edita_notas(request, primarykey):
     # Filtra avaliações e observações individuais e de grupo
     avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame__grupo=False) | Avaliacao2.objects.filter(projeto=alocacao.projeto, exame__grupo=True)
     observacoes = Observacao.objects.filter(alocacao=alocacao, exame__grupo=False) | Observacao.objects.filter(projeto=alocacao.projeto, exame__grupo=True)
-    
+
     # Reprovação
     falha = Reprovacao.objects.filter(alocacao=alocacao)
     if falha:
@@ -560,11 +560,13 @@ def edita_notas(request, primarykey):
             }
             return render(request, "generic.html", context=context)
 
+        aval_id = str(alocacao.projeto.orientador.user.id)
+
         for composicao in composicoes:
             if composicao.exame:
                 for peso in composicao.peso_set.all():
-                    peso_name = "a" + str(composicao.exame.id) + "_peso_" + (str(peso.objetivo.id) if peso.objetivo else "")
-                    nota_name = "a" + str(composicao.exame.id) + "_nota_" + (str(peso.objetivo.id) if peso.objetivo else "")
+                    peso_name = "a" + str(composicao.exame.id) + "_peso_" + (str(peso.objetivo.id) if peso.objetivo else "") + "_p" + aval_id
+                    nota_name = "a" + str(composicao.exame.id) + "_nota_" + (str(peso.objetivo.id) if peso.objetivo else "") + "_p" + aval_id
                     peso_value = request.POST.get(peso_name, "")
                     nota_value = request.POST.get(nota_name, "")
                     
@@ -589,8 +591,8 @@ def edita_notas(request, primarykey):
 
                         reg.save()
 
-            obs_name_orientador = "a" + str(composicao.exame.id) + "_obs_orientador"
-            obs_name_estudantes = "a" + str(composicao.exame.id) + "_obs_estudantes"
+            obs_name_orientador = "a" + str(composicao.exame.id) + "_obs_orientador" + "_p" + aval_id
+            obs_name_estudantes = "a" + str(composicao.exame.id) + "_obs_estudantes" + "_p" + aval_id
             obs_value_orientador = request.POST.get(obs_name_orientador, "")
             obs_value_estudantes = request.POST.get(obs_name_estudantes, "")
             if obs_value_orientador != "" or obs_value_estudantes != "":

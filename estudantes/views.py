@@ -513,9 +513,23 @@ def minhas_bancas(request):
             }
             return render(request, "generic.html", context=context)
 
-        projetos = Projeto.objects.filter(alocacao__aluno=request.user.aluno)
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
+                                           projeto__ano=configuracao.ano,
+                                           projeto__semestre=configuracao.semestre).last()
+        
+        if not alocacao:
+            mensagem = "Você não está alocado em um projeto esse semestre."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+        
+        bancag = Banca.objects.filter(projeto=alocacao.projeto).order_by("-startDate")
 
-        bancas = Banca.objects.filter(projeto__in=projetos).order_by("-startDate")
+        bancai = Banca.objects.filter(alocacao=alocacao).order_by("-startDate")
+        
+        bancas = bancag | bancai
         
         context["bancas"] = bancas
     else:

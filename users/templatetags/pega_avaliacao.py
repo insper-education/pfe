@@ -40,7 +40,7 @@ def pega_avaliadores(objeto, tipo):
 
 @register.filter
 def add_orientador(lista, projeto):
-    """adiciona na lista."""
+    """adiciona orientador na lista."""
     encontrou = False
     id = projeto.orientador.user.id
     for i in lista:

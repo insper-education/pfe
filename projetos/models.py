@@ -872,6 +872,7 @@ class Banca(models.Model):
         elif self.tipo_de_banca == 2:
             observacoes = Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame__titulo="Falconi")
         else:
+            # Não passando observações para bancas de probation
             observacoes = Observacao.objects.none()
         return observacoes
     
@@ -884,6 +885,7 @@ class Banca(models.Model):
         elif self.tipo_de_banca == 2:
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Falconi")
         else:
+            # Não passando avaliações para bancas de probation
             avaliacoes = Avaliacao2.objects.none()
 
         # Verifica se todos avaliaram
@@ -925,17 +927,33 @@ class Banca(models.Model):
     def get_relatorio(self):
         if self.tipo_de_banca == 0: # Final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
         elif self.tipo_de_banca == 1: # Intermediária
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
         elif self.tipo_de_banca == 2:  # Falconi
             # Reaproveita o tipo de documento da banca final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
+        elif self.tipo_de_banca == 3:  # Probation
+            tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
+            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.alocacao.projeto)
         else:
             return None
         
-        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto).order_by("data").last()
+        if documento.exists():
+            return documento.order_by("data").last()
         
-        return documento
+        return None
+
+    def get_projeto(self):
+        """Retorna o projeto da banca."""
+        if self.tipo_de_banca == 3:
+            if self.alocacao:
+                return self.alocacao.projeto
+        if self.projeto:
+            return self.projeto
+        return None
 
 
 class Encontro(models.Model):
