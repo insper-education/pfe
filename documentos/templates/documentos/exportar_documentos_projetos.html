@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 20 de Junho de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">{{ titulo }}</span>
+
+  <form method="POST">{% csrf_token %}
+    {% include "edicoes.html" with com_cursos=True n_todas=True  %}
+    {% include "tipos_de_documentos.html" with titulo_lista="Documentos" com_borda=True %}
+
+    <br>
+  
+    <div class="atualizar">
+
+      Total de Projetos = {{projetos.count}} 
+              
+      <script>
+        function carrega_pagina() {};
+        function carrega_site() {};
+        window.onload = carrega_site
+      </script>
+
+    </div>
+    <br>
+
+    <input type="submit" value="Exportar" class="btn btn-primary">
+  
+  </form>
+
+
+  {% include "edicoes_ajax.html" with tabela='Projetos' com_cursos=True %}
+  
+{% endblock %}

@@ -7,13 +7,17 @@ Data: 15 de Dezembro de 2020
 """
 
 import os
+import re
 import json
+import zipfile
 
+from django.http import FileResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.exceptions import PermissionDenied
 
 from professores.support import recupera_orientadores
 from professores.support import recupera_coorientadores
@@ -317,7 +321,7 @@ def relatorios_publicos(request, edicao=None):
 
 
 @login_required
-@permission_required('users.altera_professor', raise_exception=True)
+@permission_required("users.altera_professor", raise_exception=True)
 def tabela_documentos(request):
     """Exibe tabela com todos os documentos armazenados."""
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
@@ -368,6 +372,91 @@ def tabela_documentos(request):
         }
 
     return render(request, "documentos/tabela_documentos.html", context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def exportar_documentos_projetos(request):
+    """Exibe tabela com todos os documentos armazenados."""
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
+
+    tipos_documentos = TipoDocumento.objects.filter(projeto=True)
+
+    context = {
+        "titulo": "Exportar Documentos dos Projetos",
+        "edicoes": get_edicoes(Projeto)[0],
+        "cursos": cursos_insper,
+        "cursos_externos": cursos_externos,
+        "lista": tipos_documentos,
+    }
+
+    if "edicao" in request.POST:
+        edicao = request.POST["edicao"]
+
+        if edicao == "todas":
+            projetos = Projeto.objects.all()
+        else:
+            ano, semestre = request.POST["edicao"].split('.')
+            projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        if "curso" in request.POST:
+            curso = request.POST["curso"]
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+        # Filtra para projetos com estudantes de um curso específico
+        if curso != "TE":
+            if curso != 'T':
+                projetos = projetos.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+            else:
+                projetos = projetos.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
+
+        context["projetos"] = projetos
+        context["edicao"] = edicao
+
+        if request.is_ajax():
+            pass
+
+        elif request.method == "POST":  # Significa que o usuário clicou no botão de exportar
+
+            selecionados = request.POST.getlist("selection")
+            tipos_documentos_selecionados = TipoDocumento.objects.filter(sigla__in=selecionados)
+
+            # Return all the objects that point to files
+            documentos = Documento.objects.filter(projeto__in=projetos, tipo_documento__in=tipos_documentos_selecionados)
+
+            # Create a zip file
+            zip_path = os.path.join(settings.MEDIA_ROOT, "documentos_" + edicao.replace('.', '_') + ".zip")
+            with zipfile.ZipFile(zip_path, "w") as zip_file:
+                # Loop over all documents
+                for documento in documentos:
+                    projeto_titulo = re.sub(r"\W+", "", documento.projeto.get_titulo().replace(' ', '_'))
+                    username = re.sub(r'\W+', '', documento.usuario.username.replace(' ', '_'))
+                    tipo_documento = re.sub(r"\W+", "", documento.tipo_documento.nome.replace(' ', '_'))
+                    
+                    # Get the path of the file
+                    local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+                    file_path = os.path.abspath(local_path)
+                    if ".." in file_path:
+                        raise PermissionDenied
+                    if os.path.exists(file_path):
+                        # Add the file to the zip file
+                        virtual_path = projeto_titulo
+                        if documento.tipo_documento and documento.tipo_documento.individual:
+                            virtual_path = virtual_path + "/" + username
+                        
+                        basename = os.path.basename(file_path)
+                        _, extension = os.path.splitext(basename)
+                        filename = tipo_documento + extension
+                        arcname = os.path.join(virtual_path, filename)
+                        zip_file.write(file_path, arcname=arcname)
+
+            # Open the zip file and return it as a response
+            return FileResponse(open(zip_path, "rb"), as_attachment=True, filename=os.path.basename(zip_path))
+
+    return render(request, "documentos/exportar_documentos_projetos.html", context)
 
 
 @login_required

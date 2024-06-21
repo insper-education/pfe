@@ -79,8 +79,7 @@ class DisciplinasResource(resources.ModelResource):
         """Forma que arrumei para evitar preencher com o mesmo dado."""
         nome = row.get('nome')
         if nome is None:
-            pass
-            # print("Erro ao recuperar o nome da disciplina")
+            pass  # "Erro ao recuperar o nome da disciplina"
         elif nome != "":
             (reg, _created) = Disciplina.objects.get_or_create(nome=nome)
             row['id'] = reg.id
@@ -138,12 +137,10 @@ class Avaliacoes2Resource(resources.ModelResource):
         elif 'user_id' in row:
             estudante_str = row.get('user_id')
         else:
-            pass
-            # print("Erro ao recuperar coluna estudante ou user_id")
+            pass  # "Erro ao recuperar coluna estudante ou user_id"
 
         if estudante_str is None:
-            pass
-            # print("Erro ao recuperar o estudante [estudante_str]")
+            pass  # "Erro ao recuperar o estudante [estudante_str]"
         elif estudante_str != "":
 
             # try:
@@ -165,8 +162,7 @@ class Avaliacoes2Resource(resources.ModelResource):
             if "avaliação" in row:
                 avaliacao = row.get('avaliação')
             else:
-                pass
-                # print("Erro ao recuperar coluna avaliação")
+                pass  # "Erro ao recuperar coluna avaliação"
 
             if "momento" in row:
                 momento = le_momento(row.get('momento'))
@@ -294,9 +290,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                                                                     exame=exame)
 
             else:
-                pass
-                # print("ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!")
-                # print(avaliacao)
+                pass  # "ERRO, AVALIAÇÃO NÃO RECONHECIDA !!!!"
 
             # CASO A LEITURA TENHA ALGUM FEEDBACK/OBSERVAÇÃO
             if "observação" in row:
@@ -325,8 +319,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                 desempenho = row.get("desempenho")
                 aval.nota = converte_conceito(desempenho)  # CALCULAR NOTA
             else:
-                pass
-                # print("Erro ao recuperar a nota")
+                pass  # "Erro ao recuperar a nota"
 
             # Todas as avaliações tem de ter peso
             # Pesos são convertidos para porcentagens
@@ -334,8 +327,7 @@ class Avaliacoes2Resource(resources.ModelResource):
                 peso = float(row.get("peso"))*100
                 aval.peso = peso
             else:
-                pass
-                # print("Erro ao recuperar o peso da avaliação")
+                pass  # "Erro ao recuperar o peso da avaliação"
 
             aval.save()
             row["id"] = aval.id
@@ -409,8 +401,7 @@ class EstudantesResource(resources.ModelResource):
         
         email = row.get("email")
         if email is None:
-            pass
-            # print("Erro ao recuperar o e-mail do usuário [email]")
+            pass  # "Erro ao recuperar o e-mail do usuário [email]"
         elif EMAIL_ESTUDANTE in email:
 
             username = email.split(EMAIL_ESTUDANTE)[0].strip()

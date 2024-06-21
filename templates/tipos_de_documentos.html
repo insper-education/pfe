@@ -1,7 +1,7 @@
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 21 de Abril de 2020
+  Data: 20 de Junho de 2024
 {% endcomment %}
 
 <style>
@@ -18,7 +18,7 @@
   }
 </style>
 
-{% if areast %}
+{% if lista %}
 
   <script>
     $(document).ready(function(){
@@ -31,34 +31,25 @@
   {% endif %}
 
   <table class="sem_b">
-    {% if titulo_areas %}
+    {% if titulo_lista %}
       <tr>
-        <td style="text-align: center;"><input type="checkbox" id="titulo_areas" value="{{area.titulo}}"
+        <td style="text-align: center;"><input type="checkbox" id="titulo_lista"
           {% if tudo_ligado %}checked{% endif %}
           {% if vencido %}disabled{% endif %}>
         </td>
-        <td style="text-align: center;"><label for="titulo_areas" style="line-height:0.6em;"><b>Áreas de Interesse</b></label></td>
+        <td style="text-align: center;"><label for="titulo_lista" style="line-height:0.6em;"><b>{{titulo_lista}}</b></label></td>
       </tr>
     {% endif %}
-    {% for area in areast %}
+    {% for elemento in lista %}
         <tr><td class="ar_in">
-                <input style="position: relative; top: 2px;" type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}" class="filtra_area"
+                <input style="position: relative; top: 2px;" type="checkbox" name="selection" id="{{elemento.id}}" value="{{elemento.sigla}}" class="filtra_area"
                 {% if tudo_ligado %}
                     checked
-                {% else %}
-                    {% comment %} Provavelmente aa não está sendo mais usado {% endcomment %}
-                    {% for a in aa %}
-                        {% if area == a.area %}checked{% endif %}
-                    {% endfor %}
                 {% endif %}
                 {% if vencido %}disabled{% endif %}>
             </td>
-            <td class="ar_in"
-                {% if area.descricao %}
-                    data-toggle="tooltip" data-html="true" animation="true" title="{{area.descricao}}"
-                {% endif %}
-                >
-                <label for="{{area.id}}" class="ar_la">{{area.titulo}}</label>
+            <td class="ar_in">
+                <label for="{{elemento.id}}" class="ar_la">{{elemento.nome}}</label>
             </td>
         </tr>
     {% endfor %}
@@ -66,20 +57,12 @@
   {% if not com_borda %}
       <div style="height:8px;font-size:8px;">&nbsp;</div>
   {% endif %}
-    
-  {% if not not_outras %}
-    <label style="display: inline-block; vertical-align: top; font-size: 14px;" for="outras">Outras:</label> 
-    <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
-    {% if vencido %}disabled{% endif %}
-    >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
-    {% comment %} Provavelmente aa não está sendo mais usado {% endcomment %}
-  {% endif %}
 
   {% if com_borda %}
     </div>
   {% endif %}
 
-  {% if titulo_areas %}
+  {% if titulo_lista %}
 
     <script>
 
@@ -95,8 +78,8 @@
               } 
           });
           if(verdade) {
-              $("#titulo_areas").prop("checked", true);
-              $("#titulo_areas").prop("indeterminate", false);
+              $("#titulo_lista").prop("checked", true);
+              $("#titulo_lista").prop("indeterminate", false);
               return;
           }
           
@@ -108,12 +91,12 @@
               } 
           });
           if(!verdade) {
-              $("#titulo_areas").prop("checked", false);
-              $("#titulo_areas").prop("indeterminate", false);
+              $("#titulo_lista").prop("checked", false);
+              $("#titulo_lista").prop("indeterminate", false);
               return;
           }
 
-          $("#titulo_areas").prop("indeterminate", true);
+          $("#titulo_lista").prop("indeterminate", true);
 
       }
 
@@ -123,8 +106,8 @@
           atualiza_colunas();
       });
 
-      $("#titulo_areas").change(function() {
-          if( $("#titulo_areas").is(":checked") ) {
+      $("#titulo_lista").change(function() {
+          if( $("#titulo_lista").is(":checked") ) {
               filterList.each(function(i, el) {
                   $(el).prop("checked", true).change();
               });

@@ -11,7 +11,7 @@ from projetos.models import Area, AreaDeInteresse
 
 def cria_area_estudante(request, estudante):
     """Cria um objeto Areas e preenche ele."""
-    check_values = request.POST.getlist('selection')
+    check_values = request.POST.getlist("selection")
 
     todas_areas = Area.objects.filter(ativa=True)
     for area in todas_areas:

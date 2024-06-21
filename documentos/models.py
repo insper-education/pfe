@@ -29,9 +29,6 @@ class TipoDocumento(models.Model):
     
     individual = models.BooleanField(default=False, help_text="Se é um documento individual")
     
-    # Temporario, soh para fazer a migracao    
-    #tmp_id = models.PositiveSmallIntegerField(default=0)
-
     def __str__(self):
         return str(self.nome) 
 
