@@ -453,10 +453,21 @@ def exportar_documentos_projetos(request):
                 
                 # Loop over all documents
                 for documento in documentos:
-                    projeto_titulo = re.sub(r"\W+", "", documento.projeto.get_titulo().replace(' ', '_'))
-                    username = re.sub(r'\W+', '', documento.usuario.username.replace(' ', '_'))
-                    tipo_documento = re.sub(r"\W+", "", documento.tipo_documento.nome.replace(' ', '_'))
+                    if documento.projeto:
+                        projeto_titulo = re.sub(r"\W+", "", documento.projeto.get_titulo().replace(' ', '_'))
+                    else:
+                        projeto_titulo = "sem_projeto"
                     
+                    if documento.usuario and documento.usuario.username:
+                        username = re.sub(r'\W+', '', documento.usuario.username.replace(' ', '_'))
+                    else:
+                        username = "sem_usuario"
+
+                    if documento.tipo_documento and documento.tipo_documento.nome:
+                        tipo_documento = re.sub(r"\W+", "", documento.tipo_documento.nome.replace(' ', '_'))
+                    else:
+                        tipo_documento = "sem_tipo_documento"
+
                     # Get the path of the file
                     if documento.documento:
                         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
