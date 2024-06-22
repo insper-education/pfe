@@ -182,3 +182,10 @@ def envia_aviso():
     """Envia avisos por e-mail."""
     avisos_do_dia()
     eventos_do_dia()
+
+
+@shared_task
+def apaga_tmp():
+    """Rotina que apaga quaisquer arquivos que esteja na pasta 'tmp'."""
+    pasta_tmp = settings.MEDIA_ROOT + "/tmp"
+    subprocess.call(["rm", "-rf", pasta_tmp + "/*"])

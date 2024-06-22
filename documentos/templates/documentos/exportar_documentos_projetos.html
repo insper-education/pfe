@@ -14,7 +14,8 @@
   
   <span class="titulo">{{ titulo }}</span>
 
-  <form method="POST">{% csrf_token %}
+  <form method="POST" id="exportForm">{% csrf_token %}
+
     {% include "edicoes.html" with com_cursos=True n_todas=True  %}
     {% include "tipos_de_documentos.html" with titulo_lista="Documentos" com_borda=True %}
 
@@ -33,8 +34,50 @@
     </div>
     <br>
 
-    <input type="submit" value="Exportar" class="btn btn-primary">
+    <input type="submit" value="Exportar" class="btn btn-primary" id="exportButton">
   
+    <script>
+      document.getElementById("exportForm").addEventListener("submit", function(event) {
+          event.preventDefault(); // Prevent the default form submission
+          const form = this;
+          const url = form.action; // The URL to which the form would be submitted
+          const formData = new FormData(form);
+      
+          // Disable the submit button
+          document.getElementById("exportButton").disabled = true;
+      
+          fetch(url, {
+              method: "POST",
+              body: formData,
+          })
+          .then(response => response.blob()) // Convert the response to a Blob
+          .then(blob => {
+              // Create a URL for the Blob
+              const downloadUrl = window.URL.createObjectURL(blob);
+              // Create a temporary link element
+              const a = document.createElement("a");
+              a.href = downloadUrl;
+
+              const selectedValue = document.getElementById("filterEdicao").value;
+              filename = "documentos_" + selectedValue.replace(".", "_");;
+              a.download = filename; // Set the filename
+
+              //a.download = "your_download_filename_here"; // Set the filename
+              document.body.appendChild(a);
+              a.click(); // Trigger the download
+              a.remove(); // Clean up
+      
+              // Re-enable the submit button
+              document.getElementById("exportButton").disabled = false;
+          })
+          .catch(() => {
+              // Handle any errors here
+              // Re-enable the submit button in case of error
+              document.getElementById("exportButton").disabled = false;
+          });
+      });
+    </script>
+
   </form>
 
 

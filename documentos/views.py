@@ -10,6 +10,9 @@ import os
 import re
 import json
 import zipfile
+import tempfile
+import random
+import string
 
 from django.http import FileResponse
 from django.conf import settings
@@ -374,6 +377,19 @@ def tabela_documentos(request):
     return render(request, "documentos/tabela_documentos.html", context)
 
 
+# Function to generate a unique arcname if the provided one already exists in the zip file
+def generate_unique_arcname(zip_file, arcname):
+    arcname = arcname.replace('\\','/')
+    if arcname not in zip_file.namelist():
+        return arcname
+    else:
+        base_name, extension = os.path.splitext(arcname)
+        counter = 1
+        while True:
+            new_arcname = f"{base_name}_{counter}{extension}"
+            if new_arcname not in zip_file.namelist():
+                return new_arcname
+            counter += 1
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -381,7 +397,7 @@ def exportar_documentos_projetos(request):
     """Exibe tabela com todos os documentos armazenados."""
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
-
+    
     tipos_documentos = TipoDocumento.objects.filter(projeto=True)
 
     context = {
@@ -426,10 +442,15 @@ def exportar_documentos_projetos(request):
 
             # Return all the objects that point to files
             documentos = Documento.objects.filter(projeto__in=projetos, tipo_documento__in=tipos_documentos_selecionados)
-
+            
             # Create a zip file
-            zip_path = os.path.join(settings.MEDIA_ROOT, "documentos_" + edicao.replace('.', '_') + ".zip")
+            nome_arquivo = "documentos_" + edicao.replace('.', '_') + ".zip"
+            # Random sequence of characters to avoid name conflicts
+            sequencia_aleatoria = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            
+            zip_path = os.path.join(settings.MEDIA_ROOT + "/tmp", "documentos_" + sequencia_aleatoria + ".zip")
             with zipfile.ZipFile(zip_path, "w") as zip_file:
+                
                 # Loop over all documents
                 for documento in documentos:
                     projeto_titulo = re.sub(r"\W+", "", documento.projeto.get_titulo().replace(' ', '_'))
@@ -437,24 +458,45 @@ def exportar_documentos_projetos(request):
                     tipo_documento = re.sub(r"\W+", "", documento.tipo_documento.nome.replace(' ', '_'))
                     
                     # Get the path of the file
-                    local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
-                    file_path = os.path.abspath(local_path)
-                    if ".." in file_path:
-                        raise PermissionDenied
-                    if os.path.exists(file_path):
-                        # Add the file to the zip file
+                    if documento.documento:
+                        local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+                        file_path = os.path.abspath(local_path)
+                        if ".." in file_path:
+                            raise PermissionDenied
+                        if os.path.exists(file_path):
+                            # Add the file to the zip file
+                            virtual_path = projeto_titulo
+                            if documento.tipo_documento and documento.tipo_documento.individual:
+                                virtual_path = virtual_path + "/" + username
+                            
+                            basename = os.path.basename(file_path)
+                            _, extension = os.path.splitext(basename)
+                            filename = tipo_documento + extension
+                            arcname = os.path.join(virtual_path, filename)
+                            unique_arcname = generate_unique_arcname(zip_file, arcname)
+                            zip_file.write(file_path, arcname=unique_arcname)
+
+                    if documento.link:
+                        # Documento does not have a file, create a temporary text file
+                        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                            redirect_content = "<html><head><meta http-equiv='refresh' content='0; url={0}'></head></html>".format(documento.link)
+                            temp_file.write(redirect_content.encode("utf-8"))
+                            temp_file_path = temp_file.name
+                            print(temp_file_path)
+                        
                         virtual_path = projeto_titulo
                         if documento.tipo_documento and documento.tipo_documento.individual:
                             virtual_path = virtual_path + "/" + username
                         
-                        basename = os.path.basename(file_path)
-                        _, extension = os.path.splitext(basename)
-                        filename = tipo_documento + extension
+                        filename = tipo_documento + ".html"
                         arcname = os.path.join(virtual_path, filename)
-                        zip_file.write(file_path, arcname=arcname)
+                        unique_arcname = generate_unique_arcname(zip_file, arcname)
+                        zip_file.write(temp_file_path, arcname=unique_arcname)
+                        # The file is no longer needed, removing it
+                        os.remove(temp_file_path)
 
             # Open the zip file and return it as a response
-            return FileResponse(open(zip_path, "rb"), as_attachment=True, filename=os.path.basename(zip_path))
+            return FileResponse(open(zip_path, "rb"), as_attachment=True, filename=nome_arquivo)
 
     return render(request, "documentos/exportar_documentos_projetos.html", context)
 
