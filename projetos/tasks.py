@@ -189,3 +189,8 @@ def apaga_tmp():
     """Rotina que apaga quaisquer arquivos que esteja na pasta 'tmp'."""
     pasta_tmp = settings.MEDIA_ROOT + "/tmp"
     subprocess.call(["sudo", "rm", "-rf", pasta_tmp + "/*"])
+    command = ["sudo", "rm", "-rf", f"{pasta_tmp}/*"]
+    result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+    if result.returncode != 0:
+        logger.error("Error: " + str(result.stderr))
+        
