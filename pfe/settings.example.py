@@ -227,6 +227,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "projetos.tasks.certbot_renew",
         "schedule": crontab(0, 0, day_of_month='1'),
     },
+    'apaga_tmp': {
+        'task': 'projetos.tasks.apaga_tmp',
+        'schedule': crontab(hour=0, minute=0, day_of_week=2),
+    },
 }
 
 SITE_ID = 1

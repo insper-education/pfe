@@ -35,48 +35,7 @@
     <br>
 
     <input type="submit" value="Exportar" class="btn btn-primary" id="exportButton">
-  
-    <script>
-      document.getElementById("exportForm").addEventListener("submit", function(event) {
-          event.preventDefault(); // Prevent the default form submission
-          const form = this;
-          const url = form.action; // The URL to which the form would be submitted
-          const formData = new FormData(form);
-      
-          // Disable the submit button
-          document.getElementById("exportButton").disabled = true;
-      
-          fetch(url, {
-              method: "POST",
-              body: formData,
-          })
-          .then(response => response.blob()) // Convert the response to a Blob
-          .then(blob => {
-              // Create a URL for the Blob
-              const downloadUrl = window.URL.createObjectURL(blob);
-              // Create a temporary link element
-              const a = document.createElement("a");
-              a.href = downloadUrl;
-
-              const selectedValue = document.getElementById("filterEdicao").value;
-              filename = "documentos_" + selectedValue.replace(".", "_");;
-              a.download = filename; // Set the filename
-
-              //a.download = "your_download_filename_here"; // Set the filename
-              document.body.appendChild(a);
-              a.click(); // Trigger the download
-              a.remove(); // Clean up
-      
-              // Re-enable the submit button
-              document.getElementById("exportButton").disabled = false;
-          })
-          .catch(() => {
-              // Handle any errors here
-              // Re-enable the submit button in case of error
-              document.getElementById("exportButton").disabled = false;
-          });
-      });
-    </script>
+    <small>Após clicar no botão, aguarde o arquivo. Pode demorar vários segundos para o download começar.</small>
 
   </form>
 
