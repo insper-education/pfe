@@ -188,4 +188,4 @@ def envia_aviso():
 def apaga_tmp():
     """Rotina que apaga quaisquer arquivos que esteja na pasta 'tmp'."""
     pasta_tmp = settings.MEDIA_ROOT + "/tmp"
-    subprocess.call(["rm", "-rf", pasta_tmp + "/*"])
+    subprocess.call(["sudo", "rm", "-rf", pasta_tmp + "/*"])
