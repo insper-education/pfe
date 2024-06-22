@@ -423,9 +423,11 @@ def exportar_documentos_projetos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
 
         # Filtra para projetos com estudantes de um curso específico
+        curso_sigla = ""
         if curso != "TE":
             if curso != 'T':
                 projetos = projetos.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+                curso_sigla = Curso.objects.get(sigla_curta=curso).sigla + "_"
             else:
                 projetos = projetos.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
 
@@ -444,7 +446,7 @@ def exportar_documentos_projetos(request):
             documentos = Documento.objects.filter(projeto__in=projetos, tipo_documento__in=tipos_documentos_selecionados)
             
             # Create a zip file
-            nome_arquivo = "documentos_" + edicao.replace('.', '_') + ".zip"
+            nome_arquivo = "documentos_" + curso_sigla + edicao.replace('.', '_') + ".zip"
             # Random sequence of characters to avoid name conflicts
             sequencia_aleatoria = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
             
