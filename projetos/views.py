@@ -153,7 +153,7 @@ def projeto_completo(request, primarykey):
         "medias_oo": medias_oo,
         "conexoes": Conexao.objects.filter(projeto=projeto),
         "coorientadores": Coorientador.objects.filter(projeto=projeto),
-        "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True),
+        "documentos": Documento.objects.filter(projeto=projeto),
         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
     }
