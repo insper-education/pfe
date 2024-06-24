@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Junho de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">{{ titulo }}</span>
+
+  <form method="POST" id="exportForm">{% csrf_token %}
+
+    {% include "edicoes.html" with n_todas=True  %}
+    <br>
+  
+    <div class="atualizar">
+      {% include "mostrar_notas.html" with titulo_lista="Exame" com_borda=True %}
+      <script>
+        function carrega_pagina() {};
+        function carrega_site() {};
+        window.onload = carrega_site
+      </script>
+
+    </div>
+    <br>
+
+    <input type="submit" value="Atualizar" class="btn btn-primary" id="atualizarButton">
+  </form>
+
+
+  {% include "edicoes_ajax.html" with tabela='Projetos' %}
+  
+{% endblock %}

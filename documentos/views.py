@@ -40,6 +40,7 @@ from operacional.models import Curso
 from .support import render_pdf_file
 
 from documentos.models import TipoDocumento
+from academica.models import Exame, ExibeNota
 
 #@login_required
 def index_documentos(request):
@@ -391,6 +392,7 @@ def generate_unique_arcname(zip_file, arcname):
                 return new_arcname
             counter += 1
 
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def exportar_documentos_projetos(request):
@@ -512,6 +514,44 @@ def exportar_documentos_projetos(request):
             return FileResponse(open(zip_path, "rb"), as_attachment=True, filename=nome_arquivo)
 
     return render(request, "documentos/exportar_documentos_projetos.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def exibir_ocultar_notas(request):
+    """Controla que notas exibir ou ocultar para os alunos."""
+    
+    exames = Exame.objects.all()
+    context = {
+        "titulo": "Exibir ou Ocultar Notas",
+        "edicoes": get_edicoes(Projeto)[0],
+        "lista": exames,
+    }
+
+    if "edicao" in request.POST:
+        edicao = request.POST["edicao"]
+
+        if edicao == "todas":
+            return HttpResponse("Erro, sem suporte para todas as edições.", status=401)
+        else:
+            ano, semestre = request.POST["edicao"].split('.')
+            # projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        context["edicao"] = edicao
+        context["selecionada"] = edicao
+
+        if request.is_ajax():
+            pass
+
+        elif request.method == "POST":  # Significa que o usuário clicou no botão de exportar
+            selecionados = request.POST.getlist("selection")
+            for exame in exames:
+                (exibe, _created)  = ExibeNota.objects.get_or_create(exame=exame, ano=ano, semestre=semestre)
+                exibe.exibe = exame.sigla in selecionados
+                exibe.save()
+
+    return render(request, "documentos/exibir_ocultar_notas.html", context)
+
 
 
 @login_required

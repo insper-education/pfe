@@ -70,6 +70,10 @@ urlpatterns = [
         views.exportar_documentos_projetos,
         name="exportar_documentos_projetos"),
 
+    path("exibir_ocultar_notas/",
+        views.exibir_ocultar_notas,
+        name="exibir_ocultar_notas"),
+
     path("contratos_assinados/",
         views.contratos_assinados,
         name="contratos_assinados"),

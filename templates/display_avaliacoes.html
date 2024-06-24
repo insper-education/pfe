@@ -4,68 +4,75 @@
   Data: 19 de Janeiro de 2024
 {% endcomment %}
 
+{% load static %}
+{% load exibe_notas %}
+
 {% if avaliacoes %}
-  <div style="display: table; width: 100%; padding: 0px;">
-    <table class="tab_notas">
-      <tr>
-        <td class="box_notas" style="width: 15em;"><div class="box_divs">
-          {% if avaliacoes.last.objetivo %}
-            <b>Avaliação:</b><br>
-            <ul>
-              {% for avaliacao in avaliacoes %}
-                <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
-                  {% if avaliacao.objetivo %}
-                    {{avaliacao.objetivo.titulo}}:
-                    {% comment %} {{avaliacao.objetivo.sigla}}: {% endcomment %}
-                  {% else %}
-                    Objetivo não definido 
-                  {% endif %}
-                  {{avaliacao.get_conceito}}
-                </li>
-              {% endfor %}
-            </ul>
-            <b>Nota = {{nota|floatformat:2}}  </b>
-          {% else %}
-            <b>Decisão:</b><br>
-            &#8227;
-            {% if avaliacoes.last.nota > 5 %}
-              Adequado
+  {% if user.tipo_de_usuario != 1 or projeto|exibe_notas_proj:item.composicao.exame %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
+    <div style="display: table; width: 100%; padding: 0px;">
+      <table class="tab_notas">
+        <tr>
+          <td class="box_notas" style="width: 15em;"><div class="box_divs">
+            {% if avaliacoes.last.objetivo %}
+              <b>Avaliação:</b><br>
+              <ul>
+                {% for avaliacao in avaliacoes %}
+                  <li style="margin-left: -1.9em; white-space: nowrap; list-style-type: '&#8227; ';">
+                    {% if avaliacao.objetivo %}
+                      {{avaliacao.objetivo.titulo}}:
+                      {% comment %} {{avaliacao.objetivo.sigla}}: {% endcomment %}
+                    {% else %}
+                      Objetivo não definido 
+                    {% endif %}
+                    {{avaliacao.get_conceito}}
+                  </li>
+                {% endfor %}
+              </ul>
+              <b>Nota = {{nota|floatformat:2}}  </b>
             {% else %}
-              Inadequado
+              <b>Decisão:</b><br>
+              &#8227;
+              {% if avaliacoes.last.nota > 5 %}
+                Adequado
+              {% else %}
+                Inadequado
+              {% endif %}
             {% endif %}
-          {% endif %}
-          </div></td>
+            </div></td>
 
-        {% if com_orientador %} 
+          {% if com_orientador %} 
 
-          {% if observacao.observacoes_estudantes or observacao.observacoes_orientador %}
-            <td class="box_notas"><div class="box_divs">
+            {% if observacao.observacoes_estudantes or observacao.observacoes_orientador %}
+              <td class="box_notas"><div class="box_divs">
+              {% if observacao.observacoes_estudantes %}
+                  <b>Observações para Estudantes:</b><br>
+                  {{observacao.observacoes_estudantes}}<br>
+                  {% if observacao.observacoes_orientador %}<br>{% endif %}
+              {% endif %}
+              {% if observacao.observacoes_orientador %} 
+                  <b>Observações do Orientador:</b><br>
+                  {{observacao.observacoes_orientador}}
+              {% endif %}
+              </div></td>
+            {% endif %}
+
+          {% else %}
+
             {% if observacao.observacoes_estudantes %}
-                <b>Observações para Estudantes:</b><br>
+              <td class="box_notas"><div class="box_divs">
+                <b>Observações:</b><br>
                 {{observacao.observacoes_estudantes}}<br>
-                {% if observacao.observacoes_orientador %}<br>{% endif %}
+              </div></td>
             {% endif %}
-            {% if observacao.observacoes_orientador %} 
-                <b>Observações do Orientador:</b><br>
-                {{observacao.observacoes_orientador}}
-            {% endif %}
-            </div></td>
+
           {% endif %}
 
-        {% else %}
-
-          {% if observacao.observacoes_estudantes %}
-            <td class="box_notas"><div class="box_divs">
-              <b>Observações:</b><br>
-              {{observacao.observacoes_estudantes}}<br>
-            </div></td>
-          {% endif %}
-
-        {% endif %}
-
-      </tr>
-    </table>
-  </div>
+        </tr>
+      </table>
+    </div>
+  {% else %}
+    <div style="height: 6px;"></div>
+  {% endif %}
 
 {% else %}
   <div style="height: 6px;"></div>

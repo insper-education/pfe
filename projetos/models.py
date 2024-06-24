@@ -898,8 +898,7 @@ class Banca(models.Model):
         if self.membro3 is not None:
             if not avaliacoes.filter(avaliador=self.membro3).exists():
                 return None
-            
-        
+
         objetivos = {}
         nota = 0
         peso = 0

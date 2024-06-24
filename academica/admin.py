@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import Composicao, Peso, Exame
+from .models import Composicao, Peso, Exame, CodigoColuna, ExibeNota
 
 
 @admin.register(Exame)
 class ExameAdmin(admin.ModelAdmin):
-    """Peso."""
+    """Exame."""
     list_display = ("titulo", "sigla", "grupo", "periodo_para_rubricas")
 
 
@@ -23,3 +23,12 @@ class PesoAdmin(admin.ModelAdmin):
     list_filter = ("objetivo",)
     search_fields = ["composicao__exame__titulo",]
 
+@admin.register(CodigoColuna)
+class CodigoColunaAdmin(admin.ModelAdmin):
+    """Código da Coluna do Blackborad."""
+    list_display = ("exame", "ano", "semestre", "coluna")
+
+@admin.register(ExibeNota)
+class ExibeNotaAdmin(admin.ModelAdmin):
+    """Exibe Nota para Estudantes."""
+    list_display = ("exame", "ano", "semestre", "exibe")
