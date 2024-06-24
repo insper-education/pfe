@@ -535,7 +535,6 @@ def exibir_ocultar_notas(request):
             return HttpResponse("Erro, sem suporte para todas as edições.", status=401)
         else:
             ano, semestre = request.POST["edicao"].split('.')
-            # projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
         context["edicao"] = edicao
         context["selecionada"] = edicao

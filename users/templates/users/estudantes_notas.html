@@ -47,6 +47,7 @@
               {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Projeto</span></th>
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Notas</span></th>
+              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Indi.</span></th>
               <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Média</span></th>
               {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
           </tr>
@@ -94,6 +95,8 @@
                 <script>
                   var nota_linha = 0;
                   var peso_linha = 0;
+                  var nota_indiv = 0;
+                  var peso_indiv = 0;
                 </script>
                 {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
                     <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" 
@@ -108,10 +111,34 @@
                       <script>
                         nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
                         peso_linha += {{peso|unlocalize}};
+                        {% if aval == "RII" or aval == "RFI" %}
+                          nota_indiv += {{nota|unlocalize}}*{{peso|unlocalize}};
+                          peso_indiv += {{peso|unlocalize}};
+                        {% endif %}
                       </script>
                     {% endif %}
                 {% endfor %}
               </td>
+
+              <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
+                {% if alocacao %}
+                  <script>
+                    var indiv_tag = $("#indiv{{aluno.id}}");
+                    peso_indiv = +peso_indiv.toFixed(7); // arredonda valores
+                    if (peso_indiv>0) {
+                      var mindiv = nota_indiv/peso_indiv;
+                      mindiv = +mindiv.toFixed(6); // arredonda valores
+                      tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
+                      if(mindiv < 5) {
+                        tag_txt += 'style="color:red"'
+                      }
+                      tag_txt += '>' + mindiv.toFixed(2)
+                      indiv_tag.html(tag_txt);
+                    }
+                  </script>
+                {% endif %}
+              </td>
+
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
                 {% if alocacao %}
                   <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"></a>
@@ -137,7 +164,6 @@
                         }
                       }
                     {% endif %}
-
                   </script>
                 {% endif %}
               </td>
