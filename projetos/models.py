@@ -1861,6 +1861,8 @@ class Certificado(models.Model):
                                 help_text="pessoa premiada com certificado")
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto relacionado ao certificado")
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="alocação relacionada ao certificado")
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="data do certificado")
 
@@ -1877,6 +1879,7 @@ class Certificado(models.Model):
         (105, "Membro da Banca Falconi"),
         (106, "Mentoria Profissional"),  # antigo mentor na Falconi
         (107, "Mentoria Técnica"),  # mentor da empresa
+        (108, "Membro de Banca de Probation"),
     )
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 

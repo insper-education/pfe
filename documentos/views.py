@@ -26,6 +26,7 @@ from professores.support import recupera_orientadores
 from professores.support import recupera_coorientadores
 from professores.support import recupera_bancas_intermediarias
 from professores.support import recupera_bancas_finais
+from professores.support import recupera_bancas_probation
 from professores.support import recupera_bancas_falconi
 from professores.support import recupera_mentorias
 from professores.support import recupera_mentorias_técnica
@@ -93,14 +94,15 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     return render(request, "documentos/certificados_submetidos.html", context)
 
 
-def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
+def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None, alocacao=None):
     """Atualiza os certificados."""
     configuracao = get_object_or_404(Configuracao)
 
     (certificado, _) = \
         Certificado.objects.get_or_create(usuario=usuario,
                                           projeto=projeto,
-                                          tipo_de_certificado=tipo_cert)
+                                          tipo_de_certificado=tipo_cert,
+                                          alocacao=alocacao)
 
     tipo_documento = TipoDocumento.objects.get(sigla="PT")
     papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
@@ -137,6 +139,10 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
             context["usuario"] = usuario
             context["count_projetos"] = banca
             tipo = "_mentoria_tecnica"
+        elif tipo_cert == 108:
+            context["usuario"] = usuario
+            context["banca"] = banca
+            tipo = "_banca_probation"
         else:
             tipo = ""
 
@@ -241,6 +247,17 @@ def gerar_certificados(request):
         for membro in membro_banca:
             for banca in membro[1]:
                 certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 104, arquivo, banca=banca)
+                if certificado:
+                    certificados.append(certificado)
+
+    if "banca" in request.POST:
+        # (108, "Membro de Banca de Probation"),
+        membro_banca = recupera_bancas_probation(ano, semestre)
+        arquivo = "documentos/certificado_banca_probation.html"
+        tipos.append("B")
+        for membro in membro_banca:
+            for banca in membro[1]:
+                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 108, arquivo, banca=banca, alocacao=banca.alocacao)
                 if certificado:
                     certificados.append(certificado)
 

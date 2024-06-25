@@ -97,7 +97,6 @@
       });
     }
 
-        
     $("#tipos").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
       {% comment %}
               if(clickedIndex == 0){if(isSelected){$(".estudantes").show();}else{$(".estudantes").hide();}
@@ -126,14 +125,13 @@
 
       {% for certificado in certificados %}
 
-      
         {% if certificado.tipo_de_certificado < 100 %}
           <tr class="estudantes certificado">
         {% elif certificado.tipo_de_certificado == 101 %}
           <tr class="orientador certificado">
         {% elif certificado.tipo_de_certificado == 102 %}
           <tr class="coorientador certificado">
-        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
+        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 or certificado.tipo_de_certificado == 108 %}
           <tr class="banca certificado">
         {% elif certificado.tipo_de_certificado == 106 %}
           <tr class="mentoria_profissional certificado">
@@ -193,6 +191,8 @@
               Mentoria de Projeto
             {% elif certificado.tipo_de_certificado == 107 %}
               Mentoria de Projeto
+            {% elif certificado.tipo_de_certificado == 108 %}
+              Membro de Banca de Probation
             {% endif %}
             {% with formatada=True %}
               &amp;body={% include 'mensagem_certificados.html' %}
@@ -218,6 +218,8 @@
               Mentoria de Projeto
             {% elif certificado.tipo_de_certificado == 107 %}
               Mentoria de Projeto
+            {% elif certificado.tipo_de_certificado == 108 %}
+              Membro de Banca de Probation
             {% endif %}
             {% with formatada=False %}
             &amp;body={% include "mensagem_certificados.html" %}

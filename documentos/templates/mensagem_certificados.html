@@ -133,6 +133,33 @@
       -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Banca Final de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
       %0D%0A
 
+
+
+  {% elif certificado.tipo_de_certificado == 108 %} {% comment %} banca probation {% endcomment %}
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Gostaríamos de agradecer sua participação na Banca de Probation do Projeto Final de Engenharia.%0D%0A
+      %0D%0A
+
+      {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
+      Se desejar incluir a informação no seu Currículo Lattes%0D%0A
+      Acesse:%20{% if formatada %}%3Ca href='http://lattes.cnpq.br/' target='_blank' rel='noopener noreferrer'%3E{% endif %}http://lattes.cnpq.br/{% if formatada %}%3C%2Fa%3E{% endif %}%0D%0A
+      Escolha:%20{% if formatada %}%3Cb%3E{% endif %}Bancas%20%3E%3E%20Participação em bancas de trabalhos de conclusão{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+
+      -%20natureza:%20{% if formatada %}%3Cb%3E{% endif %}Graduação{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20título:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.get_titulo|parse_quote}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20ano:%20{% if formatada %}%3Cb%3E{% endif %}{{certificado.projeto.ano}}{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20nome do candidato:%20{% if formatada %}%3Cb%3E{% endif %}
+      {% if certificado.alocacao %}
+        {{certificado.alocacao.aluno.user.get_full_name|parse_quote}}
+      {% endif %}
+      {% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20instituição:%20{% if formatada %}%3Cb%3E{% endif %}Insper Instituto de Ensino e Pesquisa{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20curso:%20{% if formatada %}%3Cb%3E{% endif %}Engenharia{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      -%20outras informações:%20{% if formatada %}%3Cb%3E{% endif %}Banca Final de TCC{% if formatada %}%3C%2Fb%3E{% endif %}%0D%0A
+      %0D%0A
+
+      
   {% elif certificado.tipo_de_certificado == 105 %} {% comment %} banca falconi {% endcomment %}
 
       {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}

@@ -264,13 +264,11 @@ def recupera_bancas_intermediarias(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=1)  # (1, 'Intermediária'),
+        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=1)  # (1, 'Intermediária'),
 
         bancas = bancas.filter(membro1=professor.user) |\
                  bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
-
-        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
@@ -292,13 +290,11 @@ def recupera_bancas_finais(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=0)  # (0, 'Final')
+        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=0)  # (0, 'Final')
 
         bancas = bancas.filter(membro1=professor.user) |\
                  bancas.filter(membro2=professor.user) |\
                  bancas.filter(membro3=professor.user)
-
-        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
@@ -308,6 +304,31 @@ def recupera_bancas_finais(ano, semestre):
                 grupos.append(count_bancas)
 
     return zip(professores, grupos)
+
+
+def recupera_bancas_probation(ano, semestre):
+    """Recupera listas de todos os membros de bancas de probation."""
+    professores = []
+    grupos = []
+    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
+                                                      Lower("user__last_name")):
+
+        count_bancas = []
+
+        bancas = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_de_banca=3)  # (3, 'Probation')
+        bancas = bancas.filter(membro1=professor.user) |\
+                 bancas.filter(membro2=professor.user) |\
+                 bancas.filter(membro3=professor.user)
+
+        if bancas:
+            for banca in bancas:
+                count_bancas.append(banca)
+            if count_bancas:
+                professores.append(professor)
+                grupos.append(count_bancas)
+
+    return zip(professores, grupos)
+
 
 
 def recupera_bancas_falconi(ano, semestre):
@@ -323,13 +344,11 @@ def recupera_bancas_falconi(ano, semestre):
 
         count_bancas = []
 
-        bancas = Banca.objects.filter(tipo_de_banca=2)  #  (2, 'Certificação Falconi'),
+        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=2)  #  (2, 'Certificação Falconi'),
 
         bancas = bancas.filter(membro1=membro.user) |\
                  bancas.filter(membro2=membro.user) |\
                  bancas.filter(membro3=membro.user)
-
-        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         if bancas:
             for banca in bancas:
