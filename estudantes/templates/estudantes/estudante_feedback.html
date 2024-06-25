@@ -48,7 +48,7 @@
       
       <p class="text-danger">Os dados serão tratados como confidênciais.</p>
 
-      <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos um novo projeto nos próximos semestres com a {{feedback.projeto.organizacao}}?</label>
+      <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos mais projetos nos próximos semestres com a {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}?</label>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria1" value="option1" {% if feedback %}disabled  {% if feedback.recomendaria == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="recomendaria1">
@@ -68,7 +68,7 @@
         </label>
       </div>
 
-      <label for="primeira_opcao" class="mt-5" style="max-width: 860px;">Agora que você conhece mais da {{feedback.projeto.organizacao}}, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?</label>
+      <label for="primeira_opcao" class="mt-5" style="max-width: 860px;">Agora que você conhece mais da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?</label>
       <div class="form-check">
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="primeira_opcao" id="primeira_opcaoS" value="optionS" {% if feedback %}disabled  {% if feedback.primeira_opcao == True %}checked="checked"{% endif %} {% endif %}>
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <label for="proposta" class="mt-5" style="max-width: 860px;">Tendo ou não buscado alguma proposta da {{feedback.projeto.organizacao}} para estágio ou contrato de trabalho.</label>
+      <label for="proposta" class="mt-5" style="max-width: 860px;">Tendo ou não buscado alguma proposta da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %} para estágio ou contrato de trabalho.</label>
       <div class="form-check">
         <input class="form-check-input" type="radio" name="proposta" id="proposta1" value="option1" {% if feedback %}disabled  {% if feedback.proposta == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="proposta1">
@@ -120,7 +120,7 @@
       <div class="form-check">
         <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando1" value="option1" {% if feedback %}disabled  {% if feedback.trabalhando == 1 %}checked="checked"{% endif %} {% endif %}>
         <label class="form-check-label" for="trabalhando1">
-          {% if feedback.projeto.organizacao %}{{feedback.projeto.organizacao}}{% else %}Empresa do projeto{% endif %}
+          {% if projeto.proposta.organizacao %}{{projeto.proposta.organizacao}}{% else %}Empresa do projeto{% endif %}
         </label>
       </div>
       <div class="form-check">
