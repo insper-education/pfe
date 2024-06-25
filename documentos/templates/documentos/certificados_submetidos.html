@@ -29,12 +29,12 @@
       background-color: #F0F0F0;
     }
 
-    td.estudantes {border-color: #FF0000;}
-    td.orientador {border-color: #0000FF;}
-    td.coorientador {border-color: #00FF00;}
-    td.banca {border-color: #FF00FF;}
-    td.mentoria_profissional {border-color: #FFFF00;}
-    td.mentoria_tecnica {border-color: #00FFFF;}
+    tr.estudantes td {border-color: #FF0000;}
+    tr.orientador td {border-color: #0000FF;}
+    tr.coorientador td {border-color: #00FF00;}
+    tr.banca td {border-color: #FF00FF;}
+    tr.mentoria_profissional td {border-color: #FFFF00;}
+    tr.mentoria_tecnica td {border-color: #00FFFF;}
 
   </style>
 
@@ -75,17 +75,44 @@
       $("#t_mentoria_profissional").text($(".mentoria_profissional:visible").length);
       $("#t_total").text($(".certificado:visible").length);
     }
-    
-    $('#tipos').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-            if(clickedIndex == 0){if(isSelected){$('.estudantes').show();}else{$('.estudantes').hide();}
-      }else if(clickedIndex == 1){if(isSelected){$('.orientador').show();}else{$('.orientador').hide();}
-      }else if(clickedIndex == 2){if(isSelected){$('.coorientador').show();}else{$('.coorientador').hide();}
-      }else if(clickedIndex == 3){if(isSelected){$('.banca').show();}else{$('.banca').hide();}
-      }else if(clickedIndex == 4){if(isSelected){$('.mentoria_tecnica').show();}else{$('.mentoria_tecnica').hide();}
-      }else if(clickedIndex == 5){if(isSelected){$('.mentoria_profissional').show();}else{$('.mentoria_profissional').hide();}
-      }
+
+    // routine to check the state of each option in #tipos and show/hide the corresponding rows
+    function esconde_mostra_opcoes() {
+      $("#tipos").find("option").each(function(index, element){
+        if($(element).is(":selected")){
+          if(index == 0){$(".estudantes").show();}
+          if(index == 1){$(".orientador").show();}
+          if(index == 2){$(".coorientador").show();}
+          if(index == 3){$(".banca").show();}
+          if(index == 4){$(".mentoria_tecnica").show();}
+          if(index == 5){$(".mentoria_profissional").show();}
+        } else {
+          if(index == 0){$(".estudantes").hide();}
+          if(index == 1){$(".orientador").hide();}
+          if(index == 2){$(".coorientador").hide();}
+          if(index == 3){$(".banca").hide();}
+          if(index == 4){$(".mentoria_tecnica").hide();}
+          if(index == 5){$(".mentoria_profissional").hide();}
+        }
+      });
+    }
+
+        
+    $("#tipos").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      {% comment %}
+              if(clickedIndex == 0){if(isSelected){$(".estudantes").show();}else{$(".estudantes").hide();}
+        }else if(clickedIndex == 1){if(isSelected){$(".orientador").show();}else{$(".orientador").hide();}
+        }else if(clickedIndex == 2){if(isSelected){$(".coorientador").show();}else{$(".coorientador").hide();}
+        }else if(clickedIndex == 3){if(isSelected){$(".banca").show();}else{$(".banca").hide();}
+        }else if(clickedIndex == 4){if(isSelected){$(".mentoria_tecnica").show();}else{$(".mentoria_tecnica").hide();}
+        }else if(clickedIndex == 5){if(isSelected){$(".mentoria_profissional").show();}else{$(".mentoria_profissional").hide();}
+        }
+      {% endcomment %}
+      esconde_mostra_opcoes();
       conta();
     });
+
+    
   </script>
 
   {% if gerados %}
@@ -99,21 +126,22 @@
 
       {% for certificado in certificados %}
 
-      <tr>
+      
         {% if certificado.tipo_de_certificado < 100 %}
-          <td class="estudantes certificado">
+          <tr class="estudantes certificado">
         {% elif certificado.tipo_de_certificado == 101 %}
-          <td class="orientador certificado">
+          <tr class="orientador certificado">
         {% elif certificado.tipo_de_certificado == 102 %}
-          <td class="coorientador certificado">
+          <tr class="coorientador certificado">
         {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 %}
-          <td class="banca certificado">
+          <tr class="banca certificado">
         {% elif certificado.tipo_de_certificado == 106 %}
-          <td class="mentoria_profissional certificado">
+          <tr class="mentoria_profissional certificado">
         {% elif certificado.tipo_de_certificado == 107 %}
-          <td class="mentoria_tecnica certificado">
+          <tr class="mentoria_tecnica certificado">
         {% endif %}
         
+         <td>
           <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
           <b>Nome:</b>
           {% if certificado.usuario %}
@@ -228,8 +256,14 @@
   
   <script>
 
+    function recarregar_pagina() {
+      conta();
+      esconde_mostra_opcoes();
+    };
+
     function carrega_pagina() {
       conta();
+      esconde_mostra_opcoes();
     };
 
     function carrega_site() {
@@ -238,7 +272,7 @@
     };
 
     window.onload = carrega_site
-
+   
     var request_ajax_c = null;
 
     var xhrCount = 0;  // Para contar as chamadas e usar somente a última

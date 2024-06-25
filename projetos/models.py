@@ -1353,6 +1353,10 @@ class Conexao(models.Model):
                 texto += [Conexao.papel[field]]
         return texto
     
+    def get_projeto(self):
+        """Retorna o projeto da conexão."""
+        return self.projeto
+    
     def __str__(self):
         texto = ""
         if self.parceiro:
