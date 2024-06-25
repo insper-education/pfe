@@ -46,12 +46,19 @@
     };
   </script>
 
+  <script>
+    {% comment %} // estratégia para imprimir o título da página com underline e não espaço {% endcomment %}
+    var tmp_titulo_pagina = document.title;
+    window.addEventListener("beforeprint", function() {document.title = document.title.replace(/ /g, '_');});
+    window.addEventListener("afterprint", function() {document.title = tmp_titulo_pagina;});
+  </script>
+
   {% block head %}
   {% endblock %}
 </head>
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
-  {% url 'index' as url_index %}
-  {% url 'perfil' as url_perfil %}
+  {% url "index" as url_index %}
+  {% url "perfil" as url_perfil %}
 
   <div class="topnav">
     <a {% if request.get_host == "127.0.0.1:8000" %}id="barra_do_top_nav" class="active_local"{% else %}class="active"{% endif %}>

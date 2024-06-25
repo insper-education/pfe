@@ -497,7 +497,6 @@ def exportar_documentos_projetos(request):
                             redirect_content = "<html><head><meta http-equiv='refresh' content='0; url={0}'></head></html>".format(documento.link)
                             temp_file.write(redirect_content.encode("utf-8"))
                             temp_file_path = temp_file.name
-                            print(temp_file_path)
                         
                         virtual_path = projeto_titulo
                         if documento.tipo_documento and documento.tipo_documento.individual:
