@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <head>
-  {% block title %}<title>Capstone{% if titulo %}: {{ titulo }}{% endif %}</title>{% endblock %}
+  {% block title %}<title>Capstone{% if titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
   {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,12 +46,13 @@
     };
   </script>
 
+  {% comment %} 
   <script>
-    {% comment %} // estratégia para imprimir o título da página com underline e não espaço {% endcomment %}
+    // estratégia para imprimir o título da página com underline e não espaço
     var tmp_titulo_pagina = document.title;
     window.addEventListener("beforeprint", function() {document.title = document.title.replace(/ /g, '_');});
-    window.addEventListener("afterprint", function() {document.title = tmp_titulo_pagina;});
-  </script>
+    window.addEventListener("afterprint", function() {document.title = tmp_titulo_pagina;}); 
+  </script>{% endcomment %}
 
   {% block head %}
   {% endblock %}
