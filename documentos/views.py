@@ -165,7 +165,12 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
-    context = {"edicoes": get_edicoes(Projeto)[0]}
+    configuracao = get_object_or_404(Configuracao)
+    context = {
+        "edicoes": get_edicoes(Projeto)[0],
+        "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
+        "titulo": "Seleção de Geração de Certificados",
+        }
     return render(request, "documentos/selecao_geracao_certificados.html", context)
 
 

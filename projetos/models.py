@@ -989,6 +989,10 @@ class Encontro(models.Model):
             if configuracao.semestre == 2 and self.startDate.month > 7:
                 return "Atuais"
         return "Anteriores"
+    
+    def get_projeto(self):
+        """Retorna o projeto do encontro."""
+        return self.projeto
 
     @classmethod
     def create(cls, startDate, endDate):
