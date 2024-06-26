@@ -735,7 +735,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
 
         para = ""
         if certificado.usuario:
-            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email
+            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">; "
 
         subject = "Certificado Capstone Insper: "
         if certificado.tipo_de_certificado == 101: subject += "Orientação de Projeto"
