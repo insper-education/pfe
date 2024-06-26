@@ -26,7 +26,7 @@ from users.models import PFEUser, Professor, Aluno, Alocacao
 from users.support import get_edicoes
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
-from projetos.models import Banca, Evento, Encontro, Documento
+from projetos.models import Banca, Evento, Encontro, Documento, Certificado
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support import converte_letra, converte_conceito
 from projetos.support import get_objetivos_atuais
@@ -673,51 +673,48 @@ def bancas_criar(request, data=None):
 def mensagem_email(request, tipo=None, primarykey=None):
     """Envia mensagens."""
 
+    if primarykey is None:
+        return HttpResponseNotFound("<h1>Erro!</h1>")
+
+    # Envia mensagem diretamente
+    if request.is_ajax() and request.method == "POST":
+
+        mensagem = ""
+        if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
+            assunto = request.POST["assunto"]
+            para = request.POST["para"]
+            mensagem = request.POST["mensagem"]
+        else:
+            return HttpResponse("Envio não realizado.", status=401)
+
+        recipient_list = para.split(';')
+        recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
+
+        check = email(assunto, recipient_list, mensagem)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
+
+        context = {
+                "atualizado": True,
+                "mensagem": mensagem,
+            }
+        return JsonResponse(context)
+    
     if tipo == "banca":
     
-        if primarykey is None:
-            return HttpResponseNotFound("<h1>Erro!</h1>")
-
         banca = get_object_or_404(Banca, pk=primarykey)
+        projeto = banca.get_projeto()
 
-        if request.is_ajax() and request.method == "POST":
-
-            mensagem = ""
-            if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
-                assunto = request.POST["assunto"]
-                para = request.POST["para"]
-                mensagem = request.POST["mensagem"]
-            else:
-                return HttpResponse("Envio não realizado.", status=401)
-
-            recipient_list = para.split(';')
-            recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
-
-            check = email(assunto, recipient_list, mensagem)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-
-            context = {
-                    "atualizado": True,
-                    "mensagem": mensagem,
-                }
-            return JsonResponse(context)
-        
         para = ""
-
-        if banca.tipo_de_banca == 3:
-            projeto = banca.alocacao.projeto
-        else:
-            projeto = banca.projeto
-
         if projeto and projeto.orientador:
-            para = projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+            para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
         for coorientador in projeto.coorientador_set.all():
             para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         for membro in banca.membros():
             para += membro.get_full_name() + " <" + membro.email + ">; "
-        para = para[:-2]  # tirando o ultimo "; "
+        if para != "":
+            para = para[:-2]  # tirando o ultimo "; "
 
         if banca.alocacao:
             subject = "Banca Capstone: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
@@ -730,16 +727,40 @@ def mensagem_email(request, tipo=None, primarykey=None):
         }
         message = render_message("Mensagem Banca", context_carta)
 
-        context = {
-            "assunto": subject,
-            "para": para,
-            "mensagem": message,
-            "url": request.get_full_path(),
-        }
-        return render(request, "professores/mensagem_email.html", context)
+    elif tipo == "certificado":
+    
+        certificado = get_object_or_404(Certificado, pk=primarykey)
+        configuracao = get_object_or_404(Configuracao)
 
-    else:
-        return HttpResponseNotFound("<h1>Erro!</h1>")
+
+        para = ""
+        if certificado.usuario:
+            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email
+
+        subject = "Certificado Capstone Insper: "
+        if certificado.tipo_de_certificado == 101: subject += "Orientação de Projeto"
+        elif certificado.tipo_de_certificado == 102: subject += "Coorientação de Projeto"
+        elif certificado.tipo_de_certificado == 103: subject += "Membro de Banca Intermediária"
+        elif certificado.tipo_de_certificado == 104: subject += "Membro de Banca Final"
+        elif certificado.tipo_de_certificado == 105: subject += "Membro de Banca Falconi"
+        elif certificado.tipo_de_certificado == 106: subject += "Mentoria de Projeto"
+        elif certificado.tipo_de_certificado == 107: subject += "Mentoria de Projeto"
+        elif certificado.tipo_de_certificado == 108: subject += "Membro de Banca de Probation"
+        
+        context_carta = {
+            "request": request,
+            "configuracao": configuracao,
+            "certificado": certificado,
+        }
+        message = render_message("Mensagem Certificado", context_carta)
+
+    context = {
+        "assunto": subject,
+        "para": para,
+        "mensagem": message,
+        "url": request.get_full_path(),
+    }
+    return render(request, "professores/mensagem_email.html", context)
 
 
 @login_required

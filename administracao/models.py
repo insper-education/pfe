@@ -15,7 +15,7 @@ class Carta(models.Model):
     template = models.CharField("Nome do Template", max_length=64, unique=True,
                             help_text="Nome do Template")
 
-    texto = models.TextField("Texto", max_length=5000, null=True, blank=True,
+    texto = models.TextField("Texto", max_length=10000, null=True, blank=True,
                                    help_text="Texto para ser enviado")
     
     class Meta:

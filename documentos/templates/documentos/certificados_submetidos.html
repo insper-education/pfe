@@ -10,18 +10,19 @@
   {% load escape_emails %}
   {% load nospaces %}
 
+
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
-    table {
+    #certificados {
       border: 0px;
       border-collapse: separate;
       border-spacing: 1em;
       padding-left: 0px;
       padding-right: 0px;
     }
-    td {
+    #certificados td {
       padding: 1rem 1.2rem;
       border-radius: 6px;
       border-width: 3px;
@@ -170,9 +171,15 @@
             <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
           {% endif %}
           
+          <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+            data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
+            &#x2709; Enviar certificado
+          </a>
+
           
+          
+          {% comment %} 
           {% nospaces %}
-          &#x2709; Enviar certificado (
           {% with servidor='https://pfe.insper.edu.br' %}
           <a 
           {% nospacesmailto %}href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
@@ -229,9 +236,8 @@
             não formatado
           </a>
           {% endwith %}
-          )
           {% endnospaces %}
-          
+          {% endcomment %}
         </td>
       </tr>
 
@@ -308,5 +314,7 @@
   });
 
   </script>
+
+  {% include "janelas-modal.html" %}
 
 {% endblock %}
