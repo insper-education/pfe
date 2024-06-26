@@ -713,9 +713,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
             para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         for membro in banca.membros():
             para += membro.get_full_name() + " <" + membro.email + ">; "
-        if para != "":
-            para = para[:-2]  # tirando o ultimo "; "
-
+        
         if banca.alocacao:
             subject = "Banca Capstone: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
         else:
@@ -732,10 +730,9 @@ def mensagem_email(request, tipo=None, primarykey=None):
         certificado = get_object_or_404(Certificado, pk=primarykey)
         configuracao = get_object_or_404(Configuracao)
 
-
         para = ""
         if certificado.usuario:
-            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">; "
+            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
 
         subject = "Certificado Capstone Insper: "
         if certificado.tipo_de_certificado == 101: subject += "Orientação de Projeto"
@@ -753,6 +750,10 @@ def mensagem_email(request, tipo=None, primarykey=None):
             "certificado": certificado,
         }
         message = render_message("Mensagem Certificado", context_carta)
+
+    para = para.strip()
+    if para[-1] == ";":
+        para = para[:-1]  # tirando o ultimo ";"
 
     context = {
         "assunto": subject,
