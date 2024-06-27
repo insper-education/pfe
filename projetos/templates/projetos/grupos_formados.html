@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 6 de Junho de 2024
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+    <h2>Grupos Formados</h2>
+
+    <!-- Button element -->
+    <button id="loadFileButton" class="btn btn-primary mb-1" type="button">Carregar</button>
+
+    <script>
+        document.getElementById("loadFileButton").addEventListener("click", function() {
+            window.open("/arquivos/lpsoares/GruposFormados.mp4", "_blank");
+        });
+    </script>
+
+{% endblock %}

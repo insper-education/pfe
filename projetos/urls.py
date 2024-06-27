@@ -157,4 +157,10 @@ urlpatterns = [
         views.upload_estudantes_projeto,
         name="upload_estudantes_projeto"),
 
+    # Brincadeira com estudantes    
+    path("grupos_formados/",
+        views.grupos_formados,
+        name="grupos_formados"),
+
+
 ]

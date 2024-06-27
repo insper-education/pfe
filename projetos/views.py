@@ -1892,3 +1892,8 @@ def upload_estudantes_projeto(request, projeto_id):
         projeto.save()
 
     return redirect("/projetos/meuprojeto")
+
+
+def grupos_formados(request):
+
+    return render(request, "projetos/grupos_formados.html", context={})
