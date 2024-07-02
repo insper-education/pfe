@@ -1372,19 +1372,19 @@ class Conexao(models.Model):
         return texto
 
     class Meta:
-        verbose_name = 'Conexão'
-        verbose_name_plural = 'Conexões'
+        verbose_name = "Conexão"
+        verbose_name_plural = "Conexões"
 
 
 class Coorientador(models.Model):
     """Controla lista de coorientadores por projeto."""
 
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='coorientador de um projeto')
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="coorientador de um projeto")
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='projeto que foi coorientado')
+                                help_text="projeto que foi coorientado")
     observacao = models.TextField(max_length=256, null=True, blank=True,
-                                  help_text='qualquer observação relevante')
+                                  help_text="qualquer observação relevante")
 
     def __str__(self):
         mensagem = ""
@@ -1399,6 +1399,11 @@ class Coorientador(models.Model):
         else:
             mensagem += "PROJETO NÃO DEFINIDO"
         return mensagem
+
+    def certificado_coorientador(self):
+        """Se o coorientador pode emitir certificado."""
+        certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_de_certificado=102)  # (102, "Coorientação de Projeto"),
+        return certificado
 
     class Meta:
         verbose_name = "Coorientador"
@@ -1923,7 +1928,7 @@ class Certificado(models.Model):
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=0).last()  # (0, "Final"),
             if self.tipo_de_certificado == 105:  # (105, "Membro da Banca Falconi"),
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=2).last()  # (2, "Certificação Falconi"),
-            if self.tipo_de_certificado == 108:  # 
+            if self.tipo_de_certificado == 108:  # (108, "Membro de Banca de Probation"),
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=3).last()  # (3, "Probation"),
         return None
     

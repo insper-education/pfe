@@ -73,9 +73,12 @@
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
         {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
-        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-        {% templatetag openbrace %}({{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}){% templatetag closebrace %}
-        </a></li>
+        {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
+        </a>
+        {% if coorientacao.certificado_coorientador %}
+          <a href="{{ coorientacao.certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+        {% endif %}
+        </li>
       {% endif %}
     {% empty %}
       Projetos não encontrados
