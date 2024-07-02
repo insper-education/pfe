@@ -1917,14 +1917,14 @@ class Certificado(models.Model):
     def get_banca(self):
         """Retorna banca relacionada ao certificado."""
         if self.projeto:
-            if self.tipo_de_certificado == 103:
-                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=1).last()
-            if self.tipo_de_certificado == 104:
-                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=2).last()
-            if self.tipo_de_certificado == 105:
-                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=3).last()
-            if self.tipo_de_certificado == 108:
-                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=4).last()    
+            if self.tipo_de_certificado == 103:  # (103, "Membro de Banca Intermediária"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=1).last()  # (1, "Intermediária"),
+            if self.tipo_de_certificado == 104:  # (104, "Membro de Banca Final"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=0).last()  # (0, "Final"),
+            if self.tipo_de_certificado == 105:  # (105, "Membro da Banca Falconi"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=2).last()  # (2, "Certificação Falconi"),
+            if self.tipo_de_certificado == 108:  # 
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=3).last()  # (3, "Probation"),
         return None
     
     class Meta:
