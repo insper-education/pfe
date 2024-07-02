@@ -15,6 +15,7 @@
     // Verifica se não venceu
     if (now > item.expiry + prazo) {
       localStorage.removeItem("filterEdicao");
+      $("#filterEdicao").trigger("change");
     } else {
       if(filterEdicao != "todas") { // Evita todas pois é muito lento
         $("#filterEdicao").val(filterEdicao).trigger("change");

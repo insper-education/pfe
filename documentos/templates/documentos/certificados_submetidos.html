@@ -99,19 +99,9 @@
     }
 
     $("#tipos").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      {% comment %}
-              if(clickedIndex == 0){if(isSelected){$(".estudantes").show();}else{$(".estudantes").hide();}
-        }else if(clickedIndex == 1){if(isSelected){$(".orientador").show();}else{$(".orientador").hide();}
-        }else if(clickedIndex == 2){if(isSelected){$(".coorientador").show();}else{$(".coorientador").hide();}
-        }else if(clickedIndex == 3){if(isSelected){$(".banca").show();}else{$(".banca").hide();}
-        }else if(clickedIndex == 4){if(isSelected){$(".mentoria_tecnica").show();}else{$(".mentoria_tecnica").hide();}
-        }else if(clickedIndex == 5){if(isSelected){$(".mentoria_profissional").show();}else{$(".mentoria_profissional").hide();}
-        }
-      {% endcomment %}
       esconde_mostra_opcoes();
       conta();
     });
-
     
   </script>
 
@@ -175,69 +165,6 @@
             data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
             &#x2709; Enviar certificado
           </a>
-
-          
-          
-          {% comment %} 
-          {% nospaces %}
-          {% with servidor='https://pfe.insper.edu.br' %}
-          <a 
-          {% nospacesmailto %}href="mailto:{{certificado.usuario.get_full_name|parse_quote}}%20&lt;{{certificado.usuario.email }}&gt;?cc={{coordenacao.user.get_full_name}}&lt;{{coordenacao.user.email}}&gt;
-            &amp;subject=Capstone%20Insper%20:
-            {% if certificado.tipo_de_certificado == 101 %}
-              Orientação de Projeto
-            {% elif certificado.tipo_de_certificado == 102 %}
-              Coorientação de Projeto
-            {% elif certificado.tipo_de_certificado == 103 %}
-              Membro de Banca Intermediária
-            {% elif certificado.tipo_de_certificado == 104 %}
-              Membro de Banca Final
-            {% elif certificado.tipo_de_certificado == 105 %}
-              Membro de Banca Falconi
-            {% elif certificado.tipo_de_certificado == 106 %}
-              Mentoria de Projeto
-            {% elif certificado.tipo_de_certificado == 107 %}
-              Mentoria de Projeto
-            {% elif certificado.tipo_de_certificado == 108 %}
-              Membro de Banca de Probation
-            {% endif %}
-            {% with formatada=True %}
-              &amp;body={% include 'mensagem_certificados.html' %}
-            {% endwith %}
-            "{% endnospacesmailto %}
-            target="_blank" rel="noopener noreferrer">
-            formatado
-          </a>
-          /
-          <a 
-          {% nospacesmailto %}href="mailto:{{certificado.usuario.email}}?cc={{coordenacao.user.email}}&amp;subject=Capstone%20Insper%20:
-            {% if certificado.tipo_de_certificado == 101 %}
-              Orientação de Projeto
-            {% elif certificado.tipo_de_certificado == 102 %}
-              Coorientação de Projeto
-            {% elif certificado.tipo_de_certificado == 103 %}
-              Membro de Banca Intermediária
-            {% elif certificado.tipo_de_certificado == 104 %}
-              Membro de Banca Final
-            {% elif certificado.tipo_de_certificado == 105 %}
-              Membro de Banca Falconi
-            {% elif certificado.tipo_de_certificado == 106 %}
-              Mentoria de Projeto
-            {% elif certificado.tipo_de_certificado == 107 %}
-              Mentoria de Projeto
-            {% elif certificado.tipo_de_certificado == 108 %}
-              Membro de Banca de Probation
-            {% endif %}
-            {% with formatada=False %}
-            &amp;body={% include "mensagem_certificados.html" %}
-            {% endwith %}
-            "{% endnospacesmailto %}
-            target="_blank" rel="noopener noreferrer">
-            não formatado
-          </a>
-          {% endwith %}
-          {% endnospaces %}
-          {% endcomment %}
         </td>
       </tr>
 

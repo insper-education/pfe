@@ -705,7 +705,9 @@ def professor_detail(request, primarykey):
 
     context["bancas"] = ((Banca.objects.filter(membro1=context["professor"].user) |
                           Banca.objects.filter(membro2=context["professor"].user) |
-                          Banca.objects.filter(membro3=context["professor"].user))).order_by("startDate")
+                          Banca.objects.filter(membro3=context["professor"].user) |
+                          Banca.objects.filter(projeto__orientador=context["professor"])
+                            )).order_by("startDate")
     
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     

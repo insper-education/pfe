@@ -385,7 +385,7 @@
       </small>
     {% endif %}
   </h4>
-  <div style="overflow-y: auto; max-height: 16em;">
+  <div class="caixa_rolante">
     {% include "documentos.html" %}
   </div>
 
@@ -398,7 +398,7 @@
         </small>
       {% endif %}
     </h4>
-    <div style="overflow-y: auto; max-height: 16em;">
+    <div class="caixa_rolante">
       {% include "certificados.html" with certificados=projeto.certificado_set.all %}
     </div>
   {% endif %}

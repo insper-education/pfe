@@ -185,7 +185,7 @@
       >
     </small>
   </h3>
-  <div style="overflow-y: auto; max-height: 16em;">
+  <div class="caixa_rolante">
     {% include "documentos.html" with documentos=organizacao.documento_set.all %}
   </div>
 
@@ -197,7 +197,7 @@
       >
     </small>
   </h3>
-  <div style="overflow-y: auto; max-height: 16em;">
+  <div class="caixa_rolante">
     {% for entrada in organizacao.projeto_set.all %}
       {% include "certificados.html" with certificados=entrada.certificado_set.all %}
     {% endfor %}
@@ -207,7 +207,7 @@
   {% if propostas %}
     <hr>
     <h3>Propostas <small class="esconder"><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>
-    <div style="overflow-y: auto; max-height: 16em;">
+    <div class="caixa_rolante">
     <ol reversed>
       {% for proposta in propostas reversed %}
         <a href="{% url 'proposta_completa' proposta.id %}">
@@ -229,7 +229,7 @@
   {% if projetos %}
     <hr>
     <h3>Projetos</h3>
-    <div style="overflow-y: auto; max-height: 16em;">
+    <div class="caixa_rolante">
     <ol reversed>
       {% for projeto in projetos reversed %}
         {% if projeto.alocacao_set.count %}
@@ -256,7 +256,7 @@
     >
   </small></h3>
   
-  <div style="overflow-y: auto; max-height: 16em;">
+  <div class="caixa_rolante">
     <ul id="lista_anotacoes" style="padding-left: 18px;">
       {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
         <li>

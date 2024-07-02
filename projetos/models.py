@@ -1855,10 +1855,10 @@ class Observacao_Velha(models.Model):
 
 
 class Certificado(models.Model):
-    """Certificados das Premiações."""
+    """Certificados."""
 
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text="pessoa premiada com certificado")
+                                help_text="pessoa que recebeu o certificado")
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto relacionado ao certificado")
     alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1881,6 +1881,7 @@ class Certificado(models.Model):
         (107, "Mentoria Técnica"),  # mentor da empresa
         (108, "Membro de Banca de Probation"),
     )
+
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
     observacao = models.TextField(max_length=256, null=True, blank=True,
@@ -1912,6 +1913,19 @@ class Certificado(models.Model):
 
     def file_name(self):
         return self.documento.name.split('/')[-1]
+    
+    def get_banca(self):
+        """Retorna banca relacionada ao certificado."""
+        if self.projeto:
+            if self.tipo_de_certificado == 103:
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=1).last()
+            if self.tipo_de_certificado == 104:
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=2).last()
+            if self.tipo_de_certificado == 105:
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=3).last()
+            if self.tipo_de_certificado == 108:
+                return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=4).last()    
+        return None
     
     class Meta:
         verbose_name = 'Certificado'

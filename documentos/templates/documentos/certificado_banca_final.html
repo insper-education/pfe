@@ -80,17 +80,15 @@
     <b>{{ projeto.organizacao.nome }}</b>,
     intitulado: <b>{{projeto.get_titulo}}</b>,
     ocorrido em {{banca.startDate}}.
-    <br>
-    <br>
+    <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     Agradecemos seu tempo e esforço para esse processo de avaliação de grande importância.
-    <br>
-    <br>
+    <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     A banca foi composta por:
-    {{projeto.orientador.user.get_full_name}},
+    {{projeto.orientador.user.get_full_name}} (orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}),
     {% if banca.membro1 %}
       {{banca.membro1.get_full_name}}{% if banca.membro2 and banca.membro3 %},
       {% elif banca.membro2 or banca.membro3 %}

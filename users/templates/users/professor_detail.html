@@ -13,7 +13,7 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
-    ol {padding-left: 1.4em;}
+    ol {padding-left: 1.5em;}
   </style>
 {% endblock %}
 
@@ -86,62 +86,69 @@
   {% if bancas %}
     <hr>
     <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
-    <ol>
-    {% for banca in bancas %}
-      <li>
-        <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.tipo_de_banca == 0 %}Final{% elif banca.tipo_de_banca == 1 %}Intermediária{% endif %}{% if banca.startDate %}, {{banca.startDate.date}}{% endif %}:
-        </a>
-        {% if banca.get_projeto %}
-          {% if banca.get_projeto.organizacao %}
-            [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
+    <div class="caixa_rolante">
+      <ol>
+      {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+            {{banca.get_tipo_de_banca_display}}{% if banca.startDate %}, {{banca.startDate.date}}{% endif %}:
+          </a>
+          {% if banca.get_projeto %}
+            {% if banca.get_projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
+            {% endif %}
+            <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
           {% endif %}
-          <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
-        {% endif %}
-        {% with certificado=banca|certificado_banca:professor.user %}
-          {% if certificado %}
-            <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
-          {% endif %}
-        {% endwith %}
-      </li>
-    {% endfor %}
-    </ol>
+          {% with certificado=banca|certificado_banca:professor.user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+      {% endfor %}
+      </ol>
+    </div>
   {% endif %}
 
   {% if mentorias %}
     <hr>
     <h4>Mentoria{% if mentorias|length > 1 %}s{% endif %}</h4>
-    <ol>
-    {% for mentoria in mentorias %}
-      <li>
-        Mentoria {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
-        {% if mentoria.projeto %}
-          {% if mentoria.projeto.organizacao %}
-            [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
+    <div class="caixa_rolante">
+      <ol>
+      {% for mentoria in mentorias %}
+        <li>
+          Mentoria {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
+          {% if mentoria.projeto %}
+            {% if mentoria.projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
+            {% endif %}
+            <a href="{% url 'projeto_completo' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
           {% endif %}
-          <a href="{% url 'projeto_completo' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
-        {% endif %}
-        {% with certificado=mentoria|certificado_mentoria:professor.user %}
-          {% if certificado %}
-            <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
-          {% endif %}
-        {% endwith %}
-      </li>
-    {% endfor %}
-    </ol>
+          {% with certificado=mentoria|certificado_mentoria:professor.user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+      {% endfor %}
+      </ol>
+    </div>
   {% endif %}
 
 
   {% if aulas %}
     <hr>
     <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
-    <ol>{% for aula in aulas %}
-        <li>
-          {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
-            {{aula.startDate}} - {{aula.atividade}}
-          {% if aula.documento.documento %}</a>{% endif %}
-        </li>  
-    {% endfor %}</ol>
+    <div class="caixa_rolante">
+      <ol>{% for aula in aulas %}
+          <li>
+            {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
+              {{aula.startDate}} - {{aula.atividade}}
+            {% if aula.documento.documento %}</a>{% endif %}
+          </li>  
+      {% endfor %}
+      </ol>
+    </div>
   {% endif %}
 
   {% if user.tipo_de_usuario == 4 %}

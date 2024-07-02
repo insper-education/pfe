@@ -185,3 +185,8 @@ table, th, td {
 @page {
   size: auto;
 }
+
+.caixa_rolante {
+  overflow-y: auto;
+  max-height: 16em;
+}

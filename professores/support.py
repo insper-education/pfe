@@ -268,7 +268,8 @@ def recupera_bancas_intermediarias(ano, semestre):
 
         bancas = bancas.filter(membro1=professor.user) |\
                  bancas.filter(membro2=professor.user) |\
-                 bancas.filter(membro3=professor.user)
+                 bancas.filter(membro3=professor.user) |\
+                 bancas.filter(projeto__orientador=professor)
 
         if bancas:
             for banca in bancas:
@@ -294,7 +295,8 @@ def recupera_bancas_finais(ano, semestre):
 
         bancas = bancas.filter(membro1=professor.user) |\
                  bancas.filter(membro2=professor.user) |\
-                 bancas.filter(membro3=professor.user)
+                 bancas.filter(membro3=professor.user) |\
+                 bancas.filter(projeto__orientador=professor)
 
         if bancas:
             for banca in bancas:
