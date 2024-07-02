@@ -34,7 +34,7 @@ urlpatterns = [
     path("users/", include("users.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("users/", include("django.contrib.auth.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("accounts/", include("django.contrib.auth.urls")),
-    path("admin/", admin.site.urls),
+    path(settings.ADMIN_SITE, admin.site.urls),
     path("arquivos/<str:documentos>/<str:path>", arquivos.arquivos, name="arquivos"),
     path("arquivos/<str:organizacao>/<str:usuario>/<str:path>", arquivos.arquivos, name="arquivos"),
     path("arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>", arquivos.arquivos, name="arquivos"),

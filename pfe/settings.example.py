@@ -269,4 +269,6 @@ SALT = "pfe"
 
 MAINTENANCE_MODE = int(os.environ.get("MAINTENANCE_MODE", 0))
 
+ADMIN_SITE = "admin/"
+
 CONTATO = "por favor contactar: <a href='mailto:xxxx@insper.edu.br'>xxxx@insper.edu.br</a>"
