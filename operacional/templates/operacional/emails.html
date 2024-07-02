@@ -198,8 +198,15 @@
     </div>
   </div>
 
+  <br>
+  {% comment %} Texto em Vermelho {% endcomment %}
+  <div class="text-danger">
+    <b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente,
+    nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail.
+  </div>
+
   {% if user.tipo_de_usuario == 4 %}
-    <br><br>
+    <br>
     <b>Acesso de administração:</b>
     <br>
     {% if todos_alunos %}
@@ -304,7 +311,7 @@
                 //str += ",";
                 emails.push(response.Estudantes[id][2]);
               }
-              str += emails.join(',');
+              str += emails.join(';');
 
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
@@ -323,7 +330,7 @@
                 //str += response.Orientadores[id][2] + ",";
                 emails.push(response.Orientadores[id][2]);
               }
-              str += emails.join(",");
+              str += emails.join(";");
 
               //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
