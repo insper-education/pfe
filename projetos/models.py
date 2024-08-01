@@ -693,8 +693,8 @@ class Recomendada(models.Model):
 class Evento(models.Model):
     """Eventos para a agenda."""
 
-    location = models.CharField(blank=True, max_length=80,
-                                help_text="Onde Ocorrerá o Evento")
+    location = models.CharField(blank=True, null=True, max_length=80,
+                                help_text="Onde ocorrerá o evento")
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text="Inicio do Evento")
     endDate = models.DateField(default=datetime.date.today, blank=True,

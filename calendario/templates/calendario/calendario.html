@@ -510,9 +510,11 @@
                         </td>
 
                         <td class="colu local" style="cursor: pointer;">
-                          <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">
-                            {{aula.location}}
-                          </a>
+                          {% if aula.location %}
+                            <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">
+                              {{aula.location}}
+                            </a>
+                          {% endif %}
                         </td>
                     </tr>
                   {% endfor %}
@@ -774,6 +776,7 @@
                 event.atividade + (event.responsavel ? " ("+pessoas[event.responsavel]+")" : "")
               )
 
+              
               $("#ev"+event.id+" > td:last").html(event.location)
 
             } else {
@@ -804,7 +807,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -820,7 +823,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -836,7 +839,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -852,7 +855,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -868,7 +871,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -884,7 +887,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,
@@ -906,7 +909,7 @@
             {
                 id: {{evento.id}},
                 name: "{{evento.get_title}}",
-                location: "{{evento.location}}",
+                location: "{% if evento.location %}{{evento.location}}{% endif %}",
                 observation: `{{evento.observacao}}`,
                 atividade: `{{evento.atividade}}`,
                 descricao: `{{evento.descricao}}`,

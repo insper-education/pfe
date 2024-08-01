@@ -204,6 +204,8 @@ def atualiza_evento(request):
     location = request.POST.get("event-location", "")
     if location:
         evento.location = location[:Evento._meta.get_field("location").max_length]
+    else:
+        evento.location = None
 
     observacao = request.POST.get("event-observation", "")
     if observacao:
