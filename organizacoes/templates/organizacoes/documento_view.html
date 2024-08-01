@@ -24,23 +24,25 @@
   }
 
   .col1 {
-    -ms-flex: 0 0 20%;
+    -ms-flex: 0 0 5.2em;
     flex: 0 0 5.2em;
-    max-width: 20%;
+    max-width: 5.2em;
     position: relative;
     width: 100%;
     padding-right: 6px;
     padding-left: 15px; 
+    display: inline-block;
   }
 
   .col2 {
-    -ms-flex: 0 0 calc(100% - 0em);
+    -ms-flex: 0 0 calc(100% - 5.2em);
     flex: 0 0 calc(100% - 5.2em);
-    max-width: calc(100% - 0em);
+    max-width: calc(100% - 5.2em);
     position: relative;
     width: 100%;
     padding-right: 15px;
     padding-left: 6px;
+    display: inline-block;
   }
 
 
@@ -59,7 +61,7 @@
 
   <div class="modal-body">
 
-    <div class="mb-3 row">
+    <div class="mb-3 row text-nowrap">
       {% if projeto %}
         <div class="col-sm form-label">
           <span for="organizacao">Organização:</span>
@@ -85,9 +87,9 @@
           {% endif %}
         </div>
       {% else %}
-        <label for="organizacao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Empresa</label>
+        <label for="organizacao" class="col1 col-form-label d-inline-block" style="overflow: clip; overflow-clip-margin: 0.1em;">Empresa</label>
         <div class="col2">
-          <select id="organizacao" name="organizacao" class="form-control">
+          <select id="organizacao" name="organizacao" class="form-control d-inline-block">
             <option selected value> -- selecione uma organização -- </option>
             {% for org in organizacoes %}
               <option value="{{org.id}}" {% if org.id == organizacao.id %}selected="selected"{% endif %}>
@@ -99,7 +101,7 @@
       {% endif %}
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-3 row text-nowrap">
       {% if projeto %}
         <div class="col-sm form-label">
           <span for="projeto">Projeto:</span>
@@ -114,16 +116,16 @@
         </div>
       {% else %}
         <label for="projeto" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Projeto</label>
-        <div class="col2">
-        <select id="projeto" name="projeto" class="form-control">
-          <option selected value> -- selecione um projeto -- </option>
-          {% for proj in projetos %}
-            <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
-              {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
-              {% include "tipo_projeto.html" with projeto=proj %}
-            </option>
-          {% endfor %}
-        </select>
+        <div class="col2 d-inline-block">
+          <select id="projeto" name="projeto" class="form-control d-inline-block">
+            <option selected value> -- selecione um projeto -- </option>
+            {% for proj in projetos %}
+              <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+                {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+                {% include "tipo_projeto.html" with projeto=proj %}
+              </option>
+            {% endfor %}
+          </select>
         </div>
       {% endif %}
     </div>
