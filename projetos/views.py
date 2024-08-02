@@ -146,6 +146,16 @@ def projeto_completo(request, primarykey):
         titulo += " [" + projeto.proposta.organizacao.sigla + "] "
     titulo += projeto.get_titulo()
 
+    horarios = [
+            ("7:30 - 9:30", False),
+            ("9:45 - 11:45", False),
+            ("11:45 - 13:30", True),
+            ("13:30 - 15:30", False),
+            ("15:45 - 17:45", False),
+            ("18:00 - 20:00", True),
+            ("20:00 - 22:00", True),
+    ]
+
     context = {
         "titulo": titulo,
         "projeto": projeto,
@@ -156,6 +166,7 @@ def projeto_completo(request, primarykey):
         "documentos": Documento.objects.filter(projeto=projeto),
         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
+        "horarios": horarios,
     }
     return render(request, "projetos/projeto_completo.html", context=context)
 

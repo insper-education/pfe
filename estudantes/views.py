@@ -7,6 +7,8 @@ Data: 14 de Dezembro de 2020
 
 import datetime
 import logging
+import json
+
 from hashids import Hashids
 
 from django.conf import settings
@@ -113,27 +115,68 @@ def index_estudantes(request):
 @login_required
 def alinhamentos_gerais(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
-    tipo_documento = get_object_or_404(TipoDocumento, nome="Template de Alocação Semanal")
     context = {
         "titulo": "Alinhamentos Gerais",
-        "documento": Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last(),
     }
     return render(request, "estudantes/alinhamentos_gerais.html", context)
 
 @login_required
 def alocacao_semanal(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
+    configuracao = get_object_or_404(Configuracao)
     if request.user.tipo_de_usuario == 1:
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last(),
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
+    elif request.user.tipo_de_usuario in (2, 4):
+        projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
     else:
-        projeto = None
-        
+        return HttpResponse("Você não possui conta de estudante.", status=401)
+    
+    horarios = [
+            ("7:30 - 9:30", False),
+            ("9:45 - 11:45", False),
+            ("11:45 - 13:30", True),
+            ("13:30 - 15:30", False),
+            ("15:45 - 17:45", False),
+            ("18:00 - 20:00", True),
+            ("20:00 - 22:00", True),
+        ]
+    
     context = {
         "titulo": "Alocação Semanal",
         "projeto": projeto,
+        "horarios": horarios,
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 
+@login_required
+def alocacao_hora(request):
+    """Ajax para definir horarios dos estudantes."""
+    if request.user.tipo_de_usuario == 1:
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno).last()
+        horarios = json.loads(request.POST.get("horarios", None))
+        alocacao.horarios = horarios
+        alocacao.save()
+    else:
+        return JsonResponse({"atualizado": False}, status=500)
+
+    return JsonResponse({"atualizado": True,})
+
+@login_required
+def refresh_hora(request):
+    """Ajax para definir horarios dos estudantes."""
+    if request.user.tipo_de_usuario == 3:
+        return HttpResponse("Você não possui acesso.", status=401)
+    
+    projeto_id = request.GET.get("projeto_id", None)
+    if not projeto_id:
+        return HttpResponse("Projeto não encontrado.", status=404)
+    
+    projeto = Projeto.objects.get(pk=projeto_id)
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    todos_horarios = {}
+    for alocacao in alocacoes:
+        todos_horarios[alocacao.id] = alocacao.horarios
+    return JsonResponse({"todos_horarios": todos_horarios})
 
 
 @login_required

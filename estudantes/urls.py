@@ -26,6 +26,14 @@ urlpatterns = [
          views.alocacao_semanal,
          name="alocacao_semanal"),
 
+     path("alocacao_hora/",
+         views.alocacao_hora,
+         name="alocacao_hora"),
+
+     path("refresh_hora/",
+         views.refresh_hora,
+         name="refresh_hora"),
+
     path("avaliacao_pares/<str:momento>",
          views.avaliacao_pares,
          name="avaliacao_pares"),

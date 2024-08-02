@@ -774,8 +774,9 @@ class Alocacao(models.Model):
     
     avaliacao_final = models.DateTimeField("Avaliação Final", default=None, blank=True, null=True,
                                             help_text="Momento em que o orientador verificou a avaliação final de par do estudante")
-    
 
+    horarios = models.CharField(max_length=512, null=True, blank=True, help_text="Horários alocados para trabalhar no projeto")
+    
     class Meta:
         """Meta para Alocacao."""
 

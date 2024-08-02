@@ -1,0 +1,331 @@
+
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 2 de Agosto de 2024
+{% endcomment %}
+
+<style>
+  table {
+    border-collapse: collapse;
+    //width: 100%;
+    user-select: none; /* Prevent text selection */
+  }
+  td, th {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+    border-width: 1px;
+    background-color: white;
+  }
+
+  th {
+    background-color: #BEE5EB;
+  }
+
+  thead tr:first-child th {
+    width: 10em;
+  }
+
+  .highlight {
+    background-color: yellow; /* Change this to your desired color */
+  }
+
+  .meu {
+    border-color: red !important;
+    border-width: 3px !important;
+  }
+
+  .overlay {
+    position: relative;
+  }
+  
+  .overlay::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.05); /* Semi-transparent grey overlay */
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 1; /* Ensure the overlay is above the <td> content */
+  }
+  
+  .overlay td {
+    position: relative;
+    z-index: 2; /* Ensure the <td> content is above the overlay */
+  }
+
+  .borderhighlight {
+    box-shadow: inset 0 0 33px rgba(0, 255, 0, 1.0);
+  }
+
+</style>
+
+<b>Projeto:</b> {{ projeto }}<br>
+{% with alocacoes=projeto.alocacao_set.all %}
+{% for alocacao in alocacoes %}
+  <b>Estudante {{ forloop.counter }} (E{{ forloop.counter }}):</b> 
+  <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
+  {% if request.user.tipo_de_usuario != 1 %}(<span id="a{{alocacao.id}}">0</span> horas){% endif %}
+  <br>
+{% endfor %}
+<br>
+
+<table>
+  <thead>
+    <tr>
+      <th style="border-right: 2px solid black;"></th>
+      <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">Segunda</th>
+      <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">Terça</th>
+      <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">Quarta</th>
+      <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">Quinta</th>
+      <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">Sexta</th>
+    </tr>
+    <tr>
+      <th style="border-right: 2px solid black;">Horário</th>
+      {% for i in "01234" %}
+        {% for alocacao in alocacoes %}
+          <th {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}>E{{ forloop.counter }}</th>
+        {% endfor %}
+      {% endfor %}
+    </tr>
+    
+  </thead>
+  <tbody>
+    
+    {% for horario, dark in horarios %}
+      <tr>
+        {% with hora=forloop.counter0 %}
+        <td {% if dark %}class="overlay"{% endif %} style="border-right: 2px solid black;">{{horario}}</td>
+        {% for i in "01234" %}
+          {% if i == "4" and hora == 1 %}
+            <td colspan="{{alocacoes|length}}" style="background-color:lightgrey;">Aula Regular</td>
+          {% else %}
+            {% for alocacao in alocacoes %}
+              {% if request.user == alocacao.aluno.user %}
+                <td id="h_{{i}}_{{hora}}" class="h_{{i}}_{{hora}} meu{% if dark %} overlay{% endif %}"
+                {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}></td>
+              {% else %}
+                <td id="h_{{i}}_{{hora}}_{{alocacao.id}}" class="h_{{i}}_{{hora}}{% if dark %} overlay{% endif %}"
+                {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}
+                ></td>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        {% endwith %}
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+{% if request.user.tipo_de_usuario == 1 %}
+  <br>
+  Instruções:<br>
+  {% comment %} - Identifique os horários de trabalho em grupo, individuais, reuniões com orientador e se possível com os mentores nas organizações pareceiras.<br> {% endcomment %}
+  - Minimamente identifique 24 horas (contando as 2 horas de aulas) de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta).<br>
+  <b>Suas horas alocadas:</b> <span id="horas_alocadas">0</span><br>
+  <br>
+  - Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos.<br>
+{% endif %}
+<b>Horas todos juntos:</b> <span id="horas_juntos">0</span><br>
+
+<br>							
+
+<script>
+
+  function set_horas(horarios) {
+    {% if request.user.tipo_de_usuario == 1 %}
+      suas_horas = horarios.length*2;
+      document.getElementById("horas_alocadas").innerText = suas_horas + " horas";
+      if(suas_horas < 24) {
+        document.getElementById("horas_alocadas").style.color = "red";
+      } else {
+        document.getElementById("horas_alocadas").style.color = "green";
+      }
+    {% endif %}
+  }
+
+  function allElementsHaveHighlight(className) {
+    const elements = document.querySelectorAll(`.${className}`);
+    for (let element of elements) {
+      if (!element.classList.contains('highlight')) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function confere_juntos() {
+    contador = 0;
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 7; j++) {
+        if(allElementsHaveHighlight(`h_${i}_${j}`)) {
+          const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+          for (let element of allHighlighted) {
+            element.classList.add("borderhighlight");
+          }
+          contador++;
+        } else {
+          const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+          for (let element of allHighlighted) {
+            if (element.classList) {
+              element.classList.remove("borderhighlight");
+            }
+          }
+        }
+      }
+    }
+    contador--; // descontando aula regular
+    document.getElementById("horas_juntos").innerText = contador*2 + " horas";
+    if(contador < 4) {
+      document.getElementById("horas_juntos").style.color = "red";
+    } else {
+      document.getElementById("horas_juntos").style.color = "green";
+    }
+  }
+
+  {% if request.user.tipo_de_usuario == 1 %}
+    document.addEventListener("DOMContentLoaded", (event) => {
+      let isMouseDown = false;
+
+      const table = document.querySelector("table");
+      table.addEventListener("mousedown", (e) => {
+        if (e.target.classList.contains("meu")) {
+          isMouseDown = true;
+          e.target.classList.toggle("highlight");
+        }
+      });
+
+      table.addEventListener("mouseover", (e) => {
+        if (isMouseDown && e.target.classList.contains("meu")) {
+          e.target.classList.toggle("highlight");
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        isMouseDown = false;
+
+        // Identificando os horários selecionados
+        const horarios = [];
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 7; j++) {
+            const element = document.getElementById(`h_${i}_${j}`);
+            if (element && element.classList.contains("highlight")) {
+              horarios.push( [i,j] );
+            }
+          }
+        }
+        set_horas(horarios);
+        confere_juntos();
+
+        // Ajax para salvar a alocação
+        $.ajax({
+          url: "{% url "alocacao_hora" %}",
+          type: "POST",
+          data: { 
+            horarios : JSON.stringify(horarios),
+            "csrfmiddlewaretoken": "{{ csrf_token }}"
+          },
+          dataType: "JSON",
+          success: function (data) {},
+          {% include "ajax_error_function.js" %}
+        });
+
+      });
+    });
+  {% endif %}
+
+
+  // Definindo Valores Iniciais
+  {% for alocacao in alocacoes %}
+    {% if alocacao.horarios %}
+      {% if request.user == alocacao.aluno.user %}
+        horarios = {{ alocacao.horarios|safe }};
+        for (let i = 0; i < horarios.length; i++) {
+          const [dia, horario] = horarios[i];
+          const element = document.getElementById(`h_${dia}_${horario}`);
+          if (element) {
+            element.classList.add("highlight");
+          }
+        }
+        set_horas(horarios);
+
+      {% else %}
+        horarios = {{ alocacao.horarios|safe }};
+        alocacao = {{ alocacao.id }};
+        for (let i = 0; i < horarios.length; i++) {
+          const [dia, horario] = horarios[i];
+          const element = document.getElementById(`h_${dia}_${horario}_${alocacao}`);
+          if (element) {
+            element.classList.add("highlight");
+          }
+        }
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  confere_juntos();
+
+  function isInHorarios(horarios, pair) {
+    return horarios.some(function(item) {
+      return item[0] === pair[0] && item[1] === pair[1];
+    });
+  }
+
+  function refresh_horas() {
+    $.ajax({
+      url: "{% url 'refresh_hora' %}",
+      type: "GET",
+      dataType: "json",
+      data: { 
+        projeto_id : {{ projeto.id }},
+        "csrfmiddlewaretoken": "{{ csrf_token }}"
+      },
+      success: function (data) {
+        for( id in data.todos_horarios ) {
+          horarios = data.todos_horarios[id];
+          if(horarios) {
+            horarios = JSON.parse(horarios);
+
+            {% if request.user.tipo_de_usuario != 1 %}
+              document.getElementById("a"+id).innerText = horarios.length*2;
+              if(horarios.length*2 < 24) {
+                document.getElementById("a"+id).style.color = "red";
+              } else {
+                document.getElementById("a"+id).style.color = "green";
+              }
+            {% endif %}
+
+            for (let i = 0; i < 5; i++) {
+              for (let j = 0; j < 7; j++) {
+                const element = document.getElementById(`h_${i}_${j}_${id}`);
+                if (element) {
+                  if (isInHorarios(horarios, [i, j])) {
+                    element.classList.add("highlight");
+                  } else {
+                    if (element.classList) {
+                      element.classList.remove("highlight");
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        confere_juntos();
+      },
+      {% include "ajax_error_function.js" %}
+    });
+  }
+
+  // Verifica atualizações continuamente
+  setInterval(refresh_horas, 8000);
+
+  refresh_horas();
+
+</script>
+
+{% endwith %}
