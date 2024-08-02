@@ -22,6 +22,10 @@ urlpatterns = [
          views.alinhamentos_gerais,
          name="alinhamentos_gerais"),
 
+    path("alocacao_semanal/",
+         views.alocacao_semanal,
+         name="alocacao_semanal"),
+
     path("avaliacao_pares/<str:momento>",
          views.avaliacao_pares,
          name="avaliacao_pares"),

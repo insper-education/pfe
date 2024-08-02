@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 2 de Agosto de 2024
+{% endcomment %}
+
+{% block head %}
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      user-select: none; /* Prevent text selection */
+    }
+    td, th {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+    .highlight {
+      background-color: yellow; /* Change this to your desired color */
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <span class="titulo">{{ titulo }}</span>
+  <br>
+
+  <table>
+    <head>
+      <tr>
+        <th>Horário</th>
+        <th>Segunda</th>
+        <th>Terça</th>
+        <th>Quarta</th>
+        <th>Quinta</th>
+        <th>Sexta</th>
+      </tr>
+    </head>
+    <body>
+      <tr>
+        <td>7:30 - 9:30</td>
+        <td id="h_0_730" class="meu"></td>
+        <td id="h_1_730" class="meu"></td>
+        <td id="h_2_730" class="meu"></td>
+        <td id="h_3_730" class="meu"></td>
+        <td id="h_4_730" class="meu"></td>
+      </tr>
+      <tr>
+        <td>9:45 - 11:45</td>
+        <td id="h_0_945" class="meu"></td>
+        <td id="h_1_945"></td>
+        <td id="h_2_945"></td>
+        <td id="h_3_945"></td>
+        <td id="h_4_945" class="meu"></td>
+      </tr>
+    </body>
+  </table>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+      let isMouseDown = false;
+  
+      const table = document.querySelector("table");
+      table.addEventListener("mousedown", (e) => {
+        if (e.target.classList.contains("meu")) {
+          isMouseDown = true;
+          e.target.classList.toggle("highlight");
+        }
+      });
+  
+      table.addEventListener("mouseover", (e) => {
+        if (isMouseDown && e.target.classList.contains("meu")) {
+          e.target.classList.toggle("highlight");
+        }
+      });
+  
+      document.addEventListener("mouseup", () => {
+        isMouseDown = false;
+      });
+    });
+  </script>
+
+{% endblock %}

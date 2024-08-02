@@ -117,9 +117,23 @@ def alinhamentos_gerais(request):
     context = {
         "titulo": "Alinhamentos Gerais",
         "documento": Documento.objects.filter(tipo_documento=tipo_documento).order_by("data").last(),
-        "projeto": Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last(),
     }
     return render(request, "estudantes/alinhamentos_gerais.html", context)
+
+@login_required
+def alocacao_semanal(request):
+    """Para passar links de alinhamentos gerais de início de semestre."""
+    if request.user.tipo_de_usuario == 1:
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last(),
+    else:
+        projeto = None
+        
+    context = {
+        "titulo": "Alocação Semanal",
+        "projeto": projeto,
+    }
+    return render(request, "estudantes/alocacao_semanal.html", context)
+
 
 
 @login_required
