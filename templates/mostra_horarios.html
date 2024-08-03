@@ -75,7 +75,12 @@
       content: "\A";
     }
     .horario {
+      font-size: 10px;
+      padding: 1px;
+    }
+    .estud {
       font-size: 12px;
+      padding: 1px;
     }
   }
 
@@ -106,7 +111,7 @@
         <th style="border-right: 2px solid black;" class="horario">Horário</th>
         {% for i in "01234" %}
           {% for alocacao in alocacoes %}
-            <th {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}>E{{ forloop.counter }}</th>
+            <th {% if forloop.last %}style="border-right: 2px solid black;"{% endif %} class="estud">E{{ forloop.counter }}</th>
           {% endfor %}
         {% endfor %}
       </tr>
