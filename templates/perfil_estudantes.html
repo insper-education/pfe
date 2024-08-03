@@ -144,11 +144,7 @@
             "checked": checked,
           },
           dataType: "json",
-          success: function (response) {
-            if (response.atualizado) {
-              console.log("Valor atualizado.");
-            }
-          },
+          success: function (response) {},
           {% include "ajax_error_function.js" %}
         });
       });

@@ -202,7 +202,7 @@
   <script>
 
     
-  $('.conexao').change(function(evt){
+  $(".conexao").change(function(evt){
     
     $.ajax({
       url: "{% url 'seleciona_conexoes' %}?projeto="+evt.target.dataset.projeto,
@@ -218,7 +218,7 @@
         if (data.atualizado) {
           //console.log("Valor atualizado.");
         } else {
-          console.log("Valor não atualizado.");
+          //console.log("Valor não atualizado.");
         }
       },
       {% include "ajax_error_function.js" %}
