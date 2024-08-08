@@ -98,7 +98,7 @@
 {% for alocacao in alocacoes %}
   <b>Estudante {{ forloop.counter }} (E{{ forloop.counter }}):</b> 
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
-  {% if request.user.tipo_de_usuario != 1 %}(<span id="a{{alocacao.id}}">0</span> horas){% endif %}
+  {% if request.user.tipo_de_usuario != 1 %}(<span id="a{{alocacao.id}}">&#8709;</span> horas){% endif %}
   <br>
 {% endfor %}
 <br>
