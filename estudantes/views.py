@@ -171,8 +171,14 @@ def refresh_hora(request):
     if not projeto_id:
         return HttpResponse("Projeto não encontrado.", status=404)
     
-    projeto = Projeto.objects.get(pk=projeto_id)
+    projeto = Projeto.objects.filter(pk=projeto_id).last()
+    if not projeto:
+        return HttpResponse("Projeto não encontrado.", status=404)
+
     alocacoes = Alocacao.objects.filter(projeto=projeto)
+    if not alocacoes:
+        return HttpResponse("Alocações não encontrada.", status=404)
+
     todos_horarios = {}
     for alocacao in alocacoes:
         todos_horarios[alocacao.id] = alocacao.horarios
