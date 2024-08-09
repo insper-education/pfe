@@ -34,8 +34,8 @@
     
     <br>
     <label for="trabalhou">
-    Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa (informe situação)?<br>
-    Se sim, qual/quais?
+    Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?<br>
+    Se sim, qual/quais? Indique o nome, a área de atuação e sua situação atual com a empresa.<br> 
     </label><br>
     <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="{% max_length Aluno 'trabalhou' %}" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
     <br><br>
