@@ -48,9 +48,13 @@ from academica.models import Exame
 logger = logging.getLogger(__name__)
 
 @login_required
-def user_detail(request, primarykey):
+def user_detail(request, primarykey=0):
     """Retorna a página conforme o perfil do usuário."""
-    user = get_object_or_404(PFEUser, pk=primarykey)
+
+    if primarykey == 0:
+        user = request.user
+    else:
+        user = get_object_or_404(PFEUser, pk=primarykey)
 
     if user.tipo_de_usuario == 1:  # aluno
         return redirect("estudante_detail", user.aluno.id)
