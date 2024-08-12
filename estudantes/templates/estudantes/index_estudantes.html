@@ -116,7 +116,8 @@
       {% endif %}
     >Meu Projeto</a></li>
 
-    <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li>
+    {% comment %} <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li> {% endcomment %}
+    <li><a href="{% url 'alocacao_semanal' %}">Alocação Semanal</a></li>
   
     <li><a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
       Relato Quinzenal
