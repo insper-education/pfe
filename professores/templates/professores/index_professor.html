@@ -31,7 +31,7 @@
   <br>
 
   <h5>Atividades do Orientador</h5>
-  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></div>
+  <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=planos_de_orientacao prazo=planos_de_orientacao__prazo %}</span> <a href="{% url 'planos_de_orientacao' %}">Planos de Orientação</a></div>
   <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">Relatos Quinzenais</a></div>
   <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_entregas %}</span> <a href="{% url 'avaliar_entregas'%}">Avaliar Entregas</a></div>
   <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=bancas_index %}</span> <a href="{% url 'bancas_index'%}">Agendar Banca</a></div>

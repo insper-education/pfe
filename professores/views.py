@@ -83,12 +83,15 @@ def index_professor(request):
                 planos_de_orientacao = 'g'
             else:
                 evento = get_evento(10, configuracao)  # (10, "Início das aulas", "#FF1010"),
-                if evento and datetime.date.today() < evento.endDate:
+                if evento:
                     planos_de_orientacao = 'b'
-                elif evento and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
-                    planos_de_orientacao = 'r'
-                else:
-                    planos_de_orientacao = 'y'
+                    context["planos_de_orientacao__prazo"] = evento.endDate + datetime.timedelta(days=(PRAZO+5))
+                    if datetime.date.today() < evento.endDate:
+                        planos_de_orientacao = 'b'
+                    elif datetime.date.today() > context["planos_de_orientacao__prazo"]:
+                        planos_de_orientacao = 'r'
+                    else:
+                        planos_de_orientacao = 'y'
             context["planos_de_orientacao"] = planos_de_orientacao
 
             # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais

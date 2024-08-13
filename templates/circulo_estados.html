@@ -4,9 +4,9 @@
   Data: 24 de Abril de 2024
 {% endcomment %}
 {% if estado == 'r' %}
-  <span data-toggle="tooltip" data-html="true" animation="true" title="você está atrasado para concluir esse ponto">&#128308;</span>
+  <span data-toggle="tooltip" data-html="true" animation="true" title="você está atrasado para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128308;</span>
 {% elif estado == 'y' %}
-  <span data-toggle="tooltip" data-html="true" animation="true" title="você está no prazo para concluir esse ponto">&#128993;</span>
+  <span data-toggle="tooltip" data-html="true" animation="true" title="você está no prazo para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128993;</span>
 {% elif estado == 'g' %}
   <span data-toggle="tooltip" data-html="true" animation="true" title="você está em dia com esse ponto">&#128994;</span>
 {% else %}
