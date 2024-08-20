@@ -131,15 +131,7 @@ def alocacao_semanal(request):
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
     
-    horarios = [
-            ("7:30", "9:30", False),
-            ("9:45", "11:45", False),
-            ("11:45", "13:30", True),
-            ("13:30", "15:30", False),
-            ("15:45", "17:45", False),
-            ("18:00", "20:00", True),
-            ("20:00", "22:00", True),
-    ]
+    horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
     
     context = {
         "titulo": "Alocação Semanal",

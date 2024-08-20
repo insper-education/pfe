@@ -102,11 +102,6 @@
     (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> horas)
   {% endif %}
   <br>
-
-
-  
-
-
 {% endfor %}
 <br>
 
@@ -123,7 +118,7 @@
       </tr>
       <tr>
         <th style="border-right: 2px solid black;" class="horario">Horário</th>
-        {% for i in "01234" %}
+        {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
           {% for alocacao in alocacoes %}
             <th {% if forloop.last %}style="border-right: 2px solid black;"{% endif %} class="estud">E{{ forloop.counter }}</th>
           {% endfor %}
@@ -159,6 +154,9 @@
 
     </tbody>
   </table>
+
+  
+
 </div>
 {% if request.user.tipo_de_usuario == 1 %}
   <br>
@@ -199,7 +197,7 @@
   function confere_juntos() {
     contador = 0;
     for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 7; j++) {
+      for (let j = 0; j < {{horarios|length}}; j++) {
         if(allElementsHaveHighlight(`h_${i}_${j}`)) {
           const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
           for (let element of allHighlighted) {
@@ -251,7 +249,7 @@
         var horas_comerciais = 0;
         var horas_outras = 0;
         for (let i = 0; i < 5; i++) {
-          for (let j = 0; j < 7; j++) {
+          for (let j = 0; j < {{horarios|length}}; j++) {
             const element = document.getElementById(`h_${i}_${j}`);
             if (element && element.classList.contains("highlight")) {
               horarios.push( [i,j] );
@@ -364,7 +362,7 @@
             {% endif %}
 
             for (let i = 0; i < 5; i++) {
-              for (let j = 0; j < 7; j++) {
+              for (let j = 0; j < {{horarios|length}}; j++) {
                 const element = document.getElementById(`h_${i}_${j}_${id}`);
                 if (element) {
                   if (isInHorarios(horarios, [i, j])) {

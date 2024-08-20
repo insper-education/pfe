@@ -594,8 +594,15 @@ class Configuracao(models.Model):
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
 
+    ###---------------------- JSON -------------------------###
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
                                    help_text="Documentos a serem mostrados no Index Documentos")
+    
+    horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
+                                   help_text="Horários de Trabalho Semanais dos Estudantes")
+
+    ###-----------------------------------------------------###
+
 
 
     ###----------------------Mensagens----------------------###
