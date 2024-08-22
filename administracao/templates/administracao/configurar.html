@@ -86,13 +86,15 @@
 
     <label for="operacao"><span lang="pt">Operação Capstone</span>: </label>
     <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
-      {% for administrador in administradores %}
-        <option value="{{administrador.id}}" 
-          {% if administrador.id == configuracao.operacao.id %}selected{% endif %}>
-          {{administrador.user.get_full_name}}
+      {% for oper in operacionalizadores %}
+        <option value="{{oper.id}}" 
+          {% if oper.id == configuracao.operacao.id %}selected{% endif %}>
+          {{oper.get_full_name}}
         </option> 
       {% endfor %}
     </select>
+    <br>
+    <small>Operação pode ser um administrador ou funcionário do Insper.</small>
     <br>
 
     <br><br>

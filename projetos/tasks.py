@@ -109,9 +109,9 @@ def avisos_do_dia():
             email_operacional.append(str(configuracao.operacao.user.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            check = email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
             if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_coordenacoes)
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_operacional)
                 logger.error(error_message)                
                 
         if aviso.comite_pfe:

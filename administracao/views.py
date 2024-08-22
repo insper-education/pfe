@@ -509,7 +509,7 @@ def configurar(request):
                                                 path=get_upload_path(configuracao, ""))
                     configuracao.coordenacao.assinatura = assinatura[len(settings.MEDIA_URL):]
 
-                configuracao.operacao = get_object_or_404(Administrador,
+                configuracao.operacao = get_object_or_404(PFEUser,
                                                              pk=int(request.POST["operacao"]))
 
                 configuracao.coordenacao.save()
@@ -524,11 +524,18 @@ def configurar(request):
         else:
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
     
+
+    # PFEUsers Admin e que são parceiros do próprio Insper
+    organizacao = Organizacao.objects.get(nome="Insper")
+    funcionarios_insper = PFEUser.objects.filter(parceiro__organizacao=organizacao)
+    operacionalizadores = PFEUser.objects.filter(tipo_de_usuario=4) | funcionarios_insper
+
     context = {
         "titulo": "Configuração do Sistema",
         "configuracao": configuracao,
         "administradores": Administrador.objects.all(),
         "administrador": Administrador,
+        "operacionalizadores": operacionalizadores,
     }
 
     return render(request, "administracao/configurar.html", context)

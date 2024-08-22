@@ -905,7 +905,7 @@ class Alocacao(models.Model):
         return certificados
 
 
-class Parceiro(models.Model):  # da empresa (não do Insper)
+class Parceiro(models.Model):  # da empresa
     """Classe de usuários com estatus de Parceiro (das organizações)."""
 
     user = models.OneToOneField(PFEUser, related_name='parceiro',

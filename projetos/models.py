@@ -581,7 +581,7 @@ class Configuracao(models.Model):
                                     related_name="coordenacao",
                                     help_text="responsável pela coordenação do Capstone")
     
-    operacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
+    operacao = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                  related_name="operacao",
                                  help_text="responsável pela operação do Capstone")
     
