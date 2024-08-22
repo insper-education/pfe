@@ -34,11 +34,8 @@
     {% endif %}
   </span>
 
-  {% if not parceiro.user.is_active %}
-      <p style="color: red;">- NÃO ATIVO -</p>
-  {% endif %}
+  {% include "usuario.html" with user=parceiro.user %}
 
-  <strong>Usuário:</strong> {{ parceiro.user.username }}<br>
   {% if parceiro.organizacao %}
     <strong>Organização:</strong>
     <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">

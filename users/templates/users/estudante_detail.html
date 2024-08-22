@@ -30,8 +30,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
-  <strong>Usuário:</strong> {{ aluno.user.username }}<br>
+  
+<span class="titulo">{{titulo}}</span>
+
+  {% include "usuario.html" with user=aluno.user %}
+
   {% if aluno.matricula %}
     <strong>Matrícula:</strong> {{aluno.matricula}}<br>
   {% endif %}

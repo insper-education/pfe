@@ -21,11 +21,8 @@
   
   <span class="titulo">Professor{% if professor.user.genero == "F" %}a{% endif %} {{professor.user.get_full_name}}</span>
 
-  {% if not professor.user.is_active %}
-    <p style="color: red;">- NÃO ATIVO -</p><br>
-  {% endif %}
-
-  <strong>Usuário:</strong> {{ professor.user.username }}<br>
+  {% include "usuario.html" with user=professor.user %}
+  
   <strong>Regime de Dedicação:</strong>
   {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
   <br>

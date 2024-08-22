@@ -1,0 +1,16 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Agosto de 2024
+{% endcomment %}
+
+{% if not user.is_active %}
+  <p style="color: red;">- NÃO ATIVO -</p><br>
+{% endif %}
+
+<strong>Usuário:</strong> {{ user.username }}
+{% if user.membro_comite %}
+  <i>(Membro do Comitê)</i>
+{% endif %}
+<br>
+
