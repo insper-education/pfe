@@ -5,6 +5,10 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  {% include "reload.html" %}
+{% endblock %}
+
 {% block content %}
   <br>
   <a href="{% url 'avisos_listar' %}"><h5>Agenda</h5></a>

@@ -5,6 +5,10 @@
   Data: 15 de Dezembro de 2020
 {% endcomment %}
 
+{% block head %}
+  {% include "reload.html" %}
+{% endblock %}
+
 {% block content %}
   <span class="titulo">{{titulo}}</span>
   <ul>
