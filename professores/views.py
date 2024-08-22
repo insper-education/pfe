@@ -484,7 +484,7 @@ def ajax_atualiza_dinamica(request):
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
-    subject = "Banca "
+    subject = "Capstone | Banca "
     if banca.tipo_de_banca == 0:
         subject += "Final "
     elif banca.tipo_de_banca == 1:
@@ -718,9 +718,9 @@ def mensagem_email(request, tipo=None, primarykey=None):
             para += membro.get_full_name() + " <" + membro.email + ">; "
         
         if banca.alocacao:
-            subject = "Banca Capstone: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
         else:
-            subject = "Banca Capstone: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
         
         context_carta = {
             "request": request,
@@ -737,7 +737,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         if certificado.usuario:
             para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
 
-        subject = "Certificado Capstone Insper: "
+        subject = "Capstone | Certificado: "
         if certificado.tipo_de_certificado == 101: subject += "Orientação de Projeto"
         elif certificado.tipo_de_certificado == 102: subject += "Coorientação de Projeto"
         elif certificado.tipo_de_certificado == 103: subject += "Membro de Banca Intermediária"
@@ -1587,7 +1587,7 @@ def banca_avaliar(request, slug, documento_id=None):
                 julgamento_observacoes.save()
 
 
-            subject = "Avaliação de Banca Capstone "
+            subject = "Capstone | Avaliação de Banca "
             if banca.tipo_de_banca == 0:
                 subject += "Banca Final : "
             elif banca.tipo_de_banca == 1:
@@ -2003,7 +2003,7 @@ def informe_bancas(request, tipo):
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
-            subject = "Resultado da Avaliação de Banca PFE : {0}".format(banca.projeto)
+            subject = "Capstone | Resultado da Avaliação de Banca: {0}".format(banca.projeto)
 
             recipient_list = [banca.projeto.orientador.user.email, ]
             

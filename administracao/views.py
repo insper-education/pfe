@@ -239,7 +239,7 @@ def envia_senha_mensagem(user):
     message_email = message_email.replace('\t', "&nbsp;&nbsp;&nbsp;&nbsp;\t")
 
     # Enviando e-mail com mensagem para usuário.
-    subject = "Conta Capstone Insper: " + user.get_full_name()
+    subject = "Capstone | Conta de Usuário: " + user.get_full_name()
     recipient_list = [user.email,]
     check = email(subject, recipient_list, message_email)
     if check != 1:
@@ -1200,7 +1200,7 @@ def dados_backup(request, modo):
     
     if request.method == "POST" and "email" in request.POST and "sigla" in request.POST:
 
-        subject = "RELATÓRIOS"
+        subject = "Capstone | Relatórios"
         message = "Relatórios"
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [request.POST["email"],]

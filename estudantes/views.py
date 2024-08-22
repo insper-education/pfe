@@ -233,7 +233,7 @@ def encontros_marcar(request):
                         encontro.save()
 
         if agendado:
-            subject = "Dinâmica agendada"
+            subject = "Capstone | Dinâmica agendada"
             recipient_list = []
             alocacoes = Alocacao.objects.filter(projeto=projeto)
             for alocacao in alocacoes:
@@ -290,7 +290,7 @@ def encontros_cancelar(request, evento_id):
     encontro.projeto = None
     encontro.save()
 
-    subject = "Dinâmica cancelada"
+    subject = "Capstone | Dinâmica cancelada"
     recipient_list = []
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     for alocacao in alocacoes:
@@ -799,7 +799,7 @@ def selecao_propostas(request):
                             Opcao.objects.filter(aluno=aluno, proposta=proposta).delete()
                 message = create_message(aluno, ano, semestre)
 
-                subject = "Capstone Insper: " + aluno.user.username
+                subject = "Capstone | Propostas Selecionadas: " + aluno.user.username
                 recipient_list = [aluno.user.email, ]
                 check = email(subject, recipient_list, message)
                 if check != 1:

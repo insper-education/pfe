@@ -620,7 +620,7 @@ def reembolso_pedir(request):
 
         reembolso.save()
 
-        subject = "Reembolso Capstone : " + usuario.username
+        subject = "Capstone | Reembolso: " + usuario.username
         recipient_list = configuracao.recipient_reembolso.split(";")
         recipient_list.append(usuario.email)  # mandar para o usuário que pediu o reembolso
         if projeto:

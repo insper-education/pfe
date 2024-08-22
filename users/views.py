@@ -831,7 +831,7 @@ def envia_contas_senhas(request):
             message_email = html.urlize(message_email) # Faz links de e-mail, outros sites funcionarem
 
             # Enviando e-mail com mensagem para usuário.
-            subject = "Conta Capstone: " + estudante.user.get_full_name()
+            subject = "Capstone | Conta: " + estudante.user.get_full_name()
             recipient_list = [estudante.user.email, ]
             check = email(subject, recipient_list, message_email)
             if check != 1:

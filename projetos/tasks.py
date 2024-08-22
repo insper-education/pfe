@@ -84,7 +84,7 @@ def avisos_do_dia():
     for aviso in avisos:
 
         # Preparando mensagem como template para aplicar variáveis
-        subject = "Aviso: " + aviso.titulo
+        subject = "Capstone | Aviso: " + aviso.titulo
         if aviso.mensagem:
             message = aviso.mensagem
         else:
@@ -95,10 +95,7 @@ def avisos_do_dia():
         recipient_list = []
 
         if aviso.coordenacao:
-            #coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
             email_coordenacoes = []
-            #for coordenador in coordenacoes:
-            #    email_coordenacoes.append(str(coordenador.email))
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
@@ -106,6 +103,16 @@ def avisos_do_dia():
             if check != 1:
                 error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_coordenacoes)
                 logger.error(error_message)
+
+        if aviso.operacional:
+            email_operacional = []
+            email_operacional.append(str(configuracao.operacao.user.email))
+            context = {}
+            mensagem_final = mensagem_como_template.render(Context(context))
+            check = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_coordenacoes)
+                logger.error(error_message)                
                 
         if aviso.comite_pfe:
             comite = PFEUser.objects.filter(membro_comite=True)
@@ -163,7 +170,7 @@ def eventos_do_dia():
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
             for acao in context[event]:
                 if acao.startDate == datetime.date.today():
-                    subject = "Evento Capstone: {0}".format(acao.get_title())
+                    subject = "Capstone | Evento: {0}".format(acao.get_title())
                     message = "<b>Evento:</b> {0}".format(acao.get_title())
                     if acao.location:
                         message += "<br>\n<b>Local:</b> {0}".format(acao.location)
