@@ -1192,7 +1192,12 @@
         $("#barra_local").text(firstElementText);
         $(".header_local").css("display", "none");
         $(".local").css("display", "none");
-        $("#barra_inferior").css("display", "");
+        if(firstElementText=="") {
+          // Se o texto for vazio, não mostra a barra inferior de Local qualquer forma
+          $("#barra_inferior").css("display", "none");
+        } else {
+          $("#barra_inferior").css("display", "");
+        }
         $(".header_aula").css("border-radius", "0 8px 0 0");
       } else {
         $("#barra_local").text("");
