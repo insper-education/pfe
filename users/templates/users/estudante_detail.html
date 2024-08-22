@@ -57,10 +57,6 @@
   
   {% comment %} Prenchido pelo estudante {% endcomment %}
 
-  {% if aluno.user.observacoes %}
-    <br><strong>Observações:</strong> {{ aluno.user.observacoes|linebreaks }}
-  {% endif %}
-
   {% if aluno.trabalhou %}
     <br><strong>{{aluno.get_trabalhou_help_text }}</strong> {{ aluno.trabalhou|linebreaks }}
   {% endif %}
