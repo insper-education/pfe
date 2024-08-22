@@ -106,7 +106,7 @@ def avisos_do_dia():
 
         if aviso.operacional:
             email_operacional = []
-            email_operacional.append(str(configuracao.operacao.user.email))
+            email_operacional.append(str(configuracao.operacao.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             check = email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
