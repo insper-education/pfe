@@ -354,6 +354,7 @@
       };
 
       function carrega_site() {
+        {% include "edicao_puxar_local_ou_versao.js" %}
         carrega_pagina();
       }
       window.onload = carrega_site
@@ -362,5 +363,5 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Estudantes" com_cursos=True %}
-  
+
 {% endblock %}
