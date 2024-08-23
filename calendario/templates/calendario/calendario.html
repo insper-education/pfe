@@ -1178,7 +1178,7 @@
       var firstElementText = elements.first().text();
       var allSame = true;
       elements.each(function() {
-        if ($(this).text() !== firstElementText) {
+        if ($(this).text() !== firstElementText && $(this).text() !== "") {
           allSame = false;
           return false;
         }
