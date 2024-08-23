@@ -5,6 +5,9 @@
 {% endcomment %}
 
 {% load static %}
+{% comment %} Para gerar as imagens {% endcomment %}
+<script src="{% static 'js/html2canvas.min.js' %}"></script>
+<script src="{% static 'js/jspdf.min.js' %}"></script>
 
 <style>
 
@@ -53,6 +56,8 @@
 
     setTimeout(function () {
       html2canvas(document.querySelector("#tudo"), {
+        //useCORS: true, // Enable cross-origin resource sharing
+        //logging: true, // Enable logging for debugging
         width: 1200,
         windowWidth: 1200,
         scrollX: 0,
@@ -69,7 +74,7 @@
         } else {
           var imgData = canvas.toDataURL("image/jpeg");
           if(tipo=="jpg" || tipo=="jpeg") {
-            saveAs(imgData, save_image_file_name+".jpg"); // GERA PNG 
+            saveAs(imgData, save_image_file_name+".jpg"); // GERA JPG 
           } else
           if(tipo=="pdf") {
             var w = canvas.width

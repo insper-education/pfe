@@ -19,10 +19,6 @@
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
 
-  {% comment %} Para gerar as imagens {% endcomment %}
-  <script src="{% static 'js/html2canvas.min.js' %}"></script>
-  <script src="{% static 'js/jspdf.min.js' %}"></script>
-
   <style>
     table, th, td {border: 0px;}
     #info_semestre {font-size:16px;}
@@ -989,24 +985,24 @@
               });              
           }
 
+          // Desenha o fundo do dia conforme a quantidade de eventos no dia
           if(eventos.length==1) {
             $(element).css({
               "background-color": eventos[0].color 
             });
           } else if (eventos.length==2) {
-            $(element).css(
-              "background", $(element).css("background-image") + ", " + "-webkit-gradient(linear, left top, right bottom, color-stop(50%," + eventos[0].color + "), color-stop(50%," + eventos[1].color + "))" 
-            );
+            $(element).css({
+              "background": "linear-gradient(to bottom right, " + eventos[0].color + " 50%, " + eventos[1].color + " 50%)"
+            });
           } else if (eventos.length==3) {
-            $(element).css(
-              "background", $(element).css("background-image") + ", " + "linear-gradient(300deg, " + eventos[0].color + " 36%, " + eventos[1].color + " 36% 64%, " + eventos[2].color + " 64%)"
-            );
+            $(element).css({
+              "background": "linear-gradient(300deg, " + eventos[0].color + " 36%, " + eventos[1].color + " 36% 64%, " + eventos[2].color + " 64%)"
+            });
           } else if (eventos.length > 3) {
-            $(element).css(  // muitas cores
-              "background", $(element).css("background-image") + ", " + "-webkit-radial-gradient(yellow, lightblue, PaleVioletRed, green)" 
-            );
+            $(element).css({  // muitas cores
+              "background": "radial-gradient(circle, yellow, lightblue, PaleVioletRed, green)"
+            });
           }
-
         },
         {% comment %} disabledDays: [], // Não estou usando por enquanto. {% endcomment %}
         customDayRenderer: dias_especiais,
