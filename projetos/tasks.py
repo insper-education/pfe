@@ -163,22 +163,45 @@ def eventos_do_dia():
     except Configuracao.DoesNotExist:
         return None
 
-    recipient_list = []
-    recipient_list.append(str(configuracao.coordenacao.user.email))
-
     for event in context:
         if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
             for acao in context[event]:
                 if acao.startDate == datetime.date.today():
+
+                    recipient_list = []
+                    recipient_list.append(str(configuracao.coordenacao.user.email))
+
+                    if acao.tipo_de_evento == 12:  # Aula
+                        # Adicionando Orientadores
+                        orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
+                        recipient_list += [obj.user.email for obj in orientadores]
+
                     subject = "Capstone | Evento: {0}".format(acao.get_title())
-                    message = "<b>Evento:</b> {0}".format(acao.get_title())
-                    if acao.location:
-                        message += "<br>\n<b>Local:</b> {0}".format(acao.location)
+                    message = "Notificação de evento do Capstone.\n<br>"
+                    message += "(mensagem informativa dos eventos do dia)\n\n<br><br>"
+                    message += "<b>Evento:</b> {0}".format(acao.get_title())
+
+                    if acao.atividade:
+                        message += "<br>\n<b>Nome da Atividade:</b> {0}".format(acao.atividade)
+                   
                     if acao.startDate and (acao.startDate == acao.endDate or (not acao.endDate)):
                         message += "<br>\n<b>Data:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
                     else:
                         message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
                         message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate.strftime("%d/%m/%Y"))
+
+                    if acao.location:
+                        message += "<br>\n<b>Local:</b> {0}".format(acao.location)
+
+                    if acao.descricao:
+                        message += "<br>\n<b>Descrição:</b> {0}".format(acao.descricao)
+                    if acao.responsavel:
+                        message += "<br>\n<b>Responsável:</b> {0}".format(acao.responsavel.get_full_name())
+                    if acao.observacao:
+                        message += "<br>\n<b>Observações:</b> {0}".format(acao.observacao)
+                    # documento (não implementado)
+                    message += "<br>\n<br>\n<br>\n"
+
                     check = email(subject, recipient_list, message)
                     if check != 1:
                         error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)

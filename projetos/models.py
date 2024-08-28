@@ -727,6 +727,21 @@ class Evento(models.Model):
     documento = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text="Material do evento, em caso de aulas, os slides da aula")
 
+
+    # PRECISA COLOCAR EM TIPO DE EVENTO (para os avisos)
+    # coordenacao = \
+    #     models.BooleanField(default=True, help_text="Para coordenação do Capstone")
+    # operacional = \
+    #     models.BooleanField(default=False, help_text="Para equipe operacional do Capstone")
+    # comite_pfe = \
+    #     models.BooleanField(default=False, help_text="Para os membros do comitê do Capstone")
+    # todos_alunos = \
+    #     models.BooleanField(default=False, help_text="Para todos os estudantes do semestre")
+    # todos_orientadores = \
+    #     models.BooleanField(default=False, help_text="Para todos os orientadores do semestre")
+    # contatos_nas_organizacoes = \
+    #     models.BooleanField(default=False, help_text="Para contatos nas organizações parceiras")
+
     def get_title(self):
         """Retorna em string o nome do evento."""
         return self.get_tipo_de_evento_display()
@@ -1181,8 +1196,9 @@ class Aviso(models.Model):
                                       help_text="Datas de quando o evento foi realizado")
     
 
+    # Quem deve receber o aviso (REPETIDO EM TIPO DE EVENTO)
     coordenacao = \
-        models.BooleanField(default=False, help_text="Para coordenação do Capstone")
+        models.BooleanField(default=True, help_text="Para coordenação do Capstone")
     operacional = \
         models.BooleanField(default=False, help_text="Para equipe operacional do Capstone")
     comite_pfe = \
