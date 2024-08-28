@@ -198,11 +198,15 @@
       filtra_data();
 
       // Scrolla para a linha do dia
-      var rowPosition = $(".atual").offset().top;
-      var halfWindowHeight = $(window).height() / 2;
-      $("html, body").animate({
-        scrollTop: rowPosition - halfWindowHeight
-      }, 500);
+      var atual = $(".atual");
+      if (atual.length > 0) {
+        var rowPosition = atual.offset().top;
+        var halfWindowHeight = $(window).height() / 2;
+        $("html, body").animate({
+          scrollTop: rowPosition - halfWindowHeight
+        }, 500);
+      }
+
     });
 
     $(".aviso").change(function () {
