@@ -81,7 +81,10 @@
                 <span class="data_longa">{{a.evento.get_data}}</span><span class="data_curta">{{a.evento.get_data|date:"d/m/y"}}</span>
               </td>
               <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
+                <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
+                  {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
+                  {% if a.evento.tipo_de_evento == 12 %}Or{% endif %}
+                </span>
               </td>
               <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
                 {{a.evento.get_title}}
