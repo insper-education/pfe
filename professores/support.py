@@ -8,7 +8,7 @@ Data: 17 de Dezembro de 2020
 
 import dateutil.parser
 
-
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 
@@ -17,17 +17,31 @@ from users.support import adianta_semestre
 
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
+from projetos.models import Configuracao
 
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
-    
+
+    configuracao = get_object_or_404(Configuracao)
+
+    # Verifica se a banca não intersecta com outras bancas
+    if "inicio" in request.POST and "fim" in request.POST:
+        startDate = dateutil.parser.parse(request.POST["inicio"])
+        endDate = dateutil.parser.parse(request.POST["fim"])
+        total_bancas = Banca.objects.all().count()
+        nao_intersecta = Banca.objects.filter(Q(endDate__lte=startDate) | Q(startDate__gte=endDate)).count()
+        if (total_bancas - nao_intersecta) >= configuracao.limite_salas_bancas:
+            return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado.", None
+    else:
+        return "Data de início ou fim não informada!", None
+
     if banca is None:
         banca = Banca.create()
 
     if "tipo" in request.POST and request.POST["tipo"] != "":
         banca.tipo_de_banca = int(request.POST["tipo"])
     else:
-        return False
+        return "Tipo de banca não informado!", None
 
     if banca.tipo_de_banca == 3:  # Banca Probation
 
@@ -35,18 +49,18 @@ def editar_banca(banca, request):
             try:
                 banca.alocacao = Alocacao.objects.get(id=int(request.POST["alocacao"]))
             except Alocacao.DoesNotExist:
-                return False
+                return "Alocação não encontrada!", None
         else:
-            return False
+            return "Alocação não informada!", None
     else:
 
         if "projeto" in request.POST:
             try:
                 banca.projeto = Projeto.objects.get(id=int(request.POST["projeto"]))
             except Projeto.DoesNotExist:
-                return False
+                return "Projeto não encontrado!", None
         else:
-            return False
+            return "Projeto não informado!", None
 
     if "inicio" in request.POST:
         try:
@@ -78,11 +92,11 @@ def editar_banca(banca, request):
         else:
             banca.membro3 = None
     except PFEUser.DoesNotExist:
-        return False
+        return "Membro da banca não encontrado!", None
 
     banca.save()
 
-    return banca
+    return None, banca
 
 
 def professores_membros_bancas(banca=None):

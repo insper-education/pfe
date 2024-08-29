@@ -77,6 +77,7 @@ def index_professor(request):
             # Verifica se todos os projetos do professor orientador têm o plano de orientação
             tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
             feito = True
+            planos_de_orientacao = 'b'
             for projeto in projetos:
                 feito = feito and Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists()
             if feito:
@@ -484,6 +485,8 @@ def ajax_atualiza_dinamica(request):
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
+    error_message = None
+
     subject = "Capstone | Banca "
     if banca.tipo_de_banca == 0:
         subject += "Final "
@@ -532,11 +535,15 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
     mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y das %H:%M") + " às " + banca.endDate.strftime("%H:%M") + "<br><br>"
 
-    LIMITE_DE_SALAS = 2
+    configuracao = get_object_or_404(Configuracao)
     if not excluida:
         total_bancas = Banca.objects.all().count()
         nao_intersecta = Banca.objects.filter(Q(endDate__lte=banca.startDate) | Q(startDate__gte=banca.endDate)).count()
-        if (total_bancas - nao_intersecta - 1) >= LIMITE_DE_SALAS:  # -1 para nao contar a propria banca
+        if (total_bancas - nao_intersecta - 1) >= configuracao.limite_salas_bancas:  # -1 para nao contar a propria banca
+
+            if BLOQUEAR:
+                return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado."
+            
             mensagem += "<span style='color: red; font-weight: bold;'>"
             mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
             mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
@@ -578,16 +585,15 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     if configuracao.coordenacao:
         recipient_list.append(str(configuracao.coordenacao.user.email))
     if configuracao.operacao:
-        recipient_list.append(str(configuracao.operacao.user.email))
+        recipient_list.append(str(configuracao.operacao.email))
 
     if enviar:
         check = email(subject, recipient_list, mensagem)
         if check != 1:
             error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
             logger.error(error_message)
-            mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
     
-    return mensagem
+    return error_message
     
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -597,14 +603,15 @@ def bancas_criar(request, data=None):
 
     if request.is_ajax() and request.method == "POST":
 
-        banca = editar_banca(None, request)
-        if banca:
-            mensagem = mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
+        atualizado = True
+        mensagem, banca = editar_banca(None, request)
+        if mensagem is None:
+            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
         else:
-            return HttpResponse("Banca não registrada, erro geral", status=401)
+            atualizado = False
 
         context = {
-            "atualizado": True,
+            "atualizado": atualizado,
             "mensagem": mensagem,
         }
         return JsonResponse(context)
@@ -668,7 +675,6 @@ def bancas_criar(request, data=None):
                 context["tipob"] = 3
         
     return render(request, "professores/bancas_view.html", context)
-
 
 
 @login_required
@@ -780,21 +786,23 @@ def bancas_editar(request, primarykey=None):
 
     if request.is_ajax() and request.method == "POST":
 
+        atualizado = True
         mensagem = ""
         if "atualizar" in request.POST:
-            if editar_banca(banca, request):
-                mensagem = mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST)) # Atualizada
+            mensagem, _ = editar_banca(banca, request)
+            if mensagem is None:
+                mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST)) # Atualizada
             else:
-                mensagem = "Erro ao Editar banca."
+                atualizado = False
         elif "excluir" in request.POST:
-            mensagem = mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST)) # Excluida
+            mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST)) # Excluída
             if "projeto" in request.POST:
                 banca.delete()
         else:
             return HttpResponse("Atualização não realizada.", status=401)
 
         context = {
-                "atualizado": True,
+                "atualizado": atualizado,
                 "mensagem": mensagem,
             }
         return JsonResponse(context)

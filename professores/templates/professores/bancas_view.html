@@ -398,9 +398,9 @@
   <div id="div_botao" class="modal-footer">
 
     <small>
-      <input type="checkbox" name="enviar_mensagem" value="sim" 
+      <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
       {% if user.tipo_de_usuario != 4 %}checked{% endif %}>
-      Enviar mensagem para envolvidos
+      <label for="enviar_mensagem">Enviar mensagem para envolvidos</label>
     </small>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -579,7 +579,7 @@
 
   $("form#criarbancasform").submit(function(e){
     e.preventDefault();
-
+    
     if($("#inicio").val() == $("#fim").val()) {
       alert("Datas e horários de início e fim são iguais!");
       return false;
@@ -632,11 +632,15 @@
       data: formData,
       processData: false,
       contentType: false,
-      success: function(response){
-        $("#submit").hide();
-        $("#excluir").hide();
-        $("#popup").modal("hide");
-        loadContent( "#atualizar", "{% url 'bancas_index' %}", "#atualizar" );
+      success: function(data){
+        if (data.atualizado) {
+          $("#submit").hide();
+          $("#excluir").hide();
+          $("#popup").modal("hide");
+          loadContent( "#atualizar", "{% url 'bancas_index' %}", "#atualizar" );  
+        } else {
+          alert(data.mensagem);
+        }
       },
       {% include "ajax_error_function.js" %}
     });

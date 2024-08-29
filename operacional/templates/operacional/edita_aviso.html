@@ -93,8 +93,8 @@
         </button>
 
         <script>
-          $('#apagar').click(function() {
-            if(confirm('Você tem certeza?')){
+          $("#apagar").click(function() {
+            if(confirm("Você tem certeza?")){
               event.preventDefault();
               window.location = "{% url 'deleta_aviso' aviso.id %}";
             }

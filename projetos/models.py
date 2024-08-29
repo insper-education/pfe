@@ -593,6 +593,11 @@ class Configuracao(models.Model):
     
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
+    
+
+    #LIMITE_DE_SALAS_P_BANCAS
+    limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,
+                                           help_text="Limite de Salas para Bancas Simultâneas")
 
     ###---------------------- JSON -------------------------###
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
