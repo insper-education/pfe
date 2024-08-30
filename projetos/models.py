@@ -732,6 +732,10 @@ class Evento(models.Model):
     documento = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
                                   help_text="Material do evento, em caso de aulas, os slides da aula")
 
+    documento2 = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
+                                  related_name="documento2",
+                                  help_text="Material axuliar do evento, em caso de aulas, os slides da aula")
+
 
     # PRECISA COLOCAR EM TIPO DE EVENTO (para os avisos)
     # coordenacao = \
@@ -1114,6 +1118,9 @@ class Documento(models.Model):
     
     def filename(self):
         return os.path.basename(self.documento.name)
+    
+    def extensao(self):
+        return os.path.splitext(self.filename())[1][1:].upper()
 
     # Remove o arquivo apontado pelo documento se o documento for deletado
     def delete(self, using=None, keep_parents=False):

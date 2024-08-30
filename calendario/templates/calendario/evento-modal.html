@@ -110,10 +110,12 @@
 
             <div class="form-group row">
               <label style="line-height: normal;" for="event-material" class="col-sm-4 control-label">Material (arquivo)<br>
-                <small style="line-height: 1.0 !important;">Só mostrará arquivos com data no passado.</small>
+                {% comment %} <small style="line-height: 1.0 !important;">Só mostrará arquivos com data no passado.</small> {% endcomment %}
               </label>
               
-              <div class="col-sm-8">
+              {% comment %} <div class="col-sm-8"> {% endcomment %}
+              <div class="col-sm-8" style="height: 84px; overflow-y: auto;">
+
                 <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
                   <option value id="nenhum"> -------- </option>
                   {% for documento in documentos %}
@@ -122,7 +124,21 @@
                 </select>
                 <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
                   {% include "formatos_suportados.html" %}>
+
+                <hr>
+
+                <select name="event-material2" id="event-material2" class="form-control" title="Selecione material anexo">
+                  <option value id="nenhum"> -------- </option>
+                  {% for documento in documentos %}
+                    <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
+                  {% endfor %}
+                </select>
+                <input required id="arquivo2" type="file" name="arquivo2" class="form-control" style="border: 0px; padding-left: 0px;"
+                  {% include "formatos_suportados.html" %}>
               </div>
+
+              
+
             </div>
             
             {% if configuracao.maxMB_filesize and user.tipo_de_usuario != 4 %}

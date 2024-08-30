@@ -1,0 +1,19 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 30 de Agosto de 2024
+{% endcomment %}
+
+{% if extensao == "JPG" %}
+  <i class="fa fa-file-image"></i>
+{% elif extensao == "PDF" %}
+  <i class="fa fa-file-pdf"></i>
+{% elif extensao == "XLS" or extensao == "XLSX" %}
+  <i class="fa fa-file-excel"></i>
+{% elif extensao == "DOC" or extensao == "DOCX" %}
+  <i class="fa fa-file-word"></i>
+{% elif extensao == "PPT" or extensao == "PPTX" %}
+  <i class="fa fa-file-powerpoint"></i>
+{% else %}
+  <i class="fa fa-file"></i>
+{% endif %}

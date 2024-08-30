@@ -495,14 +495,27 @@
                           {% if aula.documento and aula.documento.data|dif_agora < 0 %}
                             {% if aula.documento.documento %}
                               <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}">
-                                &nbsp;<i class="fa fa-file-pdf"></i>
+                                &nbsp;{% include "icones_extensoes.html" with extensao=aula.documento.extensao %}
                               </a>
                             {% elif aula.documento.link %}
                               <a class="esconder" href="{{aula.documento.link}}">
-                                &nbsp;<i class="fa fa-file-pdf"></i>
+                                &nbsp;<i class="fa fa-link"></i>
                               </a>
                             {% endif %}
                           {% endif %}
+
+                          {% if aula.documento2 and aula.documento2.data|dif_agora < 0 %}
+                            {% if aula.documento2.documento %}
+                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento2.documento.url}}">
+                                &nbsp;{% include "icones_extensoes.html" with extensao=aula.documento2.extensao %}
+                              </a>
+                            {% elif aula.documento2.link %}
+                              <a class="esconder" href="{{aula.documento2.link}}">
+                                &nbsp;<i class="fa fa-link"></i>
+                              </a>
+                            {% endif %}
+                          {% endif %}
+
                         </td>
 
                         <td class="colu local" style="cursor: pointer;">
@@ -588,7 +601,8 @@
       $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
       $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
       $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
-      $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');      
+      $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');
+      $('#event-modal select[name="event-material2"]').val(evento ? evento.material2 : '');
       $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
       $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
 
@@ -648,6 +662,7 @@
         observation: $('#event-modal input[name="event-observation"]').val(),
         responsavel: $('#event-modal select[name="event-responsavel"]').val(),
         material: $('#event-modal select[name="event-material"]').val(),
+        material2: $('#event-modal select[name="event-material2"]').val(),
         startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
         endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
         color: $('#event-modal select[name="event-type"] option:selected').data("color"),
@@ -657,6 +672,20 @@
       $("#event-type").css({"border-color":''});
       $("#min-date").css({"border-color":''});
       $("#max-date").css({"border-color":''});
+
+      var arquivo = $("#arquivo");
+      if(arquivo[0].files.length > 0) {  // check se input não está vazio
+        var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
+        var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
+        $("#event-material").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
+      }
+
+      var arquivo = $("#arquivo2");
+      if(arquivo[0].files.length > 0) {  // check se input não está vazio
+        var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
+        var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
+        $("#event-material2").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
+      }
 
       if(event.type == null) {
         $("#warning-footer").html("Tipo de evento é obrigatório.");
@@ -743,6 +772,7 @@
                   dataSource[i].observation = event.observation;
                   dataSource[i].responsavel = event.responsavel;
                   dataSource[i].material = event.material;
+                  dataSource[i].material2 = event.material2;
                   dataSource[i].startDate = event.startDate;
                   dataSource[i].endDate = event.endDate;
                   dataSource[i].color = event.color;
@@ -809,6 +839,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -825,6 +856,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -841,6 +873,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -857,6 +890,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -873,6 +907,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -889,6 +924,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
@@ -911,6 +947,7 @@
                 descricao: `{{evento.descricao}}`,
                 responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
                 material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
                 type: "{{evento.tipo_de_evento}}",
                 startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
                 endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),

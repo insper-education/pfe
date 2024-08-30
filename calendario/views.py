@@ -174,6 +174,32 @@ def export_calendar(request, event_id):
 
     return response
 
+
+def cria_material_aula(request, campo_arquivo):
+        """Cria material de aula."""
+        #link = request.POST.get("link", None)
+        max_length = Documento._meta.get_field("documento").max_length
+        if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length - 1:
+                return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+        
+        documento = Documento.create()  # Criando documento na base de dados
+        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
+        documento.data = datetime.datetime.now()
+        #documento.link = link
+        documento.lingua_do_documento = 0  # (0, 'Português')
+        documento.confidencial = False  # Por padrão aulas não são confidenciais
+        documento.usuario = request.user
+
+        if len(request.FILES[campo_arquivo].name) > max_length - 1:
+            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+    
+        arquivo = simple_upload(request.FILES[campo_arquivo],
+                                path=get_upload_path(documento, ""))
+        documento.documento = arquivo[len(settings.MEDIA_URL):]
+        documento.save()
+        return documento
+
+
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
@@ -222,33 +248,19 @@ def atualiza_evento(request):
     responsavel = request.POST.get("event-responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
-    max_length = Documento._meta.get_field("documento").max_length
     if "arquivo" in request.FILES:
-
-        #link = request.POST.get("link", None)
-        max_length = Documento._meta.get_field("documento").max_length
-        if "arquivo" in request.FILES and len(request.FILES["arquivo"].name) > max_length - 1:
-                return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
-        
-        documento = Documento.create()  # Criando documento na base de dados
-        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
-        documento.data = datetime.datetime.now()
-        #documento.link = link
-        documento.lingua_do_documento = 0  # (0, 'Português')
-        documento.confidencial = False  # Por padrão aulas não são confidenciais
-        documento.usuario = request.user
-
-        if len(request.FILES["arquivo"].name) > max_length - 1:
-            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
-    
-        arquivo = simple_upload(request.FILES["arquivo"],
-                                path=get_upload_path(documento, ""))
-        documento.documento = arquivo[len(settings.MEDIA_URL):]
-        documento.save()
+        documento = cria_material_aula(request, "arquivo")
         evento.documento = documento
     else:
         material = request.POST.get("event-material", None)
         evento.documento = Documento.objects.get(id=material) if material else None
+
+    if "arquivo2" in request.FILES:
+        documento = cria_material_aula(request, "arquivo2")
+        evento.documento2 = documento
+    else:
+        material = request.POST.get("event-material2", None)
+        evento.documento2 = Documento.objects.get(id=material) if material else None
 
     evento.save()
 
