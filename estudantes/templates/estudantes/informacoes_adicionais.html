@@ -8,6 +8,8 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+
   <style>
     textarea, input {max-width:100%;}
     .ent_nome {cursor:pointer;}
@@ -100,6 +102,10 @@
     $(".ent_nome").click(function(e){
       $("#entidade").append(e.target.innerHTML+"; ");
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}

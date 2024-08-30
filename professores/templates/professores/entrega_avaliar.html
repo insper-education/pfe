@@ -15,6 +15,7 @@
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
     ul,ol {
@@ -189,5 +190,9 @@
 
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+  </script>
 
 {% endblock %}

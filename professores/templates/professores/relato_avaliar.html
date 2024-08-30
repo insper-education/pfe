@@ -12,7 +12,7 @@
 
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-  
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   {% comment %} REMOVER O STYLE E USAR O ARQUIVO CSS {% endcomment %}
   {% comment %} <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}"> {% endcomment %}
@@ -151,6 +151,10 @@
         }
       });
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}

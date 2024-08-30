@@ -14,6 +14,7 @@
   <script>{% include "tooltip.js" %}</script>
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
 {% endblock %}
 
@@ -190,6 +191,10 @@
         $(this).find('button[type="submit"]').prop("disabled", true);
       });
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}

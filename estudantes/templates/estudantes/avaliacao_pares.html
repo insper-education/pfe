@@ -6,6 +6,8 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <style>
     textarea {
       max-width:100%;
@@ -124,8 +126,12 @@
     {% endfor %}
 
     <br>
-    <input {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit" value="Enviar">
+    <input class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit" value="Enviar"> 
 
   </form>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+  </script>
 
 {% endblock %}

@@ -11,6 +11,7 @@
   {% load get_prazo %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
     textarea {max-width:100%;}
@@ -134,6 +135,10 @@
       $(this).siblings("div").toggle(200);
       $("span", this).toggleClass("seta-baixo seta-cima");
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}
