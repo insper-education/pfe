@@ -8,6 +8,8 @@
 {% block head %}
   {% load static %}
   {% load define_action %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+
   <style>
     textarea {
       max-width:100%;
@@ -311,6 +313,10 @@
         }
       });
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}

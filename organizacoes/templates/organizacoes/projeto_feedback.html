@@ -6,10 +6,9 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
   <link rel="stylesheet" href="{% static 'css/style_botao_lingua.css' %}">
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
     
@@ -188,5 +187,9 @@
     </div>
 
   </form>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+  </script>
 
 {% endblock %}
