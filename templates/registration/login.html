@@ -1,17 +1,59 @@
 {% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 1 de Stemebro de 2024
+{% endcomment %}
+
+{% block head %}
+  <style>
+    .container {max-width: 840px;}
+    .card {border-radius: 10px;}
+    .card-header {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .card-footer {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  </style>
+{% endblock %}
 
 {% block content %}
-
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
-</form>
-<br>
-<p style="color:red">atenção: você não deve colocar o @insper.edu.br, coloque somente o seu login.</p>
-<br>
-<p><a href="{% url 'password_reset' %}">Recriar senha.</a></p>
-
-
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-header text-center bg-primary text-white">
+            <h2>Login</h2>
+          </div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              <div class="form-group row mb-1">
+                <label for="{{ form.username.id_for_label }}" class="col-sm-3 col-form-label">{{ form.username.label }}</label>
+                <div class="col-sm-9">
+                  {{ form.username }}
+                </div>
+              </div>
+              <div class="form-group row mb-3">
+                <label for="{{ form.password.id_for_label }}" class="col-sm-3 col-form-label">{{ form.password.label }}</label>
+                <div class="col-sm-9">
+                  {{ form.password }}
+                </div>
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-primary mb-3" type="submit">Login</button>
+              </div>
+            </form>
+            <p class="text-center mt-3"><a href="{% url 'password_reset' %}">Criar/Recriar senha</a></p>
+          </div>
+          <div class="card-footer text-muted text-center">
+            <p class="mb-0">Atenção: você não deve colocar o @insper.edu.br ou @al.insper.edu.br, coloque somente o seu login.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
