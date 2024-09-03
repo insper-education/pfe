@@ -29,15 +29,14 @@
 
   <span class="titulo">{{ titulo }}
     {% if user.tipo_de_usuario == 4 %}
-    <small class="esconder">
-      <a
-        class="open-documento" style="cursor:pointer;"
-        data-url="{% url 'adiciona_documento' %}"
-        >&#10133;</a
-      >
-    </small>
-  {% endif %}
-
+      <small class="esconder">
+        <a
+          class="open-documento" style="cursor:pointer;"
+          data-url="{% url 'adiciona_documento' %}"
+          >&#10133;</a
+        >
+      </small>
+    {% endif %}
   </span>
 
   {% for area in areas %}
