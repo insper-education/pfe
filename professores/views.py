@@ -510,9 +510,9 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         subject += " - Projeto: [" + projeto.proposta.organizacao.nome + "] " + projeto.get_titulo()
 
     if excluida:
-        mensagem = "Banca Capstone Cancelada.<br><br>"
+        mensagem = '<span style="color: red; font-weight: bold;">Banca Capstone Cancelada.</span><br><br>'
     elif atualizada:
-        mensagem = "Banca Capstone Reagendada.<br><br>"
+        mensagem = '<span style="color: yellow; font-weight: bold;">Banca Capstone Reagendada.</span><br><br>'
     else:
         mensagem = "Banca Capstone Agendada.<br><br>"
 
@@ -535,6 +535,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
     mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y das %H:%M") + " às " + banca.endDate.strftime("%H:%M") + "<br><br>"
 
+    BLOQUEAR = True
     configuracao = get_object_or_404(Configuracao)
     if not excluida:
         total_bancas = Banca.objects.all().count()
@@ -549,9 +550,9 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
             mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
             mensagem += "</span><br>"
 
-    mensagem += "Envolvidos:<br><ul>"
-
     recipient_list = []
+
+    mensagem += 'Membros da Banca:<br><ul style="margin-top: 2px;">'
 
     # Orientador
     if projeto.orientador:
@@ -570,6 +571,9 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         mensagem += "<li>" + membro.get_full_name() + " [membro da banca] "
         mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a></li>"
         recipient_list.append(membro.email)
+    mensagem += "</ul>"
+
+    mensagem += 'Grupo de Estudantes:<br><ul style="margin-top: 2px;">'
 
     # estudantes
     for alocacao in projeto.alocacao_set.all():
@@ -577,7 +581,6 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         mensagem += " [" + str(alocacao.aluno.curso2) + "] "
         mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
         recipient_list.append(alocacao.aluno.user.email)
-
     mensagem += "</ul>"
 
     # Adiciona coordenacao e operacaos
@@ -628,7 +631,6 @@ def bancas_criar(request, data=None):
     hoje = datetime.date.today()
     bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
     projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
-
 
     if configuracao.semestre == 1:
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
