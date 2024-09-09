@@ -83,7 +83,7 @@
         <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
         <b>Preenchimento: </b>
         {% if relato %}
-          {{relato.momento|date:"DATE_FORMAT"}}
+          {{relato.momento|date:"DATETIME_FORMAT"}}
         {% else %}
             Não entregue
         {% endif %}  

@@ -2742,7 +2742,10 @@ def relato_avaliar(request, projeto_id, evento_id):
                                     # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
 
     # Só o próprio orientador pode editar uma avaliação
-    editor = request.user == projeto.orientador.user
+    if projeto.orientador:
+        editor = request.user == projeto.orientador.user
+    else:
+        editor = False
 
     exame = Exame.objects.get(titulo="Relato Quinzenal")
 
