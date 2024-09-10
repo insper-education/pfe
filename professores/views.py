@@ -516,7 +516,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     else:
         mensagem = "Banca Capstone Agendada.<br><br>"
 
-    mensagem += "Projeto: " + projeto.get_titulo() + "<br>"
+    mensagem += "Projeto: [" + projeto.proposta.organizacao.nome + "] " + projeto.get_titulo() + "<br>"
 
     if banca.tipo_de_banca == 0:
         mensagem += "Tipo: Banca Final<br>"
