@@ -35,7 +35,7 @@ from projetos.support import calcula_objetivos, get_upload_path
 
 from operacional.models import Curso
 
-from estudantes.models import Relato
+from estudantes.models import Relato, EstiloComunicacao
 
 from academica.models import Exame
 
@@ -903,6 +903,49 @@ class Alocacao(models.Model):
         """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
         certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
         return certificados
+
+
+class EstudanteEstiloComunicacao(models.Model):
+    estudante = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    estilo_comunicacao = models.ForeignKey(EstiloComunicacao, on_delete=models.CASCADE)
+    prioridade_resposta1 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
+    prioridade_resposta2 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
+    prioridade_resposta3 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
+    prioridade_resposta4 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
+
+    def get_weight(self, priority):
+        WEIGHT_CHOICES = {1: 6, 2: 4, 3: 3, 4: 1}
+        return WEIGHT_CHOICES.get(priority, 0)
+
+    def clean(self):
+        # Ensure that all priority fields have unique values
+        priorities = [
+            self.prioridade_resposta1,
+            self.prioridade_resposta2,
+            self.prioridade_resposta3,
+            self.prioridade_resposta4,
+        ]
+        if len(priorities) != len(set(priorities)):
+            raise ValidationError("Cada prioridade deve ser única.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def get_respostas_in_order(self):
+        respostas = [
+            (self.prioridade_resposta1, self.estilo_comunicacao.resposta1),
+            (self.prioridade_resposta2, self.estilo_comunicacao.resposta2),
+            (self.prioridade_resposta3, self.estilo_comunicacao.resposta3),
+            (self.prioridade_resposta4, self.estilo_comunicacao.resposta4),
+        ]
+        return sorted(respostas, key=lambda x: x[0])
+
+    def __str__(self):
+        return f"{self.estudante.user.get_full_name} - {self.estilo_comunicacao.questao}"
+
+    class Meta:
+        unique_together = ('estudante', 'estilo_comunicacao')
 
 
 class Parceiro(models.Model):  # da empresa

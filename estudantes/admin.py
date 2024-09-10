@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Relato, Pares
+from .models import Relato, Pares, EstiloComunicacao
 
 @admin.register(Relato)
 class RelatoAdmin(admin.ModelAdmin):
@@ -22,3 +22,9 @@ class ParesAdmin(admin.ModelAdmin):
                      "alocacao_de__aluno__user__last_name",
                      "alocacao_para__aluno__user__first_name",
                      "alocacao_para__aluno__user__last_name",]
+
+@admin.register(EstiloComunicacao)
+class EstiloComunicacaoAdmin(admin.ModelAdmin):
+    """Exibição no sistema de administração do Django para Avaliação de EstiloComunicacao."""
+
+    list_display = ("bloco", "questao")

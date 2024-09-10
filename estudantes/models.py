@@ -118,5 +118,30 @@ class Pares(models.Model):
         return pares
 
     class Meta:
-        verbose_name = 'Avaliação de Pares'
-        verbose_name_plural = 'Avaliações de Pares'
+        verbose_name = "Avaliação de Pares"
+        verbose_name_plural = "Avaliações de Pares"
+
+
+class EstiloComunicacao(models.Model):
+    """Estilos de Comunicação."""
+
+    bloco = models.CharField(max_length=1, verbose_name="Código do Bloco", null=True, blank=True)
+    questao = models.TextField("Questão", max_length=256, null=True, blank=True,
+                                   help_text="Questão a ser respondida")
+    resposta1 = models.TextField("Resposta 1", max_length=256, null=True, blank=True)
+    resposta2 = models.TextField("Resposta 2", max_length=256, null=True, blank=True)
+    resposta3 = models.TextField("Resposta 3", max_length=256, null=True, blank=True)
+    resposta4 = models.TextField("Resposta 4", max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return self.bloco + " - " + self.questao
+    
+    @classmethod
+    def create(cls):
+        """Cria um objeto (entrada) em EstiloComunicacao."""
+        estilo = cls()
+        return estilo
+    
+    class Meta:
+        verbose_name = "Estilo de Comunicação"
+        verbose_name_plural = "Estilos de Comunicação"

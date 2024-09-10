@@ -46,6 +46,10 @@ urlpatterns = [
          views.encontros_cancelar,
          name="encontros_cancelar"),
 
+    path("estilo_comunicacao/",
+         views.estilo_comunicacao,
+         name="estilo_comunicacao"),
+
     path("estudante_feedback",
          views.estudante_feedback,
          name="estudante_feedback"),

@@ -41,6 +41,10 @@ from administracao.models import Carta
 from administracao.support import propostas_liberadas
 from documentos.models import TipoDocumento
 
+from django import forms
+from .models import EstiloComunicacao
+from users.models import EstudanteEstiloComunicacao
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -312,6 +316,49 @@ def encontros_cancelar(request, evento_id):
         "mensagem": mensagem,
     }
     return render(request, "generic.html", context=context)
+
+
+@login_required
+def estilo_comunicacao(request):
+    """Para passar links de alinhamentos gerais de início de semestre."""
+    estudante = request.user.aluno
+
+    if request.method == "POST":
+        for estilo in EstiloComunicacao.objects.all():
+
+            if all(f"prioridade_resposta{i}_{estilo.id}" in request.POST for i in range(1, 5)):
+                prioridade_resposta1 = request.POST.get(f"prioridade_resposta1_{estilo.id}")
+                prioridade_resposta2 = request.POST.get(f"prioridade_resposta2_{estilo.id}")
+                prioridade_resposta3 = request.POST.get(f"prioridade_resposta3_{estilo.id}")
+                prioridade_resposta4 = request.POST.get(f"prioridade_resposta4_{estilo.id}")
+
+                estudante_estilo, created = EstudanteEstiloComunicacao.objects.update_or_create(
+                    estudante=estudante,
+                    estilo_comunicacao=estilo,
+                    defaults={
+                        'prioridade_resposta1': prioridade_resposta1,
+                        'prioridade_resposta2': prioridade_resposta2,
+                        'prioridade_resposta3': prioridade_resposta3,
+                        'prioridade_resposta4': prioridade_resposta4,
+                    }
+                )
+
+            print(estilo, prioridade_resposta1, prioridade_resposta2, prioridade_resposta3, prioridade_resposta4)
+        
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": "Opções submetidas com sucesso!",
+        }
+
+        return render(request, "generic.html", context=context)
+    
+    
+    context = {
+        "titulo": "Estilo de Comunicação",
+        "estilos": EstiloComunicacao.objects.all(),
+    }
+    return render(request, "estudantes/estilo_comunicacao.html", context)
 
 
 def estudante_feedback_geral(request, usuario):

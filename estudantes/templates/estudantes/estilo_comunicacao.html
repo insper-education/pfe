@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load get_item %}
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <style>
+    .sortable-list {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    .sortable-list li {
+        margin: 0 0 4px 0;
+        padding: 2px;
+        font-size: 1em;
+        height: auto;
+        background-color: #efefef;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        cursor: move;
+        word-wrap: break-word;
+        overflow: hidden;
+    }
+    .sortable-list li:hover {
+      background-color: #f1f1f1;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 2px solid #999;
+      padding: 4px;
+      text-align: left;
+    }
+    th {
+      text-align:center;
+      background-color: #bee5eb;
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+  <span class="titulo">{{ titulo }}</span>
+
+  <form method="post">{% csrf_token %}
+    <table>
+      <thead>
+        <tr>
+          <th>Bloco</th>
+          <th>Pergunta</th>
+          <th>Respostas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for estilo in estilos %}
+          <tr>
+            <td style="text-align:center">{{ estilo.bloco }}</td>
+            <td>{{ estilo.questao }}</td>
+            <td>
+              {% with estilo|get_selecao:request.user.aluno as selected %}
+                <ul class="sortable-list" id="sortable_{{ estilo.id }}">
+                  {% if selected %}
+                      {% for priority, resposta in selected.get_respostas_in_order %}
+                          <li class="ui-state-default" data-priority="{{ priority }}">{{ resposta }}</li>
+                      {% endfor %}
+                  {% else %}
+                      <li class="ui-state-default" data-priority="1">{{ estilo.resposta1 }}</li>
+                      <li class="ui-state-default" data-priority="2">{{ estilo.resposta2 }}</li>
+                      <li class="ui-state-default" data-priority="3">{{ estilo.resposta3 }}</li>
+                      <li class="ui-state-default" data-priority="4">{{ estilo.resposta4 }}</li>
+                  {% endif %}
+                </ul>
+                <input type="hidden" name="prioridade_resposta1_{{ estilo.id }}" id="prioridade_resposta1_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta1 }}{% else %}1{% endif %}">
+                <input type="hidden" name="prioridade_resposta2_{{ estilo.id }}" id="prioridade_resposta2_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta2 }}{% else %}2{% endif %}">
+                <input type="hidden" name="prioridade_resposta3_{{ estilo.id }}" id="prioridade_resposta3_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta3 }}{% else %}3{% endif %}">
+                <input type="hidden" name="prioridade_resposta4_{{ estilo.id }}" id="prioridade_resposta4_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta4 }}{% else %}4{% endif %}">
+              {% endwith %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <br>
+    <button class="btn btn-primary mb-1 mt-2" type="submit">Enviar</button>
+
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  
+  <script>
+      $(function() {
+          $(".sortable-list").sortable({
+              update: function(event, ui) {
+                  var estiloId = $(this).attr('id').split('_')[1];
+                  $(this).children('li').each(function(index) {
+                      var priority = index + 1;
+                      var resposta = $(this).data('priority');
+                      $("#prioridade_resposta" + resposta + "_" + estiloId).val(priority);
+                  });
+              }
+          });
+          $(".sortable-list").disableSelection();
+      });
+  </script>
+
+{% endblock %}
