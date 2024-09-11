@@ -516,7 +516,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     if excluida:
         mensagem = '<span style="color: red; font-weight: bold;">Banca Capstone Cancelada.</span><br><br>'
     elif atualizada:
-        mensagem = '<span style="color: yellow; font-weight: bold;">Banca Capstone Reagendada.</span><br><br>'
+        mensagem = '<span style="color: ##FF5733; font-weight: bold;">Banca Capstone Reagendada.</span><br><br>'
     else:
         mensagem = "Banca Capstone Agendada.<br><br>"
 
