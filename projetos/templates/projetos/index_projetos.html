@@ -6,10 +6,13 @@
 {% endcomment %}
 
 {% block head %}
-{% include "reload.html" %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+  <script>{% include "tooltip.js" %}</script>
+  {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
-<br>
+<span class="titulo">Projetos</span>
 {% include "projetos/projetos.html" %}
 {% endblock %}

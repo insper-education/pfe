@@ -4,41 +4,30 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% include "reload.html" %}
 
-<b>Data e Hora do Sistema:</b> {% now "j F Y H:i" %}
-<hr>
-<a href="{% url 'servico' %}"><h5>Habilitar Aviso de Manutenção</h5></a>
-<a href="{% url 'configurar' %}"><h5>Configurar Sistema</h5></a>
+<a href="{% url 'servico' %}">Habilitar Aviso de Manutenção</a><br>
+<a href="{% url 'configurar' %}">Configurar Sistema</a><br>
+<br>
 
-<hr>
 <h5>Cadastrar</h5>
-<ul>
-  <li><a href="{% url 'cadastrar_organizacao' %}">Organização</a></li>
-  <li><a href="{% url 'cadastrar_usuario' %}">Usuário</a></li>
-  <li><a href="{% url 'cadastrar_disciplina' %}">Disciplina</a></li>
-</ul>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_organizacao' %}">Organização</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_usuario' %}">Usuário</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_disciplina' %}">Disciplina</a></div>
+<br>
 
-<hr>
 <h5>Contas e Senhas</h5>
-<ul>
-  <li><a href="{% url 'contas_senhas' %}">Envia Contas e Senhas para Estudantes</a></li>
-  <li><a href="{% url 'nomes' %}">Ajustar Maiúsculas e Minúsculas de Nomes de Usuários</a></li>
-</ul>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'contas_senhas' %}">Envia Contas e Senhas para Estudantes</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'nomes' %}">Ajustar Maiúsculas e Minúsculas de Nomes de Usuários</a></div>
+<br>
 
-<hr>
 <h5>Dados</h5>
-<ul>
-  <li><a href="{% url 'index_carregar' %}">Carregar Dados</a></li>
-  <li><a href="{% url 'exportar' 'relatorios' %}">Gerar Relatórios</a></li>
-  <li><a href="{% url 'exportar' 'dados' %}">Exportar Dados</a></li>
-  <li><a href="{% url 'exportar_documentos_projetos' %}">Exportar Relatórios dos Projetos</a></li>
-</ul>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'index_carregar' %}">Carregar Dados</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' 'relatorios' %}">Gerar Relatórios</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' 'dados' %}">Exportar Dados</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar_documentos_projetos' %}">Exportar Relatórios dos Projetos</a></div>
+<br>
 
-<hr>
 <h5>Supervisão de Sistema</h5>
-<ul>
-  <li><a href="{% url 'conexoes_estabelecidas' %}">Usuários Conectados</a></li>
-  <li><a href="{% url 'logs' %}">Logs de Sistema</a></li>
-  <li><a href="{% url 'bloqueados' %}">Usuários/IPs Bloqueados</a></li>
-</ul>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'conexoes_estabelecidas' %}">Usuários Conectados</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs' %}">Logs de Sistema</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bloqueados' %}">Usuários/IPs Bloqueados</a></div>

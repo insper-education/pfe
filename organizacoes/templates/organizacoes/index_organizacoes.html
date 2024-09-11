@@ -5,7 +5,14 @@
   Data: 8 de Março de 2020
 {% endcomment %}
 
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+  <script>{% include "tooltip.js" %}</script>
+  {% include "reload.html" %}
+{% endblock %}
+
 {% block content %}
-<br>
+<span class="titulo">Parceiros</span>
 {% include "organizacoes/organizacoes.html" %}  
 {% endblock %}

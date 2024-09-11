@@ -6,21 +6,13 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
   <script>{% include "tooltip.js" %}</script>
   {% include "reload.html" %}
-  <style>
-    .item_lista{
-      margin-left: 8px;
-    }
-    .circulo{
-      font-size: 7px;
-      vertical-align: 20%;
-      cursor:pointer;
-    }
-  </style>
 {% endblock %}
 
 {% block content %}
-<br>
+<span class="titulo">Professores</span>
 {% include "professores/professores.html" %}
 {% endblock %}

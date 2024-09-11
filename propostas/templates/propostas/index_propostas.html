@@ -5,9 +5,13 @@
   Data: 15 de Dezembro de 2020
 {% endcomment %}
 
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+{% endblock %}
+
 {% block content %}
 {% include "reload.html" %}
-<br>
 <span class="titulo">{{titulo}}</span>
 {% include "propostas/propostas.html" %}
 {% endblock %}

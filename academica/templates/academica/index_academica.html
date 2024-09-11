@@ -5,7 +5,13 @@
   Data: 10 de Abril de 2023
 {% endcomment %}
 
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+  {% include "reload.html" %}
+{% endblock %}
+
 {% block content %}
-<br>
+<span class="titulo">Acadêmica</span>
 {% include "academica/academica.html" %}
 {% endblock %}

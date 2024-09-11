@@ -22,7 +22,11 @@
     {% csrf_token %}
 
     <span class="titulo">{{ titulo }}</span>
-    <br>
+    
+
+    <b>Data e Hora do Sistema:</b> {% now "j F Y H:i" %}
+    <br><br>
+
 
     Copia calendário:
     

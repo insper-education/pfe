@@ -6,57 +6,55 @@
 
 {% if documento %}
   {% if nivel == 2 %}
-    <ul>
       {% if documento.documento and documento.link %}
-        <li style="margin-left: -1.5em; list-style-type: '&#x21B3;';">
+        <div class="item_lista"><span class="return">&#x21B3;</span>
           {{documento.tipo_documento}}
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </li>
+        </div>
       {% else %}
         {% if documento.documento %}
-          <li style="margin-left: -1.5em;list-style-type: '&#x21B3;';">
+          <div class="item_lista"><span class="return">&#x21B3;</span>
             <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
              href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
             {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-          </li>
+          </div>
         {% endif %}
         {% if documento.link %}
-          <li style="margin-left: -1.5em;list-style-type: '&#x21B3;';">
+          <div class="item_lista"><span class="return">&#x21B3;</span>
             <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
              href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
             {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-          </li>
+          </div>
         {% endif %}
       {% endif %}
-    </ul>
   {% else %}
     {% if documento.documento and documento.link %}
-      <li>
+      <div class="item_lista"><span class="circulo">&#9899;</span>
       {{documento.tipo_documento}}
       <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
         href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
       <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
         href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
       {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-      </li>
+      </div>
     {% else %}
       {% if documento.documento %}
-        <li>
+        <div class="item_lista"><span class="circulo">&#9899;</span>
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </li>
+        </div>
       {% endif %}
       {% if documento.link %}
-        <li>
+        <div class="item_lista"><span class="circulo">&#9899;</span>
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </li>
+        </div>
       {% endif %}
     {% endif %}
   {% endif %}
