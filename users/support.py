@@ -7,9 +7,9 @@ Data: 2 de Outubro de 2020
 """
 
 import datetime
+import unicodedata
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-
 
 from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Projeto
 from .models import Aluno
@@ -148,3 +148,16 @@ def get_edicoes(tipo, anual=False):
             semestre_tmp = 1
 
     return (edicoes, ano, semestre)
+
+
+def normalize_string(s):
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('ascii')
+
+
+def ordena_nomes(queryset):
+    # Normalize the names and order by them
+    users = list(queryset)
+    for user in users:
+        user.normalized_first_name = normalize_string(user.first_name)
+        user.normalized_last_name = normalize_string(user.last_name)
+    return sorted(users, key=lambda u: (u.normalized_first_name, u.normalized_last_name))

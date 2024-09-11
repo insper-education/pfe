@@ -13,7 +13,7 @@ from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 
 from users.models import PFEUser, Professor, Aluno, Parceiro, Alocacao
-from users.support import adianta_semestre
+from users.support import adianta_semestre, ordena_nomes
 
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
@@ -102,10 +102,10 @@ def editar_banca(banca, request):
 def professores_membros_bancas(banca=None):
     """Retorna potenciais usuários que podem ser membros de uma banca."""
     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-
     administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
 
-    pessoas = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
+    # Combine the querysets first
+    pessoas = professores | administradores
 
     id_membros = []
 
@@ -116,6 +116,10 @@ def professores_membros_bancas(banca=None):
             id_membros.append(membro.id)
 
     membros = pessoas.filter(pk__in=id_membros)
+
+    # Ordenando nomes com acentos
+    pessoas = ordena_nomes(pessoas)
+    membros = ordena_nomes(membros)
 
     return pessoas, membros
 
@@ -135,6 +139,10 @@ def falconi_membros_banca(banca=None):
             id_membros.append(membro.id)
 
     membros = falconis.filter(pk__in=id_membros)
+
+    # Ordenando nomes com acentos
+    falconis = ordena_nomes(falconis)
+    membros = ordena_nomes(membros)
 
     return falconis, membros
 
