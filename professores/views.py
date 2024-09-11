@@ -220,8 +220,12 @@ def index_professor(request):
                         avaliacoes_pares = 'y'
             context["avaliacoes_pares"] = avaliacoes_pares
         
-        
-    return render(request, "professores/index_professor.html", context=context)
+    
+    if "/professores/professores" in request.path:
+        return render(request, "professores/professores.html", context=context)
+    else:
+        return render(request, "professores/index_professor.html", context=context)
+    
 
 
 @login_required

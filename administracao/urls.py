@@ -18,6 +18,10 @@ urlpatterns = [
         views.index_administracao,
         name="index_administracao"),
 
+    path("administracao",
+        views.index_administracao,
+        name="administracao"),
+
     path("backup/<str:formato>",
         views.backup,
         name="backup"),

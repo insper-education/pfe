@@ -18,6 +18,10 @@ urlpatterns = [
         views.index_documentos,
         name="index_documentos"),
 
+    path("documentos",
+        views.index_documentos,
+        name="documentos"),
+
     path("certificados_submetidos/",
         views.certificados_submetidos,
         name="certificados_submetidos"),

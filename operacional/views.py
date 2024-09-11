@@ -35,7 +35,11 @@ from academica.support import filtra_composicoes
 def index_operacional(request):
     """Mostra página principal para equipe operacional."""
     context = {"titulo": "Operacional",}
-    return render(request, "operacional/index_operacional.html", context=context)
+
+    if "/operacional/operacional" in request.path:
+        return render(request, "operacional/operacional.html", context=context)
+    else:
+        return render(request, "operacional/index_operacional.html", context=context)
 
 
 @login_required

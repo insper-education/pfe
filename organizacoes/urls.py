@@ -18,6 +18,10 @@ urlpatterns = [
         views.index_organizacoes,
         name="index_organizacoes"),
 
+    path("organizacoes/",
+        views.index_organizacoes,
+        name="organizacoes"),
+
     path("anotacao/",
         views.anotacao,
         name="anotacao"),

@@ -41,7 +41,10 @@ def index_organizacoes(request):
     contex = {
         "titulo": "Área dos Parceiros",
     }
-    return render(request, "organizacoes/index_organizacoes.html", context=contex)
+    if "/organizacoes/organizacoes" in request.path:
+        return render(request, "organizacoes/organizacoes.html", context=contex)
+    else:
+        return render(request, "organizacoes/index_organizacoes.html", context=contex)    
 
 
 @login_required

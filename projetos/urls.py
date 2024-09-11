@@ -20,6 +20,10 @@ urlpatterns = [
         views.index_projetos,
         name="index_projetos"),
 
+    path("projetos",
+        views.index_projetos,
+        name="projetos"),
+
     # link antigo (remover)
     path("index_projetos/",
         views.index_projetos,

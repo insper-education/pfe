@@ -5,70 +5,7 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% block head %}
-  {% include "reload.html" %}
-{% endblock %}
-
 {% block content %}
-  <br>
-  <a href="{% url 'avisos_listar' %}"><h5>Agenda</h5></a>
-  <a href="{% url 'emails' %}"><h5>Listas de e-mails</h5></a>
-
-  <hr>
-  <h5>Agendamentos</h5>
-  <ul>
-    <li><a href="{% url 'bancas_lista' 'proximas' %}">Bancas</a></li>
-    <li><a href="{% url 'dinamicas_index' %}">Mentorias</a></li>
-  </ul>
-  
-  <hr>
-  <h5>Informes</h5>
-  <ul>
-    <li><a href="{% url 'plano_aulas' %}">Plano de Aulas</a></li>
-    <li><a href="{% url 'planos_de_orientacao_todos' %}">Planos de Orientação</a></li>
-    <li><a href="{% url 'relatos_quinzenais' 'todos' %}">Relatos Quinzenais</a></li>
-    <li><a href="{% url 'avaliar_entregas' 'todos' %}">Avaliações de Entregas</a></li>
-    <li><a href="{% url 'informe_bancas' 1 %}">Bancas Intermediárias</a></li>
-    <li><a href="{% url 'informe_bancas' 0 %}">Bancas Finais</a></li>
-    <li><a href="{% url 'avaliacoes_pares' 'todos' %}">Avaliações de Pares</a></li>
-  </ul>
-
-  <hr>
-  <h5>Listagem completa</h5>
-  <ul>
-    <li><a href="{% url 'todos_usuarios' %}">Usuários</a></li>
-    <li><a href="{% url 'estudantes_lista' %}">Estudantes</a></li>
-    <li><a href="{% url 'todos_parceiros' %}">Parceiros</a></li>
-    <li><a href="{% url 'todos_professores' %}">Professores</a></li>
-    <li><a href="{% url 'comite' %}">Comitê</a></li>
-  </ul>
-  <ul>
-    <li><a href="{% url 'organizacoes_lista' %}">Organizações</a></li>
-  </ul>
-  <ul>
-    <li><a href="{% url 'propostas_lista' %}">Propostas</a></li>
-    <li><a href="{% url 'projetos_lista' %}">Projetos</a></li>
-    <li><a href="{% url 'bancas_lista' %}">Bancas</a></li>
-  </ul>
-
-  <hr>
-  <h5>Tabelas de alocação</h5>
-  <ul>
-    <li><a href="{% url 'orientadores_tabela' %}">Orientadores</a> <a href="{% url 'orientadores_tabela_completa' %}">(completa)</a></li>
-    <li><a href="{% url 'coorientadores_tabela' %}">Coorientadores</a> <a href="{% url 'coorientadores_tabela_completa' %}">(completa)</a></li>
-    <li><a href="{% url 'organizacoes_tabela' %}">Organizações</a></li>
-    <li><a href="{% url 'bancas_tabela' %}">Bancas</a> <a href="{% url 'bancas_tabela_completa' %}">(completa)</a></li>
-    <li><a href="{% url 'aulas_tabela' %}">Aulas</a></li>
-    <li><a href="{% url 'mentorias_tabela' %}">Mentorias</a></li>
-  </ul>
-
-  <hr>
-  <h5>Certificados</h5>
-  <ul>
-    <li><a href="{% url 'certificados_submetidos' %}">Listar Certificados</a></li>
-    <li><a href="{% url 'selecao_geracao_certificados' %}">Gerar Novos Certificados</a></li>
-    <li><a href="{% url 'certificacao_falconi' %}">Certificações Falconi</a></li>
-    <li><a href="{% url 'carregar_certificado' %}">Carregar Certificado</a></li>
-  </ul>
-    
+<br>
+{% include "operacional/operacional.html" %}
 {% endblock %}

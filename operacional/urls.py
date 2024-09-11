@@ -18,6 +18,10 @@ urlpatterns = [
          views.index_operacional,
          name="index_operacional"),
 
+     path("operacional",
+           views.index_operacional,
+           name="operacional"),
+
     path("avisos_listar/",
          views.avisos_listar,
          name="avisos_listar"),

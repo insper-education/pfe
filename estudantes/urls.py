@@ -18,6 +18,10 @@ urlpatterns = [
          views.index_estudantes,
          name="index_estudantes"),
 
+     path("estudantes/",
+         views.index_estudantes,
+         name="estudantes"),
+
     path("alinhamentos_gerais/",
          views.alinhamentos_gerais,
          name="alinhamentos_gerais"),

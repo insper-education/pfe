@@ -113,7 +113,11 @@ def index_estudantes(request):
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
     context["titulo"] = "Área dos Estudantes"
 
-    return render(request, "estudantes/index_estudantes.html", context=context)
+    if "/estudantes/estudantes" in request.path:
+        return render(request, "estudantes/estudantes.html", context=context)
+    else:
+        return render(request, "estudantes/index_estudantes.html", context=context)
+    
 
 
 @login_required

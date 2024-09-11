@@ -18,6 +18,10 @@ urlpatterns = [
          views.index_professor,
          name="index_professor"),
 
+     path("professores",
+         views.index_professor,
+         name="professores"),
+
     path("avaliacoes_pares/",
          views.avaliacoes_pares,
          name="avaliacoes_pares"),

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 3 de Dezembro de 2019
+{% endcomment %}
+
+{% block head %}
+  <style>
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+    }
+    .card-body {
+      padding: 12px;
+      cursor: pointer;
+    }
+    .card-content {
+      display: none;
+      padding: 18px;
+      border-top: 1px solid #ddd;
+    }
+    .link_direto {
+      color: inherit;
+      text-decoration: none;
+    }
+    .card-title {
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 2px;
+    }
+    .extra-space {
+      margin-top: 20px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card-container">
+    <div class="card">
+      <a  class="link_direto" href="{% url 'calendario' %}">
+        <div class="card-body">
+          <h5 class="card-title">Calendário Geral</h5>
+        </div>
+      </a>
+    </div>
+
+    {% if perms.estudantes %}
+      <div class="card extra-space">
+        <div class="card-body" onclick="loadContent(this, '{% url 'estudantes' %}')">
+          <h5 class="card-title">Área dos Estudantes</h5>
+        </div>
+        <div class="card-content"></div>
+      </div>
+    {% endif %}
+    {% if perms.projetos.add_proposta %}
+      <div class="card">
+        <div class="card-body" onclick="loadContent(this, '{% url 'organizacoes' %}')">
+          <h5 class="card-title">Área dos Parceiros</h5>
+        </div>
+        <div class="card-content"></div>
+      </div>
+    {% endif %}
+    {% if perms.users.change_professor %}
+      <div class="card">
+        <div class="card-body" onclick="loadContent(this, '{% url 'professores' %}')">
+          <h5 class="card-title">Área dos Professores</h5>
+        </div>
+        <div class="card-content"></div>
+      </div>
+      <div class="card extra-space">
+        <div class="card-body" onclick="loadContent(this, '{% url 'academica' %}')">
+          <h5 class="card-title">Área Acadêmica</h5>
+        </div>
+        <div class="card-content"></div>
+      </div>
+      <div class="card">
+        <div class="card-body" onclick="loadContent(this, '{% url 'operacional' %}')">
+          <h5 class="card-title">Área Operacional</h5>
+        </div>
+        <div class="card-content"></div>
+      </div>
+      {% if perms.users.view_administrador %}
+        <div class="card">
+          <div class="card-body" onclick="loadContent(this, '{% url 'administracao' %}')">
+            <h5 class="card-title">Área Administrativa</h5>
+          </div>
+          <div class="card-content"></div>
+        </div>
+      {% endif %}
+    {% endif %}
+    {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
+      {% if perms.projetos.view_proposta %}
+        <div class="card extra-space">
+          <div class="card-body" onclick="loadContent(this, '{% url 'propostas' %}')">
+            <h5 class="card-title">Propostas</h5>
+          </div>
+          <div class="card-content"></div>
+        </div>
+      {% endif %}
+      {% if perms.projetos.view_projeto %}
+        <div class="card">
+          <div class="card-body" onclick="loadContent(this, '{% url 'projetos' %}')">
+            <h5 class="card-title">Projetos</h5>
+          </div>
+          <div class="card-content"></div>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    <div class="card extra-space">
+      <div class="card-body" onclick="loadContent(this, '{% url 'documentos' %}')">
+        <h5 class="card-title">Documentações</h5>
+      </div>
+      <div class="card-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function loadContent(element, url) {
+    const cardContent = element.nextElementSibling;
+    const dynamicUrl = new URL(url, window.location.origin);
+    dynamicUrl.searchParams.set('dynamic', 'true');
+  
+    if (cardContent.style.display === "none" || cardContent.style.display === "") {
+      fetch(dynamicUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(html => {
+          cardContent.innerHTML = html;
+          $(cardContent).slideDown("fast");
+  
+          // Extract and execute scripts
+          const scripts = cardContent.querySelectorAll('script');
+          scripts.forEach(script => {
+            const newScript = document.createElement('script');
+            if (script.src) {
+              newScript.src = script.src;
+            } else {
+              newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+            document.body.removeChild(newScript);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading content:', error);
+          cardContent.innerHTML = '<div class="alert alert-danger">Error loading content</div>';
+          $(cardContent).slideDown("fast");
+        });
+    } else {
+      $(cardContent).slideUp("fast", () => {
+        cardContent.innerHTML = "";
+      });
+    }
+  }
+</script>
+
+{% endblock %}

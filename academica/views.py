@@ -14,4 +14,9 @@ from django.shortcuts import render
 def index_academica(request):
     """Mostra página principal da área acadêmica do sistema."""
     context = {"titulo": "Área Acadêmica",}
-    return render(request, "academica/index_academica.html", context=context)
+
+    if "/academica/academica" in request.path:
+        return render(request, "academica/academica.html", context=context)
+    else:
+        return render(request, "academica/index_academica.html", context=context)
+    

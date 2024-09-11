@@ -38,10 +38,11 @@ from .support import envia_proposta, preenche_proposta
 @permission_required("users.altera_professor", raise_exception=True)
 def index_propostas(request):
     """Mostra página principal de Propostas."""
-    context = {
-        "titulo": "Propostas de Projetos",
-    }
-    return render(request, "propostas/index_propostas.html", context=context)
+    context = {"titulo": "Propostas de Projetos",}
+    if "/propostas/propostas" in request.path:
+        return render(request, "propostas/propostas.html", context=context)
+    else:
+        return render(request, "propostas/index_propostas.html", context=context)
 
 
 @login_required

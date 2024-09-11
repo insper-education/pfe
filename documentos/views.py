@@ -53,7 +53,11 @@ def index_documentos(request):
         "documentos": Documento.objects.all(),
         "areas": areas,
     }
-    return render(request, "documentos/index_documentos.html", context)
+
+    if "/documentos/documentos" in request.path:
+        return render(request, "documentos/documentos.html", context=context)
+    else:
+        return render(request, "documentos/index_documentos.html", context)
 
 
 @login_required

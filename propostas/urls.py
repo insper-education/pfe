@@ -17,6 +17,10 @@ urlpatterns = [
     path("",
         views.index_propostas,
         name="index_propostas"),
+    
+    path("propostas",
+        views.index_propostas,
+        name="propostas"),
 
     path("map_est_proj/",
         views.mapeamento_estudantes_propostas,

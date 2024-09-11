@@ -14,8 +14,12 @@ from . import views
 urlpatterns = [
 
     # pagina inicial
-    path('',
-         views.index_academica,
-         name='index_academica'),
+    path("",
+        views.index_academica,
+        name='index_academica'),
+
+    path("academica",
+        views.index_academica,
+        name='academica'),
 
 ]

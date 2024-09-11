@@ -72,7 +72,10 @@ logger = logging.getLogger(__name__)
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
     context = {"titulo": "Área Administrativa",}
-    return render(request, "administracao/index_admin.html", context=context)
+    if "/administracao/administracao" in request.path:
+        return render(request, "administracao/administracao.html", context=context)
+    else:
+        return render(request, "administracao/index_admin.html", context=context)
 
 
 @login_required
