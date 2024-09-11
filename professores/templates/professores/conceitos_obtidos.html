@@ -60,6 +60,22 @@
     </a>
     <br>
   {% endif %}
+
+  {% with coorientadores=projeto.coorientador_set.all %}
+    {% if coorientadores %}
+      <strong>Coorientação:</strong>
+      {% for coorientador in coorientadores %}
+          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+            {{coorientador.usuario.get_full_name}} 
+          </a>
+          {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
+          {% if not forloop.last %}; {% endif %}
+      {% endfor %}
+      </span>
+      <br>
+    {% endif %}
+  {% endwith %}
+
   {% include "tipo_projeto.html" with com_tipo=True %}
   
   <strong style="display: inline-block; margin-top: 6px;">Grupo:</strong>

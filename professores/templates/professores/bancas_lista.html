@@ -121,13 +121,15 @@
               {% endif %}
             {% endif %}
               
+            {% comment %} 
+            ACHO QUE NÃO ESTÁ MAIS SENDO USADO
             {% if banca.alocacao %}
               <b>Estudante:</b> 
               <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">
                 {{ banca.alocacao.aluno.user.get_full_name }}
               </a>
               <br>
-            {% endif %}
+            {% endif %} {% endcomment %}
 
             {% if banca.location %}
               <span class="local">
@@ -142,53 +144,41 @@
                 <br>
               </span>
             {% endif %}
-
-            {% if banca.get_projeto.orientador %}
-              <div class="orientacao" style="margin-top: 8px;">
-              
-                {% if banca.get_projeto.proposta.intercambio %}
-                  <b>Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-                {% else %}
-                  <b>Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-                {% endif %}
-                
-                <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
-                  {{banca.get_projeto.orientador.user.get_full_name}} 
-                </a>
-                <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
-              </div>
-            {% endif %}
-
-            {% with coorientadores=banca.get_projeto.coorientador_set.all %}
-            {% if coorientadores %}
-            <div class="orientacao" style="margin-top: 8px;">
-              <b>Coorientação:</b>
-              <ul style="margin-bottom:0px;">
-                {% for coorientador in coorientadores %}
-                  <li>
-                    <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-                      {{coorientador.usuario.get_full_name}} 
-                    </a>
-                    <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-            {% endif %}
-            {% endwith %}
             
             {% if banca.membros %}
               <div class="banca" style="margin-top: 8px;">
                 <b>Membros da Banca da Avaliação:</b>
                 <ol style="margin-bottom:0px;">
-                  {% for membro in banca.membros %}
+
+                  {% if banca.get_projeto.orientador %}
                     <li>
-                      <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                        {{membro.get_full_name}}
-                      </a>
-                      <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+                      <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
+                        {{banca.get_projeto.orientador.user.get_full_name}} 
+                      </a>         
+                      {% if banca.get_projeto.proposta.intercambio %}
+                        [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
+                      {% else %}
+                        [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
+                      {% endif %}  
+                      <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
                     </li>
-                  {% endfor %}
+                  {% endif %}
+
+                  {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
+                    {% for membro in banca.membros %}
+                      <li>
+                        <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                          {{membro.get_full_name}}
+                        </a>
+                        {% if membro.id in coorientadores %}
+                          [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
+                        {% endif %}
+
+                        <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+                      </li>
+                    {% endfor %}
+                  {% endwith %}
+
                 </ol>
               </div>
             {% endif %}

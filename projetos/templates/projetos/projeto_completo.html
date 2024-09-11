@@ -248,8 +248,8 @@
 
   {% if coorientadores %}
     <br>
-    <div style="margin-top: 10px;">
-      <strong>&nbsp;&nbsp;coorientador{% if coorientadores > 1 %}es{% endif %}:</strong>
+    <div style="margin-top: 3px;">
+      <strong>&nbsp;&nbsp;coorientação:</strong>
     </div>
     <ul>
     {% for coorientador in coorientadores %}
@@ -437,10 +437,12 @@
   {% endif %}
   {% endif %}
 
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-    <hr>
-    <h4>Alocação Semanal dos Estudantes:<br></h4>
-    {% include "mostra_horarios.html" %}
+  {% if projeto.ano >= 2024 %} {% comment %} Só começamos a fazer a partir de 2024 {% endcomment %}
+    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+      <hr>
+      <h4>Alocação Semanal dos Estudantes:<br></h4>
+      {% include "mostra_horarios.html" %}
+    {% endif %}
   {% endif %}
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}

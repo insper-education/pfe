@@ -170,6 +170,22 @@
     </a>
     <span hidden id="orientador_id"></span>
     <br>
+
+    {% with coorientadores=banca.get_projeto.coorientador_set.all %}
+      {% if coorientadores %}
+        <div class="coorientacao">
+          Coorientação: 
+            {% for coorientador in coorientadores %}
+              <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+                {{coorientador.usuario.get_full_name}} 
+              </a>
+              <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
+              {% if not forloop.last %}; {% endif %}
+            {% endfor %}
+        </div>
+        <small style="color: darkgoldenrod;">Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca.</small><br>
+      {% endif %}
+    {% endwith %}
     
     <div id="div_estudante">
       Estudante: 

@@ -29,14 +29,29 @@
         <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
         <b lang="en">Advisor:</b>
       {% endif %}
-        <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-        <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-        <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-        <br>
+      <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
+      <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+      <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
     {% else %}
       <span lang="pt">Orientador: Não definido</span>
       <span lang="en">Advisor: Not defined</span>
     {% endif %}
+    <br>
+
+    {% with coorientadores=banca.get_projeto.coorientador_set.all %}
+      {% if coorientadores %}
+        <b lang="pt">Coorientação:</b>
+        <b lang="en">Co-advisoring:</b>
+        {% for coorientador in coorientadores %}
+          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+            {{coorientador.usuario.get_full_name}} 
+          </a>
+          <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
+          {% if not forloop.last %}; {% endif %}
+        {% endfor %}
+        <br>
+      {% endif %}
+    {% endwith %}
   {% endif %}
 
 {% else %}

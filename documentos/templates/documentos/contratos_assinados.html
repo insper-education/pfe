@@ -101,7 +101,7 @@
                   {% with coorientadores=projeto.coorientador_set.all %}
                     {% if coorientadores %}
                     <span class="coorientadores">
-                    <br>coorientador:
+                    <br>coorientação:
                       {% for coorientador in coorientadores %}
                           <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">{{coorientador.usuario.get_full_name}}</a>
                           {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}

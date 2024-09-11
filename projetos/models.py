@@ -337,6 +337,11 @@ class Projeto(models.Model):
     
     def get_site(self):
         return "/sites/"+str(self.id)+"/" if os.path.exists(settings.SITE_ROOT + "/projeto"+str(self.id)) else None
+    
+    # Retorna os coorientadores do projeto
+    @property
+    def get_coorientadores_ids(self):
+        return Coorientador.objects.filter(projeto=self).values_list("usuario", flat=True)
 
 
 class Proposta(models.Model):
