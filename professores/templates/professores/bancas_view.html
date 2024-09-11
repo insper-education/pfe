@@ -27,6 +27,20 @@
     max-width: fit-content;
   }
   label {display: inline;}
+  @media (max-width: 600px) {
+    #div_botao {
+      flex-direction: column;
+    }
+    #mensagens {
+      order: 2;
+      margin-top: 0px;
+    }
+    #botoes {
+      order: 1;
+      margin-left: 0;
+      margin-top: 0px;
+    }
+  }
 </style>
 
   <form id="criarbancasform" method="post" enctype="multipart/form-data">
@@ -183,7 +197,7 @@
               {% if not forloop.last %}; {% endif %}
             {% endfor %}
         </div>
-        <small style="color: darkgoldenrod;">Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca.</small><br>
+        <div style="font-size: small; color: darkgoldenrod; line-height:1;">Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca.</div>
       {% endif %}
     {% endwith %}
     
@@ -411,30 +425,33 @@
 
   </div>
 
-  <div id="div_botao" class="modal-footer">
+  <div id="div_botao" class="modal-footer" style="display: flex; justify-content: space-between; gap: 20px;">
 
-    <small>
+    <div id="mensagens" style="font-size: small; flex: 1;">
       <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
       {% if user.tipo_de_usuario != 4 %}checked{% endif %}>
       <label for="enviar_mensagem">Enviar mensagem para envolvidos</label>
-    </small>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+    
+    <div id="botoes" style="margin-left: auto;">
+      <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
 
-    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
-
-    {% if not banca %} 
-      <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar">Agendar</button>
-    {% else %}
-      {% if banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
-        <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
-         onclick="operacao = 'atualizar';">Atualizar</button>
-        
-        <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" formnovalidate
-         onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');">
-          Excluir Banca
-        </button>
+      {% if not banca %} 
+        <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar">Agendar</button>
+      {% else %}
+        {% if banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
+          <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
+          onclick="operacao = 'atualizar';">Atualizar</button>
+          
+          <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" formnovalidate
+          onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');">
+            Excluir Banca
+          </button>
+        {% endif %}
       {% endif %}
-    {% endif %}
+    </div>
+    
+
   </div>
 
 </form>

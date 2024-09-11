@@ -87,7 +87,10 @@
         <tr class="item {{ banca.tipo_de_banca|get_banca }}">
           <td>
             {% if banca.startDate %}
-              <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+              <b>Horário:</b>
+              <span class="opt_full">{{banca.startDate.date}}</span>
+              <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
+              ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
               {% if banca.endDate %}
                 às {{banca.endDate.time}}
               {% endif %}
@@ -225,7 +228,7 @@
           </div>
 
           <span class="editar esconder" style="float: right;">
-            <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
+            <a class="open-modal"
               data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
               <button class="btn btn-primary mb-1">Editar</button>
             </a>
