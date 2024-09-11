@@ -4,20 +4,6 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% comment %} Para chamar os Tooltips {% endcomment %}
-<script>{% include "tooltip.js" %}</script>
-{% include "reload.html" %}
-<style>
-  .item_lista{
-    margin-left: 8px;
-  }
-  .circulo{
-    font-size: 7px;
-    vertical-align: 20%;
-    cursor:pointer;
-  }
-</style>
-
 <h5>Alocações</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientacoes_alocadas' %}">Orientações</a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientacoes_alocadas' %}">Coorientações</a></div>

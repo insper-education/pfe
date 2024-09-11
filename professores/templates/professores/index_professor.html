@@ -5,6 +5,21 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  <script>{% include "tooltip.js" %}</script>
+  {% include "reload.html" %}
+  <style>
+    .item_lista{
+      margin-left: 8px;
+    }
+    .circulo{
+      font-size: 7px;
+      vertical-align: 20%;
+      cursor:pointer;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
 <br>
 {% include "professores/professores.html" %}

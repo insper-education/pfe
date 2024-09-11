@@ -6,7 +6,11 @@
 {% endcomment %}
 
 {% block head %}
+  {% include "reload.html" %}
   <style>
+    h5 {
+      font-size: 1.1rem;
+    }
     .card-container {
       display: flex;
       flex-direction: column;
@@ -36,10 +40,23 @@
       cursor: pointer;
       user-select: none;
       margin-bottom: 2px;
+      font-size: 1.2rem;
     }
     .extra-space {
       margin-top: 20px;
     }
+
+
+    .item_lista{
+      margin-left: 8px;
+    }
+    .circulo{
+      font-size: 7px;
+      vertical-align: 20%;
+      cursor:pointer;
+    }
+    
+    
   </style>
 {% endblock %}
 

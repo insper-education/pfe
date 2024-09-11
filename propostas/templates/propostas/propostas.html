@@ -4,14 +4,20 @@
   Data: 15 de Dezembro de 2020
 {% endcomment %}
 
-<ul>
-  <a href="{% url 'estudantes_inscritos' %}"><li>Estudantes Inscritos no Semestre</li></a>
-  <a href="{% url 'organizacoes_prospect' %}"><li>Prospecção de Organizações</li></a>
-  <a href="{% url 'propostas_apresentadas' %}"><li>Propostas Apresentadas</li></a>
-  <a href="{% url 'publicar_propostas' %}"><li>Publicação das Propostas</li></a>
-  <a href="{% url 'procura_propostas' %}"><li>Procura pelas Propostas</li></a>
-  <a href="{% url 'mapeamento_estudantes_propostas' %}"><li>Mapeamento Estudantes e Propostas</li></a>
-  <a href="{% url 'montar_grupos' %}"><li>Planejamento de Grupos por Proposta</li></a>
-  <a href="{% url 'selecionar_orientadores' %}"><li>Selecionar Orientadores</li></a>
-  <a href="{% url 'fechar_conexoes' %}"><li>Selecionar Conexões com Organizações</li></a>
-</ul>
+<h5>Prospecção</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_inscritos' %}">Estudantes Inscritos no Semestre</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_prospect' %}">Prospecção de Organizações</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'propostas_apresentadas' %}">Propostas Apresentadas</a></div>
+<br>
+
+<h5>Período de seleção</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'publicar_propostas' %}">Publicação das Propostas</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'procura_propostas' %}">Procura pelas Propostas</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mapeamento_estudantes_propostas' %}">Mapeamento Estudantes e Propostas</a></div>
+<br>
+
+<h5>Fechamento dos Projetos</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'montar_grupos' %}">Planejamento de Grupos por Proposta</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'selecionar_orientadores' %}">Selecionar Orientadores</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'fechar_conexoes' %}">Selecionar Conexões com Organizações</a></div>
+<br>

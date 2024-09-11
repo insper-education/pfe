@@ -5,7 +5,33 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% block head %}
+  <style>
+    ul {
+      width: fit-content;
+      margin: 0px;
+      padding-left: 1.4em;
+    }
+    @media screen and (max-width: 800px) {
+      h5 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
 <br>
+<span class="titulo">{{ titulo }}
+  {% if user.tipo_de_usuario == 4 %}
+    <small class="esconder">
+      <a
+        class="open-documento" style="cursor:pointer;"
+        data-url="{% url 'adiciona_documento' %}"
+        >&#10133;</a
+      >
+    </small>
+  {% endif %}
+</span>
 {% include "documentos/documentos.html" %}
 {% endblock %}
