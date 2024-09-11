@@ -6,14 +6,13 @@ h5 {
 .card-container {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* transition: transform 0.2s; */
   border-radius: 9px;
-  
+  background: linear-gradient(135deg, #f8f8ff 0%, #ffffff 100%);
 }
 
 .card:hover {
@@ -22,7 +21,7 @@ h5 {
 }
 
 .card-body {
-  padding: 12px;
+  padding: 10px;
   cursor: pointer;
 }
 
