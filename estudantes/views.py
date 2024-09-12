@@ -336,6 +336,8 @@ def estilo_comunicacao(request):
                 prioridade_resposta3 = request.POST.get(f"prioridade_resposta3_{estilo.id}")
                 prioridade_resposta4 = request.POST.get(f"prioridade_resposta4_{estilo.id}")
 
+                print(estilo, prioridade_resposta1, ", ", prioridade_resposta2, ", ", prioridade_resposta3, ", ", prioridade_resposta4)
+                
                 estudante_estilo, created = EstudanteEstiloComunicacao.objects.update_or_create(
                     estudante=estudante,
                     estilo_comunicacao=estilo,
@@ -347,8 +349,6 @@ def estilo_comunicacao(request):
                     }
                 )
 
-            print(estilo, prioridade_resposta1, prioridade_resposta2, prioridade_resposta3, prioridade_resposta4)
-        
         context = {
             "voltar": True,
             "area_principal": True,

@@ -933,13 +933,19 @@ class EstudanteEstiloComunicacao(models.Model):
         super().save(*args, **kwargs)
 
     def get_respostas_in_order(self):
-        respostas = [
-            (self.prioridade_resposta1, self.estilo_comunicacao.resposta1),
-            (self.prioridade_resposta2, self.estilo_comunicacao.resposta2),
-            (self.prioridade_resposta3, self.estilo_comunicacao.resposta3),
-            (self.prioridade_resposta4, self.estilo_comunicacao.resposta4),
+        estilos = [
+            self.estilo_comunicacao.resposta1,
+            self.estilo_comunicacao.resposta2,
+            self.estilo_comunicacao.resposta3,
+            self.estilo_comunicacao.resposta4,
         ]
-        return sorted(respostas, key=lambda x: x[0])
+        respostas = [
+            (self.prioridade_resposta1, estilos[self.prioridade_resposta1-1]),
+            (self.prioridade_resposta2, estilos[self.prioridade_resposta2-1]),
+            (self.prioridade_resposta3, estilos[self.prioridade_resposta3-1]),
+            (self.prioridade_resposta4, estilos[self.prioridade_resposta4-1]),
+        ]
+        return respostas
 
     def __str__(self):
         return f"{self.estudante.user.get_full_name} - {self.estilo_comunicacao.questao}"
