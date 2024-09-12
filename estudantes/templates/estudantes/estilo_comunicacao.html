@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load get_item %}
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
 
   <style>
     .sortable-list {
@@ -43,6 +43,32 @@
       text-align:center;
       background-color: #bee5eb;
     }
+    .priority-indicator {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 8.2em;
+      font-size: 1rem;
+      color: #888;
+    }
+    .priority-group {
+      display: flex;
+      flex: 0;
+      flex-direction: column;
+      align-items: center;
+    }
+    .priority-indicator .plus {
+      color: green;
+    }
+    .priority-indicator .minus {
+      color: red;
+    }
+    .priority-indicator .up-arrow {
+      color: green;
+    }
+    .priority-indicator .down-arrow {
+      color: red;
+    }
   </style>
 {% endblock %}
 
@@ -58,6 +84,7 @@
           <th>Bloco</th>
           <th>Pergunta</th>
           <th>Respostas</th>
+          <th><small>↑↓</small></th>
         </tr>
       </thead>
       <tbody>
@@ -85,6 +112,18 @@
                 <input type="hidden" name="prioridade_resposta4_{{ estilo.id }}" id="prioridade_resposta4_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta4 }}{% else %}4{% endif %}">
               {% endwith %}
             </td>
+            <td>
+              <div class="priority-indicator">
+                <div class="priority-group">
+                  <span class="plus">+</span>
+                  <span class="up-arrow">↑</span>
+                </div>
+                <div class="priority-group">
+                  <span class="down-arrow">↓</span>
+                  <span class="minus">-</span>
+                </div>
+              </div>            
+            </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -95,8 +134,7 @@
 
   </form>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="{% static 'js/jquery-ui.min.js' %}"></script> 
   
   <script>
       $(function() {
