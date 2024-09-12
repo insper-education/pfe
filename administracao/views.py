@@ -406,6 +406,11 @@ def edita_usuario(request, primarykey):
         context["tipo"] = "parceiro"
         if user.parceiro.organizacao:
             context["organizacao_selecionada"] = user.parceiro.organizacao
+    elif user.tipo_de_usuario == 4:
+        if request.user.tipo_de_usuario != 4:
+            return HttpResponse("Edição de administrador bloqueada", status=401)
+        else:
+            context["tipo"] = "professor"  # a principio supondo que seja professor
     else:
         return HttpResponse("Erro com tipo de usuário", status=401)
 

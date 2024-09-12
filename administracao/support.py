@@ -154,22 +154,13 @@ def registro_usuario(request, user=None):
     if email:
         usuario.email = email.strip()
 
-    tipo_de_usuario = request.POST.get('tipo_de_usuario', None)
-    if tipo_de_usuario == "estudante":
-        usuario.tipo_de_usuario = 1  # (1, 'aluno') 
-    elif tipo_de_usuario == "professor":
-        usuario.tipo_de_usuario = 2  # (2, 'professor')
-    elif tipo_de_usuario == "parceiro":
-        usuario.tipo_de_usuario = 3  # (3, 'parceiro')
-    else:
-        # usuario.tipo_de_usuario = 4  # (4, 'administrador')
-        return ("Erro na identificação do tipo de usuário.", 401, None)
-
+    tipo_de_usuario = request.POST.get("tipo_de_usuario", None)
+    
     # se for um usuário novo
     if not user:
-        if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
+        if tipo_de_usuario == 1 or tipo_de_usuario == 2:
             username = request.POST["email"].split('@')[0]
-        elif usuario.tipo_de_usuario == 3:
+        elif tipo_de_usuario == 3:
             username = request.POST["email"].split('@')[0] + '.' + \
                 request.POST["email"].split('@')[1].split('.')[0]
         else:
@@ -223,7 +214,7 @@ def registro_usuario(request, user=None):
     # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
     mensagem = ""
 
-    if usuario.tipo_de_usuario == 1:  # estudante
+    if tipo_de_usuario == 1:  # estudante
 
         if not hasattr(user, "aluno"):
             estudante = Aluno.create(usuario)
@@ -263,7 +254,7 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 2:  # professor
+    elif tipo_de_usuario == 2:  # professor
 
         if not hasattr(user, "professor"):
             professor = Professor.create(usuario)
@@ -313,7 +304,7 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Professor"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 3:  # Parceiro
+    elif tipo_de_usuario == 3:  # Parceiro
 
         if not hasattr(user, "parceiro"):
             parceiro = Parceiro.create(usuario)
@@ -347,6 +338,19 @@ def registro_usuario(request, user=None):
 
     # elif usuario.tipo_de_usuario == 4:  # Administrador
         # user.groups.add(Group.objects.get(name="Administrador"))  # Grupo de permissões
+
+    if usuario.tipo_de_usuario == 4:
+        pass  # Administrador não muda de estatus por esse menu
+    elif tipo_de_usuario == "estudante":
+        usuario.tipo_de_usuario = 1  # (1, 'aluno') 
+    elif tipo_de_usuario == "professor":
+        usuario.tipo_de_usuario = 2  # (2, 'professor')
+    elif tipo_de_usuario == "parceiro":
+        usuario.tipo_de_usuario = 3  # (3, 'parceiro')
+    else:
+        # usuario.tipo_de_usuario = 4  # (4, 'administrador')
+        return ("Erro na identificação do tipo de usuário.", 401, None)
+    usuario.save()
 
     if mensagem != "":
         return (mensagem, 401, None)
