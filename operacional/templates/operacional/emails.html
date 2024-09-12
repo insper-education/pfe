@@ -82,7 +82,7 @@
           <div class="meio_separador input-group-addon"></div>
           <div class="input-group-append  ml-1">
             <a href="
-              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %}; {% endif %}{% endfor %}?cc={{coordenacao.user.email}}
+              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}?cc={{coordenacao.user.email}}
               {% comment %} ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br {% endcomment %}
               &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
               atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
