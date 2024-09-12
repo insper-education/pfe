@@ -73,6 +73,18 @@
         display: none;
       }
     }
+    .explanatory-text {
+      max-width: 1050px;
+      margin: 10px 10px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
   </style>
 
   <script src="{% static 'js/Sortable.min.js' %}"></script>
@@ -83,6 +95,11 @@
 {% block content %}
 
   <span class="titulo">{{ titulo }}</span>
+
+  <div class="explanatory-text">
+    Ordene as opções de acordo com a sua autopercepção dentro do mesmo bloco.<br>
+    Mova para a parte superior a afirmacao que mais te representa e para a parte inferior a que menos te representa.
+  </div>
 
   <form method="post">{% csrf_token %}
     <table>
