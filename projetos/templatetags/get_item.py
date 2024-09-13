@@ -13,7 +13,11 @@ register = template.Library()
 
 @register.filter
 def get_selecao(estilo, estudante):
+    if not estudante or not estilo:
+        return None
+    if not hasattr(estudante, "aluno"):
+        return None
     try:
-        return EstudanteEstiloComunicacao.objects.get(estilo_comunicacao=estilo, estudante=estudante)
+        return EstudanteEstiloComunicacao.objects.get(estilo_comunicacao=estilo, estudante=estudante.aluno)
     except EstudanteEstiloComunicacao.DoesNotExist:
         return None    
