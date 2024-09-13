@@ -8,7 +8,7 @@ Data: 15 de Maio de 2019
 import string
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, EstudanteEstiloComunicacao
+from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, UsuarioEstiloComunicacao
 from .models import Opcao, OpcaoTemporaria, Alocacao   # Mover para outra área
 
 
@@ -93,13 +93,12 @@ class AlocacaoAdmin(admin.ModelAdmin):
     search_fields = ["aluno__user__first_name", "aluno__user__last_name", "projeto__titulo_final", "projeto__proposta__titulo", ]
     list_filter = ("projeto__ano", "projeto__semestre", )
 
-@admin.register(EstudanteEstiloComunicacao)
-class EstudanteEstiloComunicacaoAdmin(admin.ModelAdmin):
+@admin.register(UsuarioEstiloComunicacao)
+class UsuarioEstiloComunicacaoAdmin(admin.ModelAdmin):
     """Definição de Estilo de Comunicação."""
-    list_display = ("estudante", "estilo_comunicacao")
-    ordering = ("estudante", )
-    search_fields = ["estudante__user__first_name", "estudante__user__last_name", ]
-
+    list_display = ("usuario", "estilo_comunicacao")
+    ordering = ("usuario", )
+    search_fields = ["user__first_name", "user__last_name", ]
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):

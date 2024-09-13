@@ -39,10 +39,12 @@ from operacional.models import Curso
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
-from .models import Alocacao, OpcaoTemporaria
+from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
 from .support import get_edicoes, adianta_semestre
 
 from academica.models import Exame
+
+from estudantes.models import EstiloComunicacao
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -716,6 +718,15 @@ def professor_detail(request, primarykey):
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     
     context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
+
+    context["estilos"] = EstiloComunicacao.objects.all()
+    context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=context["professor"].user)
+    # for estilo in context["estilos_usuario"]:
+    #     print(estilo.estilo_comunicacao)
+    #     print(estilo.prioridade_resposta1, estilo.prioridade_resposta2, estilo.prioridade_resposta3, estilo.prioridade_resposta4)
+
+        
+
 
     return render(request, "users/professor_detail.html", context=context)
 

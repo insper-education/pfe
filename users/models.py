@@ -905,17 +905,13 @@ class Alocacao(models.Model):
         return certificados
 
 
-class EstudanteEstiloComunicacao(models.Model):
-    estudante = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+class UsuarioEstiloComunicacao(models.Model):
+    usuario = models.ForeignKey(PFEUser, on_delete=models.CASCADE)
     estilo_comunicacao = models.ForeignKey(EstiloComunicacao, on_delete=models.CASCADE)
     prioridade_resposta1 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
     prioridade_resposta2 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
     prioridade_resposta3 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
     prioridade_resposta4 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
-
-    def get_weight(self, priority):
-        WEIGHT_CHOICES = {1: 6, 2: 4, 3: 3, 4: 1}
-        return WEIGHT_CHOICES.get(priority, 0)
 
     def clean(self):
         # Ensure that all priority fields have unique values
@@ -948,10 +944,10 @@ class EstudanteEstiloComunicacao(models.Model):
         return respostas
 
     def __str__(self):
-        return f"{self.estudante.user.get_full_name} - {self.estilo_comunicacao.questao}"
+        return f"{self.usuario.get_full_name} - {self.estilo_comunicacao.questao}"
 
     class Meta:
-        unique_together = ('estudante', 'estilo_comunicacao')
+        unique_together = ("usuario", "estilo_comunicacao")
 
 
 class Parceiro(models.Model):  # da empresa

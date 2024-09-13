@@ -5,19 +5,17 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 9 de Setembro de 2024
 """
 
-from users.models import EstudanteEstiloComunicacao
+from users.models import UsuarioEstiloComunicacao
 
 from django import template
 
 register = template.Library()
 
 @register.filter
-def get_selecao(estilo, estudante):
-    if not estudante or not estilo:
-        return None
-    if not hasattr(estudante, "aluno"):
+def get_selecao(estilo, usuario):
+    if not usuario or not estilo:
         return None
     try:
-        return EstudanteEstiloComunicacao.objects.get(estilo_comunicacao=estilo, estudante=estudante.aluno)
-    except EstudanteEstiloComunicacao.DoesNotExist:
-        return None    
+        return UsuarioEstiloComunicacao.objects.get(estilo_comunicacao=estilo, usuario=usuario)
+    except UsuarioEstiloComunicacao.DoesNotExist:
+        return None

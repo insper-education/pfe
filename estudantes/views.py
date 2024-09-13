@@ -43,7 +43,7 @@ from documentos.models import TipoDocumento
 
 from django import forms
 from .models import EstiloComunicacao
-from users.models import EstudanteEstiloComunicacao
+from users.models import UsuarioEstiloComunicacao
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -325,13 +325,8 @@ def encontros_cancelar(request, evento_id):
 @login_required
 def estilo_comunicacao(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
-    if request.user.tipo_de_usuario == 1:
-        estudante = request.user.aluno
-    else:
-        estudante = None
 
     if request.method == "POST":
-        mensagem = "Erro ao submeter opções!"
         for estilo in EstiloComunicacao.objects.all():
 
             if all(f"prioridade_resposta{i}_{estilo.id}" in request.POST for i in range(1, 5)):
@@ -339,26 +334,22 @@ def estilo_comunicacao(request):
                 prioridade_resposta2 = request.POST.get(f"prioridade_resposta2_{estilo.id}")
                 prioridade_resposta3 = request.POST.get(f"prioridade_resposta3_{estilo.id}")
                 prioridade_resposta4 = request.POST.get(f"prioridade_resposta4_{estilo.id}")
-                
-                if estudante:
-                    estudante_estilo, created = EstudanteEstiloComunicacao.objects.update_or_create(
-                        estudante=estudante,
-                        estilo_comunicacao=estilo,
-                        defaults={
-                            "prioridade_resposta1": prioridade_resposta1,
-                            "prioridade_resposta2": prioridade_resposta2,
-                            "prioridade_resposta3": prioridade_resposta3,
-                            "prioridade_resposta4": prioridade_resposta4,
-                        }
-                    )
-                    mensagem = "Opções submetidas com sucesso!"
-                else:
-                    mensagem = "Opções descartadas, somente estudantes podem gravar opções!"
+
+                usuario_estilo, created = UsuarioEstiloComunicacao.objects.update_or_create(
+                    usuario=request.user,
+                    estilo_comunicacao=estilo,
+                    defaults={
+                        "prioridade_resposta1": prioridade_resposta1,
+                        "prioridade_resposta2": prioridade_resposta2,
+                        "prioridade_resposta3": prioridade_resposta3,
+                        "prioridade_resposta4": prioridade_resposta4,
+                    }
+                )
 
         context = {
             "voltar": True,
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem": "Opções submetidas com sucesso!",
         }
 
         return render(request, "generic.html", context=context)

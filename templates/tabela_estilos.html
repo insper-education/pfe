@@ -1,0 +1,127 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Setembro de 2024
+{% endcomment %}
+
+
+{% load static %}
+{% load get_item %}
+
+<style>
+  @media (max-width: 600px) {
+    .hide-on-narrow {
+      display: none;
+    }
+  }
+  .sortable-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sortable-list li {
+    margin: 3px 0 3px 0;
+    padding: 2px;
+    font-size: 1em;
+    height: auto;
+    background-color: #efefef;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    cursor:pointer;
+    word-wrap: break-word;
+    overflow: hidden;
+  }
+  .sortable-list li:hover {
+    background-color: #f1f1f1;
+  }
+  table {
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 2px solid #999;
+    padding: 4px;
+    text-align: left;
+  }
+  th {
+    text-align:center;
+    background-color: #bee5eb;
+  }
+
+  .priority-indicator {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 8.0em;
+    font-size: 1rem;
+    color: #888;
+  }
+  .priority-group {
+    display: flex;
+    flex: 0;
+    flex-direction: column;
+    align-items: center;
+  }
+  .priority-indicator .plus {
+    color: green;
+  }
+  .priority-indicator .minus {
+    color: red;
+  }
+  .priority-indicator .up-arrow {
+    color: green;
+  }
+  .priority-indicator .down-arrow {
+    color: red;
+  }
+</style>
+
+<table>
+  <thead>
+    <tr>
+      <th class="hide-on-narrow">Bloco</th>
+      <th>Pergunta</th>
+      <th>Respostas</th>
+      <th><small>↑↓</small></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for estilo in estilos %}
+      <tr>
+        <td class="hide-on-narrow" style="text-align:center">{{ estilo.bloco }}</td>
+        <td>{{ estilo.questao }}</td>
+        <td>
+          {% with estilo|get_selecao:request.user as selected %}
+            <ul class="sortable-list" id="sortable_{{ estilo.id }}">
+              {% if selected %}
+                  {% for priority, resposta in selected.get_respostas_in_order %}
+                      <li class="sortable-item" data-priority="{{ priority }}" data-resposta-number="{{ priority }}">{{ resposta }}</li>
+                  {% endfor %}
+              {% else %}
+                  <li class="sortable-item" data-priority="1" data-resposta-number="1">{{ estilo.resposta1 }}</li>
+                  <li class="sortable-item" data-priority="2" data-resposta-number="2">{{ estilo.resposta2 }}</li>
+                  <li class="sortable-item" data-priority="3" data-resposta-number="3">{{ estilo.resposta3 }}</li>
+                  <li class="sortable-item" data-priority="4" data-resposta-number="4">{{ estilo.resposta4 }}</li>
+              {% endif %}
+            </ul>
+            <input type="hidden" name="prioridade_resposta1_{{ estilo.id }}" id="prioridade_resposta1_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta1 }}{% else %}1{% endif %}">
+            <input type="hidden" name="prioridade_resposta2_{{ estilo.id }}" id="prioridade_resposta2_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta2 }}{% else %}2{% endif %}">
+            <input type="hidden" name="prioridade_resposta3_{{ estilo.id }}" id="prioridade_resposta3_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta3 }}{% else %}3{% endif %}">
+            <input type="hidden" name="prioridade_resposta4_{{ estilo.id }}" id="prioridade_resposta4_{{ estilo.id }}" value="{% if selected %}{{ selected.prioridade_resposta4 }}{% else %}4{% endif %}">
+          {% endwith %}
+        </td>
+        <td>
+          <div class="priority-indicator">
+            <div class="priority-group">
+              <span class="plus">+</span>
+              <span class="up-arrow">↑</span>
+            </div>
+            <div class="priority-group">
+              <span class="down-arrow">↓</span>
+              <span class="minus">-</span>
+            </div>
+          </div>            
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
