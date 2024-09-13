@@ -145,27 +145,33 @@ def registra_organizacao(request, org=None):
 
 def registro_usuario(request, user=None):
     """Rotina para cadastrar usuário no sistema."""
-    if not user:
-        usuario = PFEUser.create()  # Serve para diferenciar um usuário novo
-    else:
-        usuario = user
+    usuario = PFEUser.create() if not user else user  # Cria um usuário novo ou atualiza um existente
 
     email = request.POST.get("email", None)
     if email:
         usuario.email = email.strip()
 
     tipo_de_usuario = request.POST.get("tipo_de_usuario", None)
-    
+    if tipo_de_usuario == "estudante":
+        usuario.tipo_de_usuario = 1  # (1, "estudante") 
+    elif tipo_de_usuario == "professor":
+        usuario.tipo_de_usuario = 2  # (2, "professor")
+    elif tipo_de_usuario == "parceiro":
+        usuario.tipo_de_usuario = 3  # (3, "parceiro")
+    else:
+        # usuario.tipo_de_usuario = 4  # (4, "administrador")
+        return ("Erro na identificação do tipo de usuário.", 401, None)
+
     # se for um usuário novo
     if not user:
-        if tipo_de_usuario == 1 or tipo_de_usuario == 2:
+        if usuario.tipo_de_usuario == 1 or usuario.tipo_de_usuario == 2:
             username = request.POST["email"].split('@')[0]
-        elif tipo_de_usuario == 3:
+        elif usuario.tipo_de_usuario == 3:
             username = request.POST["email"].split('@')[0] + '.' + \
                 request.POST["email"].split('@')[1].split('.')[0]
         else:
             return ("Erro na recuperação do e-mail.", 401, None)
-
+    
         #if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
         already_exist = PFEUser.objects.filter(username__iexact=username)
         if already_exist.exists():
