@@ -24,16 +24,21 @@ def editar_banca(banca, request):
 
     configuracao = get_object_or_404(Configuracao)
 
-    # Verifica se a banca não intersecta com outras bancas
-    if "inicio" in request.POST and "fim" in request.POST:
-        startDate = dateutil.parser.parse(request.POST["inicio"])
-        endDate = dateutil.parser.parse(request.POST["fim"])
-        total_bancas = Banca.objects.all().count()
-        nao_intersecta = Banca.objects.filter(Q(endDate__lte=startDate) | Q(startDate__gte=endDate)).count()
-        if (total_bancas - nao_intersecta) >= configuracao.limite_salas_bancas:
-            return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado.", None
-    else:
-        return "Data de início ou fim não informada!", None
+    if request.user.tipo_de_usuario != 4:  # Caso não Administrador
+        # Verifica se a banca não intersecta com outras bancas
+        if "inicio" in request.POST and "fim" in request.POST:
+            startDate = dateutil.parser.parse(request.POST["inicio"])
+            endDate = dateutil.parser.parse(request.POST["fim"])
+
+            if banca is not None:
+                intersecta = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate)).exclude(id=banca.id).count()
+            else:
+                intersecta = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate)).count()
+            
+            if intersecta >= configuracao.limite_salas_bancas:
+                return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado.", None
+        else:
+            return "Data de início ou fim não informada!", None
 
     if banca is None:
         banca = Banca.create()
