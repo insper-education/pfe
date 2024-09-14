@@ -80,173 +80,175 @@
   <br>
   {% include "informacoes.html" %}
 
-  {% if bancas %}
-    
-      <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
-        {% for banca in bancas %} 
-        <tr class="item {{ banca.tipo_de_banca|get_banca }}">
-          <td>
-            {% if banca.startDate %}
-              <b>Horário:</b>
-              <span class="opt_full">{{banca.startDate.date}}</span>
-              <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
-              ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
-              {% if banca.endDate %}
-                às {{banca.endDate.time}}
-              {% endif %}
-              <br>
-            {% endif %}
-            
-            {% if banca.tipo_de_banca is not None %}
-              <b>Tipo:</b> 
-              {{ banca.tipo_de_banca|get_banca }}
-              <br>
-            {% endif %}
-
-            {% if banca.get_projeto %}
-              <b>Título do Projeto:</b> 
-              <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">
-                {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
-                  {{banca.get_projeto.titulo_final}}</a><br>
-                  <small>&nbsp;&nbsp;Título original da proposta: 
-                    <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
-                  </small>
-                {% else %}
-                  {{banca.get_projeto.get_titulo}}</a>
-                {% endif %}
-              <br>
-              {% if banca.get_projeto.organizacao %}
-                <b>Organização:</b> 
-                <a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
-                  {{ banca.get_projeto.organizacao.nome }}
-                </a>
-                <br>
-              {% endif %}
-            {% endif %}
-              
-            {% comment %} 
-            ACHO QUE NÃO ESTÁ MAIS SENDO USADO
-            {% if banca.alocacao %}
-              <b>Estudante:</b> 
-              <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">
-                {{ banca.alocacao.aluno.user.get_full_name }}
-              </a>
-              <br>
-            {% endif %} {% endcomment %}
-
-            {% if banca.location %}
-              <span class="local">
-                <b>Local:</b> {{banca.location}}
-                <br>
-              </span>
-            {% endif %}
-
-            {% if banca.link %}
-              <span class="link">
-                <b>Link vídeo-conferência:</b> <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
-                <br>
-              </span>
-            {% endif %}
-            
-            {% if banca.membros %}
-              <div class="banca" style="margin-top: 8px;">
-                <b>Membros da Banca da Avaliação:</b>
-                <ol style="margin-bottom:0px;">
-
-                  {% if banca.get_projeto.orientador %}
-                    <li>
-                      <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
-                        {{banca.get_projeto.orientador.user.get_full_name}} 
-                      </a>         
-                      {% if banca.get_projeto.proposta.intercambio %}
-                        [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
-                      {% else %}
-                        [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
-                      {% endif %}  
-                      <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
-                    </li>
-                  {% endif %}
-
-                  {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
-                    {% for membro in banca.membros %}
-                      <li>
-                        <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                          {{membro.get_full_name}}
-                        </a>
-                        {% if membro.id in coorientadores %}
-                          [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
-                        {% endif %}
-
-                        <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
-                      </li>
-                    {% endfor %}
-                  {% endwith %}
-
-                </ol>
-              </div>
-            {% endif %}
-
-            <div class="grupo" style="margin-top: 8px;">
-              {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
-            </div>
-            <br>
-            
-            <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
-              &#9733; <b>Link formulário de avaliação</b>: 
-              <a href="{% url 'banca_avaliar' banca.slug %}">
-                {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
-              </a>
-            </div>
-            <br>
-
-            <div class="agendamento" style="margin-top: 8px;">
-              <b>Mensagem</b>: 
-                <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
-                  data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
-                  Servidor
-                </a>
-
-                {% comment %}
-                {% with com_nome=True %}
-                  <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
-                {% endwith %}          
-                  <!--&amp;attach='events/{{banca.pk}}'-->
-                  CN
-                  </a>
-                {% with com_nome=False %}
-                  <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
-                {% endwith %}          
-                  <!--&amp;attach='events/{{banca.pk}}'-->
-                  SN
-                  </a>
-                {% endcomment %}
-                
-            <a href="{% url 'event_ics_export' banca.id %}">
-              ics
-            </a>
-            
-          </div>
-
-          <span class="editar esconder" style="float: right;">
-            <a class="open-modal"
-              data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
-              <button class="btn btn-primary mb-1">Editar</button>
-            </a>
-          </span>
-
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody></table>
-    {% comment %} </form> {% endcomment %}
-  {% else %}
-    <p>Não existem bancas definidas.</p>
-  {% endif %}
-  <p>&nbsp;</p>
-
-  <h4>Calendário</h4>
   <div id="atualizar">
+
+    {% if bancas %}
+      
+        <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
+          {% for banca in bancas %} 
+          <tr class="item {{ banca.tipo_de_banca|get_banca }}">
+            <td>
+              {% if banca.startDate %}
+                <b>Horário:</b>
+                <span class="opt_full">{{banca.startDate.date}}</span>
+                <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
+                ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+                {% if banca.endDate %}
+                  às {{banca.endDate.time}}
+                {% endif %}
+                <br>
+              {% endif %}
+              
+              {% if banca.tipo_de_banca is not None %}
+                <b>Tipo:</b> 
+                {{ banca.tipo_de_banca|get_banca }}
+                <br>
+              {% endif %}
+
+              {% if banca.get_projeto %}
+                <b>Título do Projeto:</b> 
+                <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">
+                  {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
+                    {{banca.get_projeto.titulo_final}}</a><br>
+                    <small>&nbsp;&nbsp;Título original da proposta: 
+                      <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
+                    </small>
+                  {% else %}
+                    {{banca.get_projeto.get_titulo}}</a>
+                  {% endif %}
+                <br>
+                {% if banca.get_projeto.organizacao %}
+                  <b>Organização:</b> 
+                  <a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
+                    {{ banca.get_projeto.organizacao.nome }}
+                  </a>
+                  <br>
+                {% endif %}
+              {% endif %}
+                
+              {% comment %} 
+              ACHO QUE NÃO ESTÁ MAIS SENDO USADO
+              {% if banca.alocacao %}
+                <b>Estudante:</b> 
+                <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">
+                  {{ banca.alocacao.aluno.user.get_full_name }}
+                </a>
+                <br>
+              {% endif %} {% endcomment %}
+
+              {% if banca.location %}
+                <span class="local">
+                  <b>Local:</b> {{banca.location}}
+                  <br>
+                </span>
+              {% endif %}
+
+              {% if banca.link %}
+                <span class="link">
+                  <b>Link vídeo-conferência:</b> <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
+                  <br>
+                </span>
+              {% endif %}
+              
+              {% if banca.membros %}
+                <div class="banca" style="margin-top: 8px;">
+                  <b>Membros da Banca da Avaliação:</b>
+                  <ol style="margin-bottom:0px;">
+
+                    {% if banca.get_projeto.orientador %}
+                      <li>
+                        <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
+                          {{banca.get_projeto.orientador.user.get_full_name}} 
+                        </a>         
+                        {% if banca.get_projeto.proposta.intercambio %}
+                          [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
+                        {% else %}
+                          [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
+                        {% endif %}  
+                        <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
+                      </li>
+                    {% endif %}
+
+                    {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
+                      {% for membro in banca.membros %}
+                        <li>
+                          <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                            {{membro.get_full_name}}
+                          </a>
+                          {% if membro.id in coorientadores %}
+                            [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
+                          {% endif %}
+
+                          <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+                        </li>
+                      {% endfor %}
+                    {% endwith %}
+
+                  </ol>
+                </div>
+              {% endif %}
+
+              <div class="grupo" style="margin-top: 8px;">
+                {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
+              </div>
+              <br>
+              
+              <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
+                &#9733; <b>Link formulário de avaliação</b>: 
+                <a href="{% url 'banca_avaliar' banca.slug %}">
+                  {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
+                </a>
+              </div>
+              <br>
+
+              <div class="agendamento" style="margin-top: 8px;">
+                <b>Mensagem</b>: 
+                  <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+                    data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
+                    Servidor
+                  </a>
+
+                  {% comment %}
+                  {% with com_nome=True %}
+                    <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
+                  {% endwith %}          
+                    <!--&amp;attach='events/{{banca.pk}}'-->
+                    CN
+                    </a>
+                  {% with com_nome=False %}
+                    <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
+                  {% endwith %}          
+                    <!--&amp;attach='events/{{banca.pk}}'-->
+                    SN
+                    </a>
+                  {% endcomment %}
+                  
+              <a href="{% url 'event_ics_export' banca.id %}">
+                ics
+              </a>
+              
+            </div>
+
+            <span class="editar esconder" style="float: right;">
+              <a class="open-modal"
+                data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
+                <button class="btn btn-primary mb-1">Editar</button>
+              </a>
+            </span>
+
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody></table>
+      {% comment %} </form> {% endcomment %}
+    {% else %}
+      <p>Não existem bancas definidas.</p>
+    {% endif %}
+    <p>&nbsp;</p>
+
+    <h4>Calendário</h4>
     {% include "calendario_bancas.html" %}
+
   </div>
 
   <div class="sem_agendamento">

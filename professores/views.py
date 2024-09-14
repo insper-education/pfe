@@ -327,12 +327,16 @@ def bancas_index(request):
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
     dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
 
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+
     context = {
         "titulo": "Agendar Bancas",
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
         "usuario": request.user,
+        "root_page_url": request.session["root_page_url"],  # Usando para #atualizar a página raiz no edit da banca
     }
 
     return render(request, "professores/bancas_index.html", context)
@@ -662,6 +666,7 @@ def bancas_criar(request, data=None):
         "bancas_probation": bancas_probation,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
     }
 
     if data:
@@ -846,6 +851,8 @@ def bancas_editar(request, primarykey=None):
         "bancas_probation": bancas_probation,
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
+
     }
     return render(request, "professores/bancas_view.html", context)
 
@@ -922,6 +929,10 @@ def bancas_lista(request, periodo_projeto):
             (".sem_agendamento", "sem agendamento"),
         ]
     
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+    context["root_page_url"] = request.session["root_page_url"]
+
     return render(request, "professores/bancas_lista.html", context)
 
 

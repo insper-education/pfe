@@ -58,17 +58,17 @@ def user_detail(request, primarykey=0):
     else:
         user = get_object_or_404(PFEUser, pk=primarykey)
 
-    if user.tipo_de_usuario == 1:  # aluno
-        return redirect("estudante_detail", user.aluno.id)
-
-    elif user.tipo_de_usuario == 2:  # professor
-        return redirect("professor_detail", user.professor.id)
-
-    elif user.tipo_de_usuario == 3:  # parceiro
-        return redirect("parceiro_detail", user.parceiro.id)
-
-    elif user.tipo_de_usuario == 4:  # administrador (supor administrador como professor)
-        return redirect("professor_detail", user.professor.id)
+    try:
+        if user.tipo_de_usuario == 1:  # aluno
+            return redirect("estudante_detail", user.aluno.id)
+        elif user.tipo_de_usuario == 2:  # professor
+            return redirect("professor_detail", user.professor.id)
+        elif user.tipo_de_usuario == 3:  # parceiro
+            return redirect("parceiro_detail", user.parceiro.id)
+        elif user.tipo_de_usuario == 4:  # administrador (supor administrador como professor)
+            return redirect("professor_detail", user.professor.id)
+    except:
+        return HttpResponse("Usuário com problema em registro.", status=401)    
 
     return HttpResponse("Usuário não encontrado.", status=401)
 

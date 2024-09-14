@@ -670,7 +670,7 @@
           $("#submit").hide();
           $("#excluir").hide();
           $("#popup").modal("hide");
-          loadContent( "#atualizar", "{% url 'bancas_index' %}", "#atualizar" );  
+          loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" );
         } else {
           alert(data.mensagem);
         }
