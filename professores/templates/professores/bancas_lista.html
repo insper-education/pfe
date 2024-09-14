@@ -190,18 +190,19 @@
 
               <div class="grupo" style="margin-top: 8px;">
                 {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
+                <br>
               </div>
-              <br>
               
               <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
                 &#9733; <b>Link formulário de avaliação</b>: 
                 <a href="{% url 'banca_avaliar' banca.slug %}">
                   {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
                 </a>
+                <br>
               </div>
-              <br>
 
               <div class="agendamento" style="margin-top: 8px;">
+                <br>
                 <b>Mensagem</b>: 
                   <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
                     data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 

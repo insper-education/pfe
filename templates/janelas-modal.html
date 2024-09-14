@@ -5,31 +5,45 @@
 {% endcomment %}
 
 <script>
-  var data;
-  var url;
 
-  function abrir_modal(e) {
-    if (e != null) e.preventDefault();
-    var $popup = $("#popup");
-    data = $(this).data("data");
-    url = $(this).data("url");
+  $(document).ready(function() {
 
-    var address = url
-    if(data) {address += data}
+    var data;
+    var url;
 
-    $(".modal-content", $popup).load(address, function(response, status, xhr) {
-      if(status == "error") {
-        alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
-      } else {
-        if ($(".selectpicker").length) {
-          $(".selectpicker").selectpicker();
+    function abrir_modal(e) {
+
+      console.log("Abrindo modal");
+
+      if (e != null) e.preventDefault();
+      var $popup = $("#popup");
+      data = $(this).data("data");
+      url = $(this).data("url");
+
+      var address = url
+      if(data) {address += data}
+
+      $(".modal-content", $popup).load(address, function(response, status, xhr) {
+        if(status == "error") {
+          alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
+        } else {
+          if ($(".selectpicker").length) {
+            $(".selectpicker").selectpicker();
+          }
+          $popup.modal("show");
         }
-        $popup.modal("show");
-      }
-    });
-  }
-  
-  $(document).on("click", ".open-modal", abrir_modal);
+      });
+    }
+
+    // Check if the event handler is already registered
+    if (!$(document).data('modal-event-registered')) {
+      // Register the event handler if it is not already registered
+      $(document).on("click", ".open-modal", abrir_modal);
+      // Set the flag to indicate that the event handler has been registered
+      $(document).data('modal-event-registered', true);
+    }
+
+  });
 
 </script>
 
