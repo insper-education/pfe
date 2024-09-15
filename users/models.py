@@ -942,6 +942,131 @@ class UsuarioEstiloComunicacao(models.Model):
             (self.prioridade_resposta4, estilos[self.prioridade_resposta4-1]),
         ]
         return respostas
+    
+    def get_respostas(usuario):
+        PR_Fav = 0  # Pragmático - Escorre em Condições Favoráveis
+        PR_Str = 0  # Pragmático - Escorre em Condições de Stress
+        S_Fav = 0  # Afetivo - Escorre em Condições Favoráveis
+        S_Str = 0  # Afetivo - Escorre em Condições de Stress
+        PN_Fav = 0  # PN - Escorre em Condições Favoráveis
+        PN_Str = 0  # PN - Escorre em Condições de Stress
+        I_Fav = 0  # I - Escorre em Condições Favoráveis
+        I_Str = 0  # I - Escorre em Condições de Stress
+        
+        for estilo in EstiloComunicacao.objects.all():
+            # PR_Fav = A1 + G1 + M1 + B3 + H3 + N3 + C4 + I4 + O4  # D5+D35+D65+D12+D42+D72+D18+D48+D78
+            # PR_Str = D3 + J3 + P3 + E3 + K3 + Q3 + F2 + L2 + R2  # D22+D52+D82+D27+D57+D87+D31+D61+D91
+            # S_Fav = A2 + G2 + M2 + B1 + H1 + N1 + O3 + I3 + C3  # D6+D36+D66+D10+D40+D70+D77+D47+D17
+            # S_Str = D4 + J4 + P4 + E1 + K1 + Q1 + F4 + L4 + R4  # D23+D53+D83+D25+D55+D85+D33+D63+D93
+            # PN_Fav = A3 + M3 + G3 + B2 + H3 + N2 + C2 + I2 + O2  # D7+D67+D37+D11+D41+D71+D16+D46+D76
+            # PN_Str = D1 + J1 + P1 + E2 + K2 + Q2 + F1 + L1 + R1  # D20+D50+D80+D26+D56+D86+D30+D60+D90
+            # I_Fav = A4 + G4 + M4 + B4 + H4 + N4 + C1 + I1 + O1  # D8+D38+D68+D13+D43+D73+D15+D45+D75
+            # I_Str = D2 + J2 + P2 + E4 + K4 + Q4 + R3 + L3 + F3  # D21+D51+D81+D28+D58+D88+D92+D62+D32
+            
+            usuario_estilo = UsuarioEstiloComunicacao.objects.filter(usuario=usuario, estilo_comunicacao=estilo).last()
+            if usuario_estilo and estilo.bloco:
+                if estilo.bloco == "A":
+                    PR_Fav += usuario_estilo.prioridade_resposta1
+                    S_Fav += usuario_estilo.prioridade_resposta2
+                    PN_Fav += usuario_estilo.prioridade_resposta3
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "B":
+                    PR_Fav += usuario_estilo.prioridade_resposta3
+                    S_Fav += usuario_estilo.prioridade_resposta1
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "C":
+                    PR_Fav += usuario_estilo.prioridade_resposta4
+                    S_Fav += usuario_estilo.prioridade_resposta3
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta1
+                elif estilo.bloco == "D":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta4
+                    PN_Str += usuario_estilo.prioridade_resposta1
+                    I_Str += usuario_estilo.prioridade_resposta2
+                elif estilo.bloco == "E":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta1
+                    PN_Str += usuario_estilo.prioridade_resposta2
+                    I_Str += usuario_estilo.prioridade_resposta3
+                elif estilo.bloco == "F":
+                    PR_Fav += usuario_estilo.prioridade_resposta2
+                    S_Fav += usuario_estilo.prioridade_resposta4
+                    PN_Fav += usuario_estilo.prioridade_resposta1
+                    I_Fav += usuario_estilo.prioridade_resposta3
+                elif estilo.bloco == "G":
+                    PR_Fav += usuario_estilo.prioridade_resposta1
+                    S_Fav += usuario_estilo.prioridade_resposta2
+                    PN_Fav += usuario_estilo.prioridade_resposta3
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "H":
+                    PR_Fav += usuario_estilo.prioridade_resposta3
+                    S_Fav += usuario_estilo.prioridade_resposta1
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "I":
+                    PR_Fav += usuario_estilo.prioridade_resposta4
+                    S_Fav += usuario_estilo.prioridade_resposta3
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta1
+                elif estilo.bloco == "J":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta4
+                    PN_Str += usuario_estilo.prioridade_resposta1
+                    I_Str += usuario_estilo.prioridade_resposta2
+                elif estilo.bloco == "K":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta1
+                    PN_Str += usuario_estilo.prioridade_resposta2
+                    I_Str += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "L":
+                    PR_Str += usuario_estilo.prioridade_resposta2
+                    S_Str += usuario_estilo.prioridade_resposta4
+                    PN_Str += usuario_estilo.prioridade_resposta1
+                    I_Str += usuario_estilo.prioridade_resposta3
+                elif estilo.bloco == "M":
+                    PR_Fav += usuario_estilo.prioridade_resposta1
+                    S_Fav += usuario_estilo.prioridade_resposta2
+                    PN_Fav += usuario_estilo.prioridade_resposta3
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "N":
+                    PR_Fav += usuario_estilo.prioridade_resposta3
+                    S_Fav += usuario_estilo.prioridade_resposta1
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "O":
+                    PR_Fav += usuario_estilo.prioridade_resposta4
+                    S_Fav += usuario_estilo.prioridade_resposta3
+                    PN_Fav += usuario_estilo.prioridade_resposta2
+                    I_Fav += usuario_estilo.prioridade_resposta1    
+                elif estilo.bloco == "P":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta4
+                    PN_Str += usuario_estilo.prioridade_resposta1
+                    I_Str += usuario_estilo.prioridade_resposta2
+                elif estilo.bloco == "Q":
+                    PR_Str += usuario_estilo.prioridade_resposta3
+                    S_Str += usuario_estilo.prioridade_resposta1
+                    PN_Str += usuario_estilo.prioridade_resposta2
+                    I_Str += usuario_estilo.prioridade_resposta4
+                elif estilo.bloco == "R":
+                    PR_Str += usuario_estilo.prioridade_resposta2
+                    S_Str += usuario_estilo.prioridade_resposta4
+                    PN_Str += usuario_estilo.prioridade_resposta1
+                    I_Str += usuario_estilo.prioridade_resposta3
+
+        return {
+            "PR_Fav": PR_Fav,
+            "PR_Str": PR_Str,
+            "S_Fav": S_Fav,
+            "S_Str": S_Str,
+            "PN_Fav": PN_Fav,
+            "PN_Str": PN_Str,
+            "I_Fav": I_Fav,
+            "I_Str": I_Str,
+        }
+        
 
     def __str__(self):
         return f"{self.usuario.get_full_name} - {self.estilo_comunicacao.questao}"

@@ -346,10 +346,17 @@ def estilo_comunicacao(request):
                     }
                 )
 
+        respostas = UsuarioEstiloComunicacao.get_respostas(request.user)
+
+        mensagem = "Opções submetidas com sucesso!"
+        mensagem += "<br><br><b>Respostas:</b>"
+        for key, value in respostas.items():
+            mensagem += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+
         context = {
             "voltar": True,
             "area_principal": True,
-            "mensagem": "Opções submetidas com sucesso!",
+            "mensagem": mensagem,
         }
 
         return render(request, "generic.html", context=context)
