@@ -360,6 +360,8 @@ def estilo_comunicacao(request):
             error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + respostas + ", recipient_list=" + str(recipient_list)
             logger.error(error_message)
             mensagem = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
+        else:
+            logger.info("E-mail enviado para " + request.user.email + " com sucesso.")
 
 
         mensagem += respostas
