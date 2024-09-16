@@ -90,7 +90,7 @@
         <td class="hide-on-narrow" style="text-align:center">{{ estilo.bloco }}</td>
         <td>{{ estilo.questao }}</td>
         <td>
-          {% with estilo|get_selecao:request.user as selected %}
+          {% with estilo|get_selecao:usuario as selected %}
             <ul class="sortable-list" id="sortable_{{ estilo.id }}">
               {% if selected %}
                   {% for priority, resposta in selected.get_respostas_in_order %}

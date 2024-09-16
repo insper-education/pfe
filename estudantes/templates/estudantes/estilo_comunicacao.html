@@ -38,7 +38,7 @@
   </div>
 
   <form method="post">{% csrf_token %}
-    {% include "tabela_estilos.html" %}<br>
+    {% include "tabela_estilos.html" with usuario=request.user %}<br>
     <button class="btn btn-primary mb-1 mt-2" type="submit">Enviar</button>
   </form>
 

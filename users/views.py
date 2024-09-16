@@ -694,6 +694,11 @@ def estudante_detail(request, primarykey):
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
     context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
     context["areast"] = Area.objects.filter(ativa=True)
+    context["estilos"] = EstiloComunicacao.objects.all()
+    
+    context["estilos"] = EstiloComunicacao.objects.all()
+    # context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=estudante.user)
+    context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(estudante.user)
 
     return render(request, "users/estudante_detail.html", context=context)
 
@@ -720,13 +725,8 @@ def professor_detail(request, primarykey):
     context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
 
     context["estilos"] = EstiloComunicacao.objects.all()
-    context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=context["professor"].user)
-    # for estilo in context["estilos_usuario"]:
-    #     print(estilo.estilo_comunicacao)
-    #     print(estilo.prioridade_resposta1, estilo.prioridade_resposta2, estilo.prioridade_resposta3, estilo.prioridade_resposta4)
-
-        
-
+    # context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=context["professor"].user)
+    context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(context["professor"].user)
 
     return render(request, "users/professor_detail.html", context=context)
 

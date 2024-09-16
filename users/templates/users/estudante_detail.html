@@ -200,6 +200,16 @@
         {% endfor %}
     {% endif %}
 
+    {% if estilos_respostas %}
+      <br><hr>
+      <h4>Estilos de Comunicação</h4>
+      {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
+      {% for metrica, valor in estilos_respostas.items %}
+        <strong>{{ metrica }}:</strong> {{ valor }}<br>
+      {% endfor %}
+      <br>
+    {% endif %}
+
     {% if user.tipo_de_usuario == 4 %}
       <a href="{% url 'edita_usuario' aluno.user.id %}">
         <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
