@@ -365,7 +365,7 @@ def estilo_comunicacao(request):
                 logger.info("E-mail enviado para " + request.user.email + " com sucesso.")
 
 
-            mensagem += respostas
+            mensagem += mensagem_resposta
 
         else:
             mensagem = "Erro na submissão das opções."
