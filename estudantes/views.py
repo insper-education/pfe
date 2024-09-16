@@ -352,7 +352,7 @@ def estilo_comunicacao(request):
             mensagem = "Opções submetidas com sucesso!"
             mensagem_resposta = "<br><br><b>Respostas:</b>"
             for key, value in respostas.items():
-                mensagem += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+                mensagem_resposta += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
 
             subject = "Capstone | Estilo de Comunicação"
             recipient_list = [request.user.email, ]
