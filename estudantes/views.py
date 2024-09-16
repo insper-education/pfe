@@ -349,9 +349,20 @@ def estilo_comunicacao(request):
         respostas = UsuarioEstiloComunicacao.get_respostas(request.user)
 
         mensagem = "Opções submetidas com sucesso!"
-        mensagem += "<br><br><b>Respostas:</b>"
+        respostas = "<br><br><b>Respostas:</b>"
         for key, value in respostas.items():
             mensagem += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+
+        subject = "Capstone | Estilo de Comunicação"
+        recipient_list = [request.user.email, ]
+        check = email(subject, recipient_list, respostas)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + respostas + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
+            mensagem = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
+
+
+        mensagem += respostas
 
         context = {
             "voltar": True,
