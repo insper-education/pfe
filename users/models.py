@@ -1078,14 +1078,16 @@ class UsuarioEstiloComunicacao(models.Model):
                     I_Str += respostas[2]
 
         return {
-            "PR_Fav": PR_Fav,
-            "PR_Str": PR_Str,
-            "S_Fav": S_Fav,
-            "S_Str": S_Str,
-            "PN_Fav": PN_Fav,
-            "PN_Str": PN_Str,
-            "I_Fav": I_Fav,
-            "I_Str": I_Str,
+            "Pragmático Favorável": PR_Fav,
+            "Pragmático Stress": PR_Str,
+            "Afetivo Favorável": S_Fav,
+            "Afetivo Stress": S_Str,
+            "Racional Favorável": PN_Fav,
+            "Racional Stress": PN_Str,
+            "Reflexivo Favorável": I_Fav,
+            "Reflexivo Stress": I_Str,
+            "TOTAL Favorável": PR_Fav + S_Fav + PN_Fav + I_Fav,
+            "TOTAL Stress": PR_Str + S_Str + PN_Str + I_Str,
         }
         
 

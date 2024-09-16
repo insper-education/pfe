@@ -6,32 +6,32 @@
 
 <script>
 
-  $(document).ready(function() {
+  var data;
+  var url;
 
-    var data;
-    var url;
+  function abrir_modal(e) {
 
-    function abrir_modal(e) {
+    if (e != null) e.preventDefault();
+    var $popup = $("#popup");
+    data = $(this).data("data");
+    url = $(this).data("url");
 
-      if (e != null) e.preventDefault();
-      var $popup = $("#popup");
-      data = $(this).data("data");
-      url = $(this).data("url");
+    var address = url
+    if(data) {address += data}
 
-      var address = url
-      if(data) {address += data}
-
-      $(".modal-content", $popup).load(address, function(response, status, xhr) {
-        if(status == "error") {
-          alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
-        } else {
-          if ($(".selectpicker").length) {
-            $(".selectpicker").selectpicker();
-          }
-          $popup.modal("show");
+    $(".modal-content", $popup).load(address, function(response, status, xhr) {
+      if(status == "error") {
+        alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
+      } else {
+        if ($(".selectpicker").length) {
+          $(".selectpicker").selectpicker();
         }
-      });
-    }
+        $popup.modal("show");
+      }
+    });
+  }
+
+  $(document).ready(function() {
 
     // Check if the event handler is already registered
     if (!$(document).data('modal-event-registered')) {
