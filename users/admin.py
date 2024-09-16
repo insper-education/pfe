@@ -98,7 +98,7 @@ class UsuarioEstiloComunicacaoAdmin(admin.ModelAdmin):
     """Definição de Estilo de Comunicação."""
     list_display = ("usuario", "estilo_comunicacao")
     ordering = ("usuario", )
-    search_fields = ["user__first_name", "user__last_name", ]
+    search_fields = ["usuario__first_name", "usuario__last_name", ]
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
