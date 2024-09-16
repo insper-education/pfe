@@ -347,24 +347,29 @@ def estilo_comunicacao(request):
                 )
 
         respostas = UsuarioEstiloComunicacao.get_respostas(request.user)
+        if respostas:
 
-        mensagem = "Opções submetidas com sucesso!"
-        respostas = "<br><br><b>Respostas:</b>"
-        for key, value in respostas.items():
-            mensagem += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+            mensagem = "Opções submetidas com sucesso!"
+            mensagem_resposta = "<br><br><b>Respostas:</b>"
+            for key, value in respostas.items():
+                mensagem += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
 
-        subject = "Capstone | Estilo de Comunicação"
-        recipient_list = [request.user.email, ]
-        check = email(subject, recipient_list, respostas)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + respostas + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
-            mensagem = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
+            subject = "Capstone | Estilo de Comunicação"
+            recipient_list = [request.user.email, ]
+            check = email(subject, recipient_list, mensagem_resposta)
+            if check != 1:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem_resposta + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+                mensagem = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
+            else:
+                logger.info("E-mail enviado para " + request.user.email + " com sucesso.")
+
+
+            mensagem += respostas
+
         else:
-            logger.info("E-mail enviado para " + request.user.email + " com sucesso.")
+            mensagem = "Erro na submissão das opções."
 
-
-        mensagem += respostas
 
         context = {
             "voltar": True,
