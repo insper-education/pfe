@@ -969,11 +969,11 @@ class UsuarioEstiloComunicacao(models.Model):
         I_Fav = 0  # I - Escorre em Condições Favoráveis
         I_Str = 0  # I - Escorre em Condições de Stress
         
-        estilos = EstiloComunicacao.objects.all()
+        estilos = estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
         if not estilos:
             return None
         
-        for estilo in estilos:
+        for estilo in EstiloComunicacao.objects.all():
             # PR_Fav = A1 + G1 + M1 + B3 + H3 + N3 + C4 + I4 + O4  # D5+D35+D65+D12+D42+D72+D18+D48+D78
             # PR_Str = D3 + J3 + P3 + E3 + K3 + Q3 + F2 + L2 + R2  # D22+D52+D82+D27+D57+D87+D31+D61+D91
             # S_Fav = A2 + G2 + M2 + B1 + H1 + N1 + O3 + I3 + C3  # D6+D36+D66+D10+D40+D70+D77+D47+D17
