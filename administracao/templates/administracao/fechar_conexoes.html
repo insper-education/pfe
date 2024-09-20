@@ -200,37 +200,26 @@
   </ul>
 
   <script>
-
+    $(".conexao").change(function(evt){
+      
+      $.ajax({
+        url: "{% url 'seleciona_conexoes' %}?projeto="+evt.target.dataset.projeto,
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "tipo": evt.target.name,
+          "parceiro_id": evt.target.value,
+          "checked": evt.target.checked,
+        },
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          {% comment %} if (data.atualizado) {} {% endcomment %}
+        },
+        {% include "ajax_error_function.js" %}
+      });
     
-  $(".conexao").change(function(evt){
-    
-    $.ajax({
-      url: "{% url 'seleciona_conexoes' %}?projeto="+evt.target.dataset.projeto,
-      data: {
-        "csrfmiddlewaretoken": "{{ csrf_token }}",
-        "tipo": evt.target.name,
-        "parceiro_id": evt.target.value,
-        "checked": evt.target.checked,
-      },
-      type: "POST",
-      dataType: "json",
-      success: function (data) {
-        if (data.atualizado) {
-          //console.log("Valor atualizado.");
-        } else {
-          //console.log("Valor não atualizado.");
-        }
-      },
-      {% include "ajax_error_function.js" %}
     });
-  
-  });
 
-  //widths = $(".nomes_conec").map(function(){
-  //          return $(this).width();
-  //         }).get();
-    
-  //console.log(widths);
   </script>
 
 {% endblock %}

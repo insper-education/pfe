@@ -16,6 +16,36 @@
 
   <style>
     thead {background-color: #bee5eb;}
+
+    .message {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
   </style>
   
 {% endblock %}
@@ -53,7 +83,7 @@
         {% with conexoes=parceiro.conexao_set.all %}
           <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
             <th scope="row" style="text-align: center;">
-              <input type="checkbox" name="gestor_responsavel" value="{{parceiro.id}}"
+              <input class="conexao" type="checkbox" name="gestor_responsavel" value="{{parceiro.id}}"
                 {% for conexao in conexoes %}
                   {% if conexao.projeto == projeto %} 
                     {% if conexao.gestor_responsavel %}
@@ -64,7 +94,7 @@
               >
             </th>
             <th scope="row" style="text-align: center;">
-              <input type="checkbox" name="mentor_tecnico" value="{{parceiro.id}}"
+              <input class="conexao" type="checkbox" name="mentor_tecnico" value="{{parceiro.id}}"
                 {% for conexao in conexoes %}
                   {% if conexao.projeto == projeto %}
                     {% if conexao.mentor_tecnico %}
@@ -75,7 +105,7 @@
               >   
             </th>
             <th scope="row" style="text-align: center;">
-              <input type="checkbox" name="recursos_humanos" value="{{parceiro.id}}"
+              <input class="conexao" type="checkbox" name="recursos_humanos" value="{{parceiro.id}}"
                 {% for conexao in conexoes %}
                   {% if conexao.projeto == projeto %}
                     {% if conexao.recursos_humanos %}
@@ -142,11 +172,52 @@
       Cadastrar Novo Parceiro
     </button></small>
 
-    <input type="submit" class="btn btn-primary mb-1" value="Fechar Conexões">
+    {% comment %} <input type="submit" class="btn btn-primary mb-1" value="Fechar Conexões"> {% endcomment %}
 
     &nbsp;&nbsp;
 
   </form>
+
+  <div id="message" class="message"></div>
+
+  <script>
+    $(".conexao").change(function(evt){
+      
+      $.ajax({
+        url: "{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}",
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "tipo": evt.target.name,
+          "parceiro_id": evt.target.value,
+          "checked": evt.target.checked,
+        },
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          if (data.atualizado) {
+            showMessage("Conexão atualizada", "alert-success");
+          } else {
+            showMessage("Erro na atualização", "alert-warning");
+          }
+        },
+        {% include "ajax_error_function.js" %}
+      });
+    
+    });
+
+    function showMessage(message, alertClass) {
+      var messageDiv = $('#message');
+      messageDiv.removeClass('alert-success alert-warning alert-danger');
+      messageDiv.addClass(alertClass);
+      messageDiv.html(message);
+      messageDiv.fadeIn();
+  
+      setTimeout(function() {
+          messageDiv.fadeOut();
+      }, 3000); // Hide after 3 seconds
+    }
+
+  </script>
 
   <script>
     function carrega_pagina(){
