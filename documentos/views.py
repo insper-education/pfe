@@ -18,7 +18,7 @@ from django.http import FileResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
@@ -59,6 +59,47 @@ def index_documentos(request):
     else:
         return render(request, "documentos/index_documentos.html", context)
 
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def biblioteca_link(request, primarykey=None):
+    """Edita uma banca de avaliação para o projeto."""
+
+    if primarykey is None:
+        return HttpResponseNotFound("<h1>Erro!</h1>")
+    if request.user.tipo_de_usuario != 4:
+        return HttpResponse("Sem privilégios necessários", status=401)
+    
+    relatorio = get_object_or_404(Documento, pk=primarykey)
+
+    if request.is_ajax() and request.method == "POST":
+
+        atualizado = False
+
+        if "link" in request.POST:
+            relatorio.link = request.POST["link"].strip()
+            if relatorio.link:
+                atualizado = True
+            relatorio.save()
+
+        else:
+            return HttpResponse("Atualização não realizada.", status=401)
+
+        context = {
+                "atualizado": atualizado,
+                "link": relatorio.link,
+            }
+        return JsonResponse(context)
+    
+    else:
+        
+        context = {
+            "Documento": Documento,
+            "relatorio": relatorio,
+            "url": request.get_full_path(),
+        }
+        return render(request, "documentos/biblioteca_link.html", context)
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

@@ -18,6 +18,14 @@ urlpatterns = [
         views.index_documentos,
         name="index_documentos"),
 
+    path("biblioteca_link/",
+        views.biblioteca_link,
+        name="biblioteca_link"),
+
+    path("biblioteca_link/<int:primarykey>",
+        views.biblioteca_link,
+        name="biblioteca_link"),
+
     path("documentos",
         views.index_documentos,
         name="documentos"),
