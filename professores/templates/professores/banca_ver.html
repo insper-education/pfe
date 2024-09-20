@@ -26,6 +26,7 @@
   {% elif banca.tipo_de_banca == 1 %}
     <b>Tipo:</b> Intermediária<br>
   {% endif %}
+
   {% if banca.projeto %}
     <b>Título do Projeto:</b> 
     <a href="{% url 'projeto_completo' banca.projeto.id %}">
@@ -86,6 +87,12 @@
 
   <b>Banca</b>
   <ol>
+    {% if banca.tipo_de_banca == 1 or banca.tipo_de_banca == 2 %} {% comment %} Intermediária ou Final {% endcomment %}
+      <li>{{banca.projeto.orientador.user.get_full_name}} 
+          [Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}]
+          <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+      </li>
+    {% endif %}
     {% for membro in banca.membros %}
       <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
     {% endfor %}
