@@ -944,19 +944,22 @@ class UsuarioEstiloComunicacao(models.Model):
         return respostas
     
     def get_score(self):
-        priority_to_score = {1: 6, 2: 4, 3: 3, 4: 1}
 
         # List of priorities
         priorities = [
-            self.prioridade_resposta1,
-            self.prioridade_resposta2,
-            self.prioridade_resposta3,
-            self.prioridade_resposta4
+            (self.prioridade_resposta1, 6),
+            (self.prioridade_resposta2, 4),
+            (self.prioridade_resposta3, 3),
+            (self.prioridade_resposta4, 1),
         ]
 
-        # Calculate scores based on priorities
-        respostas = [priority_to_score[priority] for priority in priorities]
-        return respostas
+        # Sort the priorities list by the second element of each tuple
+        sorted_priorities = sorted(priorities, key=lambda x: x[0])
+
+        # Extract the first element of each sorted tuple into a new list
+        sorted_first_columns = [item[1] for item in sorted_priorities]
+
+        return sorted_first_columns
 
     
     def get_respostas(usuario):
@@ -1004,6 +1007,9 @@ class UsuarioEstiloComunicacao(models.Model):
                     for i in v:
                         if i[0] == estilo.bloco:
                             valores[k] += respostas[int(i[1])]
+                            if k == "PR_Fav":
+                                print(f"{estilo.questao} {respostas[int(i[1])]}")
+                                # HABILITAR EMAIL
 
         return {
             "Pragmático Favorável": valores["PR_Fav"],
