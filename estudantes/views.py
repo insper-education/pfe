@@ -349,9 +349,9 @@ def estilo_comunicacao(request):
         respostas = UsuarioEstiloComunicacao.get_respostas(request.user)
         if respostas:
 
-            mensagem = "Opções submetidas com sucesso!"
+            mensagem = "Opções submetidas com sucesso!<br>"
             mensagem_resposta = "<br><h4>Tabela de Estilo de Comunicação</h4>"
-            mensagem_resposta += "<br><br><b>Respostas:</b>"
+            mensagem_resposta += "<br><b>Respostas:</b>"
             for key, value in respostas.items():
                 mensagem_resposta += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
 
