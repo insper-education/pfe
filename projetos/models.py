@@ -599,6 +599,8 @@ class Configuracao(models.Model):
     prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
     
+    periodo_relato = models.PositiveIntegerField("Período Relato Quinzenal", default=10,
+                                           help_text="Período para Relato Quinzenal ser preenchido antes do prazo")
 
     #LIMITE_DE_SALAS_P_BANCAS
     limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,

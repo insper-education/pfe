@@ -671,20 +671,27 @@ def minhas_bancas(request):
 def relato_quinzenal(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    
+    configuracao = get_object_or_404(Configuracao)
+
     hoje = datetime.date.today()
 
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
     prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by("endDate").first()
+
+    # Só mostra o relato N (config.periodo_relato) dias antes do prazo
+    fora_periodo = prazo.endDate - hoje > datetime.timedelta(days=configuracao.periodo_relato)
+    inicio_periodo = prazo.endDate - datetime.timedelta(days=configuracao.periodo_relato)
 
     context = {
         "titulo": "Formulário de Relato Quinzenal",
         "prazo": prazo,
         "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
         "Relato": Relato,
+        "fora_periodo": fora_periodo,
+        "inicio_periodo": inicio_periodo,
     }
 
-    if request.user.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:  # Estudante
 
         configuracao = get_object_or_404(Configuracao)
 
@@ -699,6 +706,11 @@ def relato_quinzenal(request):
             return render(request, "estudantes/relato_quinzenal.html", context)
 
         if request.method == "POST":
+
+            # Só mostra o relato N (config.periodo_relato) dias antes do prazo
+            if fora_periodo:
+                return HttpResponseNotFound("<h1>Relato quinzenal não disponível!</h1>")
+
             texto_relato = request.POST.get("relato", None)
             relato = Relato.objects.create(alocacao=alocacao)
             relato.texto = texto_relato
@@ -725,6 +737,7 @@ def relato_quinzenal(request):
 
 
         relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by("endDate").last()
+        
         if not relato_anterior:
             return HttpResponseNotFound("<h1>Erro ao buscar prazos!</h1>")
 

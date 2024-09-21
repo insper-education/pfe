@@ -62,23 +62,37 @@
 
   <form method="post"> {% csrf_token %}
 
-    Prazo para a submissão do relato: <b style='color:red;'>
     {% if prazo %}
-    <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
-    <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
+      {% if fora_periodo %}
+        Fora do período para a submissão de relatos.<br>
+        Próxima entrega será entre<b style='color:green;'>
+          <span class="opt_full">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
+          <span class="opt_short">{{inicio_periodo|date:"d/m/y" }}</span>
+        </b>
+        e
+        <b style='color:green;'>
+          <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
+          <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
+        </b>
+      {% else %}
+        Prazo para a submissão do relato: <b style='color:red;'>
+          <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
+          <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
+        </b>
+      {% endif %}
     {% else %}
       Não há datas para fazer relatos.
     {% endif %}
-    </b>
+    
     <br><br>
 
     <label for="relato">Informe seu relato quinzenal (máximo {% max_length Relato "texto" %} caracteres)</label><br>
-    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if not prazo %}disabled{% endif %} 
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
               placeholder="{{msg_relato_quinzenal}}"
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
     <br><br>
-    <input {% if not prazo %}disabled{% endif %} class="btn btn-primary mb-1" type="submit" value="Enviar">
+    <input {% if fora_periodo or not prazo %}disabled{% endif %} class="btn btn-primary mb-1" type="submit" value="Enviar">
 
   </form>
 
