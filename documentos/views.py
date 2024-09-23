@@ -79,9 +79,8 @@ def biblioteca_link(request, primarykey=None):
 
         if "link" in request.POST:
             relatorio.link = request.POST["link"].strip()
-            if relatorio.link:
-                atualizado = True
             relatorio.save()
+            atualizado = True
 
         else:
             return HttpResponse("Atualização não realizada.", status=401)

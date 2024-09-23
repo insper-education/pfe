@@ -122,7 +122,7 @@
 
 
     link = $("#link").val().trim();
-    var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+    var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$|^$/i;
     if (!urlPattern.test(link)) {
         alert("Link inválido!");
         return false;
@@ -139,15 +139,33 @@
       contentType: false,
       success: function(data){
         if (data.atualizado) {
-          ancora = `
-          <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;" 
+          if (data.link) {
+            ancora = `
+              <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;" 
                 href="` + data.link + `" target="_blank" rel="noopener noreferrer">
                 <span class="short-text" style="width: 4em;">DSpace</span>
-                <span class="full-text" style="width: 12em;">Link&nbsp;Biblioteca&nbsp;(DSpace)</span>
-              </a><br>
-          `;
+                <span class="full-text" style="width: 12em;">Link&nbsp;Biblioteca&nbsp;(DSpace)</span>`
+            {% if user.tipo_de_usuario == 4 %}
+              ancora += `
+                <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
+                  <i class="fas fa-pencil-alt"></i>
+                </span>`
+            {% endif %}
+            ancora += `</a><br>`;
+          } else {
+            ancora = `
+              <a 
+                {% comment %} id="c{{relatorio.pk}}" {% endcomment %}
+                class="btn btn-warning btn-outline-dark btn-sm open-modal"
+                href="{% url 'biblioteca_link' relatorio.pk %}"
+                data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
+                target="_blank" rel="noopener noreferrer">
+                <span class="short-text" style="width: 4em;">+&nbsp;DSpace</span>
+                <span class="full-text" style="width: 12em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
+              </a><br>`;
+          }
 
-          $("#p{{relatorio.pk}}").append(ancora);
+          $("#p{{relatorio.pk}}").html(ancora);
           $("#c{{relatorio.pk}}").hide();
           $("#popup").modal("hide");          
         }
