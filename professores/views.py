@@ -262,6 +262,8 @@ def avaliacoes_pares(request, todos=None):
 
     return render(request, "professores/avaliacoes_pares.html", context=context)
 
+from django.db.models import Case, When, Value, DateTimeField, F, ExpressionWrapper, Func, FloatField
+from django.utils import timezone
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -272,12 +274,24 @@ def bancas_alocadas(request):
               Banca.objects.filter(membro3=request.user))
     
     if request.user.professor:
-        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor)
-        bancas = bancas | Banca.objects.filter(projeto__coorientador__usuario=request.user)
+        #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
+        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+        # bancas = bancas | Banca.objects.filter(projeto__coorientador__usuario=request.user)  # Coorientador precisa ser indicado para ser membro de banca
+
+    # Usado para inverter as datas das bancas atuais
+    periodo = timezone.now().date() - datetime.timedelta(days=30)
+    bancas = bancas.annotate(
+        custom_order=Case(
+            When(startDate__lt=periodo, then=Value(100000000000)),
+            When(startDate__gte=periodo, then=Func(F("startDate"), function='EXTRACT', template="%(function)s(EPOCH FROM %(expressions)s)", output_field=FloatField())),
+            output_field=FloatField(),
+        )
+    ).order_by("custom_order", "-startDate")
+
 
     context = {
         "titulo": "Participação em Bancas",
-        "bancas": bancas.order_by("-startDate"),
+        "bancas": bancas,
         }
     return render(request, "professores/bancas_alocadas.html", context=context)
 
@@ -627,10 +641,9 @@ def bancas_criar(request, data=None):
         }
         return JsonResponse(context)
 
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
-    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+    # Originalmente estava: .exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()

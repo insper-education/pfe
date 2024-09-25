@@ -51,7 +51,9 @@
               {% endfor %}
             {% endwith %}
             {% if not user.professor or user.professor and banca.projeto.orientador != user.professor %}
-              <i><span class="opt_short">Ori.</span><span class="opt_full">Orientador{% if user.genero == 'F' %}a{% endif %}</span>: {{banca.projeto.orientador}}</i>
+              <i><span class="opt_short">Ori.</span><span class="opt_full">Orientador{% if user.genero == 'F' %}a{% endif %}</span>:
+                {% if banca.projeto.orientador %}{{banca.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}
+              </i>
             {% endif %}
           </a>
         </div>
@@ -67,24 +69,37 @@
               </div>
           {% endif %}
 
-          {% with certificado=banca|certificado_banca:user %}
-            {% if certificado %}
-              <div>
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a><br>
-              </div>
-            {% endif %}
-          {% endwith %}
-            </td></tr>
-      {% empty %}
-        Nenhuma banca encontrada.
-      {% endfor %}
-      </tbody></table>
+          <div>
+            {% with relatorio=banca.get_relatorio %}
+              {% if relatorio %}
+                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
+                  target="_blank" rel="noopener noreferrer"><b>[RELATÓRIO]</b>
+                </a>
+              {% endif %}
+            {% endwith %}
 
-      {% include "toggle_anteriores.html" %}
+            {% with site=banca.projeto.get_site %}
+              {% if site %}
+                <a href="{{site}}" target="_blank"><b>[SITE]</b></a>
+              {% endif %}
+            {% endwith %}
 
-      Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua
-      <a href="{% url 'index_professor' %}">
-        página do Professor
-      </a>.
+            {% with certificado=banca|certificado_banca:user %}
+              {% if certificado %}
+                <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a>
+              {% endif %}
+            {% endwith %}
+          </div>
+
+      </td></tr>
+    {% empty %}
+      Nenhuma banca encontrada.
+    {% endfor %}
+    </tbody></table>
+
+    {% include "toggle_anteriores.html" %}
+
+    Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua
+    <a href="{% url 'index_professor' %}">página do Professor</a>.
       
 {% endblock %}
