@@ -13,14 +13,14 @@ from django.http import HttpResponse
 
 
 @login_required
-def index(request):
+def index_old(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
     # request.session['num_visits'] = num_visits + 1
     return render(request, "index.html")
 
 @login_required
-def index2(request):
+def index(request):
     """Página principal do sistema do Projeto Final de Engenharia."""
     return render(request, "index2.html")
 
