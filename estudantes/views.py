@@ -132,8 +132,10 @@ def alinhamentos_gerais(request):
 def alocacao_semanal(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     configuracao = get_object_or_404(Configuracao)
-    if request.user.tipo_de_usuario == 1:
+    if request.user.tipo_de_usuario == 1:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
+        if not projeto:
+            return HttpResponse("Erro: Você não está alocado em um projeto!", status=401)
     elif request.user.tipo_de_usuario in (2, 4):
         projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
     else:
