@@ -62,12 +62,12 @@
   {% url "perfil" as url_perfil %}
 
   <div class="topnav">
-    <a {% if request.get_host == "127.0.0.1:8000" %}id="barra_do_top_nav" class="active_local"{% else %}class="active"{% endif %}>
+    <a style="cursor: pointer;" {% if request.get_host == "127.0.0.1:8000" %}id="barra_do_top_nav" class="active_local"{% else %}class="active"{% endif %}>
       <img 
       {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %}
       src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
-      <b {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %} id="pfelogo">PFE</b> 
-      {% if user.is_authenticated %}&nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username">[{{user.get_full_name}}]</u>{% endif %}
+      <b {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %} id="pfelogo">Capstone</b> 
+      {% if user.is_authenticated %}&nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username"><i style="font-size: 0.55rem;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>{% endif %}
     </a>
     
     <div id="myLinks" class="links-container">
