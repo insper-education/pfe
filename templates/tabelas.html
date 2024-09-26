@@ -4,6 +4,11 @@
   Data: 30 de Janeiro de 2021
 {% endcomment %}
 
+
+{% comment %} ACREDITO QUE ESSE CÓDIGO NÃO É MAIS USADO {% endcomment %}
+{% comment %} Procurar tabela_scrippts.js {% endcomment %}
+
+{% comment %} 
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'DataTables/DataTables-1.10.24/css/dataTables.bootstrap4.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'DataTables/Buttons-1.7.0/css/buttons.bootstrap4.min.css' %}">
@@ -19,27 +24,46 @@
 <script src="{% static 'DataTables/Buttons-1.7.0/js/buttons.colVis.min.js' %}"></script>
 
 <script class="init">
+
+  var languageSettings = {
+    pt: {
+        emptyTable: "Tabela vazia",
+        info: "Exibindo _START_ até _END_ de _TOTAL_ itens",
+        buttons: {
+            colvis: "Colunas"
+        },
+        search: "Busca:",
+        paginate: {
+            first: "Primeira",
+            last: "Última",
+            next: "Próxima",
+            previous: "Anterior"
+        }
+    },
+    en: {
+        emptyTable: "No data available",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        buttons: {
+            colvis: "Columns"
+        },
+        search: "Search:",
+        paginate: {
+            first: "First",
+            last: "Last",
+            next: "Next",
+            previous: "Previous"
+        }
+    }
+  };
+
   $(document).ready(function() {
     var table = $("#{{tabela}}").DataTable( {
       lengthChange: false,
       buttons: [ "copy", "csv", "excel", "pdf", "colvis" ],
-      language: {
-          emptyTable: "Tabela vazia",
-          info: "Exibindo _START_ até _END_ de _TOTAL_ itens",
-          buttons: {
-              colvis: "Colunas"
-          },
-          search: "Busca:",
-          paginate: {
-              first:      "Primeira",
-              last:       "Última",
-              next:       "Próxima",
-              previous:   "Anterior"
-          },
-      }
+      language: languageSettings.en,
     } );
 
     table.buttons().container()
       .appendTo( '#{{tabela}}_wrapper .col-md-6:eq(0)' );
   } );
-</script>
+</script> {% endcomment %}

@@ -387,7 +387,7 @@ def relatorios_publicos(request, edicao=None):
             "selecionada": edicao,
         }
     
-    return render(request, "documentos/relatorios_publicos.html", context)
+    return render(request, "documentos/relatorios_publicos.html", context) 
 
 
 @login_required
