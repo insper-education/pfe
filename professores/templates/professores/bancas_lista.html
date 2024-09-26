@@ -23,6 +23,31 @@
       margin: 0px 0px 8px 0px;
       padding: 0px 0px 0px 1.5em;
     }
+
+    .agendamento {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    
+    .agendamento > * {
+        margin-left: 4px;
+    }
+    
+    .editar {
+        margin-left: auto;
+        float: right;
+    }
+
+    @media (max-width: 800px) {
+      .btn {
+          font-size: 0.75rem; /* Smaller font size */
+          padding: 0.25rem 0.5rem; /* Smaller padding */
+      }
+    }
+
   </style>
 
   <script>{% include "tooltip.js" %}</script>
@@ -88,25 +113,12 @@
           {% for banca in bancas %} 
           <tr class="item {{ banca.tipo_de_banca|get_banca }}">
             <td>
-              {% if banca.startDate %}
-                <b>Horário:</b>
-                <span class="opt_full">{{banca.startDate.date}}</span>
-                <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
-                ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
-                {% if banca.endDate %}
-                  às {{banca.endDate.time}}
-                {% endif %}
-                <br>
-              {% endif %}
-              
-              {% if banca.tipo_de_banca is not None %}
-                <b>Tipo:</b> 
-                {{ banca.tipo_de_banca|get_banca }}
-                <br>
-              {% endif %}
 
               {% if banca.get_projeto %}
-                <b>Título do Projeto:</b> 
+                <b>Projeto:</b> 
+                {% if banca.get_projeto.organizacao %}
+                  [<a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
+                {% endif %}
                 <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">
                   {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
                     {{banca.get_projeto.titulo_final}}</a><br>
@@ -117,25 +129,19 @@
                     {{banca.get_projeto.get_titulo}}</a>
                   {% endif %}
                 <br>
-                {% if banca.get_projeto.organizacao %}
-                  <b>Organização:</b> 
-                  <a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
-                    {{ banca.get_projeto.organizacao.nome }}
-                  </a>
-                  <br>
-                {% endif %}
               {% endif %}
-                
-              {% comment %} 
-              ACHO QUE NÃO ESTÁ MAIS SENDO USADO
-              {% if banca.alocacao %}
-                <b>Estudante:</b> 
-                <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">
-                  {{ banca.alocacao.aluno.user.get_full_name }}
-                </a>
-                <br>
-              {% endif %} {% endcomment %}
 
+              {% if banca.startDate %}
+                <b>Horário:</b>
+                <span class="opt_full">{{banca.startDate.date}}</span>
+                <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
+                ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+                {% if banca.endDate %}
+                  às {{banca.endDate.time}}
+                {% endif %}
+                <br>
+              {% endif %}
+                             
               {% if banca.location %}
                 <span class="local">
                   <b>Local:</b> {{banca.location}}
@@ -146,52 +152,71 @@
               {% if banca.link %}
                 <span class="link">
                   <b>Link vídeo-conferência:</b> <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
-                  <br>
                 </span>
+                <br>
               {% endif %}
+
+              <b>Tipo:</b> 
+              {% if banca.tipo_de_banca is not None %}
+                {{ banca.tipo_de_banca|get_banca }}
+              {% else %}
+                Não definido
+              {% endif %}
+              <br>
               
               {% if banca.membros %}
                 <div class="banca" style="margin-top: 8px;">
                   <b>Membros da Banca da Avaliação:</b>
-                  <ol style="margin-bottom:0px;">
-
-                    {% if banca.get_projeto.orientador %}
-                      <li>
-                        <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
-                          {{banca.get_projeto.orientador.user.get_full_name}} 
-                        </a>         
-                        {% if banca.get_projeto.proposta.intercambio %}
-                          [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
-                        {% else %}
-                          [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
-                        {% endif %}  
-                        <a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
-                      </li>
-                    {% endif %}
-
-                    {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
-                      {% for membro in banca.membros %}
+                  {% with is_ori=banca.get_projeto.orientador %}
+                    <a class="email" href="mailto:{% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.email}}{% endif %};{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.get_full_name}}, {% endif %}{% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
+                      <i class="fas fa-mail-bulk"></i>
+                    </a>
+                    <ol style="margin-bottom:0px;">
+                      {% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}
                         <li>
-                          <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                            {{membro.get_full_name}}
-                          </a>
-                          {% if membro.id in coorientadores %}
-                            [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
+                          <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
+                            {{banca.get_projeto.orientador.user.get_full_name}} 
+                          </a>         
+                          {% if banca.get_projeto.proposta.intercambio %}
+                            [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
+                          {% else %}
+                            [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
                           {% endif %}
-
-                          <a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+                          <span class="opt_full emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
+                          <span class="opt_short emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+                          
                         </li>
-                      {% endfor %}
-                    {% endwith %}
+                      {% endif %}
 
-                  </ol>
+                      {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
+                        {% for membro in banca.membros %}
+                          <li>
+                            <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                              {{membro.get_full_name}}
+                            </a>
+                            {% if membro.id in coorientadores %}
+                              [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
+                            {% endif %}
+                            <span class="opt_full emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
+                            <span class="opt_short emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
+                            
+                          </li>
+                        {% endfor %}
+                      {% endwith %}
+
+                    </ol>
+                  {% endwith %}
                 </div>
               {% endif %}
 
               <div class="grupo" style="margin-top: 8px;">
-                {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
-                <br>
-              </div>
+                {% if banca.tipo_de_banca == 3 %}  {% comment %} Banca Probation {% endcomment %}
+                  <b>Estudante:</b> 
+                  {% include "mostra_estudante.html" with alocacao=banca.alocacao %}  
+                {% else %}
+                  {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
+                {% endif %}
+              </div><br>
               
               <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
                 &#9733; <b>Link formulário de avaliação</b>: 
@@ -200,42 +225,23 @@
                 </a>
                 <br>
               </div>
-
-              <div class="agendamento" style="margin-top: 8px;">
-                <br>
-                <b>Mensagem</b>: 
-                  <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
-                    data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
-                    Servidor
-                  </a>
-
-                  {% comment %}
-                  {% with com_nome=True %}
-                    <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
-                  {% endwith %}          
-                    <!--&amp;attach='events/{{banca.pk}}'-->
-                    CN
-                    </a>
-                  {% with com_nome=False %}
-                    <a href="{% include 'professores/mensagem_banca.html' %}" target="_blank">
-                  {% endwith %}          
-                    <!--&amp;attach='events/{{banca.pk}}'-->
-                    SN
-                    </a>
-                  {% endcomment %}
-                  
-              <a href="{% url 'event_ics_export' banca.id %}">
-                ics
-              </a>
               
-            </div>
+              <div class="agendamento">  
+                <b>Mensagem</b>: 
+                <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+                  data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
+                  avaliadores
+                </a>
+              <a href="{% url 'event_ics_export' banca.id %}">ics</a>
+            
+              <div class="editar esconder">
+                <a class="open-modal"
+                  data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
+                  <button class="btn btn-primary mb-1">Editar</button>
+                </a>
+              </div>
 
-            <span class="editar esconder" style="float: right;">
-              <a class="open-modal"
-                data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
-                <button class="btn btn-primary mb-1">Editar</button>
-              </a>
-            </span>
+            </div>
 
             </td>
           </tr>
