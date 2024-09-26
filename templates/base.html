@@ -62,14 +62,14 @@
   {% url "perfil" as url_perfil %}
 
   <div class="topnav">
-    <a style="cursor: pointer;" {% if request.get_host == "127.0.0.1:8000" %}id="barra_do_top_nav" class="active_local"{% else %}class="active"{% endif %}>
+    <a style="cursor: pointer;" id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
       <img 
       {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %}
       src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
       <b {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %} id="pfelogo">Capstone</b> 
       {% if user.is_authenticated %}&nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username"><i style="font-size: 0.55rem;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>{% endif %}
     </a>
-    
+        
     <div id="myLinks" class="links-container">
       {% if user.is_authenticated %}
 
@@ -106,7 +106,7 @@
         <a href="{% url 'login'%}?next={{request.path}}">Login</a>
       {% endif %} 
     </div>
-    <a href="javascript:void(0);" class="icon" onclick="bars()">
+    <a href="javascript:void(0);" id="hamburger" class="icon" onclick="bars()">
       <i class="fa fa-bars" aria-hidden="true"></i>
     </a>
   </div>

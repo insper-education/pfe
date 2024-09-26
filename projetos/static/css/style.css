@@ -34,11 +34,54 @@ textarea {max-width:100%;}
   display: none;
 }
 
-#myLinks a {
-  padding: 10px;
+.links-container {
+  display: none;
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  width: 200px;
+  background-color: #000e4d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 0px;
 }
 
-.topnav a {
+.links-container a {
+  padding: 5px 16px;
+  display: block;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+
+.links-container a:last-child {
+  border-bottom: none;
+}
+
+.links-container a:hover {
+  background-color: #4971bb;
+}
+
+#barra_do_top_nav {
+  padding: 14px 16px;
+  display: block;
+}
+
+#barra_do_top_nav a.icon {
+  background: black;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#myLinks a {
+  color: white;
+  text-decoration: none;
+}
+
+#hamburger {
   color: white;
   padding: 14px 16px;
   text-decoration: none;
@@ -46,8 +89,8 @@ textarea {max-width:100%;}
   display: block;
 }
 
-.topnav a.icon {
-  background: black;
+#hamburger.icon {
+  background-color: black;
   display: block;
   position: absolute;
   right: 0;
@@ -55,7 +98,7 @@ textarea {max-width:100%;}
   height: 54px;
 }
 
-.topnav a:hover {
+#hamburger:hover {
   background-color: #ddd;
   color: black;
 }
