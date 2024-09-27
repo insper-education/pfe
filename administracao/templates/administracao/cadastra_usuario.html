@@ -27,7 +27,6 @@
 {% block content %}
 
   <span class="titulo">{{ titulo }}</span>
-  <br>
 
   {% if mensagem %}
     <div style="border: 2px solid red; padding: 4px; width: fit-content;">
@@ -35,30 +34,32 @@
     </div><br>
   {% endif %}
 
-  <form class="myForm" style="width: 850px; max-width: 100%;" id="cadastrauser" method="post" enctype="multipart/form-data"> {% csrf_token %}
-  
+  <form id="cadastrauser" enctype="multipart/form-data">{% csrf_token %}
+
+    Tipo de Usuário:<br>
     <label for="estudante" style="margin-right: 1em;"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>&nbsp;Estudante</label>
     <label for="professor" style="margin-right: 1em;"><input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}>&nbsp;Professor</label>
     <label for="parceiro" style="margin-right: 1em;"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>&nbsp;Parceiro</label>
     <br><br>
 
-    <label for="pronome_tratamento">Pronome de Tratamento (opcional)</label>
-    <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
-    
-    <label for="nome_social">Nome Social (opcional)</label>
-    <input type="text" size="77" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
-    
     <label for="nome">Nome do Usuário<br></label><br>
-    {% comment %} {% max_length PFEUser "first_name" %} + {% max_length PFEUser "lastst_name" %} {% endcomment %}
     <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
-    <br>
+    
+    <div style="margin-left: 24px;">
+      <label for="pronome_tratamento">Pronome de Tratamento (opcional)</label>
+      <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
+      
+      <label for="nome_social">Nome Social (opcional)</label>
+      <input type="text" size="57" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
+    </div>
 
+    <br>
     <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
     
-    <label for="telefone">telefone:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% endif %}><br>
-    <label for="celular">celular:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
-    <label for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}><br>
+    <label style="width: 4rem;" for="telefone">telefone:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% endif %}><br>
+    <label style="width: 4rem;" for="celular">celular:</label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
+    <label style="width: 4rem;" for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}><br>
     <br>
 
     <label for="masculino"><input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}>  Masculino</label>&nbsp;&nbsp;&nbsp;
@@ -77,6 +78,7 @@
     <label for="observacao">Observações:</label><br>
     <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea><br>
 
+
     {% comment %}
     <input type="checkbox" id="membro_comite" name="membro_comite" value="True">
     <label for="membro_comite"> Membro do Comitê</label><br>  
@@ -85,7 +87,7 @@
     <br>
 
     {% comment %} Estudante {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row" data-type="estudante">
+    <div style="display: block; padding-left: 32px" class="row_tipo" data-type="estudante">
 
       <label for="matricula">Matrícula: </label> <input type="text" size="8" maxlength="{% max_length Estudante 'matricula' %}" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
  
@@ -128,7 +130,7 @@
     </div>
 
     {% comment %} Professor {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row" data-type="professor">
+    <div style="display: block; padding-left: 32px" class="row_tipo" data-type="professor">
 
       Dedicação: 
       <label for="TI" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TI" value="TI" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %}> Tempo Integral</label>
@@ -145,7 +147,7 @@
     </div>
 
     {% comment %} Parceiro {% endcomment %}
-    <div id="parceiro_div" style="display: block; padding-left: 32px" class="row" data-type="parceiro">
+    <div id="parceiro_div" style="display: block; padding-left: 32px" class="row_tipo" data-type="parceiro">
 
       <br><b><label for="organizacao">Organização</label></b>:
       <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="42%" data-size="10" >
@@ -188,13 +190,14 @@
     <label for="envia"><input type="checkbox" id="envia" name="envia" style="margin-right: 4px;">cria nova senha e envia mensagem (e-mail) de conta</label>
 
   </form>
+</div>
 
 
   <script>
 
     function filtra_data() {
       var filterValue = $("input:radio[name=tipo_de_usuario]:checked").val()
-      var row = $(".row"); 
+      var row = $(".row_tipo"); 
       row.hide();
 
       row.each(function(i, el) {
