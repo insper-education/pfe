@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load l10n %}
+  {% load addstr %}
 
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
@@ -180,13 +181,12 @@
             </td>
 
             <td style="text-align:center">
-              <small style="cursor:pointer;">
-               <span id="{{organizacao.id}}5" onclick="estrelas('{{organizacao.id}}',5)">{% if organizacao.estrelas > 4 %}&#9733;{% else %}&#9734;{% endif %}</span
-              ><span id="{{organizacao.id}}4" onclick="estrelas('{{organizacao.id}}',4)">{% if organizacao.estrelas > 3 %}&#9733;{% else %}&#9734;{% endif %}</span
-              ><span id="{{organizacao.id}}3" onclick="estrelas('{{organizacao.id}}',3)">{% if organizacao.estrelas > 2 %}&#9733;{% else %}&#9734;{% endif %}</span
-              ><span id="{{organizacao.id}}2" onclick="estrelas('{{organizacao.id}}',2)">{% if organizacao.estrelas > 1 %}&#9733;{% else %}&#9734;{% endif %}</span
-              ><span id="{{organizacao.id}}1" onclick="estrelas('{{organizacao.id}}',1)">{% if organizacao.estrelas > 0 %}&#9733;{% else %}&#9734;{% endif %}</span
-              ><span id="{{organizacao.id}}0" onclick="estrelas('{{organizacao.id}}',0)">&nbsp;</span>
+              <small style="cursor:pointer;"
+                {% for i in "54321" %}
+                  ><span id="{{ organizacao.id }}{{i}}" onclick="estrelas('{{organizacao.id}}', {{i}})"
+                    >{% if organizacao.estrelas >= i|to_int %}&#9733;{% else %}<span style="color: rgba(0, 0, 0, 0.1);">&#9734;</span>{% endif %}</span
+                {% endfor %}
+                ><span id="{{organizacao.id}}0" onclick="estrelas('{{organizacao.id}}',0)">&nbsp;</span>
               </small>
             </td>
 
@@ -547,30 +547,8 @@
     numberRows();
 
     function estrelas(id, pos) {
-      if(pos > 0) {
-        document.getElementById(id+"1").innerHTML = "&#9733;";
-      } else {
-        document.getElementById(id+"1").innerHTML = "&#9734;";
-      }
-      if(pos > 1) {
-        document.getElementById(id+"2").innerHTML = "&#9733;";
-      } else {
-        document.getElementById(id+"2").innerHTML = "&#9734;";
-      }
-      if(pos > 2) {
-        document.getElementById(id+"3").innerHTML = "&#9733;";
-      } else {
-        document.getElementById(id+"3").innerHTML = "&#9734;";
-      }
-      if(pos > 3) {
-        document.getElementById(id+"4").innerHTML = "&#9733;";
-      } else {
-        document.getElementById(id+"4").innerHTML = "&#9734;";
-      }
-      if(pos > 4) {
-        document.getElementById(id+"5").innerHTML = "&#9733;";
-      } else {
-        document.getElementById(id+"5").innerHTML = "&#9734;";
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(id + i).innerHTML = pos >= i ? "&#9733;" : "<span style='color: rgba(0, 0, 0, 0.1);'>&#9734;</span>";
       }
 
       $.ajax({

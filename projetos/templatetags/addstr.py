@@ -15,3 +15,11 @@ register = template.Library()
 def addstr(arg1, arg2):
     """concatenate arg1 & arg2"""
     return str(arg1) + str(arg2)
+
+@register.filter
+def int_range(value):
+    return range(value, 0, -1)
+
+@register.filter
+def to_int(value):
+    return int(value)
