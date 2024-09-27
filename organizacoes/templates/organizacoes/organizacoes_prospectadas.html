@@ -604,7 +604,12 @@
           }
         }
         else if( filterValue == "Prospecção") {
-          if(["0", "1", "2", "3", "4", "5"].includes($(el).attr("data-type"))) {
+          if(["0", "1", "2", "3"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+        else if( filterValue == "Retorno") {
+          if(["4", "5"].includes($(el).attr("data-type"))) {
             $(el).show();
           }
         }
