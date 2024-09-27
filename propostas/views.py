@@ -560,21 +560,47 @@ def proposta_editar(request, slug):
 
     configuracao = get_object_or_404(Configuracao)
     liberadas_propostas = propostas_liberadas(configuracao)
-
-    configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
     vencida = proposta.ano != ano or proposta.semestre != semestre
 
     if request.method == "POST":
         if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
+            enviar = "mensagem" in request.POST  # Verifica check para enviar e-mail
             if request.POST.get("new"):
-                proposta = preenche_proposta(request, None)
-            else:
+                 
+                titulo = request.POST.get("titulo_prop", "").strip()
+                if titulo and Proposta.objects.filter(titulo=titulo, ano=ano, semestre=semestre).exists():
+                    context = {
+                        "voltar": True,
+                        "mensagem": "Uma proposta com este título já existe para o próximo semestre e aparentemente está sendo duplicada.<br> Caso considere que isso não deveria acontecer, por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> A proposta não foi salva.",
+                    }
+                    return render(request, "generic.html", context=context)
+
+                if proposta:
+                    organizacao = proposta.organizacao
+                    colaboracao = proposta.colaboracao
+                    anexo = proposta.anexo
+                    proposta = preenche_proposta(request, None)
+                    proposta.organizacao = organizacao
+                    proposta.colaboracao = colaboracao
+                    proposta.anexo = anexo
+                else:
+                    proposta = preenche_proposta(request, None)
+            elif request.POST.get("update"):
                 preenche_proposta(request, proposta)
+            elif request.POST.get("remover"):
+                proposta.delete()
+                context = {
+                    "voltar": True,
+                    "mensagem": "Proposta removida!",
+                }
+                return render(request, "generic.html", context=context)
+            else:
+                return HttpResponse("Erro não identificado.", status=401)
 
             if "arquivo" in request.FILES:
-                arquivo = simple_upload(request.FILES['arquivo'],
+                arquivo = simple_upload(request.FILES["arquivo"],
                                         path=get_upload_path(proposta, ""))
                 proposta.anexo = arquivo[len(settings.MEDIA_URL):]
                 proposta.save()
@@ -587,10 +613,11 @@ def proposta_editar(request, slug):
                     colaboracao_id = request.POST.get("colaboracao", None)
                     if colaboracao_id:
                         proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-                    proposta.save()
+            
+            # Salva a proposta no Banco de Dados
+            proposta.save()
 
-            enviar = "mensagem" in request.POST  # Por e-mail se enviar
-            mensagem = envia_proposta(proposta, enviar)
+            mensagem = envia_proposta(proposta, request, enviar)
             resposta = "Submissão de proposta de projeto "
             resposta += "atualizada com sucesso.<br>"
 

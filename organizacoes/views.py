@@ -342,7 +342,7 @@ def proposta_submissao(request):
                 proposta.save()
 
         enviar = "mensagem" in request.POST  # Por e-mail se enviar
-        mensagem = envia_proposta(proposta, enviar)
+        mensagem = envia_proposta(proposta, request, enviar)
 
         resposta = "Submissão de proposta de projeto realizada "
         resposta += "com sucesso.<br>"
@@ -453,7 +453,7 @@ def carrega_proposta(request):
             proposta, erros = preenche_proposta_pdf(fields, None)
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
-            mensagem = envia_proposta(proposta, enviar)
+            mensagem = envia_proposta(proposta, request, enviar)
 
             if erros:
                 resposta += "ERROS:<br><b style='color:red;font-size:40px'>"

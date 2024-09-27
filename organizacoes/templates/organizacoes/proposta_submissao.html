@@ -271,16 +271,26 @@
             </div>
           {% endif %}
 
-          <div class="col-xl-auto" style="margin-top: 20px;">
+          <div class="col-xl-auto mt-3 p-0">
             <div class="container">
               <div class="row justify-content-center">
-                <div class="form-check" style="margin: 0px 12px 0px 12px; padding-left: 0px;">
+                <div class="form-check p-0 text-center">
+                  <input type="submit" class="btn btn-primary mb-1" 
+                    {% if edicao %}name="update" value="Atualizar Proposta de Projeto"{% else %}
+                    name="new" value="Enviar Proposta de Projeto"{% endif %}
+                    {% if vencida or liberadas_propostas %}disabled{% endif %}>
                   {% if not liberadas_propostas %}
-                    <input type="submit" class="btn btn-primary mb-1" name="{% if edicao %}update" value="Atualizar{% else %}new" value="Enviar{% endif %} Proposta de Projeto">
-                    {% if proposta and vencida %}
-                      <input type="submit" class="btn btn-primary mb-1" name="new" value="Nova Proposta de Projeto ">
-                      <span class="red-bold" style="display: block;">Essa proposta foi submetida em um semestre anterior,
-                        ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
+                    {% if proposta and not liberadas_propostas %}
+                      {% if vencida %}
+                        <input type="submit" class="btn btn-primary mb-1" name="new" value="Nova Proposta de Projeto ">
+                      {% endif %}
+                      <input type="submit" class="btn btn-warning mb-1" name="remover" value="Remover Proposta de Projeto"
+                        onclick="return confirm('Você tem certeza que deseja remover esta proposta de projeto?');"
+                        {% if vencida %}disabled{% endif %}>
+                      {% if vencida %}
+                        <span class="red-bold" style="display: block;">Essa proposta foi submetida em um semestre anterior,
+                          ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
+                      {% endif %}
                     {% endif %}
                   {% endif %}
                 </div>

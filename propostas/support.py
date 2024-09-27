@@ -292,10 +292,11 @@ def lista_interesses(proposta):
         message += "- {0}<br>".format(Proposta.TIPO_INTERESSE[4][1])
     return message
 
-def envia_proposta(proposta, enviar=True):
+def envia_proposta(proposta, request, enviar=True):
     """Envia Proposta por email."""
 
     context_carta = {
+            "request": request,
             "proposta": proposta,
             "settings": settings,
             "emails": list(map(str.strip, re.split(",|;", proposta.email))),
