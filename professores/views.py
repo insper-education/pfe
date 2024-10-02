@@ -2476,7 +2476,7 @@ def dinamicas_lista(request):
                 "informacoes": informacoes,
             }
 
-    return render(request, 'professores/dinamicas_lista.html', context)
+    return render(request, "professores/dinamicas_lista.html", context)
 
 
 @login_required
@@ -2494,7 +2494,7 @@ def orientadores_tabela_completa(request):
         "cabecalhos": cabecalhos,
         "titulo": titulo,
     }
-    return render(request, 'professores/orientadores_tabela_completa.html', context)
+    return render(request, "professores/orientadores_tabela_completa.html", context)
 
 
 
