@@ -13,8 +13,33 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
-    label {
-      margin: 6px 0px 6px 0px;
+    label {margin: 6px 0px 6px 0px;}
+    .radio {
+      display: inline-block;
+      margin: 0px 0px 0px 0px;
+    }
+    .botao {
+      margin-left: 6px;
+      margin-right: 6px;
+      display: flex;
+      align-items: center;
+    }
+    .spa_1 {
+      font-weight: bold;
+      margin: 6px;
+      display: inline-block;
+    }
+    .bot_tag {
+      margin-left: 0.5em;
+      margin-right: 0.5em;
+      display: inline-block;
+      /*text-wrap: nowrap;*/
+      white-space: nowrap;
+      padding: 0.25em 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      font-size: 0.9em;
     }
   </style>
 {% endblock %}
@@ -24,13 +49,13 @@
     <span class="titulo">{{titulo}}</span>
     
     {% if user.tipo_de_usuario == 1 %}
-    <h4>Projeto: 
-            {% if projeto %}
-              ({{projeto.organizacao}}) {{projeto.get_titulo}}
-            {% else %}
-              &lt; PROJETO NÃO ENCONTRADO &gt;
-            {% endif %}
-    </h4>
+      <h4>Projeto: 
+        {% if projeto %}
+          [{{projeto.organizacao}}] {{projeto.get_titulo}}
+        {% else %}
+          &lt; PROJETO NÃO ENCONTRADO &gt;
+        {% endif %}
+      </h4>
     {% else %}
         <h4>Somente visualização das opções de encontros (você não está registrado como estudante)</h4>
     {% endif %}
@@ -51,34 +76,39 @@
       <table class="table table-borderless table-sm arredondado">
         <tbody>
         {% for e in encontros %}
-          <tr><td style="display: flex;"><div style="margin-right: 6px; display: flex; align-items: center;">
+          <tr><td style="display: flex;"><div class="botao">
             <input id="din{{e.id}}" type="radio" name="selection" value="{{e.id}}" 
             {% if e.projeto == projeto %}checked{% endif %}
             {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
             ></div>
               {% if e.projeto and e.projeto != projeto %}
-                <div style="color:lightgrey;">
+                <div class="tag_intern" style="color:lightgrey;">
                 <label title="Horário já selecionado por outro grupo!" 
               {% elif e.projeto and e.projeto == projeto %}
-                <div style="color:Red;">
+                <div class="tag_intern" style="color:Red;">
                 <label title="Horário selecionado por seu grupo!"
               {% else %}
-                <div style="color:Green;">
+                <div class="tag_intern" style="color:Green;">
                 <label title="Horário livre!"
               {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" for="din{{e.id}}">
-                <span style="font-weight: bold;">
+                <span class="spa_1">
                   <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                   <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 </span>
-                {% if e.facilitador %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">(Facilitador: {{e.facilitador.get_full_name}})</div>{% endif %}
-                {% if e.location %}<div style="margin-left: 1em; display: inline-block; text-wrap: nowrap;">[Local: {{e.location}}]</div>{% endif %}
+                {% if e.facilitador %}<div class="bot_tag">Facilitador: {{e.facilitador.get_full_name}}</div>{% endif %}
+                {% if e.location %}
+                  <div class="bot_tag">
+                    Local: {% if e.url_location %}Vídeo-conferência{% else %}{{e.location}}{% endif %}
+                  </div>
+                {% endif %}
                 {% if e.projeto and e.projeto == projeto %}
                   <div style="text-decoration: underline; margin-left: 1em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
                 {% endif %}
               </label>
               {% endfor %}
             </div>
-          </td></tr>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
