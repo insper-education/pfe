@@ -29,7 +29,7 @@ from django.db.models.functions import Lower
 from django.db.models import F
 
 
-from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2
+from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, Banca
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento, Certificado
 from projetos.support import calcula_objetivos, get_upload_path
 
@@ -530,16 +530,6 @@ class Aluno(models.Model):
                     notas.append(("RIG", nota_rig, peso/100 if peso else 0,
                                 "Relatório Intermediário de Grupo"))
 
-                # Banca Intermediária (1)
-                avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                                    exame=Exame.objects.get(sigla="BI"))
-                if avaliacoes_banca_interm:
-                    nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
-                                                            avaliacoes_banca_interm,
-                                                            eh_banca=True)
-                    notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
-                                "Banca Intermediária"))
-
 
                 # Relatório Final Individual (22)
                 rfi = Avaliacao2.objects.filter(alocacao=alocacao,
@@ -559,16 +549,65 @@ class Aluno(models.Model):
                     nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
                     notas.append(("RFG", nota_rfg, peso/100 if peso else 0,
                                 "Relatório Final de Grupo"))
+                    
+                
+                ### BANCAS TEM UM TRATAMENTO ESPECIAL PARA SÓ FECHAR DEPOIS QUE TODOS MEMBROS POSTAREM AS NOTAS 
+                now = datetime.datetime.now()
+                # Banca Intermediária (1)
+                banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=1).last()  # (1, "Intermediária"),
+                if banca:
+                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                    exame=Exame.objects.get(sigla="BI"))
+                    if avaliacoes:
+                        # Verifica se todos avaliaram a pelo menos 24 horas atrás
+                        valido = True
+                        for membro in banca.membros():
+                            avaliacao = avaliacoes.filter(avaliador=membro).last()
+                            if not avaliacao:
+                                valido = False
+                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                valido = False
+                        if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                            avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
+                            if not avaliacao:
+                                valido = False
+                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                valido = False
+
+                        if valido:
+                            nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
+                                                                    avaliacoes,
+                                                                    eh_banca=True)
+                            notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
+                                        "Banca Intermediária"))
 
                 # Banca Final (2)
-                avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                                exame=Exame.objects.get(sigla="BF"))
-                if avaliacoes_banca_final:
-                    nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
-                                                            avaliacoes_banca_final,
-                                                            eh_banca=True)
-                    notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
-                                "Banca Final"))
+                banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=0).last()  # (0, "Final"),
+                if banca:
+                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto,
+                                                exame=Exame.objects.get(sigla="BF"))
+                    if avaliacoes:
+                        # Verifica se todos avaliaram a pelo menos 24 horas atrás
+                        valido = True
+                        for membro in banca.membros():
+                            avaliacao = avaliacoes.filter(avaliador=membro).last()
+                            if not avaliacao:
+                                valido = False
+                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                valido = False
+                        if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                            avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
+                            if not avaliacao:
+                                valido = False
+                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                valido = False
+
+                        if valido:
+                            nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
+                                                                    avaliacoes,
+                                                                    eh_banca=True)
+                            notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
+                                        "Banca Final"))
 
                 
                 # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES

@@ -910,27 +910,31 @@ class Banca(models.Model):
     
     def get_avaliacoes(self):
         """Retorna as avaliações da banca, mas somente se todos os membros da banca já avaliaram."""
-        if self.tipo_de_banca == 0:
+        if self.tipo_de_banca == 0:  # Banca Final
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Final")
-        elif self.tipo_de_banca == 1:
+        elif self.tipo_de_banca == 1:  # Banca Intermediária
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Intermediária")
-        elif self.tipo_de_banca == 2:
+        elif self.tipo_de_banca == 2:  # Falconi
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Falconi")
-        else:
+        else:  # Probation (pelo momento)
             # Não passando avaliações para bancas de probation
             avaliacoes = Avaliacao2.objects.none()
 
-        # Verifica se todos avaliaram
-        if self.membro1 is not None:
-            if not avaliacoes.filter(avaliador=self.membro1).exists():
+        # Verifica se todos avaliaram a pelo menos 24 horas atrás
+        now = datetime.datetime.now()
+        for membro in self.membros():
+            avaliacao = avaliacoes.filter(avaliador=membro).last()
+            if not avaliacao:
                 return None
-        if self.membro2 is not None:
-            if not avaliacoes.filter(avaliador=self.membro2).exists():
+            if now - avaliacao.momento < datetime.timedelta(hours=24):
                 return None
-        if self.membro3 is not None:
-            if not avaliacoes.filter(avaliador=self.membro3).exists():
+        if self.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+            avaliacao = avaliacoes.filter(avaliador=self.projeto.orientador.user).last()
+            if not avaliacao:
                 return None
-
+            if now - avaliacao.momento < datetime.timedelta(hours=24):
+                return None
+        
         objetivos = {}
         nota = 0
         peso = 0
@@ -1639,7 +1643,7 @@ class Avaliacao2(models.Model):
                                  help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text="Data e hora da comunicação") # hora ordena para dia
+                                   help_text="Data e hora da avaliação") # hora ordena para dia
 
     peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True,
                              help_text="Peso da avaliação na média em % (varia de 0 a 100)")
