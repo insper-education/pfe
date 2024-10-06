@@ -608,12 +608,15 @@ def organizacoes_lista(request):
     total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
         .distinct().count()
 
-    #cabecalhos = ["Organização", "Último <br>Contato", "Parceira <br>Desde", "Propostas <br>Enviadas", "Projetos <br>Fechados", "Grupos de <br>Estudantes", ]
-    cabecalhos = ["Company", "Last <br>Contact", "Partner <br>Since", "Submitted <br>Proposals", "Closed <br>Projects", "Group of <br>Students", ]
-
-    #titulo = "Organizações Parceiras"
-    titulo = "Partnership Companies"
-
+    cabecalhos = [
+        {"pt": "Organização", "en": "Company", },
+        {"pt": "Último <br>Contato", "en": "Last <br>Contact", },
+        {"pt": "Parceira <br>Desde", "en": "Partner <br>Since", },
+        {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals", },
+        {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects", },
+        {"pt": "Grupos de <br>Estudantes", "en": "Group of S<br>tudents", },    
+    ]
+    
     context = {
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
@@ -623,7 +626,7 @@ def organizacoes_lista(request):
         "filtro": "todas",
         "grupos": grupos,
         "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        "titulo": {"pt": "Organizações Parceiras", "en": "Partnership Companies"},
     }
 
     return render(request, "organizacoes/organizacoes_lista.html", context)
@@ -771,8 +774,8 @@ def todos_usuarios(request):
 
     context = {
         "usuarios": usuarios,
-        "cabecalhos": ["Nome", "e-mail", "Tipo" ],
-        "titulo": "Todos os Usuários",
+        "cabecalhos": [{"pt": "Nome", "en": "Name", }, {"pt": "e-mail", "en": "e-mail", }, {"pt": "Tipo", "en": "Type", }, ],
+        "titulo": {"pt": "Todos os Usuários", "en": "All Users"},
         }
 
     return render(request, "organizacoes/todos_usuarios.html", context)

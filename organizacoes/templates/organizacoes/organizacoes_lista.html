@@ -12,12 +12,15 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}<small class="esconder"><a
-      href="{% url 'cadastrar_organizacao' %}"
-      >&#10133;</a></small>
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+    <small class="esconder"><a href="{% url 'cadastrar_organizacao' %}">&#10133;</a></small>
   </span>
 
-  {% include "tabelas_top.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
+  {% include "tabelas_top_ml.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
         {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
           <tr class="item">
 
@@ -57,5 +60,8 @@
     }
     window.onload = carrega_pagina
   </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

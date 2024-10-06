@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <head>
-  {% block title %}<title>Capstone{% if titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
+  {% block title %}<title>Capstone{% if titulo.pt %} - {{ titulo.pt }}{% elif titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
   {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

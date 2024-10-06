@@ -12,7 +12,11 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder"><a href="{% url 'cadastrar_usuario' %}">&#10133;</a></small>
   </span>
 
@@ -33,7 +37,7 @@
 
   <div class="atualizar">
 
-    {% include "tabelas_top.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
       {% for usuario in usuarios %}
         <tr class="item" {% if not usuario.is_active %} style="color: lightgrey;" {% endif %}>
           <th scope="row" data-sort="{{usuario.get_full_name}}">
@@ -47,16 +51,19 @@
         </tr>
       {% endfor %}
     </table> 
-    </div> {% comment %} do "tabelas_top.html" {% endcomment %}
-
-    <script>
-      function carrega_pagina() {};
-      function carrega_site(){carrega_pagina();};
-      window.onload = carrega_site
-    </script>
+    </div> {% comment %} do "tabelas_top_ml.html" {% endcomment %}
 
   </div>
 
-  {% include "selecao_ajax.html" with tabela="Usuarios" %}
+  <script>
+    function carrega_pagina(){
+      {% include "selecao_ajax.html" with tabela="Usuarios" %}
+    }
+    function carrega_site(){carrega_pagina();};
+    window.onload = carrega_site;
+  </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -4,7 +4,7 @@
   Data: 3 de Maio de 2024
 {% endcomment %}
 
-<script>
+{% comment %} <script> {% endcomment %}
 
   var request_ajax = null;
     
@@ -49,12 +49,12 @@
 
   $(".filter").change(recarregar_pagina);
 
-  // pequeno tempo para select voltar a funcionar
+  {% comment %} // pequeno tempo para select voltar a funcionar
   function recarregar() {
       setTimeout(function () {
               recarregar_pagina();
       }, 10);
   }
-  recarregar();
+  recarregar(); {% endcomment %}
 
-</script>
+{% comment %} </script> {% endcomment %}

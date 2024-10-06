@@ -1,0 +1,16 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Outubro de 2024
+{% endcomment %}
+
+{% comment %} Somente para a parte de cima das tabelas comuns {% endcomment %}
+<div class="table-responsive">
+  <table id="{{tabela}}Table" class="table table-bordered table-hover table-sm" style="width: 100%;">
+  <thead class="table-info">
+    <tr>
+      {% for cabecalho in cabecalhos %}
+        <th scope="col" class="text-center"><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
+      {% endfor %}
+    </tr>
+  </thead>
