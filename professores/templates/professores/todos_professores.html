@@ -11,12 +11,16 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder">
     <a href="{% url 'cadastrar_usuario' %}?tipo=professor">&#10133;</a></small>
   </span>
 
-  {% include "tabelas_top.html" with tabela="Professores" cabecalhos=cabecalhos %}
+  {% include "tabelas_top_ml.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
       <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}>
         <th scope="row" data-sort="{{professor.user.get_full_name}}">
@@ -55,9 +59,11 @@
 
   <script>
     function carrega_pagina(){
-      {% include "tabelas_scripts.html" with tabela='Professores' %}
+      {% include "tabelas_scripts.html" with tabela="Professores" %}
     }
     window.onload = carrega_pagina
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -178,9 +178,14 @@ table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)"
 
 // function to update the language
 function atualiza_lingua(lang) {
-    table.destroy();
+    {% comment %} Primeiro Destruir a tabela {% endcomment %}
+    var tableId = "#{{tabela}}Table";
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().destroy();
+    }
+    {% comment %} Setar a nova linguagem {% endcomment %}
     configuracao_table["language"] = textos_linguas[lang];
-    table = $('#{{tabela}}Table').DataTable(configuracao_table);
+    table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
 }
 

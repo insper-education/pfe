@@ -12,7 +12,11 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder">
     <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro">&#10133;</a></small>
   </span>
@@ -22,7 +26,7 @@
 
   <div class="atualizar">
 
-    {% include "tabelas_top.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
       {% for parceiro in parceiros %}
         <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
           <th scope="row" data-sort="{{parceiro.user.get_full_name}}">
@@ -100,5 +104,8 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela='Parceiros' %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

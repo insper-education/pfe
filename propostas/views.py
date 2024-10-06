@@ -371,9 +371,15 @@ def propostas_lista(request):
 
             propostas = propostas.order_by("ano", "semestre", "organizacao", "titulo")
 
+            cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
+                                {"pt": "Período", "en": "Period"},
+                                {"pt": "Organização", "en": "Organization"},
+                                {"pt": "Tipo", "en": "Type"},
+                    ]
             context = {
                 "propostas": propostas,
                 "edicao": edicao,
+                "cabecalhos": cabecalhos,
             }
 
         else:
@@ -381,7 +387,7 @@ def propostas_lista(request):
     else:
         edicoes, _, _ = get_edicoes(Proposta)
         context = {
-            "titulo": "Lista de Propostas",
+            "titulo": {"pt": "Lista de Propostas", "en": "Proposals List"},
             "edicoes": edicoes,
             }
 

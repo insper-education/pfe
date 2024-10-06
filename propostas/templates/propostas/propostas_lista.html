@@ -16,7 +16,12 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}<small class="esconder"><a
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+    <small class="esconder"><a
     href="{% url 'proposta_submissao' %}"
     >&#10133;</a></small>
   </span>
@@ -27,73 +32,70 @@
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
   <div class="atualizar">
 
-    {% if propostas %}
-      <div class="table-responsive">
-      <table id="PropostasTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-        <thead class="table-info">
-        <tr>
-          <th scope="col" class="text-center">Título da Proposta</th>
-          {% if edicao == "todas" %}
-            <th scope="col" class="periodo text-center">Período</th>
-          {% endif %}
-          <th scope="col" class="text-center">Organização</th>
-          <th scope="col" class="text-center">Tipo</th>
-        </tr>
-        </thead>
-        {% for proposta in propostas %} 
-        
-          <tr class="item"> 
+    {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos %}
 
-            <th scope="row">
-              <a href="{% url 'proposta_completa' proposta.id %}">
-                {{proposta.titulo}}
-              </a>  
-            </th>
-
-            {% if edicao == "todas" %}
-              <td class="text-center periodo">
-                {{proposta.ano}}.{{proposta.semestre}}
-              </td>
-            {% endif %}
-
-            <td>
-              {% if proposta.organizacao %}
-                <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-                  {{ proposta.organizacao.nome }}
-                </a>
-              {% elif proposta.nome_organizacao %}
-                {{ proposta.nome_organizacao }}
-              {% else %}
-                Organização não definida.
-              {% endif %}  
-            </td>
-
-            <td class="text-center">
-              {% include "tipo_proposta.html" %}
-            </td>
-
-          </tr>
-
-        {% endfor %}
-
-      </table>
-      </div>
-
-      <p>&nbsp;</p>
-      <strong>Número Total de Propostas:</strong> 
-      <span id="propostas_publicadas">{{propostas|length}}</span>
+      {% for proposta in propostas %} 
       
-    {% endif %}
+        <tr class="item"> 
+
+          <th scope="row">
+            <a href="{% url 'proposta_completa' proposta.id %}">
+              {{proposta.titulo}}
+            </a>  
+          </th>
+
+          {% comment %} {% if edicao == "todas" %} {% endcomment %}
+            <td class="text-center periodo">
+              {{proposta.ano}}.{{proposta.semestre}}
+            </td>
+          {% comment %} {% endif %} {% endcomment %}
+
+          <td>
+            {% if proposta.organizacao %}
+              <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+                {{ proposta.organizacao.nome }}
+              </a>
+            {% elif proposta.nome_organizacao %}
+              {{ proposta.nome_organizacao }}
+            {% else %}
+              Organização não definida.
+            {% endif %}  
+          </td>
+
+          <td class="text-center">
+            {% include "tipo_proposta.html" %}
+          </td>
+
+        </tr>
+
+      {% endfor %}
+
+    </table>
+    </div>
+
+    {% comment %} <p>&nbsp;</p>
+    <strong>Número Total de Propostas:</strong> 
+    <span id="propostas_publicadas">{{propostas|length}}</span>
+      {% endcomment %}
+
 
     <script>
-      function carrega_pagina() {};
+      function carrega_pagina(){
+        if($("#PropostasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#PropostasTable").dataTable();
+          if(table) {
+            // Hide/Esconde certas colunas
+            table.fnSetColumnVis( 1, !($("#filterEdicao").val()!="todas" ));  // esconde Período
+          }
+        }
+      }
       window.onload = carrega_pagina
     </script>
 
   </div>
   
-  {% include "edicoes_ajax.html" with tabela='Propostas' %}
+  {% include "edicoes_ajax.html" with tabela="Propostas" %}
 
-  <p>&nbsp;</p>
+  {% include "linguas.html" %}
 
 {% endblock %}

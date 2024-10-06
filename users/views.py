@@ -229,7 +229,16 @@ def estudantes_lista(request):
             num_alunos_masculino = alunos_list.filter(user__genero='M').count()
             num_alunos_feminino = alunos_list.filter(user__genero='F').count()
 
-            cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Linkedin", "Celular", ]
+            #cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Linkedin", "Celular", ]
+            cabecalhos = [{"pt": "Nome", "en": "Name"},
+                          {"pt": "Matrícula", "en": "Enrollment"},
+                          {"pt": "e-mail", "en": "e-mail"},
+                          {"pt": "Curso", "en": "Program"},
+                          {"pt": "Período", "en": "Period"},
+                          {"pt": "Projeto", "en": "Project"},
+                          {"pt": "Linkedin", "en": "Linkedin"},
+                          {"pt": "Celular", "en": "Cellphone"},
+                          ]
             
             context = {
                 "alunos_list": alunos_list,
@@ -256,10 +265,10 @@ def estudantes_lista(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Aluno)
-        titulo = "Estudantes"
+
         context = {
             "edicoes": edicoes,
-            "titulo": titulo,
+            "titulo": {"pt": "Estudantes", "en": "Students"},
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
         }

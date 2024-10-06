@@ -227,8 +227,8 @@
     <script>
       function carrega_pagina() {
         // Esconde a coluna de Período se a edição não for "todas"
-        if($('#ProjetosTable th').length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $('#ProjetosTable').dataTable();
+        if($("#ProjetosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#ProjetosTable").dataTable();
           if(table) {table.fnSetColumnVis( 3, !($("#filterEdicao").val()!="todas" ));}  // esconde Período
         }
       };

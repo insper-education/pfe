@@ -16,6 +16,7 @@
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
   {% include "tabelas_includes.html" %}
+  
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
@@ -28,7 +29,11 @@
 
 {% block content %}
   
-  <span class="titulo">{{titulo}}
+  <div id="language_button" style="user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=estudante">&#10133;</a></small>
   </span>
 
@@ -44,7 +49,7 @@
   
   <div class="atualizar">
 
-    {% include "tabelas_top.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
         {% for aluno in alunos_list %} 
         <tr class="item">
           <th scope="row" data-order="{{aluno.user.get_full_name}}">
@@ -349,6 +354,17 @@
             table.fnSetColumnVis( 1, false );  // esconde Matrícula
             table.fnSetColumnVis( 6, false );  // esconde Linkedin
             table.fnSetColumnVis( 7, false );  // esconde Telefone
+
+            // Para selecionar o idioma
+            lingua_atual = localStorage.getItem("lingua");
+            if (lingua_atual == "en") {
+              $('[lang="pt"]').css("display", "none");
+              $('[lang="en"]').css("display", "initial");
+            } else {
+              $('[lang="pt"]').css("display", "initial");
+              $('[lang="en"]').css("display", "none");
+            }
+
           }
         }
       };
@@ -363,5 +379,8 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Estudantes" com_cursos=True %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

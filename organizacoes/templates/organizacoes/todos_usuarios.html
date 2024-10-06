@@ -55,10 +55,10 @@
 
   </div>
 
+  {% include "selecao_ajax.html" with tabela="Usuarios" %}
+
   <script>
-    function carrega_pagina(){
-      {% include "selecao_ajax.html" with tabela="Usuarios" %}
-    }
+    function carrega_pagina(){}
     function carrega_site(){carrega_pagina();};
     window.onload = carrega_site;
   </script>

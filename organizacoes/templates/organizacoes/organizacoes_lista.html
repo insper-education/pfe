@@ -51,12 +51,12 @@
       </table>
     </div>
 
-    <strong>{% if lingua == 'pt' %}Total de Propostas Submetidas{% else %}Total of Submitted Proposals{% endif %}:</strong> {{ total_submetidos }}<br>
-    <strong>{% if lingua == 'pt' %}Total de Projetos Fechados{% else %}Total of Closed Projects{% endif %}:</strong> {{ total_fechados }}<br>
+    <strong lang="pt">Total de Propostas Submetidas</strong><strong lang="en">Total of Submitted Proposals</strong>: {{ total_submetidos }}<br>
+    <strong lang="pt">Total de Projetos Fechados</strong><strong lang="en">Total of Closed Projects</strong>: {{ total_fechados }}<br>
 
   <script>
     function carrega_pagina(){
-      {% include "tabelas_scripts.html" with tabela='Organizacoes' %}
+      {% include "tabelas_scripts.html" with tabela="Organizacoes" %}
     }
     window.onload = carrega_pagina
   </script>

@@ -445,9 +445,11 @@ def projetos_lista(request):
 
             projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao")
 
-            #cabecalhos = ["Projeto", "Estudantes", "Período", "Orientador", "Organização", ]
-            cabecalhos = ["Project" ,"Students", "Semester", "Advisor", "Sponsor",]
-            
+            cabecalhos = [{ "pt": "Projeto", "en": "Project" },
+                          { "pt": "Estudantes", "en": "Students" },
+                          { "pt": "Período", "en": "Semester" },
+                          { "pt": "Orientador", "en": "Advisor" },
+                          { "pt": "Organização", "en": "Sponsor" },]
             context = {
                 "projetos": projetos,
                 "cabecalhos": cabecalhos,
@@ -456,10 +458,8 @@ def projetos_lista(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Projeto)
-        #titulo = "Projetos"
-        titulo = "Projects"
         context = {
-            "titulo": titulo,
+            "titulo": { "pt": "Projetos", "en": "Projects"},
             "edicoes": edicoes,
         }
 
@@ -480,7 +480,10 @@ def bancas_lista(request):
                 ano, semestre = edicao.split('.')
                 bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
-            cabecalhos = ["Tipo" ,"Data", "Projeto", "Avaliadores",]
+            cabecalhos = [{"pt": "Tipo", "en": "Type"},
+                          {"pt": "Data", "en": "Date"},
+                          {"pt": "Projeto", "en": "Project"},
+                          {"pt": "Avaliadores", "en": "Evaluators"},]
             
             context = {
                 "bancas": bancas,
@@ -490,9 +493,8 @@ def bancas_lista(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         edicoes, _, _ = get_edicoes(Projeto)
-        titulo = "Bancas"
         context = {
-            "titulo": titulo,
+            "titulo": {"pt": "Bancas", "en": "Evaluation Boards"},
             "edicoes": edicoes,
         }
 
@@ -652,9 +654,9 @@ def reembolso_pedir(request):
 def comite(request):
     """Exibe os professores que estão no comitê do Capstone."""
     context = {
-        "professores": Professor.objects.filter(user__membro_comite=True),
-        "cabecalhos": ["Nome", "e-mail", "Lattes", ],
-        "titulo": "Comitê Capstone",
+            "professores": Professor.objects.filter(user__membro_comite=True),
+            "cabecalhos": [{"pt": "Nome", "en": "Name"}, {"pt": "e-mail", "en": "e-mail"}, {"pt": "Lattes", "en": "Lattes"}, ],
+            "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
     return render(request, "projetos/comite_pfe.html", context)
 

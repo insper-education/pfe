@@ -3090,9 +3090,13 @@ def resultado_meus_projetos(request):
 def todos_professores(request):
     """Exibe todas os professores que estão cadastrados."""
     context = {
-        "professores": Professor.objects.all(),
-        "cabecalhos": ["Nome", "e-mail", "Bancas", "Orientações", "Lattes", ],
-        "titulo": "Professores",
+            "professores": Professor.objects.all(),
+            "cabecalhos": [{ "pt": "Nome", "en": "Name", },
+                        { "pt": "e-mail", "en": "e-mail", },
+                        { "pt": "Bancas", "en": "Boards", },
+                        { "pt": "Orientações", "en": "Orientations", },
+                        { "pt": "Lattes", "en": "Lattes", },],
+            "titulo": { "pt": "Professores", "en": "Professors", },
         }
 
     return render(request, "professores/todos_professores.html", context)

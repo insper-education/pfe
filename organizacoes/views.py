@@ -750,10 +750,16 @@ def todos_parceiros(request):
                 parceiros = parceiros.filter(id__in=conexoes)
 
     edicoes, _, _ = get_edicoes(Projeto)    
+    cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
+                  { "pt": "Cargo", "en": "Position", }, 
+                  { "pt": "Organização", "en": "Organization", }, 
+                  { "pt": "e-mail", "en": "e-mail", }, 
+                  { "pt": "telefone", "en": "phone", }, 
+                  { "pt": "papel", "en": "role", }, ]
     context = {
         "parceiros": parceiros,
-        "cabecalhos": ["Nome", "Cargo", "Organização", "e-mail", "telefone", "papel", ],
-        "titulo": "Parceiros Profissionais",
+        "cabecalhos": cabecalhos,
+        "titulo": { "pt": "Parceiros Profissionais", "en": "Professional Partners", },
         "edicoes": edicoes,
         "edicao": edicao,
         "Conexao": Conexao,
