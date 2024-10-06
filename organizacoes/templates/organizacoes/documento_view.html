@@ -61,7 +61,7 @@
 
   <div class="modal-body">
 
-    <div class="mb-3 row text-nowrap">
+    <div class="mb-3 row text-nowrap text-truncate">
       {% if projeto %}
         <div class="col-sm form-label">
           <span for="organizacao">Organização:</span>
@@ -101,7 +101,7 @@
       {% endif %}
     </div>
 
-    <div class="mb-3 row text-nowrap">
+    <div class="mb-3 row text-nowrap text-truncate">
       {% if projeto %}
         <div class="col-sm form-label">
           <span for="projeto">Projeto:</span>
@@ -111,7 +111,7 @@
           {% endif %}
             {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            </a>  
+            </a>
           {% endif %}
         </div>
       {% else %}
@@ -130,7 +130,7 @@
       {% endif %}
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-3 row text-truncate">
       {% if tipo %}
         <div class="col-sm form-label">
           <span for="tipo_documento">Tipo:</span>
@@ -152,7 +152,7 @@
       {% endif %}
     </div>
 
-    <div class="mb-3 row">
+    <div class="mb-3 row text-truncate">
       {% if travado %}
         <div class="col-sm form-label">
           <label>Data:</label> <span id="datetime"></span>
@@ -174,7 +174,7 @@
     </div>
 
     {% if not tipo or tipo and tipo.arquivo %}
-      <div class="mb-3 row">
+      <div class="mb-3 row text-truncate">
         <label for="arquivo" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
         <div class="col2">
           <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
@@ -200,7 +200,7 @@
     {% endif %}
     
     {% if not tipo or tipo and tipo.link %}
-      <div class="mb-3 row">
+      <div class="mb-3 row text-truncate">
         <label for="link" class="col1 col-form-label">Link</label>
         <div class="col2">
           <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://">
@@ -208,7 +208,7 @@
       </div>
     {% endif %}
 
-    <div class="mb-3 row">
+    <div class="mb-3 row text-truncate">
       <label for="lingua_do_documento" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Língua</label>
       <div class="col2">
         <select id="lingua_do_documento" name="lingua_do_documento" class="form-control" required="required" >
@@ -219,7 +219,7 @@
     </div>
 
     {% if not travado %}
-      <div class="mb-3 row">
+      <div class="mb-3 row text-truncate">
         <label for="anotacao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">Anotação</label>
         <div class="col2">
           <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "anotacao" %}" id="anotacao" name="anotacao">
