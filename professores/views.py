@@ -1636,12 +1636,19 @@ def banca_avaliar(request, slug, documento_id=None):
                 subject += "Probation : " + banca.alocacao.aluno.user.get_full_name()
             subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
             
+            # Se não houver erro a mensagem deve permanecer vazia
+            error_message = ""
+
             # Envio de mensagem para Avaliador
             message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
             recipient_list = [avaliador.email, ]
-            check = email(subject, recipient_list, message)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            try:
+                check = email(subject, recipient_list, message)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
 
             # Envio de mensagem para Orientador / Coordenação
@@ -1651,14 +1658,22 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [projeto.orientador.user.email, ]
             else: # banca.tipo_de_banca == 2 or banca.tipo_de_banca == 3:  # Falconi ou Probation
                 recipient_list = [coordenacao.user.email, ]
-            check = email(subject, recipient_list, message)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            try:
+                check = email(subject, recipient_list, message)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
             
-            resposta = "Avaliação submetida e enviada para:<br>"
-            for recipient in recipient_list:
-                resposta += "&bull; {0}<br>".format(recipient)
+            resposta = ""
+            if error_message:
+                resposta += "Erro ao enviar e-mail de confirmação de avaliação de banca. Contudo avaliação foi salva no servidor<br>"
+            else:                
+                resposta += "Avaliação submetida e enviada para:<br>"
+                for recipient in recipient_list:
+                    resposta += "&bull; {0}<br>".format(recipient)
             if realizada:
                 resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
             resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"

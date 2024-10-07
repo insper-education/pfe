@@ -1,0 +1,14 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 7 de Outubro de 2024
+{% endcomment %}
+
+<ol>
+  {% if banca.get_projeto.orientador and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}
+    <li> {{banca.get_projeto.orientador.user.get_full_name}} [orientador] <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></li>
+  {% endif %}
+  {% for membro in banca.membros %}
+    <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+  {% endfor %}
+</ol>

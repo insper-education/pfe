@@ -493,7 +493,7 @@ class Aluno(models.Model):
         return edicao
 
     @property
-    def get_notas(self):
+    def get_notas(self, request=None):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante
 
@@ -561,18 +561,20 @@ class Aluno(models.Model):
                     if avaliacoes:
                         # Verifica se todos avaliaram a pelo menos 24 horas atrás
                         valido = True
-                        for membro in banca.membros():
-                            avaliacao = avaliacoes.filter(avaliador=membro).last()
-                            if not avaliacao:
-                                valido = False
-                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                valido = False
-                        if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                            avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
-                            if not avaliacao:
-                                valido = False
-                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                valido = False
+
+                        if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+                            for membro in banca.membros():
+                                avaliacao = avaliacoes.filter(avaliador=membro).last()
+                                if not avaliacao:
+                                    valido = False
+                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                    valido = False
+                            if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
+                                if not avaliacao:
+                                    valido = False
+                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                    valido = False
 
                         if valido:
                             nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
@@ -589,18 +591,20 @@ class Aluno(models.Model):
                     if avaliacoes:
                         # Verifica se todos avaliaram a pelo menos 24 horas atrás
                         valido = True
-                        for membro in banca.membros():
-                            avaliacao = avaliacoes.filter(avaliador=membro).last()
-                            if not avaliacao:
-                                valido = False
-                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                valido = False
-                        if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                            avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
-                            if not avaliacao:
-                                valido = False
-                            elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                valido = False
+                        
+                        if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+                            for membro in banca.membros():
+                                avaliacao = avaliacoes.filter(avaliador=membro).last()
+                                if not avaliacao:
+                                    valido = False
+                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                    valido = False
+                            if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
+                                if not avaliacao:
+                                    valido = False
+                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
+                                    valido = False
 
                         if valido:
                             nota_banca_final, peso, avaliadores = Aluno.get_banca(self,

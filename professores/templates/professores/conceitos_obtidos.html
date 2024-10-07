@@ -8,6 +8,8 @@
 {% block head %}
   {% load static %}
   {% load rubricas %}
+  
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
   <style>
     table {
@@ -23,7 +25,7 @@
     table, th, td {border: 1px solid lightgrey;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-    ul {padding-left: 28px;}
+    ul,ol {padding-left: 28px;}
 
   </style>
 
@@ -91,205 +93,209 @@
   {% endfor %}
   </ul>
 
-  {% if avaliadores_inter %}
-    <h5>
-    {% for banca in projeto.banca_set.all %}
-      {% if banca.tipo_de_banca == 1 %}
-          <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-            Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
-          </a>
-      {% endif %}
-    {% endfor %}
-    </h5>
-    <table>    
-      {% for avaliador, objs in avaliadores_inter.items %}
-          <tr><td>
-            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
-            <a href="{% url 'professor_detail' avaliador.professor.id %}">
-              {{avaliador.get_full_name}}
-            </a><br>
-            {% if objs.momento %}<strong>Avaliado em: </strong>{{objs.momento}}<br>{% endif %}
-            {% if objs.items %}
-              <strong>Conceitos:</strong><br>
-              <ul style="list-style-type: '&#x21A3; ';">
-                {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
-                  <li>
-                    <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
-                    <span data-toggle="tooltip" data-html="true" animation="true" title="
-                  {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
-                  <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                  <script>
-                    $("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                      {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                    );
-                    objetivo_tmp = new Objetivo();
-                    objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                    intermediaria.add_objetivo(objetivo_tmp)
-                    {% if conceito.nota %}
-                      intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
-                    {% endif %}
-                  </script>
 
-                {% endif %}{% endfor %}
-              </ul>
-            {% endif %}
-            {% if objs.observacoes_estudantes %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
-              {% if objs.observacoes_orientador %}<br>{% endif %}
-            {% endif %}
-            {% if objs.observacoes_orientador %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
-            {% endif %}
-          </td></tr>
-
-      {% endfor %}
-
-      <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
-        <b>Média das avaliações intermediárias:<ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul></b>
-        <span id="med_interm_calc"></span>
-        <script>
-          for (var key in intermediaria.dict) {
-            if(intermediaria.dict[key].avaliacoes>0) $("#med_aval").append(intermediaria.dict[key].nota_texto());
-          }
-          $("#med_interm_calc").html(intermediaria.media_calculada());
-        </script>
-      </td></tr>
-
-    </table>
-  {% endif %}
-
-  <br>
-
-  {% if avaliadores_final %}
-    <h5>
-    {% for banca in projeto.banca_set.all %}
-      {% if banca.tipo_de_banca == 0 %}
-          <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-            Banca Final ({{banca.startDate|date:"d/m/y"}})
-          </a>
-      {% endif %}
-    {% endfor %}
-    </h5>
-    <table>    
-      {% for avaliador, objs in avaliadores_final.items %}
-          <tr><td>
-            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
-            <a href="{% url 'professor_detail' avaliador.professor.id %}">
-              {{avaliador.get_full_name}}
-            </a><br>
-            <strong>Avaliado em: </strong>{{objs.momento}}<br>
-            <strong>Conceitos:</strong><br>
-            <ul style="list-style-type: '&#x21A3; ';">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
-
-                <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
-                <span id="final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>
-                  $("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                  );
-                  objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                  final.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota %}
-                    final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+  {% for banca in projeto.banca_set.all %}
+    {% if banca.tipo_de_banca == 1 %}
+      <div class="div_arredondado">
+        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+          Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
+        </a></h5>
+        {% include "membros_da_banca.html" %}
+        {% if avaliadores_inter %}
+          <table>    
+            {% for avaliador, objs in avaliadores_inter.items %}
+                <tr><td>
+                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <a href="{% url 'professor_detail' avaliador.professor.id %}">
+                    {{avaliador.get_full_name}}
+                  </a><br>
+                  {% if objs.momento %}<strong>Avaliado em: </strong>{{objs.momento}}<br>{% endif %}
+                  {% if objs.items %}
+                    <strong>Conceitos:</strong><br>
+                    <ul style="list-style-type: '&#x21A3; ';">
+                      {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+                        <li>
+                          <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                          <span data-toggle="tooltip" data-html="true" animation="true" title="
+                        {{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}">
+                        <span id="inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                        <script>
+                          $("#inter{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                            {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                          );
+                          objetivo_tmp = new Objetivo();
+                          objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                          intermediaria.add_objetivo(objetivo_tmp)
+                          {% if conceito.nota %}
+                            intermediaria.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                          {% endif %}
+                        </script>
+    
+                      {% endif %}{% endfor %}
+                    </ul>
                   {% endif %}
-                </script>
-              {% endif %}{% endfor %}
-            </ul>
-            {% if objs.observacoes_estudantes %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
-              {% if objs.observacoes_orientador %}<br>{% endif %}
-            {% endif %}
-            {% if objs.observacoes_orientador %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
-            {% endif %}
-          </td></tr>
+                  {% if objs.observacoes_estudantes %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    {% if objs.observacoes_orientador %}<br>{% endif %}
+                  {% endif %}
+                  {% if objs.observacoes_orientador %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                  {% endif %}
+                </td></tr>
+            {% endfor %}
+    
+            <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
+              <b>Média das avaliações intermediárias:<ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <span id="med_interm_calc"></span>
+              <script>
+                for (var key in intermediaria.dict) {
+                  if(intermediaria.dict[key].avaliacoes>0) $("#med_aval").append(intermediaria.dict[key].nota_texto());
+                }
+                $("#med_interm_calc").html(intermediaria.media_calculada());
+              </script>
+            </td></tr>
+    
+          </table>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
 
-      {% endfor %}
-
-      <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
-        <b>Média das avaliações finais:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul></b>
-        <span id="med_final_calc"></span>
-        <script>
-          for (var key in final.dict) {
-            if(final.dict[key].avaliacoes>0) $("#med_final").append(final.dict[key].texto());
-          }
-          $("#med_final_calc").html(final.media_calculada());
-        </script>
-      </td></tr>
-
-    </table>
-  {% endif %}
   <br>
 
-  {% if avaliadores_falconi %}
-    <h5>
-    {% for banca in projeto.banca_set.all %}
-      {% if banca.tipo_de_banca == 2 %}    
-          <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+  {% for banca in projeto.banca_set.all %}
+    {% if banca.tipo_de_banca == 0 %}
+      <div class="div_arredondado">
+        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+          Banca Final ({{banca.startDate|date:"d/m/y"}})
+        </a></h5>
+        {% include "membros_da_banca.html" %}
+        {% if avaliadores_final %}
+          <table>    
+            {% for avaliador, objs in avaliadores_final.items %}
+                <tr><td>
+                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <a href="{% url 'professor_detail' avaliador.professor.id %}">
+                    {{avaliador.get_full_name}}
+                  </a><br>
+                  <strong>Avaliado em: </strong>{{objs.momento}}<br>
+                  <strong>Conceitos:</strong><br>
+                  <ul style="list-style-type: '&#x21A3; ';">
+                    {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+
+                      <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                      {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
+                      <span id="final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                      <script>
+                        $("#final{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                          {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                        );
+                        objetivo_tmp = new Objetivo();
+                        objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                        final.add_objetivo(objetivo_tmp)
+                        {% if conceito.nota %}
+                          final.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                        {% endif %}
+                      </script>
+                    {% endif %}{% endfor %}
+                  </ul>
+                  {% if objs.observacoes_estudantes %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    {% if objs.observacoes_orientador %}<br>{% endif %}
+                  {% endif %}
+                  {% if objs.observacoes_orientador %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                  {% endif %}
+                </td></tr>
+
+            {% endfor %}
+
+            <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
+              <b>Média das avaliações finais:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <span id="med_final_calc"></span>
+              <script>
+                for (var key in final.dict) {
+                  if(final.dict[key].avaliacoes>0) $("#med_final").append(final.dict[key].texto());
+                }
+                $("#med_final_calc").html(final.media_calculada());
+              </script>
+            </td></tr>
+
+          </table>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <br>
+
+  {% for banca in projeto.banca_set.all %}
+    {% if banca.tipo_de_banca == 2 %}    
+      <div class="div_arredondado">
+        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
             Banca Falconi ({{banca.startDate|date:"d/m/y"}})
-          </a>
-      {% endif %}
-    {% endfor %}
-    </h5>
-    <table>    
-      {% for avaliador, objs in avaliadores_falconi.items %}
-          <tr><td>
-            <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
-            <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
-              {{avaliador.get_full_name}}
-            </a><br>
-            <strong>Avaliado em: </strong>{{objs.momento}}<br>
-            <strong>Conceitos:</strong><br>
-            <ul style="list-style-type: '&#x21A3; ';">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
-                <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
-                {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
-                <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>
-                  $("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                  );
-                  objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                  falconi.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota %}
-                    falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+        </a></h5>
+        {% include "membros_da_banca.html" %}
+        {% if avaliadores_falconi %}
+          <table>
+            {% for avaliador, objs in avaliadores_falconi.items %}
+                <tr><td>
+                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
+                    {{avaliador.get_full_name}}
+                  </a><br>
+                  <strong>Avaliado em: </strong>{{objs.momento}}<br>
+                  <strong>Conceitos:</strong><br>
+                  <ul style="list-style-type: '&#x21A3; ';">
+                    {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+                      <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
+                      {{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}">
+                      <span id="falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                      <script>
+                        $("#falconi{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                          {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                        );
+                        objetivo_tmp = new Objetivo();
+                        objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                        falconi.add_objetivo(objetivo_tmp)
+                        {% if conceito.nota %}
+                          falconi.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                        {% endif %}
+                      </script>
+      
+                    {% endif %}{% endfor %}
+                  </ul>
+                  {% if objs.observacoes_estudantes %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    {% if objs.observacoes_orientador %}<br>{% endif %}
                   {% endif %}
-                </script>
+                  {% if objs.observacoes_orientador %}  
+                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                  {% endif %}
+      
+                </td></tr>
+      
+            {% endfor %}
+      
+            <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
+              <b>Média das avaliações falconi:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <span id="med_falconi_calc"></span>
+              <script>
+                for (var key in falconi.dict) {
+                  if(falconi.dict[key].avaliacoes>0) $("#med_falconi").append(falconi.dict[key].texto());
+                }
+                $("#med_falconi_calc").html(falconi.media_calculada());
+              </script>
+      
+            </td></tr>
+      
+          </table>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
 
-              {% endif %}{% endfor %}
-            </ul>
-            {% if objs.observacoes_estudantes %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
-              {% if objs.observacoes_orientador %}<br>{% endif %}
-            {% endif %}
-            {% if objs.observacoes_orientador %}  
-              &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
-            {% endif %}
-
-          </td></tr>
-
-      {% endfor %}
-
-      <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
-        <b>Média das avaliações falconi:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul></b>
-        <span id="med_falconi_calc"></span>
-        <script>
-          for (var key in falconi.dict) {
-            if(falconi.dict[key].avaliacoes>0) $("#med_falconi").append(falconi.dict[key].texto());
-          }
-          $("#med_falconi_calc").html(falconi.media_calculada());
-        </script>
-
-      </td></tr>
-
-    </table>
-  {% endif %}
-
-  <b>Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador quando for o caso)
+  <b>Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
      e depois de 24 horas que a última avaliação foi feita.</b>
 
 {% endblock %}
