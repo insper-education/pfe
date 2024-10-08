@@ -97,9 +97,12 @@
   {% for banca in projeto.banca_set.all %}
     {% if banca.tipo_de_banca == 1 %}
       <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-          Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
+        <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+            Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
+          </a>
+          <br><small style="font-size: 11px;">★ Formulário: <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+        </h5>
+        
         {% include "membros_da_banca.html" %}
         {% if avaliadores_inter %}
           <table>    
@@ -166,9 +169,11 @@
   {% for banca in projeto.banca_set.all %}
     {% if banca.tipo_de_banca == 0 %}
       <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-          Banca Final ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
+        <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+            Banca Final ({{banca.startDate|date:"d/m/y"}})
+          </a>
+          <br><small style="font-size: 11px;">★ Formulário: <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+        </h5>
         {% include "membros_da_banca.html" %}
         {% if avaliadores_final %}
           <table>    
@@ -232,9 +237,11 @@
   {% for banca in projeto.banca_set.all %}
     {% if banca.tipo_de_banca == 2 %}    
       <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+        <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
             Banca Falconi ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
+          </a>
+          <br><small style="font-size: 11px;">★ Formulário: <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+        </h5>
         {% include "membros_da_banca.html" %}
         {% if avaliadores_falconi %}
           <table>
