@@ -221,6 +221,20 @@
       <div class="two" id='calendar'></div>
   </div>
 
+  <h4 style="margin: 8px 0 0 0;">Legendas</h4>
+  <div class="wrap">  
+    <div class="legenda" style="display: flex;">
+      <div class="legenda-block">
+        <div id="leg_intermediaria" class="legenda-item">
+          <div class="legenda-texto"><font style="color: #5151D3;">&#9608;</font>&nbsp;Horário Agendado (com projeto alocado)</div>
+        </div>
+        <div id="leg_final" class="legenda-item">
+          <div class="legenda-texto"><font style="color: #307f30;">&#9608;</font>&nbsp;Horário em Aberto (sem projeto alocado)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {% include "janelas-modal.html" %}
 
 {% endblock %}
