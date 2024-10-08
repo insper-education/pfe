@@ -1050,9 +1050,6 @@ class UsuarioEstiloComunicacao(models.Model):
                     for i in v:
                         if i[0] == estilo.bloco:
                             valores[k] += respostas[int(i[1])]
-                            if k == "PR_Fav":
-                                print(f"{estilo.questao} {respostas[int(i[1])]}")
-                                # HABILITAR EMAIL
 
         return {
             "Pragmático Favorável": valores["PR_Fav"],
