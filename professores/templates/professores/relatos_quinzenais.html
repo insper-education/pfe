@@ -27,6 +27,7 @@
 
   <div class="atualizar">
 
+    {% if not edicoes %}
       {% for projeto in projetos %}
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
@@ -46,6 +47,7 @@
       {% empty %}
        Sem alocações de projetos esse semestre.
       {% endfor %}
+    {% endif %}
 
     {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
     {% include "linguas.html" %}

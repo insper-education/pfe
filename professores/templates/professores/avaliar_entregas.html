@@ -23,14 +23,6 @@
       margin-bottom: 6px;
       width: 100%;
     }
-
-    // REMOVER O ESTILO ABAIXO PINTERM
-    .pintern {
-      border: 1px solid grey;
-      display:block;
-      margin: 8px 0px 0px 0px;
-      background-color: #FAFAF3;
-    }
     
     .lightgrey,
     .lightgrey:link,
@@ -60,7 +52,7 @@
   <br>
 
   <div class="atualizar">
-
+    {% if not edicoes %}
       {% for projeto, entregas in avaliacoes %}
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
@@ -214,12 +206,13 @@
       {% empty %}
        Sem alocações de projetos esse semestre.
       {% endfor %}
+    {% endif %}
 
-      {% if edicao == "nenhuma" %}
-        <script>
-          $("#container_edicao").hide();
-        </script>
-      {% endif %}
+    {% if edicao == "nenhuma" %}
+      <script>
+        $("#container_edicao").hide();
+      </script>
+    {% endif %}
 
   </div> 
 
