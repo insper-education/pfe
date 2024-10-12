@@ -121,7 +121,7 @@ def index_professor(request):
                 entregas = filtra_entregas(composicoes, projeto)
                 for item in entregas:
                     if item["evento"] and item["evento"].endDate:
-                        dias_passados = datetime.date.today() - item["evento"].endDate
+                        dias_passados = datetime.date.today() - item["evento"].data_aval()
                         if dias_passados.days > 0:
                             if item["composicao"] and item["composicao"].exame:
                                 if item["composicao"].exame.grupo:
@@ -2703,7 +2703,8 @@ def avaliar_entregas(request, selecao=None):
         context = {
             "avaliacoes": avaliacoes,
             "edicao": edicao,
-            "prazo_avaliar": -int(get_object_or_404(Configuracao).prazo_avaliar)
+            "prazo_avaliar": -int(get_object_or_404(Configuracao).prazo_avaliar),
+            "hoje": datetime.date.today(),
         }
 
     else:

@@ -785,6 +785,21 @@ class Evento(models.Model):
     def em_prazo(self):
         """Se ainda em prazo."""
         return datetime.date.today() <= self.endDate
+    
+    def data_aval(self):
+        """Data para avaliação de relatórios de bancas é especial. (para professores avaliarem)"""
+        # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
+        # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
+        # (14, "Bancas Intermediárias", "#EE82EE"),
+        # (15, "Bancas Finais", "#FFFF00"),
+        if self.tipo_de_evento in [22, 23]:
+            if self.tipo_de_evento == 22:
+                evento = Evento.objects.filter(tipo_de_evento=14, startDate__gt=self.endDate).order_by("startDate").first()
+                return evento.endDate
+            else: # 23
+                evento = Evento.objects.filter(tipo_de_evento=15, startDate__gt=self.endDate).order_by("startDate").first()
+                return evento.endDate
+        return self.endDate
 
     @classmethod
     def create(cls):

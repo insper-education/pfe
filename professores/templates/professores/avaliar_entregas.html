@@ -40,6 +40,15 @@
     .linha {
       margin: 4px 0px 2px 0px;
     }
+
+    .redish {
+      background-color: #ffcccc;
+    }
+
+    .yellowish {
+      background-color: #ffffcc;
+    }
+
   </style>
   {% include "style_display_avaliacoes.html" %}
 {% endblock %}
@@ -101,7 +110,7 @@
 
             <div style="margin:8px 0px 3px 0px; "><strong>Entregas:</strong></div>
             {% for item in entregas %}
-            {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
+            {% with dias_ate=item.evento.data_aval|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
               <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}>
                 <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
                   {% if item.composicao.tipo_documento %}
@@ -119,7 +128,16 @@
                   {% comment %} onClick="check_prazo('{{item.evento.endDate|date:"Y-m-d"}}T23:59:59');" {% endcomment %}
                 <br>
                 {% if item.composicao.exame.grupo %}
-                  <ul style="margin-bottom: 2px; padding-left: 22px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                  <ul style="margin-bottom: 2px; padding-left: 22px;" 
+                    class="
+                      {% if item.avaliacoes and item.avaliacoes.first%}
+                        {% if documento.data > item.avaliacoes.first.momento %}redish{% endif %}
+                      {% else %}
+                        {% if dias_ate < prazo_avaliar %}redish
+                        {% elif item.evento.endDate < hoje %}yellowish{% endif %}
+                      {% endif %}
+                      {% if dias_ate > dias %}lightgrey{% endif %}
+                    ">
                     {% for documento in item.documentos %}
                       <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                         {% if forloop.first%}<b>{% endif %}
@@ -158,7 +176,16 @@
                   {% for alocacao, values in item.alocacoes.items %}
                     <hr class="linha">
                     <b class="{% if dias_ate > dias %}lightgrey{% endif %} nome_est">&#10040; {{alocacao.aluno.user.get_full_name}}:</b>
-                    <ul style="margin-bottom: 0px; padding-left: 32px;" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
+                    <ul style="margin-bottom: 0px; padding-left: 32px;"
+                      class="
+                        {% if values.avaliacoes and values.avaliacoes.first%}
+                          {% if documento.data > values.avaliacoes.first.momento %}redish{% endif %}
+                        {% else %}
+                          {% if dias_ate < prazo_avaliar %}redish
+                          {% elif item.evento.endDate < hoje %}yellowish{% endif %}
+                        {% endif %}
+                        {% if dias_ate > dias %}lightgrey{% endif %}
+                      ">
                       {% for documento in values.documentos %}
                         <li style="list-style-type:'';" {% if dias_ate > dias %}class="lightgrey"{% endif %}>
                           {% if forloop.first%}<b>{% endif %}
