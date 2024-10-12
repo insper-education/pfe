@@ -9,6 +9,7 @@
   {% load static %}
   {% load l10n %}
   {% load addstr %}
+  {% load dictionary %}
 
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
@@ -66,7 +67,7 @@
        href="{% url 'anotacao' %}"
        data-url="{% url 'anotacao' %}">&#10133;</a></small>
   </span>
-  
+
   <div class="container" style="margin: 0px; padding: 0px;">
     <div class="row align-items-start justify-content-start mb-1">
       <div class="ml-3 form-inline">
@@ -267,33 +268,45 @@
               <script>
                 {% with area_cursos=organizacao.area_curso.all%}
                 
-                tipo = "{% for curso in area_cursos %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
-                {% if contato.tipo_de_retorno < 2 and submetidas > 0 %} {% comment %} Coloca como se enviou proposta de projeto {% endcomment %}
-                  if (!("2" in cursos_organizacoes)) {cursos_organizacoes["2"] = {};}
-                  cursos_organizacoes["2"][tipo] = 
-                    (cursos_organizacoes["2"][tipo] || 0) + 1;
-                {% else %}
-                  if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
-                  cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = 
-                    (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
-                {% endif %}
-                
-                {% for curso in area_cursos %}
-                  {% if contato.tipo_de_retorno == 2 or submetidas > 0 %} {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
-                    cursos_projetos["{{curso.sigla_curta}}"] += {{submetidas}}.0/{{area_cursos.count}}.0;
-                    orgs_confirmadas["{{curso.sigla_curta}}"].push("- {{organizacao.nome}} X {{submetidas}}");
-                  {% elif contato.tipo_de_retorno == 0 %} {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
-                    sondados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
-                    org_sondados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
-                  {% elif contato.tipo_de_retorno == 1 %} {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
-                    interessados["{{curso.sigla_curta}}"] += 1.0/{{area_cursos.count}}.0;
-                    orgs_interessados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
+                  tipo = "{% for curso in area_cursos %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
+                  {% if contato.tipo_de_retorno < 2 and submetidas > 0 %} {% comment %} Coloca como se enviou proposta de projeto {% endcomment %}
+                    if (!("2" in cursos_organizacoes)) {cursos_organizacoes["2"] = {};}
+                    cursos_organizacoes["2"][tipo] = 
+                      (cursos_organizacoes["2"][tipo] || 0) + 1;
+                  {% else %}
+                    if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
+                    cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = 
+                      (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
                   {% endif %}
                   
-                {% endfor %}
+                  var curso_count = {{area_cursos|length}};
+                  {% comment %} Calculando peso total de cursos {% endcomment %}
+                  var curso_pesos = 0;
+                  {% for curso in area_cursos %}
+                    curso_pesos += {{necessarios|get_value:curso|unlocalize}};
+                  {% endfor %}
 
-                
-
+                  {% for curso in area_cursos %}
+                    {% if contato.tipo_de_retorno == 2 or submetidas > 0 %} {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
+                      {% if submetidas > 0 %}
+                        cursos_projetos["{{curso.sigla_curta}}"] += {{submetidas}}.0*({{necessarios|get_value:curso|unlocalize}}/curso_pesos);
+                      {% else %}
+                        cursos_projetos["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
+                      {% endif %}
+                      orgs_confirmadas["{{curso.sigla_curta}}"].push("- {{organizacao.nome}} X {{submetidas}}");
+                    {% elif contato.tipo_de_retorno == 0 %} {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
+                      if(curso_pesos > 0) {
+                        sondados["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
+                      }
+                      org_sondados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
+                    {% elif contato.tipo_de_retorno == 1 %} {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
+                      if(curso_pesos > 0) {
+                        interessados["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
+                      }
+                      orgs_interessados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
+                    {% endif %}
+                    
+                  {% endfor %}
 
                 {% endwith %}
               </script>
@@ -460,7 +473,7 @@
           label: "Necessários",
           backgroundColor: "rgba(255, 205, 87, 0.4)",
           borderWidth: 1,
-          data: [{% for necessario in necessarios %}{{necessario|unlocalize}}, {% endfor %}],
+          data: [{% for curso in cursos %}{{necessarios|get_value:curso|unlocalize}}, {% endfor %}],
           xAxisID: "bar-x-necessario",
           stack: "Stack 1",
           barThickness: 90,
@@ -475,7 +488,7 @@
       var options = {
         title: {
             display: true,
-            text: "Previsão de Projetos por Curso",
+            text: "Previsão de Propostas por Curso",
             position: "top"
         },
         legend: {
@@ -497,7 +510,7 @@
             ticks: {beginAtZero: true},
             scaleLabel: {
               display: true,
-              labelString: "projetos",
+              labelString: "propostas",
             }
           }]
         },

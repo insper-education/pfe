@@ -543,10 +543,10 @@ def organizacoes_prospect(request):
     TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
 
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
-    necessarios = []
+    necessarios = {}
     estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
     for curso in cursos:
-        necessarios.append(estudantes.filter(curso2=curso).count()/4)  # grupos de 4 estudantes
+        necessarios[curso] = estudantes.filter(curso2=curso).count()/configuracao.estudates_por_grupo  # grupos de 4 estudantes
 
     context = {
         "titulo": "Prospecção de Organizações",

@@ -602,6 +602,9 @@ class Configuracao(models.Model):
     periodo_relato = models.PositiveIntegerField("Período Relato Quinzenal", default=10,
                                            help_text="Período para Relato Quinzenal ser preenchido antes do prazo")
 
+    estudates_por_grupo = models.PositiveIntegerField("Estudantes por Grupo", default=4,
+                                           help_text="Quantidade padrão de estudantes por grupo de projeto")
+
     #LIMITE_DE_SALAS_P_BANCAS
     limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,
                                            help_text="Limite de Salas para Bancas Simultâneas")
