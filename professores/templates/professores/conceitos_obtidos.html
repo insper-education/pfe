@@ -95,12 +95,16 @@
 
 
   {% for banca in projeto.banca_set.all %}
-    {% if banca.tipo_de_banca == 1 %}
-      <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-          Banca Intermediária ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
-        {% include "membros_da_banca.html" %}
+    
+    <div class="div_arredondado">
+      <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+        Banca {{banca.get_tipo_de_banca_display}} ({{banca.startDate|date:"d/m/y"}})
+        </a>
+        <br><small style="font-size: 11px;">★ Formulário: <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+      </h5>
+      {% include "membros_da_banca.html" %}
+    
+      {% if banca.tipo_de_banca == 1 %}
         {% if avaliadores_inter %}
           <table>    
             {% for avaliador, objs in avaliadores_inter.items %}
@@ -145,7 +149,7 @@
             {% endfor %}
     
             <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
-              <b>Média das avaliações intermediárias:<ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul></b>
               <span id="med_interm_calc"></span>
               <script>
                 for (var key in intermediaria.dict) {
@@ -157,19 +161,9 @@
     
           </table>
         {% endif %}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  <br>
-
-  {% for banca in projeto.banca_set.all %}
-    {% if banca.tipo_de_banca == 0 %}
-      <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-          Banca Final ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
-        {% include "membros_da_banca.html" %}
+      {% endif %}
+    
+      {% if banca.tipo_de_banca == 0 %}
         {% if avaliadores_final %}
           <table>    
             {% for avaliador, objs in avaliadores_final.items %}
@@ -211,7 +205,7 @@
             {% endfor %}
 
             <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
-              <b>Média das avaliações finais:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul></b>
               <span id="med_final_calc"></span>
               <script>
                 for (var key in final.dict) {
@@ -223,19 +217,9 @@
 
           </table>
         {% endif %}
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  <br>
-
-  {% for banca in projeto.banca_set.all %}
-    {% if banca.tipo_de_banca == 2 %}    
-      <div class="div_arredondado">
-        <h5><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-            Banca Falconi ({{banca.startDate|date:"d/m/y"}})
-        </a></h5>
-        {% include "membros_da_banca.html" %}
+      {% endif %}
+      
+      {% if banca.tipo_de_banca == 2 %}    
         {% if avaliadores_falconi %}
           <table>
             {% for avaliador, objs in avaliadores_falconi.items %}
@@ -278,7 +262,7 @@
             {% endfor %}
       
             <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
-              <b>Média das avaliações falconi:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul></b>
               <span id="med_falconi_calc"></span>
               <script>
                 for (var key in falconi.dict) {
@@ -291,8 +275,10 @@
       
           </table>
         {% endif %}
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
+    <br>
+    
   {% endfor %}
 
   <b>Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)

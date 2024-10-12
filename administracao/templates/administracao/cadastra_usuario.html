@@ -34,7 +34,7 @@
     </div><br>
   {% endif %}
 
-  <form id="cadastrauser" enctype="multipart/form-data">{% csrf_token %}
+  <form id="cadastrauser" method="post" enctype="multipart/form-data">{% csrf_token %}
 
     Tipo de Usuário:<br>
     <label for="estudante" style="margin-right: 1em;"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>&nbsp;Estudante</label>

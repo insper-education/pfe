@@ -253,14 +253,23 @@ def encontros_marcar(request):
             # coordenadoção
             recipient_list.append(str(configuracao.coordenacao.user.email))
 
+            error_message = ""
             message = message_agendamento(agendado, cancelado)
-            check = email(subject, recipient_list, message)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            try:
+                check = email(subject, recipient_list, message)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
 
             horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
-            mensagem = "Dinâmica agendada: " + horario
+            mensagem = ""
+            if error_message:
+                mensagem += "Erro ao enviar e-mail de confirmação de agendamento. Contudo agendamento foi salvo no servidor<br>"
+            mensagem += "Dinâmica agendada: " + horario
+
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
@@ -297,9 +306,6 @@ def encontros_cancelar(request, evento_id):
 
     encontro = get_object_or_404(Encontro, pk=evento_id, projeto=projeto)
     
-    encontro.projeto = None
-    encontro.save()
-
     subject = "Capstone | Dinâmica cancelada"
     recipient_list = []
     alocacoes = Alocacao.objects.filter(projeto=projeto)
@@ -310,13 +316,26 @@ def encontros_cancelar(request, evento_id):
     recipient_list.append(str(configuracao.coordenacao.user.email))
 
     message = message_cancelamento(encontro)
-    check = email(subject, recipient_list, message)
-    if check != 1:
-        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+    error_message = ""
+    try:
+        check = email(subject, recipient_list, message)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
+    except Exception as e:
+        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
         logger.error(error_message)
 
+    encontro.projeto = None
+    encontro.save()
+
     horario = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
-    mensagem = "Agendamento Cancelado: " + horario
+    
+    mensagem = ""
+    if error_message:
+        mensagem += "Erro ao enviar e-mail de confirmação de cancelamento. Contudo cancelamento foi registrado no servidor<br>"
+    mensagem += "Mentoria/Dinâmica cancelada: " + horario
+    
     context = {
         "area_principal": True,
         "mensagem": mensagem,
