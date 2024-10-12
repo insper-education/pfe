@@ -72,6 +72,17 @@
   var text_pt = "<span style='cursor: pointer;'>&nbsp;<b>PT</b>|EN&nbsp;</span>";
   var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
 
+  {% comment %} Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela {% endcomment %}
+  function switchTableLanguage(language) {
+    document.querySelectorAll('th[data-lang-pt]').forEach(function(th) {
+        if (language === 'pt') {
+            th.innerHTML = th.getAttribute('data-lang-pt');
+        } else if (language === 'en') {
+            th.innerHTML = th.getAttribute('data-lang-en');
+        }
+    });
+  }
+
   function esconde_lingua() {
     if (localStorage.getItem("lingua") == null) {
       if (navigator.language.startsWith("pt")) {
@@ -85,10 +96,12 @@
       $("#language_button").html(text_pt);
       $('[lang="pt"]').css("display", "initial");
       $('[lang="en"]').css("display", "none");
+      switchTableLanguage("pt");
     } else {
       $("#language_button").html(text_en);
       $('[lang="pt"]').css("display", "none");
       $('[lang="en"]').css("display", "initial");
+      switchTableLanguage("en");
     }
 
   }
@@ -108,12 +121,14 @@
         $("#language_button").html(text_en); 
         $('[lang="pt"]').css("display", "none");
         $('[lang="en"]').css("display", "initial");
+        switchTableLanguage('en');
         //await sleep(500);
         localStorage.setItem("lingua", "en");
       } else {
         $("#language_button").html(text_pt);
         $('[lang="pt"]').css("display", "initial");
         $('[lang="en"]').css("display", "none");
+        switchTableLanguage('pt');
         //await sleep(500);
         localStorage.setItem("lingua", "pt");
       }

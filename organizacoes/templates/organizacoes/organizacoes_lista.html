@@ -48,6 +48,8 @@
 
           </tr>
         {% endfor %}
+        {% comment %} Não mudar o caption para varias linhas pois o PDF será gerado errado {% endcomment %}
+        <caption style="text-align:right;"><small>{% for curso in cursos %}<span style="white-space: nowrap;">{{curso.sigla_curta}}: {{curso.nome}}</span>{% if not forloop.last %} / {% endif %}{% endfor %}</small></caption>
       </table>
     </div>
 

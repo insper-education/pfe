@@ -84,12 +84,8 @@
           </td>
         </tr>
       {% endfor %}
-      <caption style="text-align:right"><small>
-        {% for _,captions  in Conexao.papel.items %}
-          <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
-          {% if not forloop.last %}/{% endif %}
-        {% endfor %}
-      </small></caption>
+      {% comment %} Não mudar o caption para varias linhas pois o PDF será gerado errado {% endcomment %}
+      <caption style="text-align:right;"><small>{% for _,captions  in Conexao.papel.items %}<span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>{% if not forloop.last %} / {% endif %}{% endfor %}</small></caption>
     </table> 
     </div> {% comment %} do "tabelas_top.html" {% endcomment %}
 

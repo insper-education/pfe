@@ -595,12 +595,11 @@ def organizacoes_lista(request):
         tipo_estudantes = ""
         for projeto in projetos:
             estudantes = Aluno.objects.filter(alocacao__projeto=projeto)
-            tipos = ""
+            tipos = []
             for estudante in estudantes:
-                tipos += estudante.curso2.sigla_curta
+                tipos.append(estudante.curso2.sigla_curta)
             tipo_estudantes += "["+"|".join(tipos)+"] "
         grupos.append(tipo_estudantes)
-
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato, grupos)
     total_organizacoes = Organizacao.objects.all().count()
@@ -614,7 +613,7 @@ def organizacoes_lista(request):
         {"pt": "Parceira <br>Desde", "en": "Partner <br>Since", },
         {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals", },
         {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects", },
-        {"pt": "Grupos de <br>Estudantes", "en": "Group of S<br>tudents", },    
+        {"pt": "Grupos de Estudantes", "en": "Group of Students", },    
     ]
     
     context = {
@@ -627,6 +626,7 @@ def organizacoes_lista(request):
         "grupos": grupos,
         "cabecalhos": cabecalhos,
         "titulo": {"pt": "Organizações Parceiras", "en": "Partnership Companies"},
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"), 
     }
 
     return render(request, "organizacoes/organizacoes_lista.html", context)

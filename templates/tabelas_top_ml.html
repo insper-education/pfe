@@ -10,7 +10,7 @@
   <thead class="table-info">
     <tr>
       {% for cabecalho in cabecalhos %}
-        <th scope="col" class="text-center"><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
+        <th scope="col" class="text-center" data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
       {% endfor %}
     </tr>
   </thead>
