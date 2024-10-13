@@ -648,7 +648,7 @@ def exportar(request):
         ("Opções", "opcoes"),
         ("Avaliações", "avaliacoes"),
         ("Usuários", "usuarios"),
-        ("Estudantes", "alunos"),
+        ("Estudantes", "estudantes"),
         ("Professores", "professores"),
         ("Parceiros", "parceiros"),
         ("Configuração", "configuracao"),
