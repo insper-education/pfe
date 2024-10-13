@@ -1,0 +1,105 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Outubro de 2024
+{% endcomment %}
+
+{% for colega, pares in colegas %}
+
+  {% if com_projeto %}
+    {% if not forloop.first%}<br><br>{% endif %}
+    <p style="page-break-before: always"></p>
+    <b>Projeto:</b> {{projeto.get_titulo}} {% include "tipo_projeto.html" %}<br>
+    {% if projeto.orientador %}
+      {% if projeto.proposta.intercambio %}
+        <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+      {% else %}
+        <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+      {% endif %}
+      {{projeto.orientador.user.get_full_name}}
+      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+    {% else %}
+      <h3>Orientador: Não definido</h3>
+    {% endif %}
+    <br><br>
+  {% endif %}
+
+  <div class="div_arredondado">
+    <div class="topico">
+      Avaliação para: <b>{{colega.aluno}}</b>
+    </div>
+
+    <hr>
+    <div class="pergunta">O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?<br>
+      {% for par in pares %}
+        <i>por: {{par.alocacao_de.aluno}}</i>
+        <div class="caixa">{% if par.aprecia %}{{par.aprecia}}{% endif %}</div>    
+      {% endfor %}
+    </div>
+
+    <hr>
+    <div class="pergunta">O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?<br>
+      {% for par in pares %}
+        <i>por: {{par.alocacao_de.aluno}}</i>
+        <div class="caixa">{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</div>   
+      {% endfor %}
+    </div>
+
+    <hr>
+    <div class="pergunta">O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?<br>
+      {% for par in pares %}
+        <i>por: {{par.alocacao_de.aluno}}</i>
+        <div class="caixa">{% if par.mudar %}{{par.mudar}}{% endif %}</div>
+      {% endfor %}
+    </div>
+
+    <hr>
+    <div class="pergunta">Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
+      <table class="table table-borderless table-striped">
+        {% for entrega in entregas %}
+          <tr>
+            {% with linha=forloop.counter0 %}
+              {% for par in pares %}<td class="align-middle" style="width: 12px;">
+                {% if par.entrega == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+              {% endfor %}
+              <td class="nome_item">{{entrega}}</td>
+            {% endwith %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <hr>
+    <div class="pergunta">Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
+      <table class="table table-borderless table-striped">
+        {% for iniciativa in iniciativas %}
+          <tr>
+            {% with linha=forloop.counter0 %}
+              {% for par in pares %}<td class="align-middle" style="width: 12px;">
+                {% if par.iniciativa == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+              {% endfor %}
+              <td class="nome_item">{{iniciativa}}</td>
+            {% endwith %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <hr>
+    <div class="pergunta">Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
+      <table class="table table-borderless table-striped">
+        {% for comunicacao in comunicacoes %}
+          <tr>
+            {% with linha=forloop.counter0 %}
+              {% for par in pares %}<td class="align-middle" style="width: 12px;">
+                {% if par.comunicacao == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+              {% endfor %}
+              <td class="nome_item">{{comunicacao}}</td>
+            {% endwith %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+{% endfor %}

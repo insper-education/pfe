@@ -23,16 +23,12 @@
     .pergunta {
       margin-left: 0.6em;
     }
-    .transpose {
-     // border: none;
-    }
     .transpose tr {
       display: block;
       float: left;
     }
     .transpose td {
       display: block;
-      //border: none;
     }
   </style>
 {% endblock %}
@@ -63,92 +59,9 @@
     <br><br>
 
     <b>Orientações passadas aos estudantes:</b>
-    <div style="max-width: 700px;">{{configuracao.msg_aval_pares}}</div>
+    <div style="max-width: 700px;">{{msg_aval_pares}}</div>
     <hr>
 
-    {% for colega, pares in colegas %}
-
-      <div class="div_arredondado">
-        <div class="topico">
-          Avaliação para: <b>{{colega.aluno}}</b>
-        </div>
-
-        <hr>
-        <div class="pergunta">O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?<br>
-          {% for par in pares %}
-            <i>por: {{par.alocacao_de.aluno}}</i>
-            <div class="caixa">{% if par.aprecia %}{{par.aprecia}}{% endif %}</div>    
-          {% endfor %}
-        </div>
-
-        <hr>
-        <div class="pergunta">O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?<br>
-          {% for par in pares %}
-            <i>por: {{par.alocacao_de.aluno}}</i>
-            <div class="caixa">{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</div>   
-          {% endfor %}
-        </div>
-
-        <hr>
-        <div class="pergunta">O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?<br>
-          {% for par in pares %}
-            <i>por: {{par.alocacao_de.aluno}}</i>
-            <div class="caixa">{% if par.mudar %}{{par.mudar}}{% endif %}</div>
-          {% endfor %}
-        </div>
-
-        <hr>
-        <div class="pergunta">Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
-          <table class="table table-borderless table-striped">
-            {% for entrega in entregas %}
-              <tr>
-                {% with linha=forloop.counter0 %}
-                  {% for par in pares %}<td class="align-middle">
-                    {% if par.entrega == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
-                  {% endfor %}
-                  <td>{{entrega}}</td>
-                {% endwith %}
-              </tr>
-            {% endfor %}
-          </table>
-        </div>
-
-        <hr>
-        <div class="pergunta">Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
-          <table class="table table-borderless table-striped">
-            {% for iniciativa in iniciativas %}
-              <tr>
-                {% with linha=forloop.counter0 %}
-                  {% for par in pares %}<td class="align-middle">
-                    {% if par.iniciativa == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
-                  {% endfor %}
-                  <td>{{iniciativa}}</td>
-                {% endwith %}
-              </tr>
-            {% endfor %}
-          </table>
-        </div>
-
-        <hr>
-        <div class="pergunta">Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}<br>
-          <table class="table table-borderless table-striped">
-            {% for comunicacao in comunicacoes %}
-              <tr>
-                {% with linha=forloop.counter0 %}
-                  {% for par in pares %}<td class="align-middle">
-                    {% if par.comunicacao == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
-                  {% endfor %}
-                  <td>{{comunicacao}}</td>
-                {% endwith %}
-              </tr>
-            {% endfor %}
-          </table>
-        </div>
-
- 
-
-      </div>
-
-    {% endfor %}
+    {% include "ver_pares.html" %}
 
 {% endblock %}

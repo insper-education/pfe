@@ -27,7 +27,7 @@ from django.shortcuts import get_object_or_404
 
 from .support import get_upload_path
 
-from estudantes.models import Relato
+from estudantes.models import Relato, Pares
 from operacional.models import Curso
 from academica.models import Exame
 import users.models
@@ -342,6 +342,14 @@ class Projeto(models.Model):
     @property
     def get_coorientadores_ids(self):
         return Coorientador.objects.filter(projeto=self).values_list("usuario", flat=True)
+    
+    def get_pares_colegas(self, tipo=0):
+        alocacoes = users.models.Alocacao.objects.filter(projeto=self)
+        pares = []
+        for alocacao in alocacoes:
+            pares.append(Pares.objects.filter(alocacao_de__projeto=self, alocacao_para=alocacao, tipo=tipo))
+        colegas = zip(alocacoes, pares)
+        return colegas
 
 
 class Proposta(models.Model):

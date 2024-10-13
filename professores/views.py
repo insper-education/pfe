@@ -3209,6 +3209,7 @@ def ver_pares_projeto(request, projeto_id, momento):
     if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
+    # Marcando que orientador viu avaliação
     if request.user == projeto.orientador.user:
         for alocacao in alocacoes:
             if momento=="intermediaria" and not alocacao.avaliacao_intermediaria:
@@ -3218,53 +3219,24 @@ def ver_pares_projeto(request, projeto_id, momento):
             alocacao.save()
 
     tipo = 0 if momento=="intermediaria" else 1
-        
-    pares = []
-    for alocacao in alocacoes:
-        par = Pares.objects.filter(alocacao_de__projeto=projeto, alocacao_para=alocacao, tipo=tipo)
-        pares.append(par)
+    colegas = projeto.get_pares_colegas(tipo)
 
-    colegas = zip(alocacoes, pares)
-
-    configuracao = get_object_or_404(Configuracao)
-
-    entregas = [
-        "Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.",
-        "Entregou abaixo do esperado.",
-        "Entregou precisamente o esperado.",
-        "Entregou acima do esperado.",
-        "Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.",
-    ]
-
-    iniciativas = [
-        "Mesmo quando lembrado, não cumpriu as tarefas designadas.",
-        "Precisou ser lembrado, mas cumpriu as tarefas designadas.",
-        "Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.",
-        "Além de cumprir as tarefas designadas, ajudou outro(s) membro(s) que estavam tendo dificuldades.",
-        "Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.",
-    ]
-
-    comunicacoes = [
-        "Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.",
-        "Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.",
-        "Aparentemente não teve dificuldades, mas nunca reportou nada.",
-        "Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.",
-        "Apesar de não ter dificuldades, estava sempre reportando como estava indo.",
-    ]
+    entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
+    iniciativas = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
+    comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
 
     context = {
         "alocacoes": alocacoes,
         "colegas": colegas,
         "momento": momento,
         "projeto": projeto,
-        "configuracao": configuracao,
+        "msg_aval_pares": get_object_or_404(Configuracao).msg_aval_pares,
         "entregas": entregas,
         "iniciativas": iniciativas,
         "comunicacoes": comunicacoes,
     }
 
     return render(request, "professores/ver_pares_projeto.html", context)
-
 
 
 @login_required

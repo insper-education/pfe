@@ -12,6 +12,7 @@ from django.core.exceptions import SuspiciousOperation  # Para erro 400
 from django.contrib.auth.models import Group
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Opcao, Alocacao
+from estudantes.models import Pares
 from .models import Projeto, Proposta, Organizacao, Configuracao, Disciplina
 from .models import Feedback, Avaliacao2, ObjetivosDeAprendizagem, Observacao
 from .models import Area, AreaDeInteresse
@@ -576,3 +577,11 @@ class OpcoesResource(resources.ModelResource):
         """Meta do Opções."""
 
         model = Opcao
+
+class ParesResource(resources.ModelResource):
+    """Model Resource para tratar dados de Opções."""
+
+    class Meta:
+        """Meta do Opções."""
+
+        model = Pares

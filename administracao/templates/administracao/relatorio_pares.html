@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Outubro de 2024
+{% endcomment %}
+
+{% block head %}
+  <style>
+    @page {
+      size: a4 portrait; /*landscape*/
+      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+    }
+    .nome_item {
+      font-size: 0.8em; 
+    }
+    .caixa {
+      padding: 0px;
+      margin: 0px 0px 0px 6px;
+    }
+    hr {
+      margin: 2px 0px 4px 0px;
+      background-color: #CCC;
+    }
+    .pergunta {
+      font-size: 0.8em; 
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">Avaliações de Pares</span>
+
+  {% if projetos %}
+    {% with com_projeto=True %}
+    {% for projeto in projetos %}
+      {% include "ver_pares.html" with colegas=projeto.get_pares_colegas %}
+      <hr class="striped-border">
+    {% endfor %}
+    {% endwith %}
+  {% else %}
+    <p>Não existem avaliações de pares disponíveis.</p>
+  {% endif %}
+{% endblock %}

@@ -52,11 +52,14 @@ from projetos.resources import ParceirosResource
 from projetos.resources import ConfiguracaoResource
 from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
+from projetos.resources import ParesResource
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 
 from users.support import adianta_semestre, adianta_semestre_conf
+
+from estudantes.models import Pares
 
 from propostas.support import ordena_propostas
 
@@ -570,10 +573,34 @@ def exportar(request, modo):
     elif modo == "dados":
         titulo += " Dados"
 
+    dados = [
+        ("Projetos", "projetos" ),
+        ("Organizações", "organizacoes"),
+        ("Opções", "opcoes"),
+        ("Avaliações", "avaliacoes"),
+        ("Usuários", "usuarios"),
+        ("Estudantes", "alunos"),
+        ("Professores", "professores"),
+        ("Parceiros", "parceiros"),
+        ("Configuração", "configuracao"),
+        ("Feedbacks", "feedbacks"),
+        ("Avaliação de Pares", "pares"),
+    ]
+
+    relatorios = [
+        ("Propostas", "propostas"),
+        ("Projetos", "projetos"),
+        ("Estudantes", "estudantes"),
+        ("Feedbacks", "feedbacks"),
+        ("Avaliação de Pares", "pares"),
+    ]
+
     context = {
         "titulo": titulo,
         "modo": modo,
-        }
+        "dados": dados,
+        "relatorios": relatorios,
+      }
     return render(request, "administracao/exportar.html", context=context)
 
 
@@ -1069,6 +1096,8 @@ def export(request, modelo, formato):
         resource = ConfiguracaoResource()
     elif modelo == "feedbacks":
         resource = FeedbacksResource()
+    elif modelo == "pares":
+        resource = ParesResource()
     # elif modelo == "comite":
     #     resource = ComiteResource()
     else:
@@ -1190,6 +1219,14 @@ def relatorio(request, modelo, formato):
     elif modelo == "feedbacks":
         context["feedbacks"] = Feedback.objects.all()
         arquivo = "administracao/relatorio_feedbacks.html"
+
+    elif modelo == "pares":
+        context["projetos"] = Projeto.objects.filter(ano=configuracao.ano,
+                                                     semestre=configuracao.semestre)
+        context["entregas"] = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
+        context["iniciativas"] = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
+        context["comunicacoes"] = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
+        arquivo = "administracao/relatorio_pares.html"
 
     else:
         context = {
