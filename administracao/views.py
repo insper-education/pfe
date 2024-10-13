@@ -53,11 +53,13 @@ from projetos.resources import ConfiguracaoResource
 from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
 from projetos.resources import ParesResource
+from projetos.resources import AlocacoesResource
+
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 
-from users.support import adianta_semestre, adianta_semestre_conf
+from users.support import adianta_semestre, adianta_semestre_conf, get_edicoes
 
 from estudantes.models import Pares
 
@@ -564,14 +566,81 @@ def desbloquear_usuarios(request):
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
-def exportar(request, modo):
+def exportar(request):
     """Exporta dados."""
 
-    titulo = "Exportar"
-    if modo == "relatorios":
-        titulo += " Relatórios"
-    elif modo == "dados":
-        titulo += " Dados"
+    titulo = "Exportar dados"
+
+    if request.method == "POST" and request.user.tipo_de_usuario == 4:  # admin
+        # configuracao = get_object_or_404(Configuracao)
+    
+        if "edicao" in request.POST and "dados" in request.POST and "formato" in request.POST:
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
+        else:
+            return HttpResponse("Erro")
+
+        formato = request.POST["formato"].lower()
+        databook = tablib.Databook()
+        modelo = None
+        for dado in request.POST.getlist("dados"):
+            if modelo is None:
+                modelo = dado
+            else:
+                modelo += "_" + dado
+            queryset = None
+            if dado == "projetos":
+                resource = ProjetosResource()
+                queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
+            elif dado == "organizacoes":
+                resource = OrganizacoesResource()
+            elif dado == "opcoes":
+                resource = OpcoesResource()
+            elif dado == "avaliacoes":
+                resource = Avaliacoes2Resource()
+            elif dado == "usuarios":
+                resource = UsuariosResource()
+            elif dado == "estudantes":
+                resource = EstudantesResource()
+                queryset = resource._meta.model.objects.filter(anoPFE=ano, semestrePFE=semestre)
+            elif dado == "professores":
+                resource = ProfessoresResource()
+            elif dado == "parceiros":
+                resource = ParceirosResource()
+            elif dado == "configuracao":
+                resource = ConfiguracaoResource()
+            elif dado == "feedbacks":
+                resource = FeedbacksResource()
+            elif dado == "alocacoes":
+                resource = AlocacoesResource()
+                queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+            elif dado == "pares":
+                resource = ParesResource()
+                queryset = resource._meta.model.objects.filter(alocacao_de__projeto__ano=ano, alocacao_de__projeto__semestre=semestre)
+            else:
+                mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, "generic.html", context=context)
+
+            if queryset is None:
+                queryset = resource._meta.model.objects.all()
+            dataset = resource.export(queryset)
+            dataset.title = dado
+            databook.add_sheet(dataset)
+        
+        if formato in ("xls", "xlsx"):
+            formato = "xlsx"
+            response = HttpResponse(databook.export("xlsx"), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        elif formato == "json":
+            response = HttpResponse(dataset.export("json"), content_type="application/json")
+        elif formato == "csv":
+            response = HttpResponse(dataset.export("csv"), content_type="text/csv")
+        else:
+            return HttpResponse("Erro")
+        response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
+        return response
 
     dados = [
         ("Projetos", "projetos" ),
@@ -584,9 +653,26 @@ def exportar(request, modo):
         ("Parceiros", "parceiros"),
         ("Configuração", "configuracao"),
         ("Feedbacks", "feedbacks"),
+        ("Alocações", "alocacoes"),
         ("Avaliação de Pares", "pares"),
     ]
 
+    context = {
+        "titulo": titulo,
+        "dados": dados,
+        "edicoes": get_edicoes(Aluno)[0],
+      }
+    return render(request, "administracao/exportar.html", context=context)
+
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def relatorios(request):
+    """gera relatorio dos dados."""
+
+    titulo = "Gera Relatórios"
+    
     relatorios = [
         ("Propostas", "propostas"),
         ("Projetos", "projetos"),
@@ -597,11 +683,11 @@ def exportar(request, modo):
 
     context = {
         "titulo": titulo,
-        "modo": modo,
-        "dados": dados,
         "relatorios": relatorios,
+        "edicoes": get_edicoes(Aluno)[0],
       }
-    return render(request, "administracao/exportar.html", context=context)
+    return render(request, "administracao/relatorios.html", context=context)
+
 
 
 @login_required
@@ -1076,6 +1162,9 @@ def excluir_disciplina(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def export(request, modelo, formato):
     """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
+    # APOSENTAR ESSE MÉTODO
+    # NÃO USAR MAIS
+
     if modelo == "projetos":
         resource = ProjetosResource()
     elif modelo == "organizacoes":
@@ -1098,8 +1187,8 @@ def export(request, modelo, formato):
         resource = FeedbacksResource()
     elif modelo == "pares":
         resource = ParesResource()
-    # elif modelo == "comite":
-    #     resource = ComiteResource()
+        queryset = resource._meta.model.objects.filter(year=ano)
+        dataset = resource.export(queryset)
     else:
         mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
         context = {
@@ -1247,8 +1336,11 @@ def relatorio(request, modelo, formato):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def dados_backup(request, modo):
+def dados_backup(request, modo=None):
     """Envia e-mails de backup de segurança."""
+    
+    if modo is None:
+        return HttpResponse("Sistema de envio de backup de dados desligado.")
     
     if request.method == "POST" and "email" in request.POST and "sigla" in request.POST:
 
@@ -1286,6 +1378,8 @@ def dados_backup(request, modo):
     
     else:
         raise SuspiciousOperation(f"Chamada irregular.")
+    
+    return render(request, "administracao/dados_backup.html", context=context)
 
 
 @login_required

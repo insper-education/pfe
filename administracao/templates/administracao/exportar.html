@@ -16,47 +16,37 @@
 
 {% block content %}
 
-  <form method="post" action="{% url 'dados_backup' modo %}"> {% csrf_token %}
-
   <span class="titulo">{{ titulo }}</span>
-  {% if modo == "relatorios" %}
-    <table>
-      {% for nome, dado in relatorios %}
-        <tr>
-          <td>{{ nome }}</td>
-          <td><a href="{% url 'relatorio' dado 'HTML'%}">HTML</a></td>
-          <td><a href="{% url 'relatorio' dado 'PDF'%}">PDF</a></td>
-        </tr>
-      {% endfor %}
-    </table>
-    <br><br>
-  {% endif %}
 
-  {% if modo == "dados" %}
+  <form method="post"> {% csrf_token %}
+
+    {% include "edicoes.html" %}
+    <br>
+
     <table>
-      <tr>
-        <td>Tudo</td>
-        <td></td>
-        <td><b><a href="{% url 'backup' 'xls'%}">XLS</a></b></td>
-        <td><b><a href="{% url 'backup' 'json'%}">JSON</a></b></td>
-      </tr>
       {% for nome, dado in dados %}
         <tr>
           <td>{{ nome }}</td>
-          <td><a href="{% url 'export' dado 'csv'%}">CSV</a></td>
-          <td><a href="{% url 'export' dado 'xls'%}">XLS</a></td>
-          <td><a href="{% url 'export' dado 'json'%}">JSON</a></td>
+          <td><input type="checkbox" name="dados" value="{{dado}}"></td>
         </tr>
       {% endfor %}
     </table>
     <br>
-    <br>
-  {% endif %}
-
-  Envia mensagem com dados<br>
-  <label for="email">e-mail:</label> <input type="email" size="40" id="email" name="email" value="{{user.email}}" oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br>
-  <input type="submit" class="btn btn-primary mb-1 mt-2" value="Enviar">
+    
+    <input type="submit" class="btn btn-primary mb-1 mt-2" name="formato" value="CSV">
+    <input type="submit" class="btn btn-primary mb-1 mt-2" name="formato" value="XLS">
+    <input type="submit" class="btn btn-primary mb-1 mt-2" name="formato" value="JSON">
 
   </form>
+
+  <script>
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+
+    window.onload = carrega_site
+
+  </script>
 
 {% endblock %}

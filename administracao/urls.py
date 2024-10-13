@@ -66,9 +66,17 @@ urlpatterns = [
         views.configurar,
         name="configurar"),
 
-    path("exportar/<str:modo>",
+    path("relatorios",
+        views.relatorios,
+        name="relatorios"),
+
+    path("exportar",
         views.exportar,
         name="exportar"),
+
+    path("dados_backup",
+        views.dados_backup,
+        name="dados_backup"),
 
     path("dados_backup/<str:modo>",
         views.dados_backup,

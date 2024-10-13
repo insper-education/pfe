@@ -585,3 +585,12 @@ class ParesResource(resources.ModelResource):
         """Meta do Opções."""
 
         model = Pares
+
+
+class AlocacoesResource(resources.ModelResource):
+    """Model Resource para tratar dados de Opções."""
+
+    class Meta:
+        """Meta do Opções."""
+
+        model = Alocacao

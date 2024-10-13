@@ -22,8 +22,9 @@
 
 <h5>Dados</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'index_carregar' %}">Carregar Dados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' 'relatorios' %}">Gerar Relatórios</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' 'dados' %}">Exportar Dados</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatorios' %}">Gerar Relatórios</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' %}">Exportar Dados</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dados_backup' %}">Enviar Dados</a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar_documentos_projetos' %}">Exportar Relatórios dos Projetos</a></div>
 <br>
 

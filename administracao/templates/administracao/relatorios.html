@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Outubro de 2024
+{% endcomment %}
+
+{% block head %}
+<style>
+  td {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">{{ titulo }}</span>
+
+  <form method="post"> {% csrf_token %}
+
+    {% comment %} {% include "edicoes.html" %}
+    <br> {% endcomment %}
+
+    <table>
+      {% for nome, dado in relatorios %}
+        <tr>
+          <td>{{ nome }}</td>
+          <td><a href="{% url 'relatorio' dado 'HTML'%}">HTML</a></td>
+          <td><a href="{% url 'relatorio' dado 'PDF'%}">PDF</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+    <br><br>
+    
+    <input type="submit" class="btn btn-primary mb-1 mt-2" value="Enviar">
+
+  </form>
+
+{% endblock %}
