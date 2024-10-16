@@ -60,6 +60,11 @@
           <sup>(Inglês)</sup>
         {% endif %}
       </div>
+
+      {% if user and user.tipo_de_usuario == 4 %}
+        <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'ANY' documento.id %}"><small style="font-size: 0.7em;">&nbsp;<i class="fas fa-pencil-alt"></i></small></a>
+      {% endif %}
+
     </div>
   {% empty %}
     Ainda não existem documentos associados.

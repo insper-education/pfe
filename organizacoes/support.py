@@ -156,12 +156,17 @@ def cria_documento(request, forca_confidencial=False):
 
     documento.usuario = request.user
 
+    algum_arquivo = False
     if "arquivo" in request.FILES:
         arquivo = simple_upload(request.FILES["arquivo"],
                                 path=get_upload_path(documento, ''))
         documento.documento = arquivo[len(settings.MEDIA_URL):]
+        algum_arquivo = True
 
-    if ("arquivo" not in request.FILES) and (link is None):
+    if "documentos" in request.POST:
+        algum_arquivo = True
+
+    if (not algum_arquivo) and (link is None):
         return "<h1>Erro: Arquivo ou link não informado corretamente.</h1>"
 
     documento.save()

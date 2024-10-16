@@ -126,9 +126,14 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
     
     tipo = None
-    if tipo_nome:
+    if tipo_nome and tipo_nome != "ANY":
         tipo = TipoDocumento.objects.get(sigla=tipo_nome)
-        if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+        
+    documentos = Documento.objects.filter(id=documento_id)
+    if documentos:
+        tipo = documentos.last().tipo_documento
+
+    if tipo and request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
             return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
 
     if request.is_ajax() and request.method == "POST":
@@ -159,6 +164,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         "documentos": Documento.objects.filter(id=documento_id),
         "documento_id": documento_id,
         "configuracao": configuracao,
+        "documentos": documentos,
         "travado": False,
         "adiciona": adiciona,
     }

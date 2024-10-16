@@ -46,7 +46,7 @@
             {% endwith %}
            {% else %}
             class="open-documento"
-            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}" 
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}"
            {% endif %}
            ><b><i class="fas fa-file-alt"></i>
         {% empty %}
