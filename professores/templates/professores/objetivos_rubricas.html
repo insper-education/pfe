@@ -52,8 +52,8 @@
         <br>
 
       <div style="margin-top: 6px;">
-        <span lang="pt"><b><i>Primeira Fase (Intermediária)</i></b></span>
-        <span lang="en"><b><i>First Phase (Intermediate)</i></b></span>
+        <span lang="pt"><b><i>Rubrica de Grupo</i></b></span>
+        <span lang="en"><b><i>Group Rubric</i></b></span>
       </div>
 
       <div class="table-responsive" lang="pt">
@@ -80,26 +80,26 @@
           </tr>
         </thead>
         <tbody>
-        <tr>
-            {% comment %} Rubricas de Grupo {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">GRUPO</span><span lang="en">GROUP</span></td>
+          <tr>
+            {% comment %} Rubricas Intermediária de Grupo {% endcomment %}
+            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Intermediária</span><span lang="en">Intermediate</span></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A}}</label></td>
-        </tr>
-        {% if objetivo.avaliacao_aluno %}
-        <tr>
-            {% comment %} Rubricas Individuais {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A}}</label></td>
           </tr>
-          {% endif %}
+
+          {% comment %} Rubricas Final de Grupo {% endcomment %}
+          <tr>
+            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Final</span><span lang="en">Final</span></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
+          </tr>
+      
         </tbody>
       </table>
       </div>
@@ -128,130 +128,139 @@
           </tr>
         </thead>
         <tbody>
-        <tr>
-            {% comment %} Rubricas de Grupo {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">GRUPO</span><span lang="en">GROUP</span></td>
+          {% comment %} Rubricas Intermediárias de Grupo {% endcomment %}
+          <tr>
+            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Intermediária</span><span lang="en">Intermediate</span></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_B_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_A_en}}</label></td>
-        </tr>
-        {% if objetivo.avaliacao_aluno %}
-        <tr>
-          {% comment %} Rubricas Individuais {% endcomment %}
-          <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
-          <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
-        </tr>
-        {% endif %}
-      </tbody>
-      </table>
-      </div>
+          </tr>
 
-      <div style="margin-top: 6px;">
-        <span lang="pt"><b><i>Segunda Fase (Final)</i></b></span>
-        <span lang="en"><b><i>Second Phase (Final)</i></b></span>
-      </div>
-      
-      <div class="table-responsive" lang="pt">
-      {% comment %} Tabela em Português {% endcomment %}
-      <table class="table table-bordered table-sm" style="width:100%">
-        <thead class="table-info">
-        <tr>
-          <th scope="col" style="width:1%;"></th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="text-align: center;width:18%">
-            <label for="objetivo.{{objetivo.id}}.I "><span lang="pt">Insatisfatório</span><span lang="en">Unsatisfactory</span> (I)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}D "><span lang="pt">Em Desenvolvimento</span><span lang="en">Under Development</span> (D)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}C "><span lang="pt">Essencial</span><span lang="en">Essential</span> (C/C+)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}B "><span lang="pt">Proficiente</span><span lang="en">Proficient </span> (B/B+)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}A "><span lang="pt">Avançado</span><span lang="en">Advanced</span> (A/A+)</label>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            {% comment %} Rubricas de Grupo {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">GRUPO</span><span lang="en">GROUP</span></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A}}</label></td>
-        </tr>
-        {% if objetivo.avaliacao_aluno %}
-        <tr>
-            {% comment %} Rubricas Individuais {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_individual_I}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_individual_D}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_individual_C}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A}}</label></td>
-        </tr>
-        {% endif %}
-      </tbody>
-      </table>
-      </div>
-
-      <div class="table-responsive" lang="en">
-      {% comment %} Tabela em Inglês {% endcomment %}
-      <table class="table table-bordered table-sm" style="width:100%">
-        <thead class="table-info">
-        <tr>
-          <th scope="col" style="width:1%;"></th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="text-align: center;width:18%">
-            <label for="objetivo.{{objetivo.id}}.I "><span lang="pt">Insatisfatório</span><span lang="en">Unsatisfactory</span> (I)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}D "><span lang="pt">Em Desenvolvimento</span><span lang="en">Under Development</span> (D)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}C "><span lang="pt">Essencial</span><span lang="en">Essential</span> (C/C+)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}B "><span lang="pt">Proficiente</span><span lang="en">Proficient </span> (B/B+)</label>
-          </th>
-          <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="text-align: center;width:18%">
-            <label for="objetivo{{objetivo.id}}A "><span lang="pt">Avançado</span><span lang="en">Advanced</span> (A/A+)</label>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            {% comment %} Rubricas de Grupo {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">GRUPO</span><span lang="en">GROUP</span></td>
+          {% comment %} Rubricas Finais de Grupo {% endcomment %}
+          <tr>
+            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Final</span><span lang="en">Final</span></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_B_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_A_en}}</label></td>
-        </tr>
-        {% if objetivo.avaliacao_aluno %}
-        <tr>
-            {% comment %} Rubricas Individuais {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">INDIVIDUAL</span><span lang="en">INDIVIDUAL</span></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_individual_I_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_individual_D_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_individual_C_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B_en}}</label></td>
-            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A_en}}</label></td>
-        </tr>
-        {% endif %}
-      </tbody>
+          </tr>
+        
+        </tbody>
       </table>
       </div>
+
+      {% if objetivo.avaliacao_aluno %}
+        <div style="margin-top: 6px;">
+          <span lang="pt"><b><i>Rubrica Individual</i></b></span>
+          <span lang="en"><b><i>Individual Rubric</i></b></span>
+        </div>
+        
+        <div class="table-responsive" lang="pt">
+        {% comment %} Tabela em Português {% endcomment %}
+        <table class="table table-bordered table-sm" style="width:100%">
+          <thead class="table-info">
+          <tr>
+            <th scope="col" style="width:1%;"></th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="text-align: center;width:18%">
+              <label for="objetivo.{{objetivo.id}}.I "><span lang="pt">Insatisfatório</span><span lang="en">Unsatisfactory</span> (I)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}D "><span lang="pt">Em Desenvolvimento</span><span lang="en">Under Development</span> (D)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}C "><span lang="pt">Essencial</span><span lang="en">Essential</span> (C/C+)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}B "><span lang="pt">Proficiente</span><span lang="en">Proficient </span> (B/B+)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}A "><span lang="pt">Avançado</span><span lang="en">Advanced</span> (A/A+)</label>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+            
+
+
+          {% comment %} INTERMEDIARIA Rubricas Individuais {% endcomment %}
+          
+          <tr>
+            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Intermediária</span><span lang="en">Intermediate</span></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B}}</label></td>
+            <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A}}</label></td>
+          </tr>
+          
+          <tr>
+              {% comment %} FINAL Rubricas Individuais {% endcomment %}
+              <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Final</span><span lang="en">Final</span></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_individual_I}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_individual_D}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_individual_C}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A}}</label></td>
+          </tr>
+          
+        </tbody>
+        </table>
+        </div>
+      
+
+        <div class="table-responsive" lang="en">
+        {% comment %} Tabela em Inglês {% endcomment %}
+        <table class="table table-bordered table-sm" style="width:100%">
+          <thead class="table-info">
+          <tr>
+            <th scope="col" style="width:1%;"></th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="text-align: center;width:18%">
+              <label for="objetivo.{{objetivo.id}}.I "><span lang="pt">Insatisfatório</span><span lang="en">Unsatisfactory</span> (I)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}D "><span lang="pt">Em Desenvolvimento</span><span lang="en">Under Development</span> (D)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}C "><span lang="pt">Essencial</span><span lang="en">Essential</span> (C/C+)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}B "><span lang="pt">Proficiente</span><span lang="en">Proficient </span> (B/B+)</label>
+            </th>
+            <th scope="col" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" style="text-align: center;width:18%">
+              <label for="objetivo{{objetivo.id}}A "><span lang="pt">Avançado</span><span lang="en">Advanced</span> (A/A+)</label>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          
+            {% comment %} Rubricas Individuais {% endcomment %}
+            <tr>
+              <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Intermediária</span><span lang="en">Intermediate</span></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
+            </tr>
+            
+            {% comment %} Rubricas Individuais {% endcomment %}
+            <tr>  
+              <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;"><span lang="pt">Final</span><span lang="en">Final</span></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_individual_I_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_individual_D_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_individual_C_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" ><label for="objetivo{{objetivo.id}}B">{{objetivo.rubrica_final_individual_B_en}}</label></td>
+              <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" ><label for="objetivo{{objetivo.id}}A">{{objetivo.rubrica_final_individual_A_en}}</label></td>
+            </tr>
+
+          </tbody>
+        </table>
+        </div>
+
+      {% endif %}
 
     </div>
 
