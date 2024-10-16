@@ -13,7 +13,8 @@
 </style>
 
 {% for area in areas %}
-  {% if user.tipo_de_usuario in area.permissao %}
+  {% comment %} Área 0 significa que todos os usuários podem acessar a área. {% endcomment %}
+  {% if 0 in area.permissao or user.tipo_de_usuario in area.permissao %}
     {% if not forloop.first %}<br>{% endif %}
     <h5>Área {{area.titulo}}</h5>
     
