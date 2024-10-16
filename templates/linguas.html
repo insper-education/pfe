@@ -118,7 +118,7 @@
     async function handleLanguageChange() {
       lingua_atual = localStorage.getItem("lingua");
       if (lingua_atual == "pt") {
-        $("#language_button").html(text_en); 
+        $("#language_button").html(text_en);
         $('[lang="pt"]').css("display", "none");
         $('[lang="en"]').css("display", "initial");
         switchTableLanguage('en');
@@ -137,6 +137,9 @@
     $("body").on("click", "#language_button", function(e) {
       handleLanguageChange();
     });
+
+    {% comment %} Só mostra o botão de linguagem depois de carregar a página {% endcomment %}
+    $("#language_button").css("display", "initial");
 
   });
 

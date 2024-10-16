@@ -8,18 +8,15 @@
 {% block head %}
   {% load static %}
   {% include "reload.html" %}
-  <link rel="stylesheet" href="{% static 'css/style_botao_lingua.css' %}">
 {% endblock %}
 
 {% block content %}
+
   <span class="titulo">
     <span lang="pt">{{ titulo }}</span>
     <span lang="en">Learning Goals</span>
   </span>
   
-  {% comment %} Botão para seletor de lingua (não esqueça do CSS) {% endcomment %}
-  {% include "botao_lingua.html" %}
-
   {% for objetivo in objetivos %}
     <div class="border rounded" style="padding: 15px; margin-top: 20px;">
 
@@ -266,5 +263,6 @@
 
   {% endfor %}
 
+  {% include "linguas.html" %}
 
 {% endblock %}
