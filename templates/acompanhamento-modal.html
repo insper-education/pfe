@@ -53,6 +53,12 @@
     var data_hora = $("#data_hora").val();
     var parceiro = $("#parceiro").val();
 
+    // Check if the fields are empty
+    if (!texto || !parceiro || !data_hora) {
+      alert("Por favor, preencha todos os campos.");
+      return false;
+    }
+
     $.ajax({
         type: "POST",
         url: url,

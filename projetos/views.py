@@ -1839,8 +1839,12 @@ def acompanhamento_view(request):
     if request.is_ajax() and "texto" in request.POST:
         acompanhamento = Acompanhamento.create()
 
-        parceiro_id = int(request.POST["parceiro"])
-        parceiro = get_object_or_404(Parceiro, id=parceiro_id)
+        try:
+            parceiro_id = int(request.POST["parceiro"])
+            parceiro = get_object_or_404(Parceiro, id=parceiro_id)
+        except ValueError:
+            return HttpResponse("Erro: Parceiro não foi informado corretamente.", status=401)
+        
         acompanhamento.autor = parceiro.user
 
         acompanhamento.texto = request.POST["texto"]
