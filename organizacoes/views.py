@@ -34,8 +34,9 @@ from propostas.support import envia_proposta, preenche_proposta, preenche_propos
 from operacional.models import Curso
 from documentos.models import TipoDocumento
 
-@login_required
-@permission_required("projetos.add_proposta", raise_exception=True)
+# Liberado para Parceiros poderem enviar proposta de projeto mesmo se não logados
+# @login_required
+# @permission_required("projetos.add_proposta", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
     contex = {
