@@ -20,8 +20,8 @@
   {% for objetivo in objetivos %}
     <div class="border rounded" style="padding: 15px; margin-top: 20px;">
 
-      <span lang="pt"><b>Objetivos de Aprendizagem</b>: {{objetivo.titulo}}</span>
-      <span lang="en"><b>Learning Goals</b>: {{objetivo.titulo_en}}</span>
+      <span lang="pt"><b>Objetivo de Aprendizagem</b>: {{objetivo.titulo}}</span>
+      <span lang="en"><b>Learning Goal</b>: {{objetivo.titulo_en}}</span>
       <span class="editar esconder">
         <a style="color: inherit;" href="{% url 'objetivo_editar' objetivo.pk %}">&#x270E;</a>
       </span>
