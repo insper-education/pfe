@@ -1883,19 +1883,17 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
                 if composicao.exame.grupo:
                     avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
-                                                                            exame=composicao.exame, 
-                                                                            objetivo=objetivo,
-                                                                            avaliador=projeto.orientador.user
-                                                                            )
+                                                                                 exame=composicao.exame, 
+                                                                                 objetivo=objetivo,
+                                                                                 avaliador=projeto.orientador.user)
                 else:
                     if not estudante or not alocacao:
-                        return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                        return HttpResponseNotFound("<h1>Estudante não encontrado!</h1>")
                     avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
-                                                                            exame=composicao.exame, 
-                                                                            objetivo=objetivo,
-                                                                            avaliador=projeto.orientador.user,
-                                                                            alocacao=alocacao
-                                                                            )
+                                                                                 exame=composicao.exame, 
+                                                                                 objetivo=objetivo,
+                                                                                 avaliador=projeto.orientador.user,
+                                                                                 alocacao=alocacao)
 
                 julgamento[i] = avaliacao
 
@@ -1911,12 +1909,14 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 julgamento[i].save()
 
         else:
+            julgamento = [None]
             avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                     exame=composicao.exame, 
                                                                     objetivo=None,
                                                                     avaliador=projeto.orientador.user
                                                                     )
-            
+            julgamento[0] = avaliacao
+
             if "decisao" in request.POST:
                 if request.POST["decisao"] == "1":
                     avaliacao.nota = 10
@@ -1951,6 +1951,37 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
             julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
+
+        envia = "envia" in request.POST
+        if envia:
+
+            message = str(julgamento) + "\n" + str(julgamento_observacoes)
+
+            # print(composicao.exame.titulo)
+            if estudante:
+                message += "\nEstudante: " + estudante.get_full_name()
+                # print("Estudante: ", estudante)
+            else:
+                alocacoes = Alocacao.objects.get(projeto=projeto)
+                for alocacao in alocacoes:
+                    message += "\nEstudante: " + alocacao.aluno.user.get_full_name()
+                    # print("Alocacao: ", alocacao)
+            
+
+            error_message = ""
+            subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+            # recipient_list = [user.email,]
+            recipient_list = ["lpsoares@gmail.com",]
+            
+            try:
+                check = email(subject, recipient_list, message, delay_hours=1)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
+                logger.error(error_message)
+
 
 
         resposta = "Avaliação concluída com sucesso.<br>"
@@ -2060,9 +2091,16 @@ def informe_bancas(request, tipo):
 
             recipient_list = [banca.projeto.orientador.user.email, ]
             
-            check = email(subject, recipient_list, message)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            try:
+                check = email(subject, recipient_list, message)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+                    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                    context = {"mensagem": message,}
+                    return render(request, "generic.html", context=context)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
                 message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
                 context = {"mensagem": message,}

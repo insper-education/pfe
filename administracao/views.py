@@ -249,17 +249,24 @@ def envia_senha_mensagem(user):
     # Enviando e-mail com mensagem para usuário.
     subject = "Capstone | Conta de Usuário: " + user.get_full_name()
     recipient_list = [user.email,]
-    check = email(subject, recipient_list, message_email)
-    if check != 1:
+
+    try:
+        check = email(subject, recipient_list, message_email)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + message_email + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
+            mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+            codigo = 400
+        else:
+            mensagem = "<br><br>Enviado mensagem com senha para: "
+            mensagem += user.get_full_name() + " " +\
+                    "&lt;" + user.email + "&gt;<br>\n"
+            codigo = 200
+    except:
         error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + message_email + ", recipient_list=" + str(recipient_list)
         logger.error(error_message)
         mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
         codigo = 400
-    else:
-        mensagem = "<br><br>Enviado mensagem com senha para: "
-        mensagem += user.get_full_name() + " " +\
-                "&lt;" + user.email + "&gt;<br>\n"
-        codigo = 200
     
     return mensagem, codigo
 
