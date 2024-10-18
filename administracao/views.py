@@ -1428,7 +1428,7 @@ def tarefas_agendadas(request):
 def cancela_tarefa(request, task_id):
     if request.method == "POST":
         celery_app.control.revoke(task_id, terminate=True)
-    return redirect("tarefas_agendadas")
+    return redirect("/administracao/tarefas_agendadas")
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

@@ -140,7 +140,7 @@ urlpatterns = [
 
     path("cancela_tarefa/<str:task_id>/",
         views.cancela_tarefa,
-        name="cancel_task"),
+        name="cancela_tarefa"),
 
     path("conexoes_estabelecidas/",
         views.conexoes_estabelecidas,
