@@ -1420,8 +1420,10 @@ def tarefas_agendadas(request):
     scheduled_tasks = i.scheduled()
 
     agora = datetime.datetime.now()
+    agora2 = timezone.now()
     context = {
         "agora": agora,
+        "agora2": agora2,
         "titulo": "Tarefas Agendadas",
         "scheduled_tasks": scheduled_tasks,
     }

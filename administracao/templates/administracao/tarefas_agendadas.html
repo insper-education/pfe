@@ -13,13 +13,25 @@
   <span class="titulo">{{ titulo }}</span>
 
   <div>Agora: {{ agora }}</div><br>
+  <div>Agora2: {{ agora2 }}</div><br>
 
   <table>
     <thead>
       <tr>
+        {% comment %} <th>Worker</th> {% endcomment %}
+        <th>ETA</th>
+        {% comment %} <th>Priority</th> {% endcomment %}
         <th>Task ID</th>
         <th>Task Name</th>
-        <th>ETA</th>
+        <th>Args</th>
+        {% comment %} <th>Kwargs</th>
+        <th>Type</th>
+        <th>Hostname</th>
+        <th>Time Start</th>
+        <th>Acknowledged</th>
+        <th>Delivery Info</th>
+        <th>Worker PID</th> {% endcomment %}
+        
         <th>Actions</th>
       </tr>
     </thead>
@@ -27,12 +39,23 @@
       {% for worker, tasks in scheduled_tasks.items %}
         {% for task in tasks %}
           <tr>
-            <td>{{ task.id }}</td>
-            <td>{{ task.name }}</td>
+            {% comment %} <td>{{ worker }}</td> {% endcomment %}
             <td>{{ task.eta }}</td>
+            {% comment %} <td>{{ task.priority }}</td> {% endcomment %}
+            <td>{{ task.request.id }}</td>
+            <td>{{ task.request.name }}</td>
+            <td>{{ task.request.args }}</td>
+            {% comment %} <td>{{ task.request.kwargs }}</td>
+            <td>{{ task.request.type }}</td>
+            <td>{{ task.request.hostname }}</td>
+            <td>{{ task.request.time_start }}</td>
+            <td>{{ task.request.acknowledged }}</td>
+            <td>{{ task.request.delivery_info }}</td>
+            <td>{{ task.request.worker_pid }}</td> {% endcomment %}
+            
             <td>
-              {% if task and task.id %}
-                <form method="post" action="{% url 'cancela_tarefa' task.id %}">
+              {% if task and task.request and task.request.id %}
+                <form method="post" action="{% url 'cancela_tarefa' task.request.id %}">
                   {% csrf_token %}
                   <button type="submit">Cancel</button>
                 </form>
