@@ -1419,7 +1419,9 @@ def tarefas_agendadas(request):
     i = celery_app.control.inspect()
     scheduled_tasks = i.scheduled()
 
+    agora = datetime.datetime.now()
     context = {
+        "agora": agora,
         "titulo": "Tarefas Agendadas",
         "scheduled_tasks": scheduled_tasks,
     }
