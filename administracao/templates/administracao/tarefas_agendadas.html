@@ -13,31 +13,33 @@
   <span class="titulo">{{ titulo }}</span>
 
   <table>
-      <thead>
+    <thead>
+      <tr>
+        <th>Task ID</th>
+        <th>Task Name</th>
+        <th>ETA</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for worker, tasks in scheduled_tasks.items %}
+        {% for task in tasks %}
           <tr>
-              <th>Task ID</th>
-              <th>Task Name</th>
-              <th>ETA</th>
-              <th>Actions</th>
+            <td>{{ task.id }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ task.eta }}</td>
+            <td>
+              {% if task and task.id %}
+                <form method="post" action="{% url 'cancela_tarefa' task.id %}">
+                  {% csrf_token %}
+                  <button type="submit">Cancel</button>
+                </form>
+              {% endif %}
+            </td>
           </tr>
-      </thead>
-      <tbody>
-          {% for worker, tasks in scheduled_tasks.items %}
-              {% for task in tasks %}
-                  <tr>
-                      <td>{{ task.id }}</td>
-                      <td>{{ task.name }}</td>
-                      <td>{{ task.eta }}</td>
-                      <td>
-                          <form method="post" action="{% url 'cancela_tarefa' task.id %}">
-                              {% csrf_token %}
-                              <button type="submit">Cancel</button>
-                          </form>
-                      </td>
-                  </tr>
-              {% endfor %}
-          {% endfor %}
-      </tbody>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
   </table>
 
 {% endblock %}
