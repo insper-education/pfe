@@ -38,7 +38,7 @@ def htmlizar(text):
 def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     send_mail(subject, message, from_email, recipient_list, **kwargs)
 
-def email(subject, recipient_list, message, aviso_automatica=True, delay_hours=0):
+def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0):
     """Envia e-mail automaticamente (ou com atraso)."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
     auth_user = settings.EMAIL_HOST_USER
@@ -52,19 +52,19 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_hours=0
     # Removing "\\r\\n' from header 'Subject' to avoid breaking the email
     subject = subject.replace('\r', '').replace('\n', '')
     
-    if delay_hours == 0:
+    if delay_seconds == 0:
         # Envia e-mail imediatamente
         send_mail_task.delay(subject, message, email_from, recipient_list,
                              fail_silently=True, auth_user=auth_user, html_message=message)
     else:
         # Calculate the ETA (estimated time of arrival) for the email
-        eta = datetime.now() + timedelta(hours=delay_hours)
+        #eta = datetime.now() + timedelta(hours=delay_hours)
 
         # Agenda tarefa para enviar e-mail com possibilidade de atraso
         send_mail_task.apply_async(
             args=[subject, message, email_from, recipient_list],
-            kwargs={'fail_silently': True, 'auth_user': auth_user, 'html_message': message},
-            eta=eta
+            kwargs={"fail_silently": True, "auth_user": auth_user, "html_message": message},
+            delay_seconds=delay_seconds
         )
 
     return 1  # Solução temporária para manter compatibilidade

@@ -69,6 +69,10 @@ from operacional.models import Curso
 
 from .support import usuario_sem_acesso
 
+from celery import Celery
+celery_app = Celery()
+
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -1406,6 +1410,25 @@ def logs(request, dias=30):
     
     return HttpResponse(message)
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def tarefas_agendadas(request):
+    """Alguns logs de Admin."""
+    usuario_sem_acesso(request, (4,)) # Soh Adm
+    i = celery_app.control.inspect()
+    scheduled_tasks = i.scheduled()
+
+    context = {
+        "titulo": "Tarefas Agendadas",
+        "scheduled_tasks": scheduled_tasks,
+    }
+    return render(request, "administracao/tarefas_agendadas.html", context)
+
+def cancela_tarefa(request, task_id):
+    if request.method == "POST":
+        celery_app.control.revoke(task_id, terminate=True)
+    return redirect("tarefas_agendadas")
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

@@ -133,6 +133,14 @@ urlpatterns = [
     path("logs/",
         views.logs,
         name="logs"),
+    
+    path("tarefas_agendadas/",
+        views.tarefas_agendadas,
+        name="tarefas_agendadas"),
+
+    path("cancela_tarefa/<str:task_id>/",
+        views.cancela_tarefa,
+        name="cancel_task"),
 
     path("conexoes_estabelecidas/",
         views.conexoes_estabelecidas,

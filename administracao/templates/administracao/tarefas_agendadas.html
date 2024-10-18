@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Agosto de 2019
+{% endcomment %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">{{ titulo }}</span>
+
+  <table>
+      <thead>
+          <tr>
+              <th>Task ID</th>
+              <th>Task Name</th>
+              <th>ETA</th>
+              <th>Actions</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for worker, tasks in scheduled_tasks.items %}
+              {% for task in tasks %}
+                  <tr>
+                      <td>{{ task.id }}</td>
+                      <td>{{ task.name }}</td>
+                      <td>{{ task.eta }}</td>
+                      <td>
+                          <form method="post" action="{% url 'cancela_tarefa' task.id %}">
+                              {% csrf_token %}
+                              <button type="submit">Cancel</button>
+                          </form>
+                      </td>
+                  </tr>
+              {% endfor %}
+          {% endfor %}
+      </tbody>
+  </table>
+
+{% endblock %}

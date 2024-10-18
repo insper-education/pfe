@@ -1974,7 +1974,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             recipient_list = ["lpsoares@gmail.com",]
             
             try:
-                check = email(subject, recipient_list, message, delay_hours=1)
+                check = email(subject, recipient_list, message, delay_seconds=5*60)
                 if check != 1:
                     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
                     logger.error(error_message)
