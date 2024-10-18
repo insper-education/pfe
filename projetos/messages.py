@@ -64,7 +64,7 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
         send_mail_task.apply_async(
             args=[subject, message, email_from, recipient_list],
             kwargs={"fail_silently": True, "auth_user": auth_user, "html_message": message},
-            delay_seconds=delay_seconds
+            countdown=delay_seconds
         )
 
     return 1  # Solução temporária para manter compatibilidade
