@@ -1324,6 +1324,166 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     return message
 
 
+
+# Mensagem preparada para os estudantes
+def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observacoes, objetivos_possiveis):
+    
+    message = ""
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
+    
+    message += "<b>Avaliaçãp:</b> "
+    message += composicao.exame.titulo
+
+    message += "<br>\n<br>\n"
+    message += "<b>Conceitos:</b><br>\n"
+    message += "<table style='border: 1px solid black; "
+    message += "border-collapse:collapse; padding: 0.3em;'>"
+
+    for i in range(objetivos_possiveis):
+        if julgamento[i]:
+            message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                format(julgamento[i].objetivo.titulo)
+            message += "<td style='border: 1px solid black; text-align:center'>"
+            if julgamento[i].na:
+                message += "&nbsp;N/A&nbsp;</td>\n"
+            else:
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[i].nota))
+                
+    message += "</table>"
+
+    message += "<br>\n<br>\n"
+
+    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
+        message += "<b>Observações Estudantes (enviada para todo o grupo):</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    message += "<br>\n"
+
+    # Relistar os Objetivos de Aprendizagem
+    message += "<br><b>Objetivos de Aprendizagem</b>"
+
+    destaque = " background-color: #E0E0F4;'>"
+
+    for julg in julgamento:
+
+        if julg:
+
+            message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+            message += "<table "
+            message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Insatisfatório (I)</th>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "D":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Em Desenvolvimento (D)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Essencial (C/C+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Proficiente (B/B+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Avançado (A/A+)</th>"
+
+            message += "</tr>"
+
+
+            message += "<tr " 
+            if julg.na:
+                message += " style='background-color: #151515;'"
+            message += ">"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_I)
+
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_D)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_C)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_B)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_A)
+            message += "</td>"
+
+            message += "</tr>"
+            message += "</table>"
+
+    return message
+
+
 def calcula_notas_bancas(avaliadores):
     obj_avaliados = {}
     
@@ -1952,29 +2112,29 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
 
+        resposta = "Avaliação concluída com sucesso.<br>"
+        if not nova_avaliacao:
+            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+
         envia = "envia" in request.POST
         if envia:
 
-            message = str(julgamento) + "\n" + str(julgamento_observacoes)
+            error_message = ""
+            subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+            
+            message = mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observacoes, objetivos_possiveis)
 
-            # print(composicao.exame.titulo)
             if estudante:
-                message += "\nEstudante: " + estudante.get_full_name()
-                # print("Estudante: ", estudante)
+                message += "\nEstudante: " + estudante.email + "<br>\n"
             else:
                 alocacoes = Alocacao.objects.get(projeto=projeto)
                 for alocacao in alocacoes:
-                    message += "\nEstudante: " + alocacao.aluno.user.get_full_name()
-                    # print("Alocacao: ", alocacao)
-            
+                    message += "\nEstudante: " + alocacao.aluno.user.email + "<br>\n"
 
-            error_message = ""
-            subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
-            # recipient_list = [user.email,]
             recipient_list = ["lpsoares@gmail.com",]
             
             try:
-                check = email(subject, recipient_list, message, delay_seconds=5*60)
+                check = email(subject, recipient_list, message)
                 if check != 1:
                     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
                     logger.error(error_message)
@@ -1982,11 +2142,9 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
 
+            resposta += "<br><br><h2>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos</h2><br><br>"
 
-
-        resposta = "Avaliação concluída com sucesso.<br>"
-        if not nova_avaliacao:
-            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+        
         resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
         context = {
             "area_principal": True,

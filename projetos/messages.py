@@ -57,9 +57,6 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
         send_mail_task.delay(subject, message, email_from, recipient_list,
                              fail_silently=True, auth_user=auth_user, html_message=message)
     else:
-        # Calculate the ETA (estimated time of arrival) for the email
-        #eta = datetime.now() + timedelta(hours=delay_hours)
-
         # Agenda tarefa para enviar e-mail com possibilidade de atraso
         send_mail_task.apply_async(
             args=[subject, message, email_from, recipient_list],
