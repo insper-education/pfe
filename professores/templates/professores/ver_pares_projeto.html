@@ -39,7 +39,7 @@
 
     <b>Projeto:</b>
     <a href="{% url 'projeto_completo' projeto.id %}">
-      {{projeto.get_titulo}}
+      [{{ projeto.organizacao.nome }}] {{projeto.get_titulo}}
       {% include "tipo_projeto.html" %}<br>
     </a>
 
