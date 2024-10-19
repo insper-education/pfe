@@ -1339,7 +1339,7 @@ def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observa
     message += "<br>\n<br>\n"
     if objetivos_possiveis == 0:
         message += "<b>Decisão = </b>"
-        if julgamento[i].nota > 5:
+        if julgamento[0].nota > 5:
             message += "Adequado"
         else:
             message += "Inadequado"
