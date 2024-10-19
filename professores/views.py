@@ -2142,7 +2142,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 alocacoes = Alocacao.objects.filter(projeto=projeto)
                 for alocacao in alocacoes:
                     recipient_list.append(alocacao.aluno.user.email)
-            recipient_list = ["lpsoares@gmail.com",]
 
             try:
                 check = email(subject, recipient_list, message)
