@@ -1333,7 +1333,7 @@ def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observa
     message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
     message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
     
-    message += "<b>Avaliaçãp:</b> "
+    message += "<b>Avaliação:</b> "
     message += composicao.exame.titulo
 
     message += "<br>\n<br>\n"
@@ -1357,7 +1357,7 @@ def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observa
     message += "<br>\n<br>\n"
 
     if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
-        message += "<b>Observações Estudantes (enviada para todo o grupo):</b>\n"
+        message += "<b>Observações:</b>\n"
         message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
         message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
         message += "</p>"
@@ -2113,8 +2113,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes.save()
 
         resposta = "Avaliação concluída com sucesso.<br>"
-        if not nova_avaliacao:
-            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
 
         envia = "envia" in request.POST
         if envia:
@@ -2127,7 +2125,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             if estudante:
                 message += "\nEstudante: " + estudante.email + "<br>\n"
             else:
-                alocacoes = Alocacao.objects.get(projeto=projeto)
+                alocacoes = Alocacao.objects.filter(projeto=projeto)
                 for alocacao in alocacoes:
                     message += "\nEstudante: " + alocacao.aluno.user.email + "<br>\n"
 
@@ -2142,8 +2140,10 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
                 logger.error(error_message)
 
-            resposta += "<br><br><h2>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos</h2><br><br>"
+            resposta += "<br>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos<br>"
 
+        if not nova_avaliacao:
+            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
         
         resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
         context = {
