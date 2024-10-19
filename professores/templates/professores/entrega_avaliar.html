@@ -176,7 +176,7 @@
       {% endif %}
 
       <button class="btn btn-primary mb-1" type="submit" style="margin-right: 1em;"><span lang="pt">Gravar Avaliação</span><span lang="en">Save Evaluation</span></button>
-      <label for="envia"><input type="checkbox" id="envia" name="envia" style="margin-right: 4px;">
+      <label for="envia"><input type="checkbox" id="envia" name="envia" style="margin-right: 4px;" {% if user.professor.email_avaliacao %}checked{% endif %}>
         <span lang="pt">Enviar e-mail nesse instante com resultados para estudante(s)</span>
         <span lang="en">Send email in this instant with results to student(s)</span>
       </label>

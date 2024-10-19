@@ -2153,7 +2153,11 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 logger.error(error_message)
 
             resposta += "<br>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos<br>"
-
+        
+        if request.user.professor:
+            request.user.professor.email_avaliacao = envia
+            request.user.professor.save()
+        
         if not nova_avaliacao:
             resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
         

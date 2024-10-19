@@ -184,6 +184,9 @@ class Professor(models.Model):
                               help_text="Website profissional do Professor")
     lattes = models.URLField(max_length=75, null=True, blank=True,
                              help_text="Link para o currículo Lattes do Professor")
+    
+    email_avaliacao = models.BooleanField(default=False,
+                                          help_text="Define último estado se o professor quer enviar e-mail de avaliação")
 
     class Meta:
         """Classe Meta."""
