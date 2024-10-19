@@ -13,7 +13,6 @@
   <span class="titulo">{{ titulo }}</span>
 
   <div>Agora: {{ agora }}</div><br>
-  <div>Agora2: {{ agora2 }}</div><br>
 
   <table>
     <thead>
@@ -66,5 +65,10 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <br>
+  <div> A informação do ETA é o horário estimado para a execução da tarefa, porém a informação não parece estar alinhada com os relógios disponíveis.</div>
+  <div> Quando uma tarefa é cancelada, ela é removida da fila de tarefas agendadas e não será executada.
+        Porém ela vai continuar sendo visível nessa lista até que o worker a remova. </div>
 
 {% endblock %}

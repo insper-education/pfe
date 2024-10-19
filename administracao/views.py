@@ -1198,8 +1198,8 @@ def export(request, modelo, formato):
         resource = FeedbacksResource()
     elif modelo == "pares":
         resource = ParesResource()
-        queryset = resource._meta.model.objects.filter(year=ano)
-        dataset = resource.export(queryset)
+        # queryset = resource._meta.model.objects.filter(year=ano)
+        # dataset = resource.export(queryset)
     else:
         mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
         context = {
@@ -1420,10 +1420,8 @@ def tarefas_agendadas(request):
     scheduled_tasks = i.scheduled()
 
     agora = datetime.datetime.now()
-    agora2 = timezone.now()
     context = {
         "agora": agora,
-        "agora2": agora2,
         "titulo": "Tarefas Agendadas",
         "scheduled_tasks": scheduled_tasks,
     }
