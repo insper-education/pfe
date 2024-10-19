@@ -185,7 +185,8 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+      <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+
       <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
         {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
         {% if encontro %}Atualizar{% else %}Criar{% endif %}
@@ -250,6 +251,8 @@
     // Adiciona o tipo de operação
     formData.append(operacao, "true");
     
+    {% comment %} {% include "load_content.html" %} {% endcomment %}
+
     $.ajax({
       type: "POST",
       url: "{{ url }}",
@@ -257,10 +260,15 @@
       processData: false,
       contentType: false,
       success: function(response){
-        $("#submit").hide();
-        $("#excluir").hide();
-        //$("#popup").modal("hide");
-        $("#modal-body").html(response.mensagem);
+        if (response.atualizado) {
+          $("#submit").hide();
+          $("#excluir").hide();
+          // Atualizar página
+          location.reload();         
+          {% comment %} loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" ); {% endcomment %}
+        } else {
+          alert(response.mensagem);
+        }
       },
       {% include "ajax_error_function.js" %}
     });
@@ -268,11 +276,5 @@
     return false;
 
   });
-
-  // Atualiza a página quando o popup é fechado
-  $("#popup").on("hidden.bs.modal", function() {
-    location.reload();
-  })
-
 
   </script>

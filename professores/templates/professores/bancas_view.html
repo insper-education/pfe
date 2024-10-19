@@ -450,7 +450,6 @@
         {% endif %}
       {% endif %}
     </div>
-    
 
   </div>
 
@@ -642,37 +641,22 @@
     // Adiciona o tipo de operação
     formData.append(operacao, "true");
     
-    function loadContent(target, url, selector) {
-      if (typeof calendar !== "undefined") {
-        calendarView = calendar.view.type;
-        calendarDate = calendar.getDate();
-        $(target).fadeOut("fast", function() {
-          $.ajax({
-            url: url,
-            type: "GET",
-            success: function(data,status,jqXHR) {
-                $(target).html($(data).find(selector).addBack(selector).children()).fadeIn("fast");
-                montar_calendario(calendarView, calendarDate);
-            }
-          });
-        });
-      }
-    }
-
+    {% include "load_content.html" %}
+    
     $.ajax({
       type: "POST",
       url: "{{ url }}",
       data: formData,
       processData: false,
       contentType: false,
-      success: function(data){
-        if (data.atualizado) {
+      success: function(response){
+        if (response.atualizado) {
           $("#submit").hide();
           $("#excluir").hide();
           $("#popup").modal("hide");
           loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" );
         } else {
-          alert(data.mensagem);
+          alert(response.mensagem);
         }
       },
       {% include "ajax_error_function.js" %}

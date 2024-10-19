@@ -2534,16 +2534,13 @@ def dinamicas_criar(request, data=None):
     organizacao = get_object_or_404(Organizacao, sigla="Falconi")
     falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
 
-    # outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
-    # estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
-    # pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"), Lower("last_name"))
-
     context = {
         "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
         # "pessoas": pessoas,
         "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
     }
 
     if data:
@@ -2629,18 +2626,13 @@ def dinamicas_editar(request, primarykey=None):
     falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"),
                                                                             Lower("last_name"))
 
-    # outros_parceiros = parceiros.exclude(parceiro__organizacao=organizacao)
-    # estudantes = PFEUser.objects.filter(tipo_de_usuario=1)  # (1, 'estudantes')
-    # pessoas = (outros_parceiros | estudantes).order_by(Lower("first_name"),
-    #                                                    Lower("last_name"))
-
     context = {
         "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
-        # "pessoas": pessoas,
         "encontro": encontro,
         "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
     }
     return render(request, "professores/dinamicas_view.html", context)
 

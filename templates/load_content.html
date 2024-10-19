@@ -1,0 +1,23 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Outubro de 2024
+{% endcomment %}
+
+function loadContent(target, url, selector) {
+  if (typeof calendar !== "undefined") {
+    calendarView = calendar.view.type;
+    calendarDate = calendar.getDate();
+    $(target).fadeOut("fast", function() {
+      $.ajax({
+        url: url,
+        type: "GET",
+        success: function(data,status,jqXHR) {
+            $(target).html($(data).find(selector).addBack(selector).children()).fadeIn("fast");
+            montar_calendario(calendarView, calendarDate);
+        }
+      });
+    });
+  }
+}
+
