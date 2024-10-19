@@ -188,16 +188,18 @@ class Projeto(models.Model):
         texto = ""
 
         if self.proposta.organizacao and self.proposta.organizacao.sigla:
-            texto = self.proposta.organizacao.sigla
+            texto = "[" + self.proposta.organizacao.sigla + "] "
         else:
-            texto = "SEM ORGANIZAÇÃO DEFINIDA"
+            texto = "[SEM ORGANIZAÇÃO DEFINIDA] "
+
+        texto += self.get_titulo()
 
         if self.ano and self.semestre:
             texto += " (" + str(self.ano) + "." + str(self.semestre) + ") "
         else:
             texto += " (SEM PERÍODO DEFINIDO)"
 
-        return texto + self.get_titulo()
+        return texto
 
     def tem_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
