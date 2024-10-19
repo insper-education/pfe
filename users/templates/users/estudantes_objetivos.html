@@ -10,13 +10,15 @@
   {% load dictionary %}
   {% load l10n %}
   {% include "tabelas_includes.html" %}
+  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
-  
+
   <span class="titulo">
-    {% if lingua == "pt" %}{{ titulo }}{% else %}Learning Goals by Student{% endif %}
-    (Individual)
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -24,26 +26,21 @@
   
   <div class="atualizar">
 
-    {% if alunos_list %}
-      <div class="table-responsive">
-      <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
-        <thead class="table-info">
+        {% comment %} <thead class="table-info">
           <tr>
               <th scope="col" class="text-center">Nome</th>
-
               <th scope="col" class="text-center">e-mail</th>
               <th scope="col" class="text-center">Curso</th>
-              <th scope="col" class="text-center">
-                <a data-toggle="tooltip" data-html="true" animation="true" title="<small>Projetos <u>sublinhados</u> são Capstone Avançado</small>">
-                  Projeto
-                </a>
-              </th>
+              <th scope="col" class="text-center">Projeto</th>
               {% for objetivo in objetivos %}
                 <th scope="col" class="text-center">{{objetivo.titulo}}</th>
               {% endfor %}
           </tr>
           </thead>
-          <tbody>
+          <tbody> {% endcomment %}
+
+          {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
@@ -56,13 +53,15 @@
             <td>
               <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
             </td>
-            {% if aluno2 %}
+
+            {% if aluno.curso2 %}
               <td style="color:#{{ aluno.curso2.cor }};">
-                {{ aluno.curso2 }}
+                {{ aluno.curso2.sigla_curta }}
               </td>
             {% else %}
               <td>Indefinido</td>
             {% endif %}
+
             <td>
               {% if aluno.alocacao_set.all %}
                 {% for alocacao in aluno.alocacao_set.all %}
@@ -111,20 +110,35 @@
           </tr>
           {% endfor %}
           </tbody>
+          <caption style="text-align:right">
+            <small>
+              {% for curso in cursos %}
+                <span style="white-space: nowrap;"><span style="color:#{{ curso.cor }};">{{ curso.sigla_curta }}</span>: {{curso.nome}}</span>
+                {% if not forloop.last %} |{% endif %}
+              {% endfor %}
+              <br>
+              Projetos <u>sublinhados</u> são de Capstone Avançado
+            </small>
+          </caption>
         </table>
         </div>
         <br>
 
-    {% endif %}
-
     <script>
       function carrega_pagina() {
       };
-      window.onload = carrega_pagina
+      function carrega_site() {
+        {% include "edicao_puxar_local_ou_versao.js" %}
+        carrega_pagina();
+      }
+      window.onload = carrega_site
     </script>
 
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Estudantes' %}
+  {% include "edicoes_ajax.html" with tabela="Estudantes" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
   
 {% endblock %}

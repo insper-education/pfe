@@ -436,18 +436,25 @@ def estudantes_objetivos(request):
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
-            # Filtra os Objetivos de Aprendizagem do semestre
-            objetivos = ObjetivosDeAprendizagem.objects.all()
-
+            
             #Nao está filtrando todos os semestres
             mes = 3 if semestre == 1 else 9
-            
             data_projeto = datetime.datetime(ano, mes, 1)
 
+            # Filtra os Objetivos de Aprendizagem do semestre
+            objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
             objetivos = objetivos.filter(data_inicial__lt=data_projeto)
             objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
 
             objetivos = objetivos.order_by("ordem")
+
+            cabecalhos = [{"pt": "Nome", "en": "Name"},
+                          {"pt": "e-mail", "en": "e-mail"},
+                          {"pt": "Curso", "en": "Program"},
+                          {"pt": "Projeto", "en": "Project"},
+                          ]        
+            for objetivo in objetivos:
+                cabecalhos.append({"pt": objetivo.titulo, "en": objetivo.titulo_en})
 
             context = {
                 "alunos_list": alunos_list,
@@ -457,6 +464,8 @@ def estudantes_objetivos(request):
                 "ano_semestre": str(ano)+'.'+str(semestre),
                 "loop_anos": range(2018, configuracao.ano+1),
                 "objetivos": objetivos,
+                "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+                "cabecalhos": cabecalhos,
             }
 
         else:
@@ -464,7 +473,7 @@ def estudantes_objetivos(request):
     else:
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-            "titulo": "Objetivos de Aprendizagem por Estudante",
+            "titulo": {"pt": "Objetivos de Aprendizagem por Estudante (Individual)", "en": "Learning Goals by Student (Individual)"},
             "edicoes": edicoes,
             }
 
