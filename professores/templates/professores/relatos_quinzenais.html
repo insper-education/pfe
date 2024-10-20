@@ -36,9 +36,7 @@
 
             <div style="margin-top:8px;"><strong>Relatos:</strong></div>
 
-            {% with alocacoes=projeto.alocacao_set.all %}
-              {% include "relatos.html" %}
-            {% endwith %}
+            {% include "relatos.html" with alocacoes=projeto.get_alocacoes %}
 
             <small>Obs: prazos para a entrega dos estudantes.</small>
 

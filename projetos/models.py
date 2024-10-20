@@ -216,7 +216,14 @@ class Projeto(models.Model):
 
         return eventos
 
-    # @property
+    def get_alocacoes(self):
+        """Retorna todas as alocações do projeto."""
+        if self.time_misto:
+            # Em caso de time misto, estudantes de fora da instituição não são listados
+            cursos_do_insper = Curso.objects.filter(curso_do_insper=True)
+            return users.models.Alocacao.objects.filter(projeto=self, aluno__curso2__in=cursos_do_insper)
+        return users.models.Alocacao.objects.filter(projeto=self)
+
     def get_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
         
