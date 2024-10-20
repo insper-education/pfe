@@ -19,9 +19,13 @@
 {% endblock %}
 
 {% block content %}
-    <span class="titulo">{{titulo}}</span>
 
-    <table class="table table-borderless table-sm arredondado">
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  <table class="table table-borderless table-sm arredondado">
     {% for projeto in projetos %}
       {% ifchanged projeto.periodo %}
       {% if not forloop.first %}</tbody>{% endif %}
@@ -54,5 +58,8 @@
   </tbody></table>
 
   {% include "toggle_anteriores.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

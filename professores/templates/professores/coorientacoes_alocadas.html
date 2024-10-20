@@ -19,7 +19,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <table class="table table-borderless table-sm arredondado"><tbody>
     {% for coorientacao in coorientacoes %}
@@ -50,5 +54,8 @@
   </tbody></table>
 
   {% include "toggle_anteriores.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

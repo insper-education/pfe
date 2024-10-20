@@ -19,9 +19,12 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  <div>Link para pesquisa: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
+  <div><span lang="pt">Link para pesquisa</span><span lang="en">Form link</span>: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
 
   {% include "edicoes.html" %}
 
@@ -35,7 +38,7 @@
       var comentarios = [];
     </script>
 
-    {% include "tabelas_top.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
       {% for estudante, projeto, feedback in alocacoes %}
         <tr class="item">
           <td style="font-size:80%" data-sort="{{estudante.user.get_full_name}}">
@@ -96,7 +99,10 @@
   <p>&nbsp;</p>
 
   <table id="ComentariosTable"  style="background-color: #eee;" >
-    <tr><td><b>Comentários:</b></td></tr>
+    <tr><td>
+      <b lang="pt">Comentários:</b>
+      <b lang="en">Comments:</b>
+    </td></tr>
   </table>
 
   <script>
@@ -286,5 +292,8 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Feedbacks" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

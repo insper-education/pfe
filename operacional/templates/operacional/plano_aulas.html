@@ -12,7 +12,10 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
   {% include "edicoes.html" with n_todas=True %}
   <br>
 
@@ -102,13 +105,17 @@
     <b>Orientações gerais:</b><br>
     <span>Para a Aprovação o estudante deve ter uma média individual maior ou igual a 5, e deve ter no mínimo conceito C em todos os objetivos de aprendizado da avaliação final.</span>
 
+
+  </div>
+
   <script>
     function carrega_pagina() {};
     window.onload = carrega_pagina
   </script>
 
-</div>
+  {% include "edicoes_ajax.html" %}
 
-{% include "edicoes_ajax.html" %}
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

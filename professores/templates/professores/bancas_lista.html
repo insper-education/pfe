@@ -60,7 +60,9 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">{{titulo}}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder">
       <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
           data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
@@ -253,13 +255,13 @@
     {% endif %}
     <p>&nbsp;</p>
 
-    <h4>Calendário</h4>
+    <h4 lang="pt">Calendário</h4><h4 lang="en">Calendar</h4>
     {% include "calendario_bancas.html" %}
 
     <div class="sem_agendamento">
       {% if sem_banca %}
         <br>
-        <h5>Projetos ativos sem bancas agendadas:</h5>
+        <h5 lang="pt">Projetos ativos sem bancas agendadas:</h5><h5 lang="en">Active projects without scheduled evaluation boards:</h5>
         <ul>
         {% for projeto in sem_banca %}
           <li>
@@ -301,5 +303,8 @@
   </script>
 
   {% include "janelas-modal.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

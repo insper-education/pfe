@@ -21,7 +21,10 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
   {% include "edicoes.html" %}
   <br>
 
@@ -92,10 +95,10 @@
           </th>
 
           <th>
-            <strong>Projeto:</strong>
+            <strong lang="pt">Projeto:</strong><strong lang="en">Project:</strong>
             <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% if projeto.organizacao %}<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">[{{ projeto.organizacao.nome }}]</a>{% else %}[ORGANIZAÇAO NÃO DEFINIDA]{% endif %}
-            <br><strong>Orientador:</strong>
+            <br><strong lang="pt">Orientador:</strong><strong lang="en">Advisor:</strong>
               {% if projeto.orientador %}
                 <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
               {% else %}
@@ -110,9 +113,10 @@
     </table>
 
     <p>&nbsp;</p>
-    <strong>Número de Planos de Orientação:</strong><br>
-    Submetidos: <span id="submetidos"></span><br>
-    Ausentes: <span id="ausentes"></span><br>
+    <strong lang="pt">Número de Planos de Orientação:</strong><strong lang="en">Number of Orientation Plans:</strong>
+    {{projetos|length}}<br>
+    <span lang="pt">Submetidos</span><span lang="en">Submitted</span>: <span id="submetidos"></span><br>
+    <span lang="pt">Ausentes</span><span lang="en">Missing</span>: <span id="ausentes"></span><br>
     <script>
       tsubmetidos = Object.keys(submetidos).length;
       tausentes = Object.keys(ausentes).length
@@ -145,5 +149,8 @@
   {% include "documento-modal.html" %}
 
   {% include "edicoes_ajax.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

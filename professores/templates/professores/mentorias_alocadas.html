@@ -23,83 +23,89 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
 
-      <table class="table table-borderless table-sm arredondado"><tbody>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-        {% for e in mentorias %}
 
-          {% ifchanged e.periodo %}
-            {% if not forloop.first %}</tbody>{% endif %}
-            <thead><tr><th id="{{e.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.periodo }} 
-              {% if e.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
-            <tbody>
-          {% endifchanged %}
+  <table class="table table-borderless table-sm arredondado"><tbody>
 
-          <tr class="{{e.periodo}} {% if e.periodo == "Anteriores" %}hidden_tr{% endif %}">
-            <td>
-              <a class="open-modal" class="imprimir" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}">
-                <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
-              </a>
-              {% if e.projeto  %}
-                {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto %}
-                
-                {% comment %} Meio obvio, parece desnecessário {% endcomment %}
-                {% comment %} {% if e.facilitador %}
-                  <div class="facilitador" style="margin-top: 8px;">
-                    <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                    <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
-                    <br>
-                  </div>
-                {% endif %} {% endcomment %}
+    {% for e in mentorias %}
 
-                {% if e.location %}
-                  <div class="local" style="margin-top: 8px;">
-                    <b>Local:</b> 
-                    {% if e.url_location %}
-                      <a href="{{e.location}}">
-                    {% endif %}
-                    {{e.location}}
-                    {% if e.url_location %}
-                      </a>
-                    {% endif %}
-                    <br>
-                  </div>
+      {% ifchanged e.periodo %}
+        {% if not forloop.first %}</tbody>{% endif %}
+        <thead><tr><th id="{{e.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.periodo }} 
+          {% if e.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+        <tbody>
+      {% endifchanged %}
+
+      <tr class="{{e.periodo}} {% if e.periodo == "Anteriores" %}hidden_tr{% endif %}">
+        <td>
+          <a class="open-modal" class="imprimir" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}">
+            <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
+          </a>
+          {% if e.projeto  %}
+            {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto %}
+            
+            {% comment %} Meio obvio, parece desnecessário {% endcomment %}
+            {% comment %} {% if e.facilitador %}
+              <div class="facilitador" style="margin-top: 8px;">
+                <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
+                <br>
+              </div>
+            {% endif %} {% endcomment %}
+
+            {% if e.location %}
+              <div class="local" style="margin-top: 8px;">
+                <b>Local:</b> 
+                {% if e.url_location %}
+                  <a href="{{e.location}}">
                 {% endif %}
-                <div class="grupo" style="margin-top: 8px;">
-                  <b>Grupo:</b>
-                  <ol style="padding-left: 18px;">
-                    {% for alocacao in e.projeto.alocacao_set.all %} 
-                      <li>
-                        <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
-                          <span class="curso">
-                            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-                            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-                          </span>
-                        </a>
-                        <span class="email">
-                          <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                          <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
-                        </span>
-                      </li>
-                    {% endfor %}
-                  </ol>
-                </div>
-              {% else %}
-                Horário Livre<br><br>
-              {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          Nenhuma mentoria encontrada.
-        {% endfor %}
-      </tbody></table>
-      <p>&nbsp;</p>
+                {{e.location}}
+                {% if e.url_location %}
+                  </a>
+                {% endif %}
+                <br>
+              </div>
+            {% endif %}
+            <div class="grupo" style="margin-top: 8px;">
+              <b>Grupo:</b>
+              <ol style="padding-left: 18px;">
+                {% for alocacao in e.projeto.alocacao_set.all %} 
+                  <li>
+                    <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
+                      <span class="curso">
+                        <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
+                        <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                      </span>
+                    </a>
+                    <span class="email">
+                      <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                      <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                    </span>
+                  </li>
+                {% endfor %}
+              </ol>
+            </div>
+          {% else %}
+            Horário Livre<br><br>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      Nenhuma mentoria encontrada.
+    {% endfor %}
+  </tbody></table>
+  <p>&nbsp;</p>
 
-      {% include "toggle_anteriores.html" %}
+  {% include "toggle_anteriores.html" %}
   
+  {% include "janelas-modal.html" %}
+
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
-  {% include "janelas-modal.html" %}
 
 {% endblock %}

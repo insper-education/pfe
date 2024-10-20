@@ -751,12 +751,17 @@ def lista_feedback_estudantes(request):
             "num_feedbacks": num_feedbacks,
             "alocacoes": alocacoes,
             "coordenacao": configuracao.coordenacao,
-            "cabecalhos": ["Nome", "Projeto", "Data", "Mensagem", ],
+
+            #"cabecalhos": ["Nome", "Projeto", "Data", "Mensagem", ],
+            "cabecalhos": [{"pt": "Nome", "en": "Name"}, 
+                           {"pt": "Projeto", "en": "Project"}, 
+                           {"pt": "Data", "en": "Date"}, 
+                           {"pt": "Mensagem", "en": "Message"}, ],
         }
 
     else:
         context = {
-            "titulo": "Feedbacks Finais dos Estudantes",
+            "titulo": {"pt": "Feedbacks Finais dos Estudantes", "en": "Final Feedback from Students"},
             "edicoes": edicoes,
         }
 

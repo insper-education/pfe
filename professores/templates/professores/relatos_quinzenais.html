@@ -20,7 +20,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
   
   {% include "edicoes.html" %}
   <br>
@@ -38,7 +42,8 @@
 
             {% include "relatos.html" with alocacoes=projeto.get_alocacoes %}
 
-            <small>Obs: prazos para a entrega dos estudantes.</small>
+            <small lang="pt">Obs: prazos para a entrega dos estudantes.</small>
+            <small lang="en">Note: deadlines for students' submissions.</small>
 
           </div>
         {% endif %}
@@ -62,5 +67,8 @@
   </script>
 
   {% include "edicoes_ajax.html" %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

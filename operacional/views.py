@@ -85,7 +85,8 @@ def avisos_listar(request):
                 })
 
     context = {
-        "titulo": "Avisos",
+        #"titulo": "Avisos",
+        "titulo": { "pt": "Avisos", "en": "Notices" },
         "avisos": avisos,
         "hoje" : datetime.date.today(),
         "filtro" : "todos",
@@ -105,7 +106,7 @@ def emails(request):
     atual = str(configuracao.ano)+"."+str(configuracao.semestre)
 
     context = {
-        "titulo": "Listas de e-mails",
+        "titulo": { "pt": "Listas de e-mails", "en": "Email lists" },
         "membros_comite": PFEUser.objects.filter(membro_comite=True),
         "todos_alunos": Aluno.objects.filter(trancado=False),
         "todos_professores": Professor.objects.all(),
@@ -387,7 +388,7 @@ def plano_aulas(request):
     
     edicoes, _, _ = get_edicoes(Projeto)
     context = {
-        "titulo": "Plano de Aulas",
+        "titulo": { "pt": "Plano de Aulas", "en": "Class Schedule" },
         "edicoes": edicoes,
     }
     return render(request, "operacional/plano_aulas.html", context=context)

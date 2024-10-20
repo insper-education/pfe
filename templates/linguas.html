@@ -96,11 +96,13 @@
       $("#language_button").html(text_pt);
       $('[lang="pt"]').css("display", "initial");
       $('[lang="en"]').css("display", "none");
+      {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
       switchTableLanguage("pt");
     } else {
       $("#language_button").html(text_en);
       $('[lang="pt"]').css("display", "none");
       $('[lang="en"]').css("display", "initial");
+      {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
       switchTableLanguage("en");
     }
 
@@ -121,14 +123,16 @@
         $("#language_button").html(text_en);
         $('[lang="pt"]').css("display", "none");
         $('[lang="en"]').css("display", "initial");
-        switchTableLanguage('en');
+        {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
+        switchTableLanguage("en");
         //await sleep(500);
         localStorage.setItem("lingua", "en");
       } else {
         $("#language_button").html(text_pt);
         $('[lang="pt"]').css("display", "initial");
         $('[lang="en"]').css("display", "none");
-        switchTableLanguage('pt');
+        {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
+        switchTableLanguage("pt");
         //await sleep(500);
         localStorage.setItem("lingua", "pt");
       }

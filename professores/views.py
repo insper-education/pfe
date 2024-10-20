@@ -287,9 +287,8 @@ def bancas_alocadas(request):
         )
     ).order_by("custom_order", "-startDate")
 
-
     context = {
-        "titulo": "Participação em Bancas",
+        "titulo": {"pt": "Participação em Bancas", "en": "Member in Evaluation Boards"},
         "bancas": bancas,
         }
     return render(request, "professores/bancas_alocadas.html", context=context)
@@ -301,7 +300,7 @@ def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
     projetos = Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre")
     context = {
-        "titulo": "Projetos Orientados",
+        "titulo": {"pt": "Projetos Orientados", "en": "Projects Oriented"},
         "projetos": projetos,
         }
     return render(request, "professores/orientacoes_alocadas.html", context=context)
@@ -314,7 +313,8 @@ def coorientacoes_alocadas(request):
     coorientacoes = Coorientador.objects.filter(usuario=request.user)\
         .order_by("-projeto__ano", "-projeto__semestre")
     context = {
-        "titulo": "Projetos Coorientados",
+        #"titulo": "Projetos Coorientados",
+        "titulo": {"pt": "Projetos Coorientados", "en": "Cooriented Projects"},
         "coorientacoes": coorientacoes,
         }
     return render(request, "professores/coorientacoes_alocadas.html", context=context)
@@ -327,7 +327,8 @@ def mentorias_alocadas(request):
     mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
     mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
     context = {
-        "titulo": "Mentorias Facilitadas",
+        #"titulo": "Mentorias Facilitadas",
+        "titulo": {"pt": "Mentorias Facilitadas", "en": "Facilitated Mentoring"},
         "mentorias": mentorias,
         }
     return render(request, "professores/mentorias_alocadas.html", context=context)
@@ -874,7 +875,7 @@ def bancas_editar(request, primarykey=None):
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {
-        "titulo": "Listagem das Bancas",
+        "titulo": {"pt": "Listagem das Bancas", "en": "List of Evaluation Boards"},
         "periodo": periodo_projeto
         }
 
@@ -2451,7 +2452,7 @@ def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by("startDate")
     context = {
-        "titulo": "Mentorias",
+        "titulo": {"pt": "Mentorias", "en": "Mentorships"},
         "encontros": encontros,
         }
     return render(request, "professores/dinamicas_index.html", context)
@@ -2967,7 +2968,7 @@ def relatos_quinzenais(request, todos=None):
 
         edicoes, _, _ = get_edicoes(Relato)
         context = {
-                "titulo": "Relatos Quinzenais",
+                "titulo": {"pt": "Relatos Quinzenais", "en": "Biweekly Reports"},
                 "administracao": True,
                 "edicoes": edicoes,
             }
@@ -3493,7 +3494,7 @@ def planos_de_orientacao_todos(request):
 
     else:
         context = {
-                "titulo": "Planos de Orientação",
+                "titulo": {"pt": "Planos de Orientação", "en": "Orientation Plans"},
                 "administracao": True,
                 "edicoes": get_edicoes(Projeto)[0],
             }

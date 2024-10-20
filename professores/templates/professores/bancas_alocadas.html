@@ -20,9 +20,13 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
 
-    <table class="table table-borderless table-sm arredondado">
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  <table class="table table-borderless table-sm arredondado">
     {% for banca in bancas %}
       {% ifchanged banca.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
@@ -95,11 +99,19 @@
     {% empty %}
       Nenhuma banca encontrada.
     {% endfor %}
-    </tbody></table>
+  </tbody></table>
 
-    {% include "toggle_anteriores.html" %}
+  {% include "toggle_anteriores.html" %}
 
+  <div lang="pt">
     Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua
     <a href="{% url 'index_professor' %}">página do Professor</a>.
+  </div>
+  <div lang="en">
+    Note: Professor, to schedule/update an evaluation board, access "Agendar Bancas" in your
+    <a href="{% url 'index_professor' %}">Professor's page</a>.
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
       
 {% endblock %}

@@ -32,9 +32,12 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  <label for="filter">Filtro:</label>
+  <label for="filter"><span lang="pt">Filtro</span><span lang="en">Filter</span>:</label>
   <select id="filter" class="filter" data-tableId="projetos">
     <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}>todos</option>
     <option value="Co" {% if filtro == "Co" %}selected="selected"{% endif %}>Coordenação</option>
@@ -172,9 +175,15 @@
     {% endif %}
 
   
-    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">Cria Aviso</a>
+    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
+      <span lang="pt">Cria Aviso</span>
+      <span lang="en">Create Notice</span>
+    </a>
     <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
-       onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">Reenviar Avisos do Dia</a>
+       onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
+      <span lang="pt">Reenviar Avisos do Dia</span>
+      <span lang="en">Resend Daily Notices</span>
+    </a>
 
   </form>
 
@@ -232,5 +241,8 @@
     });
 
   </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

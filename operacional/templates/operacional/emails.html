@@ -19,11 +19,11 @@
         mailto += estudantes;
         if( ($('#orientador:checked').val() && orientador.trim().length != 0) || ($('#parceiros:checked').val() && conexoes.trim().length != 0) ) {mailto += ",";}
       }
-      if($('#orientador:checked').val() && orientador.trim().length != 0) {
+      if($("#orientador:checked").val() && orientador.trim().length != 0) {
         mailto += orientador;
-        if($('#parceiros:checked').val() && conexoes.trim().length != 0) {mailto += ",";}
+        if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += ",";}
       }
-      if($('#parceiros:checked').val() && conexoes.trim().length != 0) {mailto += conexoes;}
+      if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += conexoes;}
       mailto += "?cc={{coordenacao.user.email}}";
       //mailto += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}";
       //mailto += ",pfe@insper.edu.br";
@@ -69,10 +69,13 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% if membros_comite %}
-    <strong>Comitês</strong>
+    <strong lang="pt">Comitês</strong><strong lang="en">Committees</strong>
     <div class="row align-items-start mb-2">
       <div class="ml-3">
         <div class="input-group input-group-sm">
@@ -106,7 +109,7 @@
     <br>
   {% endif %}
 
-  <strong>Por semestre</strong>
+  <strong lang="pt">Por semestre</strong><strong lang="en">By semester</strong>
   <div class="row align-items-start mb-2 table-responsive">
     <div class="ml-3">
       <div class="input-group input-group-sm">
@@ -156,7 +159,8 @@
 
   <br>
 
-  <strong>Por projeto</strong><br>
+  <strong lang="pt">Por projeto</strong><strong lang="en">By project</strong>
+  <br>
   <small>
     &nbsp;&nbsp;<b>Copiados:</b>
     <div class="form-check form-check-inline mr-1">
@@ -419,5 +423,8 @@
     $(document).ready(carrega_pagina);
 
   </script>
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}
