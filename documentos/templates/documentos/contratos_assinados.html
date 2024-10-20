@@ -14,28 +14,19 @@
 
 {% block content %}
   {% include "impressora.html" %}
-  <span class="titulo">{{ titulo }}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" %}
   <br>
   
   <div class="atualizar">
 
-    <div class="table-responsive">
-
-      <table id="ProjetosTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
-
-        <thead class="table-info">
-          <tr>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Organização</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projeto</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Conexões</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Estudantes</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Orientador</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Período</span></th>
-            <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Contrato(s)</span></th>
-          </tr>
-        </thead>
-        <tbody>
+    {% include "tabelas_top_ml.html" with tabela="Contratos" cabecalhos=cabecalhos %}
+    
           {% for projeto in projetos %} 
             <tr class="item">
 
@@ -166,32 +157,35 @@
 
     </div>
 
-    <script>
-
-      var table = null;
-
-      function carrega_pagina() {
-        if($("#ProjetosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#ProjetosTable").dataTable();
-          if(table) {
-            table.fnSetColumnVis( 5, false );  // esconde Edição
-          }
-        }
-      };
-      
-      function carrega_site() {
-        {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
-      };
-
-      window.onload = carrega_site
-
-    </script>
-
   </div>
+
+  <script>
+
+    var table = null;
+
+    function carrega_pagina() {
+      if($("#ContratosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+        table = $("#ContratosTable").dataTable();
+        if(table) {
+          table.fnSetColumnVis( 5, false );  // esconde Edição
+        }
+      }
+    };
+    
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+
+  </script>
   
   {% include "documento-modal.html" %}
 
-  {% include "edicoes_ajax.html" with tabela="Projetos" %}
+  {% include "edicoes_ajax.html" with tabela="Contratos" %}
   
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
+
 {% endblock %}

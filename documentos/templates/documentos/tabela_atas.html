@@ -15,7 +15,9 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     {% if user.tipo_de_usuario == 4 %}
       <small class="esconder">
         <a
@@ -40,8 +42,12 @@
     <table id="AtasTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')">Data</th>
-          <th>Documento</th>
+          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')">
+            <span lang="pt">Data</span><span lang="en">Date</span>
+          </th>
+          <th>
+            <span lang="pt">Documento</span><span lang="en">Document</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -81,5 +87,8 @@
   {% if user.tipo_de_usuario == 4 %}
     {% include "documento-modal.html" %}
   {% endif %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -346,10 +346,19 @@ def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
     documentos = Documento.objects.filter(tipo_documento=tipo_documento)
+
+    cabecalhos = [{"pt": "Data", "en": "Date"},
+                  {"pt": "Anotações", "en": "Notes"},
+                  {"pt": "Projeto", "en": "Project"},
+                  {"pt": "Documento", "en": "Document"},
+                  {"pt": "URLs", "en": "URLs"},
+                ]
+
     context = {
-        "titulo": "Matérias na Mídia",
+        "titulo": {"pt": "Matérias na Mídia", "en": "Media Coverage"},
         "documentos": documentos,
         "tipo": tipo_documento,
+        "cabecalhos": cabecalhos,
         }
     return render(request, "documentos/materias_midia.html", context)
 
@@ -625,7 +634,7 @@ def tabela_seguros(request):
     tipo_documento = TipoDocumento.objects.get(nome="Seguros")
     seguros = Documento.objects.filter(tipo_documento=tipo_documento)
     context = {
-        "titulo": "Seguros Emitidos",
+        "titulo": {"pt": "Seguros Emitidos", "en": "Insurance Policies"},
         "seguros": seguros,
         }
     return render(request, "documentos/tabela_seguros.html", context)
@@ -648,7 +657,7 @@ def tabela_atas(request):
         return HttpResponse("Tipo de Documento para Template de Ata do Comitê não encontrado.", status=401)
 
     context = {
-        "titulo": "Atas do Comitê Capstone",
+        "titulo": {"pt": "Atas do Comitê Capstone", "en": "Capstone Committee Minutes"},
         "atas": atas,
         "template": template,
         "tipo": tipo_ata,
@@ -689,14 +698,26 @@ def contratos_assinados(request):
                 ano, semestre = request.POST["edicao"].split('.')
                 projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
+
+        cabecalhos = [{"pt": "Organização", "en": "Organization"},
+                        {"pt": "Projeto", "en": "Project"},
+                        {"pt": "Conexões", "en": "Connections"},
+                        {"pt": "Estudantes", "en": "Students"},
+                        {"pt": "Orientador", "en": "Advisor"},
+                        {"pt": "Período", "en": "Period"},
+                        {"pt": "Contrato(s)", "en": "Contract(s)"},
+                        ]
+        
         context = {
             "projetos": projetos,
             "edicao": edicao,
+            "cabecalhos": cabecalhos
         }
 
     else:
+
         context = {
-            "titulo": "Contratos Assinados",
+            "titulo": {"pt": "Contratos Assinados", "en": "Signed Contracts"},
             "edicoes": get_edicoes(Projeto)[0],
             }
 

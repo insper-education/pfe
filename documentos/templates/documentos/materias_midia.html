@@ -33,7 +33,9 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     {% if  user.tipo_de_usuario == 4 %}
       <small class="esconder"><a class="open-documento"
         data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
@@ -44,125 +46,116 @@
   {% comment %} {% include "informacoes.html" %} {% endcomment %}
 
   <div class="atualizar">
-  <div class="table-responsive">
 
-    <table id="RelatoriosTable" data-order='[[ 0, "desc" ]]' class="table table-bordered table-hover table-sm" style="width: 100%; max-width: 100%;">
-      <thead class="table-info">
-        <tr>
-          <th scope="col">Data</th>
-          <th scope="col">Anotações</th>
-          <th scope="col">Projeto</th>
-          <th scope="col">Documento</th>
-          <th scope="col">URLs</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for relatorio in documentos %}
+    {% include "tabelas_top_ml.html" with tabela="Materias" cabecalhos=cabecalhos %}
+  
+        {% for relatorio in documentos %}
 
-        {% if relatorio.link or relatorio.documento %}
+          {% if relatorio.link or relatorio.documento %}
 
-          {% if user.tipo_de_usuario == 4 or not relatorio.confidencial %}
+            {% if user.tipo_de_usuario == 4 or not relatorio.confidencial %}
 
-            <tr class="item">
+              <tr class="item">
 
-              <td data-order="{{relatorio.data|date:"Ymd"}}">
-                {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
-                {% if relatorio.confidencial %}CONFIDENCIAL{% endif %}
-              </td>
+                <td data-order="{{relatorio.data|date:"Ymd"}}">
+                  {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
+                  {% if relatorio.confidencial %}CONFIDENCIAL{% endif %}
+                </td>
 
-              <td>
-                {% if relatorio.anotacao %}
-                  {{relatorio.anotacao}}
-                {% endif %}
-              </td>
-
-              <td>
-                {% if relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+                <td>
+                  {% if relatorio.anotacao %}
+                    {{relatorio.anotacao}}
                   {% endif %}
-                  {{relatorio.projeto.organizacao}}, {{relatorio.projeto.get_titulo}}
-                  {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    </a>
-                  {% endif %}
-                {% elif relatorio.organizacao %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    <a href="{% url 'organizacao_completo' relatorio.organizacao.id %}">
-                  {% endif %}
-                  {{relatorio.organizacao}}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    </a>
-                  {% endif %}
-                {% endif %}
-              </td>
+                </td>
 
-              <td class="text-center">
+                <td>
+                  {% if relatorio.projeto %}
+                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                      <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+                    {% endif %}
+                    {{relatorio.projeto.organizacao}}, {{relatorio.projeto.get_titulo}}
+                    {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
+                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                      </a>
+                    {% endif %}
+                  {% elif relatorio.organizacao %}
+                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                      <a href="{% url 'organizacao_completo' relatorio.organizacao.id %}">
+                    {% endif %}
+                    {{relatorio.organizacao}}
+                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                      </a>
+                    {% endif %}
+                  {% endif %}
+                </td>
+
+                <td class="text-center">
+                    {% if relatorio.link%}
+                      <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;"
+                        href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                        <span class="full-text" style="width: 9em;">Link da Matéria</span>
+                        <span class="short-text" style="width: 3em;">Link</span>
+                      </a><br>
+                    {% endif %}
+                    {% if relatorio.documento%}
+                      <a class="btn btn-light btn-outline-info btn-sm" 
+                        href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
+                        <span class="full-text" style="width: 9em;">Cópia no Servidor</span>
+                        <span class="short-text" style="width: 3em;">Cópia</span>
+                      </a>
+                    {% endif %}
+                </td>
+
+                <td>
                   {% if relatorio.link%}
-                    <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;"
-                      href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                      <span class="full-text" style="width: 9em;">Link da Matéria</span>
-                      <span class="short-text" style="width: 3em;">Link</span>
+                    <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                      <span>{{relatorio.link}}</span>
                     </a><br>
                   {% endif %}
-                  {% if relatorio.documento%}
-                    <a class="btn btn-light btn-outline-info btn-sm" 
-                      href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                      <span class="full-text" style="width: 9em;">Cópia no Servidor</span>
-                      <span class="short-text" style="width: 3em;">Cópia</span>
+                  {% if relatorio.documento %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
+                      <span>{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}</span>
                     </a>
                   {% endif %}
-              </td>
+                </td>
 
-              <td>
-                {% if relatorio.link%}
-                  <a href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                    <span>{{relatorio.link}}</span>
-                  </a><br>
-                {% endif %}
-                {% if relatorio.documento %}
-                  <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span>{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}</span>
-                  </a>
-                {% endif %}
-              </td>
+              </tr>
 
-            </tr>
+            {% endif %}
 
           {% endif %}
 
-        {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-      {% endfor %}
-      </tbody>
-    </table>
   </div>
 
   <script>
     function carrega_pagina() {
-      if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#RelatoriosTable").dataTable();
+      if($("#MateriasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+        table = $("#MateriasTable").dataTable();
         if(table) {
           table.fnSetColumnVis( 4, false );  // esconde longa URL
         }
       }
     };
-    
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
       carrega_pagina();
     };
-
     window.onload = carrega_site
-
   </script>
 
-
-  </div>
+  {% include "edicoes_ajax.html" with tabela="Materias" %}
 
   <br>
   {% if  user.tipo_de_usuario == 4 %}
     {% include "documento-modal.html" %}
   {% endif %}
+
+  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

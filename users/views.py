@@ -229,7 +229,6 @@ def estudantes_lista(request):
             num_alunos_masculino = alunos_list.filter(user__genero='M').count()
             num_alunos_feminino = alunos_list.filter(user__genero='F').count()
 
-            #cabecalhos = ["Nome", "Matrícula", "e-mail", "Curso", "Período", "Projeto", "Linkedin", "Celular", ]
             cabecalhos = [{"pt": "Nome", "en": "Name"},
                           {"pt": "Matrícula", "en": "Enrollment"},
                           {"pt": "e-mail", "en": "e-mail"},
