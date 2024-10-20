@@ -4,8 +4,6 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-
-
 <h5>Pré-projeto</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informacoes_adicionais' %}">Indicar Interesses e Experiências</a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a 
@@ -40,7 +38,6 @@
   </div>
 {% endif %}    
 <br>
-
 
 <h5>Projeto</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span>
@@ -134,7 +131,7 @@
 {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
 <script>
   function showMessage(mensagem) {
-    $("#"+mensagem).addClass("show");
-    setTimeout(function(){ $("#"+mensagem).removeClass("show"); }, 3000);
+    $("#"+mensagem).addClass("show_mensagem");
+    setTimeout(function(){ $("#"+mensagem).removeClass("show_mensagem"); }, 3000);
   }
 </script>

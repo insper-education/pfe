@@ -30,7 +30,7 @@ h5 {
   padding: 18px;
   border-top: 1px solid #ddd;
 }
-
+ 
 .link_direto {
   color: inherit;
   text-decoration: none;
@@ -79,28 +79,28 @@ h5 {
   border: 4px solid #909090;
 }
 
-.show {
+.show_mensagem {
   visibility: visible;
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  -webkit-animation: fadein_mensagem 0.5s, fadeout_mensagem 0.5s 2.5s;
+  animation: fadein_mensagem 0.5s, fadeout_mensagem 0.5s 2.5s;
 }
 
-@-webkit-keyframes fadein {
+@-webkit-keyframes fadein_mensagem {
   from {bottom: 0; opacity: 0;} 
   to {bottom: 30px; opacity: 1;}
 }
 
-@keyframes fadein {
+@keyframes fadein_mensagem {
   from {bottom: 0; opacity: 0;}
   to {bottom: 30px; opacity: 1;}
 }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes fadeout_mensagem {
   from {bottom: 30px; opacity: 1;} 
   to {bottom: 0; opacity: 0;}
 }
 
-@keyframes fadeout {
+@keyframes fadeout_mensagem {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
 }
