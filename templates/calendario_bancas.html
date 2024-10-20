@@ -246,39 +246,39 @@
 
     calendar.render();
 
+    $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
+    $("#color_banca_final").css("color", color_banca_final);
+    $("#color_probation").css("color", color_probation);
+    $("#color_banca_falconi").css("color", color_banca_falconi);
+    $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
+    $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
+
+    
+    $("#leg_intermediaria").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".b_intermediaria").toggle();
+      calendar.updateSize();
+    });
+
+    $("#leg_final").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".b_final").toggle();
+      calendar.updateSize();
+    });
+
+    $("#leg_probation").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".b_probation").toggle();
+      calendar.updateSize();
+    });
+
+    $("#leg_falconi").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".b_falconi").toggle();
+      calendar.updateSize();
+    });
+
   }
-
-  $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
-  $("#color_banca_final").css("color", color_banca_final);
-  $("#color_probation").css("color", color_probation);
-  $("#color_banca_falconi").css("color", color_banca_falconi);
-  $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
-  $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
-
-  
-  $("#leg_intermediaria").click(function(){
-    $(this).toggleClass("strikeout");
-    $(".b_intermediaria").toggle();
-    calendar.updateSize();
-  });
-
-  $("#leg_final").click(function(){
-    $(this).toggleClass("strikeout");
-    $(".b_final").toggle();
-    calendar.updateSize();
-  });
-
-  $("#leg_probation").click(function(){
-    $(this).toggleClass("strikeout");
-    $(".b_probation").toggle();
-    calendar.updateSize();
-  });
-
-  $("#leg_falconi").click(function(){
-    $(this).toggleClass("strikeout");
-    $(".b_falconi").toggle();
-    calendar.updateSize();
-  });
 
 </script>
 

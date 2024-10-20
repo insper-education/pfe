@@ -2691,9 +2691,14 @@ def dinamicas_lista(request):
 
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
+                "titulo": {"pt": "Mentorias", "en": "Mentoring"},
                 "edicoes": edicoes,
                 "informacoes": informacoes,
             }
+        
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+    context["root_page_url"] = request.session["root_page_url"]
 
     return render(request, "professores/dinamicas_lista.html", context)
 

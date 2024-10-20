@@ -7,11 +7,50 @@
 
 {% block head %}
   {% load static %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
-  {% include "reload.html" %}
-  
+  {% comment %}{% include "reload.html" %} {% endcomment %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+
+  <style>
+    select {
+      max-width: 100%;
+      margin-right: 16px;
+    }
+  
+    ul,ol {
+      margin: 0px 0px 8px 0px;
+      padding: 0px 0px 0px 1.5em;
+    }
+
+    .agendamento {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    
+    .agendamento > * {
+        margin-left: 4px;
+    }
+    
+    .editar {
+        margin-left: auto;
+        float: right;
+    }
+
+    @media (max-width: 800px) {
+      .btn {
+          font-size: 0.75rem; /* Smaller font size */
+          padding: 0.25rem 0.5rem; /* Smaller padding */
+      }
+    }
+
+  </style>
+
+  <script>{% include "tooltip.js" %}</script>
+  {% include "heads_calendar.html" %}
+  {% include "cores_bancas_mentorias.html" %}
 
 {% endblock %}
 
@@ -19,7 +58,9 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Mentorias
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder">
       <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
          data-url="{% url 'dinamicas_criar' %}" href="{% url 'dinamicas_criar'%}"> 
@@ -117,44 +158,51 @@
     {% endif %}
     <p>&nbsp;</p>
 
-    <div class="sem_agendamento">
-      {% if sem_dinamicas %}
-        <br>
-        <h5>Projetos ativos sem mentorias agendadas:</h5>
-        <ul>
-        {% for projeto in sem_dinamicas %}
-          <li>
-
-            {% if projeto.organizacao %}
-              [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
-                >{{ projeto.organizacao.nome }}</a
-              >]
-            {% endif %}
-
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-            {% include "tipo_projeto.html" %}
-            
-          </li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    </div>
-
-    <script>
-
-      function carrega_pagina() {};
-      function carrega_site() {
-        {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
-      };
-
-      window.onload = carrega_site
-    </script>
+    <h4>Calendário</h4>
+    {% include "calendario_dinamicas.html" %}
 
   </div>
+
+  <div class="sem_agendamento">
+    {% if sem_dinamicas %}
+      <br>
+      <h5>Projetos ativos sem mentorias agendadas:</h5>
+      <ul>
+      {% for projeto in sem_dinamicas %}
+        <li>
+
+          {% if projeto.organizacao %}
+            [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
+              >{{ projeto.organizacao.nome }}</a
+            >]
+          {% endif %}
+
+          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+          {% include "tipo_projeto.html" %}
+          
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
+  <script>
+
+    function carrega_pagina() {
+      montar_calendario();
+    };
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+  </script>
 
   {% include "edicoes_ajax.html" %}
 
   {% include "janelas-modal.html" %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

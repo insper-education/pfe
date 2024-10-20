@@ -1,0 +1,199 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 20 de Outubro de 2024
+{% endcomment %}
+
+
+{% load static %}
+{% load date_extras %}
+
+
+<style>
+  .strikeout {
+      text-decoration: line-through;
+      color: #808080;
+  }
+</style>
+
+<div class="wrap">
+  <div class="one">
+    <br><br>
+    <a href="{% url 'dinamicas_lista'%}"><h5>Listar Mentorias</h5></a>
+  </div>
+  <div class="two" id='calendar'></div>
+</div>
+
+<h4 style="margin: 8px 0 0 0;">Legendas</h4>
+<div class="wrap">  
+  <div class="legenda" style="display: flex;">
+    <div class="legenda-block">
+      <div id="leg_horario" class="legenda-item">
+        <div class="legenda-texto"><font id="color_horario_agendado">&#9608;</font>&nbsp;Horário Agendado (com projeto alocado)</div>
+      </div>
+      <div id="leg_aberto" class="legenda-item">
+        <div class="legenda-texto"><font id="color_horario_em_aberto">&#9608;</font>&nbsp;Horário em Aberto (sem projeto alocado)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function atualiza(event) {
+    $.ajax({
+      type: "POST",
+      url: '{% url "ajax_atualiza_dinamica" %}',
+      data: {
+          "id": event.id,
+          "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+          "end": event.end.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+      },
+      success: function(response){},
+      {% include "ajax_error_function.js" %}
+    });
+  }
+
+
+  var calendar = null;
+
+  function montar_calendario(defaultView="dayGridMonth", defaultDate=null) {
+
+    var calendarEl = document.getElementById("calendar");
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
+      header: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+      },
+      locale: "pt-br",
+      navLinks: true, // can click day/week names to navigate views
+      businessHours: true, // display business hours
+      editable: true,
+      height: "auto",
+      eventTimeFormat: {
+        hour: "2-digit", //2-digit, numeric
+        minute: "2-digit", //2-digit, numeric
+        meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+        hour12: false //true, false
+      },
+      eventRender: function(info) {
+        if (!info.event.allDay) {
+          if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+            let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let nome_facilitador = "F: sem facilitador"
+            if (info.event.extendedProps.facilitador) {
+              let facilitador = info.event.extendedProps.facilitador.split(" ");
+              if(facilitador.length > 1) {
+                nome_facilitador = "F: " + facilitador[0] + ' ' + facilitador[facilitador.length - 1];
+              }
+            }
+
+            let nome_projeto = "P: sem projeto"
+            if (info.event.extendedProps.projeto) {
+              let projeto = info.event.extendedProps.projeto;
+              if(projeto) {
+                  //nome_projeto = "P: " + projeto[0] + ' ' + projeto[projeto.length - 1];
+                  nome_projeto = "P: " + projeto;
+              }
+            }
+
+            info.el.innerHTML = "<b>" + time + "</b><br><nobr style='color:#FAD2D2'>" + info.event.extendedProps.organizacao +
+              "</nobr><br><nobr style='color:#F6F5A3'>" + info.event.extendedProps.local + 
+                "</nobr><br><nobr style='color:#FEFEFE'>" + nome_facilitador + 
+                "</nobr><br><nobr style='color:#E8E8E8'>" + nome_projeto + "</nobr>";
+
+            {% comment %} info.el.className += " m_agendada"; {% endcomment %}
+          } 
+        }
+      },
+      events: [
+        {% for encontro in encontros %} 
+          {
+            title: ""
+              {% if encontro.facilitador %}+ `Facilitador: {{encontro.facilitador}}\n`{% endif %}
+              {% if encontro.location %}+ `Local/Link: {{encontro.location}}\n`{% endif %}
+              {% if encontro.projeto %}
+                + `Projeto: ({{encontro.projeto.organizacao.sigla}}) {{encontro.projeto.get_titulo}}` +
+                `{% if encontro.facilitador %}\nFacilitador: {{encontro.facilitador}}{% endif %}` +
+                `{% if encontro.projeto.orientador %}\nOrientador: {{encontro.projeto.orientador}}{% endif %}`
+              {% endif %},
+              projeto: {% if encontro.projeto %}`{{encontro.projeto.get_titulo}}`{% else %}null{% endif %},
+              organizacao: "{{encontro.projeto.organizacao.sigla}}",
+              facilitador: {% if encontro.facilitador %}"{{encontro.facilitador.get_full_name}}"{% else %}null{% endif %},
+              orientador: {% if encontro.projeto.orientador %}"{{encontro.projeto.orientador}}"{% else %}null{% endif %},
+              local: "{{encontro.location}}",
+              start: '{{encontro.startDate.year}}-{{encontro.startDate.month|stringformat:"02d"}}-{{encontro.startDate.day|stringformat:"02d"}}T{{encontro.startDate.hour|stringformat:"02d"}}:{{encontro.startDate.minute|stringformat:"02d"}}:00',
+              end: '{{encontro.endDate.year}}-{{encontro.endDate.month|stringformat:"02d"}}-{{encontro.endDate.day|stringformat:"02d"}}T{{encontro.endDate.hour|stringformat:"02d"}}:{{encontro.endDate.minute|stringformat:"02d"}}:00',
+              id: "{{encontro.id}}",
+              {% if encontro.projeto %}backgroundColor: color_horario_agendado{% else %}backgroundColor: color_horario_em_aberto{% endif %},
+              description: {% if encontro.projeto %}"Horário Marcado"{% else %}"Horário Livre"{% endif %},
+              className: {% if encontro.projeto %}" m_agendada"{% else %}" m_n_agendada"{% endif %},
+          },
+        {% endfor %}
+      ],
+      
+      eventClick: function(event, jsEvent, view) {
+        // Para editar uma mentoria
+        var elem = document.createElement( "span" );
+        $( elem ).data( "url", "{% url 'dinamicas_editar' %}"+event.event.id);
+        abrir_modal.call(elem, null);
+    },
+
+      dateClick: function(info) {
+        // Para criar uma nova mentoria, reproveitando a data clicada
+        var elem = document.createElement( "span" );
+        $( elem ).data( "url", "{% url 'dinamicas_criar' %}");
+        $( elem ).data( "data", info.dateStr);
+        abrir_modal.call(elem, null);
+      },
+
+
+      eventMouseEnter: function (info) {
+        $(info.el).tooltip({
+              title: info.event.extendedProps.description,
+              html: true,
+        }).tooltip("show");
+      },
+
+      eventDragStart: function(info) {
+        $(".tooltip").remove();
+      },
+      
+      eventResize: function(info) {
+        $(".tooltip").remove();
+        atualiza(info.event);
+      },
+
+      eventDrop: function(info) {
+        $(".tooltip").remove();
+        atualiza(info.event);
+      },
+
+    });
+
+    calendar.render();
+
+    $("#color_horario_agendado").css("color", color_horario_agendado);
+    $("#color_horario_em_aberto").css("color", color_horario_em_aberto);
+
+    $("#leg_horario").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".m_agendada").toggle();
+      calendar.updateSize();
+    });
+  
+    $("#leg_aberto").click(function(){
+      $(this).toggleClass("strikeout");
+      $(".m_n_agendada").toggle();
+      calendar.updateSize();
+    });
+
+  }
+
+</script>
+
+{% include "janelas-modal.html" %}
