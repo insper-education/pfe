@@ -609,12 +609,12 @@ def informacoes_adicionais(request):
             request.user.aluno.entidade = request.POST.get("entidade", None)
             request.user.aluno.familia = request.POST.get("familia", None)
 
-            link = request.POST.get("linkedin", None)
-            if not (link and link.strip()):
+            link = request.POST.get("linkedin", "").strip()
+            if not (link and link != ""):
                 link = None
             if link:
                 if link[:4] != "http":
-                    link = "http://" + link
+                    link = "https://" + link
 
                 max_length = PFEUser._meta.get_field("linkedin").max_length
                 if len(link) > max_length:

@@ -68,7 +68,7 @@
     <br><br>
 
     <label for="linkedin">Caso desejar, você pode informar seu LinkedIn: (opcional)</label><br>
-    <input type="text" size="80" id="linkedin" name="linkedin" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
+    <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
     
     <br>
     <label for="celular">
