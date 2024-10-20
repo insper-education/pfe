@@ -15,7 +15,7 @@ import logging
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import html
@@ -876,3 +876,37 @@ def envia_contas_senhas(request):
 
     return HttpResponse("Algum erro não identificado.", status=401)
 
+
+@login_required
+def projeto_user(request):
+    """Retorna o projeto id associado ao usuário mais recentemente."""
+    
+    if not request.is_ajax():
+        return HttpResponse("Algum erro não identificado.", status=401)
+    
+    if "user_id" in request.POST:
+
+        print(request.POST)
+        user_id = request.POST["user_id"]
+
+        user = get_object_or_404(PFEUser, pk=user_id)
+
+        projeto_id = 0
+        if user.tipo_de_usuario == 1: # (1, "estudante"),
+            alocacao = Alocacao.objects.filter(aluno=user.aluno).last()
+            if alocacao:
+                projeto_id = alocacao.projeto.id
+        elif user.tipo_de_usuario in [2, 4]: # (2, "professor"),
+            projeto = Projeto.objects.filter(orientador=user.professor).last()
+            if projeto:
+                projeto_id = projeto.id
+        elif user.tipo_de_usuario == 3: # (3, "parceiro"),
+            conexao = Conexao.objects.filter(parceiro=user.parceiro).last()
+            if conexao:
+                projeto_id = conexao.projeto.id
+        else: 
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else: 
+        return HttpResponse("Algum erro não identificado.", status=401)
+    
+    return JsonResponse({"projeto_id": projeto_id,})

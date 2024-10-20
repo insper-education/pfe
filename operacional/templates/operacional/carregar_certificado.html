@@ -33,11 +33,7 @@
           <option selected value> -- selecione usuário -- </option>
           {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for usuario in usuarios %}
-            {% if usuario %}
-              <option value="{{usuario.id}}" data-projeto="{{usuario.aluno.alocacao_set.last.projeto.id}}" {% if usuario.id == alocacao.aluno.id %}selected{% endif %}>
-              {{usuario}}
-            </option>  
-            {% endif %}
+              <option value="{{usuario.id}}">{{usuario}}</option>  
           {% endfor %}
           {% comment %} </optgroup> {% endcomment %}
       </select>
@@ -102,8 +98,27 @@
 
     // Atualiza o projeto em função do estudante selecionado
     $("#usuario").change(function() {
-      var projeto = $("#usuario option:selected").attr("data-projeto");
-      $("#projeto").selectpicker("val", projeto);
+      
+      user_id = $("#usuario option:selected").val();
+
+      $.ajax({
+        url: "{% url 'projeto_user' %}",
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "user_id": user_id,
+        },
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          if (data.projeto_id && data.projeto_id != '0') {
+            $("#projeto").selectpicker("val", data.projeto_id);
+          } else {
+            $("#projeto").selectpicker("val", "");
+          }
+        },
+        {% include "ajax_error_function.js" %}
+      });
+
     });
 
   </script>

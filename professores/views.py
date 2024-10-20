@@ -227,7 +227,6 @@ def index_professor(request):
         return render(request, "professores/index_professor.html", context=context)
     
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares(request, todos=None):

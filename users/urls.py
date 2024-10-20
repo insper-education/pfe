@@ -72,6 +72,10 @@ urlpatterns = [
         views.professor_detail,
         name="professor_detail"),
 
+    path("projeto_user/",
+        views.projeto_user,
+        name="projeto_user"),
+
     path("user_detail",
         views.user_detail,
         name="user_detail"),
