@@ -1173,6 +1173,9 @@ class Documento(models.Model):
         documento = cls()
         return documento
 
+    class Meta:
+        ordering = ["-data"]
+
 
 class Banco(models.Model):
     """Lista dos Bancos Existentes no Brasil."""

@@ -115,6 +115,12 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None):
     """Cria um documento."""
     
+    if request.is_ajax() and request.method == "POST":
+        erro = cria_documento(request)
+        if erro:
+           return HttpResponseBadRequest(erro)
+        return JsonResponse({"atualizado": True,})
+
     configuracao = get_object_or_404(Configuracao)
     organizacao = Organizacao.objects.filter(id=organizacao_id).last()
     projeto = Projeto.objects.filter(id=projeto_id).last()
@@ -125,28 +131,33 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     if projeto_id and (not projeto):
         return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
     
-    tipo = None
-    if tipo_nome and tipo_nome != "ANY":
-        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
-        
-    documentos = Documento.objects.filter(id=documento_id)
-    if documentos:
-        tipo = documentos.last().tipo_documento
-
-    if tipo and request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
-            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
-
-    if request.is_ajax() and request.method == "POST":
-        erro = cria_documento(request)
-        if erro:
-           return HttpResponseBadRequest(erro)
-        return JsonResponse({"atualizado": True,})
-
     if organizacao:
         projetos = Projeto.objects.filter(organizacao=organizacao)
     else:
         projetos = Projeto.objects.all()
 
+    tipo = None
+    if tipo_nome and tipo_nome != "ANY":
+        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
+        
+    documento = Documento.objects.filter(id=documento_id).last()
+    if documento:
+        tipo = documento.tipo_documento
+
+    if tipo and request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
+   
+    lingua = 0
+    if documento:
+        data = documento.data
+        confidencial = documento.confidencial
+        anotacao = documento.anotacao
+        lingua = documento.lingua_do_documento
+    else:
+        data = datetime.datetime.now()
+        confidencial = None
+        anotacao = None
+        
     if tipo_nome and (not organizacao_id) and (not projeto_id):
         adiciona = "adiciona_documento_tipo"
     else:
@@ -155,18 +166,20 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     context = {
         "organizacao": organizacao,
         "tipos_documentos": TipoDocumento.objects.all(),
-        "data": datetime.datetime.now(),
+        "data": data,
         "Documento": Documento,
         "projetos": projetos,
         "projeto": projeto,
         "tipo": tipo,
         "organizacoes": Organizacao.objects.all(),
-        "documentos": Documento.objects.filter(id=documento_id),
+        "documento": documento,
         "documento_id": documento_id,
         "configuracao": configuracao,
-        "documentos": documentos,
         "travado": False,
         "adiciona": adiciona,
+        "confidencial": confidencial,
+        "anotacao": anotacao,
+        "lingua": lingua,
     }
     
     return render(request, "organizacoes/documento_view.html", context=context)
@@ -184,6 +197,12 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     """Cria um documento pelos estudantes somente."""
     usuario_sem_acesso(request, (1,)) # Soh Estudantes
 
+    if request.is_ajax() and request.method == "POST":
+        erro = cria_documento(request, forca_confidencial=True)
+        if erro:
+           return HttpResponseBadRequest(erro)
+        return JsonResponse({"atualizado": True})
+    
     configuracao = get_object_or_404(Configuracao)
 
     alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
@@ -203,23 +222,33 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     else:
         return HttpResponseNotFound("<h1>Tipo de submissão não identificada!</h1>")
 
-    if request.is_ajax() and request.method == "POST":
-        erro = cria_documento(request, forca_confidencial=True)
-        if erro:
-           return HttpResponseBadRequest(erro)
-        return JsonResponse({"atualizado": True})
+    documento = Documento.objects.filter(id=documento_id).last()
+    if documento:
+        tipo = documento.tipo_documento
+  
+    lingua = 0
+    if documento:
+        data = documento.data
+        anotacao = documento.anotacao
+        lingua = documento.lingua_do_documento
+    else:
+        data = datetime.datetime.now()
+        anotacao = None
 
     context = {
         "organizacao": organizacao,
-        "data": datetime.datetime.now(),
+        "data": data,
         "Documento": Documento,
         "projeto": projeto,
         "tipo": tipo,
-        "documentos": Documento.objects.filter(id=documento_id),
+        "documento": documento,
         "documento_id": documento_id,
         "configuracao": configuracao,
         "travado": True,
         "adiciona": "adiciona_documento_estudante",
+        "confidencial": True,  # Estudantes só podem enviar confidencial
+        "anotacao": anotacao,
+        "lingua": lingua,
     }
 
     return render(request, "organizacoes/documento_view.html", context=context)

@@ -53,7 +53,7 @@
   {% csrf_token %}
 
   <div class="modal-header">
-    <h5 id="documentacao" class="modal-title">{% if documentos %}Editar{% else %}Adicionar{% endif %} Documento</h5>    
+    <h5 id="documentacao" class="modal-title">{% if documento %}Editar{% else %}Adicionar{% endif %} Documento</h5>    
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -177,11 +177,15 @@
       <div class="mb-3 row text-truncate">
         <label for="arquivo" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.5em;">Arquivo</label>
         <div class="col2">
-          <input {% if not documentos %}required{% endif %} id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
+          <input {% if not documento %}required{% endif %} id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
             {% include "formatos_suportados.html" %}>
-          {% if documentos %}
+          {% if documento %}
             <input type="hidden" id="documentos" name="documentos" value="{{documento_id}}"/>
-            <small>Arquivo atual: {% include "documentos.html" %}</small>
+            {% if documento.documento %}
+            <small>Arquivo atual:
+              <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.filename}} ({{documento.data}})</a>
+            </small>
+            {% endif %}
           {% endif %}
         </div>
       </div>
@@ -203,7 +207,9 @@
       <div class="mb-3 row text-truncate">
         <label for="link" class="col1 col-form-label">Link</label>
         <div class="col2">
-          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://">
+          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" 
+                 maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://"
+                 {% if documento.link %}value="{{documento.link}}"{% endif %}>
         </div>
       </div>
     {% endif %}
@@ -212,8 +218,8 @@
       <label for="lingua_do_documento" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Língua</label>
       <div class="col2">
         <select id="lingua_do_documento" name="lingua_do_documento" class="form-control" required="required" >
-          <option value="portugues" selected="selected">Português</option>
-          <option value="ingles">Inglês</option>
+          <option value="portugues" {% if lingua == 0 %}selected="selected"{% endif %}>Português</option>
+          <option value="ingles" {% if lingua == 1 %}selected="selected"{% endif %}>Inglês</option>
         </select>
       </div>
     </div>
@@ -222,7 +228,10 @@
       <div class="mb-3 row text-truncate">
         <label for="anotacao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">Anotação</label>
         <div class="col2">
-          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" maxlength="{% max_length Documento "anotacao" %}" id="anotacao" name="anotacao">
+          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" 
+                 maxlength="{% max_length Documento "anotacao" %}" id="anotacao" name="anotacao"
+                 {% if anotacao %}value="{{anotacao}}"{% endif %}
+                 >
         </div>
       </div>
     {% endif %}
@@ -255,34 +264,32 @@
 
     $("#projeto").change(function() {
       $("#organizacao").val($('#projeto option:selected').attr("data-org") );
-
     });
 
-    $('#tipo_documento').change(function() {
-      if($(this).val()==26 || $(this).val()==37) { //  (26, 'Relatório Publicado'), 37, 'Materia na Midia'
-        $("#confidencial").prop("checked", false);
-      } else {
+    $("#tipo_documento").change(function() {
+      {% if confidencial is None %} {% comment %} Significa que não esta abrindo um documento é algo novo {% endcomment %}
+        if($(this).val()==26 || $(this).val()==37) { //  (26, 'Relatório Publicado'), 37, 'Materia na Midia'
+          $("#confidencial").prop("checked", false);
+        } else {
+          $("#confidencial").prop("checked", true);
+        }
+      {% elif confidencial %}
         $("#confidencial").prop("checked", true);
-      }
+      {% elif not confidencial %}
+        $("#confidencial").prop("checked", false);
+      {% endif %}
     });
     $("#tipo_documento").trigger("change");  // Para rodar quando estiver carregando
 
     // Pelo menos um campo deve ser selecionado
-    $("#arquivo").change(function() {
-      if($(this).val()) {
-        $("#link").prop("required", false);
-      } else {
-        $("#link").prop("required", true);
-      }
+    $("#arquivo").change(function() {      
+      $("#link").prop("required", !$(this).val());
     });
-
-    $("#link").on("input",function(e){
-      if($(this).val()) {
-        $("#arquivo").prop("required", false);
-      } else {
-        $("#arquivo").prop("required", true);
-      }
-    });
+    {% if not documento.documento %}
+      $("#link").on("input",function(e) {
+        $("#arquivo").prop("required", !$(this).val());
+      });
+    {% endif %}
 
   </script>
 
