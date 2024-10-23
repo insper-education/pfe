@@ -4,18 +4,15 @@
   Data: 10 de Abril de 2023
 {% endcomment %}
 
-<h5>Áreas de Interesse</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'distribuicao_areas' %}">Tendência de Áreas de Interesse (Estudantes/Propostas/Projetos)</a></div>
-<br>
 
-<h5>Feedbacks das Organizações Parceiras</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_acompanhamento' %}">Acompanhamento Intermediário</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback' %}">Comentários Finais</a></div>
-<br>
-
-<h5>Feedbacks dos Estudantes</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a data-toggle="tooltip" data-html="true" animation="true" title="Consultar DEA/Coordenador para dados">Acompanhamento Externo</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback_estudantes' %}">Acompanhamento Final</a></div>
+<h5>Informes</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'plano_aulas' %}">Plano de Aulas</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'planos_de_orientacao_todos' %}">Planos de Orientação</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatos_quinzenais' 'todos' %}">Relatos Quinzenais</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliar_entregas' 'todos' %}">Avaliações de Entregas</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' 0 %}">Bancas Intermediárias</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' 1 %}">Bancas Finais</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliacoes_pares' 'todos' %}">Avaliações de Pares</a></div>
 <br>
 
 <h5>Avaliações</h5>
