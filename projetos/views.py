@@ -898,7 +898,7 @@ def projetos_vs_propostas(request):
         org_prospectadas.append(count_organizacoes)
 
     context = {
-        "titulo": "Organizações, Projetos e Propostas",
+        "titulo": {"pt": "Organizações, Projetos e Propostas", "en": "Organizations, Projects and Proposals"},
         "num_propostas": num_propostas,
         "nome_propostas": nome_propostas,
         "num_projetos": num_projetos,
@@ -912,7 +912,6 @@ def projetos_vs_propostas(request):
         "total_org_projetos": len(total_org_projetos),
         "loop_anos": edicoes,
         "edicoes": edicoes2,
-        "lingua": configuracao.lingua,
     }
 
     return render(request, "projetos/projetos_vs_propostas.html", context)
@@ -1511,14 +1510,28 @@ def filtro_projetos(request):
             else:
                 ano, semestre = request.POST["edicao"].split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+            cabecalhos = [{"pt": "Projeto", "en": "Project"},
+                            {"pt": "Áreas", "en": "Areas"},
+                            {"pt": "Estudantes", "en": "Students"},
+                            {"pt": "Período", "en": "Period"},
+                            {"pt": "Orientador", "en": "Advisor"},
+                            {"pt": "Organização", "en": "Organization"},
+                            {"pt": "Orientador", "en": "Advisor"},
+                            {"pt": "Bancas", "en": "Boards"},
+                            {"pt": "Falconi", "en": "Falconi"},
+                            {"pt": "Média", "en": "Average"}
+                          ]
+
             context = {
                 "projetos": projetos_filtrados.order_by("ano", "semestre", "organizacao"),
+                "cabecalhos": cabecalhos,
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         context = {
-            "titulo": "Filtro para Projetos",
+            "titulo": {"pt": "Filtro para Projetos", "en": "Filter for Projects"},
             "edicoes": get_edicoes(Projeto)[0],
             "areast": Area.objects.filter(ativa=True),
         }
@@ -1540,27 +1553,15 @@ def interesses_projetos(request):
                 ano, semestre = request.POST["edicao"].split('.')
                 projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
                 propostas = Proposta.objects.filter(ano=ano, semestre=semestre)
-
-            # (10, "aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo."),
-            # (20, "realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado."),
-            # (30, "iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo."),
-            # (40, "identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente."),
-            # (50, "mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto."),
-            
-            aprimorar = propostas.filter(aprimorar=True).count()
-            realizar = propostas.filter(realizar=True).count()
-            iniciar = propostas.filter(iniciar=True).count()
-            identificar = propostas.filter(identificar=True).count()
-            mentorar = propostas.filter(mentorar=True).count()
-
+  
             context = {
                 "propostas": propostas,
                 "projetos": projetos,
-                "aprimorar": aprimorar,
-                "realizar": realizar,
-                "iniciar": iniciar,
-                "identificar": identificar,
-                "mentorar": mentorar,
+                "aprimorar": propostas.filter(aprimorar=True).count(),
+                "realizar": propostas.filter(realizar=True).count(),
+                "iniciar": propostas.filter(iniciar=True).count(),
+                "identificar": propostas.filter(identificar=True).count(),
+                "mentorar": propostas.filter(mentorar=True).count(),
                 "tipo_interesse": Proposta.TIPO_INTERESSE,
             }
         else:

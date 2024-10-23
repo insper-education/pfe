@@ -14,9 +14,8 @@
 
 {% block content %}
   <span class="titulo">
-    {% if lingua == "pt" %}{{ titulo }}{% else %}
-      Organizations, Projects e Proposals
-    {% endif %}
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
 
   <div class="2areas2">
@@ -27,14 +26,13 @@
         <canvas id="bar-projetos"></canvas>
       </div>
             
-      <small>
-        {% if lingua == "pt" %}
+      <small lang="pt">
           <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
           <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
-        {% else %}
+      </small>
+      <small lang="en">
           <p>Received <b>{{total_propostas}}</b> project proposals.</p>
           <p>Carried out <b>{{total_projetos}}</b> projects.</p>
-        {% endif %}
       </small>
       <br>
 
@@ -42,17 +40,15 @@
         <canvas id="bar-organizacoes"></canvas>
       </div>
       
-      <small>
-        {% if lingua == "pt" %}
+      <small lang="pt">
           <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
           <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
           <br><p>Obs: Dados de prospecção são em geral incompletos e baseados apenas nas anotações armazenadas.</p>
-        {% else %}
+      </small>
+      <small lang="en">
           <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
           <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
           <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
-        {% endif %}
-
       </small>
       <br><br>
 
@@ -186,5 +182,6 @@
   
   </script>
 
+  {% include "linguas.html" %}
 
 {% endblock %}
