@@ -1528,6 +1528,54 @@ def filtro_projetos(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def interesses_projetos(request):
+    """Verifica interesse para com projetos (na verdade verifico as propostas)."""
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                projetos = Projeto.objects.all()
+                propostas = Proposta.objects.all()
+            else:
+                ano, semestre = request.POST["edicao"].split('.')
+                projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+                propostas = Proposta.objects.filter(ano=ano, semestre=semestre)
+
+            # (10, "aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo."),
+            # (20, "realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado."),
+            # (30, "iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo."),
+            # (40, "identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente."),
+            # (50, "mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto."),
+            
+            aprimorar = propostas.filter(aprimorar=True).count()
+            realizar = propostas.filter(realizar=True).count()
+            iniciar = propostas.filter(iniciar=True).count()
+            identificar = propostas.filter(identificar=True).count()
+            mentorar = propostas.filter(mentorar=True).count()
+
+            context = {
+                "propostas": propostas,
+                "projetos": projetos,
+                "aprimorar": aprimorar,
+                "realizar": realizar,
+                "iniciar": iniciar,
+                "identificar": identificar,
+                "mentorar": mentorar,
+                "tipo_interesse": Proposta.TIPO_INTERESSE,
+            }
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        context = {
+            "titulo": {"pt": "Interesses com Projetos", "en": "Interests with Projects"},
+            "edicoes": get_edicoes(Projeto)[0],
+        }
+
+    return render(request, "projetos/interesses_projetos.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def evolucao_por_objetivo(request):
     """Mostra graficos das evoluções por objetivo de aprendizagem."""
     configuracao = get_object_or_404(Configuracao)

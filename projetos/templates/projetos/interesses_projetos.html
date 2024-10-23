@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Agosto de 2022
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+  <script>{% include "tooltip.js" %}</script>
+{% endblock %}
+
+{% block content %}
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  {% include "edicoes.html" %}
+  <br>
+  <div class="atualizar">
+
+    <b lang="pt">Total de Propostas</b><b lang="en">Total of Proposals</b> = {{ propostas.count }}<br>
+    <b lang="pt">Total de Projetos</b><b lang="en">Total of Projects</b> = {{ projetos.count }}<br>
+    <br>
+
+    {% comment %} <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;"> {% endcomment %}
+    <div class="chart-container" style="position: relative; max-width: 1240px; height: 360px;">
+      <canvas id="bar-interesses"></canvas>
+    </div>
+
+    <script>
+
+      var config_interesses = {
+          type: "horizontalBar",
+          data: {
+            labels: [{% for _, tipo in tipo_interesse %}"{{tipo}}",{% endfor %}],
+            datasets: [
+              {
+                  backgroundColor: "#aefef2",
+                  data: [
+                      {{ aprimorar }},
+                      {{ realizar }},
+                      {{ iniciar }},
+                      {{ identificar }},
+                      {{ mentorar }}
+                  ],
+                  barThickness: 36,
+              }, 
+            ]
+          },
+          options: {
+            maintainAspectRatio: false,
+            legend: { display: false },
+            title: {display: false,},
+            scales: {
+              xAxes: [{
+                  ticks: {
+                      beginAtZero: true,
+                      display: true,
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: "Número de Propostas"
+                  }
+              }],
+              yAxes: [{
+                  ticks: {display: false,}
+              }]
+            },
+            plugins: {
+                datalabels: {
+                    align: "end",
+                    anchor: "start",
+                    color: "#000000",
+                    formatter: function(value, context) {
+                        return context.chart.data.labels[context.dataIndex] + " [" + value + "]";
+                    }
+                },
+            }
+          }
+      };
+
+      var bar_interesses = document.getElementById("bar-interesses").getContext("2d");
+      window.interesses = new Chart(bar_interesses, config_interesses);
+
+    </script>
+
+  </div> 
+
+  <script>
+    function carrega_pagina() {};
+    window.onload = carrega_pagina;
+  </script>
+
+  {% include "edicoes_ajax.html" %}
+
+  {% include "linguas.html" %}
+
+{% endblock %}
