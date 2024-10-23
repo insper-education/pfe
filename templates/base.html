@@ -23,9 +23,11 @@
   <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script> {% comment %} Necessário para os tooltips e Bootstrap {% endcomment %}
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
 
+  <script src="{% static 'js/tooltip.js' %}"></script>
+
   {% comment %} Para pegar erros {% endcomment %}
   {% comment %} https://stackoverflow.com/questions/69470852/how-to-use-js-to-create-an-error-message-that-is-displayed-on-the-user-interface {% endcomment %}
-  <script>
+  {% comment %} <script>
     window.onerror = function (msg, url, lineNo, columnNo, error) {
       var string = String(msg).toLowerCase();
       var substring = "script error";
@@ -44,6 +46,11 @@
       }
       return false;
     };
+  </script> {% endcomment %}
+
+  <script>
+    x = 2.0/0.0;
+    console.log(x;);
   </script>
 
   {% comment %} 

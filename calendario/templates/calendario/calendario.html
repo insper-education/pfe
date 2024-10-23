@@ -19,6 +19,13 @@
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
 
+  <script>
+    window.console = window.console || function(t) {};
+    if (document.location.search.match(/type=embed/gi)) {
+      window.parent.postMessage("resize", "*");
+    }
+  </script>
+
   <style>
     table, th, td {border: 0px;}
     #info_semestre {font-size:16px;}
@@ -198,15 +205,6 @@
     }
 
   </style>
-
-  <script>
-    window.console = window.console || function(t) {};
-    if (document.location.search.match(/type=embed/gi)) {
-      window.parent.postMessage("resize", "*");
-    }
-  </script>
-
-  <script>{% include "tooltip.js" %}</script>
 
 {% endblock %}
 

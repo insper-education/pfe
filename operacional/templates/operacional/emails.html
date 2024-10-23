@@ -8,7 +8,6 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  <script>{% include "tooltip.js" %}</script>
 
   {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
 
@@ -381,7 +380,7 @@
               $("#Bancas").attr("href",str);
               $("#Bancas").show();
             }
-            {% include "tooltip.js" %}
+            
             $("#spinnerSemestre").hide();
         },
         {% include "ajax_error_function.js" %}
@@ -405,7 +404,6 @@
             $("#sequenc_projetos").replaceWith($("#sequenc_projetos",response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
-            {% include "tooltip.js" %}
             $("#spinnerProjetos").hide();    
             $("#sequenc_projetos").show();
         },
