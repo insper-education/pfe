@@ -391,7 +391,7 @@ def relatorios_publicos(request, edicao=None):
     else:
 
         context = {
-            "titulo": "Relatórios Públicos",
+            "titulo": "Documentos Públicos",
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada": edicao,
         }
