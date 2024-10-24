@@ -27,6 +27,14 @@
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/pega_erro.js' %}"></script>
 
+{% comment %} REMOVER O CSS ABAIXO {% endcomment %}
+<style>
+  #logo_insper {
+    width: 59px;
+    height: 23px;
+  }
+</style>
+
   {% block head %}
   {% endblock %}
 </head>
@@ -35,7 +43,7 @@
     <div style="cursor: pointer;" id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
       {% if user.is_authenticated %}<a id="logo_inicial" href="{% url 'index' %}">{% endif %}
         <div class="logo-container">
-          <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Insper">
+          <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Insper" >
           <b id="pfelogo">Capstone</b>
         </div>
       {% if user.is_authenticated %}</a>{% endif %}
