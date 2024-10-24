@@ -49,11 +49,13 @@
   
   <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
 
-  {% if aluno.cr %}
-    <strong>CR:</strong> {{aluno.cr}}<br>
+  {% if user and user.tipo_de_usuario != 1 %}
+    {% if aluno.cr %}
+      <strong>CR:</strong> {{aluno.cr}}<br>
+    {% endif %}
+    
+    {% include "dados_usuario.html" with user=aluno.user %}
   {% endif %}
-  
-  {% include "dados_usuario.html" with user=aluno.user %}
   
   {% comment %} Prenchido pelo estudante {% endcomment %}
 
@@ -81,6 +83,8 @@
     {% endwith %}
   {% endwith %}
   <br>
+
+  {% if user and user.tipo_de_usuario != 1 %}
 
       {% if aluno.opcao_set.all %}
         <hr>
@@ -198,16 +202,27 @@
             {% endif %}
         
         {% endfor %}
+      {% endif %}
+
     {% endif %}
+
 
     {% if estilos_respostas %}
       <br><hr>
       <h4>Estilos de Comunicação</h4>
       {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
-      {% for metrica, valor in estilos_respostas.items %}
-        <strong>{{ metrica }}:</strong> {{ valor }}<br>
-      {% endfor %}
-      <br>
+      <b>Resultados:</b><br>
+      <table>
+        <tbody>
+          <tr><td>
+          {% for metrica, valor in estilos_respostas.items %}
+            <strong>{{ metrica }}:</strong> {{ valor }}<br>
+            {% if forloop.counter|divisibleby:2 %}</td></tr>
+              {% if not forloop.last %}<tr><td>{% endif %}
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
     {% endif %}
 
     {% if user.tipo_de_usuario == 4 %}

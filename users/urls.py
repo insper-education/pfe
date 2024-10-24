@@ -40,6 +40,10 @@ urlpatterns = [
         views.estudante_detail,
         name="estudante_detail"),
 
+    path("estudante_detail/",
+        views.estudante_detail,
+        name="estudante_detail"),
+
     path("contas_senhas/",
         views.contas_senhas,
         name="contas_senhas"),

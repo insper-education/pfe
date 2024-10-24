@@ -59,7 +59,7 @@ def user_detail(request, primarykey=0):
         user = get_object_or_404(PFEUser, pk=primarykey)
 
     try:
-        if user.tipo_de_usuario == 1:  # aluno
+        if user.tipo_de_usuario == 1:  # estudante
             return redirect("estudante_detail", user.aluno.id)
         elif user.tipo_de_usuario == 2:  # professor
             return redirect("professor_detail", user.professor.id)
@@ -696,10 +696,22 @@ def edita_notas(request, primarykey):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def estudante_detail(request, primarykey):
+#@permission_required("users.altera_professor", raise_exception=True)
+def estudante_detail(request, primarykey=None):
     """Mostra detalhes sobre o estudante."""
-    estudante = Aluno.objects.filter(pk=primarykey).first()
+    if primarykey:
+        estudante = Aluno.objects.filter(pk=primarykey).first()
+    else:
+        if request.user.tipo_de_usuario == 1:
+            estudante = request.user.aluno
+        else:
+            return HttpResponse("Estudante não encontrado.", status=401)
+
+    if request.user.tipo_de_usuario == 1 and request.user.aluno != estudante:
+        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
+    if request.user.tipo_de_usuario == 3:   # (3, "parceiro")
+        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
+
     if not estudante:
         return HttpResponse("Estudante não encontrado.", status=401)
     alocacoes = Alocacao.objects.filter(aluno=estudante)
@@ -714,7 +726,6 @@ def estudante_detail(request, primarykey):
     context["estilos"] = EstiloComunicacao.objects.all()
     
     context["estilos"] = EstiloComunicacao.objects.all()
-    # context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=estudante.user)
     context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(estudante.user)
 
     return render(request, "users/estudante_detail.html", context=context)
