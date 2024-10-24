@@ -8,8 +8,10 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <head>
-  {% block title %}<title>Capstone{% if titulo.pt %} - {{ titulo.pt }}{% elif titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
   {% load static %}
+
+  {% block title %}<title>Capstone{% if titulo.pt %} - {{ titulo.pt }}{% elif titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
+  
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
@@ -20,94 +22,46 @@
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
   <script src="{% static 'js/pfe.js' %}"></script>
   <script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
-  <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script> {% comment %} Necessário para os tooltips e Bootstrap {% endcomment %}
-  <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
-
+  <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script>
   <script src="{% static 'js/tooltip.js' %}"></script>
-
-  {% comment %} Para pegar erros {% endcomment %}
-  {% comment %} https://stackoverflow.com/questions/69470852/how-to-use-js-to-create-an-error-message-that-is-displayed-on-the-user-interface {% endcomment %}
-  {% comment %} <script>
-    window.onerror = function (msg, url, lineNo, columnNo, error) {
-      var string = String(msg).toLowerCase();
-      var substring = "script error";
-      if (string.indexOf(substring) > -1){
-        alert("Erro de Execução de JavaScript, contactar: lpsoares@insper.edu.br");
-      } else {
-        var message = [
-          "Message: " + msg,
-          "URL: " + url,
-          "Line: " + lineNo,
-          "Column: " + columnNo,
-          "Error object: " + JSON.stringify(error),
-          "contactar: lpsoares@insper.edu.br"
-        ].join(" - ");
-        alert(message);
-      }
-      return false;
-    };
-  </script> {% endcomment %}
-
-  <script>
-    x = 2.0/0.0;
-    console.log(x;);
-  </script>
-
-  {% comment %} 
-  <script>
-    // estratégia para imprimir o título da página com underline e não espaço
-    var tmp_titulo_pagina = document.title;
-    window.addEventListener("beforeprint", function() {document.title = document.title.replace(/ /g, '_');});
-    window.addEventListener("afterprint", function() {document.title = tmp_titulo_pagina;}); 
-  </script>{% endcomment %}
+  <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/pega_erro.js' %}"></script>
 
   {% block head %}
   {% endblock %}
 </head>
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
-  {% url "index" as url_index %}
-  {% url "perfil" as url_perfil %}
-
   <div class="topnav">
-    <a style="cursor: pointer;" id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
-      <img 
-      {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %}
-      src="{% static 'images/logoInsper.png' %}" alt="Insper" style="width:59px;height:23px;">
-      <b {% if user.is_authenticated %} onclick="location.href='{{ url_index }}'" {% endif %} id="pfelogo">Capstone</b> 
-      {% if user.is_authenticated %}&nbsp;<u onclick="location.href='{{ url_perfil }}'" id="username"><i style="font-size: 0.55rem;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>{% endif %}
-    </a>
+    <div style="cursor: pointer;" id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
+      {% if user.is_authenticated %}<a id="logo_inicial" href="{% url 'index' %}">{% endif %}
+        <div class="logo-container">
+          <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Insper">
+          <b id="pfelogo">Capstone</b>
+        </div>
+      {% if user.is_authenticated %}</a>{% endif %}
+      {% if user.is_authenticated %}&nbsp;<a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>{% endif %}
+    </div>
         
-    <div id="myLinks" class="links-container">
+    <div id="links_menu_lat" class="links-container">
       {% if user.is_authenticated %}
-
         <a href="{% url 'perfil'%}">Perfil</a>
-
         <a href="{% url 'index'%}">Geral</a>
         <a href="{% url 'calendario'%}">Calendário</a>
-        
         {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
             <a href="{% url 'index_estudantes' %}">Área dos Estudantes</a>
         {% endif %}
-      {% endif %}
-
-      {% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
-      {% comment %} {% if user.tipo_de_usuario == 3 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} {% endcomment %}
-          <a href="{% url 'index_organizacoes' %}">Área dos Parceiros</a>
-      {% comment %} {% endif %} {% endcomment %}
-    
+      {% endif %}      
+      <a href="{% url 'index_organizacoes' %}">Área dos Parceiros</a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
       {% if user.is_authenticated %}
         {% if perms.users.altera_professor %}
           <a href="{% url 'index_professor'%}">Área do Professor</a>
           <a href="{% url 'index_academica' %}">Área Acadêmica</a>
           <a href="{% url 'index_operacional'%}">Área Operacional</a>
           <a href="{% url 'index_administracao'%}">Área Administrativa</a>
-
           <a href="{% url 'index_propostas'%}">Propostas</a>
           <a href="{% url 'index_projetos'%}">Projetos</a>
         {% endif %}
-
       {% endif %}
-
       <a href="{% url 'index_documentos'%}">Documentações</a>
 
       {% if user.is_authenticated %}
@@ -116,19 +70,17 @@
         <a href="{% url 'login'%}?next={{request.path}}">Login</a>
       {% endif %} 
     </div>
-    <a href="javascript:void(0);" id="hamburger" class="icon" onclick="bars()">
-      <i class="fa fa-bars" aria-hidden="true"></i>
-    </a>
+
+    <a href="#" id="hamburger" class="icon"><i class="fa fa-bars" aria-hidden="true"></i></a>
   </div>
   <div style="margin-top: 6px;" class="container-fluid">
-    <div id="language_box"><div id="language_button" style="display: none; user-select: none; border-radius: 10px;border: 2px solid #AAAAAA;float: right; margin-top: 4px; margin-left: 8px;"></div></div>
+    <div id="language_box"><div id="language_button"></div></div>
     {% block content %}{% endblock %}
   </div>
   <p>&nbsp;</p>
   
   {% if request.get_host == "127.0.0.1:8000" %}
-    <p>&nbsp;</p>
-    <p id="pi_the_net" style="float: right; margin-right: 12px;">&pi;</p>
+    <p id="pi_the_net" style="cursor: pointer; float: right; margin-right: 12px;">&pi;</p>
     <script>
       document.getElementById("pi_the_net").addEventListener("mousedown", function(event) {
         if (event.ctrlKey) {

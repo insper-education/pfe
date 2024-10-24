@@ -30,7 +30,7 @@ textarea {max-width:100%;}
   position: relative;
 }
 
-.topnav #myLinks {
+.topnav #links_menu_lat {
   display: none;
 }
 
@@ -64,8 +64,13 @@ textarea {max-width:100%;}
 }
 
 #barra_do_top_nav {
-  padding: 14px 16px;
-  display: block;
+  padding: 8px 12px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
 }
 
 #barra_do_top_nav a.icon {
@@ -76,7 +81,7 @@ textarea {max-width:100%;}
   top: 0;
 }
 
-#myLinks a {
+#links_menu_lat a {
   color: white;
   text-decoration: none;
 }
@@ -232,4 +237,66 @@ table, th, td {
 .caixa_rolante {
   overflow-y: auto;
   max-height: 16em;
+}
+
+#language_button {
+  display: none;
+  user-select: none;
+  border-radius: 10px;
+  border: 2px solid #AAAAAA;
+  float: right;
+  margin-top: 4px;
+  margin-left: 8px;
+}
+
+/* Remove decorações de links */
+a#logo_inicial {
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 5px;
+}
+a#logo_inicial:hover {
+    opacity: 0.8;
+}
+
+#link_username {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+#link_username:hover {
+    text-decoration: underline;
+}
+
+#logo_insper {
+    width: 59px;
+    height: 23px;        
+}
+
+#pfelogo {
+    margin-left: 3px;
+    font-size: 1rem;
+}
+
+@media (max-width: 460px) {
+    .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #logo_insper {
+        width: 40px;
+        height: 16px;
+    }
+
+    #pfelogo {
+        font-size: 0.6rem;
+        margin-left: 0;
+    }
+
+    #link_username {
+      font-size: 0.7em;
+    }
 }
