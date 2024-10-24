@@ -112,35 +112,27 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None):
+def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None, adiciona=None):
     """Cria um documento."""
-    
+
+    # Recupera o documento se existir e define o autor para o documento
+    documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
+    usuario = documento.usuario if documento else request.user
+
     if request.is_ajax() and request.method == "POST":
-        erro = cria_documento(request)
+        erro = cria_documento(request, usuario=usuario)
         if erro:
            return HttpResponseBadRequest(erro)
         return JsonResponse({"atualizado": True,})
 
-    configuracao = get_object_or_404(Configuracao)
-    organizacao = Organizacao.objects.filter(id=organizacao_id).last()
-    projeto = Projeto.objects.filter(id=projeto_id).last()
-
-    if organizacao_id and (not organizacao):
-        return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
-
-    if projeto_id and (not projeto):
-        return HttpResponseNotFound("<h1>Projeto não encontrado!</h1>")
-    
-    if organizacao:
-        projetos = Projeto.objects.filter(organizacao=organizacao)
-    else:
-        projetos = Projeto.objects.all()
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
+    projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
+    projetos = Projeto.objects.filter(organizacao=organizacao) if organizacao else Projeto.objects.all()
 
     tipo = None
     if tipo_nome and tipo_nome != "ANY":
         tipo = TipoDocumento.objects.get(sigla=tipo_nome)
-        
-    documento = Documento.objects.filter(id=documento_id).last()
+
     if documento:
         tipo = documento.tipo_documento
 
@@ -158,9 +150,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         confidencial = None
         anotacao = None
         
-    if tipo_nome and (not organizacao_id) and (not projeto_id):
-        adiciona = "adiciona_documento_tipo"
-    else:
+    if adiciona is None:
         adiciona = "adiciona_documento"
 
     context = {
@@ -174,7 +164,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
         "organizacoes": Organizacao.objects.all(),
         "documento": documento,
         "documento_id": documento_id,
-        "configuracao": configuracao,
+        "configuracao": get_object_or_404(Configuracao),
         "travado": False,
         "adiciona": adiciona,
         "confidencial": confidencial,
@@ -186,9 +176,21 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def edita_documento(request, documento_id=None):
+    """edita um documento."""
+    documento = Documento.objects.filter(id=documento_id).last()
+    if documento:
+        organizacao_id = documento.organizacao.id if documento.organizacao else None
+        projeto_id = documento.projeto.id if documento.projeto else None
+        return adiciona_documento(request, organizacao_id=organizacao_id, projeto_id=projeto_id, tipo_nome=None, documento_id=documento_id, adiciona="edita_documento")
+    return HttpResponseNotFound("<h1>Documento não encontrado!</h1>")
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def adiciona_documento_tipo(request, tipo_nome=None):
     """Cria um documento com tipo."""
-    return adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=tipo_nome)
+    return adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=tipo_nome, adiciona="adiciona_documento_tipo")
 
 
 @login_required

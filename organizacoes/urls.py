@@ -38,6 +38,10 @@ urlpatterns = [
         views.adiciona_documento,
         name="adiciona_documento"),
 
+    path("edita_documento/<int:documento_id>",
+        views.edita_documento,
+        name="edita_documento"),
+
     path("adiciona_documento/<int:organizacao_id>",
         views.adiciona_documento,
         name="adiciona_documento"),

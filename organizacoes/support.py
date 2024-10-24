@@ -74,7 +74,7 @@ def get_form_fields(infile):
 
 
 # Adiciona um novo documento na base de dados
-def cria_documento(request, forca_confidencial=False):
+def cria_documento(request, forca_confidencial=False, usuario=None):
 
     projeto = None
     projeto_id = request.POST.get("projeto", "")
@@ -154,7 +154,10 @@ def cria_documento(request, forca_confidencial=False):
     documento.lingua_do_documento = lingua_do_documento
     documento.confidencial = confidencial
 
-    documento.usuario = request.user
+    if usuario is not None:
+        documento.usuario = usuario
+    else:
+        documento.usuario = request.user
 
     algum_arquivo = False
     if "arquivo" in request.FILES:

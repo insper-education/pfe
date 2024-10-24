@@ -323,6 +323,8 @@
           {% else %}
             url: "{% url adiciona %}",
           {% endif %}
+        {% elif adiciona == "edita_documento" %}  
+          url: "{% url adiciona documento_id %}",
         {% elif adiciona == "adiciona_documento_tipo" %}  
           url: "{% url adiciona tipo.sigla %}",
         {% elif adiciona == "adiciona_documento_estudante" %}
