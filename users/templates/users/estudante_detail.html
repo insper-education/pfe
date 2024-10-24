@@ -49,7 +49,7 @@
   
   <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
 
-  {% if user and user.tipo_de_usuario != 1 %}
+  {% if user.tipo_de_usuario != 1 %}
     {% if aluno.cr %}
       <strong>CR:</strong> {{aluno.cr}}<br>
     {% endif %}
@@ -84,7 +84,7 @@
   {% endwith %}
   <br>
 
-  {% if user and user.tipo_de_usuario != 1 %}
+  {% if user.tipo_de_usuario != 1 %}
 
       {% if aluno.opcao_set.all %}
         <hr>
