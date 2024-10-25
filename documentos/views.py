@@ -382,16 +382,25 @@ def relatorios_publicos(request, edicao=None):
 
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
-
+        
+        cabecalhos = [{"pt": "Projeto", "en": "Project"},
+                      {"pt": "Estudantes", "en": "Students"},
+                      {"pt": "Orientador", "en": "Advisor"},
+                      {"pt": "Organização", "en": "Company"},
+                      {"pt": "Banca Final", "en": "Evaluation Committee"},
+                      {"pt": "Período", "en": "Semester"},
+                      {"pt": "Documentos", "en": "Documents"},]
+        
         context = {
             "relatorios": relatorios,
             "edicao": edicao,
+            "cabecalhos": cabecalhos,
         }
 
     else:
 
         context = {
-            "titulo": "Documentos Públicos",
+            "titulo": {"pt": "Documentos Públicos", "en": "Public Documents"},
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada": edicao,
         }
