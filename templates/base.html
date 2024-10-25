@@ -42,6 +42,27 @@
     overflow: hidden;
     /* text-overflow: ellipsis; */
   }
+  @media (max-width: 460px) {
+    .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #logo_insper {
+        width: 44px;
+        height: 17px;
+    }
+
+    #pfelogo {
+        font-size: 0.6rem;
+        margin-left: 0;
+    }
+
+    #link_username {
+      font-size: 0.7em;
+    }
+}
 </style>
 
   {% block head %}
