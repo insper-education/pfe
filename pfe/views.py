@@ -14,18 +14,18 @@ from django.http import HttpResponse
 
 @login_required
 def index_old(request):
-    """Página principal do sistema do Projeto Final de Engenharia."""
+    """Antiga Página principal do sistema."""
     # num_visits = request.session.get('num_visits', 0) # Visitas a página.
     # request.session['num_visits'] = num_visits + 1
     return render(request, "index.html")
 
 @login_required
 def index(request):
-    """Página principal do sistema do Projeto Final de Engenharia."""
+    """Página principal do sistema."""
     return render(request, "index2.html")
 
 def manutencao(request):
-    """Página de Manutenção do Projeto Final de Engenharia."""
+    """Página de Manutenção do sistema."""
     return render(request, "manutencao.html")
 
 def custom_400(request, exception):

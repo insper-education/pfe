@@ -149,14 +149,14 @@
             labels: ["I", "D", "C", "C+", "B", "B+", "A", "A+"],
             datasets: [
               {
-                label: "Excelência Projeto Final de Engenharia FALCONI-INSPER",
+                label: "Excelência Capstone FALCONI-INSPER",
                 backgroundColor: ["#e6ffcc", "#e6ffcc", "#e6ffcc", "#c0c0f0b0", "#c0c0f0b0", "#ffd700b0", "#ffd700b0", "#ffd700b0"],
                 labelColor: "#ffd700b0",
                 data: [{% for conceito in conceitos %} {{conceito|stringformat:".2f"|unlocalize}},{% endfor %}],
                 stack: "Stack 0",
               },
               {
-                label: "Destaque Projeto Final de Engenharia FALCONI-INSPER",
+                label: "Destaque Capstone FALCONI-INSPER",
                 labelColor: "#c0c0f0b0",
                 data: [{% for conceito in conceitos %} 0,{% endfor %}],
                 stack: "Stack 0",
@@ -247,8 +247,8 @@
           <div><ul style="list-style-type: '&#x2726; ';">
             <li>Total de projetos realizados no semestre: {{selecionados|add:nao_selecionados}}</li>
             <li>Projetos selecionados para certificação Falconi: {{selecionados}}</li>
-            <li>Projetos que obtiveram certificação <u>Destaque Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
-            <li>Projetos que obtiveram certificação <u>Excelência Projeto Final de Engenharia FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
+            <li>Projetos que obtiveram certificação <u>Destaque Capstone FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
+            <li>Projetos que obtiveram certificação <u>Excelência Capstone FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
           </ul></div><br><br>
         {% else %}
           <div>
@@ -359,12 +359,12 @@
                             if(media>=8) {
                                 $("#falconi_{{projeto.id}}").css("background-color","#ffd700b0");
                                 $("#med_falconi_situacao_{{projeto.id}}").css("background-color","#ffd700b0");
-                                $("#med_falconi_situacao_{{projeto.id}}").html("Excelência Projeto Final de Engenharia FALCONI-INSPER");
+                                $("#med_falconi_situacao_{{projeto.id}}").html("Excelência Capstone FALCONI-INSPER");
                                 n_excelencia += 1;
                             } else if(media>=6) {
                                 $("#falconi_{{projeto.id}}").css("background-color","#c0c0f0b0");
                                 $("#med_falconi_situacao_{{projeto.id}}").css("background-color","#c0c0f0b0");
-                                $("#med_falconi_situacao_{{projeto.id}}").html("Destaque Projeto Final de Engenharia FALCONI-INSPER");
+                                $("#med_falconi_situacao_{{projeto.id}}").html("Destaque Capstone FALCONI-INSPER");
                                 n_destaque += 1;
                             } else {
                                 $("#med_falconi_situacao_{{projeto.id}}").html("Não obteve certificado");

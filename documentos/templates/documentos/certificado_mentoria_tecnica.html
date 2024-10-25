@@ -58,7 +58,7 @@
 {% block content %}
     
   <span class="titulo_certificado">
-    Projeto Final de Engenharia<br>
+    Capstone<br>
     Certificado de Mentoria de Projeto<br>
   </span>
 
@@ -71,11 +71,10 @@
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
+    Em nome do comitê do Capstone do Insper, agradecemos sua
     participação como mentor{% if usuario.genero == "F" %}a{% endif %} pela <b>{{ projeto.organizacao.nome }}</b>
-    no Projeto Final de Engenharia / Trabalho
-    de Conclusão de Curso da Engenharia do <b>Insper</b>,
-    durante todo o
+    no Projeto Final - Capstone / Trabalho de Conclusão de Curso do <b>Insper</b>,
+    ao longo do
     {% if projeto.semestre == 1 %}
       primeiro
     {% else %}
@@ -85,21 +84,21 @@
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    O projeto intitulado: <b>{{projeto.get_titulo}}</b>, contou com o grupo de estudantes:
+    O projeto intitulado: <b>{{projeto.get_titulo}}</b>, foi realizado pelos estudantes:
     {% for alocacao in projeto.alocacao_set.all %}
       <b>{{alocacao.aluno.user.get_full_name}}
       ({{alocacao.aluno.curso2}})</b>,
     {% empty %}
       SEM ESTUDANTES
     {% endfor %}
-    que foram orientados no Insper pel{% if projeto.orientador.user.genero == "F" %}a{% else %}o{% endif %}
+    sob orientação d{% if projeto.orientador.user.genero == "F" %}a{% else %}o{% endif %}
     professor{% if projeto.orientador.user.genero == "F" %}a{% endif %}
     <b>{{projeto.orientador}}</b>.
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Sua participação contribuiu com a formação dos nossos estudantes, permitindo eles estarem melhor 
-    preparados nas competências de engenharia. Somos realmente muito gratos por todo o seu tempo dedicado.
+    Sua contribuição foi fundamental para a formação dos nossos estudantes.
+    Somos sinceramente gratos por todo o tempo e dedicação investidos.
     <br><br>
   </span>
 
@@ -116,7 +115,7 @@
   <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
   <br>
   {{configuracao.coordenacao.nome_para_certificados}}<br>
-  <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+  <small>Coordenador do Capstone do Insper</small><br>
   </span>
 
 {% endblock %}

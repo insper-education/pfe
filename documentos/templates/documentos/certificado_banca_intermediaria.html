@@ -58,7 +58,7 @@
 {% block content %}
     
   <span class="titulo_certificado">
-    Projeto Final de Engenharia<br>
+    Capstone<br>
     Certificado de Participação em Banca Intermediária<br>
   </span>
 
@@ -74,9 +74,10 @@
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
-    participação na qualidade de membro da Banca Intermediária do Projeto Final de Engenharia / Trabalho
-    de Conclusão de Curso da Engenharia do Insper. O projeto foi realizado em parceria com:
+    Em nome do comitê do Capstone do Insper, agradecemos sua
+    participação como membro da Banca Intermediária do Capstone / Trabalho
+    de Conclusão de Curso do Insper. O projeto foi realizado em parceria com:
+
     <b>{{ projeto.organizacao.nome }}</b>,
     intitulado: <b>{{projeto.get_titulo}}</b>,
     ocorrido em {{banca.startDate}}.
@@ -125,7 +126,7 @@
     <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
     <br>
     {{configuracao.coordenacao.nome_para_certificados}}<br>
-    <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+    <small>Coordenador do Capstone do Insper</small><br>
   </span>
     
 {% endblock %}

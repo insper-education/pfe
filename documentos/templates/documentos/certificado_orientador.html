@@ -58,7 +58,7 @@
 {% block content %}
     
   <span class="titulo_certificado">
-    Projeto Final de Engenharia<br>
+    Capstone<br>
     Certificado de Orientação
   </span>
 
@@ -78,7 +78,7 @@
     
     <b>{{projeto.orientador}}</b>
     
-    orientou o Projeto Final de Engenharia / Trabalho de Conclusão de Curso da Engenharia do Insper.
+    orientou o Projeto Final - Capstone / Trabalho de Conclusão de Curso no Insper.
 
     <br><br>
     O projeto foi realizado em parceria com: <b>{{ projeto.organizacao.nome }}</b>,
@@ -124,7 +124,7 @@
   <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
   <br>
   {{configuracao.coordenacao.nome_para_certificados}}<br>
-  <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+  <small>Coordenador do Capstone do Insper</small><br>
   </span>
 
 {% endblock %}

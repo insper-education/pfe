@@ -1281,7 +1281,7 @@ def evolucao_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        # Para armazenar todas as notas de todos os programas de engenharia
+        # Para armazenar todas as notas de todos os programas
         notas_total = {}
         for edicao in edicoes:
             notas_total[edicao] = []

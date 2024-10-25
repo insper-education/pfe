@@ -58,7 +58,7 @@
 {% block content %}
     
   <span class="titulo_certificado">
-    Projeto Final de Engenharia<br>
+    Capstone<br>
     Certificado de Mentoria<br>
   </span>
 
@@ -71,10 +71,10 @@
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Em nome do comitê do Projeto Final de Engenharia do Insper, venho agradecer sua
-    participação como mentor{% if usuario.genero == "F" %}a{% endif %} no Projeto Final de Engenharia / Trabalho
-    de Conclusão de Curso da Engenharia do Insper.
-    
+    Em nome do comitê do Capstone do Insper, agradecemos sua
+    participação como mentor{% if usuario.genero == "F" %}a{% endif %} 
+    no Projeto Final - Capstone / Trabalho de Conclusão de Curso do <b>Insper</b>,
+
     O projeto mentorado foi realizado em parceria com:
     <b>{{ projeto.organizacao.nome }}</b>,
     intitulado: <b>{{projeto.get_titulo}}</b>,
@@ -89,8 +89,8 @@
     <br><br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    Sua participação contribuiu com a formação dos nossos estudantes, permitindo eles estarem melhor 
-    preparados nas competências de engenharia. Somos realmente muito gratos por todo o seu tempo e interesse.
+    Sua contribuição foi fundamental para a formação dos nossos estudantes.
+    Somos sinceramente gratos por todo o tempo e dedicação investidos.
     <br>
     <br>
   </span>
@@ -108,7 +108,7 @@
   <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
   <br>
   {{configuracao.coordenacao.nome_para_certificados}}<br>
-  <small>Coordenador do Projeto Final de Engenharia do Insper</small><br>
+  <small>Coordenador do Capstone do Insper</small><br>
   </span>
 
 {% endblock %}

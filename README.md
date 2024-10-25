@@ -1,5 +1,5 @@
 # Capstone/PFE
-Sistema para o Capstone/Projeto Final de Engenharia
+Sistema para o Capstone/PFE
 
 * Python = 3.7.3
 * Django = 2.2.6

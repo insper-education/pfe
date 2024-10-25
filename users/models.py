@@ -247,7 +247,7 @@ class Aluno(models.Model):
                                      help_text="proposta pre alocada")
 
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
-                                 help_text="Trabalhou/trabalha ou estagio/estagia em alguma empresa de engenharia?")
+                                 help_text="Trabalhou/trabalha ou estagio/estagia em alguma empresa de tecnologia?")
 
     social = models.TextField(max_length=1000, null=True, blank=True,
                               help_text="Já participou de atividade sociais?")
