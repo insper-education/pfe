@@ -104,6 +104,8 @@ def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
     filename = str(myfile.name.encode("utf-8").decode("ascii", "ignore"))
+    while ".." in filename:  # Remove .. do nome do arquivo
+        filename = filename.replace("..", ".")
     name = path+prefix+text.get_valid_filename(filename)
     filename = file_system_storage.save(name, myfile)
     uploaded_file_url = file_system_storage.url(filename)

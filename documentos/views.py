@@ -697,6 +697,15 @@ def tabela_imagens(request):
 def contratos_assinados(request):
     """Exibe tabela com todos os documentos armazenados."""
 
+    documentos = Documento.objects.all()
+    for documento in documentos:
+        if documento.documento and ".." in documento.documento.url:
+            txt = documento.documento.name
+            while ".." in txt:
+                txt = txt.replace("..", ".")
+            documento.documento.name = txt
+            documento.save()
+
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]

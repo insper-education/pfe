@@ -154,7 +154,7 @@ def get_response(file, path, request):
 def le_arquivo(request, local_path, path, bypass_confidencial=False):
     """Lê os arquivos pela URL."""
     file_path = os.path.abspath(local_path)
-    if ".." in file_path:
+    if ".." in file_path:   # Protecao
         raise PermissionDenied
     # if "\\" in file_path:   # Protecao, porem nao funciona no windows
     #     raise PermissionDenied
@@ -199,7 +199,7 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
             context = {"mensagem": mensagem,}
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         with open(file_path, "rb") as file:
             response = get_response(file, path, request)
