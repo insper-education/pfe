@@ -22,7 +22,8 @@
   <div id="tudo">
 
     <span class="titulo">
-        {% if lingua == "pt" %}{{ titulo }}{% else %}Grade Analysis{% endif %}
+      <span lang="pt">{{ titulo.pt }}</span>
+      <span lang="en">{{ titulo.en }}</span>
     </span>
 
     {% include "edicoes.html" with com_cursos=True %}
@@ -539,5 +540,6 @@
   </script>
 
   {% include "edicoes_ajax.html" with com_cursos=True %}
+  {% include "linguas.html" %}
 
 {% endblock %}

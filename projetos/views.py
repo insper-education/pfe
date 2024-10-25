@@ -46,32 +46,27 @@ from administracao.support import usuario_sem_acesso
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+
 def get_areas_estudantes(alunos):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    areaspfe = {}
-
-    usuarios = []
-    for aluno in alunos:
-        usuarios.append(aluno.user)
+    usuarios = [aluno.user for aluno in alunos]
 
     todas_areas = Area.objects.filter(ativa=True)
-    for area in todas_areas:
-        areas = AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area)
-        areaspfe[area.titulo] = (areas, area.descricao)
+    areaspfe = {
+        area.titulo: (AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area), area.descricao)
+        for area in todas_areas
+    }
 
     outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
 
     return areaspfe, outras
 
-
 def get_areas_propostas(propostas):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    areaspfe = {}
-
-    areas = Area.objects.filter(ativa=True)
-    for area in areas:
-        areas = AreaDeInteresse.objects.filter(proposta__in=propostas, area=area)
-        areaspfe[area.titulo] = (areas, area.descricao)
+    areaspfe = {
+        area.titulo: (AreaDeInteresse.objects.filter(proposta__in=propostas, area=area), area.descricao)
+        for area in Area.objects.filter(ativa=True)
+    }
 
     outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
 
@@ -519,10 +514,8 @@ def meuprojeto(request):
         # Pegando um estudante de um projeto quando orientador
         projeto = Projeto.objects.filter(orientador=request.user.professor).last()
         alocacao = Alocacao.objects.filter(projeto=projeto).last()
-        if alocacao:
-            context["aluno"] = alocacao.aluno
-        else:
-            context["aluno"] = None
+        context["aluno"] = alocacao.aluno if alocacao else None
+        
     else:
         # Caso seja estudante
         context["aluno"] = request.user.aluno
@@ -922,7 +915,7 @@ def projetos_vs_propostas(request):
 def analise_notas(request):
     """Mostra analise de notas."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, _, _ = get_edicoes(Avaliacao2)
+    edicoes = get_edicoes(Avaliacao2)[0]
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
@@ -931,13 +924,15 @@ def analise_notas(request):
         periodo = ["todo", "periodo"]
         
         medias_semestre = Alocacao.objects.all()
+        edicao = request.POST.get("edicao")
+        curso = request.POST.get("curso")
 
-        if "edicao" in request.POST and "curso" in request.POST:
-            if request.POST["edicao"] != "todas":
-                periodo = request.POST["edicao"].split('.')
+        if edicao and curso:
+            if edicao != "todas":
+                periodo = edicao.split('.')
                 medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
                                                          projeto__semestre=periodo[1])
-                
+
             curso = request.POST["curso"]
 
             # Filtra para projetos com estudantes de um curso específico
@@ -950,114 +945,24 @@ def analise_notas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        valor = {}
-        valor["ideal"] = 7.0
-        valor["regular"] = 5.0
+        valor = {"ideal": 7.0, "regular": 5.0}
 
-        notas = {
-            "rii": {"ideal": 0, "regular":0, "inferior": 0},
-            "rig": {"ideal": 0, "regular":0, "inferior": 0},
-            "bi":  {"ideal": 0, "regular":0, "inferior": 0},
-            "rfi": {"ideal": 0, "regular":0, "inferior": 0},
-            "rfg": {"ideal": 0, "regular":0, "inferior": 0},
-            "bf":  {"ideal": 0, "regular":0, "inferior": 0},
-            "rpl": {"ideal": 0, "regular":0, "inferior": 0},
-            "ppf": {"ideal": 0, "regular":0, "inferior": 0},
-            "api": {"ideal": 0, "regular":0, "inferior": 0},
-            "apg": {"ideal": 0, "regular":0, "inferior": 0},
-            "afg": {"ideal": 0, "regular":0, "inferior": 0},
-            "afi": {"ideal": 0, "regular":0, "inferior": 0},
-        }
+        # Criando espaço para todos as notas
+        notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rpl", "ppf", "api", "apg", "afg", "afi", "p"]
+        notas = {key: {"ideal": 0, "regular": 0, "inferior": 0} for key in notas_keys}
 
         notas_lista = [x.get_notas for x in medias_semestre]
         for nota2 in notas_lista:
             for nota in nota2:
                 if nota[1] is not None:
-                    if nota[0] == "RII":
+                    key = nota[0].lower()
+                    if key:
                         if nota[1] >= valor["ideal"]:
-                            notas["rii"]["ideal"] += 1
+                            notas[key]["ideal"] += 1
                         elif nota[1] >= valor["regular"]:
-                            notas["rii"]["regular"] += 1
+                            notas[key]["regular"] += 1
                         else:
-                            notas["rii"]["inferior"] += 1
-                    elif nota[0] == "RIG":
-                        if nota[1] >= valor["ideal"]:
-                            notas["rig"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["rig"]["regular"] += 1
-                        else:
-                            notas["rig"]["inferior"] += 1
-                    elif nota[0] == "BI":
-                        if nota[1] >= valor["ideal"]:
-                            notas["bi"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["bi"]["regular"] += 1
-                        else:
-                            notas["bi"]["inferior"] += 1
-                    elif nota[0] == "RFI":
-                        if nota[1] >= valor["ideal"]:
-                            notas["rfi"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["rfi"]["regular"] += 1
-                        else:
-                            notas["rfi"]["inferior"] += 1
-                    elif nota[0] == "RFG":
-                        if nota[1] >= valor["ideal"]:
-                            notas["rfg"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["rfg"]["regular"] += 1
-                        else:
-                            notas["rfg"]["inferior"] += 1
-                    elif nota[0] == "BF":
-                        if nota[1] >= valor["ideal"]:
-                            notas["bf"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["bf"]["regular"] += 1
-                        else:
-                            notas["bf"]["inferior"] += 1
-                    elif nota[0] == "RPL":
-                        if nota[1] >= valor["ideal"]:
-                            notas["rpl"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["rpl"]["regular"] += 1
-                        else:
-                            notas["rpl"]["inferior"] += 1
-                    elif nota[0] == "PPF":
-                        if nota[1] >= valor["ideal"]:
-                            notas["ppf"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["ppf"]["regular"] += 1
-                        else:
-                            notas["ppf"]["inferior"] += 1
-                    elif nota[0] == "APG":
-                        if nota[1] >= valor["ideal"]:
-                            notas["apg"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["apg"]["regular"] += 1
-                        else:
-                            notas["apg"]["inferior"] += 1
-                    elif nota[0] == "API":
-                        if nota[1] >= valor["ideal"]:
-                            notas["api"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["api"]["regular"] += 1
-                        else:
-                            notas["api"]["inferior"] += 1
-                    elif nota[0] == "AFG":
-                        if nota[1] >= valor["ideal"]:
-                            notas["afg"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["afg"]["regular"] += 1
-                        else:
-                            notas["afg"]["inferior"] += 1
-                    elif nota[0] == "AFI":
-                        if nota[1] >= valor["ideal"]:
-                            notas["afi"]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
-                            notas["afi"]["regular"] += 1
-                        else:
-                            notas["afi"]["inferior"] += 1
-
+                            notas[key]["inferior"] += 1
         medias_lista = [x.get_media for x in medias_semestre]
 
         # Somente apresenta as médias que esteja completas (pesso = 100%)
@@ -1082,7 +987,7 @@ def analise_notas(request):
 
     else:
         context = {
-            "titulo": "Análise de Notas/Conceitos",
+            "titulo": {"pt": "Análise de Notas/Conceitos", "en": "Analysis of Grades/Concepts"},
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -1380,12 +1285,13 @@ def evolucao_objetivos(request):
 
             if so_finais:
                 # Somenete avaliações finais do Capstone
-                # tipos = [2, 12, 22, 52, 54]
-                exames = Exame.objects.filter(titulo="Banca Final") |\
-                         Exame.objects.filter(titulo="Relatório Final de Grupo") |\
-                         Exame.objects.filter(titulo="Relatório Final Individual") |\
-                         Exame.objects.filter(titulo="Avaliação Final Individual") |\
-                         Exame.objects.filter(titulo="Avaliação Final de Grupo")
+                exames = Exame.objects.filter(titulo__in=[
+                    "Banca Final",
+                    "Relatório Final de Grupo",
+                    "Relatório Final Individual",
+                    "Avaliação Final Individual",
+                    "Avaliação Final de Grupo"
+                ])
                 avaliacoes_sep = Avaliacao2.objects.filter(exame__in=exames)
             else:
                 avaliacoes_sep = Avaliacao2.objects.all()
@@ -1441,32 +1347,41 @@ def evolucao_objetivos(request):
         medias = []
         objetivos = ObjetivosDeAprendizagem.objects.all()
         count = 0
+
+        # Precompute all avaliacoes and group them by edicao and objetivo
+        avaliacoes_by_edicao_objetivo = {
+            edicao: {
+                objetivo: [
+                    x.nota for x in avaliacoes.filter(
+                        projeto__ano=edicao.split('.')[0],
+                        projeto__semestre=edicao.split('.')[1],
+                        objetivo=objetivo,
+                        na=False
+                    )
+                ]
+                for objetivo in objetivos
+            }
+            for edicao in edicoes
+        }
+
         for objetivo in objetivos:
             notas = []
             faixas = []
             for edicao in edicoes:
-                periodo = edicao.split('.')
-                semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if x.objetivo == objetivo and not x.na]
-                
+                notas_lista = avaliacoes_by_edicao_objetivo[edicao][objetivo]
                 faixa = divide57(notas_lista)
                 soma = sum(faixa)
                 if soma > 0:
-                    faixa[0] = 100*faixa[0]/soma
-                    faixa[1] = 100*faixa[1]/soma
-                    faixa[2] = 100*faixa[2]/soma
-                
+                    faixa = [100 * f / soma for f in faixa]
                 notas.append(media(notas_lista))
                 faixas.append(faixa)
 
-            if configuracao.lingua == "pt":
-                titulo = objetivo.titulo
-            else:
-                titulo = objetivo.titulo_en
-
+            titulo = objetivo.titulo if configuracao.lingua == "pt" else objetivo.titulo_en
             medias.append({"objetivo": titulo, "media": notas, "cor": cores[count], "faixas": faixas})
-
             count += 1
+
+
+
 
         # Número de estudantes por semestre
         students = []
@@ -1490,7 +1405,7 @@ def evolucao_objetivos(request):
     else:
 
         context = {
-            "titulo": "Evolução por Objetivos de Aprendizado",
+            "titulo": {"pt": "Evolução por Objetivos de Aprendizado", "en": "Evolution by Learning Goals"},
             "edicoes": edicoes,
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
@@ -1702,7 +1617,7 @@ def evolucao_por_objetivo(request):
     else:
 
         context = {
-            "titulo": "Evolução por Objetivos de Aprendizado",
+            "titulo": {"pt": "Evolução por Objetivos de Aprendizado", "en": "Evolution by Learning Goals"},
             "edicoes": edicoes,
             "objetivos": objetivos,
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
@@ -1772,7 +1687,7 @@ def correlacao_medias_cr(request):
 
     else:
         context = {
-            "titulo": "Correlação entre Médias e CR",
+            "titulo": {"pt": "Correlação entre Médias e CR", "en": "Correlation between Grades and CR"},
             "edicoes": edicoes,
             "cursos": cursos_insper,
         }

@@ -28,18 +28,21 @@
 
   <div id="tudo">
 
-    <span class="titulo">{{ titulo }}</span>
+    <span class="titulo">
+      <span lang="pt">{{ titulo.pt }}</span>
+      <span lang="en">{{ titulo.en }}</span>
+    </span>
 
     {% include "edicoes.html" with com_cursos=True %}
 
     <div class="input-group input-group-sm mt-1">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
-            <label class="form-check-label" for="inlineRadio1">Médias Finais</label>
+            <label class="form-check-label" for="inlineRadio1"><span lang="pt">Médias Finais</span><span lang="en">Final Grades</span></label>
         </div>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
-            <label class="form-check-label" for="inlineRadio2">Notas Individuais</label>
+            <label class="form-check-label" for="inlineRadio2"><span lang="pt">Notas Individuais</span><span lang="en">Individual Grades</span></label>
         </div>
     </div>
 
@@ -307,5 +310,6 @@
     </div>
 
     {% include "edicoes_ajax.html" with com_cursos=True %}
+    {% include "linguas.html" %}
 
 {% endblock %}

@@ -19,8 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
 from django.http.response import StreamingHttpResponse
-from django.http import Http404
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 
 from django.shortcuts import render, get_object_or_404
 
@@ -92,64 +91,51 @@ def stream_video(request, path, content_type=None):
 
 
 def get_response(file, path, request):
-    """Checa extensão do arquivo e retorna HttpRensponse corespondente."""
-    # Exemplos:
-    # image/gif, image/tiff, application/zip,
-    # audio/mpeg, audio/ogg, text/csv, text/plain
-    if path[-3:].lower() == "jpg" or path[-4:].lower() == "jpeg":
-        return HttpResponse(file.read(), content_type="image/jpeg")
-    elif path[-3:].lower() == "png":
-        return HttpResponse(file.read(), content_type="image/png")
-    elif path[-3:].lower() == "gif":
-        return HttpResponse(file.read(), content_type="image/gif")
-    elif path[-3:].lower() == "bmp":
-        return HttpResponse(file.read(), content_type="image/bmp")
-    elif path[-4:].lower() == "avif":
-        return HttpResponse(file.read(), content_type="image/avif")
-    elif path[-4:].lower() == "webp":
-        return HttpResponse(file.read(), content_type="image/webp")
-    elif path[-4:].lower() == "apng":
-        return HttpResponse(file.read(), content_type="image/apng")
-    elif path[-3:].lower() == "tif" or path[-4:].lower() == "tiff":
-        return HttpResponse(file.read(), content_type="image/tiff")
-    elif path[-3:].lower() == "svg" or path[-4:].lower() == "svgz":
-        return HttpResponse(file.read(), content_type="image/svg+xml")
-    elif path[-3:].lower() == "doc":
-        return HttpResponse(file.read(), content_type=\
-            "application/msword")
-    elif path[-4:].lower() == "docx":
-        return HttpResponse(file.read(), content_type=\
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-    elif path[-3:].lower() == "ppt":
-        return HttpResponse(file.read(), content_type=\
-            "application/vnd.ms-powerpoint")
-    elif path[-4:].lower() == "pptx":
-        return HttpResponse(file.read(), content_type=\
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation")
-    elif path[-3:].lower() == "xls":
-        return HttpResponse(file.read(), content_type=\
-            "application/vnd.ms-excel")
-    elif path[-4:].lower() == "xlsx":
-        return HttpResponse(file.read(), content_type=\
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    elif path[-3:].lower() == "csv":
-        return HttpResponse(file.read(), content_type="text/comma-separated-values")
-    elif path[-3:].lower() == "pdf":
-        return HttpResponse(file.read(), content_type="application/pdf")
-    elif path[-3:].lower() == "mp4":
-        return stream_video(request, file.name, "video/mp4")
-    elif path[-3:].lower() == "mpg" or path[-4:].lower() == "mpeg":
-        return stream_video(request, file.name, "video/mpeg")
-    elif path[-3:].lower() == "ogv":
-        return stream_video(request, file.name, "video/ogg")
-    elif path[-3:].lower() == "mov":
-        return stream_video(request, file.name, "video/mp4")  # Não funcionando: "video/quicktime"
-    elif path[-3:].lower() == "mkv":
-        return HttpResponse(file.read(), content_type="video/webm")
-    elif path[-3:].lower() == "zip" or path[-3:].lower() == "rar" or path[-4:].lower() == "7zip":
-        return HttpResponse(file.read(), content_type="application/octet-stream")
-    else:
-        return None
+    """Checa extensão do arquivo e retorna HttpResponse correspondente."""
+    mime_types = {
+        "txt": "text/plain",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "gif": "image/gif",
+        "bmp": "image/bmp",
+        "avif": "image/avif",
+        "webp": "image/webp",
+        "apng": "image/apng",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+        "svg": "image/svg+xml",
+        "svgz": "image/svg+xml",
+        "doc": "application/msword",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "ppt": "application/vnd.ms-powerpoint",
+        "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "xls": "application/vnd.ms-excel",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "csv": "text/comma-separated-values",
+        "pdf": "application/pdf",
+        "mkv": "video/webm",
+        "zip": "application/octet-stream",
+        "rar": "application/octet-stream",
+        "7zip": "application/octet-stream"
+    }
+
+    video_types = {
+        "mp4": "video/mp4",
+        "mpg": "video/mpeg",
+        "mpeg": "video/mpeg",
+        "ogv": "video/ogg",
+        "mov": "video/mp4"  # Não funcionando: "video/quicktime"
+    }
+
+    ext = path.split('.')[-1].lower()
+    if ext in mime_types:
+        return HttpResponse(file.read(), content_type=mime_types[ext])
+    if ext in video_types:
+        return stream_video(request, file.name, video_types[ext])
+
+    return None
+
 
 def le_arquivo(request, local_path, path, bypass_confidencial=False):
     """Lê os arquivos pela URL."""
@@ -174,27 +160,20 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
                     if doc.confidencial: 
                         return render(request, "generic.html", context=context)
 
-                if (doc.confidencial) and \
-                    not ((user.tipo_de_usuario == 2) or (user.tipo_de_usuario == 4)):
-
-                    if (user.tipo_de_usuario == 1):
-                        ## Verificar se o documento é do estudante ou do grupo dele
-                        alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()                    
-                        if doc.tipo_documento.individual and doc.usuario != user:
-                            return render(request, "generic.html", context=context)
-                        elif not alocado_no_projeto:
+                if doc.confidencial and user.tipo_de_usuario not in [2, 4]:
+                    if user.tipo_de_usuario == 1:
+                        # Verificar se o documento é do estudante ou do grupo dele
+                        alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()
+                        if (doc.tipo_documento.individual and doc.usuario != user) or not alocado_no_projeto:
                             return render(request, "generic.html", context=context)
 
-                    elif (user.tipo_de_usuario == 3):
-                        ## Verificar se o documento é da organização que o uruário faz parte
-                        if doc.projeto is None:
-                            return render(request, "generic.html", context=context)
-                        if doc.projeto.proposta.organizacao != user.parceiro.organizacao:
+                    elif user.tipo_de_usuario == 3:
+                        # Verificar se o documento é da organização que o usuário faz parte
+                        if not doc.projeto or doc.projeto.proposta.organizacao != user.parceiro.organizacao:
                             return render(request, "generic.html", context=context)
 
                     else:
                         return render(request, "generic.html", context=context)
-                    
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"

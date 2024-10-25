@@ -77,7 +77,7 @@
         {% if com_cursos %}
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">Curso</span></label>
+            <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Curso</span><span lang="en" style="display: none;">Program</span></span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto" id="filterCurso" name="curso">
               <option class="opt_edi" value="T">Todos Insper</option>
@@ -106,7 +106,7 @@
         {% if com_objetivos %}
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">Objetivo de Aprendizagem</span></label>
+            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Objetivo de Aprendizagem</span><span lang="en" style="display: none;">Learning Goals</span></span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
             {% for objetivo in objetivos %}
@@ -122,11 +122,11 @@
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">Individuais</span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide"><span lang="pt">Individuais</span><span lang="en" style="display: none;">Individual</span></label>
           </div>
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="grupo" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide">Grupo</span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide"><span lang="pt">Grupo</span><span lang="en" style="display: none;">Group</span></span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
@@ -136,7 +136,7 @@
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="so_finais" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide">Só avaliações finais</span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide"><span lang="pt">Só avaliações finais</span><span lang="en" style="display: none;">Only final grades</span></span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
@@ -146,7 +146,7 @@
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="avancados" checked >
-            <label class="to_label form-check-label" for="avancados"><span class="to_hide">Avancados</span></label>
+            <label class="to_label form-check-label" for="avancados"><span class="to_hide"><span lang="pt">Avancados</span><span lang="en" style="display: none;">Advanced</span></span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
@@ -155,7 +155,7 @@
         {% if com_tipos %}
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">Tipo</span></label>
+            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Tipo</span><span lang="en" style="display: none;">Type</span></span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto form-control" id="filterTipo" name="tipo">
             <option class="opt_edi" value="estudantes">Estudantes</option>
