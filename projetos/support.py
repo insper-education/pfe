@@ -15,44 +15,6 @@ from django.utils import text
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 
-def get_upload_path(instance, filename):
-    """Caminhos para armazenar os arquivos."""
-    caminho = ""
-    #if isinstance(instance, Documento):
-    if instance.__class__.__name__ == "Documento":
-        if instance.organizacao:
-            caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
-        if instance.projeto:
-            caminho += "projeto" + str(instance.projeto.pk) + '/'
-        if instance.usuario:
-            caminho += slugify(instance.usuario.username) + '/'
-        if caminho == "":
-            caminho = "documentos/"
-    elif instance.__class__.__name__ == "Projeto":
-        caminho += slugify(instance.organizacao.sigla_limpa()) + '/'
-        caminho += "projeto" + str(instance.pk) + '/'
-    elif instance.__class__.__name__ == "Organizacao":
-        caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
-    elif instance.__class__.__name__ == "Certificado":
-        if instance.projeto and instance.projeto.organizacao:
-            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
-            caminho += "projeto" + str(instance.projeto.pk) + '/'
-        if instance.usuario:
-            caminho += slugify(instance.usuario.username) + '/'
-    elif instance.__class__.__name__ == "Configuracao" or instance.__class__.__name__ == "Administrador":
-        caminho += "configuracao/"
-    elif instance.__class__.__name__ == "Proposta":
-        caminho += "propostas/proposta"+ str(instance.pk) + '/'
-    else:  # Arquivo Temporário
-        caminho += "tmp/"
-
-    if filename:
-        filename = force_text(filename).strip().replace(' ', '_')
-        filename = re.sub(r'(?u)[^-\w.]', '', filename)
-        return "{0}/{1}".format(caminho, filename)
-
-    return "{0}".format(caminho)
-
 
 def converte_conceito(conceito):
     """Converte de Letra para Número."""
@@ -100,6 +62,46 @@ def converte_letra(nota, mais="+", espaco=""):
     return "I"+espaco
 
 
+def get_upload_path(instance, filename):
+    """Caminhos para armazenar os arquivos."""
+    caminho = ""
+    #if isinstance(instance, Documento):
+    if instance.__class__.__name__ == "Documento":
+        if instance.organizacao:
+            caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
+        if instance.projeto:
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
+        if instance.usuario:
+            caminho += slugify(instance.usuario.username) + '/'
+        if caminho == "":
+            caminho = "documentos/"
+    elif instance.__class__.__name__ == "Projeto":
+        caminho += slugify(instance.organizacao.sigla_limpa()) + '/'
+        caminho += "projeto" + str(instance.pk) + '/'
+    elif instance.__class__.__name__ == "Organizacao":
+        caminho += slugify(instance.sigla_limpa()) + "/logotipo/"
+    elif instance.__class__.__name__ == "Certificado":
+        if instance.projeto and instance.projeto.organizacao:
+            caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
+            caminho += "projeto" + str(instance.projeto.pk) + '/'
+        if instance.usuario:
+            caminho += slugify(instance.usuario.username) + '/'
+    elif instance.__class__.__name__ == "Configuracao" or instance.__class__.__name__ == "Administrador":
+        caminho += "configuracao/"
+    elif instance.__class__.__name__ == "Proposta":
+        caminho += "propostas/proposta"+ str(instance.pk) + '/'
+    else:  # Arquivo Temporário
+        caminho += "tmp/"
+
+    if filename:
+        filename = force_text(filename).strip().replace(' ', '_')
+        filename = re.sub(r'(?u)[^-\w.]', '', filename)
+        return "{0}/{1}".format(caminho, filename)
+
+    return "{0}".format(caminho)
+
+
+
 def simple_upload(myfile, path="", prefix=""):
     """Faz uploads para o servidor."""
     file_system_storage = FileSystemStorage()
@@ -125,90 +127,47 @@ def get_objetivos_atuais(objetivos):
 
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
-    #objetivos = get_objetivos_alocacoes(ObjetivosDeAprendizagem.objects.all(), alocacoes)
 
-    valor = {}
-    valor["ideal"] = 7.0
-    valor["regular"] = 5.0
+    avaliacoes = ["rii", "rig", "bi", "rfi", "rfg", "bf", "api", "apg", "afi", "afg"]
 
-    notas = {
-        "rii": {},
-        "rig": {},
-        "bi":  {},
-        "rfi": {},
-        "rfg": {},
-        "bf":  {},
-        "api": {},  # antiga
-        "apg": {},  # antiga
-        "afi": {},  # antiga
-        "afg": {},  # antiga
-    }
-
-    pesos = {
-        "rii": {},
-        "rig": {},
-        "bi":  {},
-        "rfi": {},
-        "rfg": {},
-        "bf":  {},
-        "api": {},  # antiga
-        "apg": {},  # antiga
-        "afi": {},  # antiga
-        "afg": {},  # antiga
-    }
-
+    notas = {key: {} for key in avaliacoes}
+    pesos = {key: {} for key in avaliacoes}
+    
     notas_lista = [x.get_edicoes for x in alocacoes]
-
-    avaliacoes = [("RII", "rii"), ("RIG", "rig"), ("BI", "bi"), ("RFI", "rfi"), ("RFG", "rfg"),
-                  ("BF", "bf"), ("API", "api"), ("APG", "apg"), ("AFI", "afi"), ("AFG", "afg"),]
 
     objetivos_avaliados = set()
 
     for nota2 in notas_lista:
         if nota2:
             for nota in nota2:
-                for avaliacao in avaliacoes:
-                    if nota[0] == avaliacao[0]:
-                        for k, val in nota[1].items():
-                            if k in notas[avaliacao[1]]:
-                                notas[avaliacao[1]][k] += val[0] * val[1]
-                                pesos[avaliacao[1]][k] += val[1]
-                            else:
-                                notas[avaliacao[1]][k] = val[0] * val[1]
-                                pesos[avaliacao[1]][k] = val[1]
-                                objetivos_avaliados.add(k)
+                avaliacao = nota[0].lower()
+                if avaliacao in notas:
+                    for k, val in nota[1].items():
+                        notas[avaliacao][k] = notas[avaliacao].get(k, 0) + val[0] * val[1]
+                        pesos[avaliacao][k] = pesos[avaliacao].get(k, 0) + val[1]
+                        objetivos_avaliados.add(k)
 
     # Ordena os objetivos pelo indice de ordem deles
     objetivos_avaliados = sorted(objetivos_avaliados, key=lambda oo: oo.ordem)
 
     cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#375330", "#a48577"]
-    count = 0
-    cores_obj = {}
-    for objetivo in objetivos_avaliados:
-        if count >= len(cores):
-            count = 0
-        cores_obj[objetivo] = cores[count]
-        count += 1
+    cores_obj = {objetivo: cores[i % len(cores)] for i, objetivo in enumerate(objetivos_avaliados)}
 
     medias_geral = {}
     for objetivo in objetivos_avaliados:
-        medias_geral[objetivo] = {}
-        medias_geral[objetivo]["cor"] = cores_obj[objetivo]
-        medias_geral[objetivo]["soma"] = 0
-        medias_geral[objetivo]["peso"] = 0
+        medias_geral[objetivo] = {"cor": cores_obj[objetivo], "soma": 0, "peso": 0}
 
     medias = {}
-
     for avaliacao in avaliacoes:
-        medias[avaliacao[1]] = {}
+        medias[avaliacao] = {}
         for objetivo in objetivos_avaliados:
-            if objetivo in pesos[avaliacao[1]] and pesos[avaliacao[1]][objetivo] > 0:
-                if objetivo not in medias[avaliacao[1]]:
-                    medias[avaliacao[1]][objetivo] = {}
-                    medias[avaliacao[1]][objetivo]["cor"] = cores_obj[objetivo]
-                medias[avaliacao[1]][objetivo]["media"] = notas[avaliacao[1]][objetivo] / pesos[avaliacao[1]][objetivo]
-                medias_geral[objetivo]["soma"] += notas[avaliacao[1]][objetivo]
-                medias_geral[objetivo]["peso"] += pesos[avaliacao[1]][objetivo]
+            if objetivo in pesos[avaliacao] and pesos[avaliacao][objetivo] > 0:
+                if objetivo not in medias[avaliacao]:
+                    medias[avaliacao][objetivo] = {}
+                    medias[avaliacao][objetivo]["cor"] = cores_obj[objetivo]
+                medias[avaliacao][objetivo]["media"] = notas[avaliacao][objetivo] / pesos[avaliacao][objetivo]
+                medias_geral[objetivo]["soma"] += notas[avaliacao][objetivo]
+                medias_geral[objetivo]["peso"] += pesos[avaliacao][objetivo]
 
     for objetivo in objetivos_avaliados:
         if medias_geral[objetivo]["peso"] > 0:
@@ -222,54 +181,42 @@ def calcula_objetivos(alocacoes):
 
     for media in medias_geral:
 
-        count = 0
-        media_individual[media] = {}
-        media_individual[media]["cor"] = medias_geral[media]["cor"]
-        media_individual[media]["media"] = 0
-        if media.avaliacao_aluno and media in medias["api"]: # antiga
-            media_individual[media]["media"] += medias["api"][media]["media"]
-            count += 1
-        if media.avaliacao_aluno and media in medias["afi"]: # antiga
-            media_individual[media]["media"] += medias["afi"][media]["media"]
-            count += 1
-        if media.avaliacao_aluno and media in medias["rii"]:
-            media_individual[media]["media"] += medias["rii"][media]["media"]
-            count += 1
-        if media.avaliacao_aluno and media in medias["rfi"]:
-            media_individual[media]["media"] += medias["rfi"][media]["media"]
-            count += 1
-        if count > 0:
-            media_individual[media]["media"] /= count
-        else:
-            media_individual[media]["media"] = None
+        media_individual[media] = {
+            "cor": medias_geral[media]["cor"],
+            "media": 0
+        }
 
         count = 0
-        media_grupo[media] = {}
-        media_grupo[media]["cor"] = medias_geral[media]["cor"]
-        media_grupo[media]["media"] = 0
+        avaliacoes_indiv = ["api", "afi", "rii", "rfi"]
 
-        if media.avaliacao_grupo and media in medias["apg"]: # antiga
-            media_grupo[media]["media"] += medias["apg"][media]["media"]
-            count += 1
-        if media.avaliacao_grupo and media in medias["afg"]: # antiga
-            media_grupo[media]["media"] += medias["afg"][media]["media"]
-            count += 1
-        if media.avaliacao_grupo and media in medias["rig"]:
-            media_grupo[media]["media"] += medias["rig"][media]["media"]
-            count += 1
-        if media.avaliacao_grupo and media in medias["rfg"]:
-            media_grupo[media]["media"] += medias["rfg"][media]["media"]
-            count += 1
-        if media.avaliacao_banca and media in medias["bi"]:
-            media_grupo[media]["media"] += medias["bi"][media]["media"]
-            count += 1
-        if media.avaliacao_banca and media in medias["bf"]:
-            media_grupo[media]["media"] += medias["bf"][media]["media"]
-            count += 1
-        if count > 0:
-            media_grupo[media]["media"] /= count
-        else:
-            media_grupo[media]["media"] = None
+        for avaliacao in avaliacoes_indiv:
+            if media.avaliacao_aluno and media in medias[avaliacao]:
+                media_individual[media]["media"] += medias[avaliacao][media]["media"]
+                count += 1
+
+        media_individual[media]["media"] = media_individual[media]["media"] / count if count > 0 else None
+
+
+        media_grupo[media] = {
+            "cor": medias_geral[media]["cor"],
+            "media": 0
+        }
+
+        count = 0
+        avaliacoes_grupo = ["apg", "afg", "rig", "rfg"]
+        avaliacoes_banca = ["bi", "bf"]
+
+        for avaliacao in avaliacoes_grupo:
+            if media.avaliacao_grupo and media in medias[avaliacao]:
+                media_grupo[media]["media"] += medias[avaliacao][media]["media"]
+                count += 1
+
+        for avaliacao in avaliacoes_banca:
+            if media.avaliacao_banca and media in medias[avaliacao]:
+                media_grupo[media]["media"] += medias[avaliacao][media]["media"]
+                count += 1
+
+        media_grupo[media]["media"] = media_grupo[media]["media"] / count if count > 0 else None
 
     context = {
         "medias_api": medias["api"],
@@ -311,17 +258,15 @@ def media(notas_lista):
 
 # Didide pela proporção de 5 e 7
 def divide57(notas_lista):
-    if notas_lista:
-        valores = [0, 0, 0]
-        for i in notas_lista:
-            if i:
-                if i < 5:
-                    valores[0] += 1
-                elif i > 7:
-                    valores[2] += 1
-                else:
-                    valores[1] += 1
+    valores = [0, 0, 0]
+    if not notas_lista:
         return valores
-    else:
-        return [0, 0, 0]
-
+    for i in notas_lista:
+        if i:
+            if i < 5:
+                valores[0] += 1
+            elif i > 7:
+                valores[2] += 1
+            else:
+                valores[1] += 1
+    return valores
