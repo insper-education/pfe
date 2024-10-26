@@ -29,9 +29,10 @@
 
     <div id="tudo">
     
-    <span class="titulo">
-      {% if lingua == "pt" %}{{ titulo }}{% else %}Analysis by Learning Goals{% endif %}
-    </span>
+      <span class="titulo">
+        <span lang="pt">{{ titulo.pt }}</span>
+        <span lang="en">{{ titulo.en }}</span>
+      </span>
 
     {% include "edicoes.html" with com_cursos=True %}
   
@@ -685,9 +686,6 @@
                     {% endif %}
 
 
-
-
-
                     {% if medias_rii %}
                         // Chart do nível nos objetivos de aprendizagem em RII
                         var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
@@ -735,5 +733,6 @@
     </div>
 
     {% include "edicoes_ajax.html" with com_cursos=True %}
+    {% include "linguas.html" %}
 
 {% endblock %}

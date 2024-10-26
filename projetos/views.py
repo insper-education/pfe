@@ -1157,13 +1157,15 @@ def analise_objetivos(request):
 
     else:
         context = {
-            "titulo": "Análise por Objetivos de Aprendizado",
+            "titulo": {"pt": "Análise por Objetivos de Aprendizado", "en": "Analysis by Learning Goals"},
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
         }
 
     return render(request, "projetos/analise_objetivos.html", context)
+
+from collections import defaultdict
 
 
 @login_required
@@ -1187,68 +1189,53 @@ def evolucao_notas(request):
             return HttpResponse("Algum erro não identificado.", status=401)
 
         # Para armazenar todas as notas de todos os programas
-        notas_total = {}
-        for edicao in edicoes:
-            notas_total[edicao] = []
+        notas_total = defaultdict(list)
 
-        avaliacoes = avaliacoes.filter(exame=Exame.objects.get(titulo="Relatório Intermediário Individual")) | avaliacoes.filter(exame=Exame.objects.get(titulo="Relatório Final Individual"))
+        # Filter avaliacoes for the specific exames
+        exames_titulos = ["Relatório Intermediário Individual", "Relatório Final Individual"]
+        avaliacoes = avaliacoes.filter(exame__titulo__in=exames_titulos)
 
         medias_individuais = []
-        count = 0
-        
+
         for t_curso in cursos:
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 semestre = avaliacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-                notas_lista = [x.nota for x in semestre if (x.alocacao != None and x.alocacao.aluno.curso2 == t_curso)]
-                notas_total[edicao] += notas_lista
+                notas_lista = [x.nota for x in semestre if x.alocacao and x.alocacao.aluno.curso2 == t_curso]
+                notas_total[edicao].extend(notas_lista)
                 notas.append(media(notas_lista))
-            if notas != [None] * len(notas):  # não está vazio
-                medias_individuais.append({"curso": t_curso, "media": notas})
-            count += 1
             
+            if any(nota is not None for nota in notas):  # Check if notas is not empty
+                medias_individuais.append({"curso": t_curso, "media": notas})
+
         if len(medias_individuais) > 1:
-            notas = []
-            for edicao in edicoes:
-                notas.append(media(notas_total[edicao]))
+            notas = [media(notas_total[edicao]) for edicao in edicoes]
             medias_individuais.append({"curso": {"sigla": "média dos cursos", "cor": "000000"}, "media": notas})
 
-
-        ################################
-
-
         # Para armazenar todas as notas de todos os programas
-        notas_total = {}
-        for edicao in edicoes:
-            notas_total[edicao] = []
+            notas_total = defaultdict(list)
 
-        # médias gerais totais
+        # Médias gerais totais
         medias_gerais = []
-        count = 0
+
         for t_curso in cursos:
             notas = []
             for edicao in edicoes:
                 periodo = edicao.split('.')
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
-                                                 projeto__semestre=periodo[1],
-                                                 aluno__curso2=t_curso)
-                notas_lista = []
-                for alocacao in alocacoes_tmp:
-                    media_loc = alocacao.get_media
-                    if media_loc["pesos"] == 1:
-                        notas_lista.append(media_loc["media"])
+                                                projeto__semestre=periodo[1],
+                                                aluno__curso2=t_curso)
+                notas_lista = [alocacao.get_media["media"] for alocacao in alocacoes_tmp if alocacao.get_media["pesos"] == 1]
 
-                notas_total[edicao] += notas_lista
+                notas_total[edicao].extend(notas_lista)
                 notas.append(media(notas_lista))
-            if notas != [None] * len(notas):  # não está vazio
+            
+            if any(nota is not None for nota in notas):  # Check if notas is not empty
                 medias_gerais.append({"curso": t_curso, "media": notas})
-            count += 1
 
         if len(medias_gerais) > 1:
-            notas = []
-            for edicao in edicoes:
-                notas.append(media(notas_total[edicao]))
+            notas = [media(notas_total[edicao]) for edicao in edicoes]
             medias_gerais.append({"curso": {"sigla": "média dos cursos", "cor": "000000"}, "media": notas})
 
         context = {
@@ -1260,7 +1247,7 @@ def evolucao_notas(request):
 
     else:
         context = {
-            "titulo": "Evolução por Notas/Conceitos",
+            "titulo": {"pt": "Evolução por Notas/Conceitos", "en": "Evolution by Grades"},
             "edicoes": edicoes,
             "cursos": cursos,
         }

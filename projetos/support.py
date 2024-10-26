@@ -302,16 +302,12 @@ def cap_name(name):
             items.append(item.capitalize())
     return ''.join(items)
 
+# Calcula a média de uma lista de notas
 def media(notas_lista):
-    soma = 0
-    total = 0
-    for i in notas_lista:
-        if i:
-            soma += float(i)
-            total += 1
-    if total == 0:
+    notas = [float(i) for i in notas_lista if i]
+    if not notas:
         return None
-    return soma / total
+    return sum(notas) / len(notas)
 
 # Didide pela proporção de 5 e 7
 def divide57(notas_lista):

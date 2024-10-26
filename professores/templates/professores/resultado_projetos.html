@@ -33,7 +33,12 @@
 
 {% block content %}
   {% include "impressora.html" %}  
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" %}
   {% include "informacoes.html" %}
 
@@ -48,14 +53,13 @@
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
-              <th colspan="2" class="text-center"><b>Relatórios</b></th>
-              <th colspan="3" class="text-center"><b>Bancas</b></th>
+              <th colspan="2" class="text-center"><b><span lang="pt">Relatórios</span><span lang="en">Reports</span></b></th>
+              <th colspan="3" class="text-center"><b><span lang="pt">Bancas</span><span lang="en">Evaluation Committee</span></b></th>
             </tr>
             <tr>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">Projeto</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">Período</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">Orientador</th>
-              {% comment %} <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Preliminar">Prel.</th> {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')"><span lang="pt">Projeto</span><span lang="en">Project</span></th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')"><span lang="pt">Período</span><span lang="en">Semester</span></th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')"><span lang="pt">Orientador</span><span lang="en">Advisor</span></th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediário">Inter.</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
@@ -215,16 +219,19 @@
       </table>
       
       <br>
-      &nbsp;<b>Total de Projetos: <span id="total_projetos"></span></b><br>
+      &nbsp;<b><span lang="pt">Total de Projetos</span><span lang="en">Total of Projects</span>:
+        <span id="total_projetos"></span></b><br>
 
       &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        Certificação Excelência FALCONI-INSPER
+        <span lang="pt">Certificação Excelência FALCONI-INSPER</span>
+        <span lang="en">FALCONI-INSPER Excellence Certification</span>
         (<span id="certificacao_excelencia"></span>)<br>
 
       &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        Certificação Destaque FALCONI-INSPER
+        <span lang="pt">Certificação Destaque FALCONI-INSPER</span>
+        <span lang="en">FALCONI-INSPER Highlight Certification</span>
         (<span id="certificacao_destaque"></span>)<br>
-
+    
       <script>
         $("#total_projetos").html($(".item").length);
         $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
@@ -277,6 +284,15 @@
               $(".tooltip-arrow").remove();
               $(".to_label").removeClass("label_animado");
             }
+            // Para selecionar o idioma
+            lingua_atual = localStorage.getItem("lingua");
+            if (lingua_atual == "en") {
+              $('[lang="pt"]').css("display", "none");
+              $('[lang="en"]').css("display", "initial");
+            } else {
+              $('[lang="pt"]').css("display", "initial");
+              $('[lang="en"]').css("display", "none");
+            }
           },
           {% include "ajax_error_function.js" %}
       });
@@ -290,5 +306,7 @@
     };
     window.onload = carrega_site;
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

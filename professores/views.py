@@ -3276,7 +3276,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         ]
 
         context = {
-            "titulo": "Resultado dos Projetos",
+            "titulo": {"pt": "Resultado dos Projetos", "en": "Projects Results"},
             "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,

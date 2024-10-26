@@ -23,7 +23,11 @@
 
   <div id="tudo">
 
-    <span class="titulo">{{ titulo }}</span>
+    <span class="titulo">
+      <span lang="pt">{{ titulo.pt }}</span>
+      <span lang="en">{{ titulo.en }}</span>
+    </span>
+
     <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
     
     {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
@@ -119,5 +123,6 @@
   </script>
 
   {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True %}
+  {% include "linguas.html" %}
 
 {% endblock %}

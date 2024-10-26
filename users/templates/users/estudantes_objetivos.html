@@ -10,7 +10,6 @@
   {% load dictionary %}
   {% load l10n %}
   {% include "tabelas_includes.html" %}
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 {% endblock %}
 
@@ -21,25 +20,11 @@
     <span lang="en">{{ titulo.en }}</span>
   </span>
 
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
   
   <div class="atualizar">
 
-        {% comment %} <thead class="table-info">
-          <tr>
-              <th scope="col" class="text-center">Nome</th>
-              <th scope="col" class="text-center">e-mail</th>
-              <th scope="col" class="text-center">Curso</th>
-              <th scope="col" class="text-center">Projeto</th>
-              {% for objetivo in objetivos %}
-                <th scope="col" class="text-center">{{objetivo.titulo}}</th>
-              {% endfor %}
-          </tr>
-          </thead>
-          <tbody> {% endcomment %}
-
-          {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
 
           {% for aluno in alunos_list %} 
           <tr class="item">
@@ -117,16 +102,16 @@
                 {% if not forloop.last %} |{% endif %}
               {% endfor %}
               <br>
-              Projetos <u>sublinhados</u> são de Capstone Avançado
+              <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
+              <span lang="en">Projects <u>underlined</u> are Advanced Capstone</span>
             </small>
           </caption>
         </table>
-        </div>
-        <br>
+      </div>
+    <br>
 
     <script>
-      function carrega_pagina() {
-      };
+      function carrega_pagina() {};
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
         carrega_pagina();
@@ -137,8 +122,6 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Estudantes" %}
-
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
   
 {% endblock %}
