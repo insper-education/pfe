@@ -49,7 +49,7 @@ def index_documentos(request):
     configuracao = get_object_or_404(Configuracao)
     areas = json.loads(configuracao.index_documentos) if configuracao.index_documentos else None
     context = {
-        "titulo": "Documentações",
+        "titulo": {"pt": "Documentações", "en": "Documentation"},
         "documentos": Documento.objects.all(),
         "areas": areas,
     }

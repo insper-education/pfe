@@ -27,7 +27,7 @@ class TipoDocumento(models.Model):
     gravar = models.CharField("Gravar", max_length=32, default="[4]",
                             help_text="Tipo de usuário com permissão de gravar tipo de arquivo")
     
-    individual = models.BooleanField(default=False, help_text="Se é um documento individual")
+    individual = models.BooleanField(default=False, help_text="Se é um documento para avaliação individual")
     
     def __str__(self):
         return str(self.nome) 
