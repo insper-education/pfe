@@ -64,9 +64,14 @@
         scrollY: -window.scrollY
       }).then(function(canvas) {
 
-        if (typeof save_image_file_name == "undefined") {
-          save_image_file_name = "capstone";
-        }
+        {% if file_name %}
+          var save_image_file_name = "{{file_name}}";
+        {% else %}
+          if (typeof save_image_file_name == "undefined") {
+            save_image_file_name = "capstone";
+          }
+        {% endif %}
+
         
         if(tipo=="png") {
           var imgData = canvas.toDataURL("image/png");

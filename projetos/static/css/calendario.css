@@ -1,0 +1,179 @@
+table, th, td {border: 0px;}
+#info_semestre {
+  font-size:16px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-top: 16px;
+}
+.colu {font-size:16px;}
+
+.tit_agenda {
+  font-size:20px;
+  font-weight: bold;
+  margin-left: 12px;
+  cursor: pointer;
+}
+
+.t_f {display: inline;}
+.t_s {display: none;}
+
+@media only screen and (max-width: 1800px) {
+  .t_f { display: none;}
+  .t_s {display: inline;}
+}
+
+@media only screen and (max-width: 740px) {
+  #info_semestre {font-size:13px;}
+  .colu {font-size:13px;}
+  .tit_agenda {font-size:16px;}
+  .t_f {display: none;}
+  .t_s {display: none;}
+}
+
+@media only screen and (max-width: 480px) {
+  #info_semestre {font-size:12px;}
+  .colu {font-size:12px !important;}
+  .tit_agenda {font-size:14px;}
+}
+
+.event-name, .event-type {
+  font-weight: bold;
+  padding-top: 6px;
+  font-size: 0.8em;
+  line-height: 1.0;
+}
+
+.event-location,
+.event-observation,
+.event-atividade,
+.event-descricao,
+.event-responsavel,
+.event-material {
+  font-size: 0.7em;
+  padding-left: 8px;
+  line-height: 1.0;
+}
+
+.event-responsavel {color:brown;}
+.event-location {color:darkgreen;}
+.event-atividade {color:darkblue;}
+.event-observation {color:red;}
+
+.semestre1 {
+  border-radius: 5px 0px 0px 5px;
+  background: #D0EED0;
+  cursor: pointer;
+}
+
+.semestre2 {
+  border-radius: 0px 5px 5px 0px;
+  background: #D0EED0;
+  cursor: pointer;
+}
+
+.images {
+  float: right;
+  position: relative;
+  margin-top:-14px;
+}
+
+.quad_pfe {
+  border-spacing: 0px;
+  border: solid black 2px;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 18px;
+}
+
+.quad_pfe br {
+  content: "";
+  display: block;
+}
+
+table.tab_pfe {
+  border-collapse: separate;
+  border-spacing: 0px;
+  border: solid black 2px;
+  border-radius: 8px;
+}
+
+table.tab_pfe tr:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.coordenacao:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.semestre:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+th.cabec {
+  background: #e0e0e0;
+  text-align: center;
+  font-weight: bold;
+  border-left: solid black 1px;
+  border-radius: 0px;
+  padding: 2px
+}
+
+td.colu,
+th.colu {
+  border-left: solid black 1px;
+  border-top: solid black 1px;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-weight: normal;
+}
+
+th.colu:first-child,
+td.colu:first-child,
+th.cabec:first-child,
+td.cabec:first-child {
+  border-left: none;
+}
+
+th.cabec:first-child, 
+td.cabec:first-child {
+  border-radius: 8px 0 0 0;
+}
+
+th.cabec:last-child,
+td.cabec:last-child {
+  border-radius: 0 8px 0 0;
+}
+
+tr th.colu:first-child {
+  width: 1%;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+label {margin: 6px 0px 2px 0px;}
+
+.day-content {
+  border-radius: 0px !important;
+}
+
+.sem_aula { /* Para fins de semana */
+  background-color: lightgray; /*!important*/
+  border: 0px !important;
+  line-height: 1.5 !important;
+  padding-top: 5px !important;
+}
+.sem_aula:hover {background-color: gray !important;}
+
+.escurece {
+    position: relative;
+}
+
+.escurece::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25); /* Black color with 50% opacity */
+}

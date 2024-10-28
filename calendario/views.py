@@ -6,6 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
+import json
 import datetime
 import dateutil.parser
 
@@ -47,14 +48,19 @@ def get_calendario_context(user=None):
     tipos_eventos_sorter = sorted(TIPO_EVENTO, key=lambda x: (x[0]>100, x[1]))
     tipos_eventos = [list(tipo) + ["Operação"] if tipo[0] > 100 else list(tipo) + ["Acadêmico"] for tipo in tipos_eventos_sorter]
 
-    context = {
-        "configuracao": configuracao,
+
+    eventos_academicos = {
         "eventos": eventos.exclude(tipo_de_evento__in=[12, 40, 41, 20, 30]).exclude(tipo_de_evento__gte=100),
         "aulas": eventos.filter(tipo_de_evento=12),  # 12, 'Aula'
-        "laboratorios": eventos.filter(tipo_de_evento=40),  # 40, 'Laboratório'
-        "provas": eventos.filter(tipo_de_evento=41),  # 41, 'Semana de Provas'
         "quinzenais": eventos.filter(tipo_de_evento=20),  # 20, 'Relato Quinzenal'
         "feedbacks": eventos.filter(tipo_de_evento=30),  # 30, 'Feedback dos Estudantes sobre Capstone'
+        "provas": eventos.filter(tipo_de_evento=41),  # 41, 'Semana de Provas'
+        "laboratorios": eventos.filter(tipo_de_evento=40),  # 40, 'Laboratório'
+    }
+    
+    context = {
+        "configuracao": configuracao,
+        "eventos_academicos": eventos_academicos,
         "coordenacao": Evento.objects.filter(tipo_de_evento__gte=100),  # Eventos da coordenação
         "tipos_eventos": tipos_eventos,
         "Evento": Evento,

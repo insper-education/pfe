@@ -24,6 +24,218 @@
   }
 </style>
 
+{% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+  <script src="{% static 'js/calendario_admin.js' %}"></script>
+{% endif %}
+
+<script>
+  {% comment %} let calendar = null; {% endcomment %}
+  var pessoas = {};
+  {% for pessoa in pessoas.insper %}
+    pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+  {% endfor %}
+  {% for pessoa in pessoas.falconi %}
+    pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+  {% endfor %}
+
+  function deleteEvent(event) {
+      
+    $.ajax({
+      url: "{% url "remove_evento" %}",
+      type: "POST",
+      data: { 
+        id : event.id,
+        "csrfmiddlewaretoken": "{{ csrf_token }}"
+      },
+      dataType: "JSON",
+      success: function (data) {},
+      {% include "ajax_error_function.js" %}
+    });
+
+    var dataSource = calendar.getDataSource();
+    calendar.setDataSource(dataSource.filter(item => item.id != event.id));
+  }
+  
+
+  // Função para salvar evento
+  function saveEvent() {
+
+    var event = {
+      id: $('#event-modal input[name="event-index"]').val(),
+      name: $('#event-modal select[name="event-type"] option:selected').text(),
+      type: $('#event-modal select[name="event-type"] option:selected').val(),
+      location: $('#event-modal input[name="event-location"]').val(),
+      atividade: $('#event-modal input[name="event-atividade"]').val(),
+      descricao: $('#event-modal textarea[name="event-descricao"]').val(),
+      observation: $('#event-modal input[name="event-observation"]').val(),
+      responsavel: $('#event-modal select[name="event-responsavel"]').val(),
+      material: $('#event-modal select[name="event-material"]').val(),
+      material2: $('#event-modal select[name="event-material2"]').val(),
+      startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
+      endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
+      color: $('#event-modal select[name="event-type"] option:selected').data("color"),
+    };
+
+    // Métodos de segurança para evitar que usuário coloque campos inválidos
+    $("#event-type").css({"border-color":''});
+    $("#min-date").css({"border-color":''});
+    $("#max-date").css({"border-color":''});
+
+    var arquivo = $("#arquivo");
+    if(arquivo[0].files.length > 0) {  // check se input não está vazio
+      var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
+      var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
+      $("#event-material").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
+    }
+
+    var arquivo = $("#arquivo2");
+    if(arquivo[0].files.length > 0) {  // check se input não está vazio
+      var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
+      var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
+      $("#event-material2").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
+    }
+
+    if(event.type == null) {
+      $("#warning-footer").html("Tipo de evento é obrigatório.");
+      $("#event-type").css({"border-color":"red"});
+      return;
+    }
+
+    if(event.startDate == null) {
+      $("#warning-footer").html("Data de inicio é obrigatória.");
+      $("#min-date").css({"border-color":"red"});
+      return;
+    }
+
+    if(event.startDate.getFullYear() < 2018 || event.startDate.getFullYear() > 2218) {
+      $("#warning-footer").html("Data de inicio irregular.");
+      $("#min-date").css({"border-color":"red"});
+      return;
+    }
+
+    if(event.endDate == null) {
+      $("#warning-footer").html("Data de término é obrigatória.");
+      $("#max-date").css({"border-color":"red"});
+      return;
+    }
+
+    if(event.endDate.getFullYear() < 2018 || event.endDate.getFullYear() > 2218) {
+      $("#warning-footer").html("Data de término irregular.");
+      $("#max-date").css({"border-color":"red"});
+      return;
+    }
+
+    if(event.endDate - event.startDate < 0) {
+      $("#warning-footer").html("Término não pode ser anterior ao início.");
+      $("#min-date").css({"border-color":"red"});
+      $("#max-date").css({"border-color":"red"});
+      return;
+    }
+
+    // Passou os testes, colocar ampulheta
+    $("#carregando_arquivo").show();
+
+    {% comment %} if (!event.id) {id = 0;}
+    else {id = event.id;} {% endcomment %}
+
+    var dataSource = calendar.getDataSource();  // Para depois atualizar a base de dados
+
+    {% comment %} Atualiza na base de dados {% endcomment %}
+
+    s = event.startDate;
+    var startDate = s.getFullYear() + "-" + (s.getMonth()+1) + "-" +  s.getDate() ;
+
+    e = event.endDate;
+    var endDate = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate() ;
+
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#meuForm").closest("form");
+    var formData = new FormData(form[0]);
+
+    // Estava bagunçando o formato das datas
+    formData.append("startDate", startDate);
+    formData.append("endDate", endDate);
+
+    $.ajax({
+      url: "{% url 'atualiza_evento' %}",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false, 
+      success: function (data) {
+        if (data.atualizado) {
+          //console.log("Evento atualizado.");
+
+          if (event.id) {
+            for (var i in dataSource) {
+              if (dataSource[i].id == event.id) {
+                dataSource[i].name = event.name;
+                dataSource[i].type = event.type;
+                dataSource[i].location = event.location;
+                dataSource[i].atividade = event.atividade;
+                dataSource[i].descricao = event.descricao;
+                dataSource[i].observation = event.observation;
+                dataSource[i].responsavel = event.responsavel;
+                dataSource[i].material = event.material;
+                dataSource[i].material2 = event.material2;
+                dataSource[i].startDate = event.startDate;
+                dataSource[i].endDate = event.endDate;
+                dataSource[i].color = event.color;
+                break;
+              }
+            }
+
+          }       
+          else {
+            event.id = data.evento_id;
+            dataSource.push(event);
+          }
+
+          calendar.setDataSource(dataSource);
+          $("#carregando_arquivo").hide();
+          $("#event-modal").modal("hide");
+
+          if (event.type == 12 ) {
+            s = event.startDate;
+            $("#ev"+event.id+" > th > span").html(
+              s.getDate().toString().padStart(2, '0') + "/" + (s.getMonth()+1).toString().padStart(2, '0') + 
+              "<span class='t_f'>/" + s.getFullYear() + "</span>" + 
+              "<span class='t_s'>/" + s.getFullYear().toString().slice(-2) + "</span>"
+            );
+            
+            $("#ev"+event.id+" > td:first").html(
+              event.atividade + (event.responsavel ? " ("+pessoas[event.responsavel]+")" : "")
+            )
+
+            
+            $("#ev"+event.id+" > td:last").html(event.location)
+
+          } else {
+            $("#lista_operacao").replaceWith("FAZER REFRESH DA PÁGINA<br>");
+            $("#lista_academico").replaceWith("FAZER REFRESH DA PÁGINA<br>");
+          }
+
+        }
+      },
+      error: function (request, status, error) {
+        $("#carregando_arquivo").hide();
+        {% if user.tipo_de_usuario == 4 %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log("error"+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+
+  }
+
+</script>
+
 <form id="meuForm" class="form-horizontal" method="post" enctype="multipart/form-data">
 
   {% csrf_token %}
@@ -171,7 +383,11 @@
           <div id="carregando_arquivo" style="float: left; display: none;">Salvando evento... <div class="carregando"></div></div>
           <div id="warning-footer" style="color: red;"></div>
           <button type="button" class="btn btn-default mb-1" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary mb-1" id="save-event">Save</button>
+          
+            <button type="button" class="btn btn-primary mb-1" id="save-event"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+            >Save</button>
+          
         </div> {% comment %} modal-footer {% endcomment %}
 
       </div> {% comment %} modal-content {% endcomment %}

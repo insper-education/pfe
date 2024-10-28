@@ -854,6 +854,10 @@ class Evento(models.Model):
                 return "Atuais"
         return "Anteriores"
     
+    def documentos(self):
+        """Retorna os documentos do evento."""
+        return [self.documento, self.documento2]
+    
     class Meta:
         ordering = ["startDate"]
 

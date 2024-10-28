@@ -11,971 +11,66 @@
   {% load nospaces %}
   {% load date_extras %}
 
-  {% comment %} REFERENCIA: https://github.com/year-calendar/js-year-calendar {% endcomment %}
   <script src="{% static 'js-year-calendar/dist/js-year-calendar.min.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'js-year-calendar/dist/js-year-calendar.min.css' %}" />
   <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">
   <script src="{% static 'js-year-calendar/locales/js-year-calendar.pt.js' %}"></script>
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
-
-  <script>
-    window.console = window.console || function(t) {};
-    if (document.location.search.match(/type=embed/gi)) {
-      window.parent.postMessage("resize", "*");
-    }
-  </script>
-
-  <style>
-    table, th, td {border: 0px;}
-    #info_semestre {font-size:16px;}
-    .colu {font-size:16px;}
-
-    .tit_agenda {
-      font-size:20px;
-      font-weight: bold;
-      margin-left: 12px;
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      cursor: pointer;
-      {% endif %}
-    }
-    
-    .t_f {display: inline;}
-    .t_s {display: none;}
-    
-    @media only screen and (max-width: 1800px) {
-      .t_f { display: none;}
-      .t_s {display: inline;}
-    }
-
-    @media only screen and (max-width: 740px) {
-      #info_semestre {font-size:13px;}
-      .colu {font-size:13px;}
-      .tit_agenda {font-size:16px;}
-      .t_f {display: none;}
-      .t_s {display: none;}
-    }
-
-    @media only screen and (max-width: 480px) {
-      #info_semestre {font-size:12px;}
-      .colu {font-size:12px !important;}
-      .tit_agenda {font-size:14px;}
-    }
-    
-    .event-name, .event-type {
-      font-weight: bold;
-      padding-top: 6px;
-      font-size: 0.8em;
-      line-height: 1.0;
-    }
-
-    .event-location,
-    .event-observation,
-    .event-atividade,
-    .event-descricao,
-    .event-responsavel,
-    .event-material {
-      font-size: 0.7em;
-      padding-left: 8px;
-      line-height: 1.0;
-    }
-
-    .event-responsavel {color:brown;}
-    .event-location {color:darkgreen;}
-    .event-atividade {color:darkblue;}
-    .event-observation {color:red;}
-
-    .semestre1 {
-      border-radius: 5px 0px 0px 5px;
-      background: #D0EED0;
-      cursor: pointer;
-    }
-
-    .semestre2 {
-      border-radius: 0px 5px 5px 0px;
-      background: #D0EED0;
-      cursor: pointer;
-    }
-
-    .images {
-      float: right;
-      position: relative;
-      margin-top:-14px;
-    }
-
-    .quad_pfe {
-      border-spacing: 0px;
-      border: solid black 2px;
-      border-radius: 8px;
-      padding: 4px;
-      margin-bottom: 18px;
-    }
-
-    .quad_pfe br {
-      content: "";
-      display: block;
-    }
-
-    table.tab_pfe {
-      border-collapse: separate;
-      border-spacing: 0px;
-      border: solid black 2px;
-      border-radius: 8px;
-    }
-
-    table.tab_pfe tr:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    .coordenacao:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .semestre:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    th.cabec {
-      background: #e0e0e0;
-      text-align: center;
-      font-weight: bold;
-      border-left: solid black 1px;
-      border-radius: 0px;
-      padding: 2px
-    }
-    
-    td.colu,
-    th.colu {
-      border-left: solid black 1px;
-      border-top: solid black 1px;
-      padding-left: 4px;
-      padding-right: 4px;
-      font-weight: normal;
-    }
-    
-    th.colu:first-child,
-    td.colu:first-child,
-    th.cabec:first-child,
-    td.cabec:first-child {
-      border-left: none;
-    }
- 
-    th.cabec:first-child, 
-    td.cabec:first-child {
-      border-radius: 8px 0 0 0;
-    }
-
-    th.cabec:last-child,
-    td.cabec:last-child {
-      border-radius: 0 8px 0 0;
-    }
-  
-    tr th.colu:first-child {
-      width: 1%;
-      white-space: nowrap;
-      padding-right: 4px;
-    }
-
-    label {margin: 6px 0px 2px 0px;}
-
-    .day-content {
-      border-radius: 0px !important;
-    }
-
-    .sem_aula { /* Para fins de semana */
-      background-color: lightgray; /*!important*/
-      border: 0px !important;
-      line-height: 1.5 !important;
-      padding-top: 5px !important;
-    }
-    .sem_aula:hover {background-color: gray !important;}
-
-    .escurece {
-        position: relative;
-    }
-    
-    .escurece::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.25); /* Black color with 50% opacity */
-    }
-
-  </style>
-
-{% endblock %}
-
-{% block content %}
-
-  <script>
-
-    function ajusta() {
-      document.querySelector("#tudo").style.width = "1200px";  
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        // Escondendo informações
-        if($(".lista_operacao").is(":hidden")) {
-          $("#titulo_operacao").hide();
-        }          
-        if($(".lista_academico").is(":hidden")) {
-          $("#titulo_academico").hide();
-        }
-        if($(".lista_aulas").is(":hidden")) {
-          $("#titulo_aulas").hide();
-        }
-        carrega_semestre();
-      {% endif %}
-    }
-
-    function reajusta() {
-        // Reajustando tela para visualização no browser
-        document.querySelector("#tudo").style.width = "100%";
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          if($(".lista_operacao").is(":hidden")) {
-            $("#titulo_operacao").show();
-          }          
-          if($(".lista_academico").is(":hidden")) {
-            $("#titulo_academico").show();
-          }
-          if($(".lista_aulas").is(":hidden")) {
-            $("#titulo_aulas").show();
-          }
-          carrega_semestre();
-        {% endif %}
-    }
-
-  </script>
-
-  <script>
-    var save_image_file_name = "calendario_capstone";
-  </script>
-  {% include "save_image.html" %}
-
-  <div id="tudo">
-
-    <span class="titulo">{{ titulo }}</span>
-    
-    <div id="calendar" style="overflow-x: visible;"></div>
-    
-    <div style="margin-top: 10px; margin-left: 3vw;">Semestre:
-      <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
-    </div>   
-    <br>
-
-    <div id="info_semestre" class="container-fluid" style="padding-left: 6px; padding-right: 6px;">
-      <div class="row justify-content-around">
-        {% comment %} between {% endcomment %}
-        <div id="bloco_eventos" class="col-xl-auto ">
-
-          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true" title=
-            "O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
-              Operação<br>
-            </span>
-
-            <div id="lista_operacao" class="lista_operacao quad_pfe">
-              {% if coordenacao %}
-                {% nospaces %}
-                  {% for evento in coordenacao|dictsort:"endDate" %} 
-                    <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
-                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
-                        <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
-                        {% if evento.startDate == evento.endDate %} 
-                          {{evento.endDate.day}}/{{evento.endDate.month}}
-                        {% else %}
-                          {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}
-                        {% endif %}
-                      {% else %}
-                        ; {{evento.endDate.day}}/{{evento.endDate.month}}
-                      {% endifchanged %}
-                    </span>
-                  {% endfor %}
-                {% endnospaces %}
-              {% endif %}
-            <br>
-            </div>
-          {% endif %}
-          
-          <span class="tit_agenda" id="titulo_academico">
-            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-              Acadêmico
-            {% else %}
-              Eventos
-            {% endif %}
-          </span><br>
-          
-          <div id="lista_academico" class="lista_academico quad_pfe">
-            {% if eventos %}
-              {% nospaces %}
-                {% for evento in eventos|dictsort:"endDate" %}
-                  {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
-                    <span class="ano{{evento.endDate.year}} ano">
-                      <span class="semestre" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}">
-                        {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}   
-                          <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
-                          {% if evento.startDate == evento.endDate %} 
-                            {{evento.endDate.day}}/{{evento.endDate.month}}
-                          {% else %}
-                            {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
-                          {% endif %}
-                        {% else %}
-                          {% if evento.startDate == evento.endDate %} 
-                          ; {{evento.endDate.day}}/{{evento.endDate.month}}
-                          {% else %}
-                          ;  {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}} 
-                          {% endif %}
-                        {% endifchanged %}
-                      </span>
-                    </span>
-                  {% endif %}
-                {% endfor %}
-              {% endnospaces %}
-            {% endif %}
-
-            {% if feedbacks %}
-              {% nospaces %}
-                {% for feedback in feedbacks|dictsort:"endDate" %}
-                  <span class="ano{{feedback.endDate.year}} ano">
-                    <span class="semestre" data-mes="{{feedback.endDate.month}}">
-                      {% ifchanged feedback.get_title feedback.get_semester feedback.endDate.year %} 
-                        <br><font style="color:{{feedback.get_color}}">&#9608;</font>&nbsp;{{feedback.get_title}}: 
-                        {{feedback.endDate.day}}/{{feedback.endDate.month}}
-                      {% else %}
-                        ; {{feedback.endDate.day}}/{{feedback.endDate.month}}
-                      {% endifchanged %}
-                    </span>
-                  </span>
-                {% endfor %}
-              {% endnospaces %}
-            {% endif %}
-
-            {% if quinzenais %}
-              {% nospaces %}
-                {% for quinzenal in quinzenais|dictsort:"endDate" %}
-                  <span class="ano{{quinzenal.endDate.year}} ano">
-                    <span class="semestre" data-mes="{{quinzenal.endDate.month}}">
-                      {% ifchanged quinzenal.get_title quinzenal.get_semester quinzenal.endDate.year %} 
-                        <br><font style="color:{{quinzenal.get_color}}">&#9608;</font>&nbsp;{{quinzenal.get_title}}: 
-                        {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}
-                      {% else %}; {{quinzenal.endDate.day}}/{{quinzenal.endDate.month}}{% endifchanged %}</span>
-                  </span>
-                {% endfor %}
-              {% endnospaces %}
-            {% endif %}
-
-            {% if aulas %}
-              {% nospaces %}
-                {% for aula in aulas|dictsort:"endDate" %}
-                  <span class="ano{{aula.endDate.year}} ano">
-                    <span class="semestre" data-mes="{{aula.endDate.month}}">
-                      {% ifchanged aula.get_title aula.get_semester aula.endDate.year %} 
-                        <br><font style="color:{{aula.get_color}}">&#9608;</font>&nbsp;{{aula.get_title}}: 
-                        {{aula.endDate.day}}/{{aula.endDate.month}}
-                      {% else %}
-                        ; {{aula.endDate.day}}/{{aula.endDate.month}}
-                      {% endifchanged %}
-                    </span>
-                  </span>
-                {% endfor %}
-              {% endnospaces %}
-            {% endif %}
-
-            {% if laboratorios %}
-              {% nospaces %}
-              <span id="linha_lab_br"><br></span>
-              {% for laboratorio in laboratorios|dictsort:"endDate" %}
-                {% if laboratorio.get_title != "Feriado" %}
-                  <span class="ano{{laboratorio.endDate.year}} ano">
-                    <span class="semestre lab" data-mes="{{laboratorio.endDate.month}}">
-                      {% ifchanged laboratorio.get_title laboratorio.get_semester laboratorio.endDate.year %}
-                        <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{laboratorio.get_color}} 80%">
-                          &nbsp;&nbsp;&nbsp;
-                        </font>
-                        &nbsp;{{laboratorio.get_title}}: 
-                        {% if laboratorio.startDate == laboratorio.endDate %}
-                          {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
-                        {% else %}
-                          {{laboratorio.startDate.day}}/{{laboratorio.startDate.month}} à {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
-                        {% endif %}
-                      {% else %}
-                        ; {{laboratorio.endDate.day}}/{{laboratorio.endDate.month}}
-                      {% endifchanged %}
-                    </span>
-                  </span>
-                {% endif %}
-              {% endfor %}
-              {% endnospaces %}
-              <font style="text-decoration: underline solid orange">
-                <span id="linha_lab"><br>Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)</span>
-              </font>
-            {% endif %}
-
-            {% if provas %}
-              {% nospaces %}
-              {% for prova in provas|dictsort:"endDate" %}
-                {% if prova.get_title != "Feriado" %}
-                  <span class="ano{{prova.endDate.year}} ano">
-                    <span class="semestre prova" data-mes="{{prova.endDate.month}}">
-                      {% ifchanged prova.get_title prova.get_semester prova.endDate.year %}
-                        <br><font style="background-image : linear-gradient(to bottom, transparent 80%, {{prova.get_color}} 80%">
-                          &nbsp;&nbsp;&nbsp;
-                        </font>
-                        &nbsp;{{prova.get_title}}:
-                        {% if prova.startDate == prova.endDate %}
-                          {{prova.endDate.day}}/{{prova.endDate.month}}
-                        {% else %}
-                          {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}
-                        {% endif %}
-                      {% else %}
-                        {% if prova.startDate == prova.endDate %}
-                          ; {{prova.endDate.day}}/{{prova.endDate.month}}
-                        {% else %}
-                          ; {{prova.startDate.day}}/{{prova.startDate.month}} à {{prova.endDate.day}}/{{prova.endDate.month}}
-                        {% endif %}
-                      {% endifchanged %}
-                    </span>
-                  </span>
-                {% endif %}
-              {% endfor %}
-              {% endnospaces %}
-              <font style="text-decoration: underline solid red">
-                <span id="linha_provas"><br>Semana de provas sublinhado em vermelho</span>
-              </font>
-            {% endif %}
-            <br>
-            </div>
-
-        </div> <!--id="bloco_eventos"-->
-
-        <div id="bloco_aulas" class="col-xl-auto">
-
-          <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
-
-          <span id="lista_aulas" class="lista_aulas">
-
-            {% if aulas %}
-              {% nospaces %}
-              <table class="tab_pfe">
-                <thead><tr>
-                        <th scope="col" class="cabec">Data</th>
-                        <th scope="col" class="cabec header_aula">Aula</th>
-                        <th scope="col" class="cabec header_local">Local</th>
-                </tr></thead>
-                <tbody>
-                  {% for aula in aulas|dictsort:"endDate" %}
-                    <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
-                        {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
-                        <th class="colu" scope="row">
-                          {% if user.tipo_de_usuario == 4 %}
-                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
-                          {% else %}
-                            <span>
-                          {% endif %}
-                            {{aula.endDate|date:"d/m"}}
-                            <span class="t_f">/{{aula.endDate.year}}</span>
-                            <span class="t_s">/{{aula.endDate|date:"y"}}</span>
-                          </span>
-                        </th>
-                        
-                        <td class="colu" style="cursor:pointer;">
-                          {% if user.tipo_de_usuario == 4 %}
-                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
-                          {% else %}
-                            <span
-                          {% endif %}
-                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
-                            {{aula.atividade}}
-                            {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
-                          </span>
-                          {% comment %} Só mostra se data do documento for no passado {% endcomment %}
-                          {% if aula.documento and aula.documento.data|dif_agora < 0 %}
-                            {% if aula.documento.documento %}
-                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}">
-                                &nbsp;{% include "icones_extensoes.html" with extensao=aula.documento.extensao %}
-                              </a>
-                            {% elif aula.documento.link %}
-                              <a class="esconder" href="{{aula.documento.link}}">
-                                &nbsp;<i class="fa fa-link"></i>
-                              </a>
-                            {% endif %}
-                          {% endif %}
-
-                          {% if aula.documento2 and aula.documento2.data|dif_agora < 0 %}
-                            {% if aula.documento2.documento %}
-                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{aula.documento2.documento.url}}">
-                                &nbsp;{% include "icones_extensoes.html" with extensao=aula.documento2.extensao %}
-                              </a>
-                            {% elif aula.documento2.link %}
-                              <a class="esconder" href="{{aula.documento2.link}}">
-                                &nbsp;<i class="fa fa-link"></i>
-                              </a>
-                            {% endif %}
-                          {% endif %}
-
-                        </td>
-
-                        <td class="colu local" style="cursor: pointer;">
-                          {% if aula.location %}
-                            <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">
-                              {{aula.location}}
-                            </a>
-                          {% endif %}
-                        </td>
-                    </tr>
-                  {% endfor %}
-
-                     <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
-                    </td></tr>
-                    
-                </tbody>
-              </table>
-              {% endnospaces %}
-            {% endif %}
-
-          </span>
-
-        </div> <!--id="bloco_aulas"-->
-      </div> <!-- class="row" -->
-    </div> <!--id="info_semestre"-->
-    <br>
-    <br>
-
-  </div>
-
-  <script>
-    var pessoas = {};
-    {% for pessoa in pessoas.insper %}
-      pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
-    {% endfor %}
-    {% for pessoa in pessoas.falconi %}
-      pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
-    {% endfor %}
-  </script>
-
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-    {% include "calendario/evento-modal.html" %}
-  {% endif %}
+  <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
 
   <script>
 
     let calendar = null;
+    $(document).ready(function() {
+      $(calendario);
+    });
 
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-
-    {% comment %} Define o formato para dia/mes/ano em português {% endcomment %}
-    formato_br = {
-      format: "dd/mm/yyyy",
-      language: "pt-BR",
-      daysOfWeekHighlighted: "0,6",
-      orientation: "bottom auto",
-      autoclose: true,
-      showOnFocus: true,
-      maxViewMode: 'days',
-      keepEmptyValues: true,
-      templates: {}
-    }
-
-    $('#event-modal input[name="event-start-date"]').datepicker(formato_br);
-    $('#event-modal input[name="event-end-date"]').datepicker(formato_br);
-
-    // Função para tratar edição de evento
-    function editEvent(event) {
-
-      var evento = null;
-
-      if (event.constructor.name=="Event" && event.events.length) { // não vazia
-        evento = event.events[0];
-      } else {
-        evento = event;
-      }
-
-      $('#event-modal input[name="event-index"]').val(evento ? evento.id : '');
-      $('#event-modal select[name="event-type"]').val(evento ? evento.type : '');
-      $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
-      $('#event-modal input[name="event-atividade"]').val(evento ? evento.atividade : '');
-      $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
-      $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
-      $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
-      $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');
-      $('#event-modal select[name="event-material2"]').val(evento ? evento.material2 : '');
-      $('#event-modal input[name="event-start-date"]').datepicker('update', evento ? evento.startDate : '');
-      $('#event-modal input[name="event-end-date"]').datepicker('update', evento ? evento.endDate : '');
-
-      $('#event-modal input[name="arquivo"]').val(''); // Limpa o campo de arquivo
-      
-      {% if user.tipo_de_usuario != 4 %}
-        $("#save-event").prop("disabled",true);
-      {% endif %}
-
-      $(".tooltip-inner").remove();
-      $(".tooltip-arrow").remove();
-
-      $("#event-modal").modal();
-    }
-
-    function buscaEditEvent(id) {
-      if (id) {
-        var dataSource = calendar.getDataSource();
-        for (var i in dataSource) {
-          if (dataSource[i].id == id) {
-            editEvent(dataSource[i]);
-            break;
-          }
-        }
-      }
-    }
-
-    function deleteEvent(event) {
-      
-      $.ajax({
-        url: "{% url "remove_evento" %}",
-        type: "POST",
-        data: { 
-          id : event.id,
-          "csrfmiddlewaretoken": "{{ csrf_token }}"
-        },
-        dataType: "JSON",
-        success: function (data) {},
-        {% include "ajax_error_function.js" %}
-      });
-
-      var dataSource = calendar.getDataSource();
-      calendar.setDataSource(dataSource.filter(item => item.id != event.id));
-    }
-    
-  
-    // Função para salvar evento
-    function saveEvent() {
-
-      var event = {
-        id: $('#event-modal input[name="event-index"]').val(),
-        name: $('#event-modal select[name="event-type"] option:selected').text(),
-        type: $('#event-modal select[name="event-type"] option:selected').val(),
-        location: $('#event-modal input[name="event-location"]').val(),
-        atividade: $('#event-modal input[name="event-atividade"]').val(),
-        descricao: $('#event-modal textarea[name="event-descricao"]').val(),
-        observation: $('#event-modal input[name="event-observation"]').val(),
-        responsavel: $('#event-modal select[name="event-responsavel"]').val(),
-        material: $('#event-modal select[name="event-material"]').val(),
-        material2: $('#event-modal select[name="event-material2"]').val(),
-        startDate: $('#event-modal input[name="event-start-date"]').datepicker('getDate'),
-        endDate: $('#event-modal input[name="event-end-date"]').datepicker('getDate'),
-        color: $('#event-modal select[name="event-type"] option:selected').data("color"),
-      };
-
-      // Métodos de segurança para evitar que usuário coloque campos inválidos
-      $("#event-type").css({"border-color":''});
-      $("#min-date").css({"border-color":''});
-      $("#max-date").css({"border-color":''});
-
-      var arquivo = $("#arquivo");
-      if(arquivo[0].files.length > 0) {  // check se input não está vazio
-        var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
-        var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
-        $("#event-material").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
-      }
-
-      var arquivo = $("#arquivo2");
-      if(arquivo[0].files.length > 0) {  // check se input não está vazio
-        var date = new Date().toLocaleDateString("pt-BR");  // Current date in stringformat "dd/mm/yyyy"
-        var texto = "[" + date + "] " + arquivo[0].files[0].name + " CRIADO TEMPORÁRIO";
-        $("#event-material2").prepend(new Option(texto, texto, true, true));  // Adiciona nome no select do evento
-      }
-
-      if(event.type == null) {
-        $("#warning-footer").html("Tipo de evento é obrigatório.");
-        $("#event-type").css({"border-color":"red"});
-        return;
-      }
-
-      if(event.startDate == null) {
-        $("#warning-footer").html("Data de inicio é obrigatória.");
-        $("#min-date").css({"border-color":"red"});
-        return;
-      }
-
-      if(event.startDate.getFullYear() < 2018 || event.startDate.getFullYear() > 2218) {
-        $("#warning-footer").html("Data de inicio irregular.");
-        $("#min-date").css({"border-color":"red"});
-        return;
-      }
-  
-      if(event.endDate == null) {
-        $("#warning-footer").html("Data de término é obrigatória.");
-        $("#max-date").css({"border-color":"red"});
-        return;
-      }
-
-      if(event.endDate.getFullYear() < 2018 || event.endDate.getFullYear() > 2218) {
-        $("#warning-footer").html("Data de término irregular.");
-        $("#max-date").css({"border-color":"red"});
-        return;
-      }
-
-      if(event.endDate - event.startDate < 0) {
-        $("#warning-footer").html("Término não pode ser anterior ao início.");
-        $("#min-date").css({"border-color":"red"});
-        $("#max-date").css({"border-color":"red"});
-        return;
-      }
-
-      // Passou os testes, colocar ampulheta
-      $("#carregando_arquivo").show();
-
-      {% comment %} if (!event.id) {id = 0;}
-      else {id = event.id;} {% endcomment %}
-
-      var dataSource = calendar.getDataSource();  // Para depois atualizar a base de dados
-
-      {% comment %} Atualiza na base de dados {% endcomment %}
-
-      s = event.startDate;
-      var startDate = s.getFullYear() + "-" + (s.getMonth()+1) + "-" +  s.getDate() ;
-
-      e = event.endDate;
-      var endDate = e.getFullYear() + "-" + (e.getMonth()+1) + "-" + e.getDate() ;
-
-      $.ajaxSetup({
-        headers: { "X-CSRFToken": "{{csrf_token}}" }
-      });
-
-      var form = $("form#meuForm").closest("form");
-      var formData = new FormData(form[0]);
-
-      // Estava bagunçando o formato das datas
-      formData.append("startDate", startDate);
-      formData.append("endDate", endDate);
-
-      $.ajax({
-        url: "{% url 'atualiza_evento' %}",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false, 
-        success: function (data) {
-          if (data.atualizado) {
-            //console.log("Evento atualizado.");
-
-            if (event.id) {
-              for (var i in dataSource) {
-                if (dataSource[i].id == event.id) {
-                  dataSource[i].name = event.name;
-                  dataSource[i].type = event.type;
-                  dataSource[i].location = event.location;
-                  dataSource[i].atividade = event.atividade;
-                  dataSource[i].descricao = event.descricao;
-                  dataSource[i].observation = event.observation;
-                  dataSource[i].responsavel = event.responsavel;
-                  dataSource[i].material = event.material;
-                  dataSource[i].material2 = event.material2;
-                  dataSource[i].startDate = event.startDate;
-                  dataSource[i].endDate = event.endDate;
-                  dataSource[i].color = event.color;
-                  break;
-                }
-              }
-
-            }       
-            else {
-              event.id = data.evento_id;
-              dataSource.push(event);
-            }
-
-            calendar.setDataSource(dataSource);
-            $("#carregando_arquivo").hide();
-            $("#event-modal").modal("hide");
-
-            if (event.type == 12 ) {
-              s = event.startDate;
-              $("#ev"+event.id+" > th > span").html(
-                s.getDate().toString().padStart(2, '0') + "/" + (s.getMonth()+1).toString().padStart(2, '0') + 
-                "<span class='t_f'>/" + s.getFullYear() + "</span>" + 
-                "<span class='t_s'>/" + s.getFullYear().toString().slice(-2) + "</span>"
-              );
-              
-              $("#ev"+event.id+" > td:first").html(
-                event.atividade + (event.responsavel ? " ("+pessoas[event.responsavel]+")" : "")
-              )
-
-              
-              $("#ev"+event.id+" > td:last").html(event.location)
-
-            } else {
-              $("#lista_operacao").replaceWith("FAZER REFRESH DA PÁGINA<br>");
-              $("#lista_academico").replaceWith("FAZER REFRESH DA PÁGINA<br>");
-            }
-
-          }
-        },
-        error: function (request, status, error) {
-          $("#carregando_arquivo").hide();
-          {% if user.tipo_de_usuario == 4 %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log("error"+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
-      });
-
-    }
-    {% endif %}
-
-    {% nospaces %}
     var dataEventosAcademicos = [
-          {% for evento in eventos %} 
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-          {% for evento in aulas %} 
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-          {% for evento in quinzenais %} 
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-          {% for evento in feedbacks %} 
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-          {% for evento in provas %}
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-          {% for evento in laboratorios %}
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-      ];
-      {% endnospaces %}
-      
-      {% nospaces %}
-      var dataEventosOrganizacao = [
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-          {% for evento in coordenacao %} 
-            {
-                id: {{evento.id}},
-                name: "{{evento.get_title}}",
-                location: "{% if evento.location %}{{evento.location}}{% endif %}",
-                observation: `{{evento.observacao}}`,
-                atividade: `{{evento.atividade}}`,
-                descricao: `{{evento.descricao}}`,
-                responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
-                material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
-                material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-                type: "{{evento.tipo_de_evento}}",
-                startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
-                endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
-                color: "{{evento.get_color}}",
-            },
-          {% endfor %}
-        {% endif %}
-      ];
-      {% endnospaces %}
+      {% for nome_evento, event_list in eventos_academicos.items %}
+        {% for evento in event_list %}
+          {
+            id: {{ evento.id }},
+            name: "{{ evento.get_title }}",
+            location: "{% if evento.location %}{{ evento.location }}{% endif %}",
+            observation: `{{ evento.observacao }}`,
+            atividade: `{{ evento.atividade }}`,
+            descricao: `{{ evento.descricao }}`,
+            responsavel: {% if evento.responsavel %}{{ evento.responsavel.id }}{% else %}0{% endif %},
+            material: {% if evento.documento %}{{ evento.documento.id }}{% else %}0{% endif %},
+            material2: {% if evento.documento2 %}{{ evento.documento2.id }}{% else %}0{% endif %},
+            type: "{{ evento.tipo_de_evento }}",
+            startDate: new Date({{ evento.startDate.year }}, {{ evento.startDate.month|add:-1 }}, {{ evento.startDate.day }}),
+            endDate: new Date({{ evento.endDate.year }}, {{ evento.endDate.month|add:-1 }}, {{ evento.endDate.day }}),
+            color: "{{ evento.get_color }}",
+          },
+        {% endfor %}
+      {% endfor %}
+    ];
 
-    var dataEventos = [];
-    dataEventos = dataEventos.concat(dataEventosAcademicos);
-    dataEventos = dataEventos.concat(dataEventosOrganizacao);
-
-
-    function dias_especiais(element, date) {
-      {% if not limpo %}
-        var hoje = new Date().toDateString();
-        if(date.toDateString() == hoje) {
-          $(element).css("outline", "2px solid blue");
-          $(element).css("position", "relative");
-          $(element).css("z-index", "12");
-          $(element).addClass("hoje");
-        }
+    var dataEventosOrganizacao = [
+      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        {% for evento in coordenacao %} 
+          {
+              id: {{evento.id}},
+              name: "{{evento.get_title}}",
+              location: "{% if evento.location %}{{evento.location}}{% endif %}",
+              observation: `{{evento.observacao}}`,
+              atividade: `{{evento.atividade}}`,
+              descricao: `{{evento.descricao}}`,
+              responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
+              material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
+              material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
+              type: "{{evento.tipo_de_evento}}",
+              startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
+              endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
+              color: "{{evento.get_color}}",
+          },
+        {% endfor %}
       {% endif %}
-      
-      if (date.getDay() === 6 || date.getDay() === 0) { // sábado ou domingo
-        $(element).addClass("sem_aula");  
-      }
-    }
+    ];
+
+    var dataEventos = dataEventosAcademicos.concat(dataEventosOrganizacao);
 
     function calendario() {
 
@@ -986,60 +81,53 @@
         style: "custom",
         customDataSourceRenderer: function(element, date, event) {
 
-          var eventos = [];
-          var feriado = false;
-          var semana_provas = false;
-          var laboratorio = false;
+          let eventos = [];
+          let feriado = false;
+          let semana_provas = false;
+          let laboratorio = false;
 
-          for (var i in event) {
-            if(event[i].type == 40 ) { // (40, 'Laboratório', 'orange'),
-              laboratorio = event[i].color;
-            } else if(event[i].type == 41 ) { // (41, 'Semana de provas', 'red'),
-              semana_provas = event[i].color;
+          event.forEach(e => {
+            if (e.type == 40) {
+              laboratorio = e.color;
+            } else if (e.type == 41) {
+              semana_provas = e.color;
             } else {
-              if(event[i].type == 0 ) feriado = true; //     (0, "Feriado")
-              eventos.push(event[i]);
+              if (e.type == 0) feriado = true;
+              eventos.push(e);
             }
-          }
+          });
 
           if(laboratorio && !feriado) {
             $(element).css("background-image", "linear-gradient(to bottom, transparent 85%, " + laboratorio + " 85% )");
           }
 
           if(semana_provas && !feriado) {
-            $(element).css("border-bottom", "4px solid " + semana_provas);
-            $(element).css("line-height", "0.91");
-            $(element).css("padding-top", "8px");
+            $(element).css({
+              "border-bottom": `4px solid ` + semana_provas,
+              "line-height": "0.91",
+              "padding-top": "8px"
+            });
           }
 
           // Em caso de eventos que passam pelo final de semana ou feriado, essa rotina remove se o evento não começa ou acabar exatamente no dia
           if (date.getDay() === 6 || date.getDay() === 0 || feriado) { // sábado ou domingo ou feriado
-            eventos = eventos.filter(function(e) {
-              return (e.startDate.toISOString().slice(0,10) == date.toISOString().slice(0,10) || 
-                      e.endDate.toISOString().slice(0,10) == date.toISOString().slice(0,10));
-              });              
+            eventos = eventos.filter(e => 
+              e.startDate.toISOString().slice(0, 10) === date.toISOString().slice(0, 10) || 
+              e.endDate.toISOString().slice(0, 10) === date.toISOString().slice(0, 10)
+            );
           }
 
           // Desenha o fundo do dia conforme a quantidade de eventos no dia
           if(eventos.length==1) {
-            $(element).css({
-              "background-color": eventos[0].color 
-            });
+            $(element).css({"background-color": eventos[0].color });
           } else if (eventos.length==2) {
-            $(element).css({
-              "background": "linear-gradient(to bottom right, " + eventos[0].color + " 50%, " + eventos[1].color + " 50%)"
-            });
+            $(element).css({"background": "linear-gradient(to bottom right, " + eventos[0].color + " 50%, " + eventos[1].color + " 50%)"});
           } else if (eventos.length==3) {
-            $(element).css({
-              "background": "linear-gradient(300deg, " + eventos[0].color + " 36%, " + eventos[1].color + " 36% 64%, " + eventos[2].color + " 64%)"
-            });
+            $(element).css({"background": "linear-gradient(300deg, " + eventos[0].color + " 36%, " + eventos[1].color + " 36% 64%, " + eventos[2].color + " 64%)"});
           } else if (eventos.length > 3) {
-            $(element).css({  // muitas cores
-              "background": "radial-gradient(circle, yellow, lightblue, PaleVioletRed, green)"
-            });
+            $(element).css({"background": "radial-gradient(circle, yellow, lightblue, PaleVioletRed, green)"});   // muitas cores
           }
         },
-        {% comment %} disabledDays: [], // Não estou usando por enquanto. {% endcomment %}
         customDayRenderer: dias_especiais,
 
         mouseOnDay: function (e) {
@@ -1058,7 +146,7 @@
                 if (e.events[i].location) {
                   content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>';
                 }
-                if (e.events[i].responsavel) {
+                if (e.events[i].responsavel && typeof pessoas !== 'undefined' && pessoas !== null) {
                   var text = pessoas[e.events[i].responsavel];
                   content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';
                 }
@@ -1111,302 +199,209 @@
         {% endif %}
        });
 
-      {% comment %} Botão quando se clica no botão de save do dia {% endcomment %}
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        $("#save-event").click(function () {
-          saveEvent();
-        });
-      {% endif %}
-
     }
+    </script>
+
+  <script src="{% static 'js/calendario.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+  {% include "save_image.html" with file_name="calendario_capstone" %}
+
+  <div id="tudo">
+
+    <span class="titulo">{{ titulo }}</span>
     
-    $(calendario);
+    <div id="calendar" style="overflow-x: visible;"></div>
+    
+    <div style="margin-left: 3vw;">Semestre:
+      <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
+    </div>   
 
-    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        function atualiza_visualizacao() {
-          dataEventos = [];
-          if(!($(".lista_operacao").is(":hidden"))) {
-            dataEventos = dataEventos.concat(dataEventosOrganizacao);
-          }          
-          if(!($(".lista_academico").is(":hidden"))) {
-            dataEventos = dataEventos.concat(dataEventosAcademicos);
-            calendar.setCustomDayRenderer(dias_especiais);
-          } else {
-            calendar.setCustomDayRenderer();
-          }
-          calendar.setDataSource(dataEventos);  // Variavel global calendar
-          mostra_semestre(qual_semestre());
-        }
+    <div id="info_semestre" class="container-fluid">
+      <div class="row justify-content-around">
+        <div id="bloco_eventos" class="col-xl-auto ">
 
-        $('#titulo_operacao').click(function() {
-          $(".lista_operacao").toggle( "slide", function(){
-            atualiza_visualizacao();
-          });
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
+            title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
+              Operação<br>
+            </span>
+
+            <div id="lista_operacao" class="lista_operacao quad_pfe">
+              {% if coordenacao %}
+                {% nospaces %}
+                  {% for evento in coordenacao|dictsort:"endDate" %} 
+                    <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
+                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
+                        <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
+                        {% if evento.startDate == evento.endDate %} 
+                          {{evento.endDate.day}}/{{evento.endDate.month}}
+                        {% else %}
+                          {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}
+                        {% endif %}
+                      {% else %}
+                        ; {{evento.endDate.day}}/{{evento.endDate.month}}
+                      {% endifchanged %}
+                    </span>
+                  {% endfor %}
+                {% endnospaces %}
+              {% endif %}
+            <br>
+            </div>
+          {% endif %}
           
-        });
-        $('#titulo_academico').click(function() {
-          $(".lista_academico").toggle( "slide" , function(){
-            atualiza_visualizacao();
-          });
-        });
-        $('#titulo_aulas').click(function() {
-          $(".lista_aulas").toggle( "slide" , function(){
-            atualiza_visualizacao();
-          });
-        });
-    {% endif %}
-
-    var currentYear = 2018; //como se fosse global
-
-    document.querySelector('#calendar').addEventListener("yearChanged", function(e) {
-      currentYear = e.currentYear;
-
-      // Esconde todos os elementos por ano
-      [].forEach.call(document.querySelectorAll(".ano"), function (el) {
-        el.style.display = 'none';
-      });
-
-      // Mostra só os elementos do ano
-      [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
-        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = "table-row";
-        } else {
-          el.style.display = "inline";
-        }
-        
-      });
-      carrega_semestre()
-    });
-
-
-    // Marca no calendário o dia selecionado
-    $(".coordenacao, .semestre").hover(
-      function() {
-        dia = $(this).data("dia");
-        mes = $(this).data("mes") - 1;
-        $(".month-container[data-month-id=" + mes + "] div.day-content:not('.hoje')").filter(function() {
-          return this.innerHTML == dia;
-        }).css({ "boxShadow": "0 0 9px 11px #F0F013", "position": "relative", "z-index": "9" });
-      }, 
-      function() {
-        $("div.day-content:not('.hoje')").css({ "boxShadow": "none", "z-index": "0" })
-      }
-    );
-    
-
-    // Esconde e mostra meses do semestre
-    function mostra_semestre(semestre) {
-      if(calendar == null) { // Conforme o caso o calendario pode ainda não estar pronto.
-         window.setTimeout(mostra_semestre.bind(null, semestre), 100);
-      } else {  
-        calendar.render();
-        if(semestre == 1) {
-          $('*[data-month-id="5"]').nextAll().hide();
-        } else {
-          $('*[data-month-id="6"]').prevAll().remove();
-        }
-      }
+          <span class="tit_agenda" id="titulo_academico">
+            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+              Acadêmico
+            {% else %}
+              Eventos
+            {% endif %}
+          </span><br>
+          
+          <div id="lista_academico" class="lista_academico quad_pfe">
+            
+            {% for tipo_evento, eventos in eventos_academicos.items %}
+              {% if eventos %}
+                {% nospaces %}
+                  {% for evento in eventos|dictsort:"endDate" %}
+                    {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
+                      <span class="ano{{ evento.endDate.year }} ano">
+                        <span class="semestre {% if tipo_evento == "provas" %}prova{% endif %}" data-mes="{{ evento.endDate.month }}" data-dia="{{evento.endDate.day}}">
+                          {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
+                            <br>
+                            {% if tipo_evento == "provas" or tipo_evento == "laboratorios" %}
+                              <font style="background-image : linear-gradient(to bottom, transparent 80%, {{evento.get_color}} 80%">
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                              </font>
+                            {% else %}
+                              <font style="color:{{ evento.get_color }}">
+                                &#9608;
+                              </font>
+                            {% endif %}
+                            &nbsp;{{ evento.get_title }}:
+                            {% if evento.startDate == evento.endDate %} 
+                              {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                            {% else %}
+                              {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                            {% endif %}
+                          {% else %}
+                            {% if evento.startDate == evento.endDate %} 
+                              ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                            {% else %}
+                              ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                            {% endif %}
+                          {% endifchanged %}
+                        </span>
+                      </span>
+                    {% endif %}
+                  {% endfor %}
+                {% endnospaces %}
+              {% endif %}
+            {% endfor %}
 
 
-      // Para reduzir o local a só uma linha
-      var elements = $(".lin_aulas:visible > :last-child");
-      var firstElementText = elements.first().text();
-      var allSame = true;
-      elements.each(function() {
-        if ($(this).text() !== firstElementText && $(this).text() !== "") {
-          allSame = false;
-          return false;
-        }
-      });
-      
-      if(allSame) {
-        $("#barra_local").text(firstElementText);
-        $(".header_local").css("display", "none");
-        $(".local").css("display", "none");
-        if(firstElementText=="") {
-          // Se o texto for vazio, não mostra a barra inferior de Local qualquer forma
-          $("#barra_inferior").css("display", "none");
-        } else {
-          $("#barra_inferior").css("display", "");
-        }
-        $(".header_aula").css("border-radius", "0 8px 0 0");
-      } else {
-        $("#barra_local").text("");
-        $(".header_local").css("display", "");
-        $(".local").css("display", "");
-        $("#barra_inferior").css("display", "none");
-        $(".header_aula").css("border-radius", "0 0 0 0");
-      }
+            {% if eventos_academicos.laboratorios %}
+              <font style="text-decoration: underline solid orange">
+                <span id="linha_lab"><br>Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)</span>
+              </font>
+            {% endif %}
+            {% if eventos_academicos.provas %}
+              <font style="text-decoration: underline solid red">
+                <span id="linha_provas"><br>Semana de provas sublinhado em vermelho</span>
+              </font>
+            {% endif %}
+            </div>
 
-      
-    }
+        </div> <!--id="bloco_eventos"-->
 
-    function qual_semestre() {
-      if(document.getElementById("primeiro_semestre").style.fontWeight == "bold")
-        return 1;
-      else
-        return 2;
-    }
+        <div id="bloco_aulas" class="col-xl-auto">
 
-    function primeiro(e) {
-      
-      var fim_semestre = 7;
-      var inicio_semestre = 1;
+          <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
 
-      document.getElementById("primeiro_semestre").style.fontWeight = "bold";
-      document.getElementById("primeiro_semestre").style.color = "black";
-      document.getElementById("primeiro_semestre").style.background = "#10F010";
-      document.getElementById("segundo_semestre").style.fontWeight = "normal";
-      document.getElementById("segundo_semestre").style.color = "grey";
-      document.getElementById("segundo_semestre").style.background = "#D0EED0";
-      
-      [].forEach.call(document.querySelectorAll(".semestre"), function (el) {
-        el.style.display = "none";
-      });
-      $("#linha_lab").hide()
-      $("#linha_lab_br").hide()
-      $("#linha_provas").hide()
-      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
-      [].forEach.call(els, function (el) {
-        //el.style.display = 'inline';
-        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = "table-row";
-          if(!el.classList.contains('ano'+currentYear)) {
-            el.style.display = "none";
-          }
-        } else {
-          el.style.display = "inline";
-        }
-        if(el.parentNode.classList.contains("ano"+currentYear)) {
-          if(el.classList.contains("lab")) {
-            $("#linha_lab_br").show()
-            $("#linha_lab").show()
-          }
-          if(el.classList.contains("prova")) {
-            $("#linha_provas").show()
-          }
-        }
-      });
-      
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        [].forEach.call(document.querySelectorAll('.coordenacao'), function (el) {
-          el.style.display = 'none';
-        });
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) <= fim_semestre);
-        var els = els.filter(el => Number(el.dataset.mes) >= inicio_semestre);
-        var els = els.filter(el => Number(el.dataset.ano) == currentYear);
-        [].forEach.call(els, function (el) {
-          el.style.display = 'inline';
-        });
-      {% endif %}
+          <span id="lista_aulas" class="lista_aulas">
 
-      // Esconde informações
-      filtragem = $(".semestre[data-mes]").filter(function(){
-        no_semestre = $(this).attr("data-mes") <= fim_semestre;
-        no_ano = $(this).parents('.ano'+currentYear).length > 0;
-        return no_semestre && no_ano;
-      });
-      if (filtragem.length > 0) {
-        $("#info_semestre").show();
-      } else {
-        $("#info_semestre").hide();
-      }
+            {% if eventos_academicos.aulas %}
+              {% nospaces %}
+              <table class="tab_pfe">
+                <thead><tr>
+                        <th scope="col" class="cabec">Data</th>
+                        <th scope="col" class="cabec header_aula">Aula</th>
+                        <th scope="col" class="cabec header_local">Local</th>
+                </tr></thead>
+                <tbody>
+                  {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}
+                    <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
+                        {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
+                        <th class="colu" scope="row">
+                          {% if user.tipo_de_usuario == 4 %}
+                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
+                          {% else %}
+                            <span>
+                          {% endif %}
+                            {{aula.endDate|date:"d/m"}}
+                            <span class="t_f">/{{aula.endDate.year}}</span>
+                            <span class="t_s">/{{aula.endDate|date:"y"}}</span>
+                          </span>
+                        </th>
+                        
+                        <td class="colu" style="cursor:pointer;">
+                          {% if user.tipo_de_usuario == 4 %}
+                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
+                          {% else %}
+                            <span
+                          {% endif %}
+                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                            {{aula.atividade}}
+                            {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
+                          </span>
+                          {% for documento in aula.documentos %}
+                            {% comment %} Só mostra se data do documento for no passado {% endcomment %}
+                            {% if documento and documento.data|dif_agora < 0 %}
+                              {% if documento.documento %}
+                                <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">
+                                  &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
+                                </a>
+                              {% elif documento.link %}
+                                <a class="esconder" href="{{documento.link}}">
+                                  &nbsp;<i class="fa fa-link"></i>
+                                </a>
+                              {% endif %}
+                            {% endif %}
+                          {% endfor %}
+                        </td>
 
-      mostra_semestre(1);
-      
-    }
-    document.querySelector('#primeiro_semestre').addEventListener("click", primeiro)
+                        <td class="colu local" style="cursor: pointer;">
+                          {% if aula.location %}
+                            <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
+                          {% endif %}
+                        </td>
+                    </tr>
+                  {% endfor %}
 
-    function segundo(e) {
-      
-      var inicio_semestre = 7;
-      // var fim_semestre = 1; // do ano seguinte
+                     <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                    </td></tr>
+                    
+                </tbody>
+              </table>
+              {% endnospaces %}
+            {% endif %}
 
-      document.getElementById("primeiro_semestre").style.fontWeight = "normal";
-      document.getElementById("primeiro_semestre").style.color = "grey";
-      document.getElementById("primeiro_semestre").style.background = "#D0EED0";
-      document.getElementById("segundo_semestre").style.fontWeight = "bold";
-      document.getElementById("segundo_semestre").style.color = "black";
-      document.getElementById("segundo_semestre").style.background = "#10F010";
+          </span>
 
-      [].forEach.call(document.querySelectorAll(".semestre"), function (el) {
-        el.style.display = "none";
-      });
-      $("#linha_lab").hide()
-      $("#linha_lab_br").hide()
-      $("#linha_provas").hide()
-      var els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
-      [].forEach.call(els, function (el) {
-        //el.style.display = "inline";
-        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = "table-row";
-          if(!el.classList.contains("ano"+currentYear)) {
-            el.style.display = "none";
-          }
-        } else {
-          el.style.display = "inline";
-        }
-        if(el.parentNode.classList.contains("ano"+currentYear)) {
-          if(el.classList.contains("lab")) {
-            $("#linha_lab_br").show()
-            $("#linha_lab").show()
-          }
-          if(el.classList.contains("prova")) {
-            $("#linha_provas").show()
-          }
-        }
-      });
-      
-      
-      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-        [].forEach.call(document.querySelectorAll(".coordenacao"), function (el) {
-          el.style.display = "none";
-        });
-        
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
-        var els = els.filter(el => Number(el.dataset.ano) == currentYear);
-        [].forEach.call(els, function (el) {
-          el.style.display = 'inline';
-        });
+        </div> <!--id="bloco_aulas"-->
+      </div> <!-- class="row" -->
+    </div> <!--id="info_semestre"-->
+    <br>
+    <br>
 
-        var els = Array.from(document.querySelectorAll(".coordenacao[data-mes]")).filter(el => Number(el.dataset.mes) < 2);
-        var els = els.filter(el => Number(el.dataset.ano) == currentYear+1);
-        [].forEach.call(els, function (el) {
-          el.style.display = 'inline';
-        });
-      {% endif %}
+  </div>
 
-      // Esconde informações
-      filtragem = $(".semestre[data-mes]").filter(function(){
-        no_semestre = $(this).attr("data-mes") > inicio_semestre;
-        no_ano = $(this).parents('.ano'+currentYear).length > 0;
-        return no_semestre && no_ano;
-      });
-      if (filtragem.length > 0) {
-        $("#info_semestre").show();
-      } else {
-        $("#info_semestre").hide();
-      }
-
-      mostra_semestre(2);
-      
-    }
-    document.querySelector("#segundo_semestre").addEventListener("click",segundo)
-
-    window.onload = carrega_semestre
-    
-    // recarrega a página a cada 6 hora (evita que usuário não veja atualização do dia)
-    window.setInterval("location.reload();", 21600000); // 6 hora
-
-    function carrega_semestre() {
-      var today = new Date();
-      if(today.getMonth() < 6) {
-        primeiro();
-      } else {
-        segundo();
-      }
-    }
-
-  </script>
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+    {% include "calendario/evento-modal.html" %}
+  {% endif %}
 
 {% endblock %}
