@@ -17,7 +17,7 @@
   {% if 0 in area.permissao or user.tipo_de_usuario in area.permissao %}
     {% if not forloop.first %}<br>{% endif %}
     <h5>Área {{area.titulo}}</h5>
-    
+
       {% for documento in area.documentos %}
         {% if documento.0 == "D" %}
           {% include "documento.html" with documento=documentos|tipo_documento:documento.1 nivel=documento.2 %}
@@ -25,7 +25,7 @@
           <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url documento.2 %}">{{documento.1}}</a></div>
         {% endif %}
       {% endfor %}
-    
+
   {% endif %}
 {% endfor %}
 
