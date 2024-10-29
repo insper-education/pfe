@@ -149,7 +149,7 @@
               <td style="text-align:center"> {% comment %} Documento {% endcomment %}
                 <span id="p{{relatorio.pk}}">
                   {% if relatorio.link %}
-                    <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;; white-space: nowrap;"
+                    <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
                       href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
                       <span class="short-text" style="width: 6em;">Relatório<sup>B</sup></span>
                       <span class="full-text" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
@@ -180,11 +180,19 @@
                 {% endif %}
 
                 {% for publico in relatorio.projeto.get_documentos_publicos %}
-                  <a class="btn btn-light btn-outline-info btn-sm mt-1"
-                    href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span class="short-text" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                    <span class="full-text" style="width: 13em;">{{publico.tipo_documento}}</span>
-                  </a><br>
+                  {% if publico.documento %}
+                    <a class="btn btn-light btn-outline-info btn-sm mt-1"
+                      href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
+                      <span class="short-text" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                      <span class="full-text" style="width: 13em;">{{publico.tipo_documento}}</span>
+                    </a><br>
+                  {% elif publico.link %}
+                    <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
+                      href="{{publico.link}}" target="_blank" rel="noopener noreferrer">
+                      <span class="short-text" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                      <span class="full-text" style="width: 13em;">{{publico.tipo_documento}}</span>
+                    </a><br>
+                  {% endif %}
                 {% endfor %}
 
               </td>
