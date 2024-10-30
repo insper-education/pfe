@@ -46,9 +46,9 @@ var buttonCommon = {
     }
 };
 
-{% comment %} Colocar bancas quando todas as edições {% endcomment %}
+{% comment %} Colocar periodos quando todas as edições {% endcomment %}
 var col = -1
-var headerObj = $('#{{tabela}}Table').find('th');
+var headerObj = $("#{{tabela}}Table").find("th");
 for (var i = 0; i < headerObj.length; i +=1){
     if(headerObj.eq(i).text() == "Período") {
         col = i;
@@ -121,11 +121,11 @@ var configuracao_table = {
     createdRow: function( row, data, dataIndex, cells){
         if( $("#filterEdicao option:selected").attr("value") == "todas" ) {            
             if( data[col] != null && data[col].slice(-1) ==  '1'){
-                $(row).css('background-color', '#D0D0D0');
+                $(row).css("background-color", "#D0D0D0");
                 $(row).hover(function(){
-                    $(this).css('background-color', '#C0C0C0');
+                    $(this).css("background-color", "#C0C0C0");
                 }, function() {
-                    $(this).css('background-color', '#D0D0D0');
+                    $(this).css("background-color", "#D0D0D0");
                 });
             }
         }
@@ -166,24 +166,52 @@ var configuracao_table = {
 
 };
 
-lingua_atual = localStorage.getItem("lingua");
-if (lingua_atual == "en") {
-    configuracao_table["language"] = textos_linguas["en"];
+function getNumericColumnIndices(tableId) {
+    var indices = [];
+    $(tableId + " th").each(function(i) {
+        if ($(this).data("tipo") === "numeral") {
+            indices.push(i);
+        }
+    });
+    return indices;
 }
 
-var table = $('#{{tabela}}Table').DataTable(configuracao_table);
-
-table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
-
+function convertNotation(data, type, row, meta, lang) {
+    if (type === "display" || type === "filter") {
+        if (lang === "en") return data.replace(',', '.');
+        else if (lang === "pt") return data.replace('.', ',');
+    }
+    return data;
+}
 
 // function to update the language
 function atualiza_lingua(lang) {
-    {% comment %} Primeiro Destruir a tabela {% endcomment %}
+    // Primeiro Destruir a tabela
     var tableId = "#{{tabela}}Table";
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().destroy();
     }
-    {% comment %} Setar a nova linguagem {% endcomment %}
+
+    var numericColumnIndices = getNumericColumnIndices(tableId);
+    configuracao_table["columnDefs"] = [{
+            targets: numericColumnIndices, // Replace with the indices of your numeric columns
+            render: function(data, type, row, meta) {
+                return convertNotation(data, type, row, meta, lang);
+            }
+        }
+    ];
+
+    // Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela
+    document.querySelectorAll("th[data-lang-pt]").forEach(function(th) {
+        if (lang === "pt") {
+            th.innerHTML = th.getAttribute("data-lang-pt");
+        } else if (lang === "en") {
+            th.innerHTML = th.getAttribute("data-lang-en");
+        }
+    });
+  
+
+    // Setar a nova linguagem
     configuracao_table["language"] = textos_linguas[lang];
     table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
@@ -195,4 +223,6 @@ $(document).ready(function() {
         atualiza_lingua(lingua_atual);
     });
 });
-    
+
+lingua_atual = localStorage.getItem("lingua");
+atualiza_lingua(lingua_atual);

@@ -8,6 +8,7 @@
 
 <script>
 
+{% comment %}   
   var textos_linguas = {
     pt: {
         decimal:        "",
@@ -63,7 +64,7 @@
             colvis: 'Columns'
         }
     }
-  };
+  }; {% endcomment %}
 
   {% comment %} VER:
     function loc(number, locale="pt-BR", frac=1) {return number.toLocaleString(locale, {minimumFractionDigits: frac, maximumFractionDigits: frac});}
@@ -71,17 +72,6 @@
 
   var text_pt = "<span style='cursor: pointer;'>&nbsp;<b>PT</b>|EN&nbsp;</span>";
   var text_en = "<span style='cursor: pointer;'>&nbsp;PT|<b>EN</b>&nbsp;</span>";
-
-  {% comment %} Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela {% endcomment %}
-  function switchTableLanguage(language) {
-    document.querySelectorAll('th[data-lang-pt]').forEach(function(th) {
-        if (language === 'pt') {
-            th.innerHTML = th.getAttribute('data-lang-pt');
-        } else if (language === 'en') {
-            th.innerHTML = th.getAttribute('data-lang-en');
-        }
-    });
-  }
 
   function esconde_lingua() {
     if (localStorage.getItem("lingua") == null) {
@@ -97,13 +87,11 @@
       $('[lang="pt"]').css("display", "initial");
       $('[lang="en"]').css("display", "none");
       {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
-      switchTableLanguage("pt");
     } else {
       $("#language_button").html(text_en);
       $('[lang="pt"]').css("display", "none");
       $('[lang="en"]').css("display", "initial");
       {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
-      switchTableLanguage("en");
     }
 
   }
@@ -124,7 +112,6 @@
         $('[lang="pt"]').css("display", "none");
         $('[lang="en"]').css("display", "initial");
         {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
-        switchTableLanguage("en");
         //await sleep(500);
         localStorage.setItem("lingua", "en");
       } else {
@@ -132,7 +119,6 @@
         $('[lang="pt"]').css("display", "initial");
         $('[lang="en"]').css("display", "none");
         {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
-        switchTableLanguage("pt");
         //await sleep(500);
         localStorage.setItem("lingua", "pt");
       }

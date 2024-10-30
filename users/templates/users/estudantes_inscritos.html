@@ -7,39 +7,32 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
   {% load aderencia_aluno %}
+  {% include "tabelas_includes.html" %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
-  <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
 
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" with n_todas=True %}
   {% include "informacoes.html" %}
 
   <div class="atualizar">
-    <div class="table-responsive">
-      <table id="EstudantesTable" class="table-bordered table-sm">
-        <caption style="text-align: left">
-          <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
-          <text class="text-warning">&#x2B24;</text> Estudante realizou seleção provisória ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
-          <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>      
-        </caption>
-        <thead class="table-info">
-          <tr>
-            <th class="text-center">C</th>
-            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
-            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">Curso</th>
-            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(4)')">CR</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for aluno,opcoes,opcoestemp in alunos_list %} 
+
+    {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+
+        {% for aluno,opcoes,opcoestemp in alunos_list %}
           <tr class="item">
-            <td class="{% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
+            <td class="text-center {% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
             <td>
               <a href="{% url 'estudante_detail' aluno.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
@@ -60,19 +53,26 @@
             {% else %}
               <td><b>CURSO NÃO DEFINIDO</b></td>
             {% endif %}
-            <td>
+            <td class="numero_virgula">
               {{ aluno.cr|floatformat:4 }}
             </td>
           </tr>
         {% endfor %}
         </tbody>
+        <caption style="text-align: left">
+          <text class="text-success">&#x2B24;</text> Estudante já selecionou propostas ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
+          <text class="text-warning">&#x2B24;</text> Estudante realizou seleção provisória ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
+          <text class="text-danger">&#x2B24;</text> Estudante ainda precisa selecionar propostas ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>      
+        </caption>
       </table>
     </div>
     <br>
     
-    
-
-    <strong>Total de Estudantes Aplicando:</strong> {{ num_alunos }}<br>
+    {% if num_alunos %}
+      <strong lang="pt">Total de Estudantes Aplicando:</strong>
+      <strong lang="en">Total of Applying Students:</strong>
+      {{ num_alunos }}<br>
+    {% endif %}
 
     <div id="canvas-holder" class="chart-container">
       <canvas style="height:330px; max-width:380px" id="chart-area"></canvas>
@@ -85,11 +85,11 @@
           datasets: [{
             data: [{% for qtd in num_estudantes_curso.values %}{{qtd}},{% endfor %}],
             backgroundColor: [{% for curso in num_estudantes_curso %}'#{{curso.cor}}',{% endfor %}],
-            label: 'Proporção entre estudantes'
+            label: "Proporção entre estudantes"
           }],
           labels: [
             {% for course, qtd in num_estudantes_curso.items %}
-              '{{course}} [{% widthratio qtd num_alunos 100 %}%]',  
+              "{{course}} [{% widthratio qtd num_alunos 100 %}%]",
             {% endfor %}
           ]
         },
@@ -97,8 +97,8 @@
           responsive: true,
           title: {
                 display: true,
-                text: 'Proporção entre estudantes',
-                position: 'top'
+                text: "Proporção entre estudantes",
+                position: "top"
             },
           legend: {
             display: true,
@@ -117,9 +117,9 @@
       };
 
       function carrega_graficos() {
-        var ctx = document.getElementById('chart-area').getContext('2d');
+        var ctx = document.getElementById("chart-area").getContext("2d");
         window.myPie = new Chart(ctx, config);
-        $('#EstudantesTable tr > *:nth-child(4)').hide();  
+        {% comment %} $('#EstudantesTable tr > *:nth-child(4)').hide(); {% endcomment %}
       }
     
       function carrega_pagina() {};
@@ -128,6 +128,7 @@
 
   </div>
 
-  {% include "edicoes_ajax.html" with graficos=True %}
+  {% include "edicoes_ajax.html" with tabela="Estudantes" graficos=True %}
+  {% include "linguas.html" %}
 
 {% endblock %}

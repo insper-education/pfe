@@ -521,6 +521,13 @@ def estudantes_inscritos(request):
                     ninscritos += 1
             alunos_list = zip(alunos, opcoes, opcoestemp)
 
+            cabecalhos = [
+                {"pt": "C", "en": "C"},
+                {"pt": "Estudante", "en": "Student"},
+                {"pt": "Curso", "en": "Program"},
+                {"pt": "CR", "en": "CR/GPA", "tipo": "numeral"},
+            ]
+
             context = {
                 "alunos_list": alunos_list,
                 "num_alunos": num_alunos,
@@ -529,6 +536,7 @@ def estudantes_inscritos(request):
                 "tmpinscritos": tmpinscritos,
                 "cursos": cursos,
                 "num_estudantes_curso": num_estudantes_curso,
+                "cabecalhos": cabecalhos,
             }
 
         else:
@@ -547,7 +555,7 @@ def estudantes_inscritos(request):
         ]
 
         context = {
-            "titulo": "Estudantes Inscritos",
+            "titulo": {"pt": "Estudantes Inscritos", "en": "Enrolled Students"},
             "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,

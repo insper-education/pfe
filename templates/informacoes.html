@@ -70,7 +70,10 @@
   </script>
  
   <div id="informacoes_gerais" class="esconder">
-    <span id="informacoes_tag"><b>Informações <i class="arrow right"></i>&nbsp;</b></span>
+    <span id="informacoes_tag"><b>
+      <span lang="pt">Informações</span>
+      <span lang="en" style="display: none;">Information</span>
+      <i class="arrow right"></i>&nbsp;</b></span>
     <div id="toggle">
       {% for inf in informacoes %}
         {% comment %} O terceiro campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
