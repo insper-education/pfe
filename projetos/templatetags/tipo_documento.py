@@ -13,8 +13,8 @@ register = template.Library()
 def tipo_documento(documentos, tipo):
     """Retorna um documento por tipo."""
     if isinstance(tipo, str):
-        return documentos.filter(tipo_documento__sigla=tipo).last()
-    return documentos.filter(tipo_documento__id=tipo).last()
+        return documentos.filter(tipo_documento__sigla=tipo).order_by("data").last()
+    return documentos.filter(tipo_documento__id=tipo).order_by("data").last()
     
 @register.filter
 def tipo_documentos(documentos, tipo):
