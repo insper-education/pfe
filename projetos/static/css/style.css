@@ -1,5 +1,9 @@
 textarea {max-width:100%;}
 
+.hidden {display: none;}
+
+.visible {display: block;}
+
 .disabled {
   cursor: default;
   text-decoration: none;
