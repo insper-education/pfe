@@ -7,35 +7,14 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   {% load get_field %}
   {% load banca_tipo %}
 
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
-
-  {% comment %} REMOVER O STYLE E USAR O ARQUIVO CSS {% endcomment %}
-  {% comment %} <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}"> {% endcomment %}
-  <style>
-  .div_arredondado {
-    background: #F0F0F0;
-    vertical-align: middle;
-    border: 1px solid grey;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    max-width: 100%;
-    width: 800px;
-      padding: 8px;
-  }
-  
-  .div_arredondado > div {
-    display: block;
-    max-width: 100%;
-  }
-  </style>
-
-
-
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
   <style>
     textarea {
@@ -54,56 +33,95 @@
 
 {% block content %}
 
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   <form method="post" id="avaliacaoform" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <b>Projeto:</b> 
+    <b>
+      <span lang="pt">Projeto</span>
+      <span lang="en">Project</span>
+    </b>:
     [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
     <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
     {% if projeto.orientador %}
-      {% if projeto.proposta.intercambio %}
-        <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-      {% else %}
-        <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-      {% endif %}
+      <b>
+        {% if projeto.proposta.intercambio %}
+          <span lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável</span>
+          <span lang="en">Professor in charge</span>
+        {% else %}
+          <span lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}</span>
+          <span lang="en">Advisor</span>
+        {% endif %}
+      </b>:
       <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador}}
       </a>
     {% else %}
-      Orientador: Não definido
+      <b>
+        <span lang="pt">Orientador não definido</span>
+        <span lang="en">Advisor not defined</span>
+      </b>
     {% endif %}<br>
-    <b>Data limite do relato:</b> {{evento.endDate}}<br>
+    <b>
+      <span lang="pt">Data limite do relato</span>
+      <span lang="en">Report deadline</span>
+    </b>: 
+    <span lang="pt">{{evento.endDate|date:"DATE_FORMAT"}}</span>
+    <span lang="en">{% language 'en' %}{{ evento.endDate|date:"F d, Y" }}{% endlanguage %}</span>
+    <br>
     
     <br>
     {% for alocacao, relato in alocacoes_relatos %}
 
       <div id="{{alocacao.id}}" class="div_arredondado" style="width: 1222px;">
 
-        <b>Estudante: </b><a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
-        <b>Preenchimento: </b>
+        <b>
+          <span lang="pt">Estudante</span>
+          <span lang="en">Student</span>
+        </b>: <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
+        <b>
+          <span lang="pt">Data do Preenchimento</span>
+          <span lang="en">Filling Date</span>
+        </b>:
         {% if relato %}
           {{relato.momento|date:"DATETIME_FORMAT"}}
         {% else %}
-            Não entregue
+          <span lang="pt">Não entregue</span>
+          <span lang="en">Not delivered</span>
         {% endif %}  
         <br>
         <textarea id="relato" name="relato" rows="10" cols="160" disabled>{{relato.texto}}</textarea>
 
         <div style="width: 98%; max-width: 100%; display: block; margin-left: 8px; margin-right: 8px; " {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
-          <label>Desempenho:</label>
+          <label>
+            <span lang="pt">Desempenho</span>
+            <span lang="en">Performance</span>
+          </label>:
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
                     value="1" {% if relato.avaliacao > 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline0{{relato.id}}">Adequado</label>
+            <label class="custom-control-label" for="customRadioInline0{{relato.id}}">
+              <span lang="pt">Adequado</span>
+              <span lang="en">Adequate</span>
+            </label>
           </div>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline1{{relato.id}}" name="op.{{relato.id}}" class="custom-control-input"
                     value="0" {% if relato.avaliacao == 0 %}checked="checked"{% endif %} {% if not relato or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline1{{relato.id}}">Inadequado</label>
+            <label class="custom-control-label" for="customRadioInline1{{relato.id}}">
+              <span lang="pt">Inadequado</span>
+              <span lang="en">Inadequate</span>
+            </label>
           </div>
           {% if relato %}
           <div style="width: 100%; max-width: 100%; display: inline; margin-left: 8px;">
-            <label class="feedbacks" for="customFeedback{{relato.id}}">Feedback opcional {% if relato.feedback %}<span class="seta-baixo">{% else %}<span class="seta-cima">{% endif %}</span></label>
+            <label class="feedbacks" for="customFeedback{{relato.id}}">
+              Feedback (<pre lang="pt">opcional</pre><pre lang="en">optional</pre>)
+              {% if relato.feedback %}<span class="seta-baixo">{% else %}<span class="seta-cima">{% endif %}</span></label>
             <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
               <label for="feedback{{relato.id}}">Feedback:</label>
               <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
@@ -118,7 +136,10 @@
 
     {% endfor %}
 
-    <label for="observacoes">Informe suas observações para a coordenação do Capstone.</label><br>
+    <label for="observacoes">
+      <span lang="pt">Informe suas observações para a coordenação do Capstone.</span>
+      <span lang="en">Inform your observations to the Capstone coordination.</span>
+    </label><br>
     <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="{% max_length Observacao 'observacoes_orientador' %}" {% if not editor %}disabled{% endif %}
               placeholder="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
 
@@ -129,7 +150,10 @@
       {% if evento.em_prazo %}
         onClick="return confirm('Tem certeza que deseja enviar a avaliação? Os estudantes ainda estão no prazo para entregar o relato.');" 
       {% endif %}
-      type="submit">Concluir Avaliação</button>
+      type="submit">
+        <span lang="pt">Enviar Avaliação</span>
+        <span lang="en">Submit Evaluation</span>
+      </button>
     {% endif %}
 
   </form>
@@ -155,5 +179,6 @@
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
+  {% include "linguas.html" %}
 
 {% endblock %}

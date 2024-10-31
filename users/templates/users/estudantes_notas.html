@@ -20,39 +20,18 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" with n_todas=True %}
   {% include "informacoes.html" %}
 
   <div class="atualizar">
-    <div class="table-responsive">
-      <table id="EstudantesTable" class="table table-bordered table-hover table-sm">
-        <caption style="text-align:right">
-          <small>
-            <span style="white-space: nowrap;">BI: Banca Intermediária</span> |
-            <span style="white-space: nowrap;">BF: Banca Final</span> |
-            <span style="white-space: nowrap;">RIG: Relatório Intermediário de Grupo</span> |
-            <span style="white-space: nowrap;">RFG: Relatório Final de Grupo</span> |
-            <span style="white-space: nowrap;">RII: Relatório Intermediário Individual</span> |
-            <span style="white-space: nowrap;">RFI: Relatório Final Individual</span>
-            <br>
-            Projetos <u>sublinhados</u> são de Capstone Avançado
-          </small>
-        </caption>
-        <thead class="table-info">
-          <tr>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Nome</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">e-mail</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Curso</span></th>
-              {% comment %} <th scope="col" class="text-center">Período</th> {% endcomment %}
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Projeto</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Notas</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Indi.</span></th>
-              <th scope="col" class="text-center"><span style="margin-right: 0.6ex;">Média</span></th>
-              {% comment %} <th scope="col" class="text-center">BI</th> {% endcomment %}
-          </tr>
-        </thead>
-        <tbody>
+      {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+
           {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
@@ -71,7 +50,10 @@
                 {{ aluno.curso2 }}
               </td>
             {% else %}
-              <td>Indefinido</td>
+              <td>
+                <span lang="pt">Indefinido</span>
+                <span lang="en">Undefined</span>
+              </td>
             {% endif %}
 
             <td>
@@ -81,7 +63,8 @@
                     {% if alocacao.projeto and alocacao.projeto.organizacao %}
                       [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
                     {% else %}
-                      [SEM ORGANIZAÇÃO]
+                      <span lang="pt">[SEM ORGANIZAÇÃO]</span>
+                      <span lang="en">[NO ORGANIZATION]</span>
                     {% endif %}
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
                     {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
@@ -171,18 +154,33 @@
           </tr>
           {% endfor %}
         </tbody>
+        <caption style="text-align:right">
+          <small>
+            <span style="white-space: nowrap;">BI: Banca Intermediária</span> |
+            <span style="white-space: nowrap;">BF: Banca Final</span> |
+            <span style="white-space: nowrap;">RIG: Relatório Intermediário de Grupo</span> |
+            <span style="white-space: nowrap;">RFG: Relatório Final de Grupo</span> |
+            <span style="white-space: nowrap;">RII: Relatório Intermediário Individual</span> |
+            <span style="white-space: nowrap;">RFI: Relatório Final Individual</span>
+            <br>
+            Projetos <u>sublinhados</u> são de Capstone Avançado
+          </small>
+        </caption>
       </table>
     </div>
    
     {% if alunos_list %}
       <div id="medias" style="padding: 4px;">
-        <b>Média no semestre = <span id="media"></span></b><br>
-        <b>Desvio padrão no semestre = <span id="desvio"></span></b><br>
+        <b><span lang="pt">Média no semestre</span><span lang="en">Semester average</span> = <span id="media"></span></b><br>
+        <b><span lang="pt">Desvio padrão no semestre</span><span lang="en">Standard deviation in the semester</span> = <span id="desvio"></span></b><br>
       </div>
       {% if user.tipo_de_usuario == 4 %}
         <br>
         <div style="padding-left: 46px"> 
-          <a target="_blank" rel="noopener noreferrer" href="{% url 'blackboard_notas' ano_semestre %}">Tabela para Blackboard</a>
+          <a target="_blank" rel="noopener noreferrer" href="{% url 'blackboard_notas' ano_semestre %}">
+            <span lang="pt">Tabela para Blackboard</span>
+            <span lang="en">Table for Blackboard</span>
+          </a>
         </div>
       {% endif %}
     {% endif %}
@@ -235,6 +233,7 @@
 
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Estudantes' %}
+  {% include "edicoes_ajax.html" with tabela="Estudantes" %}
+  {% include "linguas.html" %}
   
 {% endblock %}

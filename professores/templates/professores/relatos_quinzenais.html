@@ -35,7 +35,7 @@
           
             {% include "cabecalho_projeto.html" %}
 
-            <div style="margin-top:8px;"><strong>Relatos:</strong></div>
+            <div style="margin-top:8px;"><strong><span lang="pt">Relatos</span><span lang="en">Reports</span>:</strong></div>
 
             {% include "relatos.html" with alocacoes=projeto.get_alocacoes %}
 
@@ -45,12 +45,10 @@
           </div>
         {% endif %}
       {% empty %}
-       Sem alocações de projetos esse semestre.
+        <span lang="pt">Sem alocações de projetos esse semestre.</span>
+        <span lang="en">No project allocations this semester.</span>
       {% endfor %}
     {% endif %}
-
-    {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
-    {% include "linguas.html" %}
 
   </div> 
 
@@ -64,8 +62,6 @@
   </script>
 
   {% include "edicoes_ajax.html" %}
-
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

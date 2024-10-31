@@ -3112,6 +3112,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
 
         context = {
+            "titulo": { "pt": "Avaliar Relato Quinzenal", "en": "Evaluate Biweekly Report" },
             "editor": editor,
             "projeto": projeto,
             "observacoes": obs.observacoes_orientador if obs else None,

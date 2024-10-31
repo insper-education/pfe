@@ -314,6 +314,15 @@ def estudantes_notas(request, professor=None):
             alunos_list = alunos_semestre |\
                 alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
+            cabecalhos = [{"pt": "Nome", "en": "Name"},
+                            {"pt": "e-mail", "en": "e-mail"},
+                            {"pt": "Curso", "en": "Program"},
+                            {"pt": "Projeto", "en": "Project"},
+                            {"pt": "Notas", "en": "Grades"},
+                            {"pt": "Indi.", "en": "Indi."},
+                            {"pt": "Média", "en": "Average"},
+                        ]
+
             context = {
                 "alunos_list": alunos_list,
                 "configuracao": configuracao,
@@ -321,6 +330,7 @@ def estudantes_notas(request, professor=None):
                 "semestre": semestre,
                 "ano_semestre": str(ano)+"."+str(semestre),
                 "loop_anos": range(2018, configuracao.ano+1),
+                "cabecalhos": cabecalhos,
             }
 
         else:
@@ -331,7 +341,7 @@ def estudantes_notas(request, professor=None):
         ]
         edicoes, _, _ = get_edicoes(Aluno)
         context = {
-            "titulo": "Avaliações por Estudante",
+            "titulo": {"pt": "Avaliações por Estudante", "en": "Assessments by Student"},
             "edicoes": edicoes,
             "informacoes": informacoes,
         }

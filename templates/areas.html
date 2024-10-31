@@ -16,18 +16,21 @@
     line-height:0.6em;
     margin-bottom: 0px;
   }
+
+  #bordar_areas {
+    display: inline-block;
+    border-radius: 8px;
+    border: 2px solid #636DD1;
+    padding: 6px;
+    width: fit-content;
+    margin: 0.1em 0px 0.5em 0px;  
+  }
 </style>
 
 {% if areast %}
 
-  <script>
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
-
   {% if com_borda %}
-    <div style="display: inline-block; border-radius: 8px; border: 2px solid #636DD1; padding: 6px; width: fit-content; margin: 0.1em 0px 0.5em 0px;">
+    <div id="bordar_areas">
   {% endif %}
 
   <table class="sem_b">
@@ -37,7 +40,10 @@
           {% if tudo_ligado %}checked{% endif %}
           {% if vencido %}disabled{% endif %}>
         </td>
-        <td style="text-align: center;"><label for="titulo_areas" style="line-height:0.6em;"><b>Áreas de Interesse</b></label></td>
+        <td style="text-align: center;"><label for="titulo_areas" style="line-height:0.6em;"><b>
+          <span lang="pt">Áreas de Interesse</span>
+          <span lang="en" style="display:none;">Areas of Interest</span>
+        </b></label></td>
       </tr>
     {% endif %}
     {% for area in areast %}

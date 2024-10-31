@@ -313,6 +313,13 @@ def projetos_fechados(request):
             
             projetos_filtrados = projetos_filtrados.order_by("-avancado", Lower("organizacao__nome"))
 
+            projetos_filtrados = projetos_filtrados.prefetch_related(
+                "alocacao_set__aluno__user",
+                "alocacao_set__aluno__curso2",
+                "proposta",
+                "conexao_set"
+            )
+
             projetos_selecionados = []
             prioridade_list = []
             cooperacoes = []
@@ -339,35 +346,35 @@ def projetos_fechados(request):
                         estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__in=cursos_insper)
 
                 qtd_est.append(len(estudantes_pfe))
-
                 projetos_selecionados.append(projeto)
+
                 if projeto.avancado:
                     numero_estudantes_avancado += len(estudantes_pfe)
                     numero_projetos_avancado += 1
                 else:
                     numero_estudantes += len(estudantes_pfe)
                     numero_projetos += 1
+
                 if projeto.time_misto:
                     projetos_time_misto += 1
 
                 prioridades = []
                 for estudante in estudantes_pfe:
-                    opcoes = Opcao.objects.filter(proposta=projeto.proposta)
-                    opcoes = opcoes.filter(aluno__user__tipo_de_usuario=1)
-                    opcoes = opcoes.filter(aluno__alocacao__projeto=projeto)
-                    opcoes = opcoes.filter(aluno=estudante)
+                    opcoes = Opcao.objects.filter(proposta=projeto.proposta,
+                                                  aluno__user__tipo_de_usuario=1,
+                                                  aluno__alocacao__projeto=projeto,
+                                                  aluno=estudante)
                     if opcoes:
-                        prioridade = opcoes.first().prioridade
-                        prioridades.append(prioridade)
+                        prioridades.append(opcoes.first().prioridade)
                     else:
                         prioridades.append(0)
+
                     if estudante.externo:
                         numero_estudantes_externos += 1
+
                 prioridade_list.append(zip(estudantes_pfe, prioridades))
-                cooperacoes.append(Conexao.objects.filter(projeto=projeto,
-                                                            colaboracao=True))
-                conexoes.append(Conexao.objects.filter(projeto=projeto,
-                                                        colaboracao=False))
+                cooperacoes.append(projeto.conexao_set.filter(colaboracao=True))
+                conexoes.append(projeto.conexao_set.filter(colaboracao=False))
 
             projetos = zip(projetos_selecionados, prioridade_list, cooperacoes, conexoes, qtd_est)
 
