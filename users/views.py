@@ -828,7 +828,7 @@ def contas_senhas(request, edicao=None):
     else:
         
         context = {
-            "titulo": "Enviar Contas e Senhas para Estudantes",
+            "titulo": {"pt": "Enviar Contas e Senhas para Estudantes", "en": "Send Accounts and Passwords to Students"},
             "edicoes": get_edicoes(Aluno)[0],
         }
         if edicao:

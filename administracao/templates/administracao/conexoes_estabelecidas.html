@@ -13,7 +13,10 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <div class="table-responsive">
     <table id="UsuariosTable" class="table-bordered table-sm">
@@ -43,12 +46,17 @@
   </div>
   <br>
 
-  <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br>
+  <strong>
+    <span lang="pt">Total de Conexões Válidas:</span>
+    <span lang="en">Total of Valid Connections:</span>
+  </strong> {{ usuarios|length }}<br>
 
   <br><br>
   {% if mensagem %}
     <span class="red-bold">{{mensagem|linebreaks}}</span>
   {% endif %}
   <br>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -138,16 +138,17 @@ def projeto_completo(request, primarykey):
         if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
             medias_oo = None
 
-    titulo = str(projeto.ano) + '.' + str(projeto.semestre)
+    titulo = ""
     if projeto.proposta.organizacao:
-        titulo += " [" + projeto.proposta.organizacao.sigla + "] "
-    titulo += projeto.get_titulo()
+        titulo += "[" + projeto.proposta.organizacao.sigla + "]"
+    titulo += " " + projeto.get_titulo()
+    titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
 
     configuracao = get_object_or_404(Configuracao)
     horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
 
     context = {
-        "titulo": titulo,
+        "titulo": { "pt": titulo, "en": titulo },
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,
@@ -416,7 +417,7 @@ def projetos_fechados(request):
         ]
 
         context = {
-            "titulo": "Projetos",
+            "titulo": { "pt": "Projetos", "en": "Projects"},
             "edicoes": edicoes,
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -680,7 +681,7 @@ def lista_feedback(request):
         num_feedbacks.append(Feedback.objects.filter(data__range=faixa).count())
 
     context = {
-        "titulo": "Feedbacks das Organizações Parceiras",
+        "titulo": {"pt": "Feedbacks das Organizações Parceiras", "en": "Feedback from Partner Organizations"},
         "feedbacks": Feedback.objects.all().order_by("-data"),
         "edicoes": edicoes,
         "num_projetos": num_projetos,
@@ -774,7 +775,7 @@ def lista_feedback_estudantes(request):
 def lista_acompanhamento(request):
     """Lista todos os acompanhamentos das Organizações Parceiras."""
     context = {
-        "titulo": "Acompanhamentos nas Organizações",  
+        "titulo": {"pt": "Acompanhamentos nas Organizações", "en": "Organizations Follow-up"},
         "acompanhamentos": Acompanhamento.objects.all().order_by("-data")
         }
     return render(request, "projetos/lista_acompanhamento.html", context)

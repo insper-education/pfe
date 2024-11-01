@@ -80,24 +80,17 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% if mensagem %}
     <span class="red-bold">{{mensagem|safe|linebreaks}}</span>
     <br>
   {% endif %}
 
-  {% comment %}
-  <label for="filter">Edição:</label>
-  <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
-  {% endcomment %}
-
-  {% comment %} class="container-fluid" {% endcomment %}
   <div id="lista_projetos">
   {% if projetos %}
 
@@ -151,11 +144,15 @@
     {% endfor %}
 
   {% else %}
-    <p>Não existem projetos fechados nesse semestre.</p><br>
+    <p lang="pt">Não existem projetos fechados nesse semestre.</p>
+    <p lang="en">There are no closed projects in this semester.</p>
+    <br><br>
   {% endif %}
 
   <br>
-  <b>Total de projetos:</b> {{projetos|length}}
+  <b lang="pt">Total de projetos:</b>
+  <b lang="en">Total of projects:</b>
+  {{projetos|length}}<br>
   <br><br>
     </div>
 
@@ -166,7 +163,10 @@
   <br>
   <h5>Links:</h5>
   <ul>
-   <li><a href="{% url 'projetos_fechados' %}"> Visualizar Projetos Fechados</a></li>
+    <li><a href="{% url 'projetos_fechados' %}">
+      <span lang="pt">Visualizar Projetos Fechados</span>
+      <span lang="en">View Closed Projects</span>
+    </a></li>
   </ul>
 
   <script>
@@ -233,5 +233,7 @@
       {% include "ajax_default_function.js" %}      
     });
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

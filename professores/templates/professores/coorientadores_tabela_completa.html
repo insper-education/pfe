@@ -14,7 +14,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">{{titulo}}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
   
   <div class="table-responsive">
 
@@ -53,10 +56,9 @@
     {% endfor %}
   
   </div>
-
-  <br>
-  <br>
+  <br><br>
 
   {% include "tabelas_simples_scripts.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

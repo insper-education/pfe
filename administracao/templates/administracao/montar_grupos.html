@@ -143,7 +143,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% if mensagem %}
     <h5 class="red-bold">{{mensagem|linebreaks}}</h5><br>
@@ -223,7 +226,8 @@
                       <br>
                     {% endwith %}
                   {% empty %}
-                    Nenhum aluno escolheu essa proposta
+                    <span lang="pt">Nenhum estudante escolheu essa proposta</span>
+                    <span lang="en">No student chose this proposal</span>
                   {% endfor %}
                   {% endnospaces %}
                 </div>
@@ -238,7 +242,8 @@
             {% elif proposta.nome_organizacao %}
               <a  class="ancora imprimir" style="color: darkblue;">{{ proposta.nome_organizacao }}</a>
             {% else %}
-              PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+              <span lang="pt">PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA</span>
+              <span lang="en">PROBLEM RETRIEVING PROPOSAL ORGANIZATION</span>
             {% endif %}
             <br>
           </div>
@@ -269,7 +274,8 @@
     {% endfor %}
 
   {% else %}
-    <p>Não existem propostas de projetos disponíveis.</p>
+    <p lang="pt">Não existem propostas de projetos disponíveis.</p>
+    <p lang="en">There are no project proposals available.</p>
   {% endif %}
   <div style="width: 100%; text-align: right;">
     <small style="font-size:12px;">
@@ -302,21 +308,36 @@
 
   
   <div>
-    <b class="esconder" style="font-size: 18px;">Visualizar:</b><br>
+    <b class="esconder" style="font-size: 18px;">
+      <span lang="pt">Visualizar:</span>
+      <span lang="en">View:</span>
+    </b><br>
 
     <div class="custom-control custom-switch">
       <input type="checkbox" class="custom-control-input esconder" id="balanceada" name="balanceada" checked onchange="escondePropostas()" />
-      <label class="custom-control-label" for="balanceada">Propostas Balanceadas: <span id="balanceadas">-</span></label>
+      <label class="custom-control-label" for="balanceada">
+        <span lang="pt">Propostas Balanceadas:</span>
+        <span lang="en">Balanced Proposals:</span>
+        <span id="balanceadas">-</span>
+      </label>
     </div>
 
     <div class="custom-control custom-switch">
       <input type="checkbox" class="custom-control-input esconder" id="desbalanceada" name="desbalanceada" checked onchange="escondePropostas()" />
-      <label class="custom-control-label" for="desbalanceada">Propostas Desbalanceadas: <span id="desbalanceadas">-</span></label>
+      <label class="custom-control-label" for="desbalanceada">
+        <span lang="pt">Propostas Desbalanceadas:</span>
+        <span lang="en">Unbalanced Proposals:</span>
+        <span id="desbalanceadas">-</span>
+      </label>
     </div>
 
     <div class="custom-control custom-switch">
       <input type="checkbox" class="custom-control-input" id="vazia" name="vazia" checked onchange="escondePropostas()" />
-      <label class="custom-control-label" for="vazia">Propostas Vazias: <span id="vazias">-</span></label>
+      <label class="custom-control-label" for="vazia">
+        <span lang="pt">Propostas Vazias:</span>
+        <span lang="en">Empty Proposals:</span>
+        <span id="vazias">-</span>
+      </label>
     </div>
       
   </div>
@@ -798,5 +819,6 @@
 
 {% comment %} Para o propor grupos automaticamente {% endcomment %}
 {% include "montando_grupos_auto.html" %}
+{% include "linguas.html" %}
 
 {% endblock %}

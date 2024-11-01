@@ -46,7 +46,12 @@
 
 {% block content %}
   {% include "impressora.html" %}
-  <span class="titulo">{{ titulo }}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" with com_cursos=True com_externos=True%}
   {% include "informacoes.html" %}
   <br>
@@ -77,7 +82,7 @@
           </span>
         {% endif %}
 
-        <div><b>Projeto:</b>
+        <div><b lang="pt">Projeto:</b><b lang="en">Project:</b>
         <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
           {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
             {{projeto.titulo_final}}</a></div>
@@ -88,7 +93,7 @@
           {% endif %}
         
         {% if projeto.resumo %}
-          <div class="resumo appres_projeto" style="margin-top: 6px;"><b>Resumo:</b> {{projeto.resumo}}</div>
+          <div class="resumo appres_projeto" style="margin-top: 6px;"><b lang="pt">Resumo:</b><b lang="en">Abstract(pt):</b>{{projeto.resumo}}</div>
         {% endif %}
 
         {% if projeto.abstract %}
@@ -96,33 +101,35 @@
         {% endif %}
 
         {% if projeto.palavras_chave %}
-          <div class="palavras_chave appres_projeto" style="margin-top: 6px;"><b>Palavras-chave:</b> {{projeto.palavras_chave}}</div>
+          <div class="palavras_chave appres_projeto" style="margin-top: 6px;"><b lang="pt">Palavras-chave:</b><b lang="en">Keywords:</b>{{projeto.palavras_chave}}</div>
         {% endif %}
 
         {% if projeto.proposta.descricao %}
-          <div class="descricao appres_projeto" style="margin-top: 6px;"><b>Descrição da proposta de projeto:</b> {{projeto.proposta.descricao}}</div>
+          <div class="descricao appres_projeto" style="margin-top: 6px;"><b lang="pt">Descrição da proposta de projeto:</b><b lang="en">Project proposal description:</b>{{projeto.proposta.descricao}}</div>
         {% endif %}
 
         {% if projeto.proposta.descricao_organizacao %}
-          <div class="apresentacao_organizacao apresentacao appres_projeto"><b>Apresentação da Organização Parceira:</b> {{projeto.proposta.descricao_organizacao}}</div>
+          <div class="apresentacao_organizacao apresentacao appres_projeto"><b lang="pt">Apresentação da Organização Parceira:</b><b lang="en">Partner Organization Presentation:</b> {{projeto.proposta.descricao_organizacao}}</div>  
         {% endif %}
 
         {% if projeto.proposta.departamento %}
-          <div class="apresentacao_departamento apresentacao appres_projeto"><b>Apresentação do Departamento:</b> {{projeto.proposta.departamento}}</div>
+          <div class="apresentacao_departamento apresentacao appres_projeto"><b lang="pt">Apresentação do Departamento:</b><b lang="en">Department Presentation:</b> {{projeto.proposta.departamento}}</div>
         {% endif %}
 
         {% include "tipo_projeto.html" with com_tipo=True %}
 
-        <p class="semestre pess_proj" style="display: none;"><b>Semestre:</b>
-          {{projeto.ano}}.{{projeto.semestre}}
+        <p class="semestre pess_proj" style="display: none;">
+          <b lang="pt">Semestre:</b><b lang="en">Semester:</b> {{projeto.ano}}.{{projeto.semestre}}
         </p>
 
         <p class="orientador pess_proj">
           {% if projeto.orientador %}
             {% if projeto.proposta.intercambio %}
-              <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+              <span lang="pt"><b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b></span>
+              <span lang="en"><b>Professor in charge:</b></span>
             {% else %}
-              <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+              <span lang="pt"><b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b></span>
+              <span lang="en"><b>Advisor:</b></span>
             {% endif %}
             <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
             <span class="opt_full emails"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
@@ -145,7 +152,9 @@
           {% endif %}
         {% endwith %}
 
-        <p class="estudantes pess_proj"><b>Estudantes:</b>
+        <p class="estudantes pess_proj">
+          <b lang="pt">Estudantes:</b>
+          <b lang="en">Students:</b>
             {% with alocacoes=projeto.alocacao_set.all %}{% if alocacoes %}
               <span class="emails esconder">
                 <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
@@ -177,7 +186,9 @@
         {% endfor %}
         </ol>
 
-        <p class="organizacao pess_proj"><b>Organização:</b>
+        <p class="organizacao pess_proj">
+          <b lang="pt">Organização:</b>
+          <b lang="en">Organization:</b>
           {% if projeto.organizacao %}
             <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
               {{ projeto.organizacao.nome }}
@@ -257,8 +268,10 @@
       </table>
 
       <div class="totais">
-        <b>Total de projetos = 
-        <span>{{ numero_projetos }}</span>
+        <b>
+          <span lang="pt">Total de projetos</span>
+          <span lang="en">Total of projects</span>
+          = {{ numero_projetos }}
         </b>
         {% if numero_projetos_avancado > 0 %}
           <span class="avancado">[ +{{ numero_projetos_avancado }} avançado{% if numero_projetos_avancado > 1 %}s{% endif %} ]</span>
@@ -268,8 +281,10 @@
         {% endif %}
         <br>
 
-        <b>Total de estudantes =
-        <span>{{ numero_estudantes}}</span>
+        <b>
+          <span lang="pt">Total de estudantes</span>
+          <span lang="en">Total of students</span>
+          = {{ numero_estudantes}}
         </b>
         {% if numero_estudantes_avancado > 0 %}
           <span class="avancado"> [ +{{ numero_estudantes_avancado }} avançado{% if numero_estudantes_avancado > 1 %}s{% endif %} ]</span>
@@ -337,7 +352,6 @@
       {% comment %} // Só mostra informação de semestre se edição é todas {% endcomment %}
       ($("#filterEdicao option:selected").attr("value") == "todas" ? $(".semestre").show() : $(".semestre").hide());
 
-
     </script>
     
     {% comment %} Mostra gráfico de proporção de prioridades {% endcomment %}
@@ -350,21 +364,21 @@
   
     {% endif %}
 
-    <script>
-      function carrega_pagina() {}
-
-      function carrega_site() {
-        {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
-      };
-
-      window.onload = carrega_site
-
-    </script>
-  
   </div>
+
+  <script>
+    function carrega_pagina() {}
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
+    };
+
+    window.onload = carrega_site
+
+  </script>
   
   {% include "edicoes_ajax.html" with com_cursos=True %}
-
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -18,37 +18,56 @@
 
 {% block content %}
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-    <span class="titulo">{{ titulo }}</span>
-    
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-    <b>Data e Hora do Sistema:</b> {% now "j F Y H:i" %}
+    <b lang="pt">Data e Hora do Sistema:</b>
+    <b lang="en">System Date and Time:</b>
+    {% now "j F Y H:i" %}
     <br><br>
 
 
-    Copia calendário:
+    <span lang="pt">Copia calendário:</span>
+    <span lang="en">Copy calendar:</span>
     
     <a class="btn btn-info mb-1" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja dupplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
     <br><br>
 
-    Período Liberado&nbsp;&nbsp;&nbsp;
+    <span lang="pt">Período Liberado:</span>
+    <span lang="en">Released Period:</span>
+    &nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
     &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
-    <small>
+    <small lang="pt">
       <br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)
-      <br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)
-      <br>
+      <br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)<br>
+    </small>
+    <small lang="en">
+      <br>(Only change when the semester officially changes, usually change a little before the start of classes)
+      <br>(Students will be able to see the projects they have been allocated to from the released date and project)<br>
     </small>
     <br><br><hr><br>
-    <label for="prazo_avaliar">Prazo máximo para orientadores avaliarem entregas:</label> <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/> dias<br>
-    <label for="prazo_preencher_banca">Prazo para avaliadores preencherem a avaliação de banca:</label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias<br>
-    <small>Os relatório ficarão disponíveis até o prazo definido, após o prazo, o sistema não permitirá mais a visualização do relatório de banca.</small>
+    <label for="prazo_avaliar">
+      <span lang="pt">Prazo máximo para orientadores avaliarem entregas:</span>
+      <span lang="en">Maximum deadline for advisors to evaluate deliveries:</span>
+    </label> <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/> dias<br>
+    <label for="prazo_preencher_banca">
+      <span lang="pt">Prazo para avaliadores preencherem a avaliação de banca:</span>
+      <span lang="en">Deadline for evaluators to fill out the board evaluation:</span>
+    </label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias<br>
+    <small lang="pt">Os relatório ficarão disponíveis até o prazo definido, após o prazo, o sistema não permitirá mais a visualização do relatório de banca.</small>
+    <small lang="en">The reports will be available until the deadline defined, after the deadline, the system will no longer allow the visualization of the report to the evaluation committee.</small>
     
     <br><hr><br>
 
-    <label for="coordenacao"><span lang="pt">Coordenador Capstone</span>: </label>
+    <label for="coordenacao">
+      <span lang="pt">Coordenador Capstone:</span>
+      <span lang="en">Capstone Coordinator:</span>
+    </label>
     <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do Capstone" required>
       {% for administrador in administradores %}
         <option value="{{administrador.id}}" 
@@ -61,10 +80,16 @@
     </select>
     <br>
 
-    <label for="nome_para_certificados">Nome para certificados:</label>
+    <label for="nome_para_certificados">
+      <span lang="pt">Nome para certificados:</span>
+      <span lang="en">Name for certificates:</span>
+    </label>
     <input id="nome_para_certificados" name="nome_para_certificados" type="text" size="36" maxlength="{% max_length administrador "nome_para_certificados" %}"
     {% if configuracao.coordenacao.nome_para_certificados %}value="{{configuracao.coordenacao.nome_para_certificados}}"{% endif %}/><br>
-    <label for="assinatura">Assinatura (proporção ~250x70):</label>
+    <label for="assinatura">
+      <span lang="pt">Assinatura (proporção ~250x70):</span>
+      <span lang="en">Signature (proportion ~250x70):</span>
+    </label>
     <input id="assinatura" type="file" name="assinatura" accept="image/*">
     
     <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
@@ -88,7 +113,10 @@
     
     <br><hr><br>
 
-    <label for="operacao"><span lang="pt">Operação Capstone</span>: </label>
+    <label for="operacao">
+      <span lang="pt">Responsável Operação Capstone:</span>
+      <span lang="en">Capstone Operation Responsible:</span>
+    </label>
     <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
       {% for oper in operacionalizadores %}
         <option value="{{oper.id}}" 
@@ -98,10 +126,17 @@
       {% endfor %}
     </select>
     <br>
-    <small>Operação pode ser um administrador ou funcionário do Insper.</small>
+    <small lang="pt">Operação pode ser um administrador ou funcionário do Insper.</small>
+    <small lang="en">Operation can be an administrator or employee of Insper.</small>
     <br>
 
     <br><br>
-    <button class="btn btn-primary mb-1" type="submit">Confirmar</button>
+    <button class="btn btn-primary mb-1" type="submit">
+      <span lang="pt">Confirmar</span>
+      <span lang="en">Confirm</span>
+    </button>
   </form>
+
+  {% include "linguas.html" %}
+
 {% endblock %}

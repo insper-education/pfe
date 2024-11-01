@@ -119,7 +119,7 @@ def mapeamento_estudantes_propostas(request):
         ]
 
         context = {
-            "titulo": "Mapeamento de Propostas por Estudantes",
+            "titulo": {"pt": "Mapeamento de Propostas por Estudantes", "en": "Mapping of Proposals by Students"},
             "edicoes": get_edicoes(Proposta)[0],
             "informacoes": informacoes,
         }

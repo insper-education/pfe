@@ -437,9 +437,18 @@ def tabela_documentos(request):
                 else:
                     projetos = projetos.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
 
+        cabecalhos = [{"pt": "Projeto", "en": "Project"},
+                        {"pt": "Estudantes", "en": "Students"},
+                        {"pt": "Orientador", "en": "Advisor"},
+                        {"pt": "Período", "en": "Semester"},
+                        {"pt": "Organização", "en": "Company"},
+                        {"pt": "Banca Final", "en": "Evaluation Committee"},
+                        {"pt": "Documentos", "en": "Documents"},]
+
         context = {
             "projetos": projetos,
             "edicao": edicao,
+            "cabecalhos": cabecalhos,
         }
 
     else:
@@ -452,7 +461,7 @@ def tabela_documentos(request):
         ]
 
         context = {
-            "titulo": "Documentação dos Projetos",
+            "titulo": { "pt": "Documentação dos Projetos", "en": "Project Documents"},
             "edicoes": get_edicoes(Projeto)[0],
             "informacoes": informacoes,
             "cursos": cursos_insper,
@@ -685,7 +694,7 @@ def tabela_imagens(request):
         return HttpResponse("Tipo de Documento para Imagens do Semestre não encontrado.", status=401)
 
     context = {
-        "titulo": "Tabela de Vídeos e Fotos do Semestre",
+        "titulo": {"pt": "Vídeos e Fotos do Semestre", "en": "Semester Videos and Photos"},
         "documentos": imagens,
         "tipo": tipo_imagens,
     }

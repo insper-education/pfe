@@ -6,10 +6,16 @@
 {% endcomment %}
 
 {% block content %}
-  <form method="post">
-    {% csrf_token %}
-    <h2>Manutenção do Site</h2>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+  <form method="post">{% csrf_token %}
     <input type="checkbox" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
-    <button class="btn btn-primary mb-1" type="submit">Enviar</button>
+    <button class="btn btn-primary mb-1" type="submit">
+      <span lang="pt">Enviar</span>
+      <span lang="en">Send</span>
+    </button>
   </form>
+  {% include "linguas.html" %}
 {% endblock %}

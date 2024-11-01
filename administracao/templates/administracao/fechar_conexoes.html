@@ -52,7 +52,12 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% if mensagem %}
     <span class="red-bold">{{mensagem|safe|linebreaks}}</span>
     <br>
@@ -155,45 +160,38 @@
         Cadastrar novo parceiro em {{projeto.organizacao.nome}}
       </a></small>
 
-      {% comment %}       
-      <small>
-      <ol style="margin-bottom: 6px;">
-        {% for alocacao in projeto.alocacao_set.all %}
-          <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"
-              data-toggle="tooltip" data-html="true" animation="true" title="">
-              {{alocacao.aluno.user.get_full_name}}
-              </a>
-              <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-              [{{ alocacao.aluno.curso2 }}]
-              {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-          </li>
-        {% endfor %}  
-      </ol>
-      </small>
-      {% endcomment %}
-
     </div>
     {% endfor %}
 
   {% else %}
-    <p>Não existem projetos fechados nesse semestre.</p><br>
+    <p lang="pt">Não existem projetos fechados nesse semestre.</p>
+    <p lang="en">There are no closed projects in this semester.</p>
+    <br><br>
   {% endif %}
 
-  <small>
+  <small lang="pt">
     GR: Gestor Responsável |
     MT: Mentor Técnico |
-    AA: Apoio Administrativo<br>
+    AA: Apoio Administrativo
   </small>
-
-  <br>
-  <b>Total de projetos:</b> {{projetos|length}}<br>
+  <small lang="en">
+    GR: Responsible Manager |
+    MT: Technical Mentor |
+    AA: Administrative Support
+  </small><br><br>
+  <b lang="pt">Total de projetos:</b>
+  <b lang="en">Total of projects:</b>
+  {{projetos|length}}<br>
 
   </div>
 
   <br>
   <h5>Links:</h5>
   <ul>
-   <li><a href="{% url 'projetos_fechados' %}"> Visualizar Projetos Fechados</a></li>
+    <li><a href="{% url 'projetos_fechados' %}"> 
+      <span lang="pt">Visualizar Projetos Fechados</span>
+      <span lang="en">View Closed Projects</span>
+    </a></li>
   </ul>
 
   <script>
@@ -218,5 +216,7 @@
     });
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

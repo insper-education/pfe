@@ -9,31 +9,48 @@
   {% load static %}
   <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
+  <style>
+    thead {background-color: #bee5eb;}
+    th {
+      cursor:pointer;
+      text-align: center;
+    }
+    th, td {padding: 1px 5px 1px 5px;}
+  </style>
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{ titulo }}</span>
-  <div>Link para pesquisa: <a href="{% url 'projeto_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'projeto_feedback' %}</a></div><br>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  <div>
+    <span lang="pt">Link para pesquisa:</span>
+    <span lang="en">Link to survey:</span>
+    <a href="{% url 'projeto_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'projeto_feedback' %}</a>
+  </div><br>
 
   <div class="table-responsive">
     <table id="FeedbacksTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
           <th>ver</th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Nome</th>
-          <th style="cursor:pointer" class="text-center">e-mail</th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(4)')" style="cursor:pointer" class="text-center">Organização</th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(5)')" style="cursor:pointer" class="text-center">Data</th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(6)')" style="cursor:pointer" class="text-center">NPS</th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(2)')"><span lang="pt">Nome</span><span lang="en">Name</span></th>
+          <th><span lang="pt">E-mail</span><span lang="en">E-mail</span></th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(4)')"><span lang="pt">Organização</span><span lang="en">Organization</span></th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(5)')"><span lang="pt">Data</span><span lang="en">Date</span></th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(6)')"><span lang="pt">NPS</span><span lang="en">NPS</span></th>
         </tr>
       </thead>
       <tbody>
       {% for feedback in feedbacks %} 
         <tr class="item">
           <td class="text-center"><a href="{% url 'mostra_feedback' feedback.id %}">&#x1f441;</a></td>
-          <td>{% if feedback.nome %}{{feedback.nome}}{% else %}Anônimo{% endif %}</td>
-          <td>{% if feedback.email %}{{feedback.email}}{% else %}Anônimo{% endif %}</td>
-          <td>{% if feedback.empresa %}{{feedback.empresa}}{% else %}Anônimo{% endif %}</td>
+          <td>{% if feedback.nome %}{{feedback.nome}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
+          <td>{% if feedback.email %}{{feedback.email}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
+          <td>{% if feedback.empresa %}{{feedback.empresa}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
           <td>{{feedback.data|date:"Y.m.d"}}</td>
           <td style="text-align:right">{% if feedback.nps %}{{feedback.nps}}{% endif %}</td>
         </tr>
@@ -80,5 +97,7 @@
     window.onload = carrega_site
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

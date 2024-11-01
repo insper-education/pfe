@@ -555,7 +555,7 @@ def configurar(request):
     operacionalizadores = PFEUser.objects.filter(tipo_de_usuario=4) | funcionarios_insper
 
     context = {
-        "titulo": "Configuração do Sistema",
+        "titulo": {"pt": "Configuração do Sistema", "en": "System Configuration"},
         "configuracao": configuracao,
         "administradores": Administrador.objects.all(),
         "administrador": Administrador,
@@ -1007,7 +1007,7 @@ def montar_grupos(request):
         mensagem += "você pode mexer na tela, contudo suas modificações não serão salvas."
 
     context = {
-        "titulo": "Planejamento de Grupos por Proposta",
+        "titulo": { "pt": "Planejamento de Grupos por Proposta", "en": "Planning Groups by Proposal" },
         "mensagem": mensagem,
         "configuracao": configuracao,
         "propostas": propostas,
@@ -1030,7 +1030,7 @@ def selecionar_orientadores(request):
     ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
-        "titulo": "Selecionar Orientadores para os Projetos",
+        "titulo": { "pt": "Selecionar Orientadores para os Projetos", "en": "Select Advisors for Projects" },
         "mensagem": mensagem,
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
         "orientadores": PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])  #2prof 4adm,
@@ -1051,7 +1051,7 @@ def fechar_conexoes(request):
     ano, semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
 
     context = {
-        "titulo": "Selecionar Conexões com Organizações",
+        "titulo": { "pt": "Fechar Conexões com Organizações", "en": "Close Connections with Organizations" },
         "mensagem": mensagem,
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
     }
@@ -1068,7 +1068,10 @@ def servico(request):
         check_values = request.POST.getlist("selection")
         settings.MAINTENANCE_MODE = 1 if "manutencao" in check_values else 0
         return redirect("/administracao")
-    context = {"manutencao": settings.MAINTENANCE_MODE, }
+    context = {
+        "titulo": { "pt": "Manutenção do Servidor", "en": "Server Maintenance" },
+        "manutencao": settings.MAINTENANCE_MODE,
+        }
     return render(request, "administracao/servico.html", context)
 
 
@@ -1421,8 +1424,8 @@ def tarefas_agendadas(request):
 
     agora = datetime.datetime.now()
     context = {
+        "titulo": { "pt": "Tarefas Agendadas", "en": "Scheduled Tasks" },
         "agora": agora,
-        "titulo": "Tarefas Agendadas",
         "scheduled_tasks": scheduled_tasks,
     }
     return render(request, "administracao/tarefas_agendadas.html", context)
@@ -1457,7 +1460,7 @@ def conexoes_estabelecidas(request):
             # mensagem += "; Data = " + str(data) + "<br>\n"
 
     context = {
-        "titulo": "Conexões Abertas",
+        "titulo": { "pt": "Conexões Estabelecidas", "en": "Established Connections" },
         "mensagem": mensagem,
         "usuarios": usuarios,
     }
@@ -1475,7 +1478,7 @@ def bloqueados(request):
     mes_atras = timezone.now() - datetime.timedelta(days=30)
     
     context = {
-        "titulo": "Usuários e IPs bloqueados",
+        "titulo": { "pt": "Usuários e IPs", "en": "Users and IPs" },
         "access_logs": AccessLog.objects.all().filter(attempt_time__gte=mes_atras),
         "access_attempts": AccessAttempt.objects.all(),
     }

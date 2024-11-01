@@ -2711,15 +2711,14 @@ def orientadores_tabela_completa(request):
     orientadores = recupera_orientadores_por_semestre(configuracao)
 
     cabecalhos = ["Nome", "Grupos", ]
-    titulo = "Alocação de Orientadores"
-
+    
     context = {
+        "titulo": {"pt": "Alocação de Orientadores", "en": "Advisor Allocation"},
         "anos": orientadores,
         "cabecalhos": cabecalhos,
-        "titulo": titulo,
+        
     }
     return render(request, "professores/orientadores_tabela_completa.html", context)
-
 
 
 @login_required
@@ -2798,9 +2797,10 @@ def coorientadores_tabela_completa(request):
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
 
     context = {
+        "titulo": {"pt": "Alocação de Coorientadores", "en": "Co-Advisor Allocation"},
         "anos": coorientadores,
         "cabecalhos": ["Nome", "Grupos", ],
-        "titulo": "Alocação de Coorientadores",
+        
     }
     return render(request, "professores/coorientadores_tabela_completa.html", context)
 

@@ -13,7 +13,14 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+  <br>
+
+  <h4 lang="pt">Usuários e IPs bloqueados</h4>
+  <h4 lang="en">Blocked Users and IPs</h4>
 
   <div class="table-responsive">
     <table id="BloqueadosTable" class="table-bordered table-sm">
@@ -51,12 +58,17 @@
   </div>
   <br>
 
-  Desbloquear todos os usuários 
-    <a href="{% url 'desbloquear_usuarios' %}"><button type="button" class="btn btn-warning btn-lg">DESBLOQUEAR</button> </a>
+  <span lang="pt">Desbloquear todos os usuários</span>
+  <span lang="en">Unblock all users</span>
+  <a href="{% url 'desbloquear_usuarios' %}"><button type="button" class="btn btn-warning btn-lg">
+    <span lang="pt">DESBLOQUEAR</span>
+    <span lang="en">UNBLOCK</span>
+  </button> </a>
 
   <br><br><br>
 
-  <span class="titulo">Usuários e IPs Conectados</span>
+  <h4 lang="pt">Usuários e IPs Conectados</h4>
+  <h4 lang="en">Connected Users and IPs</h4>
 
   <div class="table-responsive">
     <table id="ConectadosTable" class="table-bordered table-sm">
@@ -90,7 +102,9 @@
   </div>
   <br>
 
-  Últimos 30 dias de conexões.
+  <span lang="pt">Últimos 30 dias de conexões.</span>
+  <span lang="en">Last 30 days of connections.</span>
+  
   {% comment %} <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br> {% endcomment %}
 
   <br><br>
@@ -98,5 +112,7 @@
     <span class="red-bold">{{mensagem|linebreaks}}</span>
   {% endif %}
   <br>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

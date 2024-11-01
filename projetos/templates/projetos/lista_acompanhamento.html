@@ -7,20 +7,22 @@
 
 {% block head %}
   {% load static %}
-  
   <script src="{% static 'js/sort.js' %}"></script>
-  <script src="{% static 'js/Chart.min.js' %}"></script>
-  
   <style>
     thead {background-color: #bee5eb;}
+    th {
+      cursor:pointer;
+      text-align: center;
+    }
     th, td {padding: 1px 5px 1px 5px;}
   </style>
-
 {% endblock %}
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder"><a
       class="open-acompanhamento"
       href="{% url 'acompanhamento_view' %}"
@@ -30,44 +32,43 @@
   </span>
 
   <div class="table-responsive">
-  <table id="AcompanhamentoTable"><thead>
-    <tr>
-      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Nome</th>
-      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Organização</th>
-      <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer" class="text-center">Data</th>
-      <th class="text-center">Mensagem</th>
-    </tr></thead>  
-    <tbody> 
-    {% for acompanhamento in acompanhamentos %} 
-      <tr class="item">
-        <td>
-          {% if acompanhamento.autor %}
-            <a class="imprimir" href="{% url 'parceiro_detail' acompanhamento.autor.parceiro.id %}">
-              {{ acompanhamento.autor.get_full_name }}
-            </a>
-          {% else %}
-            Anônimo
-          {% endif %}
-        </td>
-        <td>
-          {% if acompanhamento.autor.parceiro.organizacao %}
-            <a class="imprimir" href="{% url 'organizacao_completo' acompanhamento.autor.parceiro.organizacao.id %}">
-              {{ acompanhamento.autor.parceiro.organizacao }}
-            </a>
-          {% else %}
-            Anônimo
-          {% endif %}
-        </td>
-        <td>{{acompanhamento.data|date:"Y.m.d"}}</td>
-        <td>{{acompanhamento.texto}}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+    <table id="AcompanhamentoTable"><thead>
+      <tr>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')"><span lang="pt">Autor</span><span lang="en">Author</span></th>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')"><span lang="pt">Organização</span><span lang="en">Organization</span></th>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(3)')"><span lang="pt">Data</span><span lang="en">Date</span></th></th>
+        <th class="text-center"><span lang="pt">Mensagem</span><span lang="en">Message</span></th>
+      </tr></thead>  
+      <tbody> 
+      {% for acompanhamento in acompanhamentos %} 
+        <tr class="item">
+          <td>
+            {% if acompanhamento.autor %}
+              <a class="imprimir" href="{% url 'parceiro_detail' acompanhamento.autor.parceiro.id %}">
+                {{ acompanhamento.autor.get_full_name }}
+              </a>
+            {% else %}
+              <span lang="pt">Anônimo</span><span lang="en">Anonymous</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if acompanhamento.autor.parceiro.organizacao %}
+              <a class="imprimir" href="{% url 'organizacao_completo' acompanhamento.autor.parceiro.organizacao.id %}">
+                {{ acompanhamento.autor.parceiro.organizacao }}
+              </a>
+            {% else %}
+              <span lang="pt">Anônimo</span><span lang="en">Anonymous</span>
+            {% endif %}
+          </td>
+          <td>{{acompanhamento.data|date:"Y.m.d"}}</td>
+          <td>{{acompanhamento.texto}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
 
-  <p>&nbsp;</p>
-
   {% include "acompanhamento-modal.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

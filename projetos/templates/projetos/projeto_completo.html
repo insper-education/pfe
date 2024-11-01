@@ -14,7 +14,6 @@
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
-
   <style>
     .logotipo {
       max-height:128px;
@@ -54,33 +53,52 @@
 {% block content %}
 
   <span class="titulo">
-    [{{ projeto.organizacao.nome }}] {{projeto.get_titulo}}<br>
-    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      <span style="font-size: small; padding-left: 0.7em;"><b>Título original da proposta</b>: {{projeto.proposta.titulo}}</span>
-    {% endif %}
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
 
-  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  <h4>
+  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+    <span style="font-size: small; padding-left: 0.7em;"><b>
+      <span lang="pt">Título original da proposta:</span>
+      <span lang="en">Original title of the proposal:</span>
+    </b> {{projeto.proposta.titulo}}</span>
+  {% endif %}
+  </h4>
+
+  <strong>
+    <span lang="pt">Semestre:</span>
+    <span lang="en">Semester:</span>
+  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
     <br><div class="resumo" style="margin-top: 8px;">
-      <strong>Resumo do Projeto (escrito por estudantes):</strong>
+      <strong>
+        <span lang="pt">Resumo do Projeto (escrito por estudantes):</span>
+        <span lang="en">Project Summary (written by students):</span>
+      </strong>
       {{ projeto.resumo|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.abstract %}
     <br><div class="abstract" style="margin-top: 8px;">
-      <strong>Resumo em Inglês do Projeto (escrito por estudantes):</strong>
+      <strong>
+        <span lang="pt">Resumo em Inglês do Projeto (escrito por estudantes):</span>
+        <span lang="en">Project Summary in English (written by students):</span>
+      </strong>
       {{ projeto.abstract|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
     <br><div class="palavras_chave" style="margin-top: 8px;">
-      <strong>Palavras-chave (escrito por estudantes):</strong>
+      <strong>
+        <span lang="pt">Palavras-chave (escrito por estudantes):</span>
+        <span lang="en">Keywords (written by students):</span>
+      </strong>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
   {% endif %}
@@ -99,7 +117,9 @@
     <img class="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
-  <h5>Organização:
+  <h5>
+    <span lang="pt">Organização:</span>
+    <span lang="en">Organization:</span>
     {% if projeto.organizacao %}
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
@@ -107,14 +127,17 @@
         {{ projeto.organizacao.nome }}
       {% endif %}
     {% else %}
-      NÃO DEFINIDA
+      <span lang="pt">ORGANIZAÇÃO</span>
+      <span lang="en">ORGANIZATION</span>
     {% endif %}
   </h5>
 
   {% for conexao in cooperacoes %}
     {% if conexao.parceiro and conexao.parceiro.organizacao %}
       <span>
-      &nbsp;&nbsp;&nbsp;Colaboração:
+      &nbsp;&nbsp;&nbsp;
+      <span lang="pt">Colaboração:</span>
+      <span lang="en">Collaboration:</span>
       <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
         {{conexao.parceiro.organizacao}}
       </a>
@@ -123,55 +146,81 @@
   {% endfor %}
 
   <div class="endereco" style="margin-top: 8px;">
-    <p><strong>endereço:</strong> <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+    <p><strong>
+      <span lang="pt">Endereço:</span>
+      <span lang="en">Address:</span>
+    </strong> <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
   </div>
   
   {% if projeto.organizacao.website %}
     <div class="website" style="margin-top: 8px;">
-      <p><strong>website:</strong>  <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
+      <p><strong>
+        website:
+      </strong>  <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
     </div><br>
   {% endif %}
 
-
   {% if projeto.proposta.descricao %}
     <div class="descricao" style="margin-top: 8px;">
-      <strong>Descrição da Proposta do Projeto (escrito por parceiro):</strong>
-        {{ projeto.proposta.descricao|linebreaks }}
+      <strong>
+        <span lang="pt">Descrição da Proposta do Projeto (escrito por parceiro):</span>
+        <span lang="en">Description of the Project Proposal (written by partner):</span>
+      </strong>
+      {{ projeto.proposta.descricao|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.proposta.expectativas %}
     <div class="expectativas" style="margin-top: 8px;">
-      <strong>Expectativas de resultados/entregas (escrito por parceiro):</strong> {{ projeto.proposta.expectativas|linebreaks }}
+      <strong>
+        <span lang="pt">Expectativas de resultados/entregas (escrito por parceiro):</span>
+        <span lang="en">Expectations of results/deliverables (written by partner):</span>
+      </strong>
+      {{ projeto.proposta.expectativas|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.proposta.recursos %}
     <div class="recusos" style="margin-top: 8px;">
-      <strong>Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</strong> {{ projeto.proposta.recursos|linebreaks }}
+      <strong>
+        <span lang="pt">Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</span>
+        <span lang="en">Resources to be made available to students (written by partner):</span>
+      </strong>{{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.organizacao.informacoes %}
     <div class="informacoes" style="margin-top: 8px;">
-      <strong>Informações sobre a organização :</strong> {{ projeto.organizacao.informacoes|linebreaks }}
+      <strong>
+        <span lang="pt">Informações sobre a organização:</span>
+        <span lang="en">Information about the organization:</span>
+      </strong> {{ projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.proposta.departamento %}
     <div class="departamento" style="margin-top: 8px;">
-      <strong>Informações sobre o departamento na organização :</strong> {{ projeto.proposta.departamento|linebreaks }}
+      <strong>
+        <span lang="pt">Informações sobre o departamento na organização:</span>
+        <span lang="en">Information about the department in the organization:</span>
+      </strong> {{ projeto.proposta.departamento|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.proposta.anexo %}
-    <br><strong>Anexo (fornecido por parceiro):</strong>
+    <br><strong>
+      <span lang="pt">Anexo (fornecido por parceiro):</span>
+      <span lang="en">Attachment (provided by partner):</span>
+    </strong>
     <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
     <br><br>
   {% endif %}
   
   <div class="conexoes" style="margin-top: 8px;">
-    <strong>conexões:</strong>
+    <strong>
+      <span lang="pt">Conexões:</span>
+      <span lang="en">Connections:</span>
+    </strong>
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
     {% endif %}
@@ -189,7 +238,8 @@
               {% endif %}
               <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
             {% else %}
-              PARCEIRO NÃO CADASTRADO
+              <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
+              <span lang="en">ORGANIZATION NOT REGISTERED</span>
             {% endif %}
             {% for papel in conexao.get_papeis %}
               <span class="opt_full">[{{papel.0}}]</span>
@@ -205,7 +255,10 @@
               </a>
               <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
             {% else %}
-              <span style="color: lightgrey;">PARCEIRO NÃO CADASTRADO</span>
+              <span style="color: lightgrey;">
+                <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
+                <span lang="en">ORGANIZATION NOT REGISTERED</span>
+              </span>
             {% endif %}
             <span  style="color: lightgrey; border: 0px; padding-left: 12px;">
               {% for papel in conexao.get_papeis %}
@@ -219,7 +272,8 @@
       {% endfor %}
       </ul>
     {% else %}
-      Nenhuma conexão específica para esse projeto declarada.
+      <span lang="pt">Nenhuma conexão específica para esse projeto declarada.</span>
+      <span lang="en">No specific connection declared for this project.</span>
     {% endif %}
     
   </div>
@@ -291,7 +345,7 @@
     Médias:
     {% for key, value in medias_oo.media_grupo.items %}
       {% if value.media >= 0 %}
-        <span style="white-space: nowrap; background-color:#EEF;">{{key.titulo}}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
+        <span style="white-space: nowrap;">{{key.titulo}}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
       {% endif %}
     {% endfor %}
 
@@ -498,4 +552,7 @@
     {% include "documento-modal.html" %}
 
   {% endif %}
+
+  {% include "linguas.html" %}
+
 {% endblock %}

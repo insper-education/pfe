@@ -18,7 +18,10 @@
 
 {% block content %}
   
-  <span class="titulo">{{titulo}}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "edicoes.html" %}<br>
 
@@ -27,7 +30,7 @@
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
       <table id="EstudantesTable"><thead><tr>
             <th>&nbsp;<input type="checkbox" id="todos_estudantes" checked>&nbsp;</th>
-            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')">Estudante</th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')"><span lang="pt">Estudante</span><span lang="en">Student</span></th>
             <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>
         </tr></thead>
         <tbody>
@@ -43,18 +46,24 @@
         </tbody>
       </table>
 
-      <br><strong>Total de Estudantes:</strong> <span id="count_est">{{estudantes.count}}</span> ({{estudantes.count}})
+      <br><strong>
+        <span lang="pt">Total de Estudantes:</span>
+        <span lang="en">Total of Students:</span>
+      </strong> <span id="count_est">{{estudantes.count}}</span> ({{estudantes.count}})
 
       <br><br>
 
       <div>
-        <b>Template: {{template}}</b><br>
+        <b>Template: <code>{{template}}</code></b><br>
         {% comment %} <div style="border: 2px solid black; width: fit-content; padding: 4px;"></div> {% endcomment %}
         <textarea id="texto" name="texto" rows="12" cols="100" maxlength="{% max_length Carta 'texto' %}">{% if template.texto %}{{template.texto}}{% endif %}</textarea>
       </div>
 
       <br><br>
-      <button class="btn btn-primary mb-1" type="submit">Enviar Contas e Senhas</button>
+      <button class="btn btn-primary mb-1" type="submit">
+        <span lang="pt">Enviar Contas e Senhas</span>
+        <span lang="en">Send Accounts and Passwords</span>
+      </button>
 
     </form>
 
@@ -93,5 +102,6 @@
   </script>
   
   {% include "edicoes_ajax.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

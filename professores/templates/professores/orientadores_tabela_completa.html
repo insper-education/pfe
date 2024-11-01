@@ -12,7 +12,11 @@
 
 {% block content %}
 
-  <span class="titulo">{{titulo}}</span>
+  {% include "impressora.html" %}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <div class="table-responsive">
 
@@ -45,7 +49,11 @@
           </tr>
           {% if forloop.last %}
             <tr ><td style="border-right: none;">
-              <b>Total de Orientadores: {{ forloop.counter }}</b>
+              <b>
+                <span lang="pt">Total de Orientadores:</span>
+                <span lang="en">Total of Advisors:</span>
+                {{ forloop.counter }}
+              </b>
             </td><td></td></tr>
           {% endif %}
         {% endfor %}
@@ -56,5 +64,6 @@
   </div>
 
   {% include "tabelas_simples_scripts.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

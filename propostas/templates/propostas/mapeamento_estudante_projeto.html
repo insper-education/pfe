@@ -80,7 +80,12 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" with n_todas=True %}
   {% include "informacoes.html" %}
 
@@ -89,30 +94,18 @@
     <div class="table-responsive">
     
       <table id="MapeamentoTable">
-        <caption>
-          <div style="float: left;">
-            <small style="font-size:12px;">
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span> Sem pré-alocação (padrão 1&ordf; opção) |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span> Pré-alocado em Proposta |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span> Alocado em Proposta |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span> Alocado fora de opções |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span> Proposta não disponibilizada</span>
-            </small>
-          </div>
-          <div style="float: right;">
-            <small style="font-size:12px; margin-right: 2em;">
-              {% for curso in cursos %}
-                <span style="white-space: nowrap;"><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
-                {% if not forloop.last %}|{% endif %}
-              {% endfor %}
-            </small>
-          </div>
-        </caption>
-
         <thead>
           <tr>
-            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">Estudante</th>
-            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">Curso</small></th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">
+              <span lang="pt">Estudante</span>
+              <span lang="en">Student</span>
+            </th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom">
+              <small style="font-size: 10px; font-weight: bold;">
+                <span lang="pt">Curso</span>
+                <span lang="en">Program</span>
+              </small>
+            </th>
             <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">CR</span></th>
             {% for proposta in propostas %}   
               <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
@@ -203,6 +196,25 @@
           </tr>
         {% endif %}
         </tbody>
+        <caption>
+          <div style="float: left;">
+            <small style="font-size:12px;">
+              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span> Sem pré-alocação (padrão 1&ordf; opção) |</span>
+              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span> Pré-alocado em Proposta |</span>
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span> Alocado em Proposta |</span>
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span> Alocado fora de opções |</span>
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span> Proposta não disponibilizada</span>
+            </small>
+          </div>
+          <div style="float: right;">
+            <small style="font-size:12px; margin-right: 2em;">
+              {% for curso in cursos %}
+                <span style="white-space: nowrap;"><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
+                {% if not forloop.last %}|{% endif %}
+              {% endfor %}
+            </small>
+          </div>
+        </caption>
       </table>
 
       <script>
@@ -218,8 +230,6 @@
     </div>
   </div>
 
-  <p>&nbsp;</p>
-
   <script>
     function carrega_pagina(){};
 
@@ -232,5 +242,6 @@
   </script>
 
   {% include "edicoes_ajax.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}
