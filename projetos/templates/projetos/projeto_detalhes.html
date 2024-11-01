@@ -8,6 +8,7 @@
 {% block head %}
   
   {% load static %}
+  {% load bleach %}
 
   <style>
     #logotipo {
@@ -72,7 +73,7 @@
     <div style="display: flex; align-items: flex-start;">
       <div>&#128193;&nbsp;</div>
       <div>
-        {{projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+        {{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}
       </div>
     </div>
   {% endif %}
@@ -144,7 +145,7 @@
       Uma breve descrição do que se trata o projeto e outras informações relevantes.">
         Descrição da proposta:
       </strong>
-      {{projeto.proposta.descricao|linebreaks|urlize}}<br>
+      {{projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% else %}
     <p><u>Campo de descrição ausente.<u><br></p>
@@ -160,7 +161,7 @@
       ">
         Expectativas de resultados/entregas:
       </strong>
-      {{projeto.proposta.expectativas|linebreaks|urlize}}<br>
+      {{projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
   {% else %}
     <p><u>Campo de expectativas ausente.<u><br></p>
@@ -176,7 +177,7 @@
       ">
         Recursos a serem disponibilizados:
       </strong>
-      {{projeto.proposta.recursos|linebreaks|urlize}}<br>
+      {{projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 
@@ -187,7 +188,7 @@
       ">
         Outras observações:
       </strong>
-      {{proposta.observacoes|linebreaks|urlize}}<br>
+      {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 
@@ -201,18 +202,18 @@
   <!-- Campo opcional -->
   {% if projeto.organizacao and projeto.organizacao.informacoes %}
     <p><strong>Informações sobre a empresa:</strong>
-    {{projeto.organizacao.informacoes|linebreaks|urlize}}
+    {{projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% elif projeto.proposta and projeto.proposta.descricao_organizacao %}
     <p><strong>Informações sobre a empresa:</strong>
-    {{projeto.proposta.descricao_organizacao|linebreaks|urlize}}
+    {{projeto.proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% endif %}
 
   <!-- Campo opcional -->
   {% if projeto.proposta.departamento %}
     <p><strong>Informações sobre o departamento na organização:</strong>
-    {{projeto.proposta.departamento|linebreaks|urlize}}<br></p>
+    {{projeto.proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
 
 {% endblock %}

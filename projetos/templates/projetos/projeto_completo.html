@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load bleach %}
   {% load l10n %}
   {% load alocacoes %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
@@ -369,7 +370,7 @@
     <div style="display: flex; align-items: flex-start;">
       <div>&#128193;&nbsp;</div>
       <div>
-        {{projeto.pastas_do_projeto|linebreaks|urlize|safe}}
+        {{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}
       </div>
     </div>
     <br>
