@@ -4,6 +4,10 @@
   Data: 12 de Novembro de 2020
 {% endcomment %}
 
+
+{% load static %}
+{% load bleach %}
+
 {% if proposta.nome_organizacao or proposta.organizacao or proposta.website %}
   <hr>
 
@@ -145,18 +149,18 @@
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.descricao_organizacao %}    
     <p><strong>Informações sobre a empresa:</strong>
-    {{proposta.descricao_organizacao|linebreaks|urlize}}
+    {{proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% elif proposta.organizacao and proposta.organizacao.informacoes %}
     <p><strong>Informações sobre a empresa:</strong>
-    {{proposta.organizacao.informacoes|linebreaks|urlize}}
+    {{proposta.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% endif %}
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.departamento %}
     <p><strong>Informações sobre o departamento na organização:</strong>
-    {{proposta.departamento|linebreaks|urlize}}<br></p>
+    {{proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
 
   {% include "organizacao-modal.html" %}

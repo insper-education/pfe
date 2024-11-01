@@ -8,6 +8,7 @@
 {% block head %}
 
   {% load static %}
+  {% load bleach %}
   {% load conexoes %}
 
   <style>
@@ -131,7 +132,7 @@
       <div class="contatos_apres">
         <strong>Contatos Técnicos apresentados na Propota</strong><br>
         {% if projeto.proposta.contatos_tecnicos %}
-          {{projeto.proposta.contatos_tecnicos|linebreaks|urlize}}
+          {{projeto.proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
         {% else %}
           <span style="color: red;">Não forma informados contatos técnicos na proposta.</span>
         {% endif %}
@@ -140,7 +141,7 @@
       <div class="contatos_apres">
         <strong>Contatos Administrativos apresentados na Propota</strong><br>
         {% if projeto.proposta.contatos_administrativos %}
-          {{projeto.proposta.contatos_administrativos|linebreaks|urlize}}
+          {{projeto.proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
         {% else %}
           <span style="color: red;">Não foram informados contatos administrativos na proposta.</span>
         {% endif %}

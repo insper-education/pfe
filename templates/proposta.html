@@ -4,6 +4,8 @@
   Data: 12 de Novembro de 2020
 {% endcomment %}
 
+{% load bleach %}
+
 {% if proposta %}
 
   {% if proposta.titulo %}
@@ -48,7 +50,7 @@
       ">
           Descrição:
       </strong>
-      {{proposta.descricao|linebreaks|urlize}}<br>
+      {{proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% else %}
     <p><u>Campo de descrição ausente.<u><br></p>
@@ -64,7 +66,7 @@
       ">
           Expectativas de resultados/entregas:
       </strong>
-      {{proposta.expectativas|linebreaks|urlize}}<br>
+      {{proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
   {% else %}
       <p><u>Campo de expectativas ausente.<u><br></p>
@@ -80,7 +82,7 @@
       ">
           Recursos a serem disponibilizados:
       </strong>
-      {{proposta.recursos|linebreaks|urlize}}<br>
+      {{proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 
@@ -91,7 +93,7 @@
       ">
           Outras observações:
       </strong>
-      {{proposta.observacoes|linebreaks|urlize}}<br>
+      {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 

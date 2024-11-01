@@ -5,6 +5,7 @@
 {% endcomment %}
 
 {% load static %}
+{% load bleach %}
 {% load get_field %}
 
 <style>
@@ -131,16 +132,16 @@
 
 
 <div>
-  <strong>Descrição da proposta (escrito pela organização parceira):</strong> {{alocado.projeto.proposta.descricao|linebreaks|urlize}}<br>
+  <strong>Descrição da proposta (escrito pela organização parceira):</strong> {{alocado.projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
 
   {% if alocado.projeto.proposta.expectativas %}
-    <strong>Expectativas de resultados/entregas:</strong> {{alocado.projeto.proposta.expectativas|linebreaks|urlize}}<br>
+    <strong>Expectativas de resultados/entregas:</strong> {{alocado.projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
   {% endif %}
 
   {% if alocado.projeto.proposta.recursos %}
-    <strong>Recursos a serem disponibilizados aos Estudantes:</strong> {{ alocado.projeto.proposta.recursos|linebreaks|urlize}}
+    <strong>Recursos a serem disponibilizados aos Estudantes:</strong> {{ alocado.projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
     {% if alocado.projeto.proposta.observacoes %}
-      <strong>Outras observações :</strong> {{ alocado.projeto.proposta.observacoes|linebreaks|urlize}}<br>
+      <strong>Outras observações :</strong> {{ alocado.projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     {% endif %}
   {% endif %}
 </div>

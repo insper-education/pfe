@@ -6,6 +6,10 @@
 {% endcomment %}
 
 {% block head %}
+    
+  {% load static %}
+  {% load bleach %}
+
   <style>
     @page {
       size: a4 portrait; /*landscape*/
@@ -41,13 +45,13 @@
 
           {% if proposta.contatos_tecnicos %}
             <strong>Contatos Técnicos</strong><br>
-            {{proposta.contatos_tecnicos|linebreaks|urlize}}
+            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
             <br><br>
           {% endif %}
 
           {% if proposta.contatos_administrativos %}
             <strong>Contatos Administrativos</strong><br>
-            {{proposta.contatos_administrativos|linebreaks|urlize}}
+            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
             <br><br>
           {% endif %}
 

@@ -21,3 +21,8 @@ django-axes==5.13.1 # Sistem que bloqueia usuário e IP após N tentativas inval
 tablib==3.1.0 # Para exportar arquivos em excel
 openpyxl==3.1.3 # Para exportar arquivos em excel
 et_xmlfile==1.1.0 # Para exportar arquivos em excel
+bleach==4.1.0 # Para limpar o HTML
+six==1.13.0 
+webencodings==0.5.1
+packaging==21.3
+pyparsing==3.1.4
