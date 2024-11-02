@@ -67,6 +67,10 @@ textarea {max-width:100%;}
   background-color: #4971bb;
 }
 
+.logo-container {
+  margin-right: 6px;
+}
+
 #barra_do_top_nav {
   padding: 8px 12px;
   height: 53px;
@@ -266,7 +270,7 @@ a#logo_inicial:hover {
 #link_username {
   color: white;
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.9em; 
 }
 
 #link_username:hover {

@@ -15,14 +15,15 @@ from django.http import HttpResponse
 @login_required
 def index_old(request):
     """Antiga Página principal do sistema."""
-    # num_visits = request.session.get('num_visits', 0) # Visitas a página.
-    # request.session['num_visits'] = num_visits + 1
-    return render(request, "index.html")
+    return render(request, "index_old.html")
 
-@login_required
+#@login_required
 def index(request):
     """Página principal do sistema."""
-    return render(request, "index2.html")
+    if request.user.is_authenticated:
+        return render(request, "index.html")
+    else:
+        return render(request, "info.html")
 
 def manutencao(request):
     """Página de Manutenção do sistema."""

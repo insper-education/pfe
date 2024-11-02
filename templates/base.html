@@ -67,10 +67,6 @@
         font-size: 0.6rem;
         margin-left: 0;
     }
-
-    #link_username {
-      font-size: 0.7em;
-    }
   
       .hidden {
           display: none;
@@ -95,9 +91,13 @@
           <b id="pfelogo">Capstone</b>
         </div>
       {% if user.is_authenticated %}</a>{% endif %}
-      {% if user.is_authenticated %}&nbsp;<a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>{% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>
+      {% else %}
+        <a href="{% url 'login' %}" id="link_username"><i style="font-size: 0.75em;" class="fas fa-question"></i>&nbsp;Login</u>
+      {% endif %}
     </div>
-        
+
     <div id="links_menu_lat" class="links-container">
       {% if user.is_authenticated %}
         <a href="{% url 'perfil'%}">Perfil</a>
