@@ -25,6 +25,10 @@ def index(request):
     else:
         return render(request, "info.html")
 
+def info(request):
+    """Página com informações."""
+    return render(request, "info.html")
+
 def manutencao(request):
     """Página de Manutenção do sistema."""
     return render(request, "manutencao.html")

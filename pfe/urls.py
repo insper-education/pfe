@@ -20,6 +20,7 @@ urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url="/static/favicon.ico")),
 
     path("", index, name="index"),
+    path("info", info, name="info"),
 
     path("estudantes/", include("estudantes.urls")),
     path("organizacoes/", include("organizacoes.urls")),
