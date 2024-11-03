@@ -52,7 +52,7 @@
       <span lang="pt">Arquivo PDF:</span>
       <span lang="en">PDF File:</span>
     </label> 
-    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept="application/pdf" %}<br><br>
+    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept="application/pdf" required=True %}<br><br>
 
     <button type="submit" class="btn btn-primary mb-1 mr-4">
       <span lang="pt">Enviar Proposta de Projeto</span>

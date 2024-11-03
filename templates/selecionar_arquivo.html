@@ -53,12 +53,13 @@
 <div class="file-input-container">
   <label for="arquivo" class="file-label">
       <span lang="pt">Selecionar Arquivo</span>
-      <span lang="en">Choose File</span>
+      <span lang="en" style="display: none;">Choose File</span>
   </label>
   <input id="{{arquivo_nome}}" class="file-input" type="file" 
          name="{{arquivo_nome}}"
          {% if arquivo_accept %}accept="{{arquivo_accept}}" {% endif %}
-         required>
+         {% if required %}required{% endif %}
+         >
   <div id="file-name" class="file-name">
     <span class="name"></span>
     <span lang="pt" class="noname">Nenhum arquivo selecionado</span>
