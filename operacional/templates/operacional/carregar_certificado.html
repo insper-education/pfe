@@ -11,23 +11,23 @@
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
-  <style>
-    textarea {max-width:100%;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
 
   <span class="titulo">
-   Carrega Certificado
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
   <br>
 
   <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 
     <label for="usuario">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">Usuário:</span>
+      <span style="display:inline-block; width:7.5ex; text-align:right;">
+        <span lang="pt">Usuário:</span>
+        <span lang="en">User:</span>
+      </span>
       <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
       data-live-search="true" data-width="560px">
           <option selected value> -- selecione usuário -- </option>
@@ -41,7 +41,10 @@
     <br><br>
 
     <label for="projeto">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">Projeto:</span>
+      <span style="display:inline-block; width:7.5ex; text-align:right;">
+        <span lang="pt">Projeto:</span>
+        <span lang="en">Project:</span>
+      </span>
       <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
       data-live-search="true" data-width="560px">
           <option selected value> -- selecione projeto -- </option>
@@ -59,13 +62,19 @@
     <br><br>
 
     <label for="data">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">Data:</span>
+      <span style="display:inline-block; width:7.5ex; text-align:right;">
+        <span lang="pt">Data:</span>
+        <span lang="en">Date:</span>
+      </span>
       <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
     </label>
     <br><br>
 
     <label for="tipo">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">Tipo:</span>
+      <span style="display:inline-block; width:7.5ex; text-align:right;">
+        <span lang="pt">Tipo:</span>
+        <span lang="en">Type:</span>
+      </span>
       <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
       data-live-search="true" data-width="560px" required>
           <option disabled selected value> -- selecione tipo de certificado -- </option>
@@ -82,14 +91,23 @@
     </label>
     <br><br>
 
-    <label for="observacao">Observação:<br></label><br>
+    <label for="observacao">
+      <span lang="pt">Observação:</span>
+      <span lang="en">Observation:</span>
+    </label><br>
     <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
     <br><br>
 
-    <label for="documento">Certificado:</label>
+    <label for="documento">
+      <span lang="pt">Certificado:</span>
+      <span lang="en">Certificate:</span>
+    </label>
     {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
 
-    <input type="submit" class="btn btn-primary" value="Cadastrar Certificado">
+    <button type="submit" class="btn btn-primary">
+      <span lang="pt">Cadastrar Certificado</span>
+      <span lang="en">Register Certificate</span>
+    </button>
 
   </form>
 
@@ -121,5 +139,7 @@
     });
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

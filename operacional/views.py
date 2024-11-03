@@ -316,6 +316,7 @@ def carregar_certificado(request):
     usuarios = PFEUser.objects.all()
 
     context = {
+        "titulo": {"pt": "Carregar Certificado", "en": "Load Certificate"},
         "TIPO_DE_CERTIFICADO": Certificado.TIPO_DE_CERTIFICADO,
         "projetos": projetos,
         "usuarios": usuarios,
