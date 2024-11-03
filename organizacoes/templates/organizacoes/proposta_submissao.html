@@ -44,6 +44,13 @@
 
 {% block content %}
 
+  <div style="text-align: center;">
+    <span class="titulo">
+      <span lang="pt">{{titulo.pt}}</span>
+      <span lang="en" style="display: none;">{{titulo.en}}</span>
+    </span>
+  </div>
+
   <div class="container-fluid" style="max-width:740px; padding-left: 6px; padding-right: 6px;">
     <div class="row justify-content-around">
       <div class="col-xl-auto" style="margin-bottom: 18px;">
@@ -59,16 +66,6 @@
         {% if user.tipo_de_usuario == 4 %}
           {% define False as liberadas_propostas %}
         {% endif %}
-
-        <span class="titulo">
-          {% if edicao %}
-            Edição
-          {% else %}
-            Submissão
-          {% endif %}
-          de Proposta de Projeto
-          (Capstone {{ano_semestre}})
-        </span>
 
         {% if professor %}
           <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização.</strong><br>

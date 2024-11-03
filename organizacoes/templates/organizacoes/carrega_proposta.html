@@ -6,13 +6,24 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
   {% load define_action %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <style>
-    textarea {max-width:100%;}
+    input {max-width:100%;}
+    label {
+      margin-bottom: 0px;
+      margin-top: 8px;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{titulo.pt}}</span>
+    <span lang="en">{{titulo.en}}</span>
+  </span>
 
   {% if edicao and liberadas_propostas %}
     <h3 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h3>
@@ -21,10 +32,6 @@
     {% endif %}
     <br>
   {% endif %}
-
-  <span class="titulo">
-      Carregar Proposta de Projeto (Capstone {{ano_semestre}})
-  </span>
 
   {% if professor %}
     <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização.</strong><br>
@@ -36,27 +43,40 @@
 
   <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}  
 
-    <label for="nome" style="width: 3.4em;">Nome:</label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+    <label for="nome" style="width: 3.4em;"><span lang="pt">Nome:</span><span lang="en">Name:</span></label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <label for="email" style="width: 3.4em;">e-mail:</label> <input type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
       pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required><br><br>
     
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <label for="arquivo">Arquivo PDF:</label> 
-    <input id="arquivo" type="file" name="arquivo" accept="application/pdf" required>
+    <label for="arquivo" style="margin-left: 2em;">
+      <span lang="pt">Arquivo PDF:</span>
+      <span lang="en">PDF File:</span>
+    </label> 
+    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept="application/pdf" %}<br><br>
 
-    <br><br>
-
-    <input type="submit" class="btn btn-primary mb-1" value="Enviar Proposta de Projeto">
+    <button type="submit" class="btn btn-primary mb-1 mr-4">
+      <span lang="pt">Enviar Proposta de Projeto</span>
+      <span lang="en">Send Project Proposal</span>
+    </button>
     
     {% if not liberadas_propostas %}
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input style="position: relative; top: 2px;" type="checkbox" name="mensagem" value="enviar" checked>
-      <label data-toggle="tooltip" data-html="true" animation="true" 
-             title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
-             for="mensagem">enviar mensagem (e-mail) de confirmação</label>
+      <span style="white-space: nowrap;">
+        <input style="position: relative; top: 2px;" type="checkbox" name="mensagem" value="enviar" checked>
+        <label data-toggle="tooltip" data-html="true" animation="true" 
+              title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
+              for="mensagem">
+                <span lang="pt">Enviar mensagem (e-mail) de confirmação</span>
+                <span lang="en">Send confirmation message (e-mail)</span>
+              </label>
+      </span>
     {% endif %}
     
   </form>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+  </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

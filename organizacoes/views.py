@@ -413,9 +413,10 @@ def proposta_submissao(request):
         ["identificar", Proposta.TIPO_INTERESSE[3][1], False],
         ["mentorar", Proposta.TIPO_INTERESSE[4][1], False],
     ]
+    ano_semestre = str(ano)+"."+str(semestre)
 
     context = {
-        "titulo": "Submissão de Proposta de Projeto",
+        "titulo": {"pt": "Submissão de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Submission " + ano_semestre + ")" },
         "full_name": full_name,
         "email": email_sub,
         "organizacao": organizacao,
@@ -436,7 +437,7 @@ def proposta_submissao(request):
         "observacoes": "",
         "edicao": False,
         "interesses": interesses,
-        "ano_semestre": str(ano)+"."+str(semestre),
+        "ano_semestre": ano_semestre,
         "configuracao": configuracao,
         "organizacoes": Organizacao.objects.all(),
     }
@@ -515,12 +516,14 @@ def carrega_proposta(request):
         }
         return render(request, "generic.html", context=context)
 
+    ano_semestre = str(ano)+'.'+str(semestre)
+    
     context = {
-        "titulo": "Carrega Proposta de Projeto em PDF",
+        "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
         "full_name": full_name,
         "email": email_sub,
         "parceiro": parceiro,
-        "ano_semestre": str(ano)+'.'+str(semestre),
+        "ano_semestre": ano_semestre,
     }
     return render(request, "organizacoes/carrega_proposta.html", context)
 

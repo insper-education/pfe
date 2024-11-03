@@ -645,9 +645,10 @@ def proposta_editar(request, slug):
     areas = Area.objects.filter(ativa=True)
 
     interesses = proposta.get_interesses()
+    ano_semestre = str(proposta.ano)+"."+str(proposta.semestre)
 
     context = {
-        "titulo": "Edição de Proposta de Projeto",
+        "titulo": { "pt": "Edição de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Edition " + ano_semestre + ")"},
         "liberadas_propostas": liberadas_propostas,
         "full_name": proposta.nome,
         "email": proposta.email,
@@ -658,7 +659,7 @@ def proposta_editar(request, slug):
         "proposta": proposta,
         "edicao": True,
         "interesses": interesses,
-        "ano_semestre": str(proposta.ano)+"."+str(proposta.semestre),
+        "ano_semestre": ano_semestre,
         "vencida": vencida,
         "configuracao": configuracao,
         "organizacoes": Organizacao.objects.all(),

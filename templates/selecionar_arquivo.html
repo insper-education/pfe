@@ -1,0 +1,120 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 2 de Novembro de 2024
+{% endcomment %}
+
+<style>
+  .file-input-container {
+    display: inline-block;
+    position: relative;
+    max-width: 100%;
+    cursor: pointer; 
+    padding: 2px;
+  }
+
+  .file-input {
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  
+  .file-label {
+    display: inline-block;
+    padding: 2px 5px;
+    border: 1px solid #007BFF;
+    border-radius: 4px;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    max-width: 100%;
+    text-align: center;
+    margin: 2px 0;
+  }
+  .file-label:hover {
+    background-color: #e9ecef;
+  }
+  .file-name {
+    display: inline-block;
+    margin-top: 10px;
+    font-style: italic;
+    margin: 2px 0;
+  }
+  .file-input-container.dragover {
+    background-color: #e9ecef;
+  }
+</style>
+
+<div class="file-input-container">
+  <label for="arquivo" class="file-label">
+      <span lang="pt">Selecionar Arquivo</span>
+      <span lang="en">Choose File</span>
+  </label>
+  <input id="{{arquivo_nome}}" class="file-input" type="file" 
+         name="{{arquivo_nome}}"
+         {% if arquivo_accept %}accept="{{arquivo_accept}}" {% endif %}
+         required>
+  <div id="file-name" class="file-name">
+    <span class="name"></span>
+    <span lang="pt" class="noname">Nenhum arquivo selecionado</span>
+    <span lang="en" class="noname" style="display: none;">No file chosen</span>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll(".file-input").forEach(input => {
+    if (!input.dataset.listenerAdded) {
+      input.addEventListener("change", function() {
+        console.log("VOLTEI 4");
+        if (this.files && this.files.length > 0) {
+          var fileName = this.files[0].name;
+          this.nextElementSibling.querySelector(".name").textContent = fileName;
+          this.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = true;});
+        } else {
+          this.nextElementSibling.querySelector(".name").textContent = "";
+          this.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = false;});
+        }
+      });
+      input.dataset.listenerAdded = "true";
+    }
+
+  });
+
+  // No caso de um page back, retorna o nome do arquivo
+  window.addEventListener("pageshow", function(event) {
+    document.querySelectorAll(".file-input").forEach(input => {
+        if (input.files.length > 0) {
+            var fileName = input.files[0].name;
+            input.nextElementSibling.querySelector(".name").textContent = fileName;
+            input.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = true;});
+        }
+    });
+});
+  
+
+  document.querySelectorAll(".file-input-container").forEach(container => {
+    container.addEventListener("dragover", function(event) {
+        event.preventDefault();
+        this.classList.add("dragover");
+    });
+
+    container.addEventListener("dragleave", function(event) {
+        this.classList.remove("dragover");
+    });
+
+    container.addEventListener("drop", function(event) {
+        event.preventDefault();
+        this.classList.remove("dragover");
+        var input = this.querySelector(".file-input");
+        input.files = event.dataTransfer.files;
+        var changeEvent = new Event("change");
+        input.dispatchEvent(changeEvent);
+    });
+  });
+
+</script>
