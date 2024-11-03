@@ -90,7 +90,7 @@
       <span lang="pt">Assinatura (proporção ~250x70):</span>
       <span lang="en">Signature (proportion ~250x70):</span>
     </label>
-    <input id="assinatura" type="file" name="assinatura" accept="image/*">
+    {% include "selecionar_arquivo.html" with arquivo_nome="assinatura" arquivo_accept="image/*" %}
     
     <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
       <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}</span><br>

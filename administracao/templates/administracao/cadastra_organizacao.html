@@ -54,7 +54,7 @@
     <br><br>
 
     <label for="logo">Logotipo da organização:</label>
-    <input id="logo" type="file" name="logo" accept="image/*">
+    {% include "selecionar_arquivo.html" with arquivo_nome="logo" arquivo_accept="image/*" %}
     {% if organizacao and organizacao.logotipo %}
       <br><a href="{{request.scheme}}://{{request.get_host}}{{organizacao.logotipo.url}}">
         <span class="full-text">{{request.scheme}}://{{request.get_host}}{{organizacao.logotipo.url}}</span>

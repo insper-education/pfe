@@ -86,9 +86,8 @@
     <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
     <br><br>
 
-    <label for="documento">Certificado:</label> 
-    <input id="documento" type="file" name="documento" accept="*" required>
-    <br><br>
+    <label for="documento">Certificado:</label>
+    {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
 
     <input type="submit" class="btn btn-primary" value="Cadastrar Certificado">
 

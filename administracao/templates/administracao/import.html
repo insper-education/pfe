@@ -26,10 +26,8 @@
   {% endfor %}
   </ul>
   <br>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="arquivo" accept=".csv">
-    <br><br>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept=".csv" %}<br><br>
     <button class="btn btn-primary mb-1" type="submit">Carregar Arquivo</button>
   </form>
 {% endblock %}

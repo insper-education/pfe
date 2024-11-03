@@ -72,10 +72,8 @@
 
     Arquivo com cópias das notas fiscais<br>
     <small>(se forem vários arquivos coloque eles em um arquivo zip para enviar)<br></small>
-    <input type="file" name="arquivo" required>
+    {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" required=True %}<br><br>
 
-    <br>
-    <br>
     Valor
     <input type="number" min="0.01" step="0.01" max="1500" name="valor" id="valor" placeholder="0,00" required/>
 
