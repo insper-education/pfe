@@ -6,17 +6,23 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
   <style>
     input {
       max-width: 100%;
       display: inline-block;
     }
-    textarea {max-width: 100%;}
     label {
-      margin: 6px 18px 2px 0px;
+      margin: 6px 3px 2px 0px;
       max-width: 100%;
     }
     select {max-width: 100%;}
+    .bootstrap-select {
+      max-width: 100%;
+    }
 
   </style>
 {% endblock %}
@@ -31,17 +37,18 @@
         <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
       </div><br>
 
-      <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;">
-        <label for="evento"><b>Evento relacionado</b>:
-        <select name="evento" id="evento" title="Selecione evento" required>
+      {% comment %} <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;"> {% endcomment %}
+      <div style="margin-bottom: 8px; margin-right: 25px; display: block; max-width: 100%;">
+        <label for="evento"><b>Evento relacionado</b>:</label>
+        <select style="max-width: 100%;" name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
             <option disabled selected value> -- selecione evento -- </option>
             {% for evento in eventos %}
               <option value="{{evento.0}}" {% if aviso.tipo_de_evento == evento.0 %}selected="selected"{% endif %}>
                 {{evento.1}}
-              </option>  
+              </option>
             {% endfor %}
-        </select></label>
-      </div><br>
+        </select>
+      </div>
 
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
         <label for="delta"><b>Delta</b>:
