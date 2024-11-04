@@ -590,7 +590,7 @@ def organizacoes_prospect(request):
         necessarios[curso] = estudantes.filter(curso2=curso).count()/configuracao.estudates_por_grupo  # grupos de 4 estudantes
 
     context = {
-        "titulo": "Prospecção de Organizações",
+        "titulo": {"pt": "Prospecção de Organizações", "en": "Prospecting Organizations"},	
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
         "total_disponiveis": total_disponiveis,

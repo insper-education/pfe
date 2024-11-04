@@ -44,6 +44,15 @@
       flex: 1;
       max-width: 100%;
     }
+    .indicadores {
+      margin-left: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .calc_indicadores {
+      font-size: 0.8em;
+    }
     @media (max-width: 1280px) {
       .flex-container {flex-direction: column;}
       .flex-item {width: 100%;}
@@ -60,7 +69,9 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">{{ titulo }}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
     <small class="esconder">
     <a class="create-annotation"
        href="{% url 'anotacao' %}"
@@ -69,7 +80,7 @@
 
   <div class="container" style="margin: 0px; padding: 0px;">
     <div class="row align-items-start justify-content-start mb-1">
-      <div class="ml-3 form-inline">
+      <div class="ml-3 form-inline mb-1">
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
@@ -82,13 +93,17 @@
             <option value="12">12 mêses</option>
             <option value="9999">tudo</option>
           </select>
+          &nbsp;&nbsp;&nbsp;
+          <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
+            <span class="sr-only">Carregando...</span>
+          </div>
+          &nbsp;&nbsp;&nbsp;
         </div>
-        &nbsp;&nbsp;&nbsp;<div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
-          <span class="sr-only">Carregando...</span>
-        </div>&nbsp;&nbsp;&nbsp;
-        <div class="input-group input-group-sm mt-1">
+        <div class="input-group input-group-sm mt-1 mr-4">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filter">Filtrar</label>
+            <label class="to_label input-group-text" for="filter">
+              <span lang="pt">Filtrar</span><span lang="en" style="display: none;">Filter</span>
+            </label>
           </div>
           <select id="filter" class="selectpicker filter custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
             <option value="todas">todas contactadas</option>
@@ -127,17 +142,29 @@
         <thead class="table-info">
           <tr>
             <th>#</th>
-            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(2)')">Organização</th>
-            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(3)')" width="48em">Área</th>
-            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(4)')" width="85em">Interesse</th>
-            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(5)', 'd')" width="78em"><small class="tit_peq">Último<br>Contato</small></th>
-            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(6)')">Anotação</th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(2)')">
+              <span lang="pt">Organização</span><span lang="en" style="display: none;">Organization</span>
+            </th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(3)')" width="48em">
+              <span lang="pt">Área</span><span lang="en" style="display: none;">Area</span>
+            </th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(4)')" width="85em">
+              <span lang="pt">Estrelas</span><span lang="en" style="display: none;">Stars</span>
+            </th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(5)', 'd')" width="78em"><small class="tit_peq">
+              <span lang="pt">Último<br>Contato</span><span lang="en">Last<br>Contact</span>
+            </small></th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(6)')">
+              <span lang="pt">Anotação</span><span lang="en">Notes</span>
+            </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(7)', 'n')" width="81em">
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">Propostas<br>Disponíveis</small>
-            </th>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
+                <span lang="pt">Propostas<br>Disponíveis</span><span lang="en">Available<br>Proposals</span>
+            </small></th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(8)', 'n')" width="81em">
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small class="tit_peq">Propostas<br>Enviadas</small>
-            </th>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
+                <span lang="pt">Propostas<br>Enviadas</span><span lang="en">Submited<br>Proposals</span>
+            </small></th>
           </tr>
         </thead>
 
@@ -321,7 +348,10 @@
       </div>
 
       <div style="margin-top: 10px;">
-      <strong>Total de Propostas Submetidas (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
+      <strong>
+        <span lang="pt">Total de Propostas Disponíveis</span>
+        <span lang="en" style="display: none;">Total of Proposals Available</span>
+        (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
       <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
         ({{ total_submetidas }})
         <br>
@@ -330,18 +360,21 @@
 
       <div class="flex-container">
         <div class="flex-item">
-          <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px;">
-            <b>Organizações contactadas recentemente ({{total_organizacoes}}):</b><br>
+          <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
+            <b>
+              <span lang="pt">Organizações contactadas recentemente</span>
+              <span lang="en" style="display: none;">Recently contacted organizations</span>
+               ({{total_organizacoes}}):</b><br>
         
-            &nbsp;<span data-type="0" data-color="lightblue" data-hide="false" class="show-hide" style="background-color:lightblue;">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados"></span><br>
-            &nbsp;<span data-type="1" data-color="lemonchiffon" data-hide="false" class="show-hide" style="background-color:lemonchiffon;">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados"></span><br>
-            &nbsp;<span data-type="2" data-color="lightgreen" data-hide="false" class="show-hide" style="background-color:lightgreen;">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados"></span><br>
-            &nbsp;<span data-type="3" data-color="pink" data-hide="false" class="show-hide" style="background-color:pink;">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados"></span><br>
+            <div class="indicadores"><span data-type="0" data-color="lightblue" data-hide="false" class="show-hide" style="background-color:lightblue;">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="1" data-color="lemonchiffon" data-hide="false" class="show-hide" style="background-color:lemonchiffon;">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="2" data-color="lightgreen" data-hide="false" class="show-hide" style="background-color:lightgreen;">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="3" data-color="pink" data-hide="false" class="show-hide" style="background-color:pink;">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados" class="calc_indicadores"></span></div>
 
-            &nbsp;<span data-type="4" data-color="yellow" data-hide="false" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada"></span><br>
-            &nbsp;<span data-type="6" data-color="green" data-hide="false" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada"></span><br>
-            &nbsp;<span data-type="5" data-color="#e289df" data-hide="false" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo"></span><br>
-            &nbsp;<span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros"></span><br>
+            <div class="indicadores"><span data-type="4" data-color="yellow" data-hide="false" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="6" data-color="green" data-hide="false" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="5" data-color="#e289df" data-hide="false" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo" class="calc_indicadores"></span></div>
+            <div class="indicadores"><span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros" class="calc_indicadores"></span></div>
           </div>
           <script>
 
@@ -424,7 +457,7 @@
 
         <div class="flex-item">
           <div class="table-responsive">
-            <div style="position: relative; height:260px; width:590px">
+            <div style="position: relative; height:260px; width:590px; max-width: 100%">
               <canvas id="projetos"></canvas>
             </div>
           </div>
@@ -443,8 +476,7 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}cursos_projetos["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          barThickness: 50,
+          stack: "Stack 0"
         },
         {
           label: "Interessados",
@@ -454,8 +486,7 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}interessados["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          barThickness: 50,
+          stack: "Stack 0"
         },
         {
           label: "Sondados",
@@ -465,8 +496,7 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}sondados["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          barThickness: 50,
+          stack: "Stack 0"
         },
         {
           label: "Necessários",
@@ -474,14 +504,13 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}{{necessarios|get_value:curso|unlocalize}}, {% endfor %}],
           xAxisID: "bar-x-necessario",
-          stack: "Stack 1",
-          barThickness: 90,
+          stack: "Stack 1"
         }
       ]
 
       var data = {
         labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
-        datasets: datasets,
+        datasets: datasets
       };
       
       var options = {
@@ -495,15 +524,18 @@
         },
         scales: {
           xAxes: [{
-            stacked: true,
-            id: "bar-x-projetos",
-          }, {
-            display: false,
-            id: "bar-x-necessario",
-            type: "category",
-            gridLines: {offsetGridLines: true},
-            offset: true
-          }],
+              stacked: true,
+              id: "bar-x-projetos",
+              categoryPercentage: 0.4
+            }, {
+              display: false,
+              id: "bar-x-necessario",
+              type: "category",
+              gridLines: {offsetGridLines: true},
+              offset: true,
+              categoryPercentage: 0.7
+            }
+          ],
           yAxes: [{
             stacked: true,
             ticks: {beginAtZero: true},
@@ -530,6 +562,7 @@
         },
         responsive: true,
         maintainAspectRatio: false,
+
       };
       
       var ctx = document.getElementById("projetos").getContext("2d");
@@ -664,5 +697,7 @@
         });
     });
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}
