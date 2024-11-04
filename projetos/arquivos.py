@@ -61,7 +61,7 @@ class RangeFileWrapper:
         return data
 
 
-def stream_video(request, path, content_type=None):
+def stream_file(request, path, content_type=None):
     range_header = request.META.get("HTTP_RANGE", '').strip()
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
@@ -84,7 +84,8 @@ def stream_video(request, path, content_type=None):
         #resp["Content-Length"] = str(length)
         resp["Content-Range"] = "bytes %s-%s/%s" % (first_byte, last_byte, size)
     else:
-        resp = StreamingHttpResponse(FileWrapper(open(path, "rb")), content_type=content_type)
+        file_wrapper = FileWrapper(open(path, "rb"))
+        resp = StreamingHttpResponse(file_wrapper, content_type=content_type)
         resp["Content-Length"] = str(size)
     resp["Accept-Ranges"] = "bytes"
     return resp
@@ -114,13 +115,13 @@ def get_response(file, path, request):
         "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "csv": "text/comma-separated-values",
         "pdf": "application/pdf",
-        "mkv": "video/webm",
-        "zip": "application/octet-stream",
-        "rar": "application/octet-stream",
-        "7zip": "application/octet-stream"
+        "mkv": "video/webm"
     }
 
-    video_types = {
+    stream_types = {
+        "zip": "application/zip",
+        "rar": "application/x-rar-compressed",
+        "7z": "application/x-7z-compressed",
         "mp4": "video/mp4",
         "mpg": "video/mpeg",
         "mpeg": "video/mpeg",
@@ -131,8 +132,9 @@ def get_response(file, path, request):
     ext = path.split('.')[-1].lower()
     if ext in mime_types:
         return HttpResponse(file.read(), content_type=mime_types[ext])
-    if ext in video_types:
-        return stream_video(request, file.name, video_types[ext])
+
+    if ext in stream_types:
+        return stream_file(request, file.name, stream_types[ext])
 
     return None
 
