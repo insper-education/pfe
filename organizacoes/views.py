@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Count, Prefetch
 
 from organizacoes.support import get_form_fields, cria_documento
 
@@ -610,43 +611,47 @@ def organizacoes_prospect(request):
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
     organizacoes = Organizacao.objects.all()
+
+    # Prefetch dos objetos relacionados
+    propostas_prefetch = Prefetch('proposta_set', queryset=Proposta.objects.order_by('ano', 'semestre'))
+    anotacoes_prefetch = Prefetch('anotacao_set', queryset=Anotacao.objects.order_by('momento'))
+    projetos_prefetch = Prefetch('projeto_set', queryset=Projeto.objects.filter(alocacao__isnull=False).distinct())
+
+    organizacoes = organizacoes.prefetch_related(propostas_prefetch, anotacoes_prefetch, projetos_prefetch)
+
     fechados = []
     desde = []
     contato = []
     grupos = []
+
     for organizacao in organizacoes:
-        propostas = Proposta.objects.filter(organizacao=organizacao)\
-            .order_by("ano", "semestre")
-        if propostas.first():
-            desde.append(str(propostas.first().ano) + "." +
-                         str(propostas.first().semestre))
+        propostas = organizacao.proposta_set.all()
+        if propostas:
+            desde.append(f"{propostas.first().ano}.{propostas.first().semestre}")
         else:
             desde.append("---------")
 
-        anot = Anotacao.objects.filter(organizacao=organizacao)\
-            .order_by("momento").last()
+        anot = organizacao.anotacao_set.last()
         if anot:
             contato.append(anot)
         else:
             contato.append("---------")
 
-        projetos = Projeto.objects.filter(organizacao=organizacao).filter(alocacao__isnull=False).distinct()
+        projetos = organizacao.projeto_set.all()
         fechados.append(projetos.count())
 
         tipo_estudantes = ""
         for projeto in projetos:
             estudantes = Aluno.objects.filter(alocacao__projeto=projeto)
-            tipos = []
-            for estudante in estudantes:
-                tipos.append(estudante.curso2.sigla_curta)
-            tipo_estudantes += "["+"|".join(tipos)+"] "
+            tipos = [estudante.curso2.sigla_curta for estudante in estudantes]
+            tipo_estudantes += "[" + "|".join(tipos) + "] "
         grupos.append(tipo_estudantes)
 
     organizacoes_list = zip(organizacoes, fechados, desde, contato, grupos)
-    total_organizacoes = Organizacao.objects.all().count()
-    total_submetidos = Proposta.objects.all().count()
-    total_fechados = Projeto.objects.filter(alocacao__isnull=False)\
-        .distinct().count()
+    total_organizacoes = organizacoes.count()
+    total_submetidos = Proposta.objects.count()
+    total_fechados = Projeto.objects.filter(alocacao__isnull=False).distinct().count()
+
 
     cabecalhos = [
         {"pt": "Organização", "en": "Company", },
@@ -658,6 +663,7 @@ def organizacoes_lista(request):
     ]
     
     context = {
+        "titulo": {"pt": "Organizações Parceiras", "en": "Partnership Companies"},
         "organizacoes_list": organizacoes_list,
         "total_organizacoes": total_organizacoes,
         "total_submetidos": total_submetidos,
@@ -666,7 +672,6 @@ def organizacoes_lista(request):
         "filtro": "todas",
         "grupos": grupos,
         "cabecalhos": cabecalhos,
-        "titulo": {"pt": "Organizações Parceiras", "en": "Partnership Companies"},
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"), 
     }
 
