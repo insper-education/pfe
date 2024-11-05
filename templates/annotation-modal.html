@@ -135,7 +135,6 @@
         },
         success: function(response){
             if (response.atualizado) {
-              //console.log("Valor atualizado.");
               if (organizacao=== undefined) { // Faz um refresh na página
                 setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
               }

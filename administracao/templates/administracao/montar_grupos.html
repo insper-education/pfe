@@ -805,7 +805,6 @@
       var target = $(e.target).closest(".estudante");
       estudante_id = target[0].id.slice(9);
       atual = "#estr" + estudante_id
-      //console.log($(atual).html());
       if($(atual).html() == "") {
         $(atual).html("&#9733;");
         estrela_estudante(estudante_id, true);

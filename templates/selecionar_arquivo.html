@@ -51,7 +51,7 @@
 </style>
 
 <div class="file-input-container">
-  <label for="arquivo" class="file-label">
+  <label for="{{arquivo_nome}}" class="file-label">
       <span lang="pt">Selecionar Arquivo</span>
       <span lang="en" style="display: none;">Choose File</span>
   </label>
@@ -71,7 +71,6 @@
   document.querySelectorAll(".file-input").forEach(input => {
     if (!input.dataset.listenerAdded) {
       input.addEventListener("change", function() {
-        console.log("VOLTEI 4");
         if (this.files && this.files.length > 0) {
           var fileName = this.files[0].name;
           this.nextElementSibling.querySelector(".name").textContent = fileName;
