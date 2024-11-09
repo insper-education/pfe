@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
+  {% load addhttp %}
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
@@ -29,7 +30,7 @@
     <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
   {% endif %}
   {% if professor.website %}
-    <strong>website:</strong> <a href="{{ professor.website }}"> {{ professor.website }} </a><br>
+    <strong>website:</strong> <a href="{{ professor.website|add_http }}"> {{ professor.website }} </a><br>
   {% endif %}
   {% if professor.areas %}
     <strong>Áreas de Interesse:</strong> {{ professor.areas }}<br>

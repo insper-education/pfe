@@ -6,6 +6,9 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  {% load addhttp %}
+
   <style>
     @page {
       size: a4 portrait; /*landscape*/
@@ -43,7 +46,7 @@
 
           <h5>Organização: {{ projeto.organizacao.nome }}</h5>
           <strong>endereço:</strong> {{ projeto.organizacao.endereco|linebreaks }}
-          <strong>website:</strong> <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a>        
+          <strong>website:</strong> <a href="{{ projeto.organizacao.website|add_http }}"> {{ projeto.organizacao.website }} </a>        
           <hr class="striped-border">
 
         {% endfor %}

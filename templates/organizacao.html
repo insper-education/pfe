@@ -7,6 +7,7 @@
 
 {% load static %}
 {% load bleach %}
+{% load addhttp %}
 
 {% if proposta.nome_organizacao or proposta.organizacao or proposta.website %}
   <hr>
@@ -137,9 +138,9 @@
         website:
     </strong>
     {% if proposta.website %}
-        <a id="organizacao_website" href="{{proposta.website}}">{{proposta.website}}</a>
+        <a id="organizacao_website" href="{{proposta.website|add_http}}">{{proposta.website}}</a>
     {% elif proposta.organizacao and proposta.organizacao.website %}
-        <a id="organizacao_website" href="{{proposta.organizacao.website}}">{{proposta.organizacao.website}}</a>
+        <a id="organizacao_website" href="{{proposta.organizacao.website|add_http}}">{{proposta.organizacao.website}}</a>
     {% else %}
         <a id="organizacao_website"><u>website não definido.</u></a>
     {% endif %}

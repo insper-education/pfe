@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load zip_data %}
+  {% load addhttp %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"/></script>
 
@@ -194,9 +195,9 @@
               {{ projeto.organizacao.nome }}
             </a>
             {% if projeto.organizacao.website %}
-            <span class="opt_full website">(<a href="{{projeto.organizacao.website}}"
+            <span class="opt_full website">(<a href="{{projeto.organizacao.website|add_http}}"
               >{{ projeto.organizacao.website }}</a>)</a></span>
-            <span class="opt_short website"><a href="{{projeto.organizacao.website}}"
+            <span class="opt_short website"><a href="{{projeto.organizacao.website|add_http}}"
               ><i class="fas fa-link"></i></a></span>
             {% endif %}
             {% for cooperacao in cooperacoes %}
@@ -205,9 +206,9 @@
                 <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
                   {{ cooperacao.parceiro.organizacao.nome }}</a>
                   {% if cooperacao.parceiro.organizacao.website %}
-                  <span class="opt_full website">(<a href="{{cooperacao.parceiro.organizacao.website}}"
+                  <span class="opt_full website">(<a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
                     >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
-                  <span class="opt_short website"><a href="{{cooperacao.parceiro.organizacao.website}}"
+                  <span class="opt_short website"><a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
                     ><i class="fas fa-link"></i></a></span>
                   {% endif %}
               {% endif %}

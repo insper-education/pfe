@@ -7,6 +7,7 @@
 {% load static %}
 {% load bleach %}
 {% load get_field %}
+{% load addhttp %}
 
 <style>
   #logotipo {
@@ -153,7 +154,7 @@
 
   <h5>Organização: {{ alocado.projeto.organizacao.nome }}</h5>
   <strong>endereço:</strong> {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
-  <strong>website:</strong> <a href="{{ projeto.organizacao.website }}">{{ alocado.projeto.organizacao.website }}</a><br>
+  <strong>website:</strong> <a href="{{ alocado.projeto.organizacao.website|add_http }}">{{ alocado.projeto.organizacao.website }}</a><br>
 </div>
 
 <div>

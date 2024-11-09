@@ -9,6 +9,7 @@
   
   {% load static %}
   {% load bleach %}
+  {% load addhttp %}
 
   <style>
     #logotipo {
@@ -130,9 +131,9 @@
     website:
     </strong>
     {% if projeto.organizacao and projeto.organizacao.website %}
-      <a href="{{projeto.organizacao.website}}">{{projeto.organizacao.website}}</a>
+      <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
     {% elif projeto.proposta and projeto.proposta.website %}
-      <a href="{{projeto.proposta.website}}">{{projeto.proposta.website}}</a>
+      <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
     {% else %}
       <u>não definido.</u>
     {% endif %}
