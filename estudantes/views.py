@@ -701,12 +701,16 @@ def relato_quinzenal(request):
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
     prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by("endDate").first()
 
-    # Só mostra o relato N (config.periodo_relato) dias antes do prazo
-    fora_periodo = prazo.endDate - hoje > datetime.timedelta(days=configuracao.periodo_relato)
-    inicio_periodo = prazo.endDate - datetime.timedelta(days=configuracao.periodo_relato)
+    if prazo:
+        # Só mostra o relato N (config.periodo_relato) dias antes do prazo
+        fora_periodo = prazo.endDate - hoje > datetime.timedelta(days=configuracao.periodo_relato)
+        inicio_periodo = prazo.endDate - datetime.timedelta(days=configuracao.periodo_relato)
+    else:
+        fora_periodo = True
+        inicio_periodo = None
 
     context = {
-        "titulo": "Formulário de Relato Quinzenal",
+        "titulo": {"pt": "Formulário de Relato Quinzenal", "en": "Biweekly Report Form"},
         "prazo": prazo,
         "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
         "Relato": Relato,

@@ -6,7 +6,7 @@ from .models import Relato, Pares, EstiloComunicacao
 class RelatoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Relato."""
 
-    list_display = ("momento", "alocacao", "texto", "avaliacao")
+    list_display = ("momento", "alocacao", "avaliacao")
     list_filter = ("momento",)
     search_fields = ["alocacao__aluno__user__first_name",
                      "alocacao__aluno__user__last_name",
