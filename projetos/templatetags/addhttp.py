@@ -12,7 +12,11 @@ from django import template
 register = template.Library()
 
 @register.filter(name="add_http")
-def add_http(url):
-    if not url.lstrip().startswith(("http://", "https://")):
+def add_http(url: str) -> str:
+    if not url:
+        return url
+    
+    url = url.strip()
+    if not url.startswith(("http://", "https://")):
         return "http://" + url
     return url
