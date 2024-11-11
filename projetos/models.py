@@ -1175,7 +1175,10 @@ class Documento(models.Model):
         return texto
     
     def filename(self):
-        return os.path.basename(self.documento.name)
+        if self.documento:
+            return os.path.basename(self.documento.name)
+        else:
+            return self.link
     
     def extensao(self):
         return os.path.splitext(self.filename())[1][1:].upper()

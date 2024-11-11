@@ -319,32 +319,45 @@
             </div>
 
             <div class="form-group row">
-              <label style="line-height: normal;" for="event-material" class="col-sm-4 control-label">Material (arquivo)<br>
+              <label style="line-height: normal;" for="event-material" class="col-sm-4 control-label">Material (documentos)<br>
                 {% comment %} <small style="line-height: 1.0 !important;">Só mostrará arquivos com data no passado.</small> {% endcomment %}
               </label>
               
               {% comment %} <div class="col-sm-8"> {% endcomment %}
-              <div class="col-sm-8" style="height: 84px; overflow-y: auto;">
+              <div class="col-sm-8" style="height: 116px; overflow-y: auto;">
 
-                <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
-                  <option value id="nenhum"> -------- </option>
-                  {% for documento in documentos %}
-                    <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
-                  {% endfor %}
-                </select>
-                <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
-                  {% include "formatos_suportados.html" %}>
+                <div style="display: flex; align-items: center; border: 1px solid #ccc; padding: 3px 2px; margin-bottom: 5px;">
+                  <div style="margin-right: 10px;">1</div>
+                  <div style="flex-grow: 1;">
+                    <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
+                      <option value id="nenhum"> -------- </option>
+                      {% for documento in documentos %}
+                        <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
+                      {% endfor %}
+                    </select>
+                    <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
+                      {% include "formatos_suportados.html" %}>
+                    <label for="link1">link</label>
+                    <input type="text" size="26" maxlength="{% max_length DocumentoModel "link" %}" id="link1" name="link1">
+                  </div>
+                </div>
 
-                <hr>
+                <div style="display: flex; align-items: center; border: 1px solid #ccc; padding: 3px 2px; margin-bottom: 5px;">
+                  <div style="margin-right: 10px;">2</div>
+                  <div style="flex-grow: 1;">
+                    <select name="event-material2" id="event-material2" class="form-control" title="Selecione material anexo">
+                      <option value id="nenhum"> -------- </option>
+                      {% for documento in documentos %}
+                        <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
+                      {% endfor %}
+                    </select>
+                    <input required id="arquivo2" type="file" name="arquivo2" class="form-control" style="border: 0px; padding-left: 0px;"
+                      {% include "formatos_suportados.html" %}>
+                    <label for="link2">link</label>
+                    <input type="text" size="26" maxlength="{% max_length DocumentoModel "link" %}" id="link2" name="link2">
+                  </div>
+                </div>
 
-                <select name="event-material2" id="event-material2" class="form-control" title="Selecione material anexo">
-                  <option value id="nenhum"> -------- </option>
-                  {% for documento in documentos %}
-                    <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
-                  {% endfor %}
-                </select>
-                <input required id="arquivo2" type="file" name="arquivo2" class="form-control" style="border: 0px; padding-left: 0px;"
-                  {% include "formatos_suportados.html" %}>
               </div>
 
               

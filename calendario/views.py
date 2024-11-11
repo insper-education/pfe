@@ -73,7 +73,7 @@ def get_calendario_context(user=None):
 def calendario(request):
     """Para exibir um calendário de eventos."""
     context = get_calendario_context(request.user)
-    context["titulo"] = "Calendário de Eventos"
+    context["titulo"] = { "pt": "Calendário de Eventos", "en": "Events Calendar" }
 
     if context:
     
@@ -87,6 +87,7 @@ def calendario(request):
 
         context["pessoas"] = pessoas
 
+        context["DocumentoModel"] = Documento
         try:
             tipo_documento = TipoDocumento.objects.get(sigla="MAS")  # Somente Material de Aula (pelo momento)
             context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
@@ -181,27 +182,36 @@ def export_calendar(request, event_id):
     return response
 
 
-def cria_material_aula(request, campo_arquivo):
+def cria_material_aula(request, campo_arquivo, campo_link):
         """Cria material de aula."""
-        #link = request.POST.get("link", None)
-        max_length = Documento._meta.get_field("documento").max_length
-        if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length - 1:
-                return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+        max_length_link = Documento._meta.get_field("link").max_length
+        if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
+            return "<h1>Erro: Link maior que " + str(max_length_link) + " caracteres.</h1>"
+
+        max_length_doc = Documento._meta.get_field("documento").max_length
+        if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
+            return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
         
         documento = Documento.create()  # Criando documento na base de dados
         documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
         documento.data = datetime.datetime.now()
-        #documento.link = link
+        
         documento.lingua_do_documento = 0  # (0, 'Português')
         documento.confidencial = False  # Por padrão aulas não são confidenciais
         documento.usuario = request.user
 
-        if len(request.FILES[campo_arquivo].name) > max_length - 1:
-            return "<h1>Erro: Nome do arquivo maior que " + str(max_length) + " caracteres.</h1>"
+        # if len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
+        #     return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
     
-        arquivo = simple_upload(request.FILES[campo_arquivo],
-                                path=get_upload_path(documento, ""))
-        documento.documento = arquivo[len(settings.MEDIA_URL):]
+        if campo_arquivo in request.FILES:
+            arquivo = simple_upload(request.FILES[campo_arquivo],
+                                    path=get_upload_path(documento, ""))
+            documento.documento = arquivo[len(settings.MEDIA_URL):]
+
+        if campo_link in request.POST:
+            link = request.POST.get(campo_link, "")
+            documento.link = link
+
         documento.save()
         return documento
 
@@ -254,15 +264,17 @@ def atualiza_evento(request):
     responsavel = request.POST.get("event-responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
-    if "arquivo" in request.FILES:
-        documento = cria_material_aula(request, "arquivo")
+    if "arquivo" in request.FILES or ("link1" in request.POST and request.POST["link1"] != ""):
+        print("Arquivo1")
+        documento = cria_material_aula(request, "arquivo", "link1")
         evento.documento = documento
     else:
         material = request.POST.get("event-material", None)
         evento.documento = Documento.objects.get(id=material) if material else None
 
-    if "arquivo2" in request.FILES:
-        documento = cria_material_aula(request, "arquivo2")
+    if "arquivo2" in request.FILES or ("link2" in request.POST and request.POST["link2"] != ""):
+        print("Arquivo2")
+        documento = cria_material_aula(request, "arquivo2", "link2")
         evento.documento2 = documento
     else:
         material = request.POST.get("event-material2", None)

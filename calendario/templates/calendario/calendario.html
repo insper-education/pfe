@@ -10,6 +10,7 @@
   {% load get_field %}
   {% load nospaces %}
   {% load date_extras %}
+  {% load addhttp %}
 
   <script src="{% static 'js-year-calendar/dist/js-year-calendar.min.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'js-year-calendar/dist/js-year-calendar.min.css' %}" />
@@ -208,12 +209,18 @@
 
 {% block content %}
 
-  {% include "save_image.html" with file_name="calendario_capstone" %}
+  <script>
+    var save_image_file_name = "calendario_capstone";
+  </script>
+  {% include "save_image.html" %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   <div id="tudo">
 
-    <span class="titulo">{{ titulo }}</span>
-    
     <div id="calendar" style="overflow-x: visible;"></div>
     
     <div style="margin-left: 3vw;">Semestre:
@@ -364,8 +371,9 @@
                                 <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">
                                   &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
                                 </a>
-                              {% elif documento.link %}
-                                <a class="esconder" href="{{documento.link}}">
+                              {% endif %}  
+                              {% if documento.link %}
+                                <a class="esconder" href="{{documento.link|add_http}}">
                                   &nbsp;<i class="fa fa-link"></i>
                                 </a>
                               {% endif %}
