@@ -109,6 +109,10 @@ urlpatterns = [
         views.meuprojeto,
         name="meuprojeto"),
 
+    path("meuprojeto/<int:primarykey>",
+        views.meuprojeto,
+        name="meuprojeto"),
+
     path("mostra_feedback/<int:feedback_id>",
         views.mostra_feedback,
         name="mostra_feedback"),
@@ -120,6 +124,10 @@ urlpatterns = [
     path("nomes/",
         views.nomes,
         name="nomes"),
+
+    path("projeto/<int:primarykey>",
+        views.projeto,
+        name="projeto"),
 
     path("projeto_avancado/<int:primarykey>",
         views.projeto_avancado,

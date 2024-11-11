@@ -25,83 +25,84 @@
 
 {% block content %}
 
-  {% with alocados=aluno.alocacao_set.all.reverse %}
-    <span class="titulo">Projeto{% if alocados|length > 1 %}s{% endif %} Alocado{% if alocados|length > 1 %}s{% endif %} </span> 
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+  
+  {% if professor %}
+    <h5 style="color: red;">Mostrando como é a tela, usando qualquer estudante de exemplo.<br><br></h5>
+  {% endif %}
 
-    {% if professor %}
-      <h5 style="color: red;">Mostrando como é a tela, usando qualquer estudante de exemplo.<br><br></h5>
+  {% for alocado in alocados %}
+
+  <div class="div_arredondado_100">
+    {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
+      Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
+    {% else %}
+
+      {% include "projeto.html" %}
+
+      {% with notas=alocado.get_notas %}
+        {% if notas %}
+          <div>
+            <h5>Resultados</h5>
+            <div style="background: #FFFFFF; padding: 6px;">
+            {% include "display_notas_individuais.html" %}
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% with encontros=alocado.projeto.encontro_set.all %}
+      {% if encontros %}
+      <div>
+        <h5>Mentorias Marcadas<br></h5>
+        <ul>
+          {% for dinamica in encontros %} 
+            <li>
+              {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+              {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
+              {% if dinamica.facilitador %}; facilitador: {{dinamica.facilitador}} {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      {% with certificados=alocado.get_certificados %}
+      {% if certificados %}
+      <div>
+        <h5>Certificados Recebidos<br></h5>
+        <ul>
+          {% for documento in certificados %} 
+            <li>
+              {% if documento.documento and documento.link %}
+                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+              {% else %}
+                {% if documento.documento %}
+                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
+                {% endif %}
+                {% if documento.link %}
+                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                {% endif %}
+              {% endif %}
+              ({{documento.data}})
+              </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% endwith %}
+
     {% endif %}
 
-    {% for alocado in alocados %}
+    </div>
 
-    <div class="div_arredondado_100">
-      {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
-        Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
-      {% else %}
-
-        {% include "projeto.html" %}
-
-        {% with notas=alocado.get_notas %}
-          {% if notas %}
-            <div>
-              <h5>Resultados</h5>
-              <div style="background: #FFFFFF; padding: 6px;">
-              {% include "display_notas_individuais.html" %}
-              </div>
-            </div>
-          {% endif %}
-        {% endwith %}
-
-        {% with encontros=alocado.projeto.encontro_set.all %}
-        {% if encontros %}
-        <div>
-          <h5>Mentorias Marcadas<br></h5>
-          <ul>
-            {% for dinamica in encontros %} 
-              <li>
-                {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
-                {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
-                {% if dinamica.facilitador %}; facilitador: {{dinamica.facilitador}} {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        {% endwith %}
-
-        {% with certificados=alocado.get_certificados %}
-        {% if certificados %}
-        <div>
-          <h5>Certificados Recebidos<br></h5>
-          <ul>
-            {% for documento in certificados %} 
-              <li>
-                {% if documento.documento and documento.link %}
-                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-                {% else %}
-                  {% if documento.documento %}
-                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
-                  {% endif %}
-                  {% if documento.link %}
-                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-                  {% endif %}
-                {% endif %}
-                ({{documento.data}})
-                </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        {% endwith %}
-
-      {% endif %}
-
-      </div>
-
-    {% empty %}
-      Você não está alocado em nenhum projeto.
-    {% endfor %}
-  {% endwith %}
+  {% empty %}
+    Nenhuma alocação em projetos encontrada para você.
+  {% endfor %}
 
 {% endblock %}

@@ -457,7 +457,7 @@ def carrega_proposta(request):
 
     if request.user and request.user.is_authenticated:
 
-        if request.user.tipo_de_usuario == 1:  # alunos
+        if request.user.tipo_de_usuario == 1:  # estudantes
             mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,

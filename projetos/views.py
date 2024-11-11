@@ -125,6 +125,19 @@ def projeto_detalhes(request, primarykey):
 
 
 @login_required
+def projeto(request, primarykey):
+    """Mostra um projeto conforme usuário."""
+    if request.user.tipo_de_usuario == 1:
+        return redirect("meuprojeto", primarykey=primarykey)
+    elif request.user.tipo_de_usuario in (2, 4):
+        return redirect("projeto_completo", primarykey=primarykey)
+    elif request.user.tipo_de_usuario == 3:
+        return redirect("projeto_organizacao", primarykey=primarykey)
+    else:
+        return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def projeto_completo(request, primarykey):
     """Mostra um projeto por completo."""
@@ -505,12 +518,11 @@ def bancas_lista(request):
 
 
 @login_required
-def meuprojeto(request):
-    """Mostra o projeto do próprio aluno, se for aluno."""
+def meuprojeto(request, primarykey=None):
+    """Mostra o projeto do próprio estudante, se for estudante."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Soh Est Parc Adm
 
     context = {
-        "titulo": "Meu Projeto",
         "configuracao": get_object_or_404(Configuracao),
         "Projeto": Projeto,
     }
@@ -520,13 +532,32 @@ def meuprojeto(request):
         context["professor"] = request.user.professor
 
         # Pegando um estudante de um projeto quando orientador
-        projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+        if primarykey:
+            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+        else:
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+
+        if projeto:
+            alocacao = Alocacao.objects.filter(projeto=projeto).last()
+        else:
+            return HttpResponse("Nenhum projeto encontrado.", status=401)
+        
         alocacao = Alocacao.objects.filter(projeto=projeto).last()
         context["aluno"] = alocacao.aluno if alocacao else None
         
     else:
         # Caso seja estudante
         context["aluno"] = request.user.aluno
+
+    if primarykey:
+        context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"], projeto__id=primarykey)
+    else:
+        context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"]).order_by("id")
+
+    if context["alocados"].count() > 1:
+        context["titulo"] = { "pt": "Meus Projetos", "en": "My Projects"}
+    else:
+        context["titulo"] = { "pt": "Meu Projeto", "en": "My Project"}
 
     return render(request, "projetos/meuprojeto_estudantes.html", context=context)
 
