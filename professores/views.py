@@ -41,6 +41,7 @@ from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes
 from .support import converte_conceitos, arredonda_conceitos
+from .support import calcula_interseccao_bancas
 
 from estudantes.models import Relato, Pares
 
@@ -563,9 +564,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     BLOQUEAR = True
     configuracao = get_object_or_404(Configuracao)
     if not excluida:
-        total_bancas = Banca.objects.all().count()
-        nao_intersecta = Banca.objects.filter(Q(endDate__lte=banca.startDate) | Q(startDate__gte=banca.endDate)).count()
-        if (total_bancas - nao_intersecta - 1) >= configuracao.limite_salas_bancas:  # -1 para nao contar a propria banca
+        if calcula_interseccao_bancas(banca, banca.startDate, banca.endDate):
 
             if BLOQUEAR:
                 return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado."

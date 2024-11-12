@@ -116,14 +116,17 @@
             <td>
 
               {% if banca.get_projeto %}
-                <b>Projeto:</b> 
+                <b lang="pt">Projeto:</b>
+                <b lang="en">Project:</b>
                 {% if banca.get_projeto.organizacao %}
                   [<a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
                 {% endif %}
                 <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">
                   {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
                     {{banca.get_projeto.titulo_final}}</a><br>
-                    <small>&nbsp;&nbsp;Título original da proposta: 
+                    <small>&nbsp;&nbsp;
+                      <span lang="pt">Título original da proposta:</span>
+                      <span lang="en">Original title of the proposal:</span>
                       <a class="imprimir" href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
                     </small>
                   {% else %}
@@ -133,7 +136,8 @@
               {% endif %}
 
               {% if banca.startDate %}
-                <b>Horário:</b>
+                <b lang="pt">Horário:</b>
+                <b lang="en">Time:</b>
                 <span class="opt_full">{{banca.startDate.date}}</span>
                 <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
                 ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
@@ -145,19 +149,24 @@
                              
               {% if banca.location %}
                 <span class="local">
-                  <b>Local:</b> {{banca.location}}
+                  <b lang="pt">Local:</b>
+                  <b lang="en">Location:</b>
+                  {{banca.location}}
                   <br>
                 </span>
               {% endif %}
 
               {% if banca.link %}
                 <span class="link">
-                  <b>Link vídeo-conferência:</b> <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
+                  <b lang="pt">Link vídeo-conferência:</b>
+                  <b lang="en">Video-conference link:</b>
+                  <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
                 </span>
                 <br>
               {% endif %}
 
-              <b>Tipo:</b> 
+              <b lang="pt">Tipo:</b>
+              <b lang="en">Type:</b>
               {% if banca.tipo_de_banca is not None %}
                 {{ banca.tipo_de_banca|get_banca }}
               {% else %}
@@ -167,7 +176,8 @@
               
               {% if banca.membros %}
                 <div class="banca" style="margin-top: 8px;">
-                  <b>Membros da Banca da Avaliação:</b>
+                  <b lang="pt">Membros da Banca da Avaliação:</b>
+                  <b lang="en">Evaluation Board Members:</b>
                   {% with is_ori=banca.get_projeto.orientador %}
                     <a class="email" href="mailto:{% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.email}}{% endif %};{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.get_full_name}}, {% endif %}{% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
                       <i class="fas fa-mail-bulk"></i>
@@ -179,9 +189,11 @@
                             {{banca.get_projeto.orientador.user.get_full_name}} 
                           </a>         
                           {% if banca.get_projeto.proposta.intercambio %}
-                            [Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]
+                            <span lang="pt">[Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável]</span>
+                            <span lang="en">[Responsible Professor]</span>
                           {% else %}
-                            [Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]
+                            <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
+                            <span lang="en">[Advisor]</span>
                           {% endif %}
                           <span class="opt_full emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
                           <span class="opt_short emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
@@ -196,7 +208,8 @@
                               {{membro.get_full_name}}
                             </a>
                             {% if membro.id in coorientadores %}
-                              [Coorientador{% if membro.genero == 'F' %}a{% endif %}]
+                              <span lang="pt">[Coorientador{% if membro.genero == 'F' %}a{% endif %}]</span>
+                              <span lang="en">[Co-Advisor]</span>
                             {% endif %}
                             <span class="opt_full emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
                             <span class="opt_short emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
@@ -212,7 +225,8 @@
 
               <div class="grupo" style="margin-top: 8px;">
                 {% if banca.tipo_de_banca == 3 %}  {% comment %} Banca Probation {% endcomment %}
-                  <b>Estudante:</b> 
+                  <b lang="pt">Estudante:</b>
+                  <b lang="en">Student:</b>
                   {% include "mostra_estudante.html" with alocacao=banca.alocacao %}  
                 {% else %}
                   {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
@@ -220,7 +234,9 @@
               </div><br>
               
               <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
-                &#9733; <b>Link formulário de avaliação</b>: 
+                &#9733;
+                <b lang="pt">Link formulário de avaliação:</b>
+                <b lang="en">Evaluation form link:</b>
                 <a href="{% url 'banca_avaliar' banca.slug %}">
                   {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
                 </a>
@@ -228,7 +244,8 @@
               </div>
               
               <div class="agendamento">  
-                <b>Mensagem</b>: 
+                <b lang="pt">Mensagem:</b>
+                <b lang="en">Message:</b>
                 <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
                   data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
                   avaliadores
@@ -238,7 +255,10 @@
               <div class="editar esconder">
                 <a class="open-modal"
                   data-url="{% url 'bancas_editar' %}{{banca.pk}}" href="{% url 'bancas_editar' banca.pk%}"> 
-                  <button class="btn btn-primary mb-1">Editar</button>
+                  <button class="btn btn-primary mb-1">
+                    <span lang="pt">Editar</span>
+                    <span lang="en">Edit</span>
+                  </button>
                 </a>
               </div>
 
@@ -250,7 +270,8 @@
         </tbody></table>
       {% comment %} </form> {% endcomment %}
     {% else %}
-      <p>Não existem bancas definidas.</p>
+      <p lang="pt">Não existem bancas definidas.</p>
+      <p lang="en">There are no defined evaluation boards.</p>
     {% endif %}
     <p>&nbsp;</p>
 
@@ -260,7 +281,8 @@
     <div class="sem_agendamento">
       {% if sem_banca %}
         <br>
-        <h5 lang="pt">Projetos ativos sem bancas agendadas:</h5><h5 lang="en">Active projects without scheduled evaluation boards:</h5>
+        <h5 lang="pt">Projetos ativos sem bancas agendadas:</h5>
+        <h5 lang="en">Active projects without scheduled evaluation boards:</h5>
         <ul>
         {% for projeto in sem_banca %}
           <li>
@@ -303,7 +325,6 @@
 
   {% include "janelas-modal.html" %}
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

@@ -19,23 +19,50 @@ from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao
 
+
+def calcula_interseccao_bancas(banca, startDate, endDate):
+    configuracao = get_object_or_404(Configuracao)
+    intersecta = 0
+    if banca is not None:                
+        # Pega todas as bancas que intersectam com o período informado
+        intersectadas = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate)).exclude(id=banca.id)
+
+        # Verifica entre as bancsas intersectadas se elas também se intersectam
+        for intersectada in intersectadas:
+            b = Banca.objects.filter(Q(endDate__gt=intersectada.startDate) & Q(startDate__lte=intersectada.startDate)).exclude(id=banca.id)
+            if b.count() > intersecta:
+                intersecta = b.count()
+            b = Banca.objects.filter(Q(endDate__gt=intersectada.endDate) & Q(startDate__lte=intersectada.endDate)).exclude(id=banca.id)
+            if b.count() > intersecta:
+                intersecta = b.count()
+
+    else:
+        # Pega todas as bancas que intersectam com o período informado
+        intersectadas = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate))
+    
+        # Verifica entre as bancsas intersectadas se elas também se intersectam
+        for intersectada in intersectadas:
+            b = Banca.objects.filter(Q(endDate__gt=intersectada.startDate) & Q(startDate__lte=intersectada.startDate))
+            if b.count() > intersecta:
+                intersecta = b.count()
+            b = Banca.objects.filter(Q(endDate__gt=intersectada.endDate) & Q(startDate__lte=intersectada.endDate))
+            if b.count() > intersecta:
+                intersecta = b.count()
+
+    if intersecta >= configuracao.limite_salas_bancas:
+        return True
+    return False
+
+
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
-
-    configuracao = get_object_or_404(Configuracao)
 
     if request.user.tipo_de_usuario != 4:  # Caso não Administrador
         # Verifica se a banca não intersecta com outras bancas
         if "inicio" in request.POST and "fim" in request.POST:
             startDate = dateutil.parser.parse(request.POST["inicio"])
             endDate = dateutil.parser.parse(request.POST["fim"])
-
-            if banca is not None:
-                intersecta = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate)).exclude(id=banca.id).count()
-            else:
-                intersecta = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate)).count()
-            
-            if intersecta >= configuracao.limite_salas_bancas:
+            if calcula_interseccao_bancas(banca, startDate, endDate):
                 return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado.", None
         else:
             return "Data de início ou fim não informada!", None

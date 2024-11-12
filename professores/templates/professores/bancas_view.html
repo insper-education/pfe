@@ -218,7 +218,10 @@
     <br>
 
     <div style="line-height: 1;">
-      <span style="display: inline-block; margin-bottom: 8px;">Tipo de banca:</span>
+      <span style="display: inline-block; margin-bottom: 8px;">
+        <b lang="pt">Tipo de Banca:</b>
+        <b lang="en" style="display: none;">Presentation:</b>
+      </span>
       {% for numero, texto in TIPO_DE_BANCA %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
           <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
