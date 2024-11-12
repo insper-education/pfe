@@ -22,6 +22,9 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
   }
+  .modal-body {
+    padding-bottom: 0px;
+  }
 </style>
 
 {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -243,10 +246,17 @@
       <div class="modal-content">
         
         <div class="modal-header">
-          <h5 class="modal-title">Evento</h5>
+          <h5 class="modal-title">
+            <span lang="pt">Evento</span>
+            <span lang="en" style="display: none;">Event</span>
+          </h5>
+
           {% if user.tipo_de_usuario != 4 %}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <span id="permissao" style="color:red; text-decoration: underline solid red">Alterações Restritas ao Administrador</span>
+            <span id="permissao" style="color:red; text-decoration: underline solid red">
+              <span lang="pt">Alterações Restritas ao Administrador</span>
+              <span lang="en" style="display: none;">Restricted changes to the Administrator</span>
+            </span>
           {% endif %}
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -272,9 +282,28 @@
             </div>
 
             <div class="form-group row">
-              <label for="event-atividade" class="col-sm-4 control-label">Atividade (nome)</label>
+              <label for="event-atividade" class="col-sm-4 control-label">
+                <span lang="pt">Atividade (nome)</span>
+                <span lang="en" style="display: none;">Activity (name)</span>
+              </label>
               <div class="col-sm-8">
                 <input id="event-atividade" name="event-atividade" type="text" class="form-control" maxlength="{% max_length Evento "atividade" %}">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="min-date" class="col-sm-4 control-label">
+                <span lang="pt">Datas</span>
+                <span lang="en" style="display: none;">Dates</span>
+              </label>
+              <div class="col-sm-8">
+                <div class="input-group input-daterange" data-provide="datepicker">
+                  <input id="min-date" name="event-start-date" type="text" class="form-control">
+                  <div class="input-group-prepend input-group-append">
+                    <div class="input-group-text">até</div>
+                  </div>
+                  <input id="max-date" name="event-end-date" type="text" class="form-control">
+                </div>
               </div>
             </div>
 
@@ -360,8 +389,6 @@
 
               </div>
 
-              
-
             </div>
             
             {% if configuracao.maxMB_filesize and user.tipo_de_usuario != 4 %}
@@ -376,18 +403,6 @@
               </script>
             {% endif %}
             
-            <div class="form-group row">
-              <label for="min-date" class="col-sm-4 control-label">Datas</label>
-              <div class="col-sm-8">
-                <div class="input-group input-daterange" data-provide="datepicker">
-                  <input id="min-date" name="event-start-date" type="text" class="form-control">
-                  <div class="input-group-prepend input-group-append">
-                    <div class="input-group-text">até</div>
-                  </div>
-                  <input id="max-date" name="event-end-date" type="text" class="form-control">
-                </div>
-              </div>
-            </div>
         </div> {% comment %} modal-body {% endcomment %}
 
         <div class="modal-footer">

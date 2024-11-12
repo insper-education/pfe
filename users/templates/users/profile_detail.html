@@ -12,22 +12,52 @@
 
 {% block content %}
 
-  <span class="titulo">{{ user.get_full_name }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <form action="{% url 'password_change' %}">
-    <strong>Usuário:</strong> {{ user.username }}<br>
+    <strong>
+      <span lang="pt">Nome:</span>
+      <span lang="en">Name:</span>
+    </strong> {{ user.get_full_name }}<br>
+    <strong>
+      <span lang="pt">Usuário:</span>
+      <span lang="en">Username:</span>
+    </strong> {{ user.username }}<br>
+    <strong>
+      <span lang="pt">Perfil:</span>
+      <span lang="en">Profile:</span>
+    </strong>
     {% if user.tipo_de_usuario == 1 %} {% comment %} estudante {% endcomment %}
-      <strong>Perfil:</strong> estudante<br>
-      <strong>Curso:</strong> {{user.aluno.curso2}}<br>
-      <strong>Ano e Semestre do Capstone:</strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}} <small>(ou posterior)</small><br>
+      <span lang="pt">Estudante</span>
+      <span lang="en">Student</span>
+      <br>
+      <strong>
+        <span lang="pt">Curso:</span>
+        <span lang="en">Program:</span>
+      </strong> {{user.aluno.curso2}}<br>
+      <strong>
+        <span lang="pt">Ano e Semestre do Capstone:</span>
+        <span lang="en">Capstone Year and Semester:</span>
+      </strong> {{user.aluno.anoPFE}}.{{user.aluno.semestrePFE}}
+      <small lang="pt">(ou posterior)</small>
+      <small lang="en">(or later)</small>
+      <br>
     {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}
-      <strong>Perfil:</strong> professor<br>
+      professor<br>
     {% elif user.tipo_de_usuario == 3 %} {% comment %} parceiro {% endcomment %}
-      <strong>Perfil:</strong> parceiro<br>
+      <span lang="pt">Parceiro</span>
+      <span lang="en">Partner</span>
+      <br>
     {% elif user.tipo_de_usuario == 4 %} {% comment %} administrador {% endcomment %}
-      <strong>Perfil:</strong> administrador<br>
+      <span lang="pt">Administrador</span>
+      <span lang="en">Administrator</span>  
+      <br>
     {% else %}
-      Seu perfil não foi encontrado!
+      <span lang="pt">Seu perfil não foi encontrado!</span>
+      <span lang="en">Your profile was not found!</span>
     {% endif %}
     <br>
     {% if user.linkedin %}
@@ -39,9 +69,16 @@
 
     <br><br>
     {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} 
-      <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">Meus Detalhes</a>
+      <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">
+        <span lang="pt">Meus Detalhes</span>
+        <span lang="en">My Details</span>
+      </a>
     {% endif %}
-    <input class="btn btn-primary mb-1" type="submit" value="Atualizar Senha" />
+    <button type="submit" class="btn btn-primary mb-1">
+      <span lang="pt">Atualizar Senha</span>
+      <span lang="en">Update Password</span>
   </form>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

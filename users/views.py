@@ -76,7 +76,8 @@ def user_detail(request, primarykey=0):
 @login_required
 def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
-    return render(request, "users/profile_detail.html")
+    context = {"titulo": {"pt": "Perfil", "en": "Profile"}}
+    return render(request, "users/profile_detail.html", context=context)
 
 
 class SignUp(generic.CreateView):
