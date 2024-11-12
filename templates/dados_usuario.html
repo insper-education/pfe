@@ -7,10 +7,12 @@
 
 {% if user.tipo_lingua > 1 %}
 <strong>
-  Linguagem de comunicação: 
+  <span lang="pt">Linguagem de comunicação:</span>
+  <span lang="en" style="display: none;">Communication language:</span>  
   {% if user.tipo_lingua == 2 %}
     <span style="color: red;">
-      Inglês
+      <span lang="pt">Inglês</span>
+      <span lang="en" style="display: none;">English</span>
     </span>
   {% endif %}    
   <br>
@@ -25,7 +27,10 @@
 
 {% if user.telefone or user.celular or user.instant_messaging %}
 
-  <strong>Telefones:</strong><br>
+  <strong>
+    <span lang="pt">Telefones:</span>
+    <span lang="en" style="display: none;">Phones:</span>
+  </strong><br>
   {% if user.telefone %}
     <div style="margin-left: 8px;">&#x260F;
       <a href="tel:{{user.telefone}}">{{user.telefone}}</a>
@@ -49,6 +54,9 @@
 
 {% if user.observacoes %}
     <br>
-    <strong>Observações:</strong>
+    <strong>
+      <span lang="pt">Observações:</span>
+      <span lang="en" style="display: none;">Observations:</span>
+    </strong>
     <div style="padding-left: 18px">{{user.observacoes|linebreaks}}</div>
 {% endif %}

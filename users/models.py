@@ -165,13 +165,14 @@ class PFEUser(AbstractUser):
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
 
-    user = models.OneToOneField(PFEUser, related_name='professor', on_delete=models.CASCADE)
+    user = models.OneToOneField(PFEUser, related_name="professor", on_delete=models.CASCADE)
 
     TIPO_DEDICACAO = (
         ("TI", "Tempo Integral"),
         ("TP", "Tempo Parcial"),
         ("V", "Visitante"),
         ("E", "Externo"),
+        ("O", "Outro"),
     )
 
     dedicacao = models.CharField("Dedicação", max_length=2,
@@ -185,6 +186,9 @@ class Professor(models.Model):
     lattes = models.URLField(max_length=75, null=True, blank=True,
                              help_text="Link para o currículo Lattes do Professor")
     
+    departamento = models.TextField(max_length=200, null=True, blank=True,
+                                    help_text="Departamento em que o funcionário trabalha")
+
     email_avaliacao = models.BooleanField(default=False,
                                           help_text="Define último estado se o professor quer enviar e-mail de avaliação")
 

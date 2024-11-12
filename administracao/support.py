@@ -161,6 +161,8 @@ def registro_usuario(request, user=None):
             usuario.tipo_de_usuario = 2  # (2, "professor")
         elif tipo_de_usuario == "parceiro":
             usuario.tipo_de_usuario = 3  # (3, "parceiro")
+        elif tipo_de_usuario == "funcionario":
+            usuario.tipo_de_usuario = 2  # (2, "professor") / funcionario
         else:
             # usuario.tipo_de_usuario = 4  # (4, "administrador")
             return ("Erro na identificação do tipo de usuário.", 401, None)
@@ -270,22 +272,30 @@ def registro_usuario(request, user=None):
         else:
             professor = user.professor
 
-        dedicacao = request.POST.get("dedicacao", None)
-        if dedicacao == "TI":  # ("TI", "Tempo Integral"),
-            professor.dedicacao = "TI"
-        elif dedicacao == "TP":  # ("TP", 'Tempo Parcial'),
-            professor.dedicacao = "TP"
-        elif dedicacao == "V":  # ("V", "Visitante"),
-            professor.dedicacao = "V"
-        elif dedicacao == "E":  # ("E", "Externo"),
-            professor.dedicacao = "E"
-        else:
-            professor.dedicacao = None
-            mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
+        if tipo_de_usuario == "funcionario":
+            professor.dedicacao = "O"  # ("O", "Outro"),
 
-        professor.areas = limpa_texto(request.POST.get("areas", None))
-        professor.website = limpa_texto(request.POST.get("website", None))
-        professor.lattes = limpa_texto(request.POST.get("lattes", None))
+            professor.departamento = limpa_texto(request.POST.get("departamento", None))
+
+        else:
+            dedicacao = request.POST.get("dedicacao", None)
+            if dedicacao == "TI":  # ("TI", "Tempo Integral"),
+                professor.dedicacao = "TI"
+            elif dedicacao == "TP":  # ("TP", 'Tempo Parcial'),
+                professor.dedicacao = "TP"
+            elif dedicacao == "V":  # ("V", "Visitante"),
+                professor.dedicacao = "V"
+            elif dedicacao == "E":  # ("E", "Externo"),
+                professor.dedicacao = "E"
+            elif dedicacao == "O":  # ("O", "Outro"),
+                professor.dedicacao = "O"
+            else:
+                professor.dedicacao = None
+                mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
+
+            professor.areas = limpa_texto(request.POST.get("areas", None))
+            professor.website = limpa_texto(request.POST.get("website", None))
+            professor.lattes = limpa_texto(request.POST.get("lattes", None))
 
         professor.save()
 

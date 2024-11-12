@@ -365,7 +365,7 @@ def cadastrar_usuario(request):
 
         context["mensagem"] = mensagem
 
-    context["titulo"] = "Cadastro de Usuário"
+    context["titulo"] = {"pt": "Cadastro de Usuário", "en": "User Registration"}
 
     return render(request, "administracao/cadastra_usuario.html", context)
 
@@ -430,7 +430,8 @@ def edita_usuario(request, primarykey):
     else:
         return HttpResponse("Erro com tipo de usuário", status=401)
 
-    context["titulo"] = "Edição de Usuário"
+    context["titulo"] = {"pt": "Edição de Usuário", "en": "Edit User"}
+
     return render(request, "administracao/cadastra_usuario.html", context)
 
 @login_required

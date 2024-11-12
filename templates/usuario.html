@@ -5,12 +5,19 @@
 {% endcomment %}
 
 {% if not user.is_active %}
-  <p style="color: red;">- NÃO ATIVO -</p><br>
+  <p style="color: red;">
+    <span lang="pt">- NÃO ATIVO -</span>
+    <span lang="en" style="display: none;">- NOT ACTIVE -</span>
+  </p><br>
 {% endif %}
 
-<strong>Usuário:</strong> {{ user.username }}
+<strong lang="pt">Usuário:</strong>
+<strong lang="en" style="display: none;">User:</strong>
+{{ user.username }}
+
 {% if user.membro_comite %}
-  <i>(Membro do Comitê)</i>
+  <i lang="pt">(Membro do Comitê)</i>
+  <i lang="en" style="display: none;">(Committee Member)</i>
 {% endif %}
 <br>
 

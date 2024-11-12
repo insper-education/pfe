@@ -1,5 +1,7 @@
 textarea {max-width:100%;}
 
+input {max-width: 100%;}
+
 .hidden {display: none;}
 
 .visible {display: block;}

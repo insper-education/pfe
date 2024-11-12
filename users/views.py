@@ -753,8 +753,10 @@ def estudante_detail(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
-    context = {"professor": get_object_or_404(Professor, pk=primarykey)}
-    context["titulo"] = context["professor"].user.get_full_name()
+    context = {
+        "titulo": {"pt": "Professor", "en": "Professor"},
+        "professor": get_object_or_404(Professor, pk=primarykey)
+        }
 
     context["projetos"] = Projeto.objects.filter(orientador=context["professor"]).order_by("ano", "semestre")
 

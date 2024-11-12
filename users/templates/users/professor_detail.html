@@ -13,17 +13,26 @@
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
-    ol {padding-left: 1.5em;}
+    ol {padding-left: 1.8em;}
   </style>
 {% endblock %}
 
 {% block content %}
-  
-  <span class="titulo">Professor{% if professor.user.genero == "F" %}a{% endif %} {{professor.user.get_full_name}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  <strong>
+    <span lang="pt">Nome completo:</span>
+    <span lang="en">Full name:</span>
+  </strong> {{professor.user.get_full_name}}<br>
 
   {% include "usuario.html" with user=professor.user %}
   
-  <strong>Regime de Dedicação:</strong>
+  <strong lang="pt">Tipo:</strong>
+  <strong lang="en">Type:</strong>
   {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
   <br>
   {% if professor.lattes %}
@@ -33,14 +42,17 @@
     <strong>website:</strong> <a href="{{ professor.website|add_http }}"> {{ professor.website }} </a><br>
   {% endif %}
   {% if professor.areas %}
-    <strong>Áreas de Interesse:</strong> {{ professor.areas }}<br>
+    <strong lang="pt">Áreas de Interesse:</strong>
+    <strong lang="en">Areas of Interest:</strong>
+    {{ professor.areas }}<br>
   {% endif %}
 
   {% include "dados_usuario.html" with user=professor.user %}
 
   {% if projetos %}
     <hr>
-    <h4>Projeto{% if projetos|length > 1 %}s{% endif %} Orientado{% if projetos|length > 1 %}s{% endif %}</h4>
+    <span lang="pt"><h4>Projeto{% if projetos|length > 1 %}s{% endif %} Orientado{% if projetos|length > 1 %}s{% endif %}</h4></span>
+    <span lang="en"><h4>Supervised Project{% if projetos|length > 1 %}s{% endif %}</h4></span>
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
@@ -57,14 +69,16 @@
         </li>
       {% endif %}
     {% empty %}
-      Projetos não encontrados
+      <span lang="pt">Projetos não encontrados</span>
+      <span lang="en">Projects not found</span>
     {% endfor %}
     </ol>
   {% endif %}
 
   {% if coorientacoes %}
     <hr>
-    <h4>Projeto{% if coorientacoes|length > 1 %}s{% endif %} Coorientado{% if coorientacoes|length > 1 %}s{% endif %}</h4>
+    <span lang="pt"><h4>Projeto{% if coorientacoes|length > 1 %}s{% endif %} Coorientado{% if coorientacoes|length > 1 %}s{% endif %}</h4></span>
+    <span lang="en"><h4>Co-supervised Project{% if coorientacoes|length > 1 %}s{% endif %}</h4></span>
     <ol>
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
@@ -78,14 +92,16 @@
         </li>
       {% endif %}
     {% empty %}
-      Projetos não encontrados
+      <span lang="pt">Projetos não encontrados</span>
+      <span lang="en">Projects not found</span>
     {% endfor %}
     </ol>
   {% endif %}
 
   {% if bancas %}
     <hr>
-    <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
+    <span lang="pt"><h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4></span>
+    <span lang="en"><h4>Participation in Evaluation Board{% if bancas|length > 1 %}s{% endif %}</h4></span>
     <div class="caixa_rolante">
       <ol>
       {% for banca in bancas %}
@@ -112,7 +128,8 @@
 
   {% if mentorias %}
     <hr>
-    <h4>Mentoria{% if mentorias|length > 1 %}s{% endif %}</h4>
+    <span lang="pt"><h4>Mentoria{% if mentorias|length > 1 %}s{% endif %}</h4></span>
+    <span lang="en"><h4>Mentorship{% if mentorias|length > 1 %}s{% endif %}</h4></span>
     <div class="caixa_rolante">
       <ol>
       {% for mentoria in mentorias %}
@@ -138,7 +155,8 @@
 
   {% if aulas %}
     <hr>
-    <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
+    <span lang="pt"><h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4></span>
+    <span lang="en"><h4>Class{% if aulas|length > 1 %}es{% endif %} Taught</h4></span>
     <div class="caixa_rolante">
       <ol>{% for aula in aulas %}
           <li>
@@ -163,8 +181,13 @@
 
   {% if user.tipo_de_usuario == 4 %}
     <a href="{% url 'edita_usuario' professor.user.id %}">
-      <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
+      <button class="btn btn-primary mb-1" style="float: right;">
+        <span lang="pt">Editar</span>
+        <span lang="en">Edit</span>
+      </button>
     </a>
   {% endif %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}
