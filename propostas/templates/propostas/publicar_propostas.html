@@ -27,34 +27,56 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{ titulo }}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
   
   <div>
-    <span>Data planejada para liberar propostas de projetos para estudantes:</span>
+    <span lang="pt">Data planejada para liberar propostas de projetos para estudantes:</span>
+    <span lang="en">Planned date to release project proposals for students:</span>
+
     {% if data_planejada %}
       <span style="font-weight:bold;" id="data_planejada">{{data_planejada}}.</span>
-      <small class="obs">(Estudantes conseguirão ver as propostas disponíveis para aplicar nessa data)</small>
+      <small class="obs">
+        <span lang="pt">Estudantes conseguirão ver as propostas disponíveis para aplicar nessa data</span>
+        <span lang="en">Students will be able to see the available proposals to apply on this date</span>
+      </small>
     {% else %}
-      <span style="font-weight:bold;" id="data_planejada">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
+      <span style="font-weight:bold;" id="data_planejada">
+        <span lang="pt">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
+        <span lang="en">Date to release project proposals has not been defined in the calendar yet.</span>
+      </span>
     {% endif %}
   </div>
   
   <div style="margin-top: 6px;">
-    <span>Prazo limite para seleção de propostas por estudantes: </span>
+    <span lang="pt">Prazo limite para seleção de propostas por estudantes:</span>
+    <span lang="en">Deadline for students to select proposals:</span> 
     {% if limite_propostas %}
       <span style="font-weight:bold;" id="limite_propostas">{{limite_propostas}}</span>
     {% else %}
-      <span style="font-weight:bold;" id="limite_propostas">Data para indicação de interesse nos projetos do próximo semestre pelos estudante não foi definida na agenda.</span>
+      <span style="font-weight:bold;" id="limite_propostas">
+        <span lang="pt">Prazo limite para seleção de propostas por estudantes ainda não foi definido na agenda.</span>
+        <span lang="en">Deadline for students to select proposals has not been defined in the calendar yet.</span>
+      </span>
     {% endif %}
   </div>
 
   <br>
 
-  <label for="min_props">Mínimo de Propostas para Estudantes Selecionarem:</label>
+  <label for="min_props">
+    <span lang="pt">Número mínimo de propostas para estudantes selecionarem:</span>
+    <span lang="en">Minimum number of proposals for students to select:</span>
+  </label>
   <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;"
          {% if user.tipo_de_usuario != 4 %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
          value="{{min_props}}"/>
-  <span id="mess_atual" style="display: None;"> atualizado!</span>
+  <span id="mess_atual" style="display: None;">
+    <span lang="pt">atualizado!</span>
+    <span lang="en">updated!</span>
+  </span>
   <br><br>
 
   <div id="liberadas"></div>
@@ -64,11 +86,12 @@
   function mess_liberadas(valor) {
     if (valor) {
       $("#liberadas").css("background-color", "green");
-      $("#liberadas").html("Propostas Liberadas");
+      $("#liberadas").html("<span lang='pt'>Propostas Liberadas</span><span lang='en'>Proposals Released</span>");
     } else {
       $("#liberadas").css("background-color", "yellow");
-      $("#liberadas").html("Propostas Não Liberadas");
+      $("#liberadas").html("<span lang='pt'>Propostas Não Liberadas</span><span lang='en'>Proposals Not Released</span>");
     }
+    {% include "linguas_ajax.html" %}
   }
   
   mess_liberadas({{liberadas_propostas|lower}})
@@ -104,5 +127,7 @@
   });
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

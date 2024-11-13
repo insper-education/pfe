@@ -712,7 +712,7 @@ def publicar_propostas(request):
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
     
     context = {
-        "titulo": "Publicação das Propostas de Projetos",
+        "titulo": {"pt": "Publicação das Propostas de Projetos", "en": "Publication of Project Proposals"},
         "liberadas_propostas": propostas_liberadas(configuracao),
         "min_props": configuracao.min_props,
         "limite_propostas": get_limite_propostas(configuracao),
