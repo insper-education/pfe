@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    {% if usuario %}
+    {% if user %}
       <div class="legenda-block">
         <div class="legenda-item">
           <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Orientador da Banca</div>
@@ -104,17 +104,17 @@
             let time_s = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
             let time_e = info.event.end.getHours() + ':' + info.event.end.getMinutes().toString().replace(/^(\d)$/, '0$1');
             let local = info.event.extendedProps.local;
-            let nome_orientador = ""
+            let nome_orientador = "";
             if (info.event.extendedProps.orientador) {
               let orientador = info.event.extendedProps.orientador.split(" ");
               nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];
-              {% if usuario %}
-                if (info.event.extendedProps.orientador == "{{usuario.get_full_name}}") {
+              {% if user %}
+                if (info.event.extendedProps.orientador == "{{user.get_full_name}}") {
                   info.el.style.boxShadow = "0 0 3px 4px red";
                 } else {
-                  if ( info.event.extendedProps.membro1 == "{{usuario.get_full_name}}" ||
-                       info.event.extendedProps.membro2 == "{{usuario.get_full_name}}" ||
-                       info.event.extendedProps.membro3 == "{{usuario.get_full_name}}"
+                  if ( info.event.extendedProps.membro1 == "{{user.get_full_name}}" ||
+                       info.event.extendedProps.membro2 == "{{user.get_full_name}}" ||
+                       info.event.extendedProps.membro3 == "{{user.get_full_name}}"
                   ) {
                     info.el.style.boxShadow = "0 0 3px 4px darkblue";
                   }
