@@ -384,7 +384,7 @@ class Projeto(models.Model):
 
     def get_relatorio_intermediario(self):
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
+        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
         
         if documento.exists():
             return documento.order_by("data").last()
