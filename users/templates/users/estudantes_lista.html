@@ -352,15 +352,7 @@
             table.fnSetColumnVis( 6, false );  // esconde Linkedin
             table.fnSetColumnVis( 7, false );  // esconde Telefone
 
-            // Para selecionar o idioma
-            lingua_atual = localStorage.getItem("lingua");
-            if (lingua_atual == "en") {
-              $('[lang="pt"]').css("display", "none");
-              $('[lang="en"]').css("display", "initial");
-            } else {
-              $('[lang="pt"]').css("display", "initial");
-              $('[lang="en"]').css("display", "none");
-            }
+            {% include "linguas_ajax.html" %}
 
           }
         }

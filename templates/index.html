@@ -99,13 +99,13 @@
   function loadContent(element, url) {
     const cardContent = element.nextElementSibling;
     const dynamicUrl = new URL(url, window.location.origin);
-    dynamicUrl.searchParams.set('dynamic', 'true');
+    dynamicUrl.searchParams.set("dynamic", "true");
   
     if (cardContent.style.display === "none" || cardContent.style.display === "") {
       fetch(dynamicUrl)
         .then(response => {
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
           }
           return response.text();
         })
@@ -127,7 +127,7 @@
           });
         })
         .catch(error => {
-          console.error('Error loading content:', error);
+          console.error("Error loading content:", error);
           cardContent.innerHTML = '<div class="alert alert-danger">Error loading content</div>';
           $(cardContent).slideDown("fast");
         });

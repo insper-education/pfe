@@ -9,8 +9,8 @@
 
 <style>
   .strikeout {
-      text-decoration: line-through;
-      color: #808080;
+    text-decoration: line-through;
+    color: #808080;
   }
 </style>
 
@@ -101,7 +101,9 @@
       
         if (!info.event.allDay) {
           if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
-            let time = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let time_s = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let time_e = info.event.end.getHours() + ':' + info.event.end.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let local = info.event.extendedProps.local;
             let nome_orientador = ""
             if (info.event.extendedProps.orientador) {
               let orientador = info.event.extendedProps.orientador.split(" ");
@@ -119,7 +121,7 @@
                 }
               {% endif %}
             }
-            info.el.innerHTML = "<b>" + time + "</b><br><nobr style='color:#FAD2D2'>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#F6F5A3'>" + info.event.extendedProps.local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
+            info.el.innerHTML = "<b>" + time_s + " - " + time_e + "</b><br><nobr style='color:#FAD2D2'>" + info.event.extendedProps.organizacao + "</nobr><br><nobr style='color:#F6F5A3'>" + local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
           }
         }              
       },
@@ -146,13 +148,13 @@
                         end: value.end,
                         organizacao: value.organizacao,
                         orientador: value.orientador,
-                        local: value.local,
+                        local: value.local ? value.local : "",
                         color: value.color,
                         title: value.title,
                         membro1: value.membro1,
                         membro2: value.membro2,
                         membro3: value.membro3,
-                        description: value.description,
+                        description: value.description ? value.description : "",
                         editable: value.editable,
                         className: value.className,
                       });

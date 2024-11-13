@@ -335,7 +335,7 @@
     <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
     style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
-    {% if banca %}
+    {% if banca and banca.location %}
       value="{{banca.location}}"
     {% endif %}
     />
@@ -361,7 +361,7 @@
     <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
     style="max-width: 100%;" placeholder="somente se necessário"
-    {% if banca %}
+    {% if banca and banca.link %}
       value="{{banca.link}}"
     {% endif %} 
     />

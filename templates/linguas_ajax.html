@@ -1,0 +1,15 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Novembro de 2024
+{% endcomment %}
+
+// Para selecionar o idioma
+lingua_atual = localStorage.getItem("lingua");
+if (lingua_atual == "en") {
+  $('[lang="pt"]').css("display", "none");
+  $('[lang="en"]').css("display", "initial");
+} else {
+  $('[lang="pt"]').css("display", "initial");
+  $('[lang="en"]').css("display", "none");
+}

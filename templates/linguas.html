@@ -8,64 +8,6 @@
 
 <script>
 
-{% comment %}   
-  var textos_linguas = {
-    pt: {
-        decimal:        "",
-        emptyTable:     "Tabela vazia",
-        info:           "Exibindo de _START_ até _END_ em _TOTAL_ {{tabela}}",
-        infoEmpty:      "Exibindo de 0 até 0 em 0 {{tabela}}",
-        infoFiltered:   "(filtrado de _MAX_ {{tabela}})",
-        infoPostFix:    "",
-        thousands:      "",
-        lengthMenu:     "Mostrando _MENU_ itens",
-        loadingRecords: "Carregando...",
-        processing:     "Processando...",
-        search:         "Busca:",
-        zeroRecords:    "Não foram encontrados registros com a busca",
-        paginate: {
-            first:      "Primeira",
-            last:       "Última",
-            next:       "Próxima",
-            previous:   "Anterior"
-        },
-        aria: {
-            sortAscending:  ": ativado para ordenar a coluna de forma ascendente",
-            sortDescending: ": ativado para ordenar a coluna de forma descendente"
-        },
-        buttons: {
-            colvis: 'Colunas'
-        }
-    },
-    en: {
-        decimal:        "",
-        emptyTable:     "No data available",
-        info:           "Showing _START_ to _END_ of _TOTAL_ {{tabela}}",
-        infoEmpty:      "Showing 0 to 0 of 0 {{tabela}}",
-        infoFiltered:   "(filtered from _MAX_ total {{tabela}})",
-        infoPostFix:    "",
-        thousands:      "",
-        lengthMenu:     "Show _MENU_ items",
-        loadingRecords: "Loading...",
-        processing:     "Processing...",
-        search:         "Search:",
-        zeroRecords:    "No matching records found",
-        paginate: {
-            first:      "First",
-            last:       "Last",
-            next:       "Next",
-            previous:   "Previous"
-        },
-        aria: {
-            sortAscending:  ": activate to sort column ascending",
-            sortDescending: ": activate to sort column descending"
-        },
-        buttons: {
-            colvis: 'Columns'
-        }
-    }
-  }; {% endcomment %}
-
   {% comment %} VER:
     function loc(number, locale="pt-BR", frac=1) {return number.toLocaleString(locale, {minimumFractionDigits: frac, maximumFractionDigits: frac});}
   {% endcomment %}

@@ -93,15 +93,7 @@
               $(".to_label").removeClass("label_animado");
               $(".filter").attr("disabled",false);
 
-              // Para selecionar o idioma
-              lingua_atual = localStorage.getItem("lingua");
-              if (lingua_atual == "en") {
-                $('[lang="pt"]').css("display", "none");
-                $('[lang="en"]').css("display", "initial");
-              } else {
-                $('[lang="pt"]').css("display", "initial");
-                $('[lang="en"]').css("display", "none");
-              }
+              {% include "linguas_ajax.html" %}
 
             } // else {% comment %} Ignorando resposta {% endcomment %}
  
