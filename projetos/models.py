@@ -375,28 +375,20 @@ class Projeto(models.Model):
         return documentos
     
     def get_relatorio_final(self):
-        # if self.tipo_de_banca == 0: # Final
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
-        
-        # elif self.tipo_de_banca == 1: # Intermediária
-        #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-        #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-        # elif self.tipo_de_banca == 2:  # Falconi
-        #     # Reaproveita o tipo de documento da banca final
-        #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-        #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-        # elif self.tipo_de_banca == 3:  # Probation
-        #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
-        #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.alocacao.projeto)
-        # else:
-            # return None
+
+        if documento.exists():
+            return documento.order_by("data").last()
+        return None
+
+    def get_relatorio_intermediario(self):
+        tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
         
         if documento.exists():
             return documento.order_by("data").last()
-        
         return None
-
 
 class Proposta(models.Model):
     """Dados da Proposta de Projeto."""
