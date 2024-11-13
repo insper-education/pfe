@@ -66,8 +66,11 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}<small class="esconder"><a
-    href="{% url 'proposta_submissao' %}"
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+    <small class="esconder"><a
+      href="{% url 'proposta_submissao' %}"
     >&#10133;</a></small>
   </span>
 
@@ -276,30 +279,41 @@
       </div>
 
       {% if liberadas_propostas %}
-        <span>Sistema liberado para estudantes verem propostas de projetos até: {{limite_propostas}}. &#x1F7E2;</span>
+        <span lang="pt">Sistema liberado para estudantes verem propostas de projetos até: {{limite_propostas}}. &#x1F7E2;</span>
+        <span lang="en">System released for students to see project proposals until: {{limite_propostas}}. &#x1F7E2;</span>
       {% else %}
-        <span>Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;</span>
+        <span lang="pt">Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;</span>
+        <span lang="en">System not yet released for students to see project proposals. &#x1F534;</span>
       {% endif %}<br>
       
       <p>&nbsp;</p>
-      <strong>Número Total de Propostas Publicadas:</strong> 
+      <strong lang="pt">Número Total de Propostas Publicadas:</strong>
+      <strong lang="en">Total Number of Published Proposals:</strong>
         <span id="propostas_publicadas"></span>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
           ({{ propostas.count }})
         </a><br>
       
-      <strong>Número Total de Propostas Fechadas:</strong> 
+      <strong lang="pt">Número Total de Propostas Fechadas:</strong>
+      <strong lang="en">Total Number of Closed Proposals:</strong>
       <span id="propostas_fechadas"></span><br>
-      <strong>Número Total de Organizações Participando:</strong> {{num_organizacoes}}<br>
+
+      <strong lang="pt">Número Total de Organizações Participando:</strong>
+      <strong lang="en">Total Number of Participating Organizations:</strong>
+      {{num_organizacoes}}<br>
 
       <p>&nbsp;</p>
-      <b>Disponibilidade de Propostas:</b><br>
+      <b lang="pt">Disponibilidade de Propostas:</b>
+      <b lang="en">Proposals Availability:</b>
+      <br>
       {% with nao_disponivel=True %}
         {% include "propostas_nativamente.html" %}
       {% endwith %}
 
       <p>&nbsp;</p>
-      <strong>Vagas por curso</strong><br>
+      <strong lang="pt">Vagas por curso</strong>
+      <strong lang="en">Seats per program</strong>
+      <br>
       <table class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
@@ -376,6 +390,8 @@
 
   </div>
   
-  {% include "edicoes_ajax.html" with tabela='Propostas' %}
+  {% include "edicoes_ajax.html" with tabela="Propostas" %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

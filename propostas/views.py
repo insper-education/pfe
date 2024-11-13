@@ -346,7 +346,7 @@ def propostas_apresentadas(request):
     else:
         edicoes, _, _ = get_edicoes(Proposta)
         context = {
-            "titulo": "Propostas de Projetos Apresentadas",
+            "titulo": {"pt": "Propostas de Projetos Apresentadas", "en": "Proposed Projects"},
             "edicoes": edicoes,
             }
 
