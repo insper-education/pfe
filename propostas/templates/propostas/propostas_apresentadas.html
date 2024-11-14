@@ -85,7 +85,7 @@
     </script>
 
     <div class="table-responsive">
-      <table id="PropostasTable2" class="table table-bordered table-hover table-sm" style="width: 100%;">
+      <table id="PropostasTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
           <tr>
             <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor do comitê analisou que a proposta seja publicada para os estudantes"><span id="autorizado-icon"></span></th>
@@ -112,9 +112,11 @@
             <tr class="item"> 
 
               
-              <td class="fcol estados
+              <td style="cursor:pointer;" class="fcol estados
               {% if proposta.autorizado  %}
-                text-success">&#x2713;
+                text-success" 
+                data-toggle="tooltip" data-html="true" animation="true" title="{{proposta.autorizado}}"
+                >&#x2713;
               {% else %}
                 text-danger">&#x2718;
               {% endif %}
@@ -135,7 +137,7 @@
               {% if fechada %}
                 <script>fechados += 1</script>
               {% endif %}
-              <td class="fcol estados
+              <td style="cursor:pointer;" class="fcol estados
                 {% if fechada  %}
                   text-success">&#x2713;
                 {% else %}
