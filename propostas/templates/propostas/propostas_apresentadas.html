@@ -84,9 +84,134 @@
       var fechados = 0
     </script>
 
-    {% if propostas %}
-      <div class="table-responsive">
-      <table id="PropostasTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
+    <div class="table-responsive">
+      <table id="PropostasTable2" class="table table-bordered table-hover table-sm" style="width: 100%;">
+        <thead class="table-info">
+          <tr>
+            <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor do comitê analisou que a proposta seja publicada para os estudantes"><span id="autorizado-icon"></span></th>
+            <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"><span id="disponivel-icon"></span></th>
+            <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto"><span id="fechado-icon"></span></th>
+            <th scope="col" class="text-center">Proposta</th>
+            {% if edicao == "todas" %}
+              <th scope="col" class="periodo text-center">Período</th>
+            {% endif %}
+            <th scope="col" class="text-center organizacao">Organização</th>
+            <th scope="col" class="text-center" style="font-size: 12px;">Tipo</th>
+            <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>1</th>
+            <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>2</th>
+            <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>3</th>
+            <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>4</th>
+            <th scope="col" class="text-center" style="font-size: 12px;">Disciplinas Recomendadas</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {% for proposta in propostas %} 
+          {% with disponivel=proposta.disponivel %}
+          
+            <tr class="item"> 
+
+              
+              <td class="fcol estados
+              {% if proposta.autorizado  %}
+                text-success">&#x2713;
+              {% else %}
+                text-danger">&#x2718;
+              {% endif %}
+              </td>
+
+              {% if disponivel %}
+                <script>publicados += 1;</script>
+              {% endif %}
+              <td style="cursor:pointer;" class="fcol estados">
+                {% if disponivel %}
+                  <span class="text-success" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2713;</span>
+                {% else %}
+                  <span class="text-danger" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2718;</span>
+                {% endif %}
+              </td>
+
+              {% with fechada=proposta.projeto_set.exists %}
+              {% if fechada %}
+                <script>fechados += 1</script>
+              {% endif %}
+              <td class="fcol estados
+                {% if fechada  %}
+                  text-success">&#x2713;
+                {% else %}
+                  text-danger">&#x2718;
+                {% endif %}
+              </td>
+              {% endwith %}
+
+              <th scope="row">
+                <a href="{% url 'proposta_completa' proposta.id %}" target="_blank" rel="noopener noreferrer">
+                  {% if proposta.titulo %}{{proposta.titulo}}{% else %}Título não definido.{% endif %}
+                </a>
+              </th>
+
+              {% if edicao == "todas" %}
+                <td class="text-center periodo">{{proposta.ano}}.{{proposta.semestre}}</td>
+              {% endif %}
+
+              <td class="organizacao">
+                <div id="proposta{{proposta.id}}" style="float:left;width: 85%;">
+                  {% if proposta.organizacao %}
+                    <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+                      {{ proposta.organizacao.nome }}
+                    </a>
+                  {% elif proposta.nome_organizacao %}
+                    {{ proposta.nome_organizacao }}
+                  {% else %}
+                    Organização não definida.
+                  {% endif %}  
+                </div>
+                <div class="esconder" style="float:right;">
+                  <a data-proposta="{{proposta.id}}" class="link-organizacao"
+                    href="{% url 'link_organizacao' proposta.id %}"
+                    data-url="{% url 'link_organizacao' proposta.id %}"
+                    ><small>&#128279;</small></a>
+                </div>
+                
+              </td>
+
+              <td class="text-center" style="font-size: 12px;">
+                {% include "tipo_proposta.html" with descr_short=True %}
+              </td>
+
+              {% spaceless %}
+
+              {% for perfil in proposta.perfis %}
+                {% with nativamente=proposta.get_nativamente %}
+                  <td class="text-center estudantes">
+                    {% for curso in perfil.all %}
+                      <span {% if nativamente == curso %}style="font-weight: bold;"{% endif %}>{{curso.sigla_curta}} </span>
+                    {% empty %}
+                      {% if disponivel %}<span style="color:red">?</span>{% endif %}
+                    {% endfor %}
+                  </td>
+                {% endwith %}
+              {% endfor %}
+
+              <td style="font-size: 12px;">
+                <ul style="margin-bottom: 2px; padding-left: 16px;">
+                  {% for recomendada in proposta.recomendada_set.all %}
+                    {% if recomendada.disciplina %}
+                      <li>{{recomendada.disciplina.nome}};<br></li>
+                    {% else %}
+                      <li style="color:red">ERRO: NOME DE DISCIPLINA NÃO DEFINIDO;<br></li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </td>
+
+              {% endspaceless %}
+            </tr>
+
+          {% endwith %}
+          {% endfor %} 
+        </tbody>
+
         <caption style="text-align:right">
           <small style="font-size:12px">
             {% for curso in cursos %}
@@ -96,184 +221,6 @@
             <b>RE</b>: Regular | <b>IN</b>: Internacional | <b>IC</b>: Intercâmbio | <b>E!</b>: Empreendendo | <b>CO</b>: Em Colaboração
           </small>
         </caption>
-        <thead class="table-info">
-        <tr>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor do comitê analisou que a proposta seja publicada para os estudantes"><span id="autorizado-icon"></span></th>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"><span id="disponivel-icon"></span></th>
-          <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto"><span id="fechado-icon"></span></th>
-          <th scope="col" class="text-center">Proposta</th>
-          {% if edicao == "todas" %}
-            <th scope="col" class="periodo text-center">Período</th>
-          {% endif %}
-          <th scope="col" class="text-center organizacao">Organização</th>
-          <th scope="col" class="text-center" style="font-size: 12px;">Tipo</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>1</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>2</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>3</th>
-          <th scope="col" class="estudantes text-center" style="font-size: 12px;"><span class="estudante-icon"></span>4</th>
-          <th scope="col" class="text-center" style="font-size: 12px;">Disciplinas Recomendadas</th>
-        </tr>
-        </thead>
-        {% for proposta in propostas %} 
-        {% with disponivel=proposta.disponivel %}
-        
-          <tr class="item"> 
-
-            <td class="fcol estados
-            {% if proposta.autorizado  %}
-              text-success">&#x2713;
-            {% else %}
-              text-danger">&#x2718;
-            {% endif %}
-            </td>
-
-            {% if disponivel %}
-              <script>publicados += 1;</script>
-            {% endif %}
-            <td style="cursor:pointer;" class="fcol estados">
-              {% if disponivel %}
-                <span class="text-success" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2713;</span>
-              {% else %}
-                <span class="text-danger" id="disp{{proposta.id}}" onclick="disp({{proposta.id}})">&#x2718;</span>
-              {% endif %}
-            </td>
-
-            {% with fechada=proposta.projeto_set.exists %}
-            {% if fechada %}
-              <script>fechados += 1</script>
-            {% endif %}
-            <td class="fcol estados
-              {% if fechada  %}
-                text-success">&#x2713;
-              {% else %}
-                text-danger">&#x2718;
-              {% endif %}
-            </td>
-            {% endwith %}
-
-            <th scope="row">
-              <a href="{% url 'proposta_completa' proposta.id %}" target="_blank" rel="noopener noreferrer">
-                {% if proposta.titulo %}{{proposta.titulo}}{% else %}Título não definido.{% endif %}
-              </a>
-            </th>
-
-            {% if edicao == "todas" %}
-              <td class="text-center periodo">{{proposta.ano}}.{{proposta.semestre}}</td>
-            {% endif %}
-
-            <td class="organizacao">
-              <div id="proposta{{proposta.id}}" style="float:left;width: 85%;">
-                {% if proposta.organizacao %}
-                  <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-                    {{ proposta.organizacao.nome }}
-                  </a>
-                {% elif proposta.nome_organizacao %}
-                  {{ proposta.nome_organizacao }}
-                {% else %}
-                  Organização não definida.
-                {% endif %}  
-              </div>
-              <div class="esconder" style="float:right;">
-                <a data-proposta="{{proposta.id}}" class="link-organizacao"
-                  href="{% url 'link_organizacao' proposta.id %}"
-                  data-url="{% url 'link_organizacao' proposta.id %}"
-                  ><small>&#128279;</small></a>
-              </div>
-              
-            </td>
-
-            <td class="text-center" style="font-size: 12px;">
-              {% include "tipo_proposta.html" with descr_short=True %}
-            </td>
-
-            {% spaceless %}
-            <td class="text-center estudantes">
-
-              {% for curso in proposta.perfil1.all %}
-                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}} </span>
-                {% if proposta.get_nativamente == curso %}</b>{% endif %}
-              {% endfor %}
-              
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil1.all %}
-                {% if not disponivel %}
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {% else %}
-                  ?
-                {% endif %}
-              {% endif %}
-            </td>
-            <td class="text-center estudantes">
-
-              {% for curso in proposta.perfil2.all %}
-                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}} </span>
-                {% if proposta.get_nativamente == curso %}</b>{% endif %}
-              {% endfor %}
-
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil2.all %}
-                {% if not disponivel %}
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {% else %}
-                  ?
-                {% endif %}
-              {% endif %}
-            </td>
-            <td class="text-center estudantes">
-
-              {% for curso in proposta.perfil3.all %}
-                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}} </span>
-                {% if proposta.get_nativamente == curso %}</b>{% endif %}
-              {% endfor %}
-
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil3.all %}
-                {% if not disponivel %}
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {% else %}
-                  ?
-                {% endif %}
-              {% endif %}
-            </td>
-            <td class="text-center estudantes">
-
-              {% for curso in proposta.perfil4.all %}
-                {% if proposta.get_nativamente == curso %}<b data-toggle="tooltip" data-html="true" animation="true" title="proposta nativamente para estudantes de {{curso.nome}}">{% endif %}
-                  <span>{{curso.sigla_curta}} </span>
-                {% if proposta.get_nativamente == curso %}</b>{% endif %}
-              {% endfor %}
-
-              <!-- Se não defido conta para os 3 cursos -->
-              {% if not proposta.perfil4.all %}
-                {% if not disponivel %}
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {% else %}
-                  ?
-                {% endif %}
-              {% endif %}
-            </td>
-            {% endspaceless %}
-
-            <td style="font-size: 12px;">
-              <ul style="margin-bottom: 2px; padding-left: 16px;">
-                {% for recomendada in proposta.recomendada_set.all %}
-                  {% if recomendada.disciplina %}
-                    <li>{{recomendada.disciplina.nome}};<br></li>
-                  {% else %}
-                    <li style="color:red">ERRO: NOME DE DISCIPLINA NÃO DEFINIDO;<br></li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            </td>
-
-          </tr>
-
-        {% endwith %}
-        {% endfor %}
-
       </table>
       
       </div>
@@ -291,7 +238,7 @@
       <strong lang="en">Total Number of Published Proposals:</strong>
         <span id="propostas_publicadas"></span>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
-          ({{ propostas.count }})
+          {% if propostas %}({{ propostas.count }}){% else %}(---){% endif %}
         </a><br>
       
       <strong lang="pt">Número Total de Propostas Fechadas:</strong>
@@ -329,21 +276,22 @@
           {% for curso, vaga in vagas.items %}
             <tr>
               <td>{{curso}}</td>
-              <td style="text-align: right;">{{vaga.0}}</td>
-              <td style="text-align: right;">{{vaga.1}}</td>
-              <td style="text-align: right;">{{vaga.2|floatformat:1}}</td>
-              <td style="text-align: right;">{{vaga.3|floatformat:1}}</td>
-              <td style="text-align: right;">{{vaga.4}}</td>
+              <td style="text-align: right;">{{vaga.count}}</td>
+              <td style="text-align: right;">{{vaga.count_disp}}</td>
+              <td style="text-align: right;">{{vaga.prop|floatformat:1}}</td>
+              <td style="text-align: right;">{{vaga.prop_disp|floatformat:1}}</td>
+              <td style="text-align: right;">{{vaga.neces}}</td>
             </tr>
           {% endfor %}
-          <tr>
+         <tr>
             <td><b>Total</b></td>
             <td style="text-align: right;"></td>
             <td style="text-align: right;"></td>
-            <td style="text-align: right;"><b>{{total_vagas.2|floatformat:1}}</b></td>
-            <td style="text-align: right;"><b>{{total_vagas.3|floatformat:1}}</b></td>
-            <td style="text-align: right;"><b>{{total_vagas.4}}</b></td>
+            <td style="text-align: right;"><b>{{total_vagas.prop|floatformat:1}}</b></td>
+            <td style="text-align: right;"><b>{{total_vagas.prop_disp|floatformat:1}}</b></td>
+            <td style="text-align: right;"><b>{{total_vagas.neces}}</b></td>
           </tr>
+
         </tbody>
       </table>
       
@@ -367,12 +315,7 @@
           }
           $("#propostas_publicadas").html(publicados);
 
-          function success(response){
-            if (!response.atualizado) {
-              console.log("Erro ao disponibilizar proposta.");
-            }
-          };
-
+          function success(response){};
           {% include "ajax_default_function.js" %}
           
         }
@@ -380,8 +323,6 @@
 
     {% include "plot_barras.html" %}
     {% include "organizacao-modal.html" %}
-
-    {% endif %}
 
     <script>
       function carrega_pagina() {};

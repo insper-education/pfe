@@ -39,14 +39,14 @@
         label: "proporção de vagas disponíveis",
         labelColor: "#444444",
         backgroundColor: [{% for curso in vagas %}"#{{curso.cor}}", {% endfor %}],
-        data: [{% for value in vagas.values %}100*({{value.3|unlocalize}}/{{value.4}}), {% endfor %}],
+        data: [{% for value in vagas.values %}100*({{value.prop_disp|unlocalize}}/{{value.neces}}), {% endfor %}],
         stack: "Stack 0",
         {% comment %} xAxisID: "bar-x-disponiveis", {% endcomment %}
       },{
         label: "proporção de vagas totais (incluindo as não disponíveis)",
         labelColor: "#DDDDDD",
         backgroundColor: [{% for curso in vagas %}"#{{curso.cor|clarear}}60", {% endfor %}],  // Mais brilho e transparência
-        data: [{% for value in vagas.values %}100*({{value.2|unlocalize}}/{{value.4}}), {% endfor %}],
+        data: [{% for value in vagas.values %}100*({{value.prop|unlocalize}}/{{value.neces}}), {% endfor %}],
         stack: "Stack 0",
         {% comment %} xAxisID: "bar-x-totais", {% endcomment %}
       }]

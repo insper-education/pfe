@@ -586,22 +586,22 @@ class Proposta(models.Model):
     def get_nativamente(self):
         """Retorna em string com curso mais nativo da proposta."""
 
-        count = {}
+        # Initialize count dictionary for all cursos
+        count = {curso: 0 for curso in Curso.objects.all()}
         total = 0
 
-        for curso in Curso.objects.all():
-            count[curso] = 0
-
-        for ferfil in [self.perfil1, self.perfil3, self.perfil3, self.perfil4]:
-            for curso in ferfil.all(): 
+        # Count occurrences of each curso in perfis
+        for perfil in self.perfis():
+            for curso in perfil.all():
                 count[curso] += 1
                 total += 1
 
         if total == 0:
             return " "
 
-        keymax = max(count, key= lambda x: count[x])
-        if count[keymax] > total//2:
+        # Find the curso with the maximum count
+        keymax = max(count, key=count.get)
+        if count[keymax] > total // 2:
             return keymax
         return "?"
 
