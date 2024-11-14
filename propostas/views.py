@@ -460,16 +460,8 @@ def proposta_completa(request, primarykey):
 
     opcoes = Opcao.objects.filter(proposta=proposta)
 
-    procura = {}
-    procura["1"] = opcoes.filter(prioridade=1).count()
-    procura["2"] = opcoes.filter(prioridade=2).count()
-    procura["3"] = opcoes.filter(prioridade=3).count()
-    procura["4"] = opcoes.filter(prioridade=4).count()
-    procura["5"] = opcoes.filter(prioridade=5).count()
-
-    areas = Area.objects.filter(ativa=True)
-
-    liberacao_visualizacao = Evento.objects.filter(tipo_de_evento=113).last()
+    prioridades = 5
+    procura = {str(prioridade+1): opcoes.filter(prioridade=prioridade+1).count() for prioridade in range(prioridades)}
 
     titulo = "Proposta " + str(proposta.ano) + '.' + str(proposta.semestre)
     if proposta.organizacao:
@@ -485,10 +477,10 @@ def proposta_completa(request, primarykey):
         "comite": membros_comite,
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
-        "areast": areas,
+        "areast": Area.objects.filter(ativa=True),
         "procura": procura,
         "cursos": Curso.objects.all().order_by("id"),
-        "liberacao_visualizacao": liberacao_visualizacao,
+        "liberacao_visualizacao": Evento.objects.filter(tipo_de_evento=113).last(),
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 

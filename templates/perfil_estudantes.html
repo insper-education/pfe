@@ -17,7 +17,7 @@
   <table>
     <thead>
       <tr style="background-color: #EEF;">
-        <th style="text-align:center;"></th>
+        <th style="text-align:center;" colspan="2"></th>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
             <th style="text-align:center; width:138px;">
@@ -31,6 +31,7 @@
     <tbody>
       <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
         <td style="background-color: #EEF; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
+        <td style="background-color: #EEF; text-align:center;">#1</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
@@ -45,6 +46,7 @@
         {% endfor %}
       </tr>
       <tr>
+        <td style="background-color: #EEF; text-align:center;">#2</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
@@ -59,6 +61,7 @@
         {% endfor %}
       </tr>
       <tr>
+        <td style="background-color: #EEF; text-align:center;">#3</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
@@ -73,6 +76,7 @@
         {% endfor %}
       </tr>
       <tr>
+        <td style="background-color: #EEF; text-align:center;">#4</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
           <td style="text-align:center;">
