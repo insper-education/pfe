@@ -31,10 +31,10 @@
     <tbody>
       <tr> {% comment %} NAO EH A FORMA MAIS ELEGANTE MAS FUNCIONA POR ENQUANTO {% endcomment %}
         <td style="background-color: #EEF; text-align:center; writing-mode: vertical-lr;" rowspan="4">Estudantes</td>
-        <td style="background-color: #EEF; text-align:center;">#1</td>
+        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#1</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
-          <td style="text-align:center;">
+          <td class="linha1" style="text-align:center;">
             {% if editavel %}
                 <label style="line-height:0.6em; "><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}-1" 
                 {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
@@ -46,10 +46,10 @@
         {% endfor %}
       </tr>
       <tr>
-        <td style="background-color: #EEF; text-align:center;">#2</td>
+        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#2</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
-          <td style="text-align:center;">
+          <td class="linha2"  style="text-align:center;">
             {% if editavel %}
                 <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}-2" 
                 {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
@@ -61,10 +61,10 @@
         {% endfor %}
       </tr>
       <tr>
-        <td style="background-color: #EEF; text-align:center;">#3</td>
+        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#3</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
-          <td style="text-align:center;">
+          <td class="linha3"  style="text-align:center;">
             {% if editavel %}
                 <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}-3" 
                 {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
@@ -76,10 +76,10 @@
         {% endfor %}
       </tr>
       <tr>
-        <td style="background-color: #EEF; text-align:center;">#4</td>
+        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#4</td>
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
-          <td style="text-align:center;">
+          <td class="linha4"  style="text-align:center;">
             {% if editavel %}
                 <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}-4" 
                 {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
@@ -110,6 +110,40 @@
             }
           {% endif %}
         {% endfor %}
+
+
+        if( !(
+        {% for curso in cursos %}{% if curso.curso_do_insper %}
+          $("#alunos{{curso.sigla_curta}}1").is(":checked")
+          {% if not forloop.last %}||{% endif %}
+        {% endif %}{% endfor %} 
+        ) ) $(".linha1").css("background-color", "#DD111135");
+        else $(".linha1").css("background-color", "#FFFFFF00");
+
+        if( !(
+        {% for curso in cursos %}{% if curso.curso_do_insper %}
+          $("#alunos{{curso.sigla_curta}}2").is(":checked")
+          {% if not forloop.last %}||{% endif %}
+        {% endif %}{% endfor %} 
+        ) ) $(".linha2").css("background-color", "#DD111135");
+        else $(".linha2").css("background-color", "#FFFFFF00");
+
+        if( !(
+        {% for curso in cursos %}{% if curso.curso_do_insper %}
+          $("#alunos{{curso.sigla_curta}}3").is(":checked")
+          {% if not forloop.last %}||{% endif %}
+        {% endif %}{% endfor %} 
+        ) ) $(".linha3").css("background-color", "#DD111135");
+        else $(".linha3").css("background-color", "#FFFFFF00");
+
+        if( !(
+        {% for curso in cursos %}{% if curso.curso_do_insper %}
+          $("#alunos{{curso.sigla_curta}}4").is(":checked")
+          {% if not forloop.last %}||{% endif %}
+        {% endif %}{% endfor %} 
+        ) ) $(".linha4").css("background-color", "#DD111135");
+        else $(".linha4").css("background-color", "#FFFFFF00");
+
       }
 
       atualiza_colunas();
@@ -122,15 +156,15 @@
         {% if curso.curso_do_insper %}
           $("#alunos{{curso.sigla_curta}}").change(function() {
             if( $("#alunos{{curso.sigla_curta}}").is(":checked") ) {
-              $("#alunos{{curso.sigla_curta}}1").prop("checked", true).change();;
-              $("#alunos{{curso.sigla_curta}}2").prop("checked", true).change();;
-              $("#alunos{{curso.sigla_curta}}3").prop("checked", true).change();;
-              $("#alunos{{curso.sigla_curta}}4").prop("checked", true).change();;
+              $("#alunos{{curso.sigla_curta}}1").prop("checked", true).change();
+              $("#alunos{{curso.sigla_curta}}2").prop("checked", true).change();
+              $("#alunos{{curso.sigla_curta}}3").prop("checked", true).change();
+              $("#alunos{{curso.sigla_curta}}4").prop("checked", true).change();
             } else {
-              $("#alunos{{curso.sigla_curta}}1").prop("checked", false).change();;
-              $("#alunos{{curso.sigla_curta}}2").prop("checked", false).change();;
-              $("#alunos{{curso.sigla_curta}}3").prop("checked", false).change();;
-              $("#alunos{{curso.sigla_curta}}4").prop("checked", false).change();;
+              $("#alunos{{curso.sigla_curta}}1").prop("checked", false).change();
+              $("#alunos{{curso.sigla_curta}}2").prop("checked", false).change();
+              $("#alunos{{curso.sigla_curta}}3").prop("checked", false).change();
+              $("#alunos{{curso.sigla_curta}}4").prop("checked", false).change();
             }
           });
         {% endif %}
