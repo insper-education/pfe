@@ -482,10 +482,10 @@ class Proposta(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text="Quem autorizou a ser publicado para os alunos")
 
-    perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1")
-    perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2")
-    perfil3 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil3")
-    perfil4 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil4")
+    perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1", blank=True)
+    perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2", blank=True)
+    perfil3 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil3", blank=True)
+    perfil4 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil4", blank=True)
 
     data = models.DateTimeField(default=datetime.datetime.now,
                                 help_text="Data e hora da criação da proposta de projeto")
