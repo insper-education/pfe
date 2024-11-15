@@ -1002,12 +1002,22 @@ def bancas_tabela(request):
                         membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 for membro in banca.membros():
                     membros.setdefault(membro, []).append(banca)
-
-        context = {"membros": membros,}
+    
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                      {"pt": "e-mail", "en": "e-mail"},
+                      {"pt": "Grupos", "en": "Groups"},
+                      {"pt": "Projetos", "en": "Projects"}]
+        
+        context = {
+            "cabecalhos": cabecalhos,
+            "membros": membros,
+            }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": { "pt": "Alocação em Bancas", "en": "Evaluation Board Allocation" },
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
+            }
 
     return render(request, "professores/bancas_tabela.html", context)
 
@@ -1032,11 +1042,23 @@ def mentorias_tabela(request):
             for mentoria in mentorias.filter(projeto__isnull=False):
                 mentores.setdefault(mentoria.facilitador, []).append(mentoria)
 
-        context = {"mentores": mentores,}
+
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                      {"pt": "e-mail", "en": "e-mail"},
+                      {"pt": "Grupos", "en": "Groups"},
+                      {"pt": "Projetos", "en": "Projects"}]
+
+        context = {
+            "cabecalhos": cabecalhos,
+            "mentores": mentores,
+            }
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": { "pt": "Alocação em Mentorias", "en": "Mentoring Allocation" },
+            "edicoes": edicoes,
+            }
 
     return render(request, "professores/mentorias_tabela.html", context)
 
@@ -1060,11 +1082,20 @@ def aulas_tabela(request):
                 else:  # semestre == '2':
                     aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__gt=6)
 
-        context = {"aulas": aulas,}
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "Aula/Data", "en": "Class/Date"}]
+        context = {
+            "aulas": aulas,
+            "cabecalhos": cabecalhos,
+            }
 
     else:
         edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        context = {"edicoes": edicoes,}
+        context = {
+            "titulo": { "pt": "Alocação em Aulas", "en": "Class Allocation" },
+            "edicoes": edicoes,
+            }
 
     return render(request, "professores/aulas_tabela.html", context)
 
@@ -2879,11 +2910,13 @@ def coorientadores_tabela(request):
     
         context = {
             "orientacoes": orientacoes,
-            "cabecalhos": ["Nome", "e-mail", "Grupos", "Projetos", ],
-        }
+            "cabecalhos": [{"pt": "Nome", "en": "Name"},
+                           {"pt": "e-mail", "en": "e-mail"},
+                           {"pt": "Grupos", "en": "Groups"},
+                           {"pt": "Projetos", "en": "Projects"}, ],
+            }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto, anual=True)
         informacoes = [
             (".semestre", "Semestre"),
             (".organizacao", "Organização"),
@@ -2892,8 +2925,8 @@ def coorientadores_tabela(request):
         ]
 
         context = {
-            "edicoes": edicoes,
-            "titulo": "Alocação de Coorientadores",
+            "titulo": {"pt": "Alocação de Coorientadores", "en": "Co-Advisor Allocation"},
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
             "informacoes": informacoes,
         }
 

@@ -19,7 +19,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocação em Bancas</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "edicoes.html" %}
 
@@ -27,7 +30,10 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="avaliador" onClick="recarregar_pagina()"><span class="to_hide">Avaliador</span></label>
+            <label class="to_label input-group-text" for="avaliador" onClick="recarregar_pagina()"><span class="to_hide">
+              <span lang="pt">Avaliador</span>
+              <span lang="en">Evaluator</span>
+            </span></label>
           </div>
           <select id="avaliador" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
@@ -40,18 +46,7 @@
   </div>
 
   <div class="atualizar">
-
-    <div class="table-responsive">
-
-        <table id="BancasTable" class="table table-bordered table-hover table-sm" style="width: auto;">
-          <thead class="table-info">
-            <tr>
-              <th scope="col" style="text-align: center; width:300px;">Nome</th>
-              <th scope="col" style="text-align: center; width:300px;">e-mail</th>
-              <th scope="col" style="text-align: center; width:70px;">Grupos</th>
-              <th scope="col" style="text-align: center; width:auto;">Projetos</th>
-            </tr>
-          </thead>
+    {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
           {% for membro, bancas in membros.items %}
             {% if membro.tipo_de_usuario == 2 or membro.tipo_de_usuario == 4 %}
               <tr class="item" data-user="Insper">
@@ -71,20 +66,18 @@
               </td>
             </tr>
           {% endfor %}
-        </table>
-        <br>
-
+        </tbody>
+      </table>
     </div>
-
-    <script>
-      function carrega_pagina() {
-      };
-      window.onload = carrega_pagina
-    </script>
-
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Bancas' %}
+  <script>
+    function carrega_pagina() {
+    };
+    window.onload = carrega_pagina
+  </script>
+
+  {% include "edicoes_ajax.html" with tabela="Bancas" %}
 
   <script>
     $("#avaliador").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
@@ -101,5 +94,7 @@
      table.draw();
     });
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

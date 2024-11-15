@@ -19,7 +19,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocação em Aulas</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "edicoes.html" %}
 
@@ -41,16 +44,7 @@
 
   <div class="atualizar">
 
-    <div class="table-responsive">
-
-        <table id="AulasTable" class="table table-bordered table-hover table-sm">
-          <thead class="table-info">
-            <tr>
-              <th scope="col" style="text-align: center; width:20%;">Nome</th>
-              <th scope="col" style="text-align: center; width:20%;">e-mail</th>
-              <th scope="col" style="text-align: center;">Aula/Data</th>
-            </tr>
-          </thead>
+    {% include "tabelas_top_ml.html" with tabela="Aulas" cabecalhos=cabecalhos %}
           {% for aula in aulas %}
             {% if aula.responsavel %}
               {% if aula.responsavel.tipo_de_usuario == 2 or aula.responsavel.tipo_de_usuario == 4 %}
@@ -60,26 +54,26 @@
                 <tr class="item" data-user="Externo">
                   <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
               {% else %}
-                <tr class="item"><td>Erro ao identificar usuário
+                <tr class="item"><td>
+                  <span lang="pt">Erro ao identificar usuário</span>
+                  <span lang="en">Error identifying user</span>
               {% endif %}</td>
                 <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
                 <td style="text-align: left;">{{aula.atividade}} ({{aula.startDate}}) {% if aula.descricao %} - {{aula.descricao}}{% endif %}</td>
               </tr>
             {% endif %}
           {% endfor %}
-        </table>
-        <br>
-
+        </tbody>
+      </table>
     </div>
-
-    <script>
-      function carrega_pagina() {};
-      window.onload = carrega_pagina
-    </script>
-
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Aulas' %}
+  <script>
+    function carrega_pagina() {};
+    window.onload = carrega_pagina
+  </script>
+
+  {% include "edicoes_ajax.html" with tabela="Aulas" %}
 
   <script>
     $("#usuario").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
@@ -98,5 +92,7 @@
       $("#AulasTable").DataTable().draw();
     });
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

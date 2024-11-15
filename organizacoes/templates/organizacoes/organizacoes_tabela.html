@@ -14,7 +14,10 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">Alocação de Organizações Parceiras</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <div class="table-responsive">
 
@@ -23,8 +26,14 @@
       <table id="organizacoes"class="table table-bordered table-hover table-sm" style="width: auto;">
         <thead class="table-info">
           <tr>
-            <th scope="col" style="text-align: center;width:425px;"><span style="margin-right: 0.6ex;">Organização</span></th>
-            <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Projetos</span></th>
+            <th scope="col" style="text-align: center;width:425px;"><span style="margin-right: 0.6ex;">
+              <span lang="pt">Organização</span>
+              <span lang="en">Organization</span>
+            </span></th>
+            <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">
+              <span lang="pt">Projetos</span>
+              <span lang="en">Projects</span>
+            </span></th>
           </tr>
         </thead>
         {% for organizacao,projetos in organizacoes %} 
@@ -52,9 +61,7 @@
   
   </div>
 
-  <br>
-  <br>
-
   {% include "tabelas_simples_scripts.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

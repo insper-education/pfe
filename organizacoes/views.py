@@ -742,7 +742,10 @@ def organizacoes_tabela(request):
     # inverti lista deixando os mais novos primeiro
     anos = zip(organizacoes_pfe[::-1], periodo[::-1])
 
-    context = {"anos": anos,}
+    context = {
+        "titulo": {"pt": "Alocação de Organizações Parceiras", "en": "Partnership Organizations Allocation"},
+        "anos": anos,
+        }
 
     return render(request, "organizacoes/organizacoes_tabela.html", context)
 
