@@ -19,7 +19,12 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   {% include "edicoes.html" with com_cursos=True %}
 
   <div class="2areas2">
@@ -264,20 +269,34 @@
     </script>
     <br>
 
-    <b>Disponibilidade de Propostas:</b><br>
+    <b lang="pt">Disponibilidade de Propostas:</b>
+    <b lang="en">Proposals Availability:</b>
+    <br>
     {% with nao_disponivel=False %}
       {% include "propostas_nativamente.html" %}
     {% endwith %}
     <br>
 
-    <b>Estudantes Aplicando como Primeira Opção:</b><br>
-    &nbsp;&nbsp;nativamente multidisciplinar: {{aplicando_multidisciplinar}}<br>
+    <b lang="pt">Estudantes Aplicando como Primeira Opção:</b>
+    <b lang="en">Students Applying as First Option:</b>
+    <br>
+    <span style="margin-left: 10px;">
+      <span lang="pt">nativamente multidisciplinar: </span>
+      <span lang="en" style="display: none;">multidisciplinary natively: </span>
+      {{aplicando_multidisciplinar}}
+    </span><br>
     {% for key, value in aplicando_opcoes.items %} {% if value > 0 %}
-      &nbsp;&nbsp;nativamente de {{key.nome}}: {{value}}<br>
-      {% endif %} {% endfor %} 
+      <span style="margin-left: 10px;">
+        <span lang="pt">nativamente de </span>
+        <span lang="en" style="display: none;">natively in </span>
+        {{key.nome}}: {{value}}
+      </span><br>
+    {% endif %} {% endfor %} 
     <br>
 
-    <b>Áreas mais frequente em relação a busca e projetos:</b><br>
+    <b lang="pt">Áreas mais frequente em relação a busca e projetos:</b>
+    <b lang="en">Most frequent areas in relation to demand and projects:</b>
+    <br>
     <ol>
     {% for area, quantidade in areaspfe.items|dictsortreversed:1 %}
       <li>{{area}} : {{quantidade.0}}</li>
@@ -315,5 +334,7 @@
     $(document).ready(recarregar_pagina);
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

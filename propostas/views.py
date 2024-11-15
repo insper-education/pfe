@@ -235,7 +235,7 @@ def procura_propostas(request):
         })
 
     context = {
-        "titulo": "Procura pelas Propostas de Projetos",
+        "titulo": {"pt": "Procura pelas Propostas de Projetos", "en": "Demand for Project Proposals"},
         "tamanho": tamanho,
         "propostas": propostas,
         "escolhas": escolhas,
