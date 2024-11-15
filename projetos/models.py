@@ -609,6 +609,10 @@ class Proposta(models.Model):
         """Nome do arquivo do anexo."""
         return self.anexo.name.split('/')[-1]
 
+    def get_anexo(self):
+        """Nome do arquivo do anexo."""
+        return self.anexo.name.split('/')[-1]
+
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
 

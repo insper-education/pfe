@@ -312,12 +312,13 @@ def propostas_apresentadas(request):
                     prop_disp = 0
                     for i in range(1, 5):
                         perfil = getattr(proposta, f"perfil{i}").all()
+                        count = perfil.count()
                         if curso in perfil: 
                             count += 1
-                            prop += 1 / perfil.count()
+                            prop += 1 / count
                             if proposta.disponivel:
                                 count_disp += 1
-                                prop_disp += 1 / perfil.count()
+                                prop_disp += 1 / count
 
                     vagas[curso]["count"] += count
                     vagas[curso]["count_disp"] += count_disp
