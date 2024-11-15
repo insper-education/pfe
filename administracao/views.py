@@ -91,7 +91,9 @@ def index_administracao(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    context = {"titulo": "Carregar Dados",}
+    context = {
+        "titulo": {"pt": "Carregar Dados", "en": "Load Data"},
+        }
     return render(request, "administracao/carregar.html", context=context)
 
 
@@ -101,7 +103,7 @@ def index_carregar(request):
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados."""
     context = {
-        "titulo": "Cadastro de Disciplina",
+        "titulo": {"pt": "Cadastro de Disciplina", "en": "Course Registration"},
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "Disciplina": Disciplina,
     }
@@ -166,7 +168,7 @@ def cadastrar_organizacao(request, proposta_id=None):
         proposta = get_object_or_404(Proposta, id=proposta_id)
 
     context = {
-        "titulo": "Cadastro de Organização",
+        "titulo": {"pt": "Cadastro de Organização", "en": "Organization Registration"},
         "proposta": proposta,
         "organizacao": Organizacao,
     }
@@ -581,8 +583,6 @@ def desbloquear_usuarios(request):
 def exportar(request):
     """Exporta dados."""
 
-    titulo = "Exportar dados"
-
     if request.method == "POST" and request.user.tipo_de_usuario == 4:  # admin
         # configuracao = get_object_or_404(Configuracao)
     
@@ -670,7 +670,7 @@ def exportar(request):
     ]
 
     context = {
-        "titulo": titulo,
+        "titulo": {"pt": "Exportar Dados", "en": "Export Data"},
         "dados": dados,
         "edicoes": get_edicoes(Aluno)[0],
       }
@@ -683,8 +683,6 @@ def exportar(request):
 def relatorios(request):
     """gera relatorio dos dados."""
 
-    titulo = "Gera Relatórios"
-    
     relatorios = [
         ("Propostas", "propostas"),
         ("Projetos", "projetos"),
@@ -694,7 +692,7 @@ def relatorios(request):
     ]
 
     context = {
-        "titulo": titulo,
+        "titulo": {"pt": "Gera Relatórios", "en": "Reports"},
         "relatorios": relatorios,
         "edicoes": get_edicoes(Aluno)[0],
       }

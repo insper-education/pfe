@@ -7,7 +7,7 @@
 
 {% block head %}
   {% load static %}
-  {% load get_field %}
+  {% load get_field %} \
   <style>  
     thead {background-color: #BEE5EB;}
     textarea {max-width:100%;}
@@ -17,15 +17,26 @@
 {% endblock %}
 
 {% block content %}
+      
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  <span class="titulo">{{ titulo }}</span>
   <br>
 
   <form method="post" id="disciplinaform" enctype="multipart/form-data"> {% csrf_token %}
     
-    <label for="nome">Nome da Disciplina:</label> <input type="text" size="48" style="max-width:100%;display:block"
+    <label for="nome">
+      <span lang="pt">Nome da Disciplina:</span>
+      <span lang="en">Course Name:</span>
+    </label> <input type="text" size="48" style="max-width:100%;display:block"
            maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
-    <input class="btn btn-primary mb-1 mt-2" type="submit" value="Cadastrar Disciplina">
+
+    <button class="btn btn-primary mb-1 mt-2" type="submit">
+      <span lang="pt">Cadastrar Disciplina</span>
+      <span lang="en">Register Course</span>
+    </button>
     
     <br>
     {% if mensagem %}
@@ -39,7 +50,10 @@
     <br>
 
     <table id="disciplinas">
-      <thead><tr><th>Disciplinas Cadastradas</th></tr></thead>
+      <thead><tr><th>
+        <span lang="pt">Disciplinas Cadastradas</span>
+        <span lang="en">Registered Courses</span>
+      </th></tr></thead>
       <tbody>
       {% for disciplina in disciplinas %}
         <tr id="disciplina{{disciplina.id}}"><td>
@@ -71,5 +85,7 @@
       }
     }
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

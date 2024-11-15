@@ -284,7 +284,7 @@ def distribuicao_areas(request):
             areaspfe, outras = get_areas_propostas(propostas_projetos)
 
             context = {
-                "titulo": "Tendência de Áreas de Interesse",
+                # "titulo": "Tendência de Áreas de Interesse",
                 "total": propostas_projetos.count(),
                 "areaspfe": areaspfe,
                 "outras": outras,
@@ -297,7 +297,7 @@ def distribuicao_areas(request):
 
     edicoes, _, _ = get_edicoes(Aluno)
     context = {
-        "titulo": "Tendência de Áreas de Interesse",
+        "titulo": { "pt": "Tendência de Áreas de Interesse", "en": "Trend of Areas of Interest"},
         "edicoes": edicoes,
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
@@ -1148,6 +1148,7 @@ def certificacao_falconi(request):
 
     else:
         context = {
+            "titulo": {"pt": "Análise dos Conceitos das Certificações Falconi", "en": "Analysis of Falconi Certifications"},
             "edicoes": edicoes,
         }
 

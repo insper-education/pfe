@@ -16,21 +16,24 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <form method="post"> {% csrf_token %}
 
     {% include "edicoes.html" %}
     <br>
 
-    <table>
+    <table><tbody>
       {% for nome, dado in dados %}
         <tr>
           <td>{{ nome }}</td>
           <td><input type="checkbox" name="dados" value="{{dado}}"></td>
         </tr>
       {% endfor %}
-    </table>
+    </tbody></table>
     <br>
     
     <input type="submit" class="btn btn-primary mb-1 mt-2" name="formato" value="CSV">
@@ -44,9 +47,10 @@
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     };
-
     window.onload = carrega_site
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

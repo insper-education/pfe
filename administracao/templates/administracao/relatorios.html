@@ -16,7 +16,10 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <form method="post"> {% csrf_token %}
 
@@ -33,9 +36,14 @@
       {% endfor %}
     </table>
     <br><br>
-    
-    <input type="submit" class="btn btn-primary mb-1 mt-2" value="Enviar">
+
+    <button type="submit" class="btn btn-primary mb-1 mt-2">
+      <span lang="pt">Enviar</span>
+      <span lang="en">Send</span>
+    </button>
 
   </form>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

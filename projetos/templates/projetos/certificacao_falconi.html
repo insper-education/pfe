@@ -62,7 +62,10 @@
   </script>
   {% include "save_image.html" %}
   
-  <span class="titulo">Análise dos Conceitos das Certificações Falconi</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <div id="tudo">
 
@@ -245,21 +248,41 @@
         <br>
         {% if projetos_selecionados %}
           <div><ul style="list-style-type: '&#x2726; ';">
-            <li>Total de projetos realizados no semestre: {{selecionados|add:nao_selecionados}}</li>
-            <li>Projetos selecionados para certificação Falconi: {{selecionados}}</li>
-            <li>Projetos que obtiveram certificação <u>Destaque Capstone FALCONI-INSPER</u>: <span id="n_destaque"></span></li>
-            <li>Projetos que obtiveram certificação <u>Excelência Capstone FALCONI-INSPER</u>: <span id="n_excelencia"></span></li>
+            <li>
+              <span lang="pt">Total de projetos realizados no semestre: </span>
+              <span lang="en">Total of projects carried out in the semester: </span>
+              {{selecionados|add:nao_selecionados}}
+            </li>  
+            <li>
+              <span lang="pt">Projetos selecionados para certificação Falconi: </span>
+              <span lang="en">Projects selected for Falconi certification: </span>
+              {{selecionados}}
+            </li>
+            <li>
+              <span lang="pt">Projetos que obtiveram certificação</span>
+              <span lang="en">Projects that obtained certification</span>
+              <u>Destaque Capstone FALCONI-INSPER</u>: <span id="n_destaque"></span>
+            </li>
+            <li>
+              <span lang="pt">Projetos que obtiveram certificação</span>
+              <span lang="en">Projects that obtained certification</span>
+              <u>Excelência Capstone FALCONI-INSPER</u>: <span id="n_excelencia"></span>
+            </li>
           </ul></div><br><br>
         {% else %}
           <div>
-            Não há projetos selecionados para certificação Falconi nesta edição.
+            <span lang="pt">Não há projetos selecionados para certificação Falconi nesta edição.</span>
+            <span lang="en">There are no projects selected for Falconi certification in this edition.</span>
           </div>
         {% endif %}
 
         {% if projetos_selecionados %}
 
             <p style="page-break-before: always"></p>
-            <h4 style="margin-bottom: 18px;">Projetos Selecionados:</h4>
+            <h4 style="margin-bottom: 18px;">
+              <span lang="pt">Projetos Selecionados:</span>
+              <span lang="en">Selected Projects:</span>
+            </h4>
             
             <script>
                 var n_destaque = 0;
@@ -392,5 +415,7 @@
   </div>
     
   {% include "edicoes_ajax.html" %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

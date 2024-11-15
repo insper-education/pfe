@@ -108,7 +108,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     configuracao = get_object_or_404(Configuracao)
     coordenacao = configuracao.coordenacao
     context = {
-        "titulo": "Certificados Emitidos",
+        "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
         "coordenacao": coordenacao,
         "configuracao": configuracao,
     }
@@ -217,9 +217,9 @@ def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
     context = {
+        "titulo": {"pt": "Seleção de Geração de Certificados", "en": "Certificate Generation Selection"},
         "edicoes": get_edicoes(Projeto)[0],
         "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
-        "titulo": "Seleção de Geração de Certificados",
         }
     return render(request, "documentos/selecao_geracao_certificados.html", context)
 
@@ -496,7 +496,7 @@ def exportar_documentos_projetos(request):
     tipos_documentos = TipoDocumento.objects.filter(projeto=True)
 
     context = {
-        "titulo": "Exportar Documentos dos Projetos",
+        "titulo": {"pt": "Exportar Documentos dos Projetos", "en": "Export Project Documents"},
         "edicoes": get_edicoes(Projeto)[0],
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,

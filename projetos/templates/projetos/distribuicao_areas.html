@@ -36,12 +36,18 @@
   <script>
     var save_image_file_name = "distribuicao_areas_capstone";
   </script>
+
   {% include "save_image.html" %}
 
   <div id="tudo">
 
-        <span class="titulo">{{ titulo }}</span>
+        <span class="titulo">
+          <span lang="pt">{{ titulo.pt }}</span>
+          <span lang="en">{{ titulo.en }}</span>
+        </span>
+
         {% include "edicoes.html" with com_cursos=True com_tipos=True %}
+
         <br>
 
         <div class="atualizar">
@@ -75,7 +81,8 @@
             </div>
 
             <div style="line-height: 1;">
-                <b>Outras:</b>
+                <b lang="pt">Outras:</b>
+                <b lang="en">Others:</b>
                 {% for outra in outras %}
                     {{outra.outras}}{% if not forloop.last %},{% endif %}
                 {% endfor %}
@@ -114,5 +121,7 @@
         {% include "edicoes_ajax.html" with com_cursos=True com_tipo=True %}
 
     </div>
+
+    {% include "linguas.html" %}
 
 {% endblock %}

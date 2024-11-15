@@ -10,9 +10,16 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   <br>
-  Selecione a data e os tipos de certificados a serem gerados:
+
+  <span lang="pt">Selecione a data e os tipos de certificados a serem gerados:</span>
+  <span lang="en">Select the date and the types of certificates to be generated:</span>
+  
   <br>
 
   <form method="post" action="{% url 'gerar_certificados' %}" enctype="multipart/form-data"> {% csrf_token %}
@@ -29,8 +36,14 @@
     <label><input id="mentoria_profissional" name="mentoria_profissional" type="checkbox" checked /> Mentorias Profissionais (antiga Mentoria Falconi)</label>&nbsp;&nbsp;&nbsp;
     <br><br>
 
-    <input class="btn btn-primary" type="submit" value="Gerar">
+    {% comment %} <input class="btn btn-primary" type="submit" value="Gerar"> {% endcomment %}
+    <button class="btn btn-primary mb-1 mt-2" type="submit">
+      <span lang="pt">Gerar Certificados</span>
+      <span lang="en">Generate Certificates</span>
+    </button>
 
   </form>
+
+  {% include "linguas.html" %}
 
 {% endblock %}
