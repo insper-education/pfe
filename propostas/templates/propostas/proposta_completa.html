@@ -85,48 +85,96 @@
   <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <br><b>Conformidade de Proposta: </b>
+    <div style="margin-top: 22px; margin-bottom: 8px;">
+      <b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
+        title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
+        Analisada por</label></b>:
+      <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
+          <option value='0'> ---- </option>
+          {% for pessoa in comite %}
+            <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
+              {{pessoa}}
+            </option>
+          {% endfor %}
+      </select>
+    </div>
+
+    <b>Conformidade de Proposta: </b>
     {% include "conformidade.html" %}
 
-    <br><b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
-      title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-      Analisada por</label></b>:
-    <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
-        <option value='0'> ---- </option>
-        {% for pessoa in comite %}
-          <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
-            {{pessoa}}
-          </option>  
-        {% endfor %}
-    </select>
-
-    <br><b data-toggle="tooltip" data-html="true" animation="true" 
+    <b data-toggle="tooltip" data-html="true" animation="true" 
            title="Mesmo ao disponibilizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
       Disponibilizar:
     </b>
-    <label style="margin: 2px;"><input class="fechar_proposta" type="radio" name="disponibilizar" value="sim"
+    <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="sim"
       {% if proposta.disponivel %}checked{% endif %}
     > Sim</label>
-    <label style="margin: 2px;"><input class="fechar_proposta" type="radio" name="disponibilizar" value="nao"
+    <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="nao"
       {% if not proposta.disponivel %}checked{% endif %}
     > Não</label>
     &nbsp;&nbsp;<small style="font-size: 12px; display: block;">Previsão para liberar visualização de propostas para estudantes em: {{liberacao_visualizacao.startDate}}</small> 
 
     <div id="valor_atualizado" style="display: none; width: fit-content;padding-left: 8px;padding-right: 8px;"></div>
 
+    <script>
+      $(document).ready(function() {
+        function toggleConformidade() {
+            var autorizadorValue = $("#autorizador").val();
+            if (autorizadorValue === '0' || autorizadorValue === '') {
+                $(".conformidade").prop("disabled", true);
+            } else {
+                $(".conformidade").prop("disabled", false);
+            }
+        }
+
+        // Primeira interação
+        toggleConformidade();
+
+        // Sempre que mudar verificar
+        $("#autorizador").change(function() {
+            toggleConformidade();
+        });
+
+        function toggleDisponibilizar() {
+          var allChecked = true;
+          $(".conformidade").each(function() {
+              if (!$(this).is(":checked")) {
+                  allChecked = false;
+              }
+          });
+
+          if (allChecked) {
+              $(".disponibilizar").prop("disabled", false);
+          } else {
+              $(".disponibilizar").prop("disabled", true);
+          }
+        }
+
+        // Initial check
+        toggleDisponibilizar();
+
+        // Check on change
+        $(".conformidade").change(function() {
+            toggleDisponibilizar();
+        });
+
+      });
+
+    </script>
+
     <br><br>
     <div style="max-width: 56em; text-align: center;">
-    <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
-    <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
-    
-    {% for projeto in projetos %}
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-      <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
-    {% empty %}
-      <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
-      onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
-      <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
-    {% endfor %}
+      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
+      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+      
+      {% for projeto in projetos %}
+        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
+        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
+      {% empty %}
+        <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
+        onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
+        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
+      {% endfor %}
     </div>
     <br>
 
