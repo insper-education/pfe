@@ -294,6 +294,7 @@ def propostas_apresentadas(request):
 
             disponivel_multidisciplinar = [0, 0]
 
+            
             for proposta in propostas_filtradas:
                 p = proposta.get_nativamente()
                 if isinstance(p, Curso):
@@ -312,13 +313,13 @@ def propostas_apresentadas(request):
                     prop_disp = 0
                     for i in range(1, 5):
                         perfil = getattr(proposta, f"perfil{i}").all()
-                        count = perfil.count()
+                        count_tot_perfil = perfil.count()
                         if curso in perfil: 
                             count += 1
-                            prop += 1 / count
+                            prop += 1 / count_tot_perfil
                             if proposta.disponivel:
                                 count_disp += 1
-                                prop_disp += 1 / count
+                                prop_disp += 1 / count_tot_perfil
 
                     vagas[curso]["count"] += count
                     vagas[curso]["count_disp"] += count_disp
