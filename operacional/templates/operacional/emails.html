@@ -24,8 +24,6 @@
       }
       if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += conexoes;}
       mailto += "?cc={{coordenacao.user.email}}";
-      //mailto += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}";
-      //mailto += ",pfe@insper.edu.br";
       mailto += "&subject=Capstone%20"
       if(avancado) {mailto += "Avançado%20";}
       mailto += "-%20Projeto:%20"
@@ -79,26 +77,19 @@
       <div class="ml-3">
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-              <span class="input-group-text">comitê Capstone</span>
+              <span class="input-group-text">
+                <span lang="pt">Comitê Capstone</span><span lang="en">Capstone Committee</span>
+              </span>
           </div>
           <div class="meio_separador input-group-addon"></div>
           <div class="input-group-append  ml-1">
             <a href="
               mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}?cc={{coordenacao.user.email}}
-              {% comment %} ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br {% endcomment %}
               &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
               atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
             " target="_blank">
-            {% comment %}
-            <a href="
-              mailto:{% for membro in membros_comite %}{{membro.get_full_name|parse_quote}}%20&lt;{{membro.email|parse_quote}}&gt;{% if not forloop.last %};{% endif %}{% endfor %}
-              ?cc=Luciano%20Pereira%20Soares&lt;{{coordenacao.user.email}}&gt;,Capstone&lt;pfe@insper.edu.br&gt;
-              &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
-              atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-            ">
-            {% endcomment %}
               <button class="btn btn-outline-secondary btn-sm" type="button">
-                todos
+                <span lang="pt">todos</span><span lang="en">all</span>
               </button>
             </a>
           </div>
@@ -113,7 +104,9 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
-          <label class="input-group-text" for="filterEdicaoSemestre">Edição</label>
+          <label class="input-group-text" for="filterEdicaoSemestre">
+            <span lang="pt">Edição</span><span lang="en">Edition</span>
+          </label>
         </div>
         <div class="input-group-sm">
           <select class="custom-select" id="filterEdicaoSemestre">
@@ -133,22 +126,29 @@
         <div class="input-group-append">
           <a id="Estudantes" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              Estudantes
+              <span lang="pt">Estudantes</span><span lang="en">Students</span>
             </button>
           </a>
+
+          <a id="EstudantesInsper" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              <span lang="pt">Só Estudantes Insper</span><span lang="en">Only Insper Students</span>
+            </button>
+          </a>
+
           <a id="Orientadores" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              Orientadores
+              <span lang="pt">Orientadores</span><span lang="en">Advisors</span>
             </button>
           </a>
           <a id="Parceiros" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              Parceiros
+              <span lang="pt">Parceiros</span><span lang="en">Partners</span>
             </button>
           </a>
           <a id="Bancas" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              Bancas
+              <span lang="pt">Bancas</span><span lang="en">Evaluation Committees</span>
             </button>
           </a>
         </div>
@@ -161,18 +161,26 @@
   <strong lang="pt">Por projeto</strong><strong lang="en">By project</strong>
   <br>
   <small>
-    &nbsp;&nbsp;<b>Copiados:</b>
+    &nbsp;&nbsp;<b>
+      <span lang="pt">Copiados:</span><span lang="en">Copied:</span>
+    </b>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
-      <label class="form-check-label" for="estudantes">Estudantes</label>
+      <label class="form-check-label" for="estudantes">
+        <span lang="pt">Estudantes</span><span lang="en">Students</span>
+      </label>
     </div>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="orientador" value="orientador" checked>
-      <label class="form-check-label" for="orientador">Orientador</label>
+      <label class="form-check-label" for="orientador">
+        <span lang="pt">Orientador</span><span lang="en">Advisor</span>
+      </label>
     </div>
     <div class="form-check form-check-inline mr-0">
       <input class="form-check-input" type="checkbox" id="parceiros" value="parceiros" checked>
-      <label class="form-check-label" for="parceiros">Parceiros</label>
+      <label class="form-check-label" for="parceiros">
+        <span lang="pt">Parceiros</span><span lang="en">Partners</span>
+      </label>
     </div>
   </small>
 
@@ -180,7 +188,9 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
-          <label class="input-group-text" for="filterEdicaoProjetos">Edição</label>
+          <label class="input-group-text" for="filterEdicaoProjetos">
+            <span lang="pt">Edição</span><span lang="en">Edition</span>
+          </label>
         </div>
         <div class="input-group-sm">
           <select class="custom-select" id="filterEdicaoProjetos">
@@ -195,7 +205,7 @@
           </div>
         </div>
         <div class="meio_separador input-group-addon"></div>
-        <div id="sequenc_projetos" class="input-group-append">XXXX</div>
+        <div id="sequenc_projetos" class="input-group-append"></div>
       </div>
     </div>
   </div>
@@ -203,72 +213,52 @@
   <br>
   {% comment %} Texto em Vermelho {% endcomment %}
   <div class="text-danger">
-    <b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente,
-    nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail.
+    <span lang="pt">
+      <b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente,
+      nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail.
+    </span>
+    <span lang="en">
+      <b>Attention:</b> the e-mails are generated automatically and the address line may become too long and not work directly,
+      in these cases, try copying the addresses with the right button and pasting them into your e-mail client.
+    </span>
   </div>
 
   {% if user.tipo_de_usuario == 4 %}
     <br>
-    <b>Acesso de administração:</b>
+    <b lang="pt">Acesso de administração:</b>
+    <b lang="en">Administration access:</b>
     <br>
     {% if todos_alunos %}
       <a href="
         mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }},{% endfor %}
         ?cc={{coordenacao.user.email}}
-        {% comment %} ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br {% endcomment %}
-        {% comment %} &amp;bcc=comitepfe@insper.edu.br {% endcomment %}
         &amp;subject=Capstone%20&amp;body=Caros%20estudantes,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      ">Todos estudantes</a><br>
-      {% comment %}
-      <a href="
-        mailto:{% for aluno in todos_alunos %}{{aluno.user.get_full_name|parse_quote}}%20&lt;{{ aluno.user.email|parse_quote }}&gt;,{% endfor %}
-        ?cc=Luciano%20Pereira%20Soares&lt;{{coordenacao.user.email}}&gt;,Capstone&lt;pfe@insper.edu.br&gt;
-        &amp;bcc=ComiteCapstone&lt;comitepfe@insper.edu.br&gt;
-        &amp;subject=Capstone%20&amp;body=Caros%20alunos,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      ">Todos os estudantes do Capstone</a><br>
-      {% endcomment %}
+      ">
+        <span lang="pt">Todos estudantes</span><span lang="en">All students</span>
+      </a><br>
     {% endif %}
 
     {% if todos_professores %}
       <a href="
         mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }},{% endfor %}
         ?cc={{coordenacao.user.email}}
-        {% comment %} ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br {% endcomment %}
-        {% comment %} &amp;bcc=comitepfe@insper.edu.br {% endcomment %}
         &amp;subject=Capstone&amp;body=Caros%20professores%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      " target="_blank">Todos professores</a><br>
-      {% comment %}     
-      <a href="
-        mailto:{% for professor in todos_professores %}{{professor.user.get_full_name|parse_quote}}%20&lt;{{ professor.user.email|parse_quote }}&gt;,{% endfor %}
-        ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br
-        &amp;bcc=Comite%20Capstone&lt;comitepfe@insper.edu.br&gt;
-        &amp;subject=Capstone&amp;body=Caros%20professores%20do%Capstone,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      ">Todos os professores do Capstone</a><br>
-      {% endcomment %}
+      " target="_blank">
+        <span lang="pt">Todos professores</span><span lang="en">All professors</span>
+      </a><br>
     {% endif %}
 
     {% if todos_parceiros %}
       <a href="
         mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }},{% endfor %}
         ?cc={{coordenacao.user.email}}
-        {% comment %} ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br {% endcomment %}
-        {% comment %} &amp;bcc=comitepfe@insper.edu.br {% endcomment %}
         &amp;subject=Capstone&amp;body=Caros%20parceiro%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      " target="_blank">Todos parceiros</a><br>
-      {% comment %}
-      <a href="
-        mailto:{% for parceiro in todos_parceiros %}{{parceiro.user.get_full_name|parse_quote}}%20&lt;{{ parceiro.user.email|parse_quote }}&gt;,{% endfor %}
-        ?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br
-        &amp;bcc=Comite%20Capstone&lt;comitepfe@insper.edu.br&gt;
-        &amp;subject=Capstone&amp;body=Caros%20parceiro%20do%Capstone,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      ">Todos os parceiros do Capstone</a><br>
-      {% endcomment %}
+      " target="_blank">
+        <span lang="pt">Todos parceiros</span><span lang="en">All partners</span>
+      </a><br>
     {% endif %}
 
   {% endif %}
@@ -286,6 +276,7 @@
       }
 
       $("#Estudantes").hide();
+      $("#EstudantesInsper").hide();
       $("#Orientadores").hide();
       $("#Parceiros").hide();
       $("#Bancas").hide();
@@ -308,18 +299,29 @@
 
               var emails = [];
               for (var id in response.Estudantes) {
-                //str += response.Estudantes[id][0] + "%20" + response.Estudantes[id][1] + "%20<" + response.Estudantes[id][2] + ">,";
-                //str += response.Estudantes[id][2];
-                //str += ",";
                 emails.push(response.Estudantes[id][2]);
               }
               str += emails.join(';');
 
-              //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              //str += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
               $("#Estudantes").attr("href",str);
               $("#Estudantes").show();
+            }
+
+
+            // Estudantes só Insper
+            if(response.EstudantesInsper.length) {
+              var str = "mailto:";
+
+              var emails = [];
+              for (var id in response.EstudantesInsper) {
+                emails.push(response.EstudantesInsper[id][2]);
+              }
+              str += emails.join(';');
+
+              str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
+              $("#EstudantesInsper").attr("href",str);
+              $("#EstudantesInsper").show();
             }
 
             // Orientadores
@@ -328,15 +330,11 @@
 
               var emails = [];
               for (var id in response.Orientadores) {
-                //str += response.Orientadores[id][0] + "%20" + response.Orientadores[id][1] + "%20<" + response.Orientadores[id][2] + ">,";
-                //str += response.Orientadores[id][2] + ",";
                 emails.push(response.Orientadores[id][2]);
               }
               str += emails.join(";");
 
-              //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              //str += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
               $("#Orientadores").attr("href",str);
               $("#Orientadores").show();
             }
@@ -347,16 +345,11 @@
 
               var emails = [];
               for (var id in response.Parceiros) {
-                //str += response.Parceiros[id][0] + "%20" + response.Parceiros[id][1] + "%20<" + response.Parceiros[id][2] + ">,";
-                //str += response.Parceiros[id][2] + ",";
                 emails.push(response.Parceiros[id][2]);
               }
               str += emails.join(';');
 
-              //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20parceiros,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}"
-              //str += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %}"
-              //str += ",pfe@insper.edu.br&bcc=comitepfe@insper.edu.br"
               str += "&subject=Capstone&body=Parceiros%20do%20Capstone%20Insper,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
               $("#Parceiros").attr("href",str);
               $("#Parceiros").show();
@@ -368,15 +361,11 @@
 
               var emails = [];
               for (var id in response.Bancas) {
-                //str += response.Bancas[id][0] + "%20" + response.Bancas[id][1] + "%20<" + response.Bancas[id][2] + ">,";
-                //str += response.Bancas[id][2] + ",";
                 emails.push(response.Bancas[id][2]);
               }
               str += emails.join(';');
 
-              //str += "?cc=Luciano%20Pereira%20Soares<{{coordenacao.user.email}}>,Capstone<pfe@insper.edu.br>&bcc=Comite%20Capstone<comitepfe@insper.edu.br>&subject=Capstone&body=Caros%20membros%20de%bancas,%0D%0A%0D%0Aatenciosamente,%20Luciano%20P%20Soares%20(coordenação%20Capstone)";
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              //str += "?cc={% for coordenador in administradores %}{{coordenador.email|parse_quote}}{% if not forloop.last %};{% endif %}{% endfor %},pfe@insper.edu.br&bcc=comitepfe@insper.edu.br&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
               $("#Bancas").attr("href",str);
               $("#Bancas").show();
             }
@@ -395,7 +384,7 @@
       var edicao = $("#filterEdicaoProjetos option:selected").attr("value");
       $.ajax({
         type: "POST",
-        url: "{% url "emails_projetos" %}",
+        url: '{% url "emails_projetos" %}',
         data: {
             edicao: edicao,
             "csrfmiddlewaretoken": "{{ csrf_token }}",
@@ -422,7 +411,6 @@
 
   </script>
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

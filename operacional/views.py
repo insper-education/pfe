@@ -127,60 +127,46 @@ def emails_semestre(request):
         if "edicao" in request.POST:
             ano, semestre = request.POST["edicao"].split('.')
 
-            estudantes = []  # Estudantes do semestre
-            orientadores = []  # Orientadores por semestre
-            organizacoes = []  # Controla as organizações participantes p/semestre
+            orientadores = set()  # Orientadores por semestre
+            organizacoes = set()  # Controla as organizações participantes p/semestre
             conexoes = []  # Parceiros das Organizações no semestre
-            membros_bancas = []  # Membros das bancas
+            membros_bancas = set()  # Membros das bancas
 
-            for projeto in Projeto.objects.filter(ano=ano).filter(semestre=semestre):
-                if Aluno.objects.filter(alocacao__projeto=projeto):  # checa se há alunos
-                    estudantes += Aluno.objects.filter(trancado=False).\
-                        filter(alocacao__projeto=projeto).\
-                        filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-
-                if projeto.orientador and (projeto.orientador not in orientadores):
-                    orientadores.append(projeto.orientador)  # Junta orientadores do semestre
-
-                if projeto.organizacao not in organizacoes:
-                    organizacoes.append(projeto.organizacao)  # Junta organizações do semestre
+            for projeto in Projeto.objects.filter(ano=ano, semestre=semestre):
+                if projeto.orientador:
+                    orientadores.add(projeto.orientador)  # Junta orientadores do semestre
+                if projeto.organizacao:
+                    organizacoes.add(projeto.organizacao)  # Junta organizações do semestre
 
                 conexoes += list(Conexao.objects.filter(projeto=projeto))
 
-                bancas = Banca.objects.filter(projeto=projeto)
+                bancas = Banca.objects.filter(projeto=projeto).select_related("membro1", "membro2", "membro3")
                 for banca in bancas:
-                    if banca.membro1 and (banca.membro1 not in membros_bancas):
-                        membros_bancas.append(banca.membro1)
-                    if banca.membro2 and (banca.membro2 not in membros_bancas):
-                        membros_bancas.append(banca.membro2)
-                    if banca.membro3 and (banca.membro3 not in membros_bancas):
-                        membros_bancas.append(banca.membro3)
-
-            # Cria listas para estudantes que ainda não estão em projetos
-            estudantes_sem_projeto = Aluno.objects.filter(trancado=False).\
-                filter(anoPFE=ano).\
-                filter(semestrePFE=semestre).\
-                filter(user__tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[0][0])
-            for estudante in estudantes_sem_projeto:
-                if estudante not in estudantes:
-                    estudantes.append(estudante)
+                    if banca.membro1:
+                        membros_bancas.add(banca.membro1)
+                    if banca.membro2:
+                        membros_bancas.add(banca.membro2)
+                    if banca.membro3:
+                        membros_bancas.add(banca.membro3)
 
             data = {}  # Dicionario com as pessoas do projeto
-            data["Estudantes"] = []
-            for i in estudantes:
-                data["Estudantes"].append([i.user.first_name, i.user.last_name, i.user.email])
 
-            data["Orientadores"] = []
-            for i in orientadores:
-                data["Orientadores"].append([i.user.first_name, i.user.last_name, i.user.email])
+            # Estudantes do semestre
+            estudantes = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
+            data["Estudantes"] = list(estudantes.values_list("user__first_name", "user__last_name", "user__email"))
 
-            data["Parceiros"] = []
-            for c in conexoes:
-                data["Parceiros"].append([c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email])
+            # Estudantes do semestre do Insper
+            estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, curso2__curso_do_insper=True).select_related("user")
+            data["EstudantesInsper"] = list(estudantesInsper.values_list("user__first_name", "user__last_name", "user__email"))
 
-            data["Bancas"] = []
-            for i in membros_bancas:
-                data["Bancas"].append([i.first_name, i.last_name, i.email])
+            # Orientadores
+            data["Orientadores"] = [[i.user.first_name, i.user.last_name, i.user.email] for i in orientadores]
+
+            # Parceiros
+            data["Parceiros"] = [[c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email] for c in conexoes]
+
+            # Bancas
+            data["Bancas"] = [[i.first_name, i.last_name, i.email] for i in membros_bancas]
 
             return JsonResponse(data)
 
