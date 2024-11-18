@@ -997,7 +997,7 @@ def bancas_tabela(request):
             membros = dict()
             
             for banca in bancas:
-                if banca.projeto.orientador:
+                if banca.projeto and banca.projeto.orientador:
                     if banca.tipo_de_banca != 2:  # Nao eh Falconi
                         membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 for membro in banca.membros():
