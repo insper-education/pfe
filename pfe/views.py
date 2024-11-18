@@ -43,25 +43,10 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    propostas = Proposta.objects.filter(disponivel=True)
-    for proposta in propostas:
-        proposta.habilidades = True
-        proposta.design = True
-        proposta.realistico = True
-        proposta.normas = True
-        proposta.restricoes = True
-        proposta.experimentacao = True
-        proposta.equipe = True
-        proposta.duracao = True
-        proposta.carga = True
-        proposta.mensuravel = True
-        proposta.save()
+    message = "Nada Feito"
 
     return HttpResponse(message)
