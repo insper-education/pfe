@@ -576,36 +576,36 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
     recipient_list = []
 
-    mensagem += 'Membros da Banca:<br><ul style="margin-top: 2px;">'
+    mensagem += "Membros da Banca:<br>"
 
     # Orientador
     if projeto.orientador:
-        mensagem += "<li>" + projeto.orientador.user.get_full_name() + " [orientador] "
-        mensagem += '<a href="mailto:' + projeto.orientador.user.email + '">&lt;' + projeto.orientador.user.email + "&gt;</a></li>"
+        mensagem += "&nbsp;&bull; " + projeto.orientador.user.get_full_name() + " [orientador] "
+        mensagem += '<a href="mailto:' + projeto.orientador.user.email + '">&lt;' + projeto.orientador.user.email + "&gt;</a><br>"
         recipient_list.append(projeto.orientador.user.email)
 
     # coorientadores
     for coorientador in projeto.coorientador_set.all():
-        mensagem += "<li>" + coorientador.usuario.get_full_name() + " [coorientador] "
-        mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a></li>"
+        mensagem += "&nbsp;&bull; " + coorientador.usuario.get_full_name() + " [coorientador] "
+        mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a><br>"
         recipient_list.append(coorientador.usuario.email)
 
     # membros
     for membro in banca.membros():
-        mensagem += "<li>" + membro.get_full_name() + " [membro da banca] "
-        mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a></li>"
+        mensagem += "&nbsp;&bull; " + membro.get_full_name() + " [membro da banca] "
+        mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a><br>"
         recipient_list.append(membro.email)
-    mensagem += "</ul>"
+    mensagem += "<br>"
 
-    mensagem += 'Grupo de Estudantes:<br><ul style="margin-top: 2px;">'
+    mensagem += "Grupo de Estudantes:<br>"
 
     # estudantes
     for alocacao in projeto.alocacao_set.all():
-        mensagem += "<li>" + alocacao.aluno.user.get_full_name()
+        mensagem += "&nbsp;&bull; " + alocacao.aluno.user.get_full_name()
         mensagem += " [" + str(alocacao.aluno.curso2) + "] "
-        mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a></li>"
+        mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a><br>"
         recipient_list.append(alocacao.aluno.user.email)
-    mensagem += "</ul>"
+    mensagem += "<br>"
 
     # Adiciona coordenacao e operacaos
     configuracao = get_object_or_404(Configuracao)
@@ -614,11 +614,12 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     if configuracao.operacao:
         recipient_list.append(str(configuracao.operacao.email))
 
-    if enviar:
-        check = email(subject, recipient_list, mensagem)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
+    print(mensagem)
+    # if enviar:
+    #     check = email(subject, recipient_list, mensagem)
+    #     if check != 1:
+    #         error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+    #         logger.error(error_message)
     
     return error_message
     
