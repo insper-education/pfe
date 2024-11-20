@@ -14,6 +14,7 @@ from django.conf import settings
 from django.utils import html
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
+from django.db.models import Count, Q
 
 from projetos.models import Proposta, Configuracao
 from projetos.models import Area, AreaDeInteresse
@@ -108,14 +109,17 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     else:  # todas as propostas
         propostas = Proposta.objects.filter(ano=ano, semestre=semestre).order_by("-disponivel")
 
-    opcoes_list = []
-    for proposta in propostas:
-        count = Opcao.objects.filter(proposta=proposta, aluno__anoPFE=ano, aluno__semestrePFE=semestre, prioridade__lte=5).count()
-        opcoes_list.append(count)
-
-    mylist = zip(propostas, opcoes_list)
-    mylist = sorted(mylist, key=lambda x: x[1], reverse=True)
-    return mylist
+    # Annotate proposals with the count of options
+    propostas = propostas.annotate(
+        opcoes_count=Count(
+            "opcao",
+            filter=Q(opcao__aluno__anoPFE=ano, opcao__aluno__semestrePFE=semestre, opcao__prioridade__lte=5)
+        )
+    )
+    
+    # Sort proposals by the count of options in descending order
+    propostas = propostas.order_by("-opcoes_count")
+    return propostas
 
 
 def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):

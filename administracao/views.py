@@ -713,11 +713,7 @@ def propor(request):
         semestre = configuracao.semestre
         ano, semestre = adianta_semestre(ano, semestre)
 
-        lista_propostas = list(zip(*ordena_propostas(otimizar, ano, semestre)))
-        if lista_propostas:
-            propostas = lista_propostas[0]
-        else:
-            propostas = []
+        propostas = ordena_propostas(otimizar, ano, semestre)
 
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
             filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\

@@ -56,19 +56,20 @@ def mapeamento_estudantes_propostas(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        lista_propostas = list(zip(*ordena_propostas(False, ano, semestre)))
-        propostas = lista_propostas[0] if lista_propostas else []
+        propostas = ordena_propostas(False, ano, semestre)
 
         alunos = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\
             order_by(Lower("user__first_name"), Lower("user__last_name"))
         projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
         opcoes = []
+        aloc_proj = []
         for aluno in alunos:
             opcoes_aluno = []
             opcoes_estudante = Opcao.objects.filter(aluno=aluno, proposta__in=propostas)
-            alocacoes = Alocacao.objects.filter(aluno=aluno, projeto__in=projetos)
-            alocacoes_projetos = {a.projeto for a in alocacoes}
+            alocacoes_estudante = Alocacao.objects.filter(aluno=aluno, projeto__in=projetos)
+            aloc_proj.append(alocacoes_estudante.last().projeto.proposta if alocacoes_estudante else None)
+            alocacoes_projetos = {a.projeto for a in alocacoes_estudante}
             for proposta in propostas:
                 opcao = next((o for o in opcoes_estudante if o.proposta == proposta), None)
                 if opcao:
@@ -103,7 +104,7 @@ def mapeamento_estudantes_propostas(request):
                 proposta_indice[proposta.id] = repetidas_limpa[org_name] + 1
                 repetidas_limpa[org_name] -= 1
 
-        estudantes = zip(alunos, opcoes)
+        estudantes = zip(alunos, opcoes, aloc_proj)
         context = {
             "estudantes": estudantes,
             "propostas": propostas,

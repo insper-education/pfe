@@ -131,7 +131,7 @@
           </tr>
         </thead>
         <tbody>
-        {% for estudante,opcoes in estudantes %} 
+        {% for estudante,opcoes,aloc_proj in estudantes %} 
           <tr class="item">
             <td style="text-align:right; white-space: nowrap;">
               <a href="{% url 'estudante_detail' estudante.id %}">
@@ -148,19 +148,19 @@
                 {{estudante.cr|floatformat:2}}
               </a>
             </td>
+
+            
             {% for opcao in opcoes %}
               {% if opcao %}
                 <td style="text-align:center;
-                    {% with alocacoes=estudante.alocacao_set %}
-                      {% if alocacoes.count and opcao.proposta == alocacoes.last.projeto.proposta %}
+                      {% if opcao.proposta == aloc_proj %}
                         border: 2px solid #ff0000;
                       {% endif %}
                       {% if opcao.proposta == estudante.pre_alocacao %}
                         background-color:yellow;
                       {% elif opcao.prioridade == 1 and not estudante.pre_alocacao %}
                         background-color:lightgreen;
-                      {% endif %}
-                    {% endwith %}"
+                      {% endif %}"
                     class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
                   <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
                     data-toggle="tooltip" data-html="true" animation="true" title="
@@ -176,18 +176,17 @@
                 </td>
               {% else %}
                 <td></td>
-                {% comment %} <td>&nbsp;</td> {% endcomment %}
               {% endif %}
-            {% endfor %}
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="100" style="text-align:center;">Nenhum estudante encontrado</td>
+            {% endfor %} 
+
           </tr>
         {% endfor %}
         {% if media_cr %}
           <tr>
-            <td style="text-align:right"><b>Quantidad de estudantes</b></td>
+            <td style="text-align:right">
+              <b lang="pt">Quantidad de estudantes</b>
+              <b lang="en">Number of students</b>
+            </td>
             <td style="text-align:center"><b>&#8704;</b></td>
             <td>{{media_cr|floatformat:4}}</td>
             {% for s in qtd %}
@@ -199,11 +198,26 @@
         <caption>
           <div style="float: left;">
             <small style="font-size:12px;">
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span> Sem pré-alocação (padrão 1&ordf; opção) |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span> Pré-alocado em Proposta |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span> Alocado em Proposta |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span> Alocado fora de opções |</span>
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span> Proposta não disponibilizada</span>
+              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span>
+                <span lang="pt">Sem pré-alocação (padrão 1&ordf; opção)</span>
+                <span lang="en">No pre-allocation (default 1<sup>st</sup> option)</span>
+              </span>&nbsp;|
+              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span>
+                <span lang="pt">Pré-alocado em Proposta</span>
+                <span lang="en">Pre-allocated in Proposal</span>
+              </span>&nbsp;|
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span>
+                <span lang="pt">Alocado em Proposta</span>
+                <span lang="en">Allocated in Proposal</span>
+              </span>&nbsp;|
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span>
+                <span lang="pt">Alocado fora de opções</span>
+                <span lang="en">Allocated outside of options</span>
+              </span>&nbsp;|
+              <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span>
+                <span lang="pt">Proposta não disponibilizada</span>
+                <span lang="en">Proposal not available</span>
+              </span>
             </small>
           </div>
           <div style="float: right;">
