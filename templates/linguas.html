@@ -17,11 +17,8 @@
 
   function esconde_lingua() {
     if (localStorage.getItem("lingua") == null) {
-      if (navigator.language.startsWith("pt")) {
-        localStorage.setItem("lingua", "pt");
-      } else {
-        localStorage.setItem("lingua", "en");
-      }
+      if (navigator.language.startsWith("pt")) localStorage.setItem("lingua", "pt");
+      else localStorage.setItem("lingua", "en");
     }
 
     if (localStorage.getItem("lingua") == "pt") {
@@ -38,33 +35,16 @@
 
   }
   
-  esconde_lingua();  // Para chamar no carrega_pagina
-
-
-  {% comment %} function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  } {% endcomment %}
+  function handleLanguageChange() {
+    esconde_lingua();
+    lingua_atual = localStorage.getItem("lingua");
+    if (lingua_atual == "pt") localStorage.setItem("lingua", "en");
+    else localStorage.setItem("lingua", "pt");
+  }
 
   $(document).ready(function() {
 
-    async function handleLanguageChange() {
-      lingua_atual = localStorage.getItem("lingua");
-      if (lingua_atual == "pt") {
-        $("#language_button").html(text_en);
-        $('[lang="pt"]').css("display", "none");
-        $('[lang="en"]').css("display", "initial");
-        {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
-        //await sleep(500);
-        localStorage.setItem("lingua", "en");
-      } else {
-        $("#language_button").html(text_pt);
-        $('[lang="pt"]').css("display", "initial");
-        $('[lang="en"]').css("display", "none");
-        {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
-        //await sleep(500);
-        localStorage.setItem("lingua", "pt");
-      }
-    }
+    esconde_lingua();  // Para chamar no carrega_pagina
 
     $("body").on("click", "#language_button", function(e) {
       handleLanguageChange();
@@ -74,21 +54,5 @@
     $("#language_button").css("display", "initial");
 
   });
-
-  {% comment %} 
-  // Para PEGAR o idioma do navegador
-  function getLang() {
-    if (navigator.languages != undefined) 
-      return navigator.languages[0]; 
-    return navigator.language;
-  }
-  console.log(getLang());
-  {% endcomment %}
-
-  {% comment %} // second_file.js
-$(document).ready(function() {
-  // Example usage of the function
-  atualiza_lingua("en");
-}); {% endcomment %}
 
 </script>
