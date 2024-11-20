@@ -30,20 +30,34 @@
 {% endblock %}
 
 {% block content %}
-  
-<span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{titulo.pt}}</span>
+    <span lang="en">{{titulo.en}}</span>
+  </span>
 
   {% include "usuario.html" with user=aluno.user %}
 
   {% if aluno.matricula %}
-    <strong>Matrícula:</strong> {{aluno.matricula}}<br>
+    <strong>
+      <span lang="pt">Matrícula:</span>
+      <span lang="en">Student ID:</span>
+    </strong> {{aluno.matricula}}<br>
   {% endif %}
-  <strong>Curso:</strong> {{aluno.curso2}}<br>
-  <strong>Periodo do Capstone:</strong> 
+  <strong>
+    <span lang="pt">Curso:</span>
+    <span lang="en">Program:</span>
+  </strong> {{aluno.curso2}}<br>
+  <strong>
+    <span lang="pt">Periodo do Capstone:</span>
+    <span lang="en">Capstone Semester:</span>
+    </strong> 
   {% if aluno.anoPFE and aluno.semestrePFE %}
     {{aluno.anoPFE}}.{{aluno.semestrePFE}}
   {% else %}
-    Período não definido
+    <span lang="pt">Período não definido</span>
+    <span lang="en">Not defined</span>
+    
   {% endif %}
   <br>
   
@@ -234,6 +248,8 @@
     <script>
         function carrega_pagina() {  }
         window.onload = carrega_pagina
-    </script>   
+    </script> 
+
+    {% include "linguas.html" %}
 
 {% endblock %}

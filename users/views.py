@@ -736,7 +736,7 @@ def estudante_detail(request, primarykey=None):
     alocacoes = Alocacao.objects.filter(aluno=estudante)
 
     context = calcula_objetivos(alocacoes)
-    context["titulo"] = estudante.user.get_full_name()
+    context["titulo"] = {"pt": "Estudante", "en": "Student"}
     context["aluno"] = estudante
     context["alocacoes"] = alocacoes
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
@@ -797,7 +797,7 @@ def parceiro_detail(request, primarykey=None):
     bancas = bancas.order_by("startDate")
 
     context = {
-        "titulo": parceiro.user.get_full_name(),
+        "titulo": {"pt": "Parceiro", "en": "Partner"},
         "parceiro": parceiro,
         "conexoes": Conexao.objects.filter(parceiro=parceiro),
         "mentorias": Encontro.objects.filter(facilitador=parceiro.user),

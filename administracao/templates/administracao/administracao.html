@@ -5,31 +5,91 @@
 {% endcomment %}
 
 
-<a href="{% url 'servico' %}">Habilitar Aviso de Manutenção</a><br>
-<a href="{% url 'configurar' %}">Configurar Sistema</a><br>
+<a href="{% url 'servico' %}">
+  <span lang="pt">Habilitar Aviso de Manutenção</span>
+  <span lang="en" style="display:none;">Enable Maintenance Warning</span>
+</a><br>
+<a href="{% url 'configurar' %}">
+  <span lang="pt">Configurar Sistema</span>
+  <span lang="en" style="display:none;">Configure System</span>
+</a><br>
 <br>
 
-<h5>Cadastrar</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_organizacao' %}">Organização</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_usuario' %}">Usuário</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_disciplina' %}">Disciplina</a></div>
+<h5>
+  <span lang="pt">Cadastrar</span>
+  <span lang="en" style="display:none;">Register</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_organizacao' %}">
+  <span lang="pt">Organização</span>
+  <span lang="en" style="display:none;">Organization</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_usuario' %}">
+  <span lang="pt">Usuário</span>
+  <span lang="en" style="display:none;">User</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_disciplina' %}">
+  <span lang="pt">Disciplina</span>
+  <span lang="en" style="display:none;">Course</span>
+</a></div>
 <br>
 
-<h5>Contas e Senhas</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'contas_senhas' %}">Envia Contas e Senhas para Estudantes</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'nomes' %}">Ajustar Maiúsculas e Minúsculas de Nomes de Usuários</a></div>
+<h5>
+  <span lang="pt">Contas e Senhas</span>
+  <span lang="en" style="display:none;">Accounts and Passwords</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'contas_senhas' %}">
+  <span lang="pt">Enviar Contas e Senhas para Estudantes</span>
+  <span lang="en" style="display:none;">Send Accounts and Passwords to Students</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'nomes' %}">
+  <span lang="pt">Ajustar Maiúsculas e Minúsculas de Nomes de Usuários</span>
+  <span lang="en" style="display:none;">Adjust Uppercase and Lowercase of Usernames</span>
+</a></div>
 <br>
 
-<h5>Dados</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'index_carregar' %}">Carregar Dados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatorios' %}">Gerar Relatórios</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' %}">Exportar Dados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dados_backup' %}">Enviar Dados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar_documentos_projetos' %}">Exportar Relatórios dos Projetos</a></div>
+<h5>
+  <span lang="pt">Dados</span>
+  <span lang="en" style="display:none;">Data</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'index_carregar' %}">
+  <span lang="pt">Carregar Dados</span>
+  <span lang="en" style="display:none;">Load Data</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatorios' %}">
+  <span lang="pt">Gerar Relatórios</span>
+  <span lang="en" style="display:none;">Generate Reports</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' %}">
+  <span lang="pt">Exportar Dados</span>
+  <span lang="en" style="display:none;">Export Data</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dados_backup' %}">
+  <span lang="pt">Enviar Dados</span>
+  <span lang="en" style="display:none;">Send Data</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar_documentos_projetos' %}">
+  <span lang="pt">Exportar Relatórios dos Projetos</span>
+  <span lang="en" style="display:none;">Export Project Reports</span>
+</a></div>
 <br>
 
-<h5>Supervisão de Sistema</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'conexoes_estabelecidas' %}">Usuários Conectados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs' %}">Logs de Sistema</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bloqueados' %}">Usuários/IPs Bloqueados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'tarefas_agendadas' %}">Tarefas Agendadas</a></div>
+<h5>
+  <span lang="pt">Supervisão de Sistema</span>
+  <span lang="en" style="display:none;">System Supervision</span>  
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'conexoes_estabelecidas' %}">
+  <span lang="pt">Usuários Conectados</span>
+  <span lang="en" style="display:none;">Connected Users</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs' %}">
+  <span lang="pt">Logs de Sistema</span>
+  <span lang="en" style="display:none;">System Logs</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bloqueados' %}">
+  <span lang="pt">Usuários/IPs Bloqueados</span>
+  <span lang="en" style="display:none;">Blocked Users/IPs</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'tarefas_agendadas' %}">
+  <span lang="pt">Tarefas Agendadas</span>
+  <span lang="en" style="display:none;">Scheduled Tasks</span>
+</a></div>

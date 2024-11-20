@@ -24,11 +24,6 @@
     <span lang="en">{{ titulo.en }}</span>
   </span>
 
-  <strong>
-    <span lang="pt">Nome completo:</span>
-    <span lang="en">Full name:</span>
-  </strong> {{professor.user.get_full_name}}<br>
-
   {% include "usuario.html" with user=professor.user %}
   
   <strong lang="pt">Tipo:</strong>

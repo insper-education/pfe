@@ -26,18 +26,23 @@
 {% block content %}
   
   <span class="titulo">
-    {{parceiro.user.get_full_name}}
-    {% if parceiro.principal_contato %}
-      <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
-        &#x2B50;
-      </span>
-    {% endif %}
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
 
   {% include "usuario.html" with user=parceiro.user %}
 
+  {% if parceiro.principal_contato %}
+      <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
+        &#x2B50;
+      </span>
+    {% endif %}
+
   {% if parceiro.organizacao %}
-    <strong>Organização:</strong>
+    <strong>
+      <span lang="pt">Organização:</span>
+      <span lang="en">Organization:</span>
+    </strong>
     <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">
       {{parceiro.organizacao.nome}}
     </a>
@@ -45,14 +50,20 @@
   {% endif %}
 
   {% if parceiro.cargo %}
-      <strong>Cargo:</strong> {{parceiro.cargo}}<br>
+    <strong>
+      <span lang="pt">Cargo:</span>
+      <span lang="en">Position:</span>
+    </strong> {{parceiro.cargo}}<br>
   {% endif %}
 
   {% include "dados_usuario.html" with user=parceiro.user %}
   
   {% if conexoes %}
     <hr>
-    <h3>Conexões com Projetos</h3>
+    <h3>
+      <span lang="pt">Conexões com Projetos</span>
+      <span lang="en">Connections with Projects</span>
+    </h3>
     <ol>
       {% for conexao in conexoes %}
         {% if conexao.projeto %}
@@ -62,7 +73,8 @@
           {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
           </a></li>
         {% else %}
-          PROBLEMA AO RECUPERAR PROJETO!
+          <span lang="pt">PROBLEMA AO RECUPERAR PROJETO!</span>
+          <span lang="en">PROBLEM RETRIEVING PROJECT!</span>
         {% endif %}
       {% endfor %}
     </ol>
@@ -78,7 +90,10 @@
 
   {% if mentorias %}
     <hr>
-    <h4>Mentoria nos Projeto{% if mentorias|length > 1 %}s{% endif %}</h4>
+    <h4>
+      <span lang="pt">Mentoria{% if mentorias|length > 1 %}s{% endif %} em Projeto{% if mentorias|length > 1 %}s{% endif %}</span>
+      <span lang="en">Mentorship in Project{% if mentorias|length > 1 %}s{% endif %}</span>
+    </h4>
     <ol>{% for mentoria in mentorias %}
       <li><a href="{% url 'dinamicas_editar' mentoria.id %}">
       {{mentoria.projeto.get_titulo}}
@@ -128,5 +143,7 @@
       <button class="btn btn-primary" style="float: right;">Editar</button>
     </a>
   {% endif %}
+
+  {% include "linguas.html" %}
   
 {% endblock %}

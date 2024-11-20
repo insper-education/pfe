@@ -4,6 +4,11 @@
   Data: 22 de Agosto de 2024
 {% endcomment %}
 
+<strong>
+  <span lang="pt">Nome completo:</span>
+  <span lang="en">Full name:</span>
+</strong> {{user.get_full_name}}<br>
+
 {% if not user.is_active %}
   <p style="color: red;">
     <span lang="pt">- NÃO ATIVO -</span>
