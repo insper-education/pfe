@@ -36,10 +36,10 @@
   }
   
   function handleLanguageChange() {
-    esconde_lingua();
     lingua_atual = localStorage.getItem("lingua");
     if (lingua_atual == "pt") localStorage.setItem("lingua", "en");
     else localStorage.setItem("lingua", "pt");
+    esconde_lingua();
   }
 
   $(document).ready(function() {

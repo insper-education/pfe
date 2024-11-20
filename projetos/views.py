@@ -510,7 +510,7 @@ def bancas_lista(request):
     else:
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
-            "titulo": {"pt": "Bancas", "en": "Evaluation Boards"},
+            "titulo": {"pt": "Bancas", "en": "Examination Boards"},
             "edicoes": edicoes,
         }
 
@@ -1460,7 +1460,7 @@ def filtro_projetos(request):
                             {"pt": "Orientador", "en": "Advisor"},
                             {"pt": "Organização", "en": "Organization"},
                             {"pt": "Orientador", "en": "Advisor"},
-                            {"pt": "Bancas", "en": "Boards"},
+                            {"pt": "Bancas", "en": "Examination Boards"},
                             {"pt": "Falconi", "en": "Falconi"},
                             {"pt": "Média", "en": "Average"}
                           ]

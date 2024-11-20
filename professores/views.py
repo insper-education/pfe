@@ -289,7 +289,7 @@ def bancas_alocadas(request):
     ).order_by("custom_order", "-startDate")
 
     context = {
-        "titulo": {"pt": "Participação em Bancas", "en": "Member in Evaluation Boards"},
+        "titulo": {"pt": "Participação em Bancas", "en": "Member in Examination Boards"},
         "bancas": bancas,
         }
     return render(request, "professores/bancas_alocadas.html", context=context)
@@ -346,7 +346,7 @@ def bancas_index(request):
     request.session["root_page_url"] = request.build_absolute_uri()
 
     context = {
-        "titulo": "Agendar Bancas",
+        "titulo": {"pt": "Agendar Bancas", "en": "Schedule Examination Boards"},
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
@@ -905,7 +905,7 @@ def bancas_editar(request, primarykey=None):
 def bancas_lista(request, periodo_projeto):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {
-        "titulo": {"pt": "Listagem das Bancas", "en": "List of Evaluation Boards"},
+        "titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},
         "periodo": periodo_projeto
         }
 
@@ -1016,7 +1016,7 @@ def bancas_tabela(request):
 
     else:
         context = {
-            "titulo": { "pt": "Alocação em Bancas", "en": "Evaluation Board Allocation" },
+            "titulo": { "pt": "Alocação em Bancas", "en": "Examination Board Allocation" },
             "edicoes": get_edicoes(Projeto, anual=True)[0],
             }
 
@@ -2988,7 +2988,8 @@ def avaliar_entregas(request, selecao=None):
         configuracao = get_object_or_404(Configuracao)
 
         context = {
-                "titulo": "Avaliar Entregas",
+                #"titulo": "Avaliar Entregas",
+                "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
                 "edicoes": get_edicoes(Relato)[0],
                 "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
                 "tipos_entregas": exames if selecao else None,
@@ -3382,8 +3383,8 @@ def todos_professores(request):
             "professores": Professor.objects.all(),
             "cabecalhos": [{ "pt": "Nome", "en": "Name", },
                         { "pt": "e-mail", "en": "e-mail", },
-                        { "pt": "Bancas", "en": "Boards", },
-                        { "pt": "Orientações", "en": "Orientations", },
+                        { "pt": "Bancas", "en": "Examination Boards", },
+                        { "pt": "Orientações", "en": "Advising", },
                         { "pt": "Lattes", "en": "Lattes", },],
             "titulo": { "pt": "Professores", "en": "Professors", },
         }

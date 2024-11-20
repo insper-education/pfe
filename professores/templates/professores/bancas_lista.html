@@ -177,7 +177,7 @@
               {% if banca.membros %}
                 <div class="banca" style="margin-top: 8px;">
                   <b lang="pt">Membros da Banca da Avaliação:</b>
-                  <b lang="en">Evaluation Board Members:</b>
+                  <b lang="en">Examination Board Members:</b>
                   {% with is_ori=banca.get_projeto.orientador %}
                     <a class="email" href="mailto:{% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.email}}{% endif %};{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% if is_ori and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}{{banca.get_projeto.orientador.user.get_full_name}}, {% endif %}{% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
                       <i class="fas fa-mail-bulk"></i>
@@ -275,7 +275,7 @@
       {% comment %} </form> {% endcomment %}
     {% else %}
       <p lang="pt">Não existem bancas definidas.</p>
-      <p lang="en">There are no defined evaluation boards.</p>
+      <p lang="en">There are no defined examination boards.</p>
     {% endif %}
     <p>&nbsp;</p>
 
@@ -286,7 +286,7 @@
       {% if sem_banca %}
         <br>
         <h5 lang="pt">Projetos ativos sem bancas agendadas:</h5>
-        <h5 lang="en">Active projects without scheduled evaluation boards:</h5>
+        <h5 lang="en">Active projects without scheduled examination boards:</h5>
 
         <table id="SemBancasTable" class="table table-borderless table-sm arredondado"><tbody>
           {% for projeto in sem_banca %}

@@ -18,31 +18,52 @@
   <div id="calendar"></div>
 </div>
 
-<h4 style="margin: 8px 0 0 0;">Legendas</h4>
+<h4 style="margin: 8px 0 0 0;">
+  <span lang="pt">Legendas</span>
+  <span lang="en">Captions</span>
+</h4>
 <div class="wrap">  
   <div class="legenda" style="display: flex;">
     <div class="legenda-block">
       <div id="leg_intermediaria" class="legenda-item">
-        <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;Bancas Intermediárias</div>
+        <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;
+          <span lang="pt">Bancas Intermediárias</span>
+          <span lang="en">Intermediate Examination Boards</span>
+        </div>
       </div>
       <div id="leg_final" class="legenda-item">
-        <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;Bancas Finais</div>
+        <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;
+          <span lang="pt">Bancas Finais</span>
+          <span lang="en">Final Examination Boards</span>
+        </div>
       </div>
       <div id="leg_falconi" class="legenda-item">
-        <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;Bancas Falconi</div>
+        <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;
+          <span lang="pt">Bancas Falconi</span>
+          <span lang="en">Falconi Examination Boards</span>
+        </div>
       </div>
       <div id="leg_probation" class="legenda-item">
-        <div class="legenda-texto"><font id="color_probation">&#9608;</font>&nbsp;Probation</div>
+        <div class="legenda-texto"><font id="color_probation">&#9608;</font>&nbsp;
+          <span lang="pt">Probation</span>
+          <span lang="en">Probation</span>
+        </div>
       </div>
     </div>
 
     {% if user %}
       <div class="legenda-block">
         <div class="legenda-item">
-          <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Orientador da Banca</div>
+          <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;
+            <span lang="pt">Orientador da Banca</span>
+            <span lang="en">Board Advisor</span>
+          </div>
         </div>
         <div class="legenda-item" style="margin-top: 8px;">
-          <div class="legenda-texto"><font id="banca_membro" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;Membro da Banca</div>
+          <div class="legenda-texto"><font id="banca_membro" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;
+            <span lang="pt">Membro da Banca</span>
+            <span lang="en">Examination Board Member</span>
+          </div>
         </div>
       </div>
     {% endif %}
