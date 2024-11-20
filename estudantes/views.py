@@ -501,9 +501,7 @@ def avaliacao_pares(request, momento):
 
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     
-    estudante = None
-    if request.user.tipo_de_usuario == 1:
-        estudante = request.user.aluno
+    estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
 
     # Avaliações de Pares
     # 31, 'Avaliação de Pares Intermediária'
@@ -529,41 +527,67 @@ def avaliacao_pares(request, momento):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
         alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
 
-        if (not prazo) and request.method == 'POST':
+        if (not prazo) and request.method == "POST":
 
             for alocacao in alocacoes:
 
-                (pares, _created) = Pares.objects.get_or_create(alocacao_de=alocacao_de,
+                (par, _created) = Pares.objects.get_or_create(alocacao_de=alocacao_de,
                                                                 alocacao_para=alocacao,
                                                                 tipo=tipo)
 
                 if _created:
-                    pares.alocacao_de = alocacao_de
-                    pares.alocacao_para = alocacao
-                    pares.tipo=tipo
+                    par.alocacao_de = alocacao_de
+                    par.alocacao_para = alocacao
+                    par.tipo=tipo
 
-                pares.aprecia = request.POST.get("aprecia"+str(alocacao.id), None)
-                pares.atrapalhando = request.POST.get("atrapalhando"+str(alocacao.id), None)
-                pares.mudar = request.POST.get("mudar"+str(alocacao.id), None)
+                par.aprecia = request.POST.get("aprecia"+str(alocacao.id), None)
+                par.atrapalhando = request.POST.get("atrapalhando"+str(alocacao.id), None)
+                par.mudar = request.POST.get("mudar"+str(alocacao.id), None)
 
                 entrega = request.POST.get("entrega"+str(alocacao.id), None)
                 if entrega:
-                    pares.entrega = int(entrega)
+                    par.entrega = int(entrega)
 
                 iniciativa = request.POST.get("iniciativa"+str(alocacao.id), None)
                 if iniciativa:
-                    pares.iniciativa = int(iniciativa)
+                    par.iniciativa = int(iniciativa)
 
                 comunicacao = request.POST.get("comunicacao"+str(alocacao.id), None)
                 if comunicacao:
-                    pares.comunicacao = int(comunicacao)
+                    par.comunicacao = int(comunicacao)
 
-                pares.save()
+                par.save()
+
+            alocacoes_ids = list(alocacoes.values_list("id", flat=True)) + [alocacao_de.id]
+            count_pares = Pares.objects.filter(alocacao_de__id__in=alocacoes_ids, tipo=tipo).count()
+            tot_est = len(alocacoes_ids)
+            if count_pares == tot_est*(tot_est-1):
+                if projeto and projeto.organizacao and projeto.orientador:
+                    subject = "Capstone | Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final")
+                    subject += " - [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+                    
+                    recipient_list = [projeto.orientador.user.email, "lpsoares@insper.edu.br"]
+                    
+                    message = "Caro Orientador(a),<br><br>"
+                    message += "Todas as avaliações de pares do projeto que você está orientando<br>"
+                    message += "[" + projeto.organizacao.sigla + "] " + projeto.get_titulo() + "<br>"
+                    message += "foram realizadas.<br><br>"
+                    message += "Acesse o sistema para visualizar as avaliações.<br>"
+                    message += "<a href='https://pfe.insper.edu.br/professores/avaliacoes_pares/'>https://pfe.insper.edu.br/professores/avaliacoes_pares/</a><br><br>"
+                    
+                    try:
+                        check = email(subject, recipient_list, message)
+                        if check != 1:
+                            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                            logger.error(error_message)
+                    except Exception as e:
+                        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
+                        logger.error(error_message)
 
             return render(request, "users/atualizado.html",)
         
