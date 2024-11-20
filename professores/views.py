@@ -3406,11 +3406,13 @@ def objetivo_editar(request, primarykey):
         context = {
             "area_principal": True,
             "bancas_index": True,
-            # "mensagem": mensagem,
         }
         return render(request, "generic.html", context=context)
 
-    context = {"objetivo": objetivo,}
+    context = {
+            "titulo": {"pt": "Editar Objetivo de Aprendizagem", "en": "Edit Learning Goal"},
+            "objetivo": objetivo,
+        }
     return render(request, "professores/objetivo_editar.html", context)
 
 
@@ -3419,7 +3421,7 @@ def objetivo_editar(request, primarykey):
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
     context = {
-        "titulo": "Objetivos de Aprendizagem e Rubricas",
+        "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
         "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
     }
     return render(request, "professores/objetivos_rubricas.html", context)
@@ -3524,7 +3526,7 @@ def planos_de_orientacao(request):
     template = Documento.objects.filter(tipo_documento=tipo).last()
 
     context = {
-        "titulo": "Planos de Orientação",
+        "titulo": {"pt": "Planos de Orientação", "en": "Advising Plans"},
         "projetos": projetos,
         "configuracao": get_object_or_404(Configuracao),
         "template": template,

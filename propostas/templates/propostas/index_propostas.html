@@ -7,11 +7,18 @@
 
 {% block head %}
   {% load static %}
+  {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
 {% endblock %}
 
 {% block content %}
-{% include "reload.html" %}
-<span class="titulo">{{titulo}}</span>
-{% include "propostas/propostas.html" %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  {% include "propostas/propostas.html" %}
+  {% include "linguas.html" %}
+
 {% endblock %}

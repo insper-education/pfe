@@ -20,14 +20,18 @@
 {% endblock %}
 
 {% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
  
   {% if objetivo %}
-    <form method="post" id="editarobjetivoform" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="post" id="editarobjetivoform" enctype="multipart/form-data">{% csrf_token %}
 
-      <h3><label for="projeto">Objetivo de Aprendizagem</label></h3><br>
-
-      <label for="titulo">Título:
+      <label for="titulo">
+        <span lang="pt">Título:</span>
+        <span lang="en">Title:</span>
         <input id="titulo" name="titulo" type="text" size="75" maxlength="128" style="max-width: 100%;"
         {% if objetivo %}
           value="{{objetivo.titulo}}"
@@ -36,7 +40,10 @@
       </label> 
       <br>
 
-      <label for="descricao">Descrição:<br>
+      <label for="descricao">
+        <span lang="pt">Descrição:</span>
+        <span lang="en">Description:</span>
+        <br>
         <textarea id="descricao" name="descricao" rows="4" cols="80" style="max-width: 100%;">{% if objetivo %}{{objetivo.objetivo}}{% endif %} </textarea>
       </label>
       <br>
@@ -44,7 +51,10 @@
       <div>
         
           <label for="inicio">
-          <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
+          <span style="display:inline-block; width:5.5ex; text-align:right;">
+            <span lang="pt">Início:</span>
+            <span lang="en">Start:</span>
+          </span>
           <input id="inicio" type="date-local" name="inicio" 
           {% if objetivo %}
             value="{{objetivo.data_inicial|date:'Y-m-d'}}" 
@@ -54,7 +64,10 @@
           </label>
         
           <label for="fim">
-          <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
+          <span style="display:inline-block; width:5.5ex; text-align:right">
+            <span lang="pt">Fim:</span>
+            <span lang="en">End:</span>
+          </span>
           <input id="fim" type="date-local" name="fim"
           {% if objetivo %}
             value="{{objetivo.data_final|date:'Y-m-d'}}" 
@@ -95,13 +108,22 @@
         <thead>
           <tr>
             <th scope="col">
-              <b>Avaliado por</b>
+              <b>
+                <span lang="pt">Avaliado por</span>
+                <span lang="en">Evaluated by</span>
+              </b>
             </th>
             <th scope="col" style="text-align:center;">
-              <b>Peso Intermediário</b>
+              <b>
+                <span lang="pt">Peso Intermediário</span>
+                <span lang="en">Intermediate Weight</span>
+              </b>
             </th>
             <th scope="col" style="text-align:center;">
-              <b>Peso Final</b>
+              <b>
+                <span lang="pt">Peso Final</span>
+                <span lang="en">Final Weight</span>
+              </b>
             </th>
           </tr>
         </thead>
@@ -253,16 +275,21 @@
       
 
       <br><br>
-      <button id="submit" type="submit">Atualizar</button> (NOT WORKING)
+      <button class="btn btn-primary mb-1 mt-2" id="submit" type="submit">Atualizar</button> (NOT WORKING)
       <span id="mensagem"></span>
     </form>
   {% else %}
-    <p>Erro ao recuperar objetivo de aprendizagem.</p>
+    <p>
+      <span lang="pt">Erro ao recuperar objetivo de aprendizagem.</span>
+      <span lang="en">Error retrieving learning goal.</span>
+    </p>
   {% endif %}
 
   <script>
     function carrega_pagina(){}
     window.onload = carrega_pagina
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}
