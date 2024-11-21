@@ -408,11 +408,14 @@
         <div class="modal-footer">
           <div id="carregando_arquivo" style="float: left; display: none;">Salvando evento... <div class="carregando"></div></div>
           <div id="warning-footer" style="color: red;"></div>
-          <button type="button" class="btn btn-default mb-1" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-default mb-1" data-dismiss="modal">
+            Cancelar
+          </button>
           
-            <button type="button" class="btn btn-primary mb-1" id="save-event"
-            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-            >Save</button>
+          <button type="button" class="btn btn-primary mb-1" id="save-event"
+          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+            Atualizar
+          </button>
           
         </div> {% comment %} modal-footer {% endcomment %}
 

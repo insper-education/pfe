@@ -50,7 +50,7 @@ function atualiza_visualizacao() {
        calendar.setCustomDayRenderer();
     }
     calendar.setDataSource(dataEventos);  // Variavel global calendar
-    mostra_semestre(qual_semestre());
+    mostra_semestre();
 }
 
 $("#titulo_operacao").click(function() {

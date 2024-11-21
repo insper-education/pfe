@@ -55,15 +55,13 @@ function dias_especiais(element, date) {
 var currentYear = 2018; //como se fosse global
 
 // Esconde e mostra meses do semestre
-function mostra_semestre(semestre) {
+function mostra_semestre() {
   if (!calendar) { // Conforme o caso, o calendario pode ainda não estar pronto.
-    window.setTimeout(() => mostra_semestre(semestre), 100);
+    window.setTimeout(() => mostra_semestre(), 50);
     return;
   }
 
   calendar.render();
-  if (semestre === 1) $('*[data-month-id="5"]').nextAll().hide();
-  else $('*[data-month-id="6"]').prevAll().remove();
 
   // Para reduzir o local a só uma linha
   const elements = $(".lin_aulas:visible > :last-child");
@@ -83,7 +81,7 @@ function mostra_semestre(semestre) {
   }
 }
 
-function setSemesterStyles(firstSemesterActive) {
+function setSemesterStyles(semesterActive) {
   const firstSemester = document.getElementById("primeiro_semestre");
   const secondSemester = document.getElementById("segundo_semestre");
 
@@ -93,11 +91,14 @@ function setSemesterStyles(firstSemesterActive) {
     element.style.background = background;
   }
 
-  if (firstSemesterActive) {
+  setStyles(firstSemester, "normal", "grey", "#D0EED0");
+  setStyles(secondSemester, "normal", "grey", "#D0EED0");
+
+  if (semesterActive == 1) {
     setStyles(firstSemester, "bold", "black", "#10F010");
-    setStyles(secondSemester, "normal", "grey", "#D0EED0");
-  } else {
-    setStyles(firstSemester, "normal", "grey", "#D0EED0");
+  }
+  
+  if (semesterActive == 2) {
     setStyles(secondSemester, "bold", "black", "#10F010");
   }
   
@@ -142,27 +143,27 @@ function updateInfoVisibility(fim_semestre, inicio_semestre, isSecondSemester) {
 }
 
 function primeiro(e) {
+  setSemesterStyles(1);
   const inicio_semestre = 1;
   const fim_semestre = 7;
-  setSemesterStyles(true);
   hideElements();
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
   showElements(els);
   filterAndShowCoordenacao(inicio_semestre, fim_semestre);
   updateInfoVisibility(fim_semestre, inicio_semestre, false);
-  mostra_semestre(1);
+  mostra_semestre();
 }
 
 function segundo(e) {
+  setSemesterStyles(2);
   const inicio_semestre = 7;
   const fim_semestre = 13;
-  setSemesterStyles(false);
   hideElements();
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
   showElements(els);
   filterAndShowCoordenacao(inicio_semestre, fim_semestre);
   updateInfoVisibility(inicio_semestre, 1, true);
-  mostra_semestre(2);
+  mostra_semestre();
 }
 
 function carrega_semestre() {
@@ -200,23 +201,24 @@ $(document).ready(function() {
     );
 
     document.querySelector('#calendar').addEventListener("yearChanged", function(e) {
-        currentYear = e.currentYear;
+      currentYear = e.currentYear;
     
-        // Esconde todos os elementos por ano
-        [].forEach.call(document.querySelectorAll(".ano"), function (el) {
-        el.style.display = 'none';
-        });
+      // Esconde todos os elementos por ano
+      [].forEach.call(document.querySelectorAll(".ano"), function (el) {
+        el.style.display = "none";
+      });
     
-        // Mostra só os elementos do ano
-        [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
+      // Mostra só os elementos do ano
+      [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-            el.style.display = "table-row";
+          el.style.display = "table-row";
         } else {
-            el.style.display = "inline";
+          el.style.display = "inline";
         }
-        
-        });
-        carrega_semestre()
+      });
+
+      carrega_semestre();
+
     });
 
     // Para comutar entre semestres no ano

@@ -133,50 +133,58 @@
 
         mouseOnDay: function (e) {
 
-            if (e.events.length > 0) {
-              $(e.element).children(":first").addClass("escurece");
+          if (e.events.length > 0) {
+            $(e.element).children(":first").addClass("escurece");
 
-              var content = '';
-              for (var i in e.events) {
-                content += '<div class="event-tooltip-content">' +
-                '<div class="event-name">&#8226; ' + e.events[i].name + '</div>';
-                
-                if (e.events[i].atividade) {
-                  content += '<div class="event-atividade">' + "Atividade: " + e.events[i].atividade.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
-                }
-                if (e.events[i].location) {
-                  content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>';
-                }
-                if (e.events[i].responsavel && typeof pessoas !== 'undefined' && pessoas !== null) {
-                  var text = pessoas[e.events[i].responsavel];
-                  content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';
-                }
-
-                if (e.events[i].observation) {
-                  content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>';
-                }
-                content += '</div>';
+            var content = '';
+            for (var i in e.events) {
+              content += '<div class="event-tooltip-content">' +
+              '<div class="event-name">&#8226; ' + e.events[i].name + '</div>';
+              
+              if (e.events[i].atividade) {
+                content += '<div class="event-atividade">' + "Atividade: " + e.events[i].atividade.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</div>';
+              }
+              if (e.events[i].location) {
+                content += '<div class="event-location">' + "Local: " + e.events[i].location + '</div>';
+              }
+              if (e.events[i].responsavel && typeof pessoas !== 'undefined' && pessoas !== null) {
+                var text = pessoas[e.events[i].responsavel];
+                content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';
               }
 
-              $(e.element).popover({
-                trigger: "manual",
-                container: "body",
-                html: true,
-                content: content });
+              if (e.events[i].observation) {
+                content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>';
+              }
+              content += '</div>';
+            }
 
-              $(e.element).popover("show");
-            }
-          },
-          mouseOutDay: function (e) {
-            if (e.events.length > 0) {
-              $(e.element).children(":first").removeClass("escurece");
-              $(e.element).popover("hide");
-            }
-          },
-          dayContextMenu: function (e) {
+            $(e.element).popover({
+              trigger: "manual",
+              container: "body",
+              html: true,
+              content: content });
+
+            $(e.element).popover("show");
+          }
+        },
+        mouseOutDay: function (e) {
+          if (e.events.length > 0) {
+            $(e.element).children(":first").removeClass("escurece");
             $(e.element).popover("hide");
-          },
+          }
+        },
+        dayContextMenu: function (e) {
+          $(e.element).popover("hide");
+        },
 
+        renderEnd: function(e) {
+          semestre = qual_semestre();
+          if (semestre === 1) {
+              $('*[data-month-id="5"]').nextAll().hide();
+          } else {
+              $('*[data-month-id="6"]').prevAll().remove();
+          }
+        },
 
         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
           enableRangeSelection: true,
