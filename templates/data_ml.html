@@ -1,0 +1,21 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Março de 2024
+{% endcomment %}
+
+{% comment %} {% load static %} {% endcomment %}
+{% load i18n %}
+
+<span lang="pt">
+  {% language "pt" %}
+    <span class="opt_full">{{date|date:"DATE_FORMAT"}}</span>
+    <span class="opt_short">{{date|date:"d/m/y"}}</span>
+  {% endlanguage %}
+</span>
+<span lang="en" style="display:none">
+  {% language "en" %}
+    <span class="opt_full">{{date|date:"F d, Y" }}</span>
+    <span class="opt_short">{{date|date:"M d, Y" }}</span>
+  {% endlanguage %}
+</span>

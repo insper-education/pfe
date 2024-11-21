@@ -774,7 +774,7 @@ def professor_detail(request, primarykey):
     context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
 
     context["estilos"] = EstiloComunicacao.objects.all()
-    # context["estilos_usuario"] = UsuarioEstiloComunicacao.objects.filter(usuario=context["professor"].user)
+
     context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(context["professor"].user)
 
     return render(request, "users/professor_detail.html", context=context)

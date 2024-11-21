@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   {% load l10n %}
   <script src="{% static 'js/sort.js' %}"></script>
 
@@ -29,7 +30,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{ titulo }}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <div class="atualizar">
     <script>var show = false;</script>
@@ -38,9 +43,18 @@
 
     <table id="ExamesPesosTable">
       <thead><tr>
-        <th onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">Semestre</th>
-        <th>Exames</th>
-        <th style="display: none;">Peso</th>
+        <th onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">
+          <span lang="pt">Semestre</span>
+          <span lang="en">Semester</span>
+        </th>
+        <th>
+          <span lang="pt">Exames</span>
+          <span lang="en">Evaluation</span>
+        </th>
+        <th style="display: none;">
+          <span lang="pt">Peso</span>
+          <span lang="en">Weight</span>
+        </th>
       </tr></thead>
       <tbody>
         {% for ano, semestre, composicoes in semestres reversed %}
@@ -50,8 +64,18 @@
             <td>
               <ul>
               {% for composicao in composicoes %}
-                <li><span style="display: inline-block; width: 30em;">{{composicao.exame}} ({{composicao.data_inicial|date:"d/m/Y"}} a 
-                       {% if composicao.data_final%}{{composicao.data_final|date:"d/m/Y"}}{% else %}atualmente{% endif %}):</span>
+                <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
+                  (
+                  <span lang="pt">{% language "pt" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{composicao.data_inicial|date:"M d, Y" }}{% endlanguage %} to</span>
+                  {% if composicao.data_final%}
+                    <span lang="pt">{% language "pt" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
+                    <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
+                  {% else %}
+                    <span lang="pt">atualmente</span>
+                    <span lang="en">currently</span>
+                  {% endif %}):</span>
+                  
                   <span style="display: inline-block; width: 34em;">
                     <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
                     <script> peso_tmp = 0; </script>
@@ -88,6 +112,9 @@
         $("#ExamesPesosTable tr > *:nth-child(3)").show();
       }
     </script>
-    <small>Terminar o semestre até junho e iniciar a partir de agosto.</small>
+    <small lang="pt">Terminar o semestre até junho e iniciar a partir de agosto.</small>
+    <small lang="en">End the semester by June and start from August.</small>
+
+    {% include "linguas.html" %}
   
 {% endblock %}

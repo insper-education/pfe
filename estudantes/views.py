@@ -824,7 +824,7 @@ def exames_pesos(request):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
     context = {
-        "titulo": "Exames e Pesos",
+        "titulo": {"pt": "Exames e Pesos", "en": "Exams and Weights"},
         "semestres": semestres,
         }
     return render(request, "academica/exames_pesos.html", context)

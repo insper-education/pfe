@@ -7,9 +7,10 @@
 
 {% block head %}
   {% load static %}
+  
   {% load certificados %}
   {% load addhttp %}
-
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
@@ -102,7 +103,9 @@
       {% for banca in bancas %}
         <li>
           <a href="{% url 'banca_ver' banca.id %}">
-            {{banca.get_tipo_de_banca_display}}{% if banca.startDate %}, {{banca.startDate.date}}{% endif %}:
+            {{banca.get_tipo_de_banca_display}}{% if banca.startDate %},
+              {% include "data_ml.html" with date=banca.startDate.date %}
+            {% endif %}-
           </a>
           {% if banca.get_projeto %}
             {% if banca.get_projeto.organizacao %}
