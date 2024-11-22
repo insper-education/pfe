@@ -562,8 +562,9 @@ def avaliacao_pares(request, momento):
 
                 par.save()
 
-            alocacoes_ids = list(alocacoes.values_list("id", flat=True)) + [alocacao_de.id]
-            count_pares = Pares.objects.filter(alocacao_de__id__in=alocacoes_ids, tipo=tipo).count()
+            alocacoes_so_Insper = Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True)
+            alocacoes_ids = list(alocacoes_so_Insper.values_list("id", flat=True))
+            count_pares = Pares.objects.filter(alocacao_de__id__in=alocacoes_ids, alocacao_para__id__in=alocacoes_ids, tipo=tipo).count()
             tot_est = len(alocacoes_ids)
             if count_pares == tot_est*(tot_est-1):
                 if projeto and projeto.organizacao and projeto.orientador:

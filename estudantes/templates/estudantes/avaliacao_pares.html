@@ -44,45 +44,70 @@
     <hr>
     
     {% for colega, par in colegas %}
-
       <br>
-      <div style="max-width: 700px;"><b>Colega: {{colega.aluno}}</b></div>
+      <div style="max-width: 700px;">
+        <b>
+          Colega: {{colega.aluno}}
+          {% if colega.aluno.externo %}
+            [{{colega.aluno.externo}}]
+            <span
+            style="color: #007bff;"
+            >(opcional)</span>
+          {% endif %}
+        </b>
+      </div>
 
       <br>
       <label for="aprecia">
         O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?
       </label><br>
-      <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" required {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
+      <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
+      {% if not colega.aluno.externo %}required{% endif %}
+      {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
       <br><br>
 
       <label for="atrapalhando">
         O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?
       </label><br>
-      <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000" required {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
+      <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
+      {% if not colega.aluno.externo %}required{% endif %}
+      {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
       <br><br>
 
       <label for="mudar">
         O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?
       </label><br>
-      <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000" required {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
+      <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
+      {% if not colega.aluno.externo %}required{% endif %}
+      {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
 
 
       <br><br>
       <b>Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
-        <label><input type="radio" name="entrega{{colega.id}}" value="0" required {% if par.entrega == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="entrega{{colega.id}}" value="0" 
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.entrega == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</label><br>
 
-        <label><input type="radio" name="entrega{{colega.id}}" value="1" required {% if par.entrega == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="entrega{{colega.id}}" value="1"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.entrega == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Entregou abaixo do esperado.</label><br>
 
-        <label><input type="radio" name="entrega{{colega.id}}" value="2" required {% if par.entrega == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="entrega{{colega.id}}" value="2"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.entrega == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Entregou precisamente o esperado.</label><br>
 
-        <label><input type="radio" name="entrega{{colega.id}}" value="3" required {% if par.entrega == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="entrega{{colega.id}}" value="3"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.entrega == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Entregou acima do esperado.</label><br>
 
-        <label><input type="radio" name="entrega{{colega.id}}" value="4" required {% if par.entrega == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="entrega{{colega.id}}" value="4"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.entrega == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.</label><br>
       </div>
 
@@ -90,38 +115,58 @@
       <br>
       <b>Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
-        <label><input type="radio" name="iniciativa{{colega.id}}" value="0" required {% if par.iniciativa == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="iniciativa{{colega.id}}" value="0"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.iniciativa == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Mesmo quando lembrado, não cumpriu as tarefas designadas.</label><br>
 
-        <label><input type="radio" name="iniciativa{{colega.id}}" value="1" required {% if par.iniciativa == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="iniciativa{{colega.id}}" value="1"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.iniciativa == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Precisou ser lembrado, mas cumpriu as tarefas designadas.</label><br>
 
-        <label><input type="radio" name="iniciativa{{colega.id}}" value="2" required {% if par.iniciativa == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="iniciativa{{colega.id}}" value="2"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.iniciativa == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.</label><br>
 
-        <label><input type="radio" name="iniciativa{{colega.id}}" value="3" required {% if par.iniciativa == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="iniciativa{{colega.id}}" value="3"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.iniciativa == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.</label><br>
 
-        <label><input type="radio" name="iniciativa{{colega.id}}" value="4" required {% if par.iniciativa == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="iniciativa{{colega.id}}" value="4"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.iniciativa == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.</label><br>
       </div>
 
       <br>
       <b>Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
       <div style="max-width: 700px;">
-        <label><input type="radio" name="comunicacao{{colega.id}}" value="0" required {% if par.comunicacao == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="comunicacao{{colega.id}}" value="0"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.comunicacao == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</label><br>
 
-        <label><input type="radio" name="comunicacao{{colega.id}}" value="1" required {% if par.comunicacao == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="comunicacao{{colega.id}}" value="1"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.comunicacao == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.</label><br>
 
-        <label><input type="radio" name="comunicacao{{colega.id}}" value="2" required {% if par.comunicacao == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="comunicacao{{colega.id}}" value="2"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.comunicacao == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Aparentemente não teve dificuldades, mas nunca reportou nada.</label><br>
 
-        <label><input type="radio" name="comunicacao{{colega.id}}" value="3" required {% if par.comunicacao == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="comunicacao{{colega.id}}" value="3"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.comunicacao == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.</label><br>
 
-        <label><input type="radio" name="comunicacao{{colega.id}}" value="4" required {% if par.comunicacao == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+        <label><input type="radio" name="comunicacao{{colega.id}}" value="4"
+          {% if not colega.aluno.externo %}required{% endif %}
+          {% if par.comunicacao == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
           Apesar de não ter dificuldades, estava sempre reportando como estava indo.</label><br>
       </div>
       <br>
