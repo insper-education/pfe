@@ -138,9 +138,6 @@
     // Passou os testes, colocar ampulheta
     $("#carregando_arquivo").show();
 
-    {% comment %} if (!event.id) {id = 0;}
-    else {id = event.id;} {% endcomment %}
-
     var dataSource = calendar.getDataSource();  // Para depois atualizar a base de dados
 
     {% comment %} Atualiza na base de dados {% endcomment %}
@@ -266,7 +263,10 @@
         <div class="modal-body">
           <input type="hidden" name="event-index">
             <div class="form-group row">
-              <label for="event-type" class="col-sm-4 control-label">Tipo</label>
+              <label for="event-type" class="col-sm-4 control-label">
+                <span lang="pt">Tipo</span>
+                <span lang="en" style="display: none;">Type</span>
+              </label>
               <div class="col-sm-8">
                 <select id="event-type" name="event-type" class="form-control">
                   {% for tipo in tipos_eventos %}
@@ -315,7 +315,10 @@
             </div>
 
             <div class="form-group row">
-              <label for="event-responsavel" class="col-sm-4 control-label">Responsável</label>
+              <label for="event-responsavel" class="col-sm-4 control-label">
+                <span lang="pt">Responsável</span>
+                <span lang="en" style="display: none;">Responsible</span>
+              </label>
               <div class="col-sm-8">
                 <select name="event-responsavel" id="event-responsavel" class="form-control" title="Selecione responsável">
                   <option value id="nenhum"> -------- </option>
@@ -334,21 +337,29 @@
             </div>
 
             <div class="form-group row">
-              <label for="event-descricao" class="col-sm-4 control-label">Descrição</label>
+              <label for="event-descricao" class="col-sm-4 control-label">
+                <span lang="pt">Descrição</span>
+                <span lang="en" style="display: none;">Description</span>
+              </label>
               <div class="col-sm-8">
                 <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3" maxlength="{% max_length Evento "descricao" %}"></textarea>
               </div>
             </div>
 
             <div class="form-group row">
-              <label for="event-observation" class="col-sm-4 control-label">Observações</label>
+              <label for="event-observation" class="col-sm-4 control-label">
+                <span lang="pt">Observações</span>
+                <span lang="en" style="display: none;">Observations</span>
+              </label>
               <div class="col-sm-8">
                 <input id="event-observation" name="event-observation" type="text" class="form-control" maxlength="{% max_length Evento "observacao" %}">
               </div>
             </div>
 
             <div class="form-group row">
-              <label style="line-height: normal;" for="event-material" class="col-sm-4 control-label">Material (documentos)<br>
+              <label style="line-height: normal;" for="event-material" class="col-sm-4 control-label">
+                <span lang="pt">Material (documentos)</span>
+                <span lang="en" style="display: none;">Material (documents)</span>
                 {% comment %} <small style="line-height: 1.0 !important;">Só mostrará arquivos com data no passado.</small> {% endcomment %}
               </label>
               
@@ -406,15 +417,21 @@
         </div> {% comment %} modal-body {% endcomment %}
 
         <div class="modal-footer">
-          <div id="carregando_arquivo" style="float: left; display: none;">Salvando evento... <div class="carregando"></div></div>
+          <div id="carregando_arquivo" style="float: left; display: none;">
+            <span lang="pt">Salvando evento...</span>
+            <span lang="en" style="display: none;">Saving event...</span>
+            <div class="carregando"></div>
+          </div>
           <div id="warning-footer" style="color: red;"></div>
           <button type="button" class="btn btn-default mb-1" data-dismiss="modal">
-            Cancelar
+            <span lang="pt">Cancelar</span>
+            <span lang="en" style="display: none;">Cancel</span>
           </button>
           
           <button type="button" class="btn btn-primary mb-1" id="save-event"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-            Atualizar
+            <span lang="pt">Atualizar</span>
+            <span lang="en" style="display: none;">Save</span>
           </button>
           
         </div> {% comment %} modal-footer {% endcomment %}

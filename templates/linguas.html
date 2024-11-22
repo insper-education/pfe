@@ -40,6 +40,8 @@
     if (lingua_atual == "pt") localStorage.setItem("lingua", "en");
     else localStorage.setItem("lingua", "pt");
     esconde_lingua();
+    var event = new CustomEvent("languageChanged");
+    document.dispatchEvent(event);
   }
 
   $(document).ready(function() {

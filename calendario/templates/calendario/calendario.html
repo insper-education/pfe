@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   {% load get_field %}
   {% load nospaces %}
   {% load date_extras %}
@@ -75,8 +76,13 @@
 
     function calendario() {
 
+      if (localStorage.getItem("lingua") != null)
+        lingua = localStorage.getItem("lingua")
+      else
+        lingua = "pt";
+
       calendar = new Calendar("#calendar", {
-        language: "pt",
+        language: lingua,
         dataSource: dataEventos,
         displayHeader: true, // mostra os anos na parte superior
         style: "custom",
@@ -209,7 +215,25 @@
        });
 
     }
-    </script>
+
+
+    $(document).ready(function() {
+
+      function lingua_calendario() {
+        if (!calendar) { // Conforme o caso, o calendario pode ainda não estar pronto.
+          window.setTimeout(() => lingua_calendario(), 50);
+          return;
+        }
+        calendar.setLanguage(localStorage.getItem("lingua"));
+      }
+
+      document.addEventListener("languageChanged", function() {
+        lingua_calendario();
+      });
+
+    });
+
+  </script>
 
   <script src="{% static 'js/calendario.js' %}"></script>
 
@@ -231,7 +255,9 @@
 
     <div id="calendar" style="overflow-x: visible;"></div>
     
-    <div style="margin-left: 3vw;">Semestre:
+    <div style="margin-left: 3vw;">
+      <span lang="pt">Semestre:</span>
+      <span lang="en" style="display: none;">Semester:</span>
       <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
     </div>   
 
@@ -240,10 +266,11 @@
         <div id="bloco_eventos" class="col-xl-auto ">
 
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <span class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
+            <div class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
             title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
-              Operação<br>
-            </span>
+              <span lang="pt">Operação</span>
+              <span lang="en" style="display: none;">Operation</span>
+            </div>
 
             <div id="lista_operacao" class="lista_operacao quad_pfe">
               {% if coordenacao %}
@@ -268,13 +295,15 @@
             </div>
           {% endif %}
           
-          <span class="tit_agenda" id="titulo_academico">
+          <div class="tit_agenda" id="titulo_academico">
             {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-              Acadêmico
+              <span lang="pt">Acadêmico</span>
+              <span lang="en" style="display: none;">Academic</span>
             {% else %}
-              Eventos
+              <span lang="pt">Eventos</span>
+              <span lang="en" style="display: none;">Events</span>
             {% endif %}
-          </span><br>
+          </div>
           
           <div id="lista_academico" class="lista_academico quad_pfe">
             
@@ -320,12 +349,18 @@
 
             {% if eventos_academicos.laboratorios %}
               <font style="text-decoration: underline solid orange">
-                <span id="linha_lab"><br>Dias sublinhados possuem disponibilidade de trabalho no laboratório 3 (L3)</span>
+                <span id="linha_lab"><br>
+                  <span lang="pt">Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos</span>
+                  <span lang="en" style="display: none;">Underlined days have availability for project workspace</span>
+                </span>
               </font>
             {% endif %}
             {% if eventos_academicos.provas %}
               <font style="text-decoration: underline solid red">
-                <span id="linha_provas"><br>Semana de provas sublinhado em vermelho</span>
+                <span id="linha_provas"><br>
+                  <span lang="pt">Semana de provas sublinhado em vermelho</span>
+                  <span lang="en" style="display: none;">Week of tests underlined in red</span>
+                </span>
               </font>
             {% endif %}
             </div>
@@ -334,7 +369,10 @@
 
         <div id="bloco_aulas" class="col-xl-auto">
 
-          <span class="tit_agenda" id="titulo_aulas">Aulas</span><br>
+          <div class="tit_agenda" id="titulo_aulas">
+            <span lang="pt">Aulas</span>
+            <span lang="en" style="display: none;">Classes</span>
+          </div>
 
           <span id="lista_aulas" class="lista_aulas">
 
@@ -342,8 +380,14 @@
               {% nospaces %}
               <table class="tab_pfe">
                 <thead><tr>
-                        <th scope="col" class="cabec">Data</th>
-                        <th scope="col" class="cabec header_aula">Aula</th>
+                        <th scope="col" class="cabec">
+                          <span lang="pt">Data</span>
+                          <span lang="en" style="display: none;">Date</span>
+                        </th>
+                        <th scope="col" class="cabec header_aula">
+                          <span lang="pt">Aula</span>
+                          <span lang="en" style="display: none;">Class</span>
+                        </th>
                         <th scope="col" class="cabec header_local">Local</th>
                 </tr></thead>
                 <tbody>
@@ -356,9 +400,21 @@
                           {% else %}
                             <span>
                           {% endif %}
-                            {{aula.endDate|date:"d/m"}}
-                            <span class="t_f">/{{aula.endDate.year}}</span>
-                            <span class="t_s">/{{aula.endDate|date:"y"}}</span>
+
+                            <span lang="pt">
+                              {% language "pt" %}
+                                {{aula.endDate|date:"d/m"}}
+                                <span class="t_f">/{{aula.endDate.year}}</span>
+                                <span class="t_s">/{{aula.endDate|date:"y"}}</span>
+                              {% endlanguage %}
+                            </span>
+                            <span lang="en" style="display:none">
+                              {% language "en" %}
+                                {{aula.endDate|date:"M d"}}
+                                <span class="t_f">, {{aula.endDate.year}}</span>
+                                <span class="t_s">, {{aula.endDate|date:"y"}}</span>
+                              {% endlanguage %}
+                            </span>
                           </span>
                         </th>
                         
