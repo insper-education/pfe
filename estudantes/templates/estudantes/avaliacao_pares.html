@@ -16,7 +16,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display:none">{{ titulo.en }}</span>
+  </span>
   
   {% if mensagem %}
     <h5 class="red-bold">{{mensagem}}</h5>

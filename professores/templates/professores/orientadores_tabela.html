@@ -14,19 +14,18 @@
 
   {% include "impressora.html" %}
 
-  <span class="titulo">{{titulo}}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "edicoes.html" %}
   {% include "informacoes.html" %}
 
   <div class="atualizar">
 
-    {% include "tabelas_top.html" with tabela="Orientacoes" cabecalhos=cabecalhos %}
-          {% comment %}
-          <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">Nome</span></th>
-          <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">Grupos</span></th>
-          <th scope="col" style="text-align: center;width:auto;"><span style="margin-right: 0.6ex;">Projetos</span></th>
-          {% endcomment %}
+    {% include "tabelas_top_ml.html" with tabela="Orientacoes" cabecalhos=cabecalhos %}
+
           {% for professor, grupos in orientacoes %} 
 
             <tr class="item">
@@ -46,13 +45,13 @@
     </div>
 
     <script>
-      function carrega_pagina() {
-      };
+      function carrega_pagina() {};
       window.onload = carrega_pagina
     </script>
 
   </div>
 
-  {% include "edicoes_ajax.html" with tabela='Orientacoes' %}
+  {% include "edicoes_ajax.html" with tabela="Orientacoes" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

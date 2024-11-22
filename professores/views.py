@@ -236,7 +236,9 @@ def avaliacoes_pares(request, todos=None):
     if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
-    context = {"titulo": "Avaliações de Pares"}
+    context = {
+            "titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},
+        }
 
     if request.user.tipo_de_usuario == 4:  # Administrador
         context["administracao"] = True
@@ -2281,7 +2283,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                                                 ).last()
 
         context = {
-            "titulo": "Formulário de Avaliação de Entrega",
+            "titulo": {"pt": "Formulário de Avaliação de Entrega", "en": "Delivery Evaluation Form"},
             "projeto": projeto,
             "composicao": composicao,
             "estudante": estudante,
@@ -2495,7 +2497,7 @@ def conceitos_obtidos(request, primarykey):  # acertar isso para pk
 
 
     context = {
-        "titulo": "Resultado Bancas",
+        "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Results"},
         "objetivos": objetivos,
         "projeto": projeto,
         "avaliadores_inter": avaliadores_inter,
@@ -2771,7 +2773,8 @@ def orientadores_tabela_completa(request):
     configuracao = get_object_or_404(Configuracao)
     orientadores = recupera_orientadores_por_semestre(configuracao)
 
-    cabecalhos = ["Nome", "Grupos", ]
+    cabecalhos = [{"pt": "Nome", "en": "Name"},
+                  {"pt": "Grupos", "en": "Groups"},]
     
     context = {
         "titulo": {"pt": "Alocação de Orientadores", "en": "Advisor Allocation"},
@@ -2827,14 +2830,18 @@ def orientadores_tabela(request):
 
             orientacoes = zip(professores, grupos)
 
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                      {"pt": "e-mail", "en": "e-mail"},
+                      {"pt": "Grupos", "en": "Groups"},
+                      {"pt": "Projetos", "en": "Projects"}, ]
+
         context = {
             "orientacoes": orientacoes,
-            "cabecalhos": ["Nome", "e-mail", "Grupos", "Projetos", ],
+            "cabecalhos": cabecalhos,
         }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto, anual=True)
-        titulo = "Alocação de Orientadores"
+        
         informacoes = [
             (".semestre", "Semestre"),
             (".organizacao", "Organização"),
@@ -2843,8 +2850,8 @@ def orientadores_tabela(request):
         ]
 
         context = {
-            "edicoes": edicoes,
-            "titulo": titulo,
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
+            "titulo": {"pt": "Alocação de Orientadores", "en": "Advisors Allocation"},
             "informacoes": informacoes,
         }
 
@@ -2857,10 +2864,13 @@ def coorientadores_tabela_completa(request):
     configuracao = get_object_or_404(Configuracao)
     coorientadores = recupera_coorientadores_por_semestre(configuracao)
 
+    cabecalhos = [{"pt": "Nome", "en": "Name"},
+                  {"pt": "Grupos", "en": "Groups"},]
+
     context = {
         "titulo": {"pt": "Alocação de Coorientadores", "en": "Co-Advisor Allocation"},
         "anos": coorientadores,
-        "cabecalhos": ["Nome", "Grupos", ],
+        "cabecalhos": cabecalhos,
         
     }
     return render(request, "professores/coorientadores_tabela_completa.html", context)

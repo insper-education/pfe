@@ -30,36 +30,51 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   <div class="explanatory-text">
-    Para cada um dos blocos, ordene na coluna de respostas as afirmações especificadas na coluna pergunta.<br>
-    Para isso considere a sua autoperpção em relação a cada afirmação. <br>
-    Mova para a parte superior a afirmacao que mais te representa e para a parte inferior a que menos te representa.<br>
-    Lembre-se que este assessment é confidencial e particular, portanto foque em responder de forma sincera e honesta.<br>
-    Ao concluir, você receberá um relatório com os resultados por e-mail.<br>
-    Leve para a aula o seu resultado.<br>
+    <span lang="pt">
+      Para cada um dos blocos, ordene na coluna de respostas as afirmações especificadas na coluna pergunta.<br>
+      Para isso considere a sua autoperpção em relação a cada afirmação. <br>
+      Mova para a parte superior a afirmacao que mais te representa e para a parte inferior a que menos te representa.<br>
+      Lembre-se que este assessment é confidencial e particular, portanto foque em responder de forma sincera e honesta.<br>
+      Ao concluir, você receberá um relatório com os resultados por e-mail.<br>
+      Leve para a aula o seu resultado.<br>
+    </span>
+    <span lang="en" style="display: none;">
+      For each block, order in the answers column the statements specified in the question column.<br>
+      Consider your self-perception in relation to each statement. <br>
+      Move to the top the statement that best represents you and to the bottom the one that least represents you.<br>
+      Remember that this assessment is confidential and private, so focus on answering sincerely and honestly.<br>
+      Upon completion, you will receive a report with the results by email.<br>
+      Take your result to class.<br>
   </div>
 
   <form method="post">{% csrf_token %}
     {% include "tabela_estilos.html" with usuario=request.user %}<br>
-    <button class="btn btn-primary mb-1 mt-2" type="submit">Enviar</button>
+    <button class="btn btn-primary mb-1 mt-2" type="submit">
+      <span lang="pt">Enviar</span>
+      <span lang="en" style="display: none;">Submit</span>
+    </button>
   </form>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.sortable-list').forEach(function(list) {
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll(".sortable-list").forEach(function(list) {
         new Sortable(list, {
           animation: 100,
-          ghostClass: 'sortable-ghost',
+          ghostClass: "sortable-ghost",
           onEnd: function(evt) {
             const items = evt.to.children;
             for (let i = 0; i < items.length; i++) {
               const item = items[i];
               const priority = i + 1;
-              item.setAttribute('data-priority', priority);
+              item.setAttribute("data-priority", priority);
               const estiloId = list.id.split('_')[1];
-              const respostaNumber = item.getAttribute('data-resposta-number');
+              const respostaNumber = item.getAttribute("data-resposta-number");
               document.getElementById(`prioridade_resposta${priority}_${estiloId}`).value = respostaNumber;
             }
           }

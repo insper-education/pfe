@@ -124,7 +124,7 @@ def index_estudantes(request):
 def alinhamentos_gerais(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     context = {
-        "titulo": "Alinhamentos Gerais",
+        "titulo": {"pt": "Alinhamentos Gerais", "en": "General Alignments"},
     }
     return render(request, "estudantes/alinhamentos_gerais.html", context)
 
@@ -144,7 +144,7 @@ def alocacao_semanal(request):
     horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
     
     context = {
-        "titulo": "Alocação Semanal",
+        "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
         "horarios": horarios,
     }
@@ -282,7 +282,7 @@ def encontros_marcar(request):
     agendado = encontros.filter(projeto=projeto).last()
 
     context = {
-        "titulo": "Agendar Mentorias",
+        "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentoring"},
         "encontros": encontros,
         "projeto": projeto,
         "aviso": aviso,
@@ -400,10 +400,9 @@ def estilo_comunicacao(request):
         }
 
         return render(request, "generic.html", context=context)
-    
-    
+
     context = {
-        "titulo": "Estilo de Comunicação",
+        "titulo": {"pt": "Estilo de Comunicação", "en": "Communication Style"},
         "estilos": EstiloComunicacao.objects.all(),
     }
     return render(request, "estudantes/estilo_comunicacao.html", context)
@@ -463,13 +462,12 @@ def estudante_feedback_geral(request, usuario):
         return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": "Formulário de Feedback dos Estudantes",
+        "titulo": {"pt": "Formulário de Feedback dos Estudantes", "en": "Student Feedback Form"},
         "usuario": usuario,
         "projeto": projeto,
         "mensagem": mensagem,
     }
     return render(request, "estudantes/estudante_feedback.html", context)
-
 
 
 @login_required
@@ -514,7 +512,8 @@ def avaliacao_pares(request, momento):
         tipo=1
 
     context = {
-            "titulo": "Avaliação de Pares" + (" Intermediária" if momento=="intermediaria" else " Final"),
+            "titulo": {"pt": "Avaliação de Pares" + (" Intermediária" if momento=="intermediaria" else " Final"), 
+                       "en": (" Intermediate" if momento=="intermediaria" else " Final") + " Peer Evaluation"},
         }
 
     if request.user.tipo_de_usuario == 1:
@@ -666,7 +665,7 @@ def informacoes_adicionais(request):
     context["areast"] = Area.objects.filter(ativa=True)
     context["Aluno"] = Aluno
     context["PFEUser"] = PFEUser
-    context["titulo"] = "Interesses e Experiências"
+    context["titulo"] = {"pt": "Interesses e Experiências", "en": "Interests and Experiences"}
 
     return render(request, "estudantes/informacoes_adicionais.html", context)
 
@@ -836,7 +835,9 @@ def submissao_documento(request):
 
     configuracao = get_object_or_404(Configuracao)
 
-    context = {"titulo": "Submissão de Documentos",}
+    context = {
+        "titulo": {"pt": "Submissão de Documentos", "en": "Document Submission"},
+        }
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
@@ -968,7 +969,7 @@ def selecao_propostas(request):
     areas = areas_normais or areas_outras
 
     context = {
-        "titulo": "Seleção de Propostas de Projetos",
+        "titulo": {"pt": "Seleção de Propostas de Projetos", "en": "Project Proposal Selection"},
         "liberadas_propostas": liberadas_propostas,
         "vencido": vencido,
         "propostas": propostas,

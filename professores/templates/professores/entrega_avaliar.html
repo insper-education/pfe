@@ -28,12 +28,12 @@
 {% block content %}
 
   <span class="titulo">
-    <span lang="pt">{{titulo}}</span>
-    <span lang="en">Deliverable Evaluation Form</span>
-  </span>  
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% if mensagem %}
-  <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
+    <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
   {% endif %}
 
   <span lang="pt"></span><span lang="en"></span>
@@ -189,11 +189,10 @@
 
   {% include "atualiza_objetivos.html" %}
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
-  {% include "linguas.html" %}
-
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -38,8 +38,8 @@
 {% block content %}
 
   <span class="titulo">
-    <span lang="pt">{{ titulo }}</span>
-    <span lang="en">Organizations Feedback Form</span>
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
   </span>
 
   <form action="" method="post"> {% csrf_token %}  
@@ -148,12 +148,10 @@
       </div>
 
       <script charset="utf-8">
-        var myRange = document.querySelector('#nps');
-        var myValue = document.querySelector('#myValue');
+        var myRange = document.querySelector("#nps");
+        var myValue = document.querySelector("#myValue");
 
         var off = (myRange.offsetWidth - (parseInt(myRange.style.paddingRight) + parseInt(myRange.style.paddingLeft) ) ) / (parseInt(myRange.max) - parseInt(myRange.min));
-        
-        // myValue.parentElement.style.top = myRange.offsetHeight + 'px';
 
         function desenha_numero(){
           let px = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2) + parseInt(myRange.style.paddingLeft);
@@ -164,7 +162,6 @@
             myValue.innerHTML = myRange.value;
             $("#cor_texto").css("color", "blue");
           }
-          // myValue.parentElement.style.left = px + 'px';
         };
 
         myRange.oninput = desenha_numero;
@@ -174,7 +171,10 @@
       </script>
 
       <br><br><br>
-      <input class="btn btn-primary mb-1" type="submit" value="Enviar">
+      <button type="submit" class="btn btn-primary mb-1">
+        <span lang="pt">Enviar</span>
+        <span lang="en">Submit</span>
+      </button>
 
     </div>
 

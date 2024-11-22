@@ -1390,6 +1390,7 @@ def dados_backup(request, modo=None):
     else:
         raise SuspiciousOperation(f"Chamada irregular.")
     
+    context = {"titulo": { "pt": "Backup de Dados", "en": "Data Backup" },}
     return render(request, "administracao/dados_backup.html", context=context)
 
 

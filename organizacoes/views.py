@@ -277,10 +277,15 @@ def parceiro_propostas(request):
     else:
         propostas = None
 
+
+    cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
+                  {"pt": "Período", "en": "Semester"},]
+    
     context = {
-        "titulo": "Propostas de Projetos Submetidas",
+        "titulo": {"pt": "Propostas de Projetos Submetidas", "en": "Submitted Project Proposals"},
         "propostas": propostas,
         "organizacao": user.parceiro.organizacao,
+        "cabecalhos": cabecalhos,
     }
     return render(request, "organizacoes/parceiro_propostas.html", context)
 
@@ -307,7 +312,7 @@ def parceiro_projetos(request):
         organizacao = None
 
     context = {
-        "titulo": "Lista de Projetos",
+        "titulo": {"pt": "Lista de Projetos", "en": "Projects List"},
         "projetos": projetos,
         "organizacao": organizacao,
     }
@@ -686,7 +691,7 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
         return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
     organizacao = get_object_or_404(Organizacao, id=org)
     context = {
-        "titulo": organizacao.nome,
+        "titulo": {"pt": "Organização Parceira", "en": "Partnership Organization"},
         "organizacao": organizacao,
         "cursos": Curso.objects.all().order_by("id"),
     }
@@ -776,7 +781,7 @@ def projeto_feedback(request):
         return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": "Formulário de Feedback das Organizações Parceiras",
+        "titulo": {"pt": "Formulário de Feedback das Organizações Parceiras", "en": "Partnership Organizations Feedback Form"},
     }
     return render(request, "organizacoes/projeto_feedback.html", context)
 

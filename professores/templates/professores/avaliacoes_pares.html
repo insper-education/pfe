@@ -20,7 +20,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "edicoes.html" %}
   <br>
@@ -74,5 +78,6 @@
   </script>
 
   {% include "edicoes_ajax.html" %}
+  {% include "linguas.html" %}
   
 {% endblock %}

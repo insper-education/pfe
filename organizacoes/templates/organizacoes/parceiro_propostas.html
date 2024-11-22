@@ -12,16 +12,27 @@
 
 {% block content %}
 
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  <b>Organização</b>: {{ organizacao }}<br><br>
+  <b lang="pt">Organização:</b>
+  <b lang="en">Organization:</b>
+  {{ organizacao }}<br><br>
 
   <div class="table-responsive">
     <table id="PropostasTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Título da Proposta</th>
-          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
+          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
+            <span lang="pt">{{cabecalhos.0.pt}}</span>
+            <span lang="en">{{cabecalhos.0.en}}</span>
+          </th>
+          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
+            <span lang="pt">{{cabecalhos.1.pt}}</span>
+            <span lang="en">{{cabecalhos.1.en}}</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -42,13 +53,21 @@
           </tr>
         {% empty %}
           <tr>
-            <td colspan="3">Não existem propostas disponíveis pela sua organização.</td>
+            <td colspan="3">
+              <span lang="pt">Não existem propostas disponíveis pela sua organização.</span>
+              <span lang="en">There are no proposals available from your organization.</span>
+            </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
   <p>&nbsp;</p>
-  <strong>Número Total de Propostas Registradas:</strong> ({{ propostas.count }})<br>
+  <strong>
+    <span lang="pt">Número Total de Propostas Registradas:</span>
+    <span lang="en">Total Number of Registered Proposals:</span>
+  </strong> {{ propostas.count }}<br>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

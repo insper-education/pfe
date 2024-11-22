@@ -7,56 +7,59 @@
 
 {% block head %}
 
-    <style>
-      .ordenar {
-        box-shadow:inset 0px 1px 3px 0px #91b8b3;
-        background:linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);
-        background-color:#96ada7;
-        border-radius:5px;
-        border:1px solid #768983;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:13px;
-        font-weight:bold;
-        padding:3px 3px;
-        text-decoration:none;
-        text-shadow:0px -1px 0px #2b665e;
-        margin-left:10px;
-        margin-bottom: 3px;    
-        float: right;
-      }
+  <style>
+    .ordenar {
+      box-shadow:inset 0px 1px 3px 0px #91b8b3;
+      background:linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);
+      background-color:#96ada7;
+      border-radius:5px;
+      border:1px solid #768983;
+      display:inline-block;
+      cursor:pointer;
+      color:#ffffff;
+      font-family:Arial;
+      font-size:13px;
+      font-weight:bold;
+      padding:3px 3px;
+      text-decoration:none;
+      text-shadow:0px -1px 0px #2b665e;
+      margin-left:10px;
+      margin-bottom: 3px;    
+      float: right;
+    }
 
-      .ordenar:hover {
-        background:linear-gradient(to bottom, #8c9c9c 5%, #96ada7 100%);
-        background-color:#8c9c9c;
-      }
+    .ordenar:hover {
+      background:linear-gradient(to bottom, #8c9c9c 5%, #96ada7 100%);
+      background-color:#8c9c9c;
+    }
 
-      .ordenar:active {
-        position:relative;
-        top:1px;
-      }
+    .ordenar:active {
+      position:relative;
+      top:1px;
+    }
 
-    </style>
+  </style>
 
 {% endblock %}
 
 {% block content %}
 
-    {% if vencido %}
-      <h2 class="red-bold">Você não está cadastrado como estudante.</h2>
-    {% else %}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display:none">{{ titulo.en }}</span>
+  </span>
 
-      {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
-        <h2 class="red-bold">Você não está registrado para o Capstone em {{ano}}.{{semestre}}</h2>
-        <h3 class="red-bold">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone</h3>
-        <br>
-      {% endif %}
-
+  {% if vencido %}
+    <h2 class="red-bold">Você não está cadastrado como estudante.</h2>
+  {% else %}
+    {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
+      <h2 class="red-bold">Você não está registrado para o Capstone em {{ano}}.{{semestre}}</h2>
+      <h3 class="red-bold">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone</h3>
+      <br>
     {% endif %}
+  {% endif %}
 
-    {% if not areas %}
+  {% if not areas %}
     <h5 class="text-warning">
     Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:
     <a href="{% url 'informacoes_adicionais' %}">
@@ -64,102 +67,101 @@
     </a>
     <br><br>
     <h5>
-    {% endif %}
+  {% endif %}
 
-    <div class="row">
-      <div class="col">
-          <span class="titulo">{{ titulo }}</span>
-        </div>
-      <div class="col-2 align-self-end">
-        <button class="ordenar" onclick="sortTable()">Ordenar&nbsp;&#x21e3;</button>
-      </div>
+  <div class="row">
+    <div class="col">
+      Selecione as propostas conforme seu interesse
     </div>
-    <div class="row">
-      <div class="col">
+    <div class="col-2 align-self-end">
+      <button class="ordenar" onclick="sortTable()">Ordenar&nbsp;&#x21e3;</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
 
-        {% if propostas %}
-          <form action="" method="post"> {% csrf_token %}
-            {% if liberadas_propostas %}
+      {% if propostas %}
+        <form action="" method="post"> {% csrf_token %}
+          {% if liberadas_propostas %}
 
-              <table id="propostas" class="table table-hover table-bordered table-sm ">
-                <tbody>
-                {% for proposta in propostas %} 
-                  {% if proposta.disponivel %}
-                    <tr>
-                      <th scope="row" class="align-middle" style="text-align:center; width: 1%;">
-                        <select class="opcoes" id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
-                        {% if vencido %}disabled{% endif %}></select>
-                        <script>
-                          var select = document.getElementById("selection{{proposta.pk}}");
-                          select.options[select.options.length] = new Option("--", 0);
-                          for(var index=1; index<={{propostas|length}}; index++){
-                            select.options[select.options.length] = new Option(index, index);
-                          }
+            <table id="propostas" class="table table-hover table-bordered table-sm ">
+              <tbody>
+              {% for proposta in propostas %} 
+                {% if proposta.disponivel %}
+                  <tr>
+                    <th scope="row" class="align-middle" style="text-align:center; width: 1%;">
+                      <select class="opcoes" id="selection{{proposta.pk}}" name="selection{{proposta.pk}}" 
+                      {% if vencido %}disabled{% endif %}></select>
+                      <script>
+                        var select = document.getElementById("selection{{proposta.pk}}");
+                        select.options[select.options.length] = new Option("--", 0);
+                        for(var index=1; index<={{propostas|length}}; index++){
+                          select.options[select.options.length] = new Option(index, index);
+                        }
 
-                          // Para agora nao encontrei forma mais inteligente de fazer isso
-                          {% for opcao in opcoes_temporarias %} 
-                            {% if opcao.proposta.pk == proposta.pk %}
-                            select.selectedIndex = {{ opcao.prioridade }};
-                            {% endif %}
-                          {% endfor %}
-
-                        </script>
-                      </th>
-                      <td>
-                        <a style="display: block;" href="{% url 'proposta_detalhes' proposta.pk %}">
-                          {% if proposta.titulo %}
-                            {{proposta.titulo}}
-                          {% else %}
-                            PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
+                        // Para agora nao encontrei forma mais inteligente de fazer isso
+                        {% for opcao in opcoes_temporarias %} 
+                          {% if opcao.proposta.pk == proposta.pk %}
+                          select.selectedIndex = {{ opcao.prioridade }};
                           {% endif %}
-                          <font color="darkblue">
-                            {% if proposta.nome_organizacao %}
-                              ({{ proposta.nome_organizacao }})
-                            {% elif proposta.organizacao and proposta.organizacao.nome %}
-                              ({{ proposta.organizacao.nome }})
-                            {% else %}
-                              PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
-                            {% endif %}
-                          </font>
+                        {% endfor %}
 
-                          {% include "tipo_proposta.html" %}
+                      </script>
+                    </th>
+                    <td>
+                      <a style="display: block;" href="{% url 'proposta_detalhes' proposta.pk %}">
+                        {% if proposta.titulo %}
+                          {{proposta.titulo}}
+                        {% else %}
+                          PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
+                        {% endif %}
+                        <font color="darkblue">
+                          {% if proposta.nome_organizacao %}
+                            ({{ proposta.nome_organizacao }})
+                          {% elif proposta.organizacao and proposta.organizacao.nome %}
+                            ({{ proposta.organizacao.nome }})
+                          {% else %}
+                            PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                          {% endif %}
+                        </font>
 
-                        </a>
-                      </td>
-                    </tr>
-                  {% endif %}
-                {% endfor %}
-                </tbody>
-              </table>
-              
-            {% else %}
-              Propostas ainda não liberadas.
-            {% endif %}
+                        {% include "tipo_proposta.html" %}
 
-            <font color="red">
-              {{warnings|linebreaks}}
-            </font>
+                      </a>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+              </tbody>
+            </table>
+            
+          {% else %}
+            Propostas ainda não liberadas.
+          {% endif %}
 
-            <small >Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.<br></small>
-            <div style="display: flex; margin-top: 8px;">      
-              
-              <input class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
+          <font color="red">
+            {{warnings|linebreaks}}
+          </font>
 
-              <small style="float: right;"><font color="red">
-                Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.
-              </font></small>
-              
-            </div>
+          <small >Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.<br></small>
+          <div style="display: flex; margin-top: 8px;">      
+            
+            <input class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
 
-          </form>
+            <small style="float: right;"><font color="red">
+              Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.
+            </font></small>
+            
+          </div>
 
-        {% else %}
-          <p>Não existem Propostas de Projetos disponíveis.</p>
-        {% endif %}
+        </form>
 
-      </div>
+      {% else %}
+        <p>Não existem Propostas de Projetos disponíveis.</p>
+      {% endif %}
+
     </div>
-
+  </div>
 
   <script>
     {% comment %} https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number {% endcomment %}
@@ -182,7 +184,6 @@
 
           if (Number(x) > Number(y)) {
             shouldSwitch = true;
-            
             break;
           }
         }

@@ -161,7 +161,7 @@ def projeto_completo(request, primarykey):
     horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
 
     context = {
-        "titulo": { "pt": titulo, "en": titulo },
+        "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
         "projeto": projeto,
         "alocacoes": alocacoes,
         "medias_oo": medias_oo,

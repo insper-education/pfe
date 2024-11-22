@@ -34,7 +34,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display:none">{{ titulo.en }}</span>
+  </span>
 
   {% if mensagem %}
     <h5 style="color:red">{{mensagem|safe}}</h5>
@@ -148,7 +152,10 @@
 
       <br><br><br>
       {% if not feedback %}
-        <input class="btn btn-primary mb-1" type="submit" value="Enviar">
+        <button type="submit" class="btn btn-primary mb-1">
+          <span lang="pt">Enviar Feedback</span>
+          <span lang="en" style="display:none">Send Feedback</span>
+        </button>
       {% endif %}
 
     </div>

@@ -615,7 +615,7 @@ def exibir_ocultar_notas(request):
     
     exames = Exame.objects.all()
     context = {
-        "titulo": "Exibir ou Ocultar Notas",
+        "titulo": {"pt": "Exibir ou Ocultar Notas", "en": "Show or Hide Grades"},
         "edicoes": get_edicoes(Projeto)[0],
         "lista": exames,
     }

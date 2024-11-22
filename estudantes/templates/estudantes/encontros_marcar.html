@@ -45,9 +45,13 @@
 {% endblock %}
 
 {% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display:none">{{ titulo.en }}</span>
+  </span>
+
   <form method="post"> {% csrf_token %}
-    <span class="titulo">{{titulo}}</span>
-    
     {% if user.tipo_de_usuario == 1 %}
       <h4>Projeto: 
         {% if projeto %}

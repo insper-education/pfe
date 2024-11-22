@@ -12,7 +12,10 @@
 
 {% block content %}
   
-  <span class="titulo">{{ titulo }}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <form method="POST" id="exportForm">{% csrf_token %}
 
@@ -30,10 +33,14 @@
     </div>
     <br>
 
-    <input type="submit" value="Atualizar" class="btn btn-primary" id="atualizarButton">
+    <button type="button" class="btn btn-primary" type="submit" id="atualizarButton">
+      <span lang="pt">Atualizar</span>
+      <span lang="en">Update</span>
+    </button>
+
   </form>
 
-
   {% include "edicoes_ajax.html" with tabela="Projetos" %}
+  {% include "linguas.html" %}
   
 {% endblock %}

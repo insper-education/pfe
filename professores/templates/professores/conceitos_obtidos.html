@@ -45,7 +45,11 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">{{titulo}}</span>
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <strong>Projeto:</strong>
   [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
@@ -281,5 +285,7 @@
 
   <b>Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
      e depois de 24 horas que a última avaliação foi feita.</b>
+
+  {% include "linguas.html" %}
 
 {% endblock %}
