@@ -148,14 +148,13 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
     #     raise PermissionDenied
     if os.path.exists(file_path):
         documento = local_path[len(settings.BASE_DIR) + len(settings.MEDIA_URL):]
-
+        
         doc = Documento.objects.filter(documento=documento).last()
+        
         if doc:
             mensagem = "Documento Confidencial"
             context = {"mensagem": mensagem,}
-
             if not bypass_confidencial: # Soh para o caso de documentos de bancas
-
                 try:
                     user = PFEUser.objects.get(pk=request.user.pk)
                 except PFEUser.DoesNotExist:
@@ -176,6 +175,10 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
 
                     else:
                         return render(request, "generic.html", context=context)
+        else:
+            mensagem = "Documento não mais válido"
+            context = {"mensagem": mensagem,}
+            return render(request, "generic.html", context=context)
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
