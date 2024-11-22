@@ -27,14 +27,14 @@
   {% endif %}
 
   {% if vencido %}
-    <h5 class="red-bold">Fora do Período de Avaliação de Pares
-      {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}
+    <h5 class="red-bold">
+      <span lang="pt">Fora do Período de Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
+      <span lang="en" style="display:none">Out of {% if momento == "intermediaria" %}Intermediate{% else %}Final{% endif %} Peer Evaluation Period</span>
     </h5>
   {% else %}
     <h5>
-      Período de Avaliação de Pares
-      {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}
-      de {{inicio}} até {{fim}}
+      <span lang="pt">Período de Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %} de {{inicio}} até {{fim}}</span>
+      <span lang="en" style="display:none">{% if momento == "intermediaria" %}Intermediate{% else %}Final{% endif %} Peer Evaluation Period from {{inicio}} to {{fim}}</span>
     </h5>
   {% endif %}
 
@@ -47,19 +47,23 @@
       <br>
       <div style="max-width: 700px;">
         <b>
-          Colega: {{colega.aluno}}
+          <span lang="pt">Colega:</span>
+          <span lang="en" style="display:none">Colleague:</span>
+          {{colega.aluno}}
           {% if colega.aluno.externo %}
             [{{colega.aluno.externo}}]
-            <span
-            style="color: #007bff;"
-            >(opcional)</span>
+            <span style="color: #007bff;">
+              <span lang="pt">(opcional)</span>
+              <span lang="en" style="display:none">(optional)</span>
+            </span>
           {% endif %}
         </b>
       </div>
 
       <br>
       <label for="aprecia">
-        O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?
+        <span lang="pt">O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?</span>
+        <span lang="en" style="display:none">What do you appreciate about {{colega.aluno}}?</span>
       </label><br>
       <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
       {% if not colega.aluno.externo %}required{% endif %}
@@ -67,7 +71,8 @@
       <br><br>
 
       <label for="atrapalhando">
-        O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?
+        <span lang="pt">O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?</span>
+        <span lang="en" style="display:none">What do you see {{colega.aluno}} doing, or not doing, that is hindering?</span>
       </label><br>
       <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
       {% if not colega.aluno.externo %}required{% endif %}
@@ -75,7 +80,8 @@
       <br><br>
 
       <label for="mudar">
-        O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?
+        <span lang="pt">O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?</span>
+        <span lang="en" style="display:none">What can {{colega.aluno}} change that would make a difference to you?</span>
       </label><br>
       <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
       {% if not colega.aluno.externo %}required{% endif %}
@@ -83,91 +89,130 @@
 
 
       <br><br>
-      <b>Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
+      <b>
+        <span lang="pt">Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
+        <span lang="en" style="display:none">Delivery of {{colega.aluno}}</span>
+      </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="entrega{{colega.id}}" value="0" 
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</label><br>
+          <span lang="pt">Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</span>
+          <span lang="en" style="display:none">Delivered well below expectations, putting the delivery at risk and forcing other member(s) to change personal plans to guarantee it.</span>
+        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Entregou abaixo do esperado.</label><br>
+          <span lang="pt">Entregou abaixo do esperado.</span>
+          <span lang="en" style="display:none">Delivered below expectations.</span>
+        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Entregou precisamente o esperado.</label><br>
+          <span lang="pt">Entregou precisamente o esperado.</span>
+          <span lang="en" style="display:none">Delivered exactly what was expected.</span>
+        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Entregou acima do esperado.</label><br>
+          <span lang="pt">Entregou acima do esperado.</span>
+          <span lang="en" style="display:none">Delivered above expectations.</span>
+        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.</label><br>
+          <span lang="pt">Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.</span>
+          <span lang="en" style="display:none">Delivered well above expectations, changing personal plans to guarantee a delivery that was at risk.</span>
+        </label><br>
       </div>
 
 
       <br>
-      <b>Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
+      <b>
+        <span lang="pt">Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
+        <span lang="en" style="display:none">Initiative of {{colega.aluno}}</span>
+      </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="iniciativa{{colega.id}}" value="0"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Mesmo quando lembrado, não cumpriu as tarefas designadas.</label><br>
+          <span lang="pt">Mesmo quando lembrado, não cumpriu as tarefas designadas.</span>
+          <span lang="en" style="display:none">Even when reminded, did not fulfill the assigned tasks.</span>
+        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Precisou ser lembrado, mas cumpriu as tarefas designadas.</label><br>
+          <span lang="pt">Precisou ser lembrado, mas cumpriu as tarefas designadas.</span>
+          <span lang="en" style="display:none">Needed to be reminded, but fulfilled the assigned tasks.</span>
+        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.</label><br>
+          <span lang="pt">Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.</span>
+          <span lang="en" style="display:none">Autonomously, fulfilled the assigned tasks, neither more nor less.</span>
+        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.</label><br>
+          <span lang="pt">Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.</span>
+          <span lang="en" style="display:none">In addition to fulfilling the assigned tasks, helped other member(s) who were having difficulties.</span>
+        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.</label><br>
+          <span lang="pt">Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.</span>
+          <span lang="en" style="display:none">Monopolized part of the tasks, assuming tasks of other member(s) even when there was no evidence of difficulties.</span>
+        </label><br>
       </div>
 
       <br>
-      <b>Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</b>
+      <b>
+        <span lang="pt">Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
+        <span lang="en" style="display:none">Communication of {{colega.aluno}}</span>
+      </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="comunicacao{{colega.id}}" value="0"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</label><br>
+          <span lang="pt">Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</span>
+          <span lang="en" style="display:none">Had difficulties, never communicated them and in the end they prevented the delivery.</span>
+        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.</label><br>
+          <span lang="pt">Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.</span>
+          <span lang="en" style="display:none">Had difficulties and never communicated them, but at least it did not prevent the delivery.</span>
+        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Aparentemente não teve dificuldades, mas nunca reportou nada.</label><br>
+          <span lang="pt">Aparentemente não teve dificuldades, mas nunca reportou nada.</span>
+          <span lang="en" style="display:none">Apparently had no difficulties, but never reported anything.</span>
+        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.</label><br>
+          <span lang="pt">Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.</span>
+          <span lang="en" style="display:none">Communicated difficulties. Regardless of whether the delivery was made or not, the team was not surprised.</span>
+        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          Apesar de não ter dificuldades, estava sempre reportando como estava indo.</label><br>
+          <span lang="pt">Apesar de não ter dificuldades, estava sempre reportando como estava indo.</span>
+          <span lang="en" style="display:none">Despite having no difficulties, was always reporting how it was going.</span>
+        </label><br>
       </div>
       <br>
       <hr>
@@ -175,12 +220,17 @@
     {% endfor %}
 
     <br>
-    <input class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit" value="Enviar"> 
+    <button class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
+      <span lang="pt">Enviar</span>
+      <span lang="en" style="display:none">Submit</span>
+    </button>
 
   </form>
 
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}
