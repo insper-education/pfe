@@ -50,31 +50,42 @@
   </span>
 
   {% if vencido %}
-    <h2 class="red-bold">Você não está cadastrado como estudante.</h2>
+    <h2 class="red-bold">
+      <span lang="pt">Você não está cadastrado como estudante.</span>
+      <span lang="en" style="display:none">You are not registered as a student.</span>
+    </h2>
   {% else %}
     {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
-      <h2 class="red-bold">Você não está registrado para o Capstone em {{ano}}.{{semestre}}</h2>
-      <h3 class="red-bold">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone</h3>
+      <h2 class="red-bold">
+        <span lang="pt">Você não está registrado para o Capstone em {{ano}}.{{semestre}}</span>
+        <span lang="en" style="display:none">You are not registered for the Capstone in {{ano}}.{{semestre}}</span>
+      </h2>
+      <h3 class="red-bold">
+        <span lang="pt">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone.</span>
+        <span lang="en" style="display:none">If you believe there is an error in the information, please contact the Capstone coordination.</span>
+      </h3>
       <br>
     {% endif %}
   {% endif %}
 
   {% if not areas %}
     <h5 class="text-warning">
-    Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:
-    <a href="{% url 'informacoes_adicionais' %}">
-      Áreas de Interesse
-    </a>
-    <br><br>
-    <h5>
+      <span lang="pt">Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:</span>
+      <span lang="en" style="display:none">You have not selected any areas of interest yet, please make a selection before confirming the desired projects:</span>      
+      <a href="{% url 'informacoes_adicionais' %}">
+        <span lang="pt">Áreas de Interesse</span>
+        <span lang="en" style="display:none">Areas of Interest</span>
+      </a>
+    <h5><br><br>
   {% endif %}
 
   <div class="row">
     <div class="col">
-      Selecione as propostas conforme seu interesse
+      <span lang="pt">Selecione as propostas conforme seu interesse</span>
+      <span lang="en" style="display:none">Select the proposals according to your interest</span>
     </div>
     <div class="col-2 align-self-end">
-      <button class="ordenar" onclick="sortTable()">Ordenar&nbsp;&#x21e3;</button>
+      <button class="ordenar" onclick="sortTable()"><span lang="pt">Ordenar</span><span lang="en" style="display:none">Sort</span>&nbsp;&#x21e3;</button>
     </div>
   </div>
   <div class="row">
@@ -113,7 +124,8 @@
                         {% if proposta.titulo %}
                           {{proposta.titulo}}
                         {% else %}
-                          PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA
+                          <span lang="pt">PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA</span>
+                          <span lang="en" style="display:none">PROBLEM IN RETRIEVING PROPOSAL TITLE</span>
                         {% endif %}
                         <font color="darkblue">
                           {% if proposta.nome_organizacao %}
@@ -121,7 +133,8 @@
                           {% elif proposta.organizacao and proposta.organizacao.nome %}
                             ({{ proposta.organizacao.nome }})
                           {% else %}
-                            PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA
+                            <span lang="pt">PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA</span>
+                            <span lang="en" style="display:none">PROBLEM IN RETRIEVING PROPOSAL ORGANIZATION</span>
                           {% endif %}
                         </font>
 
@@ -136,20 +149,30 @@
             </table>
             
           {% else %}
-            Propostas ainda não liberadas.
+            <span lang="pt">Propostas ainda não liberadas.</span>
+            <span lang="en" style="display:none">Proposals not yet released.</span>
           {% endif %}
 
           <font color="red">
             {{warnings|linebreaks}}
           </font>
 
-          <small >Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.<br></small>
+          <small>
+            <span lang="pt">Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.</span>
+            <span lang="en" style="display:none">When you decide on the desired projects, click <b>Confirm</b>. You can reconfirm as many times as you want until {{prazo}}.</span>
+          </small><br>
+
           <div style="display: flex; margin-top: 8px;">      
-            
-            <input class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;" value="Confirmar" {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
+
+            <button class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;"
+                    {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
+              <span lang="pt">Confirmar</span>
+              <span lang="en" style="display:none">Confirm</span>
+            </button>
 
             <small style="float: right;"><font color="red">
-              Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.
+              <span lang="pt">Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.</span>
+              <span lang="en" style="display:none">Select at least {{min_props}} proposals (1 to {{min_props}}), being 1 for the one you are most interested in.</span>
             </font></small>
             
           </div>
@@ -157,7 +180,10 @@
         </form>
 
       {% else %}
-        <p>Não existem Propostas de Projetos disponíveis.</p>
+        <p>
+          <span lang="pt">Não existem Propostas de Projetos disponíveis.</span>
+          <span lang="en" style="display:none">There are no Project Proposals available.</span>
+        </p>
       {% endif %}
 
     </div>
@@ -224,5 +250,9 @@
     $(".opcoes").change(atualiza_opcao_temporaria);
 
   </script>
+
+
+  {% include "linguas.html" %}
+
 
 {% endblock %}

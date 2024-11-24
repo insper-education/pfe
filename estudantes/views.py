@@ -111,14 +111,13 @@ def index_estudantes(request):
     context["limite_propostas"] = get_limite_propostas2(configuracao)
 
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
-    context["titulo"] = "Área dos Estudantes"
+    context["titulo"] = {"pt": "Área dos Estudantes", "en": "Students Area"}
 
     if "/estudantes/estudantes" in request.path:
         return render(request, "estudantes/estudantes.html", context=context)
     else:
         return render(request, "estudantes/index_estudantes.html", context=context)
     
-
 
 @login_required
 def alinhamentos_gerais(request):

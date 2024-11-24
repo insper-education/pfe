@@ -13,6 +13,12 @@
 {% endblock %}
 
 {% block content %}
-<span class="titulo">Estudantes</span>
-{% include "estudantes/estudantes.html" %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
+  {% include "estudantes/estudantes.html" %}
+
 {% endblock %}

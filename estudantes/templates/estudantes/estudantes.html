@@ -4,8 +4,15 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-<h5>Pré-projeto</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informacoes_adicionais' %}">Indicar Interesses e Experiências</a></div>
+<h5>
+  <span lang="pt">Pré-projeto</span>
+  <span lang="en" style="display: none;">Pre-project</span>
+</h5>
+
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informacoes_adicionais' %}">
+  <span lang="pt">Indicar Interesses e Experiências</span>
+  <span lang="en" style="display: none;">Indicate Interests and Experiences</span>
+</a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a 
   {% comment %} Caso Professor {% endcomment %}
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -26,20 +33,29 @@
           href="{% url 'selecao_propostas' %}"
       {% endif %}
   {% endif %}
-  >Selecionar Propostas de Projetos</a>
+  >
+    <span lang="pt">Selecionar Propostas de Projetos</span>
+    <span lang="en" style="display: none;">Select Project Proposals</span>
+  </a>
 </div>
 {% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
   <div style="color: red;">
     {% if liberadas_propostas and limite_propostas %}
-      Prazo para a seleção das propostas {{ano}}.{{semestre}}: <b>{{limite_propostas}}</b>
+      <span lang="pt">Prazo para a seleção das propostas</span>
+      <span lang="en" style="display: none;">Deadline for selecting proposals</span>
+      {{ano}}.{{semestre}}: <b>{{limite_propostas}}</b>
     {% else %}
-      Propostas para {{ano}}.{{semestre}} ainda não liberadas, previsão de liberação: <b>{{liberacao_visualizacao}}</b>
+      <span lang="pt">Propostas para {{ano}}.{{semestre}} ainda não liberadas, previsão de liberação: <b>{{liberacao_visualizacao}}</b></span>
+      <span lang="en" style="display: none;">Proposals for {{ano}}.{{semestre}} not yet released, forecast release: <b>{{liberacao_visualizacao}}</b></span>
     {% endif %}      
   </div>
 {% endif %}    
 <br>
 
-<h5>Projeto</h5>
+<h5>
+  <span lang="pt">Projeto</span>
+  <span lang="en" style="display: none;">Project</span>
+</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a
     {% comment %} Caso Organização {% endcomment %}
@@ -57,11 +73,15 @@
     {% endif %}
   >Meu Projeto</a>
 </div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'alocacao_semanal' %}">Alocação Semanal</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'alocacao_semanal' %}">
+  <span lang="pt">Alocação Semanal</span>
+  <span lang="en" style="display: none;">Weekly Allocation</span>
+</a></div>
 {% comment %} <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li> {% endcomment %}
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
-    Relato Quinzenal
+    <span lang="pt">Relato Quinzenal</span>
+    <span lang="en" style="display: none;">Biweekly Report</span>
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
@@ -75,58 +95,91 @@
             href="{% url 'submissao_documento' %}"
         {% endif %}
     {% endif %}
-  >Submissão de Documentos</a>
+  >
+    <span lang="pt">Submissão de Documentos</span>
+    <span lang="en" style="display: none;">Document Submission</span>
+  </a>
 </div>
 
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
-    Informações das Bancas
+    <span lang="pt">Informações das Bancas</span>
+    <span lang="en" style="display: none;">Information of the Examination Boards</span>
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')"
           {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
-    Agendar Mentorias
+    <span lang="pt">Agendar Mentorias</span>
+    <span lang="en" style="display: none;">Schedule Mentoring</span>
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
       {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
       href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
-      Avaliação de Pares Intermediária
+      <span lang="pt">Avaliação de Pares Intermediária</span>
+      <span lang="en" style="display: none;">Intermediate Peer Evaluation</span>
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
       {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
       href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
-      Avaliação de Pares Final
+        <span lang="pt">Avaliação de Pares Final</span>
+        <span lang="en" style="display: none;">Final Peer Evaluation</span>
   </a>
 </div>
 <br>
 
-<h5>Pós-projeto</h5>
+<h5>
+  <span lang="pt">Pós-projeto</span>
+  <span lang="en" style="display: none;">Post-project</span>
+</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
-    Feedback de encerramento
+    <span lang="pt">Feedback de encerramento</span>
+    <span lang="en" style="display: none;">Closing Feedback</span>
   </a>
 </div>
 <br>
 
-<h5>Outros</h5>
+<h5>
+  <span lang="pt">Outros</span>
+  <span lang="en" style="display: none;">Others</span>
+</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a href="{% url 'estilo_comunicacao' %}">
-    Estilos de Comunicação
+    <span lang="pt">Estilos de Comunicação</span>
+    <span lang="en" style="display: none;">Communication Styles</span>
   </a>
 </div>
 
 {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
-<div class="mensagem" id="projeto">Você não está alocado em um projeto.</div>
-<div class="mensagem" id="vencido">Prazo para a seleção dos propostas vencido.</div>
-<div class="mensagem" id="liberado">Propostas ainda não liberadas.</div>
-<div class="mensagem" id="final">Você ainda não está na fase final de projeto.</div>
-<div class="mensagem" id="feedback">Fora do período para o feedback.</div>
-<div class="mensagem" id="projeto_organizacao">Area não acessível para organizações.</div>
+<div class="mensagem" id="projeto">
+  <span lang="pt">Você não está alocado em um projeto.</span>
+  <span lang="en" style="display: none;">You are not allocated to a project.</span>
+</div>
+<div class="mensagem" id="vencido">
+  <span lang="pt">Prazo para a seleção dos propostas vencido.</span>
+  <span lang="en" style="display: none;">Deadline for selecting proposals expired.</span>
+</div>
+<div class="mensagem" id="liberado">
+  <span lang="pt">Propostas ainda não liberadas.</span>
+  <span lang="en" style="display: none;">Proposals not yet released.</span>
+</div>
+<div class="mensagem" id="final">
+  <span lang="pt">Você ainda não está na fase final de projeto.</span>
+  <span lang="en" style="display: none;">You are not in the final project phase yet.</span>
+</div>
+<div class="mensagem" id="feedback">
+  </span lang="pt">Fora do período para o feedback.</span>
+  <span lang="en" style="display: none;">Out of the feedback period.</span>
+</div>
+<div class="mensagem" id="projeto_organizacao">
+  <span lang="pt">Área não acessível para organizações.</span>
+  <span lang="en" style="display: none;">Area not accessible for organizations.</span>
+</div>
 
 {% comment %} tipo_de_usuario == 2 é professor e tipo_de_usuario == 4 é administrador {% endcomment %}
 <script>
