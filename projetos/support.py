@@ -65,7 +65,6 @@ def converte_letra(nota, mais="+", espaco=""):
 def get_upload_path(instance, filename):
     """Caminhos para armazenar os arquivos."""
     caminho = ""
-    #if isinstance(instance, Documento):
     if instance.__class__.__name__ == "Documento":
         if instance.organizacao:
             caminho += slugify(instance.organizacao.sigla_limpa()) + "/"

@@ -1153,8 +1153,8 @@ class Anotacao(models.Model):
         return anotacao
 
     class Meta:
-        verbose_name = 'Anotação'
-        verbose_name_plural = 'Anotações'
+        verbose_name = "Anotação"
+        verbose_name_plural = "Anotações"
 
 
 class Documento(models.Model):

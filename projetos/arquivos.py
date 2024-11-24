@@ -13,20 +13,16 @@ import mimetypes
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
-
 from django.contrib.auth.decorators import login_required
-
 from django.core.exceptions import PermissionDenied
-
-from django.http.response import StreamingHttpResponse
 from django.http import Http404, HttpResponse
-
+from django.http.response import StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from users.models import PFEUser, Alocacao
+from users.models import PFEUser, Alocacao, Administrador
 from documentos.models import TipoDocumento
 
-from .models import Documento
+from .models import Documento, Organizacao, Proposta, Reembolso, Certificado
 
 # FONTE: https://stackoverflow.com/questions/33208849/
 # ... python-django-streaming-video-mp4-file-using-httpresponse/41289535#41289535
@@ -176,9 +172,22 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
                     else:
                         return render(request, "generic.html", context=context)
         else:
-            mensagem = "Documento não mais válido"
-            context = {"mensagem": mensagem,}
-            return render(request, "generic.html", context=context)
+
+            # Checa se é um outro tipo de documento confidencial
+            if Organizacao.objects.filter(logotipo=documento).exists():
+                pass
+            elif Administrador.objects.filter(assinatura=documento).exists():
+                pass
+            elif Proposta.objects.filter(anexo=documento).exists():
+                pass
+            elif Reembolso.objects.filter(nota=documento).exists():
+                pass
+            elif Certificado.objects.filter(documento=documento).exists():
+                pass
+            else:
+                mensagem = "Documento não mais válido"
+                context = {"mensagem": mensagem,}
+                return render(request, "generic.html", context=context)
 
         if documento[:3] == "tmp":
             mensagem = "Documento não acessível"
