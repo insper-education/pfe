@@ -24,7 +24,6 @@
   </span>
 
   {% include "edicoes.html" with n_todas=True %}
-  {% include "informacoes.html" %}
 
   <div class="atualizar">
 
@@ -32,7 +31,17 @@
 
         {% for aluno,opcoes,opcoestemp in alunos_list %}
           <tr class="item">
-            <td class="text-center {% if opcoes.count >= 5 %}text-success{% elif opcoestemp.count >= 5 %}text-warning{% else %}text-danger{% endif %}"> &#x2B24; </td>
+            <td 
+              class="text-center 
+              {% if opcoes.count >= 5 %}
+                text-success" data-sort="2"
+              {% elif opcoestemp.count >= 5 %}
+                text-warning" data-sort="1"
+              {% else %}
+              text-danger" data-sort="0"
+              {% endif %}>
+              &#x2B24;
+            </td>
             <td>
               <a href="{% url 'estudante_detail' aluno.id %}"
                   data-toggle="tooltip" data-html="true" animation="true" title="
@@ -53,6 +62,9 @@
             {% else %}
               <td><b>CURSO NÃO DEFINIDO</b></td>
             {% endif %}
+            <td>
+              <a href="mailto:{{aluno.user.email}}">{{aluno.user.email}}</a>
+            </td>
             <td class="numero_virgula">
               {{ aluno.cr|floatformat:4 }}
             </td>
@@ -80,11 +92,11 @@
 
     <script>
       var config = {
-        type: 'pie',
+        type: "pie",
         data: {
           datasets: [{
             data: [{% for qtd in num_estudantes_curso.values %}{{qtd}},{% endfor %}],
-            backgroundColor: [{% for curso in num_estudantes_curso %}'#{{curso.cor}}',{% endfor %}],
+            backgroundColor: [{% for curso in num_estudantes_curso %}"#{{curso.cor}}",{% endfor %}],
             label: "Proporção entre estudantes"
           }],
           labels: [
@@ -110,7 +122,7 @@
           },
           plugins: {
             datalabels: {
-              color: '#000',
+              color: "#000",
             }
           },
         }
@@ -119,10 +131,16 @@
       function carrega_graficos() {
         var ctx = document.getElementById("chart-area").getContext("2d");
         window.myPie = new Chart(ctx, config);
-        {% comment %} $('#EstudantesTable tr > *:nth-child(4)').hide(); {% endcomment %}
       }
     
-      function carrega_pagina() {};
+      function carrega_pagina() {
+        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#EstudantesTable").dataTable();
+          if(table) {table.fnSetColumnVis( 3, false);}  // esconde e-mail
+          if(table) {table.fnSetColumnVis( 4, false);}  // esconde CR
+        }
+      };
+
       window.onload = carrega_pagina
     </script>
 

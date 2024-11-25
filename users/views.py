@@ -536,6 +536,7 @@ def estudantes_inscritos(request):
                 {"pt": "C", "en": "C"},
                 {"pt": "Estudante", "en": "Student"},
                 {"pt": "Curso", "en": "Program"},
+                {"pt": "e-mail", "en": "e-mail"},
                 {"pt": "CR", "en": "CR/GPA", "tipo": "numeral"},
             ]
 
@@ -560,16 +561,10 @@ def estudantes_inscritos(request):
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
         selecionada = str(ano) + "." + str(semestre)
 
-        informacoes = [
-            ("#EstudantesTable tr > *:nth-child(3)", "Curso"),
-            ("#EstudantesTable tr > *:nth-child(4)", "CR", False),
-        ]
-
         context = {
             "titulo": {"pt": "Estudantes Inscritos", "en": "Enrolled Students"},
             "edicoes": edicoes,
             "selecionada": selecionada,
-            "informacoes": informacoes,
         }
 
     return render(request, "users/estudantes_inscritos.html", context=context)

@@ -108,6 +108,7 @@ def mapeamento_estudantes_propostas(request):
 
         estudantes = zip(alunos, opcoes, aloc_proj)
         context = {
+            "qtd_estudantes": len(alunos),
             "estudantes": estudantes,
             "propostas": propostas,
             "proposta_indice": proposta_indice,
