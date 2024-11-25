@@ -31,14 +31,20 @@
   </span>
   
   {% if professor %}
-    <h5 style="color: red;">Mostrando como é a tela, usando qualquer estudante de exemplo.<br><br></h5>
+    <h5 style="color: red;">
+      <span lang="pt">Mostrando como é a tela, usando qualquer estudante de exemplo.</span>
+      <span lang="en" style="display: none;">Showing how the screen looks like, using any student as an example.</span>
+    </h5><br><br>
   {% endif %}
 
   {% for alocado in alocados %}
 
   <div class="div_arredondado_100">
     {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
-      Projetos {{configuracao.ano}}.{{configuracao.semestre}} em fase de alocação.<br>
+      <span lang="pt">Projeto {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} em fase de alocação.</span>
+      <span lang="en" style="display: none;">Projects {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} in the allocation phase.</span>
+      <br>
+
     {% else %}
 
       {% include "projeto.html" %}
@@ -46,7 +52,10 @@
       {% with notas=alocado.get_notas %}
         {% if notas %}
           <div>
-            <h5>Resultados</h5>
+            <h5>
+              <span lang="pt">Resultados</span>
+              <span lang="en" style="display: none;">Results</span>
+            </h5>
             <div style="background: #FFFFFF; padding: 6px;">
             {% include "display_notas_individuais.html" %}
             </div>
@@ -57,7 +66,10 @@
       {% with encontros=alocado.projeto.encontro_set.all %}
       {% if encontros %}
       <div>
-        <h5>Mentorias Marcadas<br></h5>
+        <h5>
+          <span lang="pt">Mentorias Marcadas</span>
+          <span lang="en" style="display: none;">Scheduled Mentoring Sessions</span>
+        </h5>
         <ul>
           {% for dinamica in encontros %} 
             <li>
@@ -74,7 +86,10 @@
       {% with certificados=alocado.get_certificados %}
       {% if certificados %}
       <div>
-        <h5>Certificados Recebidos<br></h5>
+        <h5>
+          <span lang="pt">Certificados Recebidos</span>
+          <span lang="en" style="display: none;">Certificates Received</span>
+        </h5>
         <ul>
           {% for documento in certificados %} 
             <li>
@@ -102,7 +117,8 @@
     </div>
 
   {% empty %}
-    Nenhuma alocação em projetos encontrada para você.
+    <span lang="pt">Nenhuma alocação em projetos encontrada para você.</span>
+    <span lang="en" style="display: none;">No project allocation found for you.</span>
   {% endfor %}
 
 {% endblock %}

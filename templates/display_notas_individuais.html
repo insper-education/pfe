@@ -9,8 +9,6 @@
 {% load exibe_notas %}
 <link rel="stylesheet" href="{% static 'css/one_line.css' %}">
 
-{% comment %} Colocar no head da página {% endcomment %}
-{% comment %} <script src="{% static 'js/Chart.min.js' %}"></script> {% endcomment %}
 <script>
   function loc(number, locale="pt-BR", frac=1) {return number.toLocaleString(locale, {minimumFractionDigits: frac, maximumFractionDigits: frac});}
 </script>
@@ -78,7 +76,10 @@
           <div style="position: relative; height:203px; width:406px;"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
       </div>
   </div>
-  <small>Obs: Exibição radar supõe mesmo peso para todas as avaliações</small>
+  <small>
+    <span lang="pt">Obs: Exibição radar supõe mesmo peso para todas as avaliações</span>
+    <span lang="en" style="display:none">Note: Radar display assumes same weight for all evaluations</span>
+  </small>
 
   {% with medias_oo=alocado.get_medias_oo %}
     <script>

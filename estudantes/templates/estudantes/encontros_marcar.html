@@ -57,11 +57,15 @@
         {% if projeto %}
           [{{projeto.organizacao}}] {{projeto.get_titulo}}
         {% else %}
-          &lt; PROJETO NÃO ENCONTRADO &gt;
+          <span lang="pt">&lt; PROJETO NÃO ENCONTRADO &gt;</span>
+          <span lang="en" style="display:none">&lt; PROJECT NOT FOUND &gt;</span>
         {% endif %}
       </h4>
     {% else %}
-        <h4>Somente visualização das opções de encontros (você não está registrado como estudante)</h4>
+        <h4>
+          <span lang="pt">Somente visualização das opções de encontros (você não está registrado como estudante)</span>
+          <span lang="en" style="display:none">Only viewing the meeting options (you are not registered as a student)</span>
+        </h4>
     {% endif %}
     <br>
 
@@ -71,9 +75,13 @@
     {% endif %}
 
     {% if encontros %}
-      <b>Horários disponíveis para agendamento:</b>
+      <b>
+        <span lang="pt">Horários disponíveis para agendamento:</span>
+        <span lang="en" style="display:none">Available times for scheduling:</span>
+      </b>
     {% else %}
-      Sem encontros para marcar.
+      <span lang="pt">Sem encontros para marcar.</span>
+      <span lang="en" style="display:none">No slots to schedule.</span>
     {% endif %}
 
     <div id="horarios">
@@ -99,10 +107,19 @@
                   <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                   <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 </span>
-                {% if e.facilitador %}<div class="bot_tag">Facilitador: {{e.facilitador.get_full_name}}</div>{% endif %}
+                {% if e.facilitador %}<div class="bot_tag">
+                  <span lang="pt">Facilitador:</span>
+                  <span lang="en" style="display:none">Facilitator:</span>
+                  {{e.facilitador.get_full_name}}</div>{% endif %}
                 {% if e.location %}
                   <div class="bot_tag">
-                    Local: {% if e.url_location %}Vídeo-conferência{% else %}{{e.location}}{% endif %}
+                    Local:
+                    {% if e.url_location %}
+                      <span lang="pt">Vídeo-conferência</span>
+                      <span lang="en" style="display:none">Video-conference</span>
+                    {% else %}
+                      {{e.location}}
+                    {% endif %}
                   </div>
                 {% endif %}
                 {% if e.projeto and e.projeto == projeto %}
@@ -122,16 +139,19 @@
         <button class="btn btn-primary mb-1 ml-2" type="submit" 
         {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
           {% if agendado %}
-            Reagendar
+            <span lang="pt">Reagendar</span>
+            <span lang="en" style="display:none">Reschedule</span>
           {% else %}
-            Agendar
+            <span lang="pt">Agendar</span>
+            <span lang="en" style="display:none">Schedule</span>
           {% endif %}
         </button>
 
         {% if agendado %}
             <button class="btn btn-danger mb-1 ml-2" id="cancelar" 
               {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
-              Cancelar Agendamento
+              <span lang="pt">Cancelar Agendamento</span>
+              <span lang="en" style="display:none">Cancel Schedule</span>
             </button>
             <script>
                 $("#cancelar").click(function() {
@@ -177,4 +197,5 @@
     </script>
 
   </form>
+
 {% endblock %}

@@ -46,11 +46,20 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-      <label for="nome" class="col-form-label">Nome:</label> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
+      <label for="nome" class="col-form-label">
+        <span lang="pt">Nome:</span>
+        <span lang="en" style="display:none">Name:</span>
+      </label> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
 
-      <label for="projeto" class="col-form-label">Projeto:</label> {% if projeto %}{{projeto}}{% endif %}<br>
+      <label for="projeto" class="col-form-label">
+        <span lang="pt">Projeto:</span>
+        <span lang="en" style="display:none">Project:</span>
+      </label> {% if projeto %}{{projeto}}{% endif %}<br>
       
-      <p class="text-danger">Os dados serão tratados como confidênciais.</p>
+      <p class="text-danger">
+        <span lang="pt">Os dados serão tratados como confidênciais.</span>
+        <span lang="en" style="display:none">The data will be treated as confidential.</span>
+      </p>
 
       <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos mais projetos nos próximos semestres com a {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}?</label>
       <div class="form-check">
