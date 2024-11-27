@@ -4,6 +4,9 @@
   Data: 27 de Novembro de 2024
 {% endcomment %}
 
+{% load static %}
+<script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+
 <style>
   .perg {margin-bottom: 7px;}
   #listas_respostas {padding-left: 18px;}
@@ -46,8 +49,8 @@
         <textarea name="resposta_proposta{{pergunta.id}}" class="form-control" required
         rows="3">{% if pergunta.resposta %}{{ pergunta.resposta }}{% endif %}</textarea>
         <button type="button" data-id="{{pergunta.id}}" class="btn btn-primary enviar_resposta">
-          <span lang="pt">Enviar</span>
-          <span lang="en" style="display:none">Send</span>
+          <span lang="pt">Enviar Resposta</span>
+          <span lang="en" style="display:none">Send Answer</span>
         </button>
         <br><br>
       </li>
@@ -88,3 +91,7 @@
 </script> 
 {% endif %}
 {% endwith %}
+
+<script>
+  aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+</script>

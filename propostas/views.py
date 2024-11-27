@@ -474,9 +474,9 @@ def ajax_proposta_pergunta(request, primarykey=None):
 
         
             # Enviando e-mail com mensagem para usuários.
-            mensagem = f"O estudante {request.user.get_full_name()} fez uma pergunta sobre a proposta {proposta.titulo}."
-            mensagem += f"\n\n<br><br>Pergunta: {pergunta_resposta.pergunta}"
-            mensagem += f"\n\n<br><br>Link para a proposta: {settings.SITE_ROOT}/propostas/proposta_completa/{proposta.id}/"
+            mensagem = f"O estudante: <b>{request.user.get_full_name()}</b>, fez uma pergunta sobre a proposta: <b>{proposta.titulo}</b>."
+            mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
+            mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host}/propostas/proposta_completa/{proposta.id}/"
             subject = "Capstone | Pergunta sobre proposta de projeto"
             configuracao = get_object_or_404(Configuracao)
             recipient_list = [str(configuracao.coordenacao.user.email)]
@@ -532,10 +532,10 @@ def ajax_proposta_resposta(request, primarykey=None):
             pergunta_resposta.save()
 
             # Enviando e-mail com mensagem para usuários.
-            mensagem = f"Sua pergunta sobre a proposta {proposta.titulo} foi respondida.<br><br>"
-            mensagem += f"\n\n<br><br>Pergunta: {pergunta_resposta.pergunta}"
-            mensagem += f"\n\n<br><br>Resposta: {pergunta_resposta.resposta}"
-            mensagem += f"\n\n<br><br>Link para a proposta: {settings.SITE_ROOT}/propostas/proposta_detalhes/{proposta.id}/"
+            mensagem = f"Sua pergunta sobre a proposta <b>{proposta.titulo}</b> foi respondida."
+            mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
+            mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
+            mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host}/propostas/proposta_detalhes/{proposta.id}/"
             subject = "Capstone | Pergunta sobre proposta de projeto"
             configuracao = get_object_or_404(Configuracao)
             recipient_list = [
