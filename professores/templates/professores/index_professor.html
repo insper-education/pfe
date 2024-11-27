@@ -10,8 +10,14 @@
   <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
   {% include "reload.html" %}
 {% endblock %}
-
+ 
 {% block content %}
-<span class="titulo">Professores</span>
-{% include "professores/professores.html" %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
+  {% include "professores/professores.html" %}
+
 {% endblock %}

@@ -70,17 +70,19 @@ input {max-width: 100%;}
 }
 
 .logo-container {
+  margin-left: 6px;
   margin-right: 6px;
 }
 
 #barra_do_top_nav {
-  padding: 8px 12px;
+  padding: 0px;
   height: 53px;
   display: flex;
   align-items: center;
   white-space: nowrap;
   overflow: hidden;
-  /* text-overflow: ellipsis; */
+  width: 100%; 
+  justify-content: flex-start;
 }
 
 #barra_do_top_nav a.icon {
@@ -105,6 +107,7 @@ input {max-width: 100%;}
 }
 
 #hamburger.icon {
+  cursor: pointer;
   background-color: black;
   display: block;
   position: absolute;
@@ -114,8 +117,7 @@ input {max-width: 100%;}
 }
 
 #hamburger:hover {
-  background-color: #ddd;
-  color: black;
+  color: grey;
 }
 
 .active {
@@ -253,10 +255,17 @@ table, th, td {
   display: none;
   user-select: none;
   border-radius: 10px;
-  border: 2px solid #AAAAAA;
+  border: 2px solid #DDD;
   float: right;
   margin-top: 4px;
   margin-left: 8px;
+  background-color: #999;
+}
+
+#language_box {
+  margin-left: auto;
+  padding: 8px;
+  margin-right: 48px;
 }
 
 /* Remove decorações de links */
@@ -309,4 +318,9 @@ a#logo_inicial:hover {
   #link_username {
     font-size: 0.7em;
   }
+
+  #language_button {
+    font-size: 0.8em;
+  }
+  
 }

@@ -41,7 +41,7 @@ from documentos.models import TipoDocumento
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
     contex = {
-        "titulo": "Área dos Parceiros",
+        "titulo": {"pt": "Área dos Parceiros", "en": "Partners Area"},
     }
     if "/organizacoes/organizacoes" in request.path:
         return render(request, "organizacoes/organizacoes.html", context=contex)

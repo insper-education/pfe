@@ -33,24 +33,44 @@
     display: none;
     user-select: none;
     border-radius: 10px;
-    border: 2px solid #AAAAAA;
+    border: 2px solid #DDD;
     float: right;
     margin-top: 4px;
     margin-left: 8px;
+    background-color: #999;
   }
+
   #logo_insper {
     width: 59px;
     height: 23px;
   }
+
+  #hamburger:hover {
+    color: grey;
+  }
+
+  .logo-container {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
   #barra_do_top_nav {
-    padding: 8px 12px;
+    padding: 0px;
     height: 53px;
     display: flex;
     align-items: center;
     white-space: nowrap;
     overflow: hidden;
-    /* text-overflow: ellipsis; */
+    width: 100%; 
+    justify-content: flex-start;
   }
+
+  #language_box {
+    margin-left: auto;
+    padding: 8px;
+    margin-right: 48px;
+  }
+
   @media (max-width: 460px) {
     .logo-container {
         display: flex;
@@ -68,13 +88,17 @@
         margin-left: 0;
     }
   
-      .hidden {
-          display: none;
-      }
-  
-      .visible {
-          display: block;
-      }
+    .hidden {
+        display: none;
+    }
+
+    .visible {
+        display: block;
+    }
+
+    #language_button {
+      font-size: 0.8em;
+    }
   
 }
 </style>
@@ -92,46 +116,52 @@
         </div>
       {% if user.is_authenticated %}</a>{% endif %}
       {% if user.is_authenticated %}
-        <a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;{{user.get_full_name}}</u>
+        <a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;
+          <span class="first_name">{{user.first_name}}</span>
+          <span class="last_name">{{user.last_name}}</span>
+        </u></a>
       {% else %}
-        <a href="{% url 'login' %}" id="link_username"><i style="font-size: 0.75em;" class="fas fa-question"></i>&nbsp;Login</u>
+        <a href="{% url 'login' %}" id="link_username"><i style="font-size: 0.75em;" class="fas fa-question"></i>&nbsp;Login</u></a>
       {% endif %}
+      <div id="language_box"><div id="language_button"></div></div>
+    
+
+      <div id="links_menu_lat" class="links-container">
+        <a href="{% url 'info'%}">Informações</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'perfil'%}">Perfil</a>
+          <a href="{% url 'index'%}">Geral</a>
+          <a href="{% url 'calendario'%}">Calendário</a>
+          {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+              <a href="{% url 'index_estudantes' %}">Área dos Estudantes</a>
+          {% endif %}
+        {% endif %}      
+        <a href="{% url 'index_organizacoes' %}">Área dos Parceiros</a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
+        {% if user.is_authenticated %}
+          {% if perms.users.altera_professor %}
+            <a href="{% url 'index_professor'%}">Área do Professor</a>
+            <a href="{% url 'index_academica' %}">Área Acadêmica</a>
+            <a href="{% url 'index_operacional'%}">Área Operacional</a>
+            <a href="{% url 'index_administracao'%}">Área Administrativa</a>
+            <a href="{% url 'index_propostas'%}">Propostas</a>
+            <a href="{% url 'index_projetos'%}">Projetos</a>
+          {% endif %}
+        {% endif %}
+        <a href="{% url 'index_documentos'%}">Documentações</a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'logout'%}">Logout</a>
+        {% else %}
+          <a href="{% url 'login'%}?next={{request.path}}">Login</a>
+        {% endif %} 
+      </div>
+
+      <div id="hamburger" class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+
     </div>
 
-    <div id="links_menu_lat" class="links-container">
-      <a href="{% url 'info'%}">Informações</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'perfil'%}">Perfil</a>
-        <a href="{% url 'index'%}">Geral</a>
-        <a href="{% url 'calendario'%}">Calendário</a>
-        {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <a href="{% url 'index_estudantes' %}">Área dos Estudantes</a>
-        {% endif %}
-      {% endif %}      
-      <a href="{% url 'index_organizacoes' %}">Área dos Parceiros</a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
-      {% if user.is_authenticated %}
-        {% if perms.users.altera_professor %}
-          <a href="{% url 'index_professor'%}">Área do Professor</a>
-          <a href="{% url 'index_academica' %}">Área Acadêmica</a>
-          <a href="{% url 'index_operacional'%}">Área Operacional</a>
-          <a href="{% url 'index_administracao'%}">Área Administrativa</a>
-          <a href="{% url 'index_propostas'%}">Propostas</a>
-          <a href="{% url 'index_projetos'%}">Projetos</a>
-        {% endif %}
-      {% endif %}
-      <a href="{% url 'index_documentos'%}">Documentações</a>
-
-      {% if user.is_authenticated %}
-        <a href="{% url 'logout'%}">Logout</a>
-      {% else %}
-        <a href="{% url 'login'%}?next={{request.path}}">Login</a>
-      {% endif %} 
-    </div>
-
-    <span id="hamburger" class="icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
   </div>
   <div style="margin-top: 6px;" class="container-fluid">
-    <div id="language_box"><div id="language_button"></div></div>
     {% block content %}{% endblock %}
   </div>
   <p>&nbsp;</p>

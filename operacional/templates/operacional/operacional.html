@@ -5,46 +5,148 @@
 {% endcomment %}
 
 
-<a href="{% url 'avisos_listar' %}">Agenda</a><br>
-<a href="{% url 'emails' %}">Listas de e-mails</a><br>
+<a href="{% url 'avisos_listar' %}">
+  <span lang="pt">Agenda</span>
+  <span lang="en" style="display: none;">Agenda</span>
+</a><br>
+<a href="{% url 'emails' %}">
+  <span lang="pt">Listas de e-mails</span>
+  <span lang="en" style="display: none;">E-mail lists</span>
+</a><br>
 <br>
 
-<h5>Feedbacks</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_acompanhamento' %}">Acompanhamento Intermediário das Organizações</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback' %}">Comentários Finais das Organizações</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback_estudantes' %}">Acompanhamento Final dos Estudantes</a></div>
+<h5>
+  <span lang="pt">Feedbacks</span>
+  <span lang="en" style="display: none;">Feedbacks</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_acompanhamento' %}">
+  <span lang="pt">Acompanhamento Intermediário das Organizações</span>
+  <span lang="en" style="display: none;">Organizations' Intermediate Feedback</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback' %}">
+  <span lang="pt">Comentários Finais das Organizações</span>
+  <span lang="en" style="display: none;">Organizations' Final Feedback</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback_estudantes' %}">
+  <span lang="pt">Acompanhamento Final dos Estudantes</span>
+  <span lang="en" style="display: none;">Students' Final Feedback</span>
+</a></div>
 <br>
 
-<h5>Agendamentos</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' 'proximas' %}">Bancas</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dinamicas_index' %}">Mentorias</a></div>
+<h5>
+  <span lang="pt">Agendamentos</span>
+  <span lang="en" style="display: none;">Scheduling</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' 'proximas' %}">
+  <span lang="pt">Bancas</span>
+  <span lang="en" style="display: none;">Evaluation Boards</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dinamicas_index' %}">
+  <span lang="pt">Mentorias</span>
+  <span lang="en" style="display: none;">Mentorships</span>
+</a></div>
 <br>
 
-<h5>Listagem completa</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_usuarios' %}">Usuários</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_lista' %}">Estudantes</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_parceiros' %}">Parceiros</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_professores' %}">Professores</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'comite' %}">Comitê</a></div>
+<h5>
+  <span lang="pt">Listagem completa</span>
+  <span lang="en" style="display: none;">Complete list</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_usuarios' %}">
+  <span lang="pt">Usuários</span>
+  <span lang="en" style="display: none;">Users</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_lista' %}">
+  <span lang="pt">Estudantes</span>
+  <span lang="en" style="display: none;">Students</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_parceiros' %}">
+  <span lang="pt">Parceiros</span>
+  <span lang="en" style="display: none;">Partners</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_professores' %}">
+  <span lang="pt">Professores</span>
+  <span lang="en" style="display: none;">Professors</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'comite' %}">
+  <span lang="pt">Comitê</span>
+  <span lang="en" style="display: none;">Committee</span>
+</a></div>
 
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_lista' %}">Organizações</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_lista' %}">
+  <span lang="pt">Organizações</span>
+  <span lang="en" style="display: none;">Organizations</span>
+</a></div>
 
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'propostas_lista' %}">Propostas</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_lista' %}">Projetos</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' %}">Bancas</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'propostas_lista' %}">
+  <span lang="pt">Propostas</span>
+  <span lang="en" style="display: none;">Proposals</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_lista' %}">
+  <span lang="pt">Projetos</span>
+  <span lang="en" style="display: none;">Projects</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' %}">
+  <span lang="pt">Bancas</span>
+  <span lang="en" style="display: none;">Evaluation Boards</span>
+</a></div>
 <br>
 
-<h5>Tabelas de alocação</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientadores_tabela' %}">Orientadores</a><a href="{% url 'orientadores_tabela_completa' %}">(completa)</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientadores_tabela' %}">Coorientadores</a> <a href="{% url 'coorientadores_tabela_completa' %}">(completa)</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_tabela' %}">Organizações</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela' %}">Bancas</a> <a href="{% url 'bancas_tabela_completa' %}">(completa)</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'aulas_tabela' %}">Aulas</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_tabela' %}">Mentorias</a></div>
+<h5>
+  <span lang="pt">Tabelas de alocação</span>
+  <span lang="en" style="display: none;">Allocation tables</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientadores_tabela' %}">
+  <span lang="pt">Orientadores</span>
+  <span lang="en" style="display: none;">Advisors</span>
+</a><a href="{% url 'orientadores_tabela_completa' %}">
+  <span lang="pt">(completa)</span>
+  <span lang="en" style="display: none;">(complete)</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientadores_tabela' %}">
+  <span lang="pt">Coorientadores</span>
+  <span lang="en" style="display: none;">Co-advisors</span>
+</a> <a href="{% url 'coorientadores_tabela_completa' %}">
+  <span lang="pt">(completa)</span>
+  <span lang="en" style="display: none;">(complete)</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_tabela' %}">
+  <span lang="pt">Organizações</span>
+  <span lang="en" style="display: none;">Organizations</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela' %}">
+  <span lang="pt">Bancas</span>
+  <span lang="en" style="display: none;">Evaluation Boards</span>
+</a> <a href="{% url 'bancas_tabela_completa' %}">
+  <span lang="pt">(completa)</span>
+  <span lang="en" style="display: none;">(complete)</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'aulas_tabela' %}">
+  <span lang="pt">Aulas</span>
+  <span lang="en" style="display: none;">Classes</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_tabela' %}">
+  <span lang="pt">Mentorias</span>
+  <span lang="en" style="display: none;">Mentorships</span>
+</a></div>
 <br>
 
-<h5>Certificados</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificados_submetidos' %}">Listar Certificados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'selecao_geracao_certificados' %}">Gerar Novos Certificados</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificacao_falconi' %}">Certificações Falconi</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carregar_certificado' %}">Carregar Certificado</a></div>
+<h5>
+  <span lang="pt">Certificados</span>
+  <span lang="en" style="display: none;">Certificates</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificados_submetidos' %}">
+  <span lang="pt">Listar Certificados</span>
+  <span lang="en" style="display: none;">List Certificates</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'selecao_geracao_certificados' %}">
+  <span lang="pt">Gerar Novos Certificados</span>
+  <span lang="en" style="display: none;">Generate New Certificates</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificacao_falconi' %}">
+  <span lang="pt">Certificações Falconi</span>
+  <span lang="en" style="display: none;">Falconi Certifications</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carregar_certificado' %}">
+  <span lang="pt">Carregar Certificado</span>
+  <span lang="en" style="display: none;">Load Certificate</span>
+</a></div>

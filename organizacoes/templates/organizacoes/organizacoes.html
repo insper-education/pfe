@@ -5,18 +5,42 @@
 {% endcomment %}
 
 
-<h5>Propostas</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'proposta_submissao' %}">Submeter Proposta de Projeto</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carrega_proposta' %}">Carrega Proposta de Projeto em PDF</a></div>
+<h5>
+  <span lang="pt">Propostas</span>
+  <span lang="en" style="display: none;">Proposals</span>
+</h5>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'proposta_submissao' %}">
+  <span lang="pt">Submeter Proposta de Projeto</span>
+  <span lang="en" style="display: none;">Submit Project Proposal</span>
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carrega_proposta' %}">
+  <span lang="pt">Carregar Proposta de Projeto em PDF</span>
+  <span lang="en" style="display: none;">Load Project Proposal in PDF</span>
+</a></div>
 
 {% if user.is_authenticated %}
-  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_propostas' %}">Propostas Submetidas</a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_propostas' %}">
+    <span lang="pt">Propostas Submetidas</span>
+    <span lang="en" style="display: none;">Submitted Proposals</span>
+  </a></div>
   <br>
 
-  <h5>Projetos</h5>
-  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_projetos' %}">Lista de Projetos</a></div>
+  <h5>
+    <span lang="pt">Projetos</span>
+    <span lang="en" style="display: none;">Projects</span>
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_projetos' %}">
+    <span lang="pt">Lista de Projetos</span>
+    <span lang="en" style="display: none;">Projects List</span>
+  </a></div>
   <br>
 
-  <h5>Feedbacks</h5>
-  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projeto_feedback' %}">Enviar feedback de projeto</a></div>
+  <h5>
+    <span lang="pt">Feedbacks</span>
+    <span lang="en" style="display: none;">Feedbacks</span>
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projeto_feedback' %}">
+    <span lang="pt">Enviar feedback de projeto</span>
+    <span lang="en" style="display: none;">Send project feedback</span>
+  </a></div>
 {% endif %}

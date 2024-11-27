@@ -12,6 +12,12 @@
 {% endblock %}
 
 {% block content %}
-<span class="titulo">Acadêmica</span>
-{% include "academica/academica.html" %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
+  {% include "academica/academica.html" %}
+
 {% endblock %}

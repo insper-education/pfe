@@ -77,7 +77,9 @@ def get_areas_propostas(propostas):
 @permission_required("projetos.view_projeto", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
-    context = {"titulo": "Projetos",}
+    context = {
+            "titulo": { "pt": "Projetos", "en": "Projects"},
+        }
 
     if "/projetos/projetos" in request.path:
         return render(request, "projetos/projetos.html", context=context)

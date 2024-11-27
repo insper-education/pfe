@@ -12,6 +12,12 @@
 {% endblock %}
 
 {% block content %}
-<span class="titulo">Parceiros</span>
-{% include "organizacoes/organizacoes.html" %}  
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
+  {% include "organizacoes/organizacoes.html" %}
+
 {% endblock %}

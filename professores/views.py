@@ -16,11 +16,11 @@ from urllib.parse import quote, unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, F, Func, FloatField
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import html
+from django.utils import html, timezone
 
 from users.models import PFEUser, Professor, Aluno, Alocacao
 from users.support import get_edicoes
@@ -69,7 +69,10 @@ def index_professor(request):
     configuracao = get_object_or_404(Configuracao)
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
 
-    context = {"titulo": "Área dos Professores",}
+    context = {
+            "titulo": {"pt": "Área dos Professores", "en": "Professors Area"},
+        }
+
     if request.user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
         projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
 
@@ -259,13 +262,10 @@ def avaliacoes_pares(request, todos=None):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Pares)
-        context["edicoes"] = edicoes
+        context["edicoes"] = get_edicoes(Pares)[0]
 
     return render(request, "professores/avaliacoes_pares.html", context=context)
 
-from django.db.models import Case, When, Value, DateTimeField, F, ExpressionWrapper, Func, FloatField
-from django.utils import timezone
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -316,7 +316,6 @@ def coorientacoes_alocadas(request):
     coorientacoes = Coorientador.objects.filter(usuario=request.user)\
         .order_by("-projeto__ano", "-projeto__semestre")
     context = {
-        #"titulo": "Projetos Coorientados",
         "titulo": {"pt": "Projetos Coorientados", "en": "Cooriented Projects"},
         "coorientacoes": coorientacoes,
         }
@@ -330,7 +329,6 @@ def mentorias_alocadas(request):
     mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
     mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
     context = {
-        #"titulo": "Mentorias Facilitadas",
         "titulo": {"pt": "Mentorias Facilitadas", "en": "Facilitated Mentoring"},
         "mentorias": mentorias,
         }
@@ -370,8 +368,7 @@ def ajax_bancas(request):
             start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
             end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
             bancas = {}
-            for banca in Banca.objects.filter(startDate__gte=start,
-                                              startDate__lte=end):
+            for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
                 bancas[banca.id] = {}
                 bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S")
                 bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
@@ -484,7 +481,6 @@ def ajax_atualiza_banca(request):
             return JsonResponse(context)
     
     return HttpResponse("Erro.", status=401)    
-
 
 
 @login_required
@@ -616,12 +612,11 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     if configuracao.operacao:
         recipient_list.append(str(configuracao.operacao.email))
 
-    print(mensagem)
-    # if enviar:
-    #     check = email(subject, recipient_list, mensagem)
-    #     if check != 1:
-    #         error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-    #         logger.error(error_message)
+    if enviar:
+        check = email(subject, recipient_list, mensagem)
+        if check != 1:
+            error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+            logger.error(error_message)
     
     return error_message
     
@@ -674,9 +669,7 @@ def bancas_criar(request, data=None):
         "alocacoes": alocacoes,
         "professores": professores,
         "Banca": Banca,
-        # "TIPO_DE_BANCA": Banca.TIPO_DE_BANCA,
-        # Para ficar na ordem que desejo
-        "TIPO_DE_BANCA": ((1, 'Intermediária'), (0, 'Final'), (2, 'Certificação Falconi'), (3, 'Probation')),
+        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi"), (3, "Probation")),  # Para ficar na ordem que desejo
         "falconis": falconis,
         "projetos_agendados": projetos_agendados,
         "bancas_intermediarias": bancas_intermediarias,
@@ -3330,7 +3323,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             return HttpResponse("Algum erro não identificado.", status=401)
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
+        edicoes = get_edicoes(Projeto)[0]
 
         if ano and semestre:
             selecionada = str(ano) + "." + str(semestre)
@@ -3392,10 +3385,10 @@ def todos_professores(request):
     context = {
             "professores": Professor.objects.all(),
             "cabecalhos": [{ "pt": "Nome", "en": "Name", },
-                        { "pt": "e-mail", "en": "e-mail", },
-                        { "pt": "Bancas", "en": "Examination Boards", },
-                        { "pt": "Orientações", "en": "Advising", },
-                        { "pt": "Lattes", "en": "Lattes", },],
+                           { "pt": "e-mail", "en": "e-mail", },
+                           { "pt": "Bancas", "en": "Examination Boards", },
+                           { "pt": "Orientações", "en": "Advising", },
+                           { "pt": "Lattes", "en": "Lattes", },],
             "titulo": { "pt": "Professores", "en": "Professors", },
         }
 
@@ -3437,50 +3430,49 @@ def objetivos_rubricas(request):
     return render(request, "professores/objetivos_rubricas.html", context)
 
 
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def ver_pares(request, alocacao_id, momento):
-    """Permite visualizar a avaliação de pares."""
+# @login_required
+# @transaction.atomic
+# @permission_required("users.altera_professor", raise_exception=True)
+# def ver_pares(request, alocacao_id, momento):
+#     """Permite visualizar a avaliação de pares."""
 
-    # DEIXANDO DE USAR PARA USAR ver_pares_projeto #
+#     # DEIXANDO DE USAR PARA USAR ver_pares_projeto #
 
-    alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
+#     alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
 
-    if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
-        return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
+#     if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
+#         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
-    if request.method == "POST":
-        if momento=="intermediaria" and not alocacao_de.avaliacao_intermediaria:
-            alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
-        elif momento=="final" and not alocacao_de.avaliacao_final:
-            alocacao_de.avaliacao_final = datetime.datetime.now()
-        alocacao_de.save()
-        return redirect("/professores/avaliacoes_pares/")
+#     if request.method == "POST":
+#         if momento=="intermediaria" and not alocacao_de.avaliacao_intermediaria:
+#             alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
+#         elif momento=="final" and not alocacao_de.avaliacao_final:
+#             alocacao_de.avaliacao_final = datetime.datetime.now()
+#         alocacao_de.save()
+#         return redirect("/professores/avaliacoes_pares/")
 
-    tipo = 0 if momento=="intermediaria" else 1
+#     tipo = 0 if momento=="intermediaria" else 1
     
-    alocacoes = Alocacao.objects.filter(projeto=alocacao_de.projeto).exclude(aluno=alocacao_de.aluno)
+#     alocacoes = Alocacao.objects.filter(projeto=alocacao_de.projeto).exclude(aluno=alocacao_de.aluno)
     
-    pares = []
-    for alocacao in alocacoes:
-        par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
-        pares.append(par)
+#     pares = []
+#     for alocacao in alocacoes:
+#         par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
+#         pares.append(par)
 
-    colegas = zip(alocacoes, pares)
+#     colegas = zip(alocacoes, pares)
 
-    configuracao = get_object_or_404(Configuracao)
+#     configuracao = get_object_or_404(Configuracao)
 
-    context = {
-        "estudante": alocacao_de.aluno,
-        "colegas": colegas,
-        "momento": momento,
-        "projeto": alocacao_de.projeto,
-        "configuracao": configuracao,
-    }
+#     context = {
+#         "estudante": alocacao_de.aluno,
+#         "colegas": colegas,
+#         "momento": momento,
+#         "projeto": alocacao_de.projeto,
+#         "configuracao": configuracao,
+#     }
 
-    return render(request, "professores/ver_pares.html", context)
-
+#     return render(request, "professores/ver_pares.html", context)
 
 
 @login_required
