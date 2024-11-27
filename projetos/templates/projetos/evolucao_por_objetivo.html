@@ -18,35 +18,26 @@
 
 {% block content %}
 
-  <script>
-      function ajusta() { }
-      function reajusta() { }
-  </script>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  {% include "save_image.html" %}
+  {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
 
-  <div id="tudo">
+  <div class="atualizar">
 
-    <span class="titulo">
-      <span lang="pt">{{ titulo.pt }}</span>
-      <span lang="en">{{ titulo.en }}</span>
-    </span>
+    {% if curso and objetivo %}
+      {% with file_name="evolucao_por_objetivos_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
+        <script>
+          var save_image_file_name = "{{file_name}}";
+        </script>  
+      {% endwith %}
+    {% endif %}
 
-    {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
+    <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
-    <div class="atualizar">
-
-      {% if curso and objetivo %}
-        {% with file_name="evolucao_por_objetivos_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
-          <script>
-            var save_image_file_name = "{{file_name}}";
-          </script>  
-        {% endwith %}
-      {% endif %}
-
-      <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
-
-    <div class="container">
+      <div class="container">
 
         <div style="max-width:860px;margin: auto;"> 
             <canvas id="chart-medias"></canvas>
@@ -110,9 +101,9 @@
               },
               plugins: {
                 datalabels: {
-                  color: 'white',
+                  color: "white",
                   font: {
-                    weight: 'bold'
+                    weight: "bold"
                   },
                   formatter: function(value, context) {
                     return Math.round(value) + '%';
@@ -122,20 +113,19 @@
             }
           }
 
-    function carrega_pagina() {  
-      // Chart do média dos alunos
-      var chart_medias = document.getElementById('chart-medias').getContext('2d');
-      window.medias = new Chart(chart_medias, config_medias);
-    }
+      </script>
 
-    window.onload = carrega_pagina
-  
-  </script>
-
-
-    </div>
     </div>
   </div>
+
+  <script>
+    function carrega_pagina() {  
+      // Chart do média dos alunos
+      var chart_medias = document.getElementById("chart-medias").getContext("2d");
+      window.medias = new Chart(chart_medias, config_medias);
+    }
+    window.onload = carrega_pagina
+  </script>
 
   {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
   {% include "linguas.html" %}

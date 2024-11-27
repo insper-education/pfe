@@ -12,12 +12,12 @@
 
 {% block content %}
 
-  {% include "impressora.html" %}
-
-  <span class="titulo">Alocações em Bancas</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   {% include "informacoes.html" %}
-  
   <br>
 
   <div class="table-responsive">
@@ -88,5 +88,6 @@
   </div>
 
   {% include "tabelas_simples_scripts.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}

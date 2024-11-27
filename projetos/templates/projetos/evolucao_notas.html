@@ -19,108 +19,98 @@
 
 {% block content %}
 
-  {% include "save_image.html" %}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  <div id="tudo">
+  <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
+  
+  {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
+  
+  <div class="atualizar">
 
-    <span class="titulo">
-      <span lang="pt">{{ titulo.pt }}</span>
-      <span lang="en">{{ titulo.en }}</span>
-    </span>
+      {% if curso %}
+        {% with file_name="evolucao_notas_"|addstr:curso %}
+          <script>
+            var save_image_file_name = "{{file_name}}";
+          </script>
+        {% endwith %}
+      {% endif %}
 
-    <small>(esta janela está muito lenta pela grande quantidade de cálculos)</small><br><br>
-    
-    {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
-    
-    <div class="atualizar">
+      <br><br>
 
-        {% if curso %}
-          {% with file_name="evolucao_notas_"|addstr:curso %}
-            <script>
-              var save_image_file_name = "{{file_name}}";
-            </script>
-          {% endwith %}
-        {% endif %}
+      <div class="container">
 
-        <br><br>
+          <div style="width: 860px; max-width: 100%;"> 
+              <canvas id="chart-medias-individuais"></canvas>
+              <br>
+              <canvas id="chart-medias-gerais"></canvas>
+          </div>
 
-        <div class="container">
+          <script>
+      
+              var config_medias_individuais = {
+                  type: "line",
+                  data: {
+                      labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
+                      datasets: [
+                          {% for media in medias_individuais %}{ 
+                                  data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
+                                  label: "{{media.curso.sigla}}",
+                                  borderColor: "#{{media.curso.cor}}",
+                                  fill: false,
+                                  spanGaps: true,
+                                  lineTension: 0,  // para deixar as linhas retas (sem as curvas de bezier)
+                          },{% endfor %}
+                      ]
+                  },
+                  options: {
+                      title: { display: true,
+                                text: "Evolução de notas individuais"},
+                  }
+              }
 
-            <div style="width: 860px; max-width: 100%;"> 
-                <canvas id="chart-medias-individuais"></canvas>
-                <br>
-                <canvas id="chart-medias-gerais"></canvas>
-            </div>
+      
+              var config_medias_gerais = {
+                  type: "line",
+                  data: {
+                      labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
+                      datasets: [
+                          {% for media in medias_gerais %}{ 
+                                  data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
+                                  label: "{{media.curso.sigla}}",
+                                  borderColor: "#{{media.curso.cor}}",
+                                  fill: false,
+                                  spanGaps: true,
+                                  lineTension: 0,  // para deixar as linhas retas (sem as curvas de bezier)
+                          },{% endfor %}
+                      ]
+                  },
+                  options: {
+                      title: { display: true,
+                                text: "Evolução médias gerais"},
+                  }
+              }
 
-            <script>
-        
-                var config_medias_individuais = {
-                    type: "line",
-                    data: {
-                        labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
-                        datasets: [
-                            {% for media in medias_individuais %}{ 
-                                    data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
-                                    label: "{{media.curso.sigla}}",
-                                    borderColor: "#{{media.curso.cor}}",
-                                    fill: false,
-                                    spanGaps: true,
-                                    lineTension: 0,  // para deixar as linhas retas (sem as curvas de bezier)
-                            },{% endfor %}
-                        ]
-                    },
-                    options: {
-                        title: { display: true,
-                                 text: "Evolução de notas individuais"},
-                    }
-                }
+              function carrega_pagina() {  
 
-        
-                var config_medias_gerais = {
-                    type: "line",
-                    data: {
-                        labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
-                        datasets: [
-                            {% for media in medias_gerais %}{ 
-                                    data: [{% for nota in media.media %}{{nota|stringformat:".2f"|unlocalize}},{% endfor %}],
-                                    label: "{{media.curso.sigla}}",
-                                    borderColor: "#{{media.curso.cor}}",
-                                    fill: false,
-                                    spanGaps: true,
-                                    lineTension: 0,  // para deixar as linhas retas (sem as curvas de bezier)
-                            },{% endfor %}
-                        ]
-                    },
-                    options: {
-                        title: { display: true,
-                                 text: "Evolução médias gerais"},
-                    }
-                }
+                  // Chart do média individuais
+                  var chart_medias_individuais = document.getElementById("chart-medias-individuais").getContext("2d");
+                  window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
 
-                function carrega_pagina() {  
+                  // Chart do média gerais
+                  var chart_medias_gerais = document.getElementById("chart-medias-gerais").getContext("2d");
+                  window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
 
-                    // Chart do média individuais
-                    var chart_medias_individuais = document.getElementById("chart-medias-individuais").getContext("2d");
-                    window.medias = new Chart(chart_medias_individuais, config_medias_individuais);
+              }
 
-                    // Chart do média gerais
-                    var chart_medias_gerais = document.getElementById("chart-medias-gerais").getContext("2d");
-                    window.medias = new Chart(chart_medias_gerais, config_medias_gerais);
+              window.onload = carrega_pagina
+          
+          </script>
 
-                }
-
-                window.onload = carrega_pagina
-            
-            </script>
-
-        </div>
-    </div>
+      </div>
   </div>
-
-  <script>
-    function ajusta() { }
-    function reajusta() { }
-  </script>
 
   {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True %}
   {% include "linguas.html" %}

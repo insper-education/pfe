@@ -1142,6 +1142,7 @@ def bancas_tabela_completa(request):
     context = {
         "anos": anos,
         "informacoes": informacoes,
+        "titulo": { "pt": "Alocação em Bancas", "en": "Examination Board Assignment" },
     }
 
     return render(request, "professores/bancas_tabela_completa.html", context)

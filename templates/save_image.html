@@ -11,45 +11,49 @@
 
 <style>
 
-    .images {
-      float: right;
-      position: relative;
-      margin-top:0px;
-      outline-width: 0;
-      background-color: none;
-      cursor: pointer;
-    }
+  .images_salvar {
+    display: inline-block;
+  }
 
-    @media only screen and (max-width: 740px) {
-      .images {
-        -moz-transform:scale(0.8);
-        -webkit-transform:scale(0.8);
-        transform:scale(0.8);
-      }  
-    }
+  .image_salvar {
+    font-size: 1.2em;
+    display: inline-block;
+    text-align: center;
+    margin-right: 12px;
+  }
 
-    .image:hover {
-      background: #e7e7e7;
-      background-color: none;
-    }
-
-    .image:active {
-      background-color: lightblue;
-    }
+  .image-texto {
+      display: block;
+      font-size: 0.5em;
+      color: #EEE;
+  }
 
 </style>
 
-<div class="images">
-  <img class="image" id="bjpg" src="{% static 'images/icone_JPG.png' %}" alt="jpg">
-  <img class="image" id="bpng" src="{% static 'images/icone_PNG.png' %}" alt="png">
-  <img class="image" id="bpdf" src="{% static 'images/icone_PDF.png' %}" alt="pdf">
+<div class="images_salvar">
+  <div class="image_salvar">
+      <i class="fas fa-file-image" id="bjpg" title="JPG"></i>
+      <span class="image-texto">JPG</span>
+  </div>
+  <div class="image_salvar">
+      <i class="fas fa-file-image" id="bpng" title="PNG"></i>
+      <span class="image-texto">PNG</span>
+  </div>
+  <div class="image_salvar">
+      <i class="fas fa-file-pdf" id="bpdf" title="PDF"></i>
+      <span class="image-texto">PDF</span>
+  </div>
 </div>
+
 
 <script>
 
   function get_image(tipo) {
 
-    ajusta();
+    if (typeof ajusta === "function") {
+      ajusta();
+    }
+
     $(".esconder").hide();
 
     setTimeout(function () {
@@ -92,7 +96,10 @@
       });
 
       $(".esconder").show();
-      reajusta();
+
+      if (typeof reajusta === "function") {
+        reajusta();
+      }
 
     }, 600);
   }

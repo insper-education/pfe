@@ -13,24 +13,20 @@
 
 {% block content %}
 
-  <div id="tudo">
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
 
-    <span class="titulo">
-      <span lang="pt">{{ titulo.pt }}</span>
-      <span lang="en">{{ titulo.en }}</span>
+    <small class="esconder">
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
+          data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
+          &#10133;
+      </a>
+    </small>
+  </span>
 
-      <small class="esconder">
-        <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
-            data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
-            &#10133;
-        </a>
-      </small>
-    </span>
-
-    <div id="atualizar">
-      {% include "calendario_bancas.html" %}
-    </div>
-
+  <div id="atualizar">
+    {% include "calendario_bancas.html" %}
   </div>
 
   <script>

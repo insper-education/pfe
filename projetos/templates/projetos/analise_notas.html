@@ -17,521 +17,516 @@
 
 {% block content %}
 
-  {% include "save_image.html" %}
-
-  <div id="tudo">
-
-    <span class="titulo">
+  <span class="titulo">
       <span lang="pt">{{ titulo.pt }}</span>
       <span lang="en">{{ titulo.en }}</span>
-    </span>
+  </span>
 
-    {% include "edicoes.html" with com_cursos=True %}
+  {% include "edicoes.html" with com_cursos=True %}
 
-    <div class="atualizar">
+  <div class="atualizar">
 
-        {% if periodo and curso %}
-            {% with file_name="analise_notas_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-                <script>
-                   var save_image_file_name = "{{file_name}}";
-                </script>
-            {% endwith %}
-        {% endif %}
+      {% if periodo and curso %}
+          {% with file_name="analise_notas_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
+              <script>
+                  var save_image_file_name = "{{file_name}}";
+              </script>
+          {% endwith %}
+      {% endif %}
 
-        <br>
+      <br>
 
-        <div class="container">
+      <div class="container">
 
-            {% if medias.ideal or medias.regular or medias.inferior %}
-                <div class="row mt-5">
-                    <div class="col"><canvas id="doughnut-situacao"></canvas></div>
-                </div>
-            {% endif %}
-            <div class="row mt-5 justify-content-md-center">
-                {% comment %} Avaliações Antigas {% endcomment %}
-                {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-ppf"></canvas></div>
-                {% endif %}
-                {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-api"></canvas></div>
-                {% endif %}
-                {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-apg"></canvas></div>
-                {% endif %}
-                {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-afi"></canvas></div>
-                {% endif %}
-                {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-afg"></canvas></div>
-                {% endif %}
-                {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-rpl"></canvas></div>
-                {% endif %}
-
-
-                {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
-                {% endif %}
-                {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
-                {% endif %}
-                {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
-                {% endif %}
-                {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
-                {% endif %}
-                {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
-                {% endif %}
-                {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
-                    <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
-                {% endif %}
-            </div>
-
-            <script>
-        
-                var tooltips = {
-                    enabled: false
-                };
-
-                var legend = {
-                    display: true,
-                    position: "bottom",
-                };
-
-                var plugins = {
-                    datalabels: {
-                        formatter: (value, ctx) => {
-                            let sum = 0;
-                            let dataArr = ctx.chart.data.datasets[0].data;
-                            dataArr.map(data => {
-                                sum += data;
-                            });
-                            if(sum>0 && value>0) {
-                                return (value*100 / sum).toFixed(1)+"%";
-                            } else {
-                                return " ";
-                            }
-                        },
-                        color: '#000',
-                    }
-                };
+          {% if medias.ideal or medias.regular or medias.inferior %}
+              <div class="row mt-5">
+                  <div class="col"><canvas id="doughnut-situacao"></canvas></div>
+              </div>
+          {% endif %}
+          <div class="row mt-5 justify-content-md-center">
+              {% comment %} Avaliações Antigas {% endcomment %}
+              {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-ppf"></canvas></div>
+              {% endif %}
+              {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-api"></canvas></div>
+              {% endif %}
+              {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-apg"></canvas></div>
+              {% endif %}
+              {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-afi"></canvas></div>
+              {% endif %}
+              {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-afg"></canvas></div>
+              {% endif %}
+              {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-rpl"></canvas></div>
+              {% endif %}
 
 
-                var config_situacao = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11", "#F10c0c"],
-                        data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Médias Finais [{{medias.total}} estudantes]{% else %}Final Grades [{{medias.total}} students]{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-rii"></canvas></div>
+              {% endif %}
+              {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-rig"></canvas></div>
+              {% endif %}
+              {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-bi"></canvas></div>
+              {% endif %}
+              {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-rfi"></canvas></div>
+              {% endif %}
+              {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-rfg"></canvas></div>
+              {% endif %}
+              {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
+                  <div class="col-md-6"><canvas id="doughnut-bf"></canvas></div>
+              {% endif %}
+          </div>
 
-                {% comment %} Avaliações Antigas {% endcomment %}
-                var config_ppf = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.ppf.ideal}},{{notas.ppf.regular}},{{notas.ppf.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Avaliação Preliminar{% else %}Preliminary Assessment{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+          <script>
+      
+              var tooltips = {
+                  enabled: false
+              };
 
-                var config_api = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.api.ideal}},{{notas.api.regular}},{{notas.api.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Avaliação Preliminar Individual{% else %}Individual Preliminary Assessment{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var legend = {
+                  display: true,
+                  position: "bottom",
+              };
 
-                var config_apg = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.apg.ideal}},{{notas.apg.regular}},{{notas.apg.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Avaliação Preliminar de Grupo{% else %}Group Preliminary Assessment{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var plugins = {
+                  datalabels: {
+                      formatter: (value, ctx) => {
+                          let sum = 0;
+                          let dataArr = ctx.chart.data.datasets[0].data;
+                          dataArr.map(data => {
+                              sum += data;
+                          });
+                          if(sum>0 && value>0) {
+                              return (value*100 / sum).toFixed(1)+"%";
+                          } else {
+                              return " ";
+                          }
+                      },
+                      color: '#000',
+                  }
+              };
 
 
-                var config_afi = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.afi.ideal}},{{notas.afi.regular}},{{notas.afi.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var config_situacao = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11", "#F10c0c"],
+                      data: [{{medias.ideal}},{{medias.regular}},{{medias.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Médias Finais [{{medias.total}} estudantes]{% else %}Final Grades [{{medias.total}} students]{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                var config_afg = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.afg.ideal}},{{notas.afg.regular}},{{notas.afg.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Group Final Assessment{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              {% comment %} Avaliações Antigas {% endcomment %}
+              var config_ppf = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.ppf.ideal}},{{notas.ppf.regular}},{{notas.ppf.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Avaliação Preliminar{% else %}Preliminary Assessment{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                var config_rpl = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.rpl.ideal}},{{notas.rpl.regular}},{{notas.rpl.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Relatório Preliminar{% else %}Preliminary Report{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var config_api = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.api.ideal}},{{notas.api.regular}},{{notas.api.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Avaliação Preliminar Individual{% else %}Individual Preliminary Assessment{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-
-
-
-                var config_rii = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
-
-                var config_rig = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
-
-                var config_bi = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Evaluation Committee{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var config_apg = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.apg.ideal}},{{notas.apg.regular}},{{notas.apg.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Avaliação Preliminar de Grupo{% else %}Group Preliminary Assessment{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
 
+              var config_afi = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.afi.ideal}},{{notas.afi.regular}},{{notas.afi.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                var config_rfi = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: "{% if lingua == 'pt' %}Relatório Final Individual{% else %}Individual Final Report{% endif %}",
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
+              var config_afg = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.afg.ideal}},{{notas.afg.regular}},{{notas.afg.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Group Final Assessment{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                var config_rfg = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Final Group Report{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
-
-                var config_bf = {
-                    type: "doughnut",
-                    data: {
-                    labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
-                    datasets: [
-                        {
-                        label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
-                        backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
-                        data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
-                        }
-                    ]
-                    },
-                    options: {
-                        title: {
-                            display: true,
-                            text: '{% if lingua == "pt" %}Banca Final{% else %}Final Evaluation Committee{% endif %}',
-                            position: "top"
-                        },
-                        tooltips: tooltips,
-                        legend: legend,
-                        plugins: plugins,
-                    }
-                }
-
-                function carrega_pagina() {  
-
-                    {% if medias.ideal or medias.regular or medias.inferior %}
-                        // Chart da situação dos alunos por faixa de nota
-                        var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
-                        window.situacao = new Chart(doughnut_situacao, config_situacao);
-                    {% endif %}
-
-
-                    {% comment %} Avaliações Antigas {% endcomment %}
-                    {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
-                        // Chart da PPF dos alunos por faixa de notas
-                        var doughnut_ppf = document.getElementById('doughnut-ppf').getContext('2d');
-                        window.ppf = new Chart(doughnut_ppf, config_ppf);
-                    {% endif %}
-
-                    {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
-                        // Chart da API dos alunos por faixa de notas
-                        var doughnut_api = document.getElementById('doughnut-api').getContext('2d');
-                        window.api = new Chart(doughnut_api, config_api);
-                    {% endif %}
-
-                    {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
-                        // Chart da APG dos alunos por faixa de notas
-                        var doughnut_apg = document.getElementById('doughnut-apg').getContext('2d');
-                        window.apg = new Chart(doughnut_apg, config_apg);
-                    {% endif %}
-
-                    {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
-                        // Chart da AFI dos alunos por faixa de notas
-                        var doughnut_afi = document.getElementById('doughnut-afi').getContext('2d');
-                        window.afi = new Chart(doughnut_afi, config_afi);
-                    {% endif %}
-
-                    {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
-                        // Chart da AFG dos alunos por faixa de notas
-                        var doughnut_afg = document.getElementById('doughnut-afg').getContext('2d');
-                        window.afg = new Chart(doughnut_afg, config_afg);
-                    {% endif %}
-
-                    {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
-                        // Chart da RPL dos alunos por faixa de notas
-                        var doughnut_rpl = document.getElementById('doughnut-rpl').getContext('2d');
-                        window.rpl = new Chart(doughnut_rpl, config_rpl);
-                    {% endif %}
+              var config_rpl = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.rpl.ideal}},{{notas.rpl.regular}},{{notas.rpl.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Relatório Preliminar{% else %}Preliminary Report{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
 
 
 
+              var config_rii = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.rii.ideal}},{{notas.rii.regular}},{{notas.rii.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                    {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
-                        // Chart da RII dos alunos por faixa de notas
-                        var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
-                        window.rii = new Chart(doughnut_rii, config_rii);
-                    {% endif %}
+              var config_rig = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.rig.ideal}},{{notas.rig.regular}},{{notas.rig.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                    {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
-                        // Chart da RIG dos alunos por faixa de notas
-                        var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
-                        window.rig = new Chart(doughnut_rig, config_rig);
-                    {% endif %}
+              var config_bi = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.bi.ideal}},{{notas.bi.regular}},{{notas.bi.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Evaluation Committee{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                    {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
-                        // Chart da BI dos alunos por faixa de notas
-                        var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
-                        window.bi = new Chart(doughnut_bi, config_bi);
-                    {% endif %}
 
-                    {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
-                        // Chart da RFI dos alunos por faixa de notas
-                        var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
-                        window.rfi = new Chart(doughnut_rfi, config_rfi);
-                    {% endif %}
 
-                    {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
-                        // Chart da RFG dos alunos por faixa de notas
-                        var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
-                        window.rfg = new Chart(doughnut_rfg, config_rfg);
-                    {% endif %}
+              var config_rfi = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.rfi.ideal}},{{notas.rfi.regular}},{{notas.rfi.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: "{% if lingua == 'pt' %}Relatório Final Individual{% else %}Individual Final Report{% endif %}",
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                    {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
-                        // Chart da BF dos alunos por faixa de notas
-                        var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
-                        window.bf = new Chart(doughnut_bf, config_bf);
-                    {% endif %}
+              var config_rfg = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == 'pt' %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.rfg.ideal}},{{notas.rfg.regular}},{{notas.rfg.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Final Group Report{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                }
+              var config_bf = {
+                  type: "doughnut",
+                  data: {
+                  labels: ["Ideal(>=7)", "Regular(>=5)", "Inferior(<5)"],
+                  datasets: [
+                      {
+                      label: "{% if lingua == "pt" %}Estudantes{% else %}Students{% endif %}",
+                      backgroundColor: ["#1e951e", "#8e8e11","#F10c0c"],
+                      data: [{{notas.bf.ideal}},{{notas.bf.regular}},{{notas.bf.inferior}}]
+                      }
+                  ]
+                  },
+                  options: {
+                      title: {
+                          display: true,
+                          text: '{% if lingua == "pt" %}Banca Final{% else %}Final Evaluation Committee{% endif %}',
+                          position: "top"
+                      },
+                      tooltips: tooltips,
+                      legend: legend,
+                      plugins: plugins,
+                  }
+              }
 
-                window.onload = carrega_pagina
-            
-            </script>
+              function carrega_pagina() {  
 
-        </div>
-    </div>
+                  {% if medias.ideal or medias.regular or medias.inferior %}
+                      // Chart da situação dos alunos por faixa de nota
+                      var doughnut_situacao = document.getElementById('doughnut-situacao').getContext('2d');
+                      window.situacao = new Chart(doughnut_situacao, config_situacao);
+                  {% endif %}
+
+
+                  {% comment %} Avaliações Antigas {% endcomment %}
+                  {% if notas.ppf.ideal or notas.ppf.regular or notas.ppf.inferior %}
+                      // Chart da PPF dos alunos por faixa de notas
+                      var doughnut_ppf = document.getElementById('doughnut-ppf').getContext('2d');
+                      window.ppf = new Chart(doughnut_ppf, config_ppf);
+                  {% endif %}
+
+                  {% if notas.api.ideal or notas.api.regular or notas.api.inferior %}
+                      // Chart da API dos alunos por faixa de notas
+                      var doughnut_api = document.getElementById('doughnut-api').getContext('2d');
+                      window.api = new Chart(doughnut_api, config_api);
+                  {% endif %}
+
+                  {% if notas.apg.ideal or notas.apg.regular or notas.apg.inferior %}
+                      // Chart da APG dos alunos por faixa de notas
+                      var doughnut_apg = document.getElementById('doughnut-apg').getContext('2d');
+                      window.apg = new Chart(doughnut_apg, config_apg);
+                  {% endif %}
+
+                  {% if notas.afi.ideal or notas.afi.regular or notas.afi.inferior %}
+                      // Chart da AFI dos alunos por faixa de notas
+                      var doughnut_afi = document.getElementById('doughnut-afi').getContext('2d');
+                      window.afi = new Chart(doughnut_afi, config_afi);
+                  {% endif %}
+
+                  {% if notas.afg.ideal or notas.afg.regular or notas.afg.inferior %}
+                      // Chart da AFG dos alunos por faixa de notas
+                      var doughnut_afg = document.getElementById('doughnut-afg').getContext('2d');
+                      window.afg = new Chart(doughnut_afg, config_afg);
+                  {% endif %}
+
+                  {% if notas.rpl.ideal or notas.rpl.regular or notas.rpl.inferior %}
+                      // Chart da RPL dos alunos por faixa de notas
+                      var doughnut_rpl = document.getElementById('doughnut-rpl').getContext('2d');
+                      window.rpl = new Chart(doughnut_rpl, config_rpl);
+                  {% endif %}
+
+
+
+
+
+                  {% if notas.rii.ideal or notas.rii.regular or notas.rii.inferior %}
+                      // Chart da RII dos alunos por faixa de notas
+                      var doughnut_rii = document.getElementById('doughnut-rii').getContext('2d');
+                      window.rii = new Chart(doughnut_rii, config_rii);
+                  {% endif %}
+
+                  {% if notas.rig.ideal or notas.rig.regular or notas.rig.inferior %}
+                      // Chart da RIG dos alunos por faixa de notas
+                      var doughnut_rig = document.getElementById('doughnut-rig').getContext('2d');
+                      window.rig = new Chart(doughnut_rig, config_rig);
+                  {% endif %}
+
+                  {% if notas.bi.ideal or notas.bi.regular or notas.bi.inferior %}
+                      // Chart da BI dos alunos por faixa de notas
+                      var doughnut_bi = document.getElementById('doughnut-bi').getContext('2d');
+                      window.bi = new Chart(doughnut_bi, config_bi);
+                  {% endif %}
+
+                  {% if notas.rfi.ideal or notas.rfi.regular or notas.rfi.inferior %}
+                      // Chart da RFI dos alunos por faixa de notas
+                      var doughnut_rfi = document.getElementById('doughnut-rfi').getContext('2d');
+                      window.rfi = new Chart(doughnut_rfi, config_rfi);
+                  {% endif %}
+
+                  {% if notas.rfg.ideal or notas.rfg.regular or notas.rfg.inferior %}
+                      // Chart da RFG dos alunos por faixa de notas
+                      var doughnut_rfg = document.getElementById('doughnut-rfg').getContext('2d');
+                      window.rfg = new Chart(doughnut_rfg, config_rfg);
+                  {% endif %}
+
+                  {% if notas.bf.ideal or notas.bf.regular or notas.bf.inferior %}
+                      // Chart da BF dos alunos por faixa de notas
+                      var doughnut_bf = document.getElementById('doughnut-bf').getContext('2d');
+                      window.bf = new Chart(doughnut_bf, config_bf);
+                  {% endif %}
+
+              }
+
+              window.onload = carrega_pagina
+          
+          </script>
+
+      </div>
   </div>
 
   <script>

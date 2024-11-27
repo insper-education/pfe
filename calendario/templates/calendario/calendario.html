@@ -244,14 +244,11 @@
   <script>
     var save_image_file_name = "calendario_capstone";
   </script>
-  {% include "save_image.html" %}
 
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en" style="display: none;">{{ titulo.en }}</span>
   </span>
-
-  <div id="tudo">
 
     <div id="calendar" style="overflow-x: visible;"></div>
     
@@ -469,8 +466,6 @@
     </div> <!--id="info_semestre"-->
     <br>
     <br>
-
-  </div>
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     {% include "calendario/evento-modal.html" %}

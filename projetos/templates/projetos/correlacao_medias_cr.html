@@ -19,58 +19,49 @@
 
 {% block content %}
 
-  <script>
-    function ajusta() { }
-    function reajusta() { }
-  </script>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
-  {% include "save_image.html" %}
+  {% include "edicoes.html" with com_cursos=True %}
 
-  <div id="tudo">
+  <div class="input-group input-group-sm mt-1">
+      <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
+          <label class="form-check-label" for="inlineRadio1"><span lang="pt">Médias Finais</span><span lang="en">Final Grades</span></label>
+      </div>
+      <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
+          <label class="form-check-label" for="inlineRadio2"><span lang="pt">Notas Individuais</span><span lang="en">Individual Grades</span></label>
+      </div>
+  </div>
 
-    <span class="titulo">
-      <span lang="pt">{{ titulo.pt }}</span>
-      <span lang="en">{{ titulo.en }}</span>
-    </span>
+  <div class="atualizar">
 
-    {% include "edicoes.html" with com_cursos=True %}
+    {% if periodo and curso %}
+      {% with file_name="correlacao_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
+        <script>
+          var save_image_file_name = "{{file_name}}";
+        </script>
+      {% endwith %}
+    {% endif %}
 
-    <div class="input-group input-group-sm mt-1">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
-            <label class="form-check-label" for="inlineRadio1"><span lang="pt">Médias Finais</span><span lang="en">Final Grades</span></label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
-            <label class="form-check-label" for="inlineRadio2"><span lang="pt">Notas Individuais</span><span lang="en">Individual Grades</span></label>
-        </div>
-    </div>
+    <br><br>
 
-    <div class="atualizar">
+    <div class="container">
 
-      {% if periodo and curso %}
-        {% with file_name="correlacao_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-          <script>
-            var save_image_file_name = "{{file_name}}";
-          </script>
-        {% endwith %}
-      {% endif %}
-
-      <br><br>
-
-      <div class="container">
-
-        <div class="chart-container" style="position: relative; max-width:80vh">
-          <canvas id="correlacao"></canvas>
-        </div>
-            
-        <br>
-        <small>
-          <div id="semestres"></div>
-          {% for curs, estud in estudantes.items %}
-            <div id="{{curs.sigla}}"></div>
-          {% endfor %}
-        </small>
+      <div class="chart-container" style="position: relative; max-width:80vh">
+        <canvas id="correlacao"></canvas>
+      </div>
+          
+      <br>
+      <small>
+        <div id="semestres"></div>
+        {% for curs, estud in estudantes.items %}
+          <div id="{{curs.sigla}}"></div>
+        {% endfor %}
+      </small>
 
             <script>
                 {% if alocacoes %}
@@ -305,11 +296,11 @@
                 });
             </script>
 
-        </div>
     </div>
-    </div>
+    
+  </div>
 
-    {% include "edicoes_ajax.html" with com_cursos=True %}
-    {% include "linguas.html" %}
+  {% include "edicoes_ajax.html" with com_cursos=True %}
+  {% include "linguas.html" %}
 
 {% endblock %}

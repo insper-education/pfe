@@ -51,23 +51,13 @@
 {% block content %}
 
   <script>
-    function ajusta() { }
-    function reajusta() { }
-  </script>
-
-  {% include "impressora.html" %}
-
-  <script>
     var save_image_file_name = "falconi_capstone";
   </script>
-  {% include "save_image.html" %}
   
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
   </span>
-
-  <div id="tudo">
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with n_todas=True %}
@@ -411,7 +401,6 @@
             
       {% endif %}
 
-    </div>
   </div>
     
   {% include "edicoes_ajax.html" %}
