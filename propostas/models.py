@@ -23,8 +23,8 @@ class PerguntasRespostas(models.Model):
     resposta = models.TextField("Resposta", max_length=3000, null=True, blank=True,
                                 help_text="Resposta para uma proposta")
     
-    data_pergunta = models.DateTimeField("Data Pergunta", default=datetime.datetime.now, blank=True, help_text="Data da pergunta")
-    data_resposta = models.DateTimeField("Data Resposta", default=datetime.datetime.now, blank=True, help_text="Data da resposta")
+    data_pergunta = models.DateTimeField("Data Pergunta", default=datetime.datetime.now, null=True, blank=True, help_text="Data da pergunta")
+    data_resposta = models.DateTimeField("Data Resposta", default=datetime.datetime.now, null=True, blank=True, help_text="Data da resposta")
 
     quem_perguntou = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name="quem_perguntou",
