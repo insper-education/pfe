@@ -1,0 +1,91 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Novembro de 2024
+{% endcomment %}
+
+<style>
+  .perg {margin-bottom: 7px;}
+  #listas_perguntas {padding-left: 18px;}
+</style>
+
+<hr>
+<h4>
+  <span lang="pt">Fórum de Perguntas sobre Propostas</span>
+  <span lang="en" style="display:none">Proposal Questions Forum</span>
+</h4>
+<small class="lh-1">
+  <span lang="pt">
+    Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes.
+    Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos.
+  </span>
+  <span lang="en" style="display:none">
+    Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students.
+    Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved.
+  </span>
+</small><br>
+
+<ul id="listas_perguntas">
+  {% for pergunta in proposta.perguntasrespostas_set.all %}
+    <li class="perg">
+      <b>{{ pergunta.quem_perguntou.get_full_name }}</b>
+      {{ pergunta.data_pergunta|date:"d/m/Y H:i" }}<br>
+      <span lang="pt">Pergunta:</span>
+      <span lang="en" style="display:none">Question:</span>
+      <i>{{ pergunta.pergunta }}</i><br>
+
+      {% if pergunta.resposta %}
+        <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
+        {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
+        <span lang="pt">Resposta:</span>
+        <span lang="en" style="display:none">Answer:</span>
+        <i>{{ pergunta.resposta }}</i><br>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+<b>
+  <span lang="pt">Para fazer uma pergunta, use a caixa de texto abaixo:</span>
+  <span lang="en" style="display:none">To ask a question, use the text box below:</span>
+</b>
+<form id="pergunta_form" method="post">{% csrf_token %}
+  <textarea name="pergunta_proposta" class="form-control" 
+   required
+   rows="3" placeholder="Digite sua pergunta aqui"></textarea>
+  <button type="submit" id="enviar_pergunta" class="btn btn-primary">
+    <span lang="pt">Enviar</span>
+    <span lang="en" style="display:none">Send</span>
+  </button>
+  <br>
+</form>
+<br>
+
+
+<script>
+    
+  $(document).ready(function() {
+    $("#pergunta_form").on("submit", function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      var pergunta = $('textarea[name="pergunta_proposta"]').val();
+
+      $.ajax({
+          type: "POST",
+          url: "{% url 'ajax_proposta_pergunta' proposta.id %}",
+          data: {
+            "pergunta": pergunta,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+          },
+          success: function(response){
+            if(response.data_hora) {
+              $("#listas_perguntas").append("<li><b>{{request.user.get_full_name}}</b> " + response.data_hora + "<br>Pergunta: <i>" + pergunta + "</i>");
+              $('textarea[name="pergunta_proposta"]').val("");
+            }
+          },
+          {% include "ajax_error_function.js" %}
+      });
+    });
+  });
+
+</script> 

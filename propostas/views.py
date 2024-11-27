@@ -6,6 +6,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+import logging
+
 from collections import Counter
 
 from django.conf import settings
@@ -16,6 +18,9 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.utils.datastructures import MultiValueDictKeyError
+from django.utils import timezone
+
+from .models import PerguntasRespostas
 
 from users.support import get_edicoes, adianta_semestre
 from users.models import Opcao, Aluno, Alocacao, PFEUser
@@ -25,6 +30,7 @@ from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
 from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
 from projetos.models import Evento
 from projetos.support import get_upload_path, simple_upload
+from projetos.messages import email
 
 from operacional.models import Curso
 
@@ -33,6 +39,8 @@ from administracao.support import get_limite_propostas, get_data_planejada, prop
 from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -446,6 +454,127 @@ def ajax_proposta(request, primarykey=None):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
+def ajax_proposta_pergunta(request, primarykey=None):
+    """Atualiza perguntas sobre uma proposta."""
+
+    if primarykey is None:
+        return HttpResponse("Erro não identificado.", status=401)
+    
+    if request.is_ajax():
+
+        proposta = get_object_or_404(Proposta, pk=primarykey)
+        
+        # Define analisador
+        if "pergunta" in request.POST:
+            pergunta_resposta = PerguntasRespostas(
+                proposta=proposta,
+                pergunta=request.POST["pergunta"],
+                quem_perguntou=request.user,
+            )
+            pergunta_resposta.save()
+
+        
+            # Enviando e-mail com mensagem para usuários.
+            mensagem = f"O estudante {request.user.get_full_name()} fez uma pergunta sobre a proposta {proposta.titulo}."
+            mensagem += f"\n\n<br><br>Pergunta: {pergunta_resposta.pergunta}"
+            mensagem += f"\n\n<br><br>Link para a proposta: {settings.SITE_ROOT}/propostas/proposta_completa/{proposta.id}/"
+            subject = "Capstone | Pergunta sobre proposta de projeto"
+            configuracao = get_object_or_404(Configuracao)
+            recipient_list = [str(configuracao.coordenacao.user.email)]
+            if proposta.autorizado:
+                recipient_list.append(str(proposta.autorizado.email))
+
+            try:
+                check = email(subject, recipient_list, mensagem)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                    codigo = 400
+                else:
+                    mensagem = "<br><br>Enviado mensagem com senha para: "
+                    mensagem += request.user.get_full_name() + " " +\
+                            "&lt;" + request.user.email + "&gt;<br>\n"
+                    codigo = 200
+            except:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                codigo = 400
+
+
+            data = {
+                "atualizado": True,
+                "data_hora": pergunta_resposta.data_pergunta.strftime("%d/%m/%Y %H:%M"),
+                }
+            return JsonResponse(data)
+    
+    return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_proposta_resposta(request, primarykey=None):
+    """Atualiza perguntas sobre uma proposta."""
+
+    if primarykey is None:
+        return HttpResponse("Erro não identificado.", status=401)
+    
+    if request.is_ajax():
+
+        proposta = get_object_or_404(Proposta, pk=primarykey)
+        
+        # Define analisador
+        if "pergunta_id" in request.POST and "resposta" in request.POST:
+            pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
+            pergunta_resposta.resposta = request.POST["resposta"]
+            pergunta_resposta.quem_respondeu = request.user
+            pergunta_resposta.data_resposta = timezone.now()
+            pergunta_resposta.save()
+
+            # Enviando e-mail com mensagem para usuários.
+            mensagem = f"Sua pergunta sobre a proposta {proposta.titulo} foi respondida.<br><br>"
+            mensagem += f"\n\n<br><br>Pergunta: {pergunta_resposta.pergunta}"
+            mensagem += f"\n\n<br><br>Resposta: {pergunta_resposta.resposta}"
+            mensagem += f"\n\n<br><br>Link para a proposta: {settings.SITE_ROOT}/propostas/proposta_detalhes/{proposta.id}/"
+            subject = "Capstone | Pergunta sobre proposta de projeto"
+            configuracao = get_object_or_404(Configuracao)
+            recipient_list = [
+                str(pergunta_resposta.quem_perguntou.email),
+                str(configuracao.coordenacao.user.email)
+                ]
+
+            try:
+                check = email(subject, recipient_list, mensagem)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                    codigo = 400
+                else:
+                    mensagem = "<br><br>Enviado mensagem com senha para: "
+                    mensagem += request.user.get_full_name() + " " +\
+                            "&lt;" + request.user.email + "&gt;<br>\n"
+                    codigo = 200
+            except:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
+                logger.error(error_message)
+                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+                codigo = 400
+
+
+            data = {
+                "atualizado": True,
+                }
+            return JsonResponse(data)
+    
+    return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
 def proposta_completa(request, primarykey):
     """Mostra uma proposta por completo."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
@@ -517,13 +646,8 @@ def proposta_detalhes(request, primarykey):
     procura["4"] = opcoes.filter(prioridade=4).count()
     procura["5"] = opcoes.filter(prioridade=5).count()
 
-    titulo = "Proposta " + str(proposta.ano) + '.' + str(proposta.semestre)
-    if proposta.organizacao:
-        titulo += " [" + proposta.organizacao.sigla + "] "
-    titulo += proposta.titulo
-
     context = {
-        "titulo": titulo,
+        "titulo": {"pt": "Detalhes da Proposta", "en": "Proposal Details"},
         "proposta": proposta,
         "procura": procura,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),

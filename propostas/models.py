@@ -3,35 +3,33 @@
 Desenvolvido para o Projeto Final de Engenharia.
 
 Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-Data: 9 de Outubro de 2023
+Data: 27 de Novembro de 2024
 """
 
 from django.db import models
 
 
-# from django.contrib.postgres.fields import ArrayField
+class PerguntasRespostas(models.Model):
+    """Modelo de Perguntas e Respostas."""
 
-# from operacional.models import Curso
+    proposta = models.ForeignKey("projetos.Proposta", null=True, blank=True,   
+                                    on_delete=models.SET_NULL,
+                                    help_text="Proposta relacionada a pergunta")
 
-# class PerfilVaga(models.Model):
-#     """Perfil de estudante para uma vaga em proposta de projeto."""
-
-#     # curso = models.ForeignKey('operacional.Curso', null=True, blank=True,
-#     #                              on_delete=models.SET_NULL,
-#     #                              help_text="Perfis desejados para uma vaga")
+    pergunta = models.TextField("Pergunta", max_length=3000, null=True, blank=True,
+                                help_text="Pergunta de estudante para uma proposta")
+    resposta = models.TextField("Resposta", max_length=3000, null=True, blank=True,
+                                help_text="Resposta para uma proposta")
     
-#     curso = ArrayField(models.ForeignKey(Curso, on_delete=models.SET_NULL))
+    data_pergunta = models.DateTimeField("Data", auto_now_add=True, help_text="Data da pergunta")
+    data_resposta = models.DateTimeField("Data", auto_now_add=True, help_text="Data da resposta")
 
-#     class Meta:
-#         verbose_name = 'Perfil de Vaga'
-#         verbose_name_plural = 'Perfil de Vagas'
-
-#     @classmethod
-#     def create(cls):
-#         """Cria um objeto (entrada) em PerfilVaga."""
-#         perfil = cls()
-#         return perfil
-
-#     def __str__(self):
-#         """Retorno padrão textual."""
-#         return self.template
+    quem_perguntou = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                       on_delete=models.SET_NULL, related_name="quem_perguntou",
+                                       help_text="Quem fez a pergunta")
+    quem_respondeu = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                        on_delete=models.SET_NULL, related_name="quem_respondeu",
+                                        help_text="Quem respondeu a pergunta")
+    
+    def __str__(self):
+        return self.pergunta

@@ -13,10 +13,23 @@
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
+    
+  <style>
+    {% comment %} REMOVER TUDO ABAIXO{% endcomment %}
+    .lh-1 {
+      display: inline-block;
+      line-height: 1.0;
+    }
+  </style>
 
 {% endblock %}
 
 {% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   {% include "proposta.html" %}
 
@@ -28,16 +41,19 @@
 
   {% include "prioridades.html" %}
 
-  <hr>
-  <br><b><label for="autorizador">Membro do comitê do Capstone responsável pela proposta</label></b>:
-  <span id="autorizador">
-    {{ proposta.autorizado.get_full_name }}
-    <a href="mailto:{{proposta.autorizado.email}}"> &lt;{{proposta.autorizado.email}}&gt;</a>
-  </span><br>
-  <small>Obs: O responsável da proposta não necessariamente será o orientador do projeto, e muitas vezes não é.
-         Use esse contato para tirar dúvidas da proposta. Perceba também que o responsável pode demorar para responder suas dúvidas.
-         Não espere respostas imediatas, pois não as terá.
-  </small>
-  
-  <p>&nbsp;</p>
+  {% if proposta.autorizado %}
+    <hr>
+    <br><b><label for="autorizador">Membro do comitê do Capstone responsável pela proposta</label></b>:
+    <span id="autorizador">
+      {{ proposta.autorizado.get_full_name }}
+      <a href="mailto:{{proposta.autorizado.email}}"> &lt;{{proposta.autorizado.email}}&gt;</a>
+    </span><br>
+    <small class="lh-1">Obs: O responsável da proposta não necessariamente será o orientador do projeto, e muitas vezes não é.
+          Use esse contato para tirar dúvidas da proposta. Perceba também que o responsável pode demorar para responder suas dúvidas.
+          Não espere respostas imediatas, pois não as terá.
+    </small>
+  {% endif %}
+
+  {% include "forum_perguntas.html" %}
+
 {% endblock %}

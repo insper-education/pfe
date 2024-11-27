@@ -574,7 +574,7 @@ def avaliacao_pares(request, momento):
                     
                     message = "Caro Orientador(a),<br><br>"
                     message += "Todas as avaliações de pares do projeto que você está orientando<br>"
-                    message += "[" + projeto.organizacao.sigla + "] " + projeto.get_titulo() + "<br>"
+                    message += "<b>[" + projeto.organizacao.sigla + "] " + projeto.get_titulo() + "</b><br>"
                     message += "foram realizadas.<br><br>"
                     message += "Acesse o sistema para visualizar as avaliações.<br>"
                     message += "<a href='https://pfe.insper.edu.br/professores/avaliacoes_pares/'>https://pfe.insper.edu.br/professores/avaliacoes_pares/</a><br><br>"

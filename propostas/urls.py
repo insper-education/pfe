@@ -85,5 +85,13 @@ urlpatterns = [
     path("ajax_proposta/<int:primarykey>",
         views.ajax_proposta,
         name="ajax_proposta"),
+    
+    path("ajax_proposta_pergunta/<int:primarykey>",
+        views.ajax_proposta_pergunta,
+        name="ajax_proposta_pergunta"),
+
+    path("ajax_proposta_resposta/<int:primarykey>",
+        views.ajax_proposta_resposta,
+        name="ajax_proposta_resposta"),
 
 ]

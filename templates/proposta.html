@@ -9,15 +9,15 @@
 {% if proposta %}
 
   {% if proposta.titulo %}
-    <span class="titulo" data-toggle="tooltip" data-html="true" animation="true" 
+    <h5 data-toggle="tooltip" data-html="true" animation="true" 
     title="
     Título provisório para a proposta de projeto.
     Durante a execução do projeto o título poderá/deverá sofrer atualizações.
     ">
-      <b>Proposta:</b> {{proposta.titulo}}
-    </span>
+      <b>Proposta:</b> [{{proposta.organizacao}}] {{proposta.titulo}}
+    </h5>
   {% else %}
-    <span class="titulo">Problema na identificação do título</span>
+    <h5 class="titulo">Problema na identificação do título</h5>
   {% endif %}
 
   {% if proposta.ano and proposta.semestre %}

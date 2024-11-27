@@ -1,0 +1,90 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Novembro de 2024
+{% endcomment %}
+
+<style>
+  .perg {margin-bottom: 7px;}
+  #listas_respostas {padding-left: 18px;}
+</style>
+
+{% with perguntas=proposta.perguntasrespostas_set.all %}
+{% if perguntas %}
+<hr>
+<h4>
+  <span lang="pt">Fórum de Perguntas sobre Propostas</span>
+  <span lang="en" style="display:none">Proposal Questions Forum</span>
+</h4>
+<small class="lh-1">
+  <span lang="pt">
+    Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes.
+    Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos.
+  </span>
+  <span lang="en" style="display:none">
+    Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students.
+    Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved.
+  </span>
+</small><br>
+
+<form id="resposta_form" method="post">{% csrf_token %}
+  <ul id="listas_respostas">
+    {% for pergunta in proposta.perguntasrespostas_set.all %}
+      <li class="perg">
+        <b>{{ pergunta.quem_perguntou.get_full_name }}</b>
+        {{ pergunta.data_pergunta|date:"d/m/Y H:i" }}<br>
+        <span lang="pt">Pergunta:</span>
+        <span lang="en" style="display:none">Question:</span>
+        <i>{{ pergunta.pergunta }}</i><br>
+
+        {% if pergunta.resposta %}
+          <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
+          {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
+        {% endif %}
+        <span lang="pt">Resposta:</span>
+        <span lang="en" style="display:none">Answer:</span>
+        <textarea name="resposta_proposta{{pergunta.id}}" class="form-control" required
+        rows="3">{% if pergunta.resposta %}{{ pergunta.resposta }}{% endif %}</textarea>
+        <button type="button" data-id="{{pergunta.id}}" class="btn btn-primary enviar_resposta">
+          <span lang="pt">Enviar</span>
+          <span lang="en" style="display:none">Send</span>
+        </button>
+        <br><br>
+      </li>
+    {% endfor %}
+  </ul>
+</form>
+<br>
+
+<script>    
+  $(document).ready(function() {
+    $(".enviar_resposta").on("click", function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      var perguntaId = $(this).data("id");
+      var resposta = $('textarea[name="resposta_proposta' + perguntaId + '"]').val();
+      if (!resposta) {
+        alert("Por favor, preencha a resposta antes de enviar.");
+        return;
+      }
+
+      $.ajax({
+          type: "POST",
+          url: "{% url 'ajax_proposta_resposta' proposta.id %}",
+          data: {
+            "pergunta_id": perguntaId,
+            "resposta": resposta,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+          },
+          success: function(response) {
+            alert("Resposta enviada com sucesso!");
+            location.reload(); 
+          },
+          {% include "ajax_error_function.js" %}
+      });
+    });
+  });
+
+</script> 
+{% endif %}
+{% endwith %}

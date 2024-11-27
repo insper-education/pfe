@@ -66,12 +66,6 @@
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
-            {% comment %} if (response.atualizado) {
-              
-            } else {
-              console.log("Erro: Valor não atualizado.");
-            } {% endcomment %}
-
             if(anotacao) {
               $("#anotacao"+anotacao).data("anotacao", response.anotacao_id);
               $("#anotacao"+anotacao).text(texto);
@@ -79,9 +73,7 @@
             } else {
               $("#lista_anotacoes").prepend("<li><a class='open-annotation' href='"+url+"' data-url='"+url+"' data-anotacao='"+response.anotacao_id+"'>"+response.autor_nome+" "+response.autor_sobrenome+" [<span id='data"+response.anotacao_id+"'>"+response.data_full+"</span>] : <span id='anotacao"+response.anotacao_id+"'>"+texto+'</span></a></li>');
             }
-            
             $("#sem_anotacoes").hide();
-
         },
         {% include "ajax_error_function.js" %}
     });

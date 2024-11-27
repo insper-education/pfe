@@ -2078,8 +2078,8 @@ class Area(models.Model):
         return area
 
     class Meta:
-        verbose_name = 'Área'
-        verbose_name_plural = 'Áreas'
+        verbose_name = "Área"
+        verbose_name_plural = "Áreas"
 
 class AreaDeInteresse(models.Model):
     """Usado para fazer o mapeando da proposta ou da pessoa para área de interesse."""
