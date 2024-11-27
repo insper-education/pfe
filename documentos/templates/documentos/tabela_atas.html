@@ -17,17 +17,19 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    {% if user.tipo_de_usuario == 4 %}
-      <small class="esconder">
-        <a
-          class="open-documento" style="cursor:pointer;"
-          data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-          >&#10133;</a
-        >
-      </small>
-    {% endif %}
   </span>
 
+  {% if user.tipo_de_usuario == 4 %}
+    <span class="esconder">
+      <a
+        href="#"
+        class="open-documento"
+        data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
+        ><i class="fas fa-plus"></i> 
+         Adicionar nova Ata</a
+      >
+    </span><br>
+  {% endif %}
 
   {% if template and template.documento %}
     <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
