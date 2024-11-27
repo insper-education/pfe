@@ -453,7 +453,6 @@ def ajax_proposta(request, primarykey=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
 def ajax_proposta_pergunta(request, primarykey=None):
     """Atualiza perguntas sobre uma proposta."""
 
@@ -514,7 +513,6 @@ def ajax_proposta_pergunta(request, primarykey=None):
 
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
 def ajax_proposta_resposta(request, primarykey=None):
     """Atualiza perguntas sobre uma proposta."""
 
