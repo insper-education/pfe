@@ -3457,6 +3457,10 @@ def ver_pares_projeto(request, projeto_id, momento):
     comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
 
     context = {
+        "titulo": {
+            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
+            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
+            },
         "alocacoes": alocacoes,
         "colegas": colegas,
         "momento": momento,

@@ -265,7 +265,6 @@ def atualiza_evento(request):
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
     if "arquivo" in request.FILES or ("link1" in request.POST and request.POST["link1"] != ""):
-        print("Arquivo1")
         documento = cria_material_aula(request, "arquivo", "link1")
         evento.documento = documento
     else:
@@ -273,7 +272,6 @@ def atualiza_evento(request):
         evento.documento = Documento.objects.get(id=material) if material else None
 
     if "arquivo2" in request.FILES or ("link2" in request.POST and request.POST["link2"] != ""):
-        print("Arquivo2")
         documento = cria_material_aula(request, "arquivo2", "link2")
         evento.documento2 = documento
     else:

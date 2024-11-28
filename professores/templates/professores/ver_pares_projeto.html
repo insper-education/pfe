@@ -35,33 +35,53 @@
 
 {% block content %}
 
-  <span class="titulo">Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span></span>
 
-    <b>Projeto:</b>
-    <a href="{% url 'projeto_completo' projeto.id %}">
-      [{{ projeto.organizacao.nome }}] {{projeto.get_titulo}}
-      {% include "tipo_projeto.html" %}<br>
-    </a>
+  <b>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display: none;">Project:</span>
+  </b>
+  <a href="{% url 'projeto_completo' projeto.id %}">
+    [{{ projeto.organizacao.nome }}] {{projeto.get_titulo}}
+    {% include "tipo_projeto.html" %}<br>
+  </a>
 
-    {% if projeto.orientador %}
-      {% if projeto.proposta.intercambio %}
-        <b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-      {% else %}
-        <b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-      {% endif %}
-      <a href="{% url 'professor_detail' projeto.orientador.id %}">
-        {{projeto.orientador.user.get_full_name}}
-      </a>
-      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+  {% if projeto.orientador %}
+    {% if projeto.proposta.intercambio %}
+      <b>
+        <span lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
+        <span lang="en" style="display: none;">Responsible Professor:</span>
+      </b>
     {% else %}
-      <h3>Orientador: Não definido</h3>
+      <b>
+        <span lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
+        <span lang="en" style="display: none;">Advisor:</span>
+      </b>
     {% endif %}
-    <br><br>
+    <a href="{% url 'professor_detail' projeto.orientador.id %}">
+      {{projeto.orientador.user.get_full_name}}
+    </a>
+    <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+  {% else %}
+    <h3>
+      <span lang="pt">Orientador: Não definido</span>
+      <span lang="en" style="display: none;">Advisor: Not defined</span>
+    </h3>
+  {% endif %}
+  <br><br>
 
-    <b>Orientações passadas aos estudantes:</b>
-    <div style="max-width: 700px;">{{msg_aval_pares}}</div>
-    <hr>
+  <b>
+    <span lang="pt">Orientações passadas aos estudantes:</span>
+    <span lang="en" style="display: none;">Guidelines given to students:</span>
+  </b>
+  <div style="max-width: 700px;">{{msg_aval_pares}}</div>
+  <hr>
 
-    {% include "ver_pares.html" %}
+  {% include "ver_pares.html" %}
+  
+  {% include "linguas.html" %}
 
 {% endblock %}

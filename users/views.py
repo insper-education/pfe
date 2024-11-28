@@ -912,7 +912,6 @@ def projeto_user(request):
     
     if "user_id" in request.POST:
 
-        print(request.POST)
         user_id = request.POST["user_id"]
 
         user = get_object_or_404(PFEUser, pk=user_id)
