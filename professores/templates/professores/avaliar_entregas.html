@@ -26,26 +26,15 @@
     .lightgrey:link,
     .lightgrey:visited,
     .lightgrey:hover,
-    .lightgrey:active
-      {color:lightgrey;}
+    .lightgrey:active {color:lightgrey;}
     .nome_entrega {
       font-size: 0.9em;
       margin-left: 0.4em;
     }
-    .nome_est {
-      margin-left: 0.4em;
-    }
-    .linha {
-      margin: 4px 0px 2px 0px;
-    }
-
-    .redish {
-      background-color: #ffcccc;
-    }
-
-    .yellowish {
-      background-color: #ffffcc;
-    }
+    .nome_est {margin-left: 0.4em;}
+    .linha {margin: 4px 0px 2px 0px;}
+    .redish {background-color: #ffcccc;}
+    .yellowish {background-color: #ffffcc;}
 
   </style>
   {% include "style_display_avaliacoes.html" %}
@@ -205,10 +194,13 @@
                       {% endif %}
                     {% empty %}
                       {% if item.composicao.tipo_documento %}
-                        <span {% if dias_inic > dias %}style="color:lightgrey;"{% endif %}>
+                        <a data-toggle="tooltip" data-html="true" animation="true" title="Documento não foi entregue"
+                          {% if dias_inic > dias %}class="lightgrey"{% endif %}
+                          href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
+                          target="_blank" rel="noopener noreferrer">
                           <span lang="pt">sem arquivos</span>
                           <span lang="en">no files</span>
-                        </span><br>
+                        </a><br>
                       {% endif %}
                     {% endfor %}
                   </ul>
@@ -265,10 +257,13 @@
                         {% endif %}
                       {% empty %}
                         {% if item.composicao.tipo_documento %}
-                          <span {% if dias_inic > dias %}style="color:lightgrey;"{% endif %}>
+                          <a data-toggle="tooltip" data-html="true" animation="true" title="Documento não foi entregue"
+                            {% if dias_inic > dias %}class="lightgrey"{% endif %}
+                            href="{% url 'entrega_avaliar' item.composicao.id projeto.id alocacao.aluno.user.id %}"
+                            target="_blank" rel="noopener noreferrer">
                             <span lang="pt">sem arquivos</span>
                             <span lang="en">no files</span>
-                          </span><br>
+                          </a>
                         {% endif %}
                       {% endfor %}
                     </ul>

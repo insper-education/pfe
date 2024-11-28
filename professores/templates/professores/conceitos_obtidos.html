@@ -51,14 +51,23 @@
     <span lang="en">{{ titulo.en }}</span>
   </span>
 
-  <strong>Projeto:</strong>
+  <strong>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display: none;">Project:</span>
+  </strong>
   [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
   <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
 
-  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  <strong>
+    <span lang="pt">Semestre:</span>
+    <span lang="en" style="display: none;">Semester:</span>
+  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% if projeto.orientador %}
-    <strong>Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}: </strong>
+    <strong>
+      <span lang="pt">Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
+      <span lang="en" style="display: none;">Advisor:</span>
+    </strong>
     <a href="{% url 'professor_detail' projeto.orientador.id %}">
       {{projeto.orientador.user.get_full_name}}
     </a>
@@ -67,7 +76,10 @@
 
   {% with coorientadores=projeto.coorientador_set.all %}
     {% if coorientadores %}
-      <strong>Coorientação:</strong>
+      <strong>
+        <span lang="pt">Coorientador:</span>
+        <span lang="en" style="display: none;">Co-advisor:</span>
+      </strong>
       {% for coorientador in coorientadores %}
           <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
             {{coorientador.usuario.get_full_name}} 
@@ -82,7 +94,10 @@
 
   {% include "tipo_projeto.html" with com_tipo=True %}
   
-  <strong style="display: inline-block; margin-top: 6px;">Grupo:</strong>
+  <strong style="display: inline-block; margin-top: 6px;">
+    <span lang="pt">Grupo:</span>
+    <span lang="en" style="display: none;">Group:</span>
+  </strong>
   <ul>
   {% for alocacao in projeto.alocacao_set.all %}
     <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
@@ -100,9 +115,14 @@
     
     <div class="div_arredondado">
       <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-        Banca {{banca.get_tipo_de_banca_display}} ({{banca.startDate|date:"d/m/y"}})
+        <span lang="pt">Banca</span>
+        <span lang="en" style="display: none;">Examining Board</span>
+        {{banca.get_tipo_de_banca_display}} ({{banca.startDate|date:"d/m/y"}})
         </a>
-        <br><small style="font-size: 11px;">★ Formulário: <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+        <br><small style="font-size: 11px;">★ 
+          <span lang="pt">Formulário:</span>
+          <span lang="en" style="display: none;">Form:</span>
+          <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
       </h5>
       {% include "membros_da_banca.html" %}
     
@@ -111,13 +131,25 @@
           <table>    
             {% for avaliador, objs in avaliadores_inter.items %}
                 <tr><td>
-                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <strong>
+                    <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
+                    <span lang="en" style="display: none;">Evaluator:</span>
+                  </strong>
                   <a href="{% url 'professor_detail' avaliador.professor.id %}">
                     {{avaliador.get_full_name}}
                   </a><br>
-                  {% if objs.momento %}<strong>Avaliado em: </strong>{{objs.momento}}<br>{% endif %}
+                  {% if objs.momento %}
+                    <strong>
+                      <span lang="pt">Avaliado em:</span>
+                      <span lang="en" style="display: none;">Evaluated on:</span>
+                    </strong>
+                    {{objs.momento}}<br>
+                  {% endif %}
                   {% if objs.items %}
-                    <strong>Conceitos:</strong><br>
+                    <strong>
+                      <span lang="pt">Conceitos:</span>
+                      <span lang="en" style="display: none;">Grades:</span>
+                    </strong><br>
                     <ul style="list-style-type: '&#x21A3; ';">
                       {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
                         <li>
@@ -141,17 +173,28 @@
                     </ul>
                   {% endif %}
                   {% if objs.observacoes_estudantes %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Estudantes</span>
+                      <span lang="en" style="display: none;">Observations for Students</span>
+                    </span>:</u> {{objs.observacoes_estudantes}}<br>
                     {% if objs.observacoes_orientador %}<br>{% endif %}
                   {% endif %}
                   {% if objs.observacoes_orientador %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Orientador</span>
+                      <span lang="en" style="display: none;">Observations for Advisor</span>
+                    </span>:</u> {{objs.observacoes_orientador}}<br>
                   {% endif %}
                 </td></tr>
             {% endfor %}
     
             <tr style="background-color: var(--color_banca_intermediaria); color: darkslategrey"><td>
-              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>
+                <span lang="pt">Média das Avaliações da Banca</span>
+                <span lang="en" style="display: none;">Average of the Examining Board</span>
+                {{banca.get_tipo_de_banca_display}}:
+                <ul id="med_aval" style="list-style-type: '&#x21A3; ';"></ul>
+              </b>
               <span id="med_interm_calc"></span>
               <script>
                 for (var key in intermediaria.dict) {
@@ -170,12 +213,21 @@
           <table>    
             {% for avaliador, objs in avaliadores_final.items %}
                 <tr><td>
-                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <strong>
+                    <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
+                    <span lang="en" style="display: none;">Evaluator:</span>
+                  </strong>
                   <a href="{% url 'professor_detail' avaliador.professor.id %}">
                     {{avaliador.get_full_name}}
                   </a><br>
-                  <strong>Avaliado em: </strong>{{objs.momento}}<br>
-                  <strong>Conceitos:</strong><br>
+                  <strong>
+                    <span lang="pt">Avaliado em:</span>
+                    <span lang="en" style="display: none;">Evaluated on:</span>
+                  </strong>{{objs.momento}}<br>
+                  <strong>
+                    <span lang="pt">Conceitos:</span>
+                    <span lang="en" style="display: none;">Grades:</span>
+                  </strong><br>
                   <ul style="list-style-type: '&#x21A3; ';">
                     {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
 
@@ -196,18 +248,28 @@
                     {% endif %}{% endfor %}
                   </ul>
                   {% if objs.observacoes_estudantes %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Estudantes</span>
+                      <span lang="en" style="display: none;">Observations for Students</span>
+                    </span>:</u> {{objs.observacoes_estudantes}}<br>
                     {% if objs.observacoes_orientador %}<br>{% endif %}
                   {% endif %}
                   {% if objs.observacoes_orientador %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Orientador</span>
+                      <span lang="en" style="display: none;">Observations for Advisor</span>
+                    </span>:</u> {{objs.observacoes_orientador}}<br>
                   {% endif %}
                 </td></tr>
 
             {% endfor %}
 
             <tr style="background-color: var(--color_banca_final); color: darkslategrey"><td>
-              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>
+                <span lang="pt">Média das Avaliações da Banca</span>
+                <span lang="en" style="display: none;">Average of the Examining Board</span>
+                {{banca.get_tipo_de_banca_display}}:<ul id="med_final" style="list-style-type: '&#x21A3; ';"></ul>
+              </b>
               <span id="med_final_calc"></span>
               <script>
                 for (var key in final.dict) {
@@ -226,12 +288,21 @@
           <table>
             {% for avaliador, objs in avaliadores_falconi.items %}
                 <tr><td>
-                  <strong>Avaliador{% if avaliador.genero == "F" %}a{% endif %}: </strong>
+                  <strong>
+                    <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
+                    <span lang="en" style="display: none;">Evaluator:</span>
+                  </strong>
                   <a href="{% url 'parceiro_detail' avaliador.parceiro.id %}">
                     {{avaliador.get_full_name}}
                   </a><br>
-                  <strong>Avaliado em: </strong>{{objs.momento}}<br>
-                  <strong>Conceitos:</strong><br>
+                  <strong>
+                    <span lang="pt">Avaliado em:</span>
+                    <span lang="en" style="display: none;">Evaluated on:</span>
+                  </strong>{{objs.momento}}<br>
+                  <strong>
+                    <span lang="pt">Conceitos:</span>
+                    <span lang="en" style="display: none;">Grades:</span>
+                  </strong><br>
                   <ul style="list-style-type: '&#x21A3; ';">
                     {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
                       <li><span style="font-weight: 500;">{{objetivo.titulo}}</span>: <span data-toggle="tooltip" data-html="true" animation="true" title="
@@ -252,11 +323,17 @@
                     {% endif %}{% endfor %}
                   </ul>
                   {% if objs.observacoes_estudantes %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Estudantes</span>:</u> {{objs.observacoes_estudantes}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Estudantes</span>
+                      <span lang="en" style="display: none;">Observations for Students</span>
+                    </span>:</u> {{objs.observacoes_estudantes}}<br>
                     {% if objs.observacoes_orientador %}<br>{% endif %}
                   {% endif %}
                   {% if objs.observacoes_orientador %}  
-                    &nbsp;<u><span style="font-weight: 500;">Observações para Orientador</span>:</u> {{objs.observacoes_orientador}}<br>
+                    &nbsp;<u><span style="font-weight: 500;">
+                      <span lang="pt">Observações para Orientador</span>
+                      <span lang="en" style="display: none;">Observations for Advisor</span>
+                    </span>:</u> {{objs.observacoes_orientador}}<br>
                   {% endif %}
       
                 </td></tr>
@@ -264,7 +341,11 @@
             {% endfor %}
       
             <tr style="background-color: var(--color_banca_falconi); color: darkslategrey"><td>
-              <b>Média das Avaliações da Banca {{banca.get_tipo_de_banca_display}}:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul></b>
+              <b>
+                <span lang="pt">Média das Avaliações da Banca</span>
+                <span lang="en" style="display: none;">Average of the Examining Board</span>
+                {{banca.get_tipo_de_banca_display}}:<ul id="med_falconi" style="list-style-type: '&#x21A3; ';"></ul>
+              </b>
               <span id="med_falconi_calc"></span>
               <script>
                 for (var key in falconi.dict) {
@@ -283,8 +364,12 @@
     
   {% endfor %}
 
-  <b>Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
-     e depois de 24 horas que a última avaliação foi feita.</b>
+  <b>
+    <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
+     e depois de 24 horas que a última avaliação foi feita.</span>
+    <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
+      and after 24 hours that the last evaluation was made.</span>
+  </b>
 
   {% include "linguas.html" %}
 
