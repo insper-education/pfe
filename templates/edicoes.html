@@ -7,7 +7,10 @@
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
 {% if edicoes %}
   <style>
-    .separador {margin-right: 16px;}
+    .separador {
+      margin-right: 16px;
+      max-width: 100%;
+    }
 
     @media only screen and (max-width: 575.98px) {
       .to_hide {
@@ -26,7 +29,8 @@
       }
       .separador {
         margin-right: 6px;
-        width: 92vw;
+        {% comment %} width: 92vw; {% endcomment %}
+        max-width: 100%;
       }
     }
 
