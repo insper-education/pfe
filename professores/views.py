@@ -3124,9 +3124,6 @@ def relato_avaliar(request, projeto_id, evento_id):
             if avaliacao_negativa and (observacoes != ""):
 
                 email_dest = []
-                # coordenacoes = PFEUser.objects.filter(tipo_de_usuario=4)
-                # for coordenador in coordenacoes:
-                #     email_dest.append(str(coordenador.email))
                 configuracao = get_object_or_404(Configuracao)
                 email_dest.append(str(configuracao.coordenacao.user.email))
                 
@@ -3429,51 +3426,6 @@ def objetivos_rubricas(request):
         "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
     }
     return render(request, "professores/objetivos_rubricas.html", context)
-
-
-# @login_required
-# @transaction.atomic
-# @permission_required("users.altera_professor", raise_exception=True)
-# def ver_pares(request, alocacao_id, momento):
-#     """Permite visualizar a avaliação de pares."""
-
-#     # DEIXANDO DE USAR PARA USAR ver_pares_projeto #
-
-#     alocacao_de = get_object_or_404(Alocacao, pk=alocacao_id)
-
-#     if request.user != alocacao_de.projeto.orientador.user and request.user.tipo_de_usuario != 4:
-#         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
-
-#     if request.method == "POST":
-#         if momento=="intermediaria" and not alocacao_de.avaliacao_intermediaria:
-#             alocacao_de.avaliacao_intermediaria = datetime.datetime.now()
-#         elif momento=="final" and not alocacao_de.avaliacao_final:
-#             alocacao_de.avaliacao_final = datetime.datetime.now()
-#         alocacao_de.save()
-#         return redirect("/professores/avaliacoes_pares/")
-
-#     tipo = 0 if momento=="intermediaria" else 1
-    
-#     alocacoes = Alocacao.objects.filter(projeto=alocacao_de.projeto).exclude(aluno=alocacao_de.aluno)
-    
-#     pares = []
-#     for alocacao in alocacoes:
-#         par = Pares.objects.filter(alocacao_de=alocacao_de, alocacao_para=alocacao, tipo=tipo).first()
-#         pares.append(par)
-
-#     colegas = zip(alocacoes, pares)
-
-#     configuracao = get_object_or_404(Configuracao)
-
-#     context = {
-#         "estudante": alocacao_de.aluno,
-#         "colegas": colegas,
-#         "momento": momento,
-#         "projeto": alocacao_de.projeto,
-#         "configuracao": configuracao,
-#     }
-
-#     return render(request, "professores/ver_pares.html", context)
 
 
 @login_required
