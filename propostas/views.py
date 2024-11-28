@@ -171,39 +171,23 @@ def procura_propostas(request):
     estudantes = [[item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
 
     # Para procurar as áreas mais procuradas nos projetos
-    # opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False, prioridade=1)
+    opcoes = Opcao.objects.filter(aluno__trancado=False,
+                                  prioridade=1)
 
-    # if ano > 0:  # Ou seja não são todos os anos e semestres
-    #     opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
-    #                            proposta__ano=ano, proposta__semestre=semestre)
+    if ano > 0:  # Ou seja não são todos os anos e semestres
+        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
+                               proposta__ano=ano, proposta__semestre=semestre)
 
-    # # Caso não se deseje todos os cursos, se filtra qual se deseja
-    # if curso != "T":
-    #     opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+    # Caso não se deseje todos os cursos, se filtra qual se deseja
+    if curso != "T":
+        opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
     
-    # # Filtra para opções com estudantes de um curso específico
-    # if curso != "TE":
-    #     if curso != 'T':
-    #         opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
-    #     else:
-    #         opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
-
-    opcoes = Opcao.objects.filter(
-        aluno__user__tipo_de_usuario=1,
-        aluno__trancado=False,
-        prioridade=1,
-        aluno__anoPFE=ano if ano > 0 else None,
-        aluno__semestrePFE=semestre if ano > 0 else None,
-        proposta__ano=ano if ano > 0 else None,
-        proposta__semestre=semestre if ano > 0 else None,
-        aluno__curso2__sigla_curta=curso if curso != "T" else None
-    ).exclude(
-        aluno__anoPFE__isnull=True,
-        aluno__semestrePFE__isnull=True,
-        proposta__ano__isnull=True,
-        proposta__semestre__isnull=True,
-        aluno__curso2__sigla_curta__isnull=True
-    )
+    # Filtra para opções com estudantes de um curso específico
+    if curso != "TE":
+        if curso != 'T':
+            opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+        else:
+            opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
 
     areas = Area.objects.filter(ativa=True)
     areas = areas.annotate(
@@ -258,6 +242,12 @@ def procura_propostas(request):
     qtd_estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2__in=cursos_insper).count()
     qtd_estudantes_opc = len(opcoes.values("aluno").distinct())
 
+    qtd_estudantes_curso = {}
+    for curso in cursos_insper:
+        qtd_estudantes_curso[curso] = {}
+        qtd_estudantes_curso[curso]["qtd"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2=curso).count()
+        qtd_estudantes_curso[curso]["opc"] = len(opcoes.filter(aluno__curso2=curso).values("aluno").distinct())
+
     context = {
         "titulo": {"pt": "Procura pelas Propostas de Projetos", "en": "Demand for Project Proposals"},
         "tamanho": tamanho,
@@ -274,6 +264,7 @@ def procura_propostas(request):
         "aplicando_multidisciplinar": aplicando_multidisciplinar,
         "qtd_estudantes": qtd_estudantes,
         "qtd_estudantes_opc": qtd_estudantes_opc,
+        "qtd_estudantes_curso": qtd_estudantes_curso,
     }
 
     return render(request, "propostas/procura_propostas.html", context)

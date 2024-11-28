@@ -282,8 +282,12 @@
       <span lang="en" style="display: none;">Students who filled in options: </span>
       {{qtd_estudantes_opc}}
       ({% widthratio qtd_estudantes_opc qtd_estudantes 100 %}%)
-
     </span><br>
+    <ul>
+      {% for curso, qtds in qtd_estudantes_curso.items %}
+        <li>{{curso.nome}}: {{qtds.opc}}/{{qtds.qtd}} ({% widthratio qtds.opc qtds.qtd 100 %}%)</li>
+      {% endfor %}
+    </ul>
     <br>
 
     <b lang="pt">Estudantes Aplicando como Primeira Opção</b>
