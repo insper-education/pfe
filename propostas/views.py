@@ -13,6 +13,7 @@ from collections import Counter
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
+from django.db.models import Count, Q
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -164,42 +165,51 @@ def procura_propostas(request):
 
     NIVEIS_OPCOES = 5
     propostas_ordenadas = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
-    
-    propostas = []
-    prioridades = [[] for _ in range(NIVEIS_OPCOES)]
-    estudantes = [[] for _ in range(NIVEIS_OPCOES)]
-    if propostas_ordenadas:
-        propostas = [item[0] for item in propostas_ordenadas]
-        for i in range(NIVEIS_OPCOES):
-            prioridades[i] = [item[i+1] for item in propostas_ordenadas]
-            estudantes[i] = [item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas]
+
+    propostas = [item[0] for item in propostas_ordenadas]
+    prioridades = [[item[i+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
+    estudantes = [[item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
 
     # Para procurar as áreas mais procuradas nos projetos
-    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False, prioridade=1)
+    # opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False, prioridade=1)
 
-    if ano > 0:  # Ou seja não são todos os anos e semestres
-        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
-                               proposta__ano=ano, proposta__semestre=semestre)
+    # if ano > 0:  # Ou seja não são todos os anos e semestres
+    #     opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
+    #                            proposta__ano=ano, proposta__semestre=semestre)
 
-    # Caso não se deseje todos os cursos, se filtra qual se deseja
-    if curso != "T":
-        opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+    # # Caso não se deseje todos os cursos, se filtra qual se deseja
+    # if curso != "T":
+    #     opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
     
-    # Filtra para opções com estudantes de um curso específico
-    if curso != "TE":
-        if curso != 'T':
-            opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
-        else:
-            opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
+    # # Filtra para opções com estudantes de um curso específico
+    # if curso != "TE":
+    #     if curso != 'T':
+    #         opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+    #     else:
+    #         opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
+
+    opcoes = Opcao.objects.filter(
+        aluno__user__tipo_de_usuario=1,
+        aluno__trancado=False,
+        prioridade=1,
+        aluno__anoPFE=ano if ano > 0 else None,
+        aluno__semestrePFE=semestre if ano > 0 else None,
+        proposta__ano=ano if ano > 0 else None,
+        proposta__semestre=semestre if ano > 0 else None,
+        aluno__curso2__sigla_curta=curso if curso != "T" else None
+    ).exclude(
+        aluno__anoPFE__isnull=True,
+        aluno__semestrePFE__isnull=True,
+        proposta__ano__isnull=True,
+        proposta__semestre__isnull=True,
+        aluno__curso2__sigla_curta__isnull=True
+    )
 
     areas = Area.objects.filter(ativa=True)
-    areaspfe = {}
-    for area in areas:
-        count = 0
-        for opcao in opcoes:
-            if AreaDeInteresse.objects.filter(proposta=opcao.proposta, area=area):
-                count += 1
-        areaspfe[area.titulo] = (count, area.descricao)
+    areas = areas.annotate(
+        count=Count("areadeinteresse", filter=Q(areadeinteresse__proposta__in=opcoes.values("proposta")))
+    )
+    areaspfe = {area.titulo: (area.count, area.descricao) for area in areas}
 
     # conta de maluco para fazer diagrama ficar correto
     tamanho = len(propostas)
