@@ -163,20 +163,19 @@ def procura_propostas(request):
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
     NIVEIS_OPCOES = 5
-    mylist = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
+    propostas_ordenadas = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
+    
     propostas = []
     prioridades = [[] for _ in range(NIVEIS_OPCOES)]
     estudantes = [[] for _ in range(NIVEIS_OPCOES)]
-    if mylist:
-        propostas = [item[0] for item in mylist]
+    if propostas_ordenadas:
+        propostas = [item[0] for item in propostas_ordenadas]
         for i in range(NIVEIS_OPCOES):
-            prioridades[i] = [item[i+1] for item in mylist]
-            estudantes[i] = [item[i+NIVEIS_OPCOES+1] for item in mylist]
+            prioridades[i] = [item[i+1] for item in propostas_ordenadas]
+            estudantes[i] = [item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas]
 
     # Para procurar as áreas mais procuradas nos projetos
-    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
-                                  aluno__trancado=False,
-                                  prioridade=1)
+    opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1, aluno__trancado=False, prioridade=1)
 
     if ano > 0:  # Ou seja não são todos os anos e semestres
         opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
@@ -246,6 +245,9 @@ def procura_propostas(request):
             "cor": cores_propostas[i],
         })
 
+    qtd_estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2__in=cursos_insper).count()
+    qtd_estudantes_opc = len(opcoes.values("aluno").distinct())
+
     context = {
         "titulo": {"pt": "Procura pelas Propostas de Projetos", "en": "Demand for Project Proposals"},
         "tamanho": tamanho,
@@ -260,6 +262,8 @@ def procura_propostas(request):
         "disponivel_multidisciplinar": disponivel_multidisciplinar,
         "aplicando_opcoes": aplicando_opcoes,
         "aplicando_multidisciplinar": aplicando_multidisciplinar,
+        "qtd_estudantes": qtd_estudantes,
+        "qtd_estudantes_opc": qtd_estudantes_opc,
     }
 
     return render(request, "propostas/procura_propostas.html", context)

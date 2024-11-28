@@ -269,16 +269,25 @@
     </script>
     <br>
 
-    <b lang="pt">Disponibilidade de Propostas:</b>
-    <b lang="en">Proposals Availability:</b>
+    <b lang="pt">Estudantes no Semestre</b>
+    <b lang="en" style="display: none;">Students in the Semester</b>
     <br>
-    {% with nao_disponivel=False %}
-      {% include "propostas_nativamente.html" %}
-    {% endwith %}
+    <span style="margin-left: 10px;">
+      <span lang="pt">Total de estudantes: </span>
+      <span lang="en" style="display: none;">Total students: </span>
+      {{qtd_estudantes}}
+    </span><br>
+    <span style="margin-left: 10px;">
+      <span lang="pt">Estudantes que preencheram opções: </span>
+      <span lang="en" style="display: none;">Students who filled in options: </span>
+      {{qtd_estudantes_opc}}
+      ({% widthratio qtd_estudantes_opc qtd_estudantes 100 %}%)
+
+    </span><br>
     <br>
 
-    <b lang="pt">Estudantes Aplicando como Primeira Opção:</b>
-    <b lang="en">Students Applying as First Option:</b>
+    <b lang="pt">Estudantes Aplicando como Primeira Opção</b>
+    <b lang="en">Students Applying as First Option</b>
     <br>
     <span style="margin-left: 10px;">
       <span lang="pt">nativamente multidisciplinar: </span>
@@ -294,8 +303,16 @@
     {% endif %} {% endfor %} 
     <br>
 
-    <b lang="pt">Áreas mais frequente em relação a busca e projetos:</b>
-    <b lang="en">Most frequent areas in relation to demand and projects:</b>
+    <b lang="pt">Disponibilidade de Propostas</b>
+    <b lang="en">Proposals Availability</b>
+    <br>
+    {% with nao_disponivel=False %}
+      {% include "propostas_nativamente.html" %}
+    {% endwith %}
+    <br>
+
+    <b lang="pt">Áreas mais frequente em relação a busca e projetos</b>
+    <b lang="en">Most frequent areas in relation to demand and projects</b>
     <br>
     <ol>
     {% for area, quantidade in areaspfe.items|dictsortreversed:1 %}
