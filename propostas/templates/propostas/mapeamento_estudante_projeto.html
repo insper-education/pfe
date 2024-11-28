@@ -136,6 +136,9 @@
             <td style="text-align:right; white-space: nowrap;">
               <a href="{% url 'estudante_detail' estudante.id %}">
                 {{estudante.user.get_full_name}}
+                {% if estudante.externo %}
+                  <span style="color:darkred;">({{estudante.externo}})</span>
+                {% endif %}
               </a>
             </td>
             <td style="text-align:center;">
@@ -143,13 +146,12 @@
                 {{estudante.curso2.sigla_curta}}
               </a>
             </td>
-            <td style="text-align:left; border-right: 2px solid black;">
+            <td style="text-align:right; border-right: 2px solid black;">
               <a href="{% url 'estudante_detail' estudante.id %}">
                 {{estudante.cr|floatformat:2}}
               </a>
             </td>
 
-            
             {% for opcao in opcoes %}
               {% if opcao %}
                 <td style="text-align:center;

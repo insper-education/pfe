@@ -112,7 +112,7 @@ def mapeamento_estudantes_propostas(request):
         for proposta in reversed(propostas):
             org_name = proposta.organizacao.sigla if proposta.organizacao else proposta.nome_organizacao
             if org_name in repetidas_limpa:
-                proposta_indice[proposta.id] = repetidas_limpa[org_name] + 1
+                proposta_indice[proposta.id] = repetidas_limpa[org_name]
                 repetidas_limpa[org_name] -= 1
 
         estudantes = zip(alunos, opcoes, aloc_proj)
