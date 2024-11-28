@@ -70,7 +70,7 @@
       <span lang="pt">Data limite do relato</span>
       <span lang="en">Report deadline</span>
     </b>: 
-    <span lang="pt">{{evento.endDate|date:"DATE_FORMAT"}}</span>
+    <span lang="pt">{% language 'pt-br' %}{{ evento.endDate|date:"DATE_FORMAT"}}{% endlanguage %}</span>
     <span lang="en">{% language 'en' %}{{ evento.endDate|date:"F d, Y" }}{% endlanguage %}</span>
     <br>
     

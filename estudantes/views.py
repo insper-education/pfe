@@ -570,10 +570,11 @@ def avaliacao_pares(request, momento):
                     subject = "Capstone | Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final")
                     subject += " - [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
                     
-                    recipient_list = [projeto.orientador.user.email, "lpsoares@insper.edu.br"]
+                    recipient_list = [projeto.orientador.user.email]
                     
                     message = "Caro Orientador(a),<br><br>"
-                    message += "Todas as avaliações de pares do projeto que você está orientando<br>"
+                    message += "Todas as avaliações de pares " + ("intermediárias" if momento=="intermediaria" else "finais")
+                    message += " do projeto que você está orientando<br>"
                     message += "<b>[" + projeto.organizacao.sigla + "] " + projeto.get_titulo() + "</b><br>"
                     message += "foram realizadas.<br><br>"
                     message += "Acesse o sistema para visualizar as avaliações.<br>"

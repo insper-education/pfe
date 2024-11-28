@@ -16,11 +16,13 @@
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>{{ forloop.counter }}&ordm;</a></td>
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>
           <span lang="pt">
-            <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
-            <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
+            {% language "pt-br" %}
+              <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
+              <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
+            {% endlanguage %}
           </span>
           <span lang="en" style="display:none">
-            {% language 'en' %}
+            {% language "en" %}
               <span class="opt_full">{{ evento.endDate|date:"F d, Y" }}</span>
               <span class="opt_short">{{ evento.endDate|date:"M d, Y" }}</span>
             {% endlanguage %}

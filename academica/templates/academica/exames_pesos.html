@@ -66,10 +66,10 @@
               {% for composicao in composicoes %}
                 <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
                   (
-                  <span lang="pt">{% language "pt" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
+                  <span lang="pt">{% language "pt-br" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
                   <span lang="en" style="display:none">{% language "en" %}{{composicao.data_inicial|date:"M d, Y" }}{% endlanguage %} to</span>
                   {% if composicao.data_final%}
-                    <span lang="pt">{% language "pt" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
+                    <span lang="pt">{% language "pt-br" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
                     <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
                   {% else %}
                     <span lang="pt">atualmente</span>
