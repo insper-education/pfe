@@ -35,6 +35,12 @@
     <span lang="pt">Final</span><span lang="en" style="display: none;">Final</span>
   {% elif banca.tipo_de_banca == 1 %}
     <span lang="pt">Intermediária</span><span lang="en" style="display: none;">Intermediate</span>
+  {% elif banca.tipo_de_banca == 2 %}
+    <span lang="pt">Certificação Falconi</span><span lang="en" style="display: none;">Falconi Certification</span>
+  {% elif banca.tipo_de_banca == 3 %}
+    <span lang="pt">Probation</span><span lang="en" style="display: none;">Probation</span>
+  {% else %}
+    <span lang="pt">NÃO DEFINIDA</span><span lang="en" style="display: none;">NOT DEFINED</span>
   {% endif %}
   <br>
 
@@ -121,7 +127,7 @@
     <span lang="en" style="display: none;">Examination Board Members</span>
   </b>
   <ol>
-    {% if banca.tipo_de_banca == 1 or banca.tipo_de_banca == 2 %} {% comment %} Intermediária ou Final {% endcomment %}
+    {% if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %} {% comment %} Intermediária ou Final {% endcomment %}
       <li>{{banca.projeto.orientador.user.get_full_name}} 
         <span lang="pt">[Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
         <span lang="en" style="display: none;">[Advisor]</span>
@@ -130,6 +136,11 @@
     {% endif %}
     {% for membro in banca.membros %}
       <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+    {% empty %}
+      <b style="color: red;">
+        <span lang="pt">Nenhum membro da banca foi definido</span>
+        <span lang="en" style="display: none;">No examination board members have been defined</span>
+      </b>
     {% endfor %}
   </ol>
 
