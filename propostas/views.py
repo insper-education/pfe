@@ -681,7 +681,7 @@ def proposta_editar(request, slug):
                 "area_principal": True,
                 "mensagem": mensagem,
             }
-            return render(request, 'generic.html', context=context)
+            return render(request, "generic.html", context=context)
 
         if user.tipo_de_usuario == 3:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)

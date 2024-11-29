@@ -73,9 +73,9 @@ urlpatterns = [
         views.acompanhamento_view,
         name="acompanhamento_view"),
 
-    path("bancas_lista",
-        views.bancas_lista,
-        name="bancas_lista"),
+    path("bancas_tabela_agenda",
+        views.bancas_tabela_agenda,
+        name="bancas_tabela_agenda"),
 
     path("certificacao_falconi",
         views.certificacao_falconi,

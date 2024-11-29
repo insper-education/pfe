@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 16 de Dezembro de 2023
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+  {% include "tabelas_includes.html" %}
+  <style>
+    ul {padding-left: 20px;}
+    table {table-layout: auto;}
+    .data_short {display: none;}
+    .data_full {display: inline;}
+    @media screen and (max-width: 1400px) {
+      .data_short {display: inline;}
+      .data_full {display: none;}
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  {% comment %} Seletor da edição da pesquisa {% endcomment %}
+  {% include "edicoes.html" %}
+
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="tipob">
+              <span class="to_hide">
+                <span lang="pt">Tipo</span>
+                <span lang="en">Type</span>
+              </span>
+            </label>
+          </div>
+          <select id="tipob" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="19em"
+                  title="Nada selecionado"
+                  multiple>
+            <option selected="selected" title="Intermediária">Intermediária</option>
+            <option selected="selected" title="Final">Final</option>
+            <option selected="selected" title="Certificação Falconi">Certificação Falconi</option>
+            <option selected="selected" title="Probation">Probation</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="atualizar">
+    {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
+    {% for banca in bancas %}
+      <tr class="item" data-user="{{banca.get_tipo_de_banca_display}}">
+        <td>{{banca.get_tipo_de_banca_display}}</td>
+        {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
+        <td><span class="data_full">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
+            <span class="data_short">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
+        <td data-order="{{banca.projeto.get_titulo}}" style="width: 48%;">
+          {% comment %} Probation {% endcomment %}
+          {% if banca.tipo_de_banca == 3 %}
+            Projeto: 
+            {% if banca.alocacao.projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' banca.alocacao.projeto.organizacao.id %}">{{ banca.alocacao.projeto.organizacao.nome }}</a>]
+            {% else %}
+              [<i>Organização não definida</i>]
+            {% endif %}
+            {% if banca.alocacao %}
+              <a href="{% url 'projeto_completo' banca.alocacao.projeto.id %}">
+                {{banca.alocacao.projeto.get_titulo}}{% include "tipo_projeto.html" with projeto=banca.alocacao.projeto %}
+              </a><br>
+            {% endif %}
+            Orientador: 
+            {% if banca.alocacao.projeto.orientador %}
+              <a href="{% url 'professor_detail' banca.alocacao.projeto.orientador.id %}">{{ banca.alocacao.projeto.orientador }}</a>
+              <a href="mailto:{{banca.alocacao.projeto.orientador.user.email}}"> &lt;{{banca.alocacao.projeto.orientador.user.email}}&gt;</a>
+            {% else %}
+              <i>Orientador não definido</i>
+            {% endif %}
+            
+          <br>Estudante:
+          <ul>
+            <li>
+              <a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno.user.get_full_name }}</a>
+              <a href="mailto:{{banca.alocacao.aluno.user.email}}"> &lt;{{banca.alocacao.aluno.user.email}}&gt;</a>
+            </li>
+          </ul>
+
+          {% else %}
+            Projeto: 
+            {% if banca.projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
+            {% else %}
+              [<i>Organização não definida</i>]
+            {% endif %}
+            {% if banca.projeto %}
+              <a href="{% url 'projeto_completo' banca.projeto.id %}">
+                {{banca.projeto.get_titulo}}{% include "tipo_projeto.html" %}
+              </a><br>
+            {% else %}
+              <i>Projeto não definido | Probation</i>
+            {% endif %}
+            Orientador: 
+            {% if banca.projeto.orientador %}
+              <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">{{ banca.projeto.orientador }}</a>
+              <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+            {% else %}
+              <i>Orientador não definido</i>
+            {% endif %}
+
+            <br>Grupo:
+            <ul>
+            {% for estudante in banca.projeto.alocacao_set.all %}
+              <li>
+              <a href="{% url 'estudante_detail' estudante.aluno.id %}">{{ estudante.aluno.user.get_full_name }}</a>
+              <a href="mailto:{{estudante.aluno.user.email}}"> &lt;{{estudante.aluno.user.email}}&gt;</a>
+              </li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        </td>
+        {% comment %} <td class="text-center">
+          {{projeto.ano}}&middot;{{projeto.semestre}}
+        </td> {% endcomment %}
+        <td>
+          <ul>
+            {% if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}
+              <li>
+                <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">{{ banca.projeto.orientador }} [orientador]</a>
+                <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+              </li>
+            {% endif %}
+            {% for membro in banca.membros %}
+              <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
+              <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    {% endfor %}      
+    </table>
+    </div>
+  </div>
+  
+  {% include "edicoes_ajax.html" with tabela="Bancas" %}
+
+  <script>
+    $("#tipob").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      table = $("#BancasTable").DataTable();
+      $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+          if(table) {
+            {% comment %} Somente mostra elemento selecionado {% endcomment %}
+            var val = $("#tipob").selectpicker("val");
+            return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
+          }
+        }
+     );
+     table.draw();
+    });
+  </script>
+
+  {% include "linguas.html" %}
+
+{% endblock %}

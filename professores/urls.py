@@ -86,9 +86,13 @@ urlpatterns = [
          views.bancas_lista,
          name="bancas_lista"),
 
-    path("bancas_tabela/",
-         views.bancas_tabela,
-         name="bancas_tabela"),
+    path("bancas_tabela_alocacao/",
+         views.bancas_tabela_alocacao,
+         name="bancas_tabela_alocacao"),
+
+    path("bancas_tabela_alocacao_completa/",
+         views.bancas_tabela_alocacao_completa,
+         name="bancas_tabela_alocacao_completa"),
 
     path("mentorias_tabela/",
          views.mentorias_tabela,
@@ -101,10 +105,6 @@ urlpatterns = [
      path("banca/<slug:slug>",
          views.banca,
          name="banca"),
-
-    path("bancas_tabela_completa/",
-         views.bancas_tabela_completa,
-         name="bancas_tabela_completa"),
 
     path("banca_avaliar/<slug:slug>",
          views.banca_avaliar,

@@ -7,12 +7,9 @@
 
 {% block head %}
   {% load static %}
-
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
   {% include "tabelas_includes.html" %}
-
 {% endblock %}
 
 {% block content %}
@@ -28,10 +25,12 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="avaliador" onClick="recarregar_pagina()"><span class="to_hide">
-              <span lang="pt">Avaliador</span>
-              <span lang="en">Evaluator</span>
-            </span></label>
+            <label class="to_label input-group-text" for="avaliador">
+              <span class="to_hide">
+                <span lang="pt">Avaliador</span>
+                <span lang="en">Evaluator</span>
+              </span>
+            </label>
           </div>
           <select id="avaliador" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
                   title="Nada selecionado"
@@ -68,12 +67,6 @@
       </table>
     </div>
   </div>
-
-  <script>
-    function carrega_pagina() {
-    };
-    window.onload = carrega_pagina
-  </script>
 
   {% include "edicoes_ajax.html" with tabela="Bancas" %}
 

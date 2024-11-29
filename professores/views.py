@@ -976,7 +976,7 @@ def bancas_lista(request, periodo_projeto):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_tabela(request):
+def bancas_tabela_alocacao(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     if request.is_ajax():
         if "edicao" in request.POST:
@@ -1015,7 +1015,7 @@ def bancas_tabela(request):
             "edicoes": get_edicoes(Projeto, anual=True)[0],
             }
 
-    return render(request, "professores/bancas_tabela.html", context)
+    return render(request, "professores/bancas_tabela_alocacao.html", context)
 
 
 @login_required
@@ -1098,7 +1098,7 @@ def aulas_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_tabela_completa(request):
+def bancas_tabela_alocacao_completa(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
     configuracao = get_object_or_404(Configuracao)
 
@@ -1145,7 +1145,7 @@ def bancas_tabela_completa(request):
         "titulo": { "pt": "Alocação em Bancas", "en": "Examination Board Assignment" },
     }
 
-    return render(request, "professores/bancas_tabela_completa.html", context)
+    return render(request, "professores/bancas_tabela_alocacao_completa.html", context)
 
 
 @login_required
@@ -2308,13 +2308,8 @@ def informe_bancas(request, tipo):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    #(0, 'Final'),
-    #(1, 'Intermediária'),
-    
-    bancas = Banca.objects.filter(projeto__ano=ano)\
-            .filter(projeto__semestre=semestre)\
-            .filter(tipo_de_banca=tipo)
-
+    #(0, 'Final'),  (1, 'Intermediária'),
+    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=tipo)
 
     if request.method == "POST":
 
@@ -2352,7 +2347,7 @@ def informe_bancas(request, tipo):
             "mensagem": resposta,
         }
 
-        return render(request, 'generic.html', context=context)
+        return render(request, "generic.html", context=context)
 
     context = {
         "titulo": {"pt": "Informe de Bancas Finais" if tipo==0 else "Informe de Bancas Intermediárias",
@@ -2361,7 +2356,6 @@ def informe_bancas(request, tipo):
         "tipo": tipo,
     }
     return render(request, "professores/informe_bancas.html", context=context)
-
 
 
 @login_required

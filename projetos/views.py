@@ -480,7 +480,7 @@ def projetos_lista(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_lista(request):
+def bancas_tabela_agenda(request):
     """Lista todos os projetos."""
     edicoes = []
     if request.is_ajax():
@@ -490,11 +490,13 @@ def bancas_lista(request):
                 bancas = Banca.objects.all()
             else:
                 ano, semestre = edicao.split('.')
-                bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+                bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+                bancas_a = Banca.objects.filter(alocacao__isnull=False)  # Probation
+                bancas = bancas_p | bancas_a
 
             cabecalhos = [{"pt": "Tipo", "en": "Type"},
                           {"pt": "Data", "en": "Date"},
-                          {"pt": "Projeto", "en": "Project"},
+                          {"pt": "Projeto/Estudante", "en": "Project/Student"},
                           {"pt": "Avaliadores", "en": "Evaluators"},]
             
             context = {
@@ -506,11 +508,11 @@ def bancas_lista(request):
     else:
         edicoes, _, _ = get_edicoes(Projeto)
         context = {
-            "titulo": {"pt": "Bancas", "en": "Examination Boards"},
+            "titulo": {"pt": "Tabela de Agenda das Bancas", "en": "Examination Boards Schedule Table"},
             "edicoes": edicoes,
         }
 
-    return render(request, "projetos/bancas_lista.html", context)
+    return render(request, "projetos/bancas_tabela_agenda.html", context)
 
 
 @login_required

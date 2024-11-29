@@ -40,6 +40,10 @@
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' 'proximas' %}">
   <span lang="pt">Bancas</span>
   <span lang="en" style="display: none;">Evaluation Boards</span>
+  <a href="{% url 'bancas_tabela_agenda' %}">
+    <span lang="pt">(tabela)</span>
+    <span lang="en" style="display: none;">(table)</span>
+  </a>
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dinamicas_index' %}">
   <span lang="pt">Mentorias</span>
@@ -85,10 +89,6 @@
   <span lang="pt">Projetos</span>
   <span lang="en" style="display: none;">Projects</span>
 </a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' %}">
-  <span lang="pt">Bancas</span>
-  <span lang="en" style="display: none;">Evaluation Boards</span>
-</a></div>
 <br>
 
 <h5>
@@ -113,10 +113,10 @@
   <span lang="pt">Organizações</span>
   <span lang="en" style="display: none;">Organizations</span>
 </a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela' %}">
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela_alocacao' %}">
   <span lang="pt">Bancas</span>
   <span lang="en" style="display: none;">Evaluation Boards</span>
-</a> <a href="{% url 'bancas_tabela_completa' %}">
+</a> <a href="{% url 'bancas_tabela_alocacao_completa' %}">
   <span lang="pt">(completa)</span>
   <span lang="en" style="display: none;">(complete)</span>
 </a></div>
