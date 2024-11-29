@@ -144,16 +144,17 @@ def mapeamento_estudantes_propostas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def procura_propostas(request):
     """Exibe um histograma com a procura das propostas pelos estudantes."""
-    configuracao = get_object_or_404(Configuracao)
-    curso = "T"  # por padrão todos os cursos
-    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+    
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
-    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
-
+    
     if request.is_ajax():
 
-        if "anosemestre" in request.POST:
-            edicao = request.POST["anosemestre"]
+        configuracao = get_object_or_404(Configuracao)
+        ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+        curso = "T"  # por padrão todos os cursos
+
+        if "edicao" in request.POST and "curso" in request.POST:
+            edicao = request.POST["edicao"]
             if edicao == "todas":
                 ano = 0
             else:
@@ -163,109 +164,116 @@ def procura_propostas(request):
         else:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
-    NIVEIS_OPCOES = 5
-    propostas_ordenadas = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
+        NIVEIS_OPCOES = 5
+        propostas_ordenadas = ordena_propostas_novo(True, ano=ano, semestre=semestre, curso=curso)
 
-    propostas = [item[0] for item in propostas_ordenadas]
-    prioridades = [[item[i+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
-    estudantes = [[item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
+        propostas = [item[0] for item in propostas_ordenadas]
+        prioridades = [[item[i+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
+        estudantes = [[item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
 
-    # Para procurar as áreas mais procuradas nos projetos
-    opcoes = Opcao.objects.filter(aluno__trancado=False,
-                                  prioridade=1)
+        # Para procurar as áreas mais procuradas nos projetos
+        opcoes = Opcao.objects.filter(aluno__trancado=False,
+                                    prioridade=1)
 
-    if ano > 0:  # Ou seja não são todos os anos e semestres
-        opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
-                               proposta__ano=ano, proposta__semestre=semestre)
+        if ano > 0:  # Ou seja não são todos os anos e semestres
+            opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
+                                proposta__ano=ano, proposta__semestre=semestre)
 
-    # Caso não se deseje todos os cursos, se filtra qual se deseja
-    if curso != "T":
-        opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
-    
-    # Filtra para opções com estudantes de um curso específico
-    if curso != "TE":
-        if curso != 'T':
+        # Caso não se deseje todos os cursos, se filtra qual se deseja
+        if curso != "T":
             opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+        
+        # Filtra para opções com estudantes de um curso específico
+        if curso != "TE":
+            if curso != 'T':
+                opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)
+            else:
+                opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
+
+        areas = Area.objects.filter(ativa=True)
+        areas = areas.annotate(
+            count=Count("areadeinteresse", filter=Q(areadeinteresse__proposta__in=opcoes.values("proposta")))
+        )
+        areaspfe = {area.titulo: (area.count, area.descricao) for area in areas}
+
+        # conta de maluco para fazer diagrama ficar correto
+        tamanho = len(propostas)
+        if tamanho <= 4:
+            tamanho *= 9
         else:
-            opcoes = opcoes.filter(aluno__curso2__in=cursos_insper)
+            tamanho *= 5
 
-    areas = Area.objects.filter(ativa=True)
-    areas = areas.annotate(
-        count=Count("areadeinteresse", filter=Q(areadeinteresse__proposta__in=opcoes.values("proposta")))
-    )
-    areaspfe = {area.titulo: (area.count, area.descricao) for area in areas}
+        # Contando propostas disponíveis e escolhas
+        cursos = Curso.objects.all().order_by("id")
+        disponivel_propostas = {}
+        aplicando_opcoes = {}
+        for curso in cursos:
+            disponivel_propostas[curso] = [0, 0]
+            aplicando_opcoes[curso] = 0
+                
+        disponivel_multidisciplinar = [0, 0]
+        for proposta in propostas:
+            p = proposta.get_nativamente()
+            if isinstance(p, Curso):
+                if proposta.disponivel:
+                    disponivel_propostas[p][0] += 1
+                disponivel_propostas[p][1] += 1
+            else:
+                if proposta.disponivel:
+                    disponivel_multidisciplinar[0] += 1
+                disponivel_multidisciplinar[1] += 1
 
-    # conta de maluco para fazer diagrama ficar correto
-    tamanho = len(propostas)
-    if tamanho <= 4:
-        tamanho *= 9
+        aplicando_multidisciplinar = 0
+        for opcao in opcoes:
+            p = opcao.proposta.get_nativamente()
+            if isinstance(p, Curso):
+                aplicando_opcoes[p] += 1
+            else:                
+                aplicando_multidisciplinar += 1
+
+        cores_propostas = ["#00FA00", "#D2E61E", "#D2BE23", "#B4B478", "#B4C8A0", "#8B4513"]
+        escolhas = []
+        for i in range(5):
+            escolhas.append({
+                "prioridades": prioridades[i],
+                "estudantes": estudantes[i],
+                "cor": cores_propostas[i],
+            })
+
+        qtd_estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2__in=cursos_insper).count()
+        qtd_estudantes_opc = len(opcoes.values("aluno").distinct())
+
+        qtd_estudantes_curso = {}
+        for curso in cursos_insper:
+            qtd_estudantes_curso[curso] = {}
+            qtd_estudantes_curso[curso]["qtd"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2=curso).count()
+            qtd_estudantes_curso[curso]["opc"] = len(opcoes.filter(aluno__curso2=curso).values("aluno").distinct())
+
+        context = {
+            "tamanho": tamanho,
+            "propostas": propostas,
+            "escolhas": escolhas,
+            "estudantes": estudantes,
+            "areaspfe": areaspfe,
+            "disponivel_propostas": disponivel_propostas,
+            "disponivel_multidisciplinar": disponivel_multidisciplinar,
+            "aplicando_opcoes": aplicando_opcoes,
+            "aplicando_multidisciplinar": aplicando_multidisciplinar,
+            "qtd_estudantes": qtd_estudantes,
+            "qtd_estudantes_opc": qtd_estudantes_opc,
+            "qtd_estudantes_curso": qtd_estudantes_curso,
+        }
+
     else:
-        tamanho *= 5
+        
+        cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    # Contando propostas disponíveis e escolhas
-    cursos = Curso.objects.all().order_by("id")
-    disponivel_propostas = {}
-    aplicando_opcoes = {}
-    for curso in cursos:
-        disponivel_propostas[curso] = [0, 0]
-        aplicando_opcoes[curso] = 0
-            
-    disponivel_multidisciplinar = [0, 0]
-    for proposta in propostas:
-        p = proposta.get_nativamente()
-        if isinstance(p, Curso):
-            if proposta.disponivel:
-                disponivel_propostas[p][0] += 1
-            disponivel_propostas[p][1] += 1
-        else:
-            if proposta.disponivel:
-                disponivel_multidisciplinar[0] += 1
-            disponivel_multidisciplinar[1] += 1
-
-    aplicando_multidisciplinar = 0
-    for opcao in opcoes:
-        p = opcao.proposta.get_nativamente()
-        if isinstance(p, Curso):
-            aplicando_opcoes[p] += 1
-        else:                
-            aplicando_multidisciplinar += 1
-
-    cores_propostas = ["#00FA00", "#D2E61E", "#D2BE23", "#B4B478", "#B4C8A0", "#8B4513"]
-    escolhas = []
-    for i in range(5):
-        escolhas.append({
-            "prioridades": prioridades[i],
-            "estudantes": estudantes[i],
-            "cor": cores_propostas[i],
-        })
-
-    qtd_estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2__in=cursos_insper).count()
-    qtd_estudantes_opc = len(opcoes.values("aluno").distinct())
-
-    qtd_estudantes_curso = {}
-    for curso in cursos_insper:
-        qtd_estudantes_curso[curso] = {}
-        qtd_estudantes_curso[curso]["qtd"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2=curso).count()
-        qtd_estudantes_curso[curso]["opc"] = len(opcoes.filter(aluno__curso2=curso).values("aluno").distinct())
-
-    context = {
-        "titulo": {"pt": "Procura pelas Propostas de Projetos", "en": "Demand for Project Proposals"},
-        "tamanho": tamanho,
-        "propostas": propostas,
-        "escolhas": escolhas,
-        "estudantes": estudantes,
-        "areaspfe": areaspfe,
-        "edicoes": get_edicoes(Proposta)[0],
-        "cursos": cursos_insper,
-        "cursos_externos": cursos_externos,
-        "disponivel_propostas": disponivel_propostas,
-        "disponivel_multidisciplinar": disponivel_multidisciplinar,
-        "aplicando_opcoes": aplicando_opcoes,
-        "aplicando_multidisciplinar": aplicando_multidisciplinar,
-        "qtd_estudantes": qtd_estudantes,
-        "qtd_estudantes_opc": qtd_estudantes_opc,
-        "qtd_estudantes_curso": qtd_estudantes_curso,
-    }
+        context = {
+            "titulo": {"pt": "Procura pelas Propostas de Projetos", "en": "Demand for Project Proposals"},
+            "edicoes": get_edicoes(Proposta)[0],
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
+        }
 
     return render(request, "propostas/procura_propostas.html", context)
 

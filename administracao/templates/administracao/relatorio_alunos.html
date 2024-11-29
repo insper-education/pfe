@@ -15,45 +15,45 @@
 {% endblock %}
 
 {% block content %}
-    
-  <span class="titulo">Estudantes - {{configuracao.ano}}.{{configuracao.semestre}}</span>
 
-  {% if alunos %}
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
-      {% for aluno in alunos %} 
-      <p style="page-break-before: always"></p>
+  <h3>Estudantes - {{configuracao.ano}}.{{configuracao.semestre}}</h3>
 
-      <h3>Aluno: {{aluno.user.get_full_name}}</h3>
-      <strong>Curso:</strong> {{aluno.curso2}} <br>
-      <strong>CR:</strong> {{aluno.cr}} <br>
-      {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span><br>{% endif %}
+  {% for aluno in alunos %} 
+    <p style="page-break-before: always"></p>
+
+    <h3>Aluno: {{aluno.user.get_full_name}}</h3>
+    <strong>Curso:</strong> {{aluno.curso2}} <br>
+    <strong>CR:</strong> {{aluno.cr}} <br>
+    {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span><br>{% endif %}
+    <br>
+
+    <strong>Áreas de interesse selecionadas:</strong>
+
+    {% with areas=aluno.areas_de_interesse %}
+        {% with vencido=True %}
+        {% include "areas.html" %}
+        {% endwith %}
+    {% endwith %}
+
       <br>
-
-      <strong>Áreas de interesse selecionadas:</strong>
-
-      {% with areas=aluno.areas_de_interesse %}
-          {% with vencido=True %}
-          {% include "areas.html" %}
-          {% endwith %}
-      {% endwith %}
-
-        <br>
-        <strong>Projetos Selecionados</strong>
-        {% for opcao in aluno.opcao_set.all %}
-          {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
-              <a href="{% url 'projeto_completo' opcao.projeto.id %}">
-                  <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
-                      {{opcao.projeto.organizacao.nome}}, {{opcao.projeto.get_titulo}} 
-                  </p>
-              </a>
-          {% endif %}            
-        {% endfor %}
-        <hr class="striped-border">
-
+      <strong>Projetos Selecionados</strong>
+      {% for opcao in aluno.opcao_set.all %}
+        {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
+            <a href="{% url 'projeto_completo' opcao.projeto.id %}">
+                <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
+                    {{opcao.projeto.organizacao.nome}}, {{opcao.projeto.get_titulo}} 
+                </p>
+            </a>
+        {% endif %}            
       {% endfor %}
-
-  {% else %}
+      <hr class="striped-border">
+  {% empty %}
     <p>Não existem projetos disponíveis.</p>
-  {% endif %}
+  {% endfor %}
 
 {% endblock %}

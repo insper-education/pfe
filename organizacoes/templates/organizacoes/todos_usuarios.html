@@ -55,11 +55,11 @@
 
   {% include "selecao_ajax.html" with tabela="Usuarios" %}
 
-  <script>
+  {% comment %} <script>
     function carrega_pagina(){}
     function carrega_site(){carrega_pagina();};
     window.onload = carrega_site;
-  </script>
+  </script> {% endcomment %}
 
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}

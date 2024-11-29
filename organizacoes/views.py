@@ -925,6 +925,7 @@ def seleciona_conexoes(request):
     colaboradores = cooperacoes.last().parceiro if cooperacoes else None
 
     context = {
+        "titulo": {"pt": "Seleção de Conexões", "en": "Connection Selection"},
         "projeto": projeto,
         "parceiros": parceiros,
         "todos_parceiros": Parceiro.objects.all(),

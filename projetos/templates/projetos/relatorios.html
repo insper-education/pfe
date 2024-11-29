@@ -5,9 +5,12 @@
   Data: 4 de Agosto de 2019
 {% endcomment %}
 
+{% comment %} APARENTEMENTE NAO MAIS USADO, REMOVER {% endcomment %}
+
+
 {% block content %}
-  <h1> Obsoleto </h1>
-  <span class="titulo">Relatórios</span>
+  {% comment %} <h1> Obsoleto </h1>
+
   <table>
     <tr>
       <td>Projetos</td>
@@ -26,5 +29,5 @@
     </tr>
   </table>
   <a href="{% url 'relatorio_backup'%}">Envia e-mail com todos os relatórios</a>
-  <br><br>
+  <br><br> {% endcomment %}
 {% endblock %}

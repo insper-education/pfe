@@ -38,18 +38,33 @@
 {% endblock %}
 
 {% block content %}
+  
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
   {% localize off %}
+  <b>
+    <span lang="pt">Nome:</span>
+    <span lang="en" style="display: none;">Name:</span>
+  </b> <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a><br>
 
-  <span class="titulo">Edição de Notas</span>
-
-  <b>Nome:</b> <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a><br>
-  <b>Projeto:</b> <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+  <b>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display: none;">Project:</span>
+  </b> <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
                 ({{alocacao.projeto.organizacao.nome}})
                 {{alocacao.projeto.get_titulo}}      
                 { {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}} }
                 {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
             </a><br>
-  <b>Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b> <a href="{% url 'professor_detail' alocacao.projeto.orientador.id %}">{{alocacao.projeto.orientador.user.get_full_name}}</a><br>
+
+  <b>
+    <span lang="pt">Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
+    <span lang="en" style="display: none;">Advisor:</span>
+  </b>
+  <a href="{% url 'professor_detail' alocacao.projeto.orientador.id %}">{{alocacao.projeto.orientador.user.get_full_name}}</a><br>
   <br>
 
   <form method="post"> {% csrf_token %}
@@ -68,7 +83,8 @@
                 <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
                 {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
                   <div class="bloco_avali">
-                    peso: 
+                    <span lang="pt">peso:</span>
+                    <span lang="en" style="display: none;">weight:</span>
                     <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
                           name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
                           min="0" max="100" step="any" style="width: 5em;"
@@ -77,7 +93,8 @@
                           {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
                   </div>
                   <div class="bloco_avali">
-                    nota: 
+                    <span lang="pt">nota:</span>
+                    <span lang="en" style="display: none;">numeric grade:</span>
                     <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}"
                           name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
                           min="0" max="10" step="any" style="width: 4em;"
@@ -87,7 +104,8 @@
                   </div>
                         
                   <div class="bloco_avali">
-                    conceito:
+                    <span lang="pt">conceito:</span>
+                    <span lang="en" style="display: none;">letter grade:</span>
                     <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
                             name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
                             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -117,11 +135,17 @@
             {% endwith %}
           </ul>
           {% with observacoes=observacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
-            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">Observações para Estudantes:</span><br>
+            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">
+              <span lang="pt">Observações para Estudantes:</span>
+              <span lang="en" style="display: none;">Observations for Students:</span>
+            </span><br>
             <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
                       rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
               >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
-            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">Observações para Orientador:</span><br>
+            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">
+              <span lang="pt">Observações para Orientador:</span>
+              <span lang="en" style="display: none;">Observations for Advisor:</span>
+            </span><br>
             <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
                       rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
               >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
@@ -136,17 +160,31 @@
     {% endfor %}
     <br>
 
-    <b>Nota de Reprovação:</b>
+    <b>
+      <span lang="pt">Nota de Reprovação:</span>
+      <span lang="en" style="display: none;">Failing Grade:</span>
+    </b>
     <ul><li>
-        <span>Devido a falha em um OA ou média individual insuficiente</span>
-        Nota: <input class="nota" id="reprovacao" name="reprovacao" type="number" min="0" max="10" step="0.001" 
+        <span>
+          <span lang="pt">Devido a falha em um OA ou média individual insuficiente</span>
+          <span lang="en" style="display: none;">Due to failure in an LG or insufficient individual grade</span>
+        </span>
+        <br>
+        <span lang="pt">Nota:</span>
+        <span lang="en" style="display: none;">Grade:</span>
+        <input class="nota" id="reprovacao" name="reprovacao" type="number" min="0" max="10" step="0.001" 
         {% if reprovacao != None %}value="{{reprovacao}}"{% endif %}
         {% if user.tipo_de_usuario != 4 %}disabled{% endif %}/>
     </li></ul>
     <br>
 
     <br><br>
-    <input class="btn btn-primary mb-1" type="submit" value="Atualiza Notas" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    {% comment %} <input class="btn btn-primary mb-1" type="submit" value="Atualiza Notas" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}> {% endcomment %}
+    <button class="btn btn-primary mb-1" type="submit"
+            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+      <span lang="pt">Atualiza Notas</span>
+      <span lang="en" style="display: none;">Update Grades</span>
+    </button>
     
   </form>
 
@@ -197,5 +235,8 @@
 
   </script>
 
-{% endlocalize %}
+  {% endlocalize %}
+
+  {% include "linguas.html" %}
+
 {% endblock %}

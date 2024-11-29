@@ -32,16 +32,20 @@
 
 {% block content %}
 
-  <span class="titulo">Avaliações de Pares</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
-  {% if projetos %}
-    {% with com_projeto=True %}
-    {% for projeto in projetos %}
-      {% include "ver_pares.html" with colegas=projeto.get_pares_colegas %}
-      <hr class="striped-border">
-    {% endfor %}
-    {% endwith %}
-  {% else %}
+  <h3>Avaliações de Pares</h3>
+
+  {% with com_projeto=True %}
+  {% for projeto in projetos %}
+    {% include "ver_pares.html" with colegas=projeto.get_pares_colegas %}
+    <hr class="striped-border">
+  {% empty %}
     <p>Não existem avaliações de pares disponíveis.</p>
-  {% endif %}
+  {% endfor %}
+  {% endwith %}
+
 {% endblock %}

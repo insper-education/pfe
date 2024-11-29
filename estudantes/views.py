@@ -675,7 +675,7 @@ def informacoes_adicionais(request):
 def minhas_bancas(request):
     """Lista as bancas agendadas para um aluno."""
     configuracao = Configuracao.objects.get()
-    context = {"titulo": "Minhas Bancas",}
+    context = {"titulo": {"pt": "Minhas Bancas", "en": "My Examining Boards"},}
     if request.user.tipo_de_usuario == 1:
         if (request.user.aluno.anoPFE > configuracao.ano) or\
             (request.user.aluno.anoPFE == configuracao.ano and
@@ -808,7 +808,10 @@ def relato_quinzenal(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def relato_visualizar(request, id):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
-    context = {"relato": get_object_or_404(Relato, pk=id),}
+    context = {
+        "titulo": {"pt": "Visualização de Relato Quinzenal", "en": "Biweekly Report Visualization"},
+        "relato": get_object_or_404(Relato, pk=id),
+        }
     return render(request, "estudantes/relato_visualizar.html", context)
 
 

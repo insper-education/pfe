@@ -35,7 +35,6 @@ from academica.support import filtra_composicoes
 def index_operacional(request):
     """Mostra página principal para equipe operacional."""
     context = {
-            #"titulo": "Operacional",
             "titulo": { "pt": "Operacional", "en": "Operational" },
         }
 
@@ -88,7 +87,6 @@ def avisos_listar(request):
                 })
 
     context = {
-        #"titulo": "Avisos",
         "titulo": { "pt": "Avisos", "en": "Notices" },
         "avisos": avisos,
         "hoje" : datetime.date.today(),

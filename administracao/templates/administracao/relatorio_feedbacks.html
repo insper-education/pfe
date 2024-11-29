@@ -16,42 +16,46 @@
 
 {% block content %}
 
-  <span class="titulo">Feedbacks</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
-  {% if feedbacks %}
-    {% for feedback in feedbacks %} 
-      <p style="page-break-before: always"></p>
-      <strong>Data:</strong> {{ feedback.data }}<br>
-      <strong>Nome:</strong> {{ feedback.nome }}<br>
-      <strong>e-mail:</strong> {{ feedback.email }}<br>
-      <strong>Organização:</strong> {{ feedback.empresa }}<br>
-      
-      <p><strong>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
-        Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
-        pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</strong></p>
-      {{ feedback.tecnico|linebreaks }}
+  <h3>Feedbacks</h3>
 
-      <p><strong>Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
-      proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
-      ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
-      caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
-      </strong></p>
-      {{ feedback.comunicacao|linebreaks }}
+  {% for feedback in feedbacks %} 
+    <p style="page-break-before: always"></p>
+    <strong>Data:</strong> {{ feedback.data }}<br>
+    <strong>Nome:</strong> {{ feedback.nome }}<br>
+    <strong>e-mail:</strong> {{ feedback.email }}<br>
+    <strong>Organização:</strong> {{ feedback.empresa }}<br>
+    
+    <p><strong>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
+      Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
+      pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</strong></p>
+    {{ feedback.tecnico|linebreaks }}
 
-      <p><strong>A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
-      os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
-      de acordo, apresentaram uma proposta de condução do projeto adequada?
-      </strong></p>
-      {{ feedback.organizacao|linebreaks }}
+    <p><strong>Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
+    proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
+    ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
+    caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
+    </strong></p>
+    {{ feedback.comunicacao|linebreaks }}
 
-      <p><strong>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
-      interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
-      </strong></p>
-      {{ feedback.outros|linebreaks }}
+    <p><strong>A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
+    os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
+    de acordo, apresentaram uma proposta de condução do projeto adequada?
+    </strong></p>
+    {{ feedback.organizacao|linebreaks }}
 
-      <hr class="striped-border">
-    {% endfor %}
-  {% else %}
+    <p><strong>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
+    interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
+    </strong></p>
+    {{ feedback.outros|linebreaks }}
+
+    <hr class="striped-border">
+  {% empty %}
     <p>Não existem feedbacks disponíveis.</p>
-  {% endif %}
+  {% endfor %}
+
 {% endblock %}

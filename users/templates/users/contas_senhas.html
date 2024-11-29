@@ -20,7 +20,7 @@
   
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
   </span>
 
   {% include "edicoes.html" %}<br>
@@ -93,13 +93,13 @@
 
   </div>
 
-  <script>
+  {% comment %} <script>
     function carrega_pagina() {};
     function carrega_site(){
       carrega_pagina();
     };
     window.onload = carrega_site
-  </script>
+  </script> {% endcomment %}
   
   {% include "edicoes_ajax.html" %}
   {% include "linguas.html" %}

@@ -12,27 +12,43 @@
 
 {% block content %}
 
-  <span class="titulo">Banca</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   {% if banca.startDate %}
-    <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+    <b>
+      <span lang="pt">Horário:</span>
+      <span lang="en" style="display: none;">Time:</span>
+    </b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
   {% endif %}
   {% if banca.endDate %}
     às {{banca.endDate.time}}
   {% endif %}
   <br>
+  <b>
+    <span lang="pt">Tipo:</span>
+    <span lang="en" style="display: none;">Type:</span>
+  </b>
   {% if banca.tipo_de_banca == 0 %}
-    <b>Tipo:</b> Final<br>
+    <span lang="pt">Final</span><span lang="en" style="display: none;">Final</span>
   {% elif banca.tipo_de_banca == 1 %}
-    <b>Tipo:</b> Intermediária<br>
+    <span lang="pt">Intermediária</span><span lang="en" style="display: none;">Intermediate</span>
   {% endif %}
+  <br>
 
   {% if banca.projeto %}
-    <b>Título do Projeto:</b> 
+    <b>
+      <span lang="pt">Título do Projeto:</span>
+      <span lang="en" style="display: none;">Project Title:</span>
+    </b> 
     <a href="{% url 'projeto_completo' banca.projeto.id %}">
       {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
         {{banca.projeto.titulo_final}}</a><br>
-        <small>Título original da proposta: 
+        <small>
+          <span lang="pt">Título original da proposta:</span>
+          <span lang="en" style="display: none;">Original title of the proposal:</span>
           <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
         </small>
       {% else %}
@@ -42,7 +58,10 @@
   {% endif %}
   <br>
   {% if banca.projeto.organizacao %}
-    <b>Organização:</b> 
+    <b>
+      <span lang="pt">Organização:</span>
+      <span lang="en" style="display: none;">Organization:</span>
+    </b>
     <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
       {{ banca.projeto.organizacao.nome }}
     </a>
@@ -55,11 +74,17 @@
   {% endif %}
 
   {% if banca.link %}
-    <b>Link vídeo-conferência:</b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
+    <b>
+      <span lang="pt">Link vídeo-conferência:</span>
+      <span lang="en" style="display: none;">Video-conference link:</span>
+    </b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
   {% endif %}
 
   {% if banca.projeto %}
-    <br><b>&#9733; formulário de avaliação</b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
+    <br><b>&#9733;
+      <span lang="pt">Formulário de avaliação</span>
+      <span lang="en" style="display: none;">Evaluation form</span>
+    </b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
   {% endif %}
 
   {% include "ver_documentos.html" %}
@@ -75,9 +100,15 @@
 
   {% if banca.projeto.orientador %}
       {% if banca.projeto.proposta.intercambio %}
-        <b>Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+        <b>
+          <span lang="pt">Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
+          <span lang="en" style="display: none;">Responsible Professor:</span>
+        </b>
       {% else %}
-        <b>Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+        <b>
+          <span lang="pt">Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
+          <span lang="en" style="display: none;">Advisor:</span>
+        </b>
       {% endif %}
       {{banca.projeto.orientador.user.get_full_name}} 
       <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
@@ -85,12 +116,16 @@
   {% endif %}
   <br>
 
-  <b>Banca</b>
+  <b>
+    <span lang="pt">Membros da Banca</span>
+    <span lang="en" style="display: none;">Examination Board Members</span>
+  </b>
   <ol>
     {% if banca.tipo_de_banca == 1 or banca.tipo_de_banca == 2 %} {% comment %} Intermediária ou Final {% endcomment %}
       <li>{{banca.projeto.orientador.user.get_full_name}} 
-          [Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}]
-          <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+        <span lang="pt">[Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
+        <span lang="en" style="display: none;">[Advisor]</span>
+        <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
       </li>
     {% endif %}
     {% for membro in banca.membros %}
@@ -102,8 +137,14 @@
   <br>
 
   {% if not bloqueado %}
-    <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary mb-1">Resultados da Banca</a>
-    <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">Editar Banca</a>
+    <a href="{% url 'conceitos_obtidos' banca.projeto.id %}" class="btn btn-primary mb-1">
+      <span lang="pt">Resultados da Banca</span>
+      <span lang="en" style="display: none;">Examination Board Results</span>
+    </a>
+    <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">
+      <span lang="pt">Editar Banca</span>
+      <span lang="en" style="display: none;">Edit Examination Board</span>
+    </a>
   {% endif %}
   
   {% include "janelas-modal.html" %}
@@ -114,7 +155,6 @@
     })
   </script>
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
   
 {% endblock %}

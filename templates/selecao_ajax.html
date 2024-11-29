@@ -33,9 +33,13 @@
               {% include "tabelas_scripts.js" %}
             {% endif %}
             {% if graficos %}
-              carrega_graficos();
+              if (typeof carrega_graficos === "function") {
+                carrega_graficos();
+              }
             {% endif %}
-            carrega_pagina();
+            if (typeof carrega_pagina === "function") {
+              carrega_pagina();
+            }
             $(".to_label").removeClass("label_animado");
             $(".filter").attr("disabled",false);
 

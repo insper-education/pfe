@@ -52,9 +52,17 @@
 
 {% block content %}
 
-  <span class="titulo">Selecione Conexões</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
   <br>
-  <span>Projeto: {{projeto}}</span>
+  <span>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display: none;">Project:</span>
+    {{projeto}}
+  </span>
   <br><br>
 
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
@@ -73,10 +81,19 @@
             <th scope="col" class="text-center">GR</th>
             <th scope="col" class="text-center">MT</th>
             <th scope="col" class="text-center">AA</th>
-            <th scope="col" class="text-center">Nome</th>
-            <th scope="col" class="text-center">Cargo</th>
+            <th scope="col" class="text-center">
+              <span lang="pt">Nome</span>
+              <span lang="en" style="display: none;">Name</span>
+            </th>
+            <th scope="col" class="text-center">
+              <span lang="pt">Cargo</span>
+              <span lang="en" style="display: none;">Position</span>
+            </th>
             <th scope="col" class="text-center">e-mail</th>
-            <th scope="col" class="text-center">telefone</th>
+            <th scope="col" class="text-center">
+              <span lang="pt">Telefone</span>
+              <span lang="en" style="display: none;">Phone</span>
+            </th>
           </tr>
         </thead>
         {% for parceiro in parceiros %}
@@ -152,7 +169,10 @@
     {% endif %}
 
     
-    <label for="colaboracao">Colaboração Externa (CE)</label></b>:
+    <label for="colaboracao">
+      <span lang="pt">Colaboração Externa (CE)</span>
+      <span lang="en" style="display: none;">External Collaboration (EC)</span>
+    </label></b>:
     <div style="display: inline-block; max-width: 100%; width: 480px;">
     <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
     data-live-search="true" data-width="100%" data-size="10">
@@ -169,13 +189,9 @@
     <br><br><br>
 
     <small><button class="btn btn-light btn-sm" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
-      Cadastrar Novo Parceiro
+      <span lang="pt">Cadastrar Novo Parceiro</span>
+      <span lang="en" style="display: none;">Register New Partner</span>
     </button></small>
-
-    {% comment %} <input type="submit" class="btn btn-primary mb-1" value="Fechar Conexões"> {% endcomment %}
-
-    &nbsp;&nbsp;
-
   </form>
 
   <div id="message" class="message"></div>
@@ -219,9 +235,11 @@
 
   </script>
 
-  <script>
+  {% comment %} <script>
     function carrega_pagina(){}
     window.onload = carrega_pagina
-  </script>
+  </script> {% endcomment %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

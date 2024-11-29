@@ -10,7 +10,6 @@
   {% load escape_emails %}
   {% load nospaces %}
 
-
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
@@ -240,7 +239,9 @@
             $("#certificados").replaceWith($("#certificados",response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
-            carrega_pagina()
+            if (typeof carrega_pagina === "function") {
+              carrega_pagina();
+            }
             $(".to_label").removeClass("label_animado");
           } // else {% comment %} Ignorando resposta {% endcomment %}
         },

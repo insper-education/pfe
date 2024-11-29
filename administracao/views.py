@@ -213,7 +213,7 @@ def edita_organizacao(request, primarykey):
         return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": "Edição de Organização",
+        "titulo": {"pt": "Edição de Organização", "en": "Organization Edition"},
         "organizacao": organizacao,
         "edicao": True,
     }
@@ -505,6 +505,7 @@ def carrega_arquivo(request, dado):
         return render(request, "generic.html", context=context)
 
     context = {
+        "titulo": {"pt": "Carregamento de CSV (Comma Separated Values)", "en": "CSV Upload"},
         "campos_permitidos": resource.campos,
     }
 
@@ -1301,7 +1302,10 @@ def backup(request, formato):
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
     configuracao = get_object_or_404(Configuracao)
-    context = {"configuracao": configuracao}
+    context = {
+        "titulo": {"pt": "Relatório", "en": "Report"},
+        "configuracao": configuracao
+        }
 
     if modelo == "propostas":
         context["propostas"] = Proposta.objects.all()
@@ -1364,6 +1368,7 @@ def dados_backup(request, modo=None):
         if modo == "relatorios":
             configuracao = get_object_or_404(Configuracao)
             context = {
+                "titulo": {"pt": "Relatório", "en": "Report"},
                 "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
                 "alunos": Aluno.objects.filter(anoPFE=configuracao.ano, semestrePFE=configuracao.semestre),
                 "configuracao": configuracao,

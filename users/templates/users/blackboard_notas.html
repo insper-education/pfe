@@ -25,7 +25,10 @@
 
 {% block content %}
   
-  <span class="titulo">Blackboard Notas</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   {% comment %} {% include "edicoes.html" %}<br> {% endcomment %}
 
@@ -34,12 +37,20 @@
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
     
       <br>
-      Criar no Blackboard colunas:<br>
+      <span lang="pt">Criar no Blackboard colunas:</span>
+      <span lang="en" style="display: none;">Create columns in Blackboard:</span>
+      <br>
       <table>
         <thead>
           <tr>
-            <th>Nome da Coluna</th>
-            <th>Nome da Central de Notas</th>
+            <th>
+              <span lang="pt">Nome da Coluna</span>
+              <span lang="en" style="display: none;">Column Name</span>
+            </th>
+            <th>
+              <span lang="pt">Nome da Central de Notas</span>
+              <span lang="en" style="display: none;">Grade Center Name</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -51,30 +62,44 @@
           {% endfor %}
         </tbody>
       </table>
-      Com:<br>
-      - Exibição primária: Pontuação<br>
-      - Pontos possíveis: 10<br>
+      <span lang="pt">  
+        Com:<br>
+        - Exibição primária: Pontuação<br>
+        - Pontos possíveis: 10<br>
+      </span>
+      <span lang="en" style="display: none;">
+        With:<br>
+        - Primary Display: Score<br>
+        - Possible Points: 10<br>
+      </span>
 
       <br><br>
-      <b>Código da Coluna</b><br>
+      <b>
+        <span lang="pt">Código da Coluna</span>
+        <span lang="en" style="display: none;">Column Code</span>
+      </b><br>
       {% for exame in exames %}
         <label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}><br>
       {% endfor %}
       <br>
-      <button class="btn btn-primary mb-1" type="submit">Download Arquivo</button>
+      <button class="btn btn-primary mb-1" type="submit">
+        <span lang="pt">Download Arquivo</span>
+        <span lang="en" style="display: none;">Download File</span>
+      </button>
 
     </form>
 
   </div>
 
-  <script>
+  {% comment %} <script>
     function carrega_pagina() {};
     function carrega_site(){
       carrega_pagina();
     };
     window.onload = carrega_site
-  </script>
+  </script> {% endcomment %}
   
   {% comment %} {% include "edicoes_ajax.html" %} {% endcomment %}
+  {% include "linguas.html" %}
 
 {% endblock %}

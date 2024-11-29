@@ -27,7 +27,7 @@
 
   {% include "edicoes.html" with com_cursos=True %}
 
-  <div class="2areas2">
+  <div class="atualizar">
 
     <div id="chart-container" style=" height:{{tamanho}}vh;">
       <canvas id="chart-area"></canvas>
@@ -148,7 +148,7 @@
               },
               custom: function(tooltipModel) {
                   // Tooltip Element
-                  var tooltipEl = document.getElementById('chartjs-tooltip');
+                  var tooltipEl = document.getElementById("chartjs-tooltip");
 
                   // Create element on first render
                   if (!tooltipEl) {
@@ -223,15 +223,13 @@
           }
       };
 
-      function chart() {
+      function carrega_graficos() {
 
         var canvasP = document.getElementById("chart-area");
         var ctx = canvasP.getContext("2d");
         
         {% if tamanho > 0 %}
           var histograma = new Chart(ctx, config);
-        {% else %}
-          $("#chart-container").text("Não há procura por propostas!");
         {% endif %}
 
         canvasP.onclick = function(e) {
@@ -274,7 +272,7 @@
     <br>
     <span style="margin-left: 10px;">
       <span lang="pt">Total de estudantes: </span>
-      <span lang="en" style="display: none;">Total students: </span>
+      <span lang="en" style="display: none;">Total of students: </span>
       {{qtd_estudantes}}
     </span><br>
     <span style="margin-left: 10px;">
@@ -320,43 +318,13 @@
     <br>
     <ol>
     {% for area, quantidade in areaspfe.items|dictsortreversed:1 %}
-      <li>{{area}} : {{quantidade.0}}</li>
+      <li>{{area}}: {{quantidade.0}}</li>
     {% endfor %}
     </ol>
 
   </div>
 
-  <script>
-  
-    var request_ajax_pp= null;
-
-    function recarregar_pagina() {
-
-        if (request_ajax_pp != null){ 
-            request_ajax_pp.abort();
-            request_ajax_pp = null;
-        }
-
-        url = "{% url 'procura_propostas' %}";
-        data = {
-          anosemestre: $("#filterEdicao option:selected").attr("value"),
-          curso: $("#filterCurso option:selected").attr("value")
-        };
-        function success(response){
-          $("div.2areas2").replaceWith($("div.2areas2",response));
-          $(".tooltip-inner").remove();
-          $(".tooltip-arrow").remove();
-          chart();
-          {% include "linguas_ajax.html" %}
-        }
-        {% include "ajax_default_function.js" %}
-    }
-
-    $(".filter").change(recarregar_pagina);    
-    $(document).ready(recarregar_pagina);
-
-  </script>
-
+  {% include "edicoes_ajax.html" with com_cursos=True graficos=True %}
   {% include "linguas.html" %}
 
 {% endblock %}

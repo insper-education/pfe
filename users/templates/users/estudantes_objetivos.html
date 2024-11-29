@@ -111,10 +111,10 @@
     <br>
 
     <script>
-      function carrega_pagina() {};
+      {% comment %} function carrega_pagina() {}; {% endcomment %}
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
+        {% comment %} carrega_pagina(); {% endcomment %}
       }
       window.onload = carrega_site
     </script>

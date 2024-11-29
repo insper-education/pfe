@@ -25,7 +25,7 @@
     <div class="atualizar">
       {% include "mostrar_notas.html" with titulo_lista="Exame" com_borda=True %}
       <script>
-        function carrega_pagina() {};
+        {% comment %} function carrega_pagina() {}; {% endcomment %}
         function carrega_site() {};
         window.onload = carrega_site
       </script>

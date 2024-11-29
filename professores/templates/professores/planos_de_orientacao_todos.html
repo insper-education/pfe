@@ -123,23 +123,13 @@
       }
     </script>
     
-    <script>
-      function carrega_pagina(){};
-      window.onload = carrega_pagina
-    </script>
-
   </div> 
 
   <script>
-
-    function carrega_pagina() {
-    };
-
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
+      {% comment %} carrega_pagina(); {% endcomment %}
     };
-
     window.onload = carrega_site
   </script>
 
@@ -147,7 +137,6 @@
 
   {% include "edicoes_ajax.html" %}
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

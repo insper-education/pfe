@@ -10,7 +10,10 @@
 
 {% block content %}
 
-  <span class="titulo">Carregamento de CSV (Comma Separated Values)</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
 
   <strong>- realmente separado por vírgula, não funciona com ponto e vírgula</strong><br>
   <strong>- não mudar o maiúscula e minúscula dos nomes das colunas, nem deixar espaços em branco ao redor</strong><br>
@@ -19,7 +22,10 @@
   </strong><br>
 
   <br>
-  <h6>Campos Permitidos:</h6>
+  <h6>
+    <span lang="pt">Campos Permitidos:</span>
+    <span lang="en" style="display: none;">Allowed Fields:</span>
+  </h6>
   <ul>
   {% for campo in campos_permitidos %}
     <li>{{campo}}</li>
@@ -28,6 +34,12 @@
   <br>
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
     {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept=".csv" %}<br><br>
-    <button class="btn btn-primary mb-1" type="submit">Carregar Arquivo</button>
+    <button class="btn btn-primary mb-1" type="submit">
+      <span lang="pt">Carregar Arquivo</span>
+      <span lang="en" style="display: none;">Load File</span>
+    </button>
   </form>
+
+  {% include "linguas.html" %}
+
 {% endblock %}

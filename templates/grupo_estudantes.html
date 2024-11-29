@@ -4,8 +4,11 @@
   Data: 28 de Março de 2024
 {% endcomment %}
 
-<b>Grupo:</b>
-  {% with alocacoes=projeto.alocacao_set.all %}
+<b>
+  <span lang="pt">Grupo:</span>
+  <span lang="en" style="display: none;">Group:</span>
+</b>
+{% with alocacoes=projeto.alocacao_set.all %}
   <a class="email" href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body={% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
     <i class="fas fa-mail-bulk"></i>
   </a>

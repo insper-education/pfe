@@ -1169,7 +1169,7 @@ def banca_ver(request, primarykey):
     documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
 
     context = {
-        "titulo": "Banca " + banca.get_tipo_de_banca_display() + " [" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo(),
+        "titulo": {"pt": "Banca", "en": "Examination Board"},
         "banca": banca,
         "documentos": documentos,
     }
@@ -2012,7 +2012,7 @@ def banca_avaliar(request, slug, documento_id=None):
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
         context = {
-            "titulo": "Formulário Banca " + banca.get_tipo_de_banca_display() + sub_titulo,
+            "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
             "estudante": banca.alocacao.aluno if banca.tipo_de_banca == 3 else None,
             "individual": True if banca.tipo_de_banca == 3 else False,
@@ -2057,6 +2057,7 @@ def banca(request, slug):
         documentos = None
 
     context = {
+        "titulo": {"pt": "Banca", "en": "Examination Board"},
         "banca": banca,
         "documentos": documentos,
         "bloqueado": True,
@@ -2351,13 +2352,13 @@ def informe_bancas(request, tipo):
 
         return render(request, 'generic.html', context=context)
 
-    tipo = "Finais" if tipo==0 else "Intermediárias"
     context = {
-        "titulo": "Informe de Bancas " + tipo,
+        "titulo": {"pt": "Informe de Bancas Finais" if tipo==0 else "Informe de Bancas Intermediárias",
+                   "en": "Final Examination Boards Report" if tipo==0 else "Intermediate Examination Boards Report"},
         "bancas": bancas,
         "tipo": tipo,
     }
-    return render(request, 'professores/informes_bancas.html', context=context)
+    return render(request, "professores/informe_bancas.html", context=context)
 
 
 
@@ -2992,7 +2993,6 @@ def avaliar_entregas(request, selecao=None):
         configuracao = get_object_or_404(Configuracao)
 
         context = {
-                #"titulo": "Avaliar Entregas",
                 "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
                 "edicoes": get_edicoes(Relato)[0],
                 "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),

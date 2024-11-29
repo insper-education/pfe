@@ -87,19 +87,10 @@
     </table> 
     </div> {% comment %} do "tabelas_top.html" {% endcomment %}
 
-    <script>
-      function carrega_pagina() {};
-      function carrega_site(){
-        carrega_pagina();
-      };
-      window.onload = carrega_site
-    </script>
-
   </div>
 
   {% include "edicoes_ajax.html" with tabela='Parceiros' %}
 
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

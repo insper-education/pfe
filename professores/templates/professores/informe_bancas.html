@@ -19,9 +19,13 @@
 
 {% block content %}
 
-  <span class="titulo">Informe de Bancas {{tipo}}</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
-  Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas.<br>
+  <span lang="pt">Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas.</span>
+  <span lang="en" style="display: none;">Send message to advisors with their boards and evaluations already held.</span>
   <br>
   
     <form method="post" id="informe_bancas" enctype="multipart/form-data">
@@ -30,9 +34,18 @@
       {% if bancas %}
       <table>
         <thead><tr>
-            <th scope="col" style="text-align:center;"><b>Orientador</b></th>
-            <th scope="col" style="text-align:center;"><b>Projeto</b></th>
-            <th scope="col" style="text-align:center;"><b>Organização</b></th>
+            <th scope="col" style="text-align:center;"><b>
+              <span lang="pt">Orientador</span>
+              <span lang="en" style="display: none;">Advisor</span>
+            </b></th>
+            <th scope="col" style="text-align:center;"><b>
+              <span lang="pt">Projeto</span>
+              <span lang="en" style="display: none;">Project</span>
+            </b></th>
+            <th scope="col" style="text-align:center;"><b>
+              <span lang="pt">Organização</span>
+              <span lang="en" style="display: none;">Organization</span>
+            </b></th>
         </tr></thead>
         <tbody>
           {% for banca in bancas %}
@@ -66,11 +79,19 @@
       </table>
           
       <br>
-      <button class="btn btn-primary mb-1" id="submit" type="submit">Enviar mensagens</button>
+      <button class="btn btn-primary mb-1" id="submit" type="submit">
+        <span lang="pt">Enviar mensagens</span>
+        <span lang="en" style="display: none;">Send messages</span>
+      </button>
 
     </form>
   {% else %}
-    <p>Nenhum banca identificada.</p>
+    <p>
+      <span lang="pt">Nenhuma banca identificada.</span>
+      <span lang="en" style="display: none;">No examination board identified.</span>
+    </p>
   {% endif %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

@@ -418,6 +418,7 @@ def blackboard_notas(request, anosemestre):
     colunas = CodigoColuna.objects.filter(exame__in=exames, ano=ano, semestre=semestre)
 
     context = {
+        "titulo": {"pt": "Notas para Blackboard", "en": "Grades for Blackboard"},
         "exames": exames,
         "colunas": colunas,
         "anosemestre": anosemestre,
@@ -699,6 +700,7 @@ def edita_notas(request, primarykey):
         return render(request, "generic.html", context=context)
 
     context = {
+        "titulo": {"pt": "Edição de Notas", "en": "Edit Grades"},
         "alocacao": alocacao,
         "composicoes": composicoes,
         "avaliacoes": avaliacoes,

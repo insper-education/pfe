@@ -4,8 +4,6 @@
   Data: 4 de Fevereiro de 2021
 {% endcomment %}
 
-{% comment %} Usar só esse, não o .js {% endcomment %} 
-
 {% if edicoes %}
   <script>
 
@@ -68,7 +66,7 @@
               {% if com_tipo %}
                 tipo: tipo,
               {% endif %}
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response){
 
@@ -80,9 +78,13 @@
                 {% include "tabelas_scripts.js" %}
               {% endif %}
               {% if graficos %}
-                carrega_graficos();
+                if (typeof carrega_graficos === "function") {
+                  carrega_graficos();
+                }
               {% endif %}
-              carrega_pagina();
+              if (typeof carrega_pagina === "function") {
+                carrega_pagina();
+              }
               $(".to_label").removeClass("label_animado");
               $(".filter").attr("disabled",false);
 

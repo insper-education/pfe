@@ -4,14 +4,15 @@
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 15 de Junho de 2019
 {% endcomment %}
-
+{% comment %} 
 {% block head %}
-{% endblock %}
+{% endblock %} {% endcomment %}
+
+{% comment %} APARENTEMENTE NÃO MAIS USADO {% endcomment %}
+
 
 {% block content %}
-
-  <span class="titulo">Projetos</span>
-
+{% comment %} 
   {% if mylist %}
     <div>      
       {% for projeto,opcoes in mylist %} 
@@ -53,6 +54,6 @@
 
   {% else %}
     <p>Não existem projetos disponíveis.</p>
-  {% endif %}
+  {% endif %} {% endcomment %}
 
 {% endblock %}

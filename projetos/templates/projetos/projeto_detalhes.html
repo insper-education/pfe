@@ -25,17 +25,29 @@
 
 {% block content %}
 
-  <span class="titulo">Projeto Detalhes</span>
-
-  <strong>Título</strong>:
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+  
+  <strong>
+    <span lang="pt">Título:</span>
+    <span lang="en" style="display: none;">Title:</span>
+  </strong>
   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
     {{projeto.titulo_final}}<br>
-    <small style="display: inline-block; padding-left: 0.7em;">Título original da proposta: {{projeto.proposta.titulo}}</small>
+    <small style="display: inline-block; padding-left: 0.7em;">
+      <span lang="pt">Título original da proposta:</span>
+      <span lang="en" style="display: none;">Original title of the proposal:</span>
+      {{projeto.proposta.titulo}}</small><br>
   {% else %}
     {{projeto.get_titulo}}
   {% endif %}<br>
 
-  <strong>Semestre:</strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  <strong>
+    <span lang="pt">Semestre:</span>
+    <span lang="en" style="display: none;">Semester:</span>
+  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
@@ -48,14 +60,20 @@
 
   {% if projeto.abstract %}
     <br><div class="abstract" style="margin-top: 8px;">
-      <strong>Resumo em Inglês do Projeto:</strong>
+      <strong>
+        <span lang="pt">Resumo em Inglês do Projeto:</span>
+        <span lang="en" style="display: none;">Project Abstract:</span>
+      </strong>
       {{ projeto.abstract|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
     <br><div class="palavras_chave" style="margin-top: 8px;">
-      <strong>Palavras-chave:</strong>
+      <strong>
+        <span lang="pt">Palavras-chave:</span>
+        <span lang="en" style="display: none;">Keywords:</span>
+      </strong>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
   {% endif %}
@@ -70,7 +88,10 @@
   
   {% if projeto.pastas_do_projeto %}
     <br><br>
-    <h4>Pastas do projeto:</h4>
+    <h4>
+      <span lang="pt">Pastas do projeto:</span>
+      <span lang="en" style="display: none;">Project repositories:</span>
+    </h4>
     <div style="display: flex; align-items: flex-start;">
       <div>&#128193;&nbsp;</div>
       <div>
@@ -88,7 +109,8 @@
   <h4 data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.
     ">
-    Organização:
+    <span lang="pt">Organização:</span>
+    <span lang="en" style="display: none;">Organization:</span>
     {% if projeto.organizacao and projeto.organizacao.nome %}
       {{projeto.organizacao.nome}}
     {% elif projeto.proposta.nome_organizacao %}
@@ -101,18 +123,18 @@
   
   <p>
     {% if projeto.organizacao and projeto.organizacao.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-       Endereço da matriz da organização parceira.
-      ">Endereço Matriz:</strong>
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço da matriz da organização parceira.">
+        <span lang="pt">Endereço Matriz:</span>
+        <span lang="en" style="display: none;">Headquarters Address:</span>
+      </strong>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
         {{projeto.organizacao.endereco|linebreaks}}
       </a>
     {% elif projeto.proposta.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-       Endereço para desenvolver o projeto.
-      ">
-       Endereço Local:
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço para desenvolver o projeto.">
+        <span lang="pt">Endereço Local:</span>
+        <span lang="en" style="display: none;">Local Address:</span>
       </strong>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.endereco}}">
@@ -142,9 +164,9 @@
 
   {% if projeto.proposta.descricao %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Uma breve descrição do que se trata o projeto e outras informações relevantes.">
-        Descrição da proposta:
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
+        <span lang="pt">Descrição da proposta:</span>
+        <span lang="en" style="display: none;">Proposal Description:</span>
       </strong>
       {{projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -158,9 +180,9 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
       Exemplos de resultados ou entregas esperadas.
       Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
-      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no Capstone.
-      ">
-        Expectativas de resultados/entregas:
+      Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no Capstone.">
+        <span lang="pt">Expectativas de resultados/entregas:</span>
+        <span lang="en" style="display: none;">Expected results/deliverables:</span>
       </strong>
       {{projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
@@ -174,9 +196,9 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
       Recursos que as organizações informaram que irão disponibilizar para os estudantes.
       O Capstone irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibilidade.
-      Não existe nenhuma garantia que o Capstone irá suprir material de consumo para os estudantes, em geral não há recursos para isso.
-      ">
-        Recursos a serem disponibilizados:
+      Não existe nenhuma garantia que o Capstone irá suprir material de consumo para os estudantes, em geral não há recursos para isso.">
+        <span lang="pt">Recursos a serem disponibilizados:</span>
+        <span lang="en" style="display: none;">Resources to be provided:</span>
       </strong>
       {{projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -184,10 +206,9 @@
 
   {% if projeto.proposta.observacoes %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-      Outras observações que a organização parceira considerou relevante para informar aos estudantes.
-      ">
-        Outras observações:
+      <strong data-toggle="tooltip" data-html="true" animation="true" title="Outras observações que a organização parceira considerou relevante para informar aos estudantes.">
+        <span lang="pt">Outras observações:</span>
+        <span lang="en" style="display: none;">Other observations:</span>
       </strong>
       {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -195,26 +216,40 @@
 
   {% if projeto.proposta.anexo %}
     <p>
-      <strong>Anexo:</strong>
+      <strong>
+        <span lang="pt">Anexo:</span>
+        <span lang="en" style="display: none;">Attachment:</span>
+      </strong>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
     </p><br>
   {% endif %}
 
   <!-- Campo opcional -->
   {% if projeto.organizacao and projeto.organizacao.informacoes %}
-    <p><strong>Informações sobre a empresa:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre a empresa:</span>
+      <span lang="en" style="display: none;">Information about the company:</span>
+    </strong>
     {{projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% elif projeto.proposta and projeto.proposta.descricao_organizacao %}
-    <p><strong>Informações sobre a empresa:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre a empresa:</span>
+      <span lang="en" style="display: none;">Information about the company:</span>
+    </strong>
     {{projeto.proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% endif %}
 
   <!-- Campo opcional -->
   {% if projeto.proposta.departamento %}
-    <p><strong>Informações sobre o departamento na organização:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre o departamento na organização:</span>
+      <span lang="en" style="display: none;">Information about the department in the organization:</span>
+    </strong>
     {{projeto.proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
+
+  {% include "linguas.html" %}
 
 {% endblock %}

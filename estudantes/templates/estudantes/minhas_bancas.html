@@ -19,7 +19,10 @@
 
 {% block content %}
 
-  <span class="titulo">Minhas Bancas</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   {% if mensagem %}
     <h5 class="red-bold">{{mensagem}}</h5>
@@ -29,34 +32,45 @@
     {% for banca in bancas.reverse %} 
       <div class="div_arredondado">
           {% if banca.startDate %}
-            <b>Horário:</b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+            <b>
+              <span lang="pt">Horário:</span>
+              <span lang="en" style="display: none;">Time:</span>
+            </b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
           {% endif %}
           {% if banca.endDate %}
             às {{banca.endDate.time}}
           {% endif %}
           <div>
-            <b>Tipo:</b> 
+            <b>
+              <span lang="pt">Tipo:</span>
+              <span lang="en" style="display: none;">Type:</span>
+            </b> 
             {% if banca.tipo_de_banca == 0 %}
-              Final
+              <span lang="pt">Final</span><span lang="en" style="display: none;">Final</span>
             {% elif banca.tipo_de_banca == 1 %}
-              Intermediária
+              <span lang="pt">Intermediária</span><span lang="en" style="display: none;">Intermediate</span>
             {% elif banca.tipo_de_banca == 2 %}
-              Certificação Falconi
+              <span lang="pt">Certificação Falconi</span><span lang="en" style="display: none;">Falconi Certification</span>
             {% elif banca.tipo_de_banca == 3 %}
-              Probation
+              <span lang="pt">Probation</span><span lang="en" style="display: none;">Probation</span>
             {% else %}
-              NÃO IDENTIFICADA
+              <span lang="pt">Não identificada</span><span lang="en" style="display: none;">Not identified</span>
             {% endif %}
           </div>
           
           {% if banca.get_projeto %}
             <div>
-              <b>Título do Projeto:</b> 
+              <b>
+                <span lang="pt">Título do Projeto:</span>
+                <span lang="en" style="display: none;">Project Title:</span>
+              </b> 
               <a href="{% url 'projeto_detalhes' banca.get_projeto.id %}">
                 {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
                   {{banca.get_projeto.titulo_final}}</a><br>
                   
-                  <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">Título original da proposta: 
+                  <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">
+                    <span lang="pt">Título original da proposta:</span>
+                    <span lang="en" style="display: none;">Original title of the proposal:</span>
                     <a href="{% url 'projeto_detalhes' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
                   </div>
                 {% else %}
@@ -66,7 +80,11 @@
           {% endif %}
           
           {% if banca.get_projeto.organizacao %}
-            <div><b>Organização Parceira:</b> 
+            <div>
+              <b>
+                <span lang="pt">Organização Parceira:</span>
+                <span lang="en" style="display: none;">Partner Organization:</span>
+              </b> 
               {{ banca.get_projeto.organizacao.nome }}
             </div>
           {% endif %}
@@ -78,33 +96,53 @@
           {% if banca.get_projeto.orientador %}
             <div>
             {% if banca.get_projeto.proposta.intercambio %}
-              <b>Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
+              <b>
+                <span lang="pt">Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
+                <span lang="en" style="display: none;">Responsible Professor:</span>
+              </b>
             {% else %}
-              <b>Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
+              <b>
+                <span lang="pt">Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
+                <span lang="en" style="display: none;">Advisor:</span>
+              </b>
             {% endif %}
             {{banca.get_projeto.orientador.user.get_full_name}} <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
             </div>
           {% endif %}
 
           <div>
-            <b>Membros da Banca:</b>
+            <b>
+              <span lang="pt">Membros da Banca:</span>
+              <span lang="en" style="display: none;">Examination Board Members:</span>
+            </b>
             {% include "membros_da_banca.html" %}
 
             {% if user.tipo_de_usuario != 1 or banca|exibe_notas_banca %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
               {% with avaliacao=banca.get_avaliacoes %}
                 {% if avaliacao.objetivos %}
                   <hr>
-                  <b>Média dos Conceitos da Banca:</b><br>
+                  <b>
+                    <span lang="pt">Média dos Conceitos da Banca:</span>
+                    <span lang="en" style="display: none;">Board's Average Grades:</span>
+                  </b><br>
                   {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                     &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao.0|floatformat:2}} ({{avaliacao.1}})<br>
                   {% endfor %}
                   {% if avaliacao.peso > 0 %}
-                    &#10149;<b> Nota final = {{avaliacao.nota|floatformat:2}}</b><br>
+                    &#10149;
+                    <b> 
+                      <span lang="pt">Nota final</span>
+                      <span lang="en" style="display: none;">Final Grade</span>
+                      = {{avaliacao.nota|floatformat:2}}
+                    </b><br>
                   {% endif %}
                   {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
 
                   {% if banca.get_observacoes_estudantes %}
-                    <b style="display: inline-block; margin-top: 14px;">Observações realizadas pelos membros da banca:</b>
+                    <b style="display: inline-block; margin-top: 14px;">
+                      <span lang="pt">Observações realizadas pelos membros da banca:</span>
+                      <span lang="en" style="display: none;">Observations made by the examination board members:</span>
+                    </b>
                     
                       {% for observacao in banca.get_observacoes_estudantes %}
                         {% if observacao.observacoes_estudantes %}
@@ -127,7 +165,12 @@
       {% endfor %}
   
   {% else %}
-    <p>Não existem bancas agendadas para você.</p>
+    <p>
+      <span lang="pt">Não existem bancas agendadas para você.</span>
+      <span lang="en" style="display: none;">There are no scheduled examination boards for you.</span>
+    </p>
   {% endif %}
 
+  {% include "linguas.html" %}
+  
 {% endblock %}

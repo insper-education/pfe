@@ -20,63 +20,60 @@
 
 {% block content %}
     
-    <span class="titulo">Propostas Disponíveis 
-    {% comment %}     
-      {{configuracao.ano}}.{{configuracao.semestre}}
-    {% endcomment %}
-    </span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
-    {% if propostas %}
+  <h3>Propostas Disponíveis</h3>
 
-      {% for proposta in propostas %} 
+  {% for proposta in propostas %} 
 
-        <p style="page-break-before: always"></p>
+    <p style="page-break-before: always"></p>
 
-          {% with completo=True %}
-            {% include "proposta.html" %}
-          {% endwith %}
+      {% with completo=True %}
+        {% include "proposta.html" %}
+      {% endwith %}
 
-          {% with completo=True %}
-            {% include "organizacao.html" %}
-          {% endwith %}
+      {% with completo=True %}
+        {% include "organizacao.html" %}
+      {% endwith %}
 
-          <strong>Submetido por:</strong><br>
-          {{proposta.nome}}<br><br>
+      <strong>Submetido por:</strong><br>
+      {{proposta.nome}}<br><br>
 
-          {% if proposta.contatos_tecnicos %}
-            <strong>Contatos Técnicos</strong><br>
-            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-            <br><br>
-          {% endif %}
+      {% if proposta.contatos_tecnicos %}
+        <strong>Contatos Técnicos</strong><br>
+        {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+        <br><br>
+      {% endif %}
 
-          {% if proposta.contatos_administrativos %}
-            <strong>Contatos Administrativos</strong><br>
-            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-            <br><br>
-          {% endif %}
+      {% if proposta.contatos_administrativos %}
+        <strong>Contatos Administrativos</strong><br>
+        {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+        <br><br>
+      {% endif %}
 
-          <h4>Áreas de Interesse</h4>
-          {% with aa=proposta.areadeinteresse_set.all %}
-            {% with vencido=True %}
-              {% include "areas.html" %}
-            {% endwith %}
-          {% endwith %}
-          <br>
+      <h4>Áreas de Interesse</h4>
+      {% with aa=proposta.areadeinteresse_set.all %}
+        {% with vencido=True %}
+          {% include "areas.html" %}
+        {% endwith %}
+      {% endwith %}
+      <br>
 
-          {% with editavel=False %}
-            {% include "recomendadas.html" %}
-          {% endwith %}
+      {% with editavel=False %}
+        {% include "recomendadas.html" %}
+      {% endwith %}
 
-          {% with editavel=False %}
-            {% include "perfil_estudantes.html" %}
-          {% endwith %}
+      {% with editavel=False %}
+        {% include "perfil_estudantes.html" %}
+      {% endwith %}
 
-        <hr class="striped-border">
+    <hr class="striped-border">
 
-      {% endfor %}
-  
-    {% else %}
-      <p>Não existem propostas disponíveis.</p>
-    {% endif %}
+  {% empty %}
+    <p>Não existem propostas disponíveis.</p>
+  {% endfor %}
 
 {% endblock %}

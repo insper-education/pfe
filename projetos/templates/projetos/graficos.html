@@ -1,22 +1,25 @@
-{% extends "base.html" %}
+{% comment %} {% extends "base.html" %}
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 22 de Setembro de 2020
 {% endcomment %}
 
+{% comment %} NAO MAIS USADO {% endcomment %}
+
+{% comment %} 
 {% block head %}
   {% load static %}
   {% load l10n %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <script src="{% static 'js/Plugin.Errorbars.min.js' %}"></script>
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 {% block content %}
-
-  <span class="titulo">Evolução por Notas/Conceitos</span>
-
+ERROR ERRO
+{% comment %} 
+  
   <div class="atualizar">
     <div class="container">
 
@@ -100,6 +103,6 @@
       </script>
 
     </div>
-  </div>
+  </div> {% endcomment %}
 
-{% endblock %}
+{% endblock %} 

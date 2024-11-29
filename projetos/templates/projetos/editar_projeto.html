@@ -26,43 +26,60 @@
 
 {% block content %}
 
-  <span class="titulo">Edição de Projeto</span>
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
 
   <form method="post"> {% csrf_token %}  
 
-    <label for="titulo">Título original da proposta:</label><br>
+    <label for="titulo">
+      <span lang="pt">Título original da proposta:</span>
+      <span lang="en" style="display: none;">Original title of the proposal:</span>
+    </label><br>
     <input type="text" size="86" id="titulo_original" name="titulo_original" value="{{projeto.proposta.titulo}}" disabled>
     <br><br>
 
-    <label for="titulo">Título do Projeto:</label><br>
+    <label for="titulo">
+      <span lang="pt">Título do Projeto:</span>
+      <span lang="en" style="display: none;">Project Title:</span>
+    </label><br>
     <input type="text" size="86" maxlength="{% max_length projeto 'titulo_final' %}" id="titulo" name="titulo"
     placeholder="Na ausência de um título final, o título original da proposta será mantido."
     value="{% if projeto.titulo_final %}{{projeto.titulo_final}}{% endif %}">
     <br><br>
 
-    {% comment %} <label for="descricao">Descrição da Proposta de Projeto (REMOVER)</label><br>
-    <textarea id="descricao" name="descricao" rows="10" cols="88" maxlength="{% max_length projeto 'descricao' %}"
-    >{% if projeto.descricao %}{{projeto.descricao}}{% endif %}</textarea>
-    <br><br> {% endcomment %}
-
-    <label for="resumo">Resumo do Projeto</label><br>
+    <label for="resumo">
+      <span lang="pt">Resumo do Projeto (português)</span>
+      <span lang="en" style="display: none;">Project Summary (english)</span>
+    </label><br>
     <textarea id="resumo" name="resumo" rows="10" cols="88" maxlength="{% max_length projeto 'resumo' %}"
     >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
-    <label for="abstract">Abstract do Projeto</label><br>
+    <label for="abstract">
+      <span lang="pt">Resumo do Projeto (inglês)</span>
+      <span lang="en" style="display: none;">Project Abstract (english)</span>
+      
+    </label><br>
     <textarea id="abstract" name="abstract" rows="10" cols="88" maxlength="{% max_length projeto 'abstract' %}"
     >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
-    <label for="palavras_chave">Palavras-chave</label><br>
+    <label for="palavras_chave">
+      <span lang="pt">Palavras-chave</span>
+      <span lang="en" style="display: none;">Keywords</span>
+    </label><br>
     <textarea id="palavras_chave" name="palavras_chave" rows="1" cols="88" maxlength="{% max_length projeto 'palavras_chave' %}"
     >{% if projeto.palavras_chave %}{{projeto.palavras_chave}}{% endif %}</textarea>
     <br><br>
 
     <div style="max-width: 560px;">
       <div style="margin-bottom: 6px;">
-        <label for="orientador" style="width: 6em;">Orientador(a):</label>
+        <label for="orientador" style="width: 6em;">
+          <span lang="pt">Orientador(a):</span>
+          <span lang="en" style="display: none;">Advisor:</span>
+        </label>
         <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
                 data-width="81%" data-size="10">
             <option selected value> -- selecione um orientador(a) -- </option>
@@ -90,7 +107,10 @@
       </div>
 
       <div style="margin-bottom: 6px;">
-        <label for="coorientador" style="width: 6em;"><small>Coorientador(a):</small></label>
+        <label for="coorientador" style="width: 6em;"><small>
+          <span lang="pt">Coorientador(a):</span>
+          <span lang="en" style="display: none;">Co-advisor:</span>
+        </small></label>
         <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
         data-width="81%">
             <option selected value> -- selecione um coorientador(a) -- </option>
@@ -105,16 +125,28 @@
     </div>
     <br>
 
-    Grupo:<br>
+    <span lang="pt">Grupo:</span>
+    <span lang="en" style="display: none;">Group:</span>
+    <br>
     <table id="AlocacaoEstudantes" style="margin-left: 12px; table-layout: fixed; max-width: 100%; width:max-content;">
-      <tr><td style="text-align: center;"><small>Estudante #</small></td>
-          <td style="text-align: center;"><small>Nome do Estudante</small></td>
-          <td><span class="AddNew" style="cursor:pointer;">&#10753;</span></td></tr>
+      <tr><td style="text-align: center;"><small>
+        <span lang="pt">Estudante</span>
+        <span lang="en" style="display: none;">Student</span>
+        Estudante
+        #</small></td>
+        <td style="text-align: center;"><small>
+          <span lang="pt">Nome do Estudante</span>
+          <span lang="en" style="display: none;">Student Name</span>
+        </small></td>
+        <td><span class="AddNew" style="cursor:pointer;">&#10753;</span></td></tr>
 
       {% for alocacao in alocacoes %}
         <tr>
           <td>
-            <label for="estudante{{forloop.counter}}" style="white-space: nowrap;">Estudante <span style="width:1em; text-align:left; display:inline-block;">{{forloop.counter}}:</span></label></b>
+            <label for="estudante{{forloop.counter}}" style="white-space: nowrap;">
+              <span lang="pt">Estudante</span>
+              <span lang="en" style="display: none;">Student</span>
+              <span style="width:1em; text-align:left; display:inline-block;">{{forloop.counter}}:</span></label></b>
           </td>
           <td>
             <select class="selectpicker show-tick estudantes" name="estudante" id="estudante{{forloop.counter}}" title="Selecione estudante membro do projeto"
@@ -162,8 +194,10 @@
 
     <br>
     <label for="time_misto">
-    <input type="checkbox" id="time_misto" name="time_misto" value="True" {% if projeto.time_misto %}checked{% endif %}>
-    Time Misto (com estudantes de outra instituição/intercâmbio)</label><br>  
+      <input type="checkbox" id="time_misto" name="time_misto" value="True" {% if projeto.time_misto %}checked{% endif %}>
+      <span lang="pt">Time Misto (com estudantes de outra instituição/intercâmbio)</span>
+      <span lang="en" style="display: none;">Mixed Team (with students from another institution/exchange)</span>
+    </label><br>  
 
     <br><br>
 
@@ -177,33 +211,33 @@
     $("#esconder").css("display","none");
 
     function renumera() {
-      $('tr').each(function(){
+      $("tr").each(function(){
         var position= $('#AlocacaoEstudantes tr').index($(this))
         if(position!=0) {
           texto = '<label for="estudante' + position + '">Estudante <span style="width:1em;text-align:left;display:inline-block;">' + position + '</span> </label></b>:';
-          $(this).children('td').first().html(texto);
+          $(this).children("td").first().html(texto);
         }
       })
     }
 
-    $('.AddNew').click(function(){        
-      var $cloned = $('#novo_no').clone();
-      $cloned.find('.bootstrap-select').replaceWith(function() { return $('select', this); })    
-      $cloned.find('.selectpicker').selectpicker('render'); 
-      $('#AlocacaoEstudantes tr:last').after($cloned);
+    $(".AddNew").click(function(){        
+      var $cloned = $("#novo_no").clone();
+      $cloned.find(".bootstrap-select").replaceWith(function() { return $("select", this); })    
+      $cloned.find(".selectpicker").selectpicker("render"); 
+      $("#AlocacaoEstudantes tr:last").after($cloned);
       renumera();
       check_duplicado();
     });
     
-    $('table').on('click', '.RemoveRow', function(){
-      $(this).closest('tr').remove();
+    $("table").on("click", ".RemoveRow", function(){
+      $(this).closest("tr").remove();
       renumera();
       check_duplicado();
     });
 
     function check_duplicado() {
       $(".estudantes").change(function(){
-        var estudantes  = $('.estudantes > select')
+        var estudantes  = $(".estudantes > select")
         var dic = {};
         for(est in estudantes){
           var chave = estudantes.eq(est).val()
@@ -226,5 +260,7 @@
     check_duplicado();
 
   </script>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

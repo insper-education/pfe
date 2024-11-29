@@ -15,18 +15,31 @@ textarea {
 
 {% block content %}
 
-  <span class="titulo">Relato Quinzenal</span>
-  <br>
-
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+  
   <form action="" method="post"> {% csrf_token %}
 
-    <b>Estudante:</b> {{relato.alocacao.aluno}}<br>
-    <b>Projeto:</b> {{relato.alocacao.projeto}}<br>
-    <b>Relato submetido:</b> {{relato.momento}}<br>
+    <b>
+      <span lang="pt">Estudante:</span>
+      <span lang="en" style="display: none;">Student:</span>
+    </b> {{relato.alocacao.aluno}}<br>
+    <b>
+      <span lang="pt">Projeto:</span>
+      <span lang="en" style="display: none;">Project:</span>
+    </b> {{relato.alocacao.projeto}}<br>
+    <b>
+      <span lang="pt">Relato submetido:</span>
+      <span lang="en" style="display: none;">Submitted report:</span>
+    </b> {{relato.momento}}<br>
     <br>
 
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea>
 
   </form>
+
+  {% include "linguas.html" %}
 
 {% endblock %}

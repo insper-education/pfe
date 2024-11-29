@@ -113,13 +113,8 @@ def projeto_detalhes(request, primarykey):
             }
             return render(request, "generic.html", context=context)
 
-    titulo = str(projeto.ano) + '.' + str(projeto.semestre)
-    if projeto.proposta.organizacao:
-        titulo += " [" + projeto.proposta.organizacao.sigla + "] "
-    titulo += projeto.get_titulo()
-
     context = {
-        "titulo": titulo,
+        "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
         "projeto": projeto,
         }
 
@@ -286,7 +281,6 @@ def distribuicao_areas(request):
             areaspfe, outras = get_areas_propostas(propostas_projetos)
 
             context = {
-                # "titulo": "Tendência de Áreas de Interesse",
                 "total": propostas_projetos.count(),
                 "areaspfe": areaspfe,
                 "outras": outras,
@@ -675,6 +669,7 @@ def reembolso_pedir(request):
 
     bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")
     context = {
+        "titulo": {"pt": "Formulário de Reembolso", "en": "Reimbursement Form"},
         "usuario": usuario,
         "projeto": projeto,
         "bancos": bancos,
@@ -818,7 +813,10 @@ def lista_acompanhamento(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback(request, feedback_id):
     """Detalha os feedbacks das Organizações Parceiras."""
-    context = {"feedback": get_object_or_404(Feedback, id=feedback_id)}
+    context = {
+        "titulo": {"pt": "Feedback de Organizações Parceiras", "en": "Feedback from Partner Organizations"},
+        "feedback": get_object_or_404(Feedback, id=feedback_id)
+        }
     return render(request, "projetos/mostra_feedback.html", context)
 
 
@@ -1792,6 +1790,7 @@ def editar_projeto(request, primarykey):
         return redirect("projeto_completo", primarykey=primarykey)
 
     context = {
+        "titulo": {"pt": "Editar Projeto", "en": "Edit Project"},
         "projeto": projeto,
         "professores": Professor.objects.all(),
         "alocacoes": Alocacao.objects.filter(projeto=projeto),
