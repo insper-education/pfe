@@ -2360,144 +2360,18 @@ def informe_bancas(request, tipo):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def conceitos_obtidos(request, primarykey):  # acertar isso para pk
+def resultado_bancas(request, primarykey):  # acertar isso para pk
     """Visualiza os conceitos obtidos pelos alunos no projeto."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
-
     objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    avaliadores_inter = {}
-    avaliadores_final = {}
-    avaliadores_falconi = {}
-    avaliadores_probation = {}
-
-    for objetivo in objetivos:
-
-        # Bancas Intermediárias
-        exame = Exame.objects.get(titulo="Banca Intermediária")
-        bancas_inter = Avaliacao2.objects.filter(projeto=projeto,
-                                                 objetivo=objetivo,
-                                                 exame=exame)\
-            .order_by("avaliador", "-momento")
-
-        for banca in bancas_inter:
-            if banca.avaliador not in avaliadores_inter:
-                avaliadores_inter[banca.avaliador] = {}
-            if objetivo not in avaliadores_inter[banca.avaliador]:
-                avaliadores_inter[banca.avaliador][objetivo] = banca
-                avaliadores_inter[banca.avaliador]["momento"] = banca.momento
-            # Senão é só uma avaliação de objetivo mais antiga
-
-        # Bancas Finais
-        exame = Exame.objects.get(titulo="Banca Final")
-        bancas_final = Avaliacao2.objects.filter(projeto=projeto,
-                                                 objetivo=objetivo,
-                                                 exame=exame)\
-            .order_by("avaliador", "-momento")
-
-        for banca in bancas_final:
-            if banca.avaliador not in avaliadores_final:
-                avaliadores_final[banca.avaliador] = {}
-            if objetivo not in avaliadores_final[banca.avaliador]:
-                avaliadores_final[banca.avaliador][objetivo] = banca
-                avaliadores_final[banca.avaliador]["momento"] = banca.momento
-            # Senão é só uma avaliação de objetivo mais antiga
-
-        # Bancas Falconi
-        exame = Exame.objects.get(titulo="Falconi")
-        bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
-                                                   objetivo=objetivo,
-                                                   exame=exame)\
-            .order_by("avaliador", "-momento")
-
-        for banca in bancas_falconi:
-            if banca.avaliador not in avaliadores_falconi:
-                avaliadores_falconi[banca.avaliador] = {}
-            if objetivo not in avaliadores_falconi[banca.avaliador]:
-                avaliadores_falconi[banca.avaliador][objetivo] = banca
-                avaliadores_falconi[banca.avaliador]["momento"] = banca.momento
-            # Senão é só uma avaliação de objetivo mais antiga
-
-        # Bancas Probation
-        exame = Exame.objects.get(titulo="Probation")
-        bancas_probation = Avaliacao2.objects.filter(projeto=projeto,
-                                                     objetivo=objetivo,
-                                                     exame=exame)\
-            .order_by("avaliador", "-momento")
-        
-        for banca in bancas_probation:
-            if banca.avaliador not in avaliadores_probation:
-                avaliadores_probation[banca.avaliador] = {}
-            if objetivo not in avaliadores_probation[banca.avaliador]:
-                avaliadores_probation[banca.avaliador][objetivo] = banca
-                avaliadores_probation[banca.avaliador]["momento"] = banca.momento
-            # Senão é só uma avaliação de objetivo mais antiga
-
-
-    # Bancas Intermediárias
-    exame = Exame.objects.get(titulo="Banca Intermediária")
-    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by("avaliador", "-momento")
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores_inter:
-            avaliadores_inter[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes_estudantes" not in avaliadores_inter[observacao.avaliador]:
-            avaliadores_inter[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-        if "observacoes_orientador" not in avaliadores_inter[observacao.avaliador]:
-            avaliadores_inter[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-        # Senão é só uma avaliação de objetivo mais antiga
-
-    # Bancas Finais
-    exame = Exame.objects.get(titulo="Banca Final")
-    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by("avaliador", "-momento")
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores_final:
-            avaliadores_final[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes_estudantes" not in avaliadores_final[observacao.avaliador]:
-            avaliadores_final[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-        if "observacoes_orientador" not in avaliadores_final[observacao.avaliador]:
-            avaliadores_final[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-        # Senão é só uma avaliação de objetivo mais antiga
-
-    # Bancas Falconi
-    exame = Exame.objects.get(titulo="Falconi")
-    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by("avaliador", "-momento")
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores_falconi:
-            avaliadores_falconi[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes_estudantes" not in avaliadores_falconi[observacao.avaliador]:
-            avaliadores_falconi[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-        if "observacoes_orientador" not in avaliadores_falconi[observacao.avaliador]:
-            avaliadores_falconi[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-        # Senão é só uma avaliação de objetivo mais antiga
-
-    # Bancas Probation
-    exame = Exame.objects.get(titulo="Probation")
-    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by("avaliador", "-momento")
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores_probation:
-            avaliadores_probation[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes_estudantes" not in avaliadores_probation[observacao.avaliador]:
-            avaliadores_probation[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-        if "observacoes_orientador" not in avaliadores_probation[observacao.avaliador]:
-            avaliadores_probation[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-        # Senão é só uma avaliação de objetivo mais antiga
-
 
     context = {
         "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Results"},
         "objetivos": objetivos,
         "projeto": projeto,
-        "avaliadores_inter": avaliadores_inter,
-        "avaliadores_final": avaliadores_final,
-        "avaliadores_falconi": avaliadores_falconi,
-        "avaliadores_probation": avaliadores_probation,
     }
 
-    return render(request, "professores/conceitos_obtidos.html", context=context)
+    return render(request, "professores/resultado_bancas.html", context=context)
 
 
 @login_required

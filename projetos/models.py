@@ -1052,6 +1052,71 @@ class Banca(models.Model):
 
         return avaliacao
     
+    def get_cor(self):
+        if self.tipo_de_banca == 0:  # Banca Final
+            cor = "#74A559"
+        elif self.tipo_de_banca == 1:  # Banca Intermediária
+            cor = "#E6B734"
+        elif self.tipo_de_banca == 2:  # Falconi
+            cor = "#FF38A6"
+        elif self.tipo_de_banca == 3:  # Probation
+            cor = "#FF8C00"
+        else:
+            return "#FFFFFF"
+        return cor
+
+    def get_avaliadores(self):
+
+        objetivos = ObjetivosDeAprendizagem.objects.all()
+
+        avaliadores = {}
+
+        if self.tipo_de_banca == 0:  # Banca Final
+            exame_titulo = "Banca Final"
+            projeto = self.projeto
+            cor = "#74A559"
+        elif self.tipo_de_banca == 1:  # Banca Intermediária
+            exame_titulo = "Banca Intermediária"
+            projeto = self.projeto
+            cor = "#E6B734"
+        elif self.tipo_de_banca == 2:  # Falconi
+            exame_titulo = "Falconi"
+            projeto = self.projeto
+            cor = "#FF38A6"
+        elif self.tipo_de_banca == 3:  # Probation
+            exame_titulo = "Probation"
+            projeto = self.alocacao.projeto
+            cor = "#FF8C00"
+        else:
+            return None
+
+        for objetivo in objetivos:
+        
+            exame = Exame.objects.get(titulo=exame_titulo)
+            avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame).order_by("avaliador", "-momento")
+
+            for banca in avaliacoes:
+                if banca.avaliador not in avaliadores:
+                    avaliadores[banca.avaliador] = {}
+                if objetivo not in avaliadores[banca.avaliador]:
+                    avaliadores[banca.avaliador][objetivo] = banca
+                    avaliadores[banca.avaliador]["momento"] = banca.momento
+
+        exame = Exame.objects.get(titulo=exame_titulo)
+        observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).order_by("avaliador", "-momento")
+
+        for observacao in observacoes:
+            if observacao.avaliador not in avaliadores:
+                avaliadores[observacao.avaliador] = {}
+            if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
+                avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
+            if "observacoes_orientador" not in avaliadores[observacao.avaliador]:
+                avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
+
+        return avaliadores
+
+
+    
     def get_relatorio(self):
         if self.tipo_de_banca == 0: # Final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")

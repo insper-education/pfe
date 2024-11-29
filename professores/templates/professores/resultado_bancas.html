@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Abril de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load rubricas %}
+  
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    table, th, td {border: 1px solid lightgrey;}
+    tbody tr:nth-child(even) {background-color: #f2f2f2;}
+    tbody tr:nth-child(odd) {background-color: #f9f9f9;}
+    ul,ol {padding-left: 28px;}
+
+  </style>
+
+  {% comment %} {% include "cores_bancas_mentorias.html" %} {% endcomment %}
+
+  {% include "converte_notas.html" %}
+  {% include "avalia_objetivos.html" %}
+
+  <script>
+    let bancas = [];
+    for (let i = 0; i < 5; i++) {
+        bancas.push(new Banca());
+    }
+  </script>
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  <strong>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display: none;">Project:</span>
+  </strong>
+  [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
+  <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
+
+  <strong>
+    <span lang="pt">Semestre:</span>
+    <span lang="en" style="display: none;">Semester:</span>
+  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+
+  {% if projeto.orientador %}
+    <strong>
+      <span lang="pt">Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
+      <span lang="en" style="display: none;">Advisor:</span>
+    </strong>
+    <a href="{% url 'professor_detail' projeto.orientador.id %}">
+      {{projeto.orientador.user.get_full_name}}
+    </a>
+    <br>
+  {% endif %}
+
+  {% with coorientadores=projeto.coorientador_set.all %}
+    {% if coorientadores %}
+      <strong>
+        <span lang="pt">Coorientador:</span>
+        <span lang="en" style="display: none;">Co-advisor:</span>
+      </strong>
+      {% for coorientador in coorientadores %}
+          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+            {{coorientador.usuario.get_full_name}} 
+          </a>
+          {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
+          {% if not forloop.last %}; {% endif %}
+      {% endfor %}
+      </span>
+      <br>
+    {% endif %}
+  {% endwith %}
+
+  {% include "tipo_projeto.html" with com_tipo=True %}
+  
+  <strong style="display: inline-block; margin-top: 6px;">
+    <span lang="pt">Grupo:</span>
+    <span lang="en" style="display: none;">Group:</span>
+  </strong>
+  <ul>
+  {% for alocacao in projeto.alocacao_set.all %}
+    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+      <li>
+        {{alocacao.aluno.user.get_full_name}} 
+        [{{ alocacao.aluno.curso2 }}]
+        &lt;{{alocacao.aluno.user.email}}&gt; 
+      </li>
+    </a>
+  {% endfor %}
+  </ul>
+
+
+  {% for banca in projeto.banca_set.all %}
+    
+    <div class="div_arredondado">
+      <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+        <span lang="pt">Banca</span>
+        <span lang="en" style="display: none;">Examining Board</span>
+        {{banca.get_tipo_de_banca_display}} ({{banca.startDate|date:"d/m/y"}})
+        </a>
+        <br><small style="font-size: 11px;">★ 
+          <span lang="pt">Formulário:</span>
+          <span lang="en" style="display: none;">Form:</span>
+          <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+      </h5>
+      {% include "membros_da_banca.html" %}
+    
+      <table>    
+        {% for avaliador, objs in banca.get_avaliadores.items %}
+            <tr><td>
+              <strong>
+                <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
+                <span lang="en" style="display: none;">Evaluator:</span>
+              </strong>
+              <a href="{% url 'user_detail' avaliador.id %}">
+                {{avaliador.get_full_name}}
+              </a><br>
+              {% if objs.momento %}
+                <strong>
+                  <span lang="pt">Avaliado em:</span>
+                  <span lang="en" style="display: none;">Evaluated on:</span>
+                </strong>
+                {{objs.momento}}<br>
+              {% endif %}
+              {% if objs.items %}
+                <strong>
+                  <span lang="pt">Conceitos:</span>
+                  <span lang="en" style="display: none;">Grades:</span>
+                </strong><br>
+                <ul style="list-style-type: '&#x21A3; ';">
+                  {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+                    <li>
+                      <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                      <span data-toggle="tooltip" data-html="true" animation="true" title=
+                      {% if banca.tipo_de_banca == 1 %} 
+                        "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
+                      {% else %}
+                        "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
+                      {% endif %}>
+                    <span id="banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                    <script>
+                      $("#banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                        {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                      );
+                      objetivo_tmp = new Objetivo();
+                      objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                      bancas[{{banca.tipo_de_banca}}].add_objetivo(objetivo_tmp)
+                      {% if conceito.nota %}
+                        bancas[{{banca.tipo_de_banca}}].dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                      {% endif %}
+                    </script>
+
+                  {% endif %}{% endfor %}
+                </ul>
+              {% endif %}
+              {% if objs.observacoes_estudantes %}  
+                &nbsp;<u><span style="font-weight: 500;">
+                  <span lang="pt">Observações para Estudantes</span>
+                  <span lang="en" style="display: none;">Observations for Students</span>
+                </span>:</u> {{objs.observacoes_estudantes}}<br>
+                {% if objs.observacoes_orientador %}<br>{% endif %}
+              {% endif %}
+              {% if objs.observacoes_orientador %}  
+                &nbsp;<u><span style="font-weight: 500;">
+                  <span lang="pt">Observações para Orientador</span>
+                  <span lang="en" style="display: none;">Observations for Advisor</span>
+                </span>:</u> {{objs.observacoes_orientador}}<br>
+              {% endif %}
+            </td></tr>
+        {% endfor %}
+
+        <tr style="background-color: {{banca.get_cor}}; color: darkslategrey"><td>
+          <b>
+            <span lang="pt">Média das Avaliações da Banca</span>
+            <span lang="en" style="display: none;">Average of the Examining Board</span>
+            {{banca.get_tipo_de_banca_display}}:
+            <ul id="banca{{banca.tipo_de_banca}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
+          </b>
+          <span id="banca{{banca.tipo_de_banca}}"></span>
+          <script>
+            for (var key in bancas[{{banca.tipo_de_banca}}].dict) {
+              if(bancas[{{banca.tipo_de_banca}}].dict[key].avaliacoes>0) $("#banca{{banca.tipo_de_banca}}_med_aval").append(bancas[{{banca.tipo_de_banca}}].dict[key].nota_texto());
+            }
+            $("#banca{{banca.tipo_de_banca}}").html(bancas[{{banca.tipo_de_banca}}].media_calculada());
+          </script>
+        </td></tr>
+
+      </table>
+    
+    </div>
+    <br>
+    
+  {% endfor %}
+
+  <b>
+    <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
+     e depois de 24 horas que a última avaliação foi feita.</span>
+    <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
+      and after 24 hours that the last evaluation was made.</span>
+  </b>
+
+  {% include "linguas.html" %}
+
+{% endblock %}

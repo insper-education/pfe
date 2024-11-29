@@ -122,9 +122,9 @@ urlpatterns = [
          views.entrega_avaliar,
          name="entrega_avaliar"),
 
-    path("conceitos_obtidos/<int:primarykey>",
-         views.conceitos_obtidos,
-         name="conceitos_obtidos"),
+    path("resultado_bancas/<int:primarykey>",
+         views.resultado_bancas,
+         name="resultado_bancas"),
 
     path("coorientadores_tabela_completa/",
          views.coorientadores_tabela_completa,
