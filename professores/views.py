@@ -1626,13 +1626,13 @@ def calcula_media_notas_bancas(obj_avaliados):
     
     message += "&#10149; Nota Final Calculada = "
     if len(obj_avaliados):
-        message += '<span>'
+        message += "<span>"
         message += "<b style='font-size: 1.16em;'>"
         message += "%.2f" % (medias/len(obj_avaliados))
         message += "</b><br>"
-        message += '</span>'
+        message += "</span>"
     else:
-        message += '<span>N/A</span>'
+        message += "<span>N/A</span>"
 
     message += "</b></div><br><br>"
 
@@ -1640,7 +1640,7 @@ def calcula_media_notas_bancas(obj_avaliados):
 
 
 # Mensagem preparada para o orientador/coordenador
-def mensagem_orientador(banca):
+def mensagem_orientador(banca, geral=False):
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
     # Trocando tipo de banca para tipo de avaliação
@@ -1696,7 +1696,10 @@ def mensagem_orientador(banca):
         "objetivos": objetivos,
         "projeto": projeto,
     }
-    message = render_message("Informe de Avaliação de Banca", context_carta)
+    if geral:
+        message = render_message("Informe Geral de Avaliação de Banca", context_carta)
+    else:
+        message = render_message("Informe de Avaliação de Banca", context_carta)
     
     return message+message2+message3
 
@@ -2318,25 +2321,25 @@ def informe_bancas(request, tipo):
         for banca in bancas:
 
             # Envio de mensagem para Orientador / Coordenação
-            message = mensagem_orientador(banca)
-            subject = "Capstone | Resultado da Avaliação de Banca: {0}".format(banca.projeto)
+            message = mensagem_orientador(banca, geral=True)
+            subject = "Capstone | Resultado Geral da Avaliação de Banca: {0}".format(banca.projeto)
 
             recipient_list = [banca.projeto.orientador.user.email, ]
-            
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-                    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-                    context = {"mensagem": message,}
-                    return render(request, "generic.html", context=context)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-                context = {"mensagem": message,}
-                return render(request, "generic.html", context=context)
+            print(message)
+            # try:
+            #     check = email(subject, recipient_list, message)
+            #     if check != 1:
+            #         error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+            #         logger.error(error_message)
+            #         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            #         context = {"mensagem": message,}
+            #         return render(request, "generic.html", context=context)
+            # except Exception as e:
+            #     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
+            #     logger.error(error_message)
+            #     message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+            #     context = {"mensagem": message,}
+            #     return render(request, "generic.html", context=context)
 
         resposta = "Informe enviado para:<br>"
 
