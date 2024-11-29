@@ -2325,21 +2325,20 @@ def informe_bancas(request, tipo):
             subject = "Capstone | Resultado Geral da Avaliação de Banca: {0}".format(banca.projeto)
 
             recipient_list = [banca.projeto.orientador.user.email, ]
-            print(message)
-            # try:
-            #     check = email(subject, recipient_list, message)
-            #     if check != 1:
-            #         error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-            #         logger.error(error_message)
-            #         message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-            #         context = {"mensagem": message,}
-            #         return render(request, "generic.html", context=context)
-            # except Exception as e:
-            #     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-            #     logger.error(error_message)
-            #     message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-            #     context = {"mensagem": message,}
-            #     return render(request, "generic.html", context=context)
+            try:
+                check = email(subject, recipient_list, message)
+                if check != 1:
+                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
+                    logger.error(error_message)
+                    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                    context = {"mensagem": message,}
+                    return render(request, "generic.html", context=context)
+            except Exception as e:
+                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
+                logger.error(error_message)
+                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
+                context = {"mensagem": message,}
+                return render(request, "generic.html", context=context)
 
         resposta = "Informe enviado para:<br>"
 
