@@ -3073,6 +3073,7 @@ def relato_avaliar(request, projeto_id, evento_id):
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
+        # print("AJAX")
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 

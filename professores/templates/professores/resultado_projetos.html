@@ -256,46 +256,17 @@
     </script>
 
   </div>
+
   <p>&nbsp;</p>
 
-  <script>
-  
-    var request_ajax_r = null;
-    var xhrCount = 0;  // Para contar as chamadas e usar somente a última
+  {% include "edicoes_ajax.html" %}
 
-    function carrega_semestre(){
-
-      var seqNumber = ++xhrCount;
-
-      $(".to_label").addClass("label_animado");
-
-      var edicao = $(".filter option:selected").attr("value");
-      request_ajax_r = $.ajax({
-          type: "POST",
-          data: {
-              edicao: edicao,
-              "csrfmiddlewaretoken": "{{ csrf_token }}",
-          },
-          success: function(response){
-            if (seqNumber === xhrCount) {
-              $(".atualizar").replaceWith($(".atualizar",response));
-              $(".tooltip-inner").remove();
-              $(".tooltip-arrow").remove();
-              $(".to_label").removeClass("label_animado");
-            }
-            {% include "linguas_ajax.html" %}
-          },
-          {% include "ajax_error_function.js" %}
-      });
-    }
-
-    $(".filter").change(carrega_semestre);    
-    $(document).ready(carrega_semestre);
-    function carrega_pagina() {};
-    function carrega_site() {
+  <script>  
+    {% comment %} ISSO ESTA FAZENDO CHAMAR DUAS VEZES {% endcomment %}
+    {% comment %} function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     };
-    window.onload = carrega_site;
+    window.onload = carrega_site; {% endcomment %}
   </script>
 
   {% include "linguas.html" %}
