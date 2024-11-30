@@ -2360,17 +2360,27 @@ def informe_bancas(request, tipo):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def resultado_bancas(request, primarykey):  # acertar isso para pk
-    """Visualiza os conceitos obtidos pelos alunos no projeto."""
-    projeto = get_object_or_404(Projeto, pk=primarykey)
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
+def resultado_banca(request, pk):
+    """Visualiza o resultado de uma banca banca."""
+    banca = get_object_or_404(Banca, pk=pk)
     context = {
-        "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Results"},
-        "objetivos": objetivos,
-        "projeto": projeto,
+        "titulo": {"pt": "Resultado Banca", "en": "Examination Board Result"},
+        "objetivos": ObjetivosDeAprendizagem.objects.all(),
+        "banca": banca,
+        "projeto": banca.get_projeto(),
     }
+    return render(request, "professores/resultado_banca.html", context=context)
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def resultado_bancas(request, pk):
+    """Visualiza os resultados das bancas de um projeto."""
+    context = {
+        "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Result"},
+        "objetivos": ObjetivosDeAprendizagem.objects.all(),
+        "projeto": get_object_or_404(Projeto, pk=pk),
+    }
     return render(request, "professores/resultado_bancas.html", context=context)
 
 

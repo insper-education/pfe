@@ -44,32 +44,32 @@
   {% endif %}
   <br>
 
-  {% if banca.projeto %}
+  {% if banca.get_projeto %}
     <b>
       <span lang="pt">Título do Projeto:</span>
       <span lang="en" style="display: none;">Project Title:</span>
     </b> 
-    <a href="{% url 'projeto_completo' banca.projeto.id %}">
-      {% if banca.projeto.titulo_final and banca.projeto.titulo_final != banca.projeto.proposta.titulo %}
-        {{banca.projeto.titulo_final}}</a><br>
+    <a href="{% url 'projeto_completo' banca.get_projeto.id %}">
+      {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
+        {{banca.get_projeto.titulo_final}}</a><br>
         <small>
           <span lang="pt">Título original da proposta:</span>
           <span lang="en" style="display: none;">Original title of the proposal:</span>
-          <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.proposta.titulo}}</a>
+          <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
         </small>
       {% else %}
-        {{banca.projeto.get_titulo}}</a>
+        {{banca.get_projeto.get_titulo}}</a>
       {% endif %}
-      {% include "tipo_projeto.html" with projeto=banca.projeto %}
+      {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
   {% endif %}
   <br>
-  {% if banca.projeto.organizacao %}
+  {% if banca.get_projeto.organizacao %}
     <b>
       <span lang="pt">Organização:</span>
       <span lang="en" style="display: none;">Organization:</span>
     </b>
-    <a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-      {{ banca.projeto.organizacao.nome }}
+    <a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
+      {{ banca.get_projeto.organizacao.nome }}
     </a>
   {% endif %}
   <br>
@@ -86,16 +86,16 @@
     </b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
   {% endif %}
 
-  {% if banca.projeto %}
-    <br><b>&#9733;
-      <span lang="pt">Formulário de avaliação</span>
-      <span lang="en" style="display: none;">Evaluation form</span>
-    </b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
-  {% endif %}
+  
+  <br><b>&#9733;
+    <span lang="pt">Formulário de avaliação</span>
+    <span lang="en" style="display: none;">Evaluation form</span>
+  </b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
+
 
   {% include "ver_documentos.html" %}
 
-  {% with site=banca.projeto.get_site %}
+  {% with site=banca.get_projeto.get_site %}
   {% if site %}
     <b>Site:</b><br>
     <div style="padding-left: 22px;">
@@ -104,20 +104,20 @@
   {% endif %}
   {% endwith %}
 
-  {% if banca.projeto.orientador %}
-      {% if banca.projeto.proposta.intercambio %}
+  {% if banca.get_projeto.orientador %}
+      {% if banca.get_projeto.proposta.intercambio %}
         <b>
-          <span lang="pt">Professor{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
+          <span lang="pt">Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
           <span lang="en" style="display: none;">Responsible Professor:</span>
         </b>
       {% else %}
         <b>
-          <span lang="pt">Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
+          <span lang="pt">Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
           <span lang="en" style="display: none;">Advisor:</span>
         </b>
       {% endif %}
-      {{banca.projeto.orientador.user.get_full_name}} 
-      <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+      {{banca.get_projeto.orientador.user.get_full_name}} 
+      <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
     <br>
   {% endif %}
   <br>
@@ -128,10 +128,10 @@
   </b>
   <ol>
     {% if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %} {% comment %} Intermediária ou Final {% endcomment %}
-      <li>{{banca.projeto.orientador.user.get_full_name}} 
-        <span lang="pt">[Orientador{% if banca.projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
+      <li>{{banca.get_projeto.orientador.user.get_full_name}} 
+        <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
         <span lang="en" style="display: none;">[Advisor]</span>
-        <a href="mailto:{{banca.projeto.orientador.user.email}}">&lt;{{banca.projeto.orientador.user.email}}&gt;</a>
+        <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
       </li>
     {% endif %}
     {% for membro in banca.membros %}
@@ -144,11 +144,39 @@
     {% endfor %}
   </ol>
 
-  {% include "grupo_estudantes.html" with projeto=banca.projeto %}
+  {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
   <br>
 
+  {% comment %} PROBATION {% endcomment %}
+  {% if banca.tipo_de_banca == 3 %}
+    <b>
+      <span lang="pt">Estudante:</span>
+      <span lang="en" style="display: none;">Student:</span>
+    </b><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <u>
+    {% if banca.alocacao %}
+      <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
+      <span class="opt_full curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
+      <span class="opt_short curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
+      <span class="opt_full emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
+      <span class="opt_short emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+    {% else %}
+      <span class="opt_full">Estudante não alocado</span>
+    {% endif %}
+    </u>
+    <br><br>
+
+  {% endif %}
+
+
+
+
+
+
+
   {% if not bloqueado %}
-    <a href="{% url 'resultado_bancas' banca.projeto.id %}" class="btn btn-primary mb-1">
+    <a href="{% url 'resultado_banca' banca.id %}" class="btn btn-primary mb-1">
       <span lang="pt">Resultados da Banca</span>
       <span lang="en" style="display: none;">Examination Board Results</span>
     </a>

@@ -98,13 +98,31 @@
   {% endfor %}
   </ul>
 
-  {% for banca in projeto.banca_set.all %}
+  {% comment %} PROBATION {% endcomment %}
+  {% if banca.tipo_de_banca == 3 %}
+    <b>
+      <span lang="pt">Estudante:</span>
+      <span lang="en" style="display: none;">Student:</span>
+    </b><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <u>
+    {% if banca.alocacao %}
+      <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
+      <span class="opt_full curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
+      <span class="opt_short curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
+      <span class="opt_full emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
+      <span class="opt_short emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+    {% else %}
+      <span class="opt_full">Estudante não alocado</span>
+    {% endif %}
+    </u>
+    <br><br>
 
-    {% include "dado_banca.html" %}
-    <br>
-    
-  {% endfor %}
+  {% endif %}
 
+  {% include "dado_banca.html" %}
+  <br>
+  
   <b>
     <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
      e depois de 24 horas que a última avaliação foi feita.</span>
