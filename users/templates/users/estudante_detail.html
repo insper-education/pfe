@@ -15,7 +15,6 @@
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
 
   <style>
@@ -51,13 +50,12 @@
   <strong>
     <span lang="pt">Periodo do Capstone:</span>
     <span lang="en">Capstone Semester:</span>
-    </strong> 
+  </strong> 
   {% if aluno.anoPFE and aluno.semestrePFE %}
     {{aluno.anoPFE}}.{{aluno.semestrePFE}}
   {% else %}
     <span lang="pt">Período não definido</span>
     <span lang="en">Not defined</span>
-    
   {% endif %}
   <br>
   
@@ -67,12 +65,10 @@
     {% if aluno.cr %}
       <strong>CR:</strong> {{aluno.cr}}<br>
     {% endif %}
-    
     {% include "dados_usuario.html" with user=aluno.user %}
   {% endif %}
   
   {% comment %} Prenchido pelo estudante {% endcomment %}
-
   {% if aluno.trabalhou %}
     <br><strong>{{aluno.get_trabalhou_help_text }}</strong> {{ aluno.trabalhou|linebreaks }}
   {% endif %}
@@ -98,53 +94,59 @@
   {% endwith %}
   <br>
 
-  {% if user.tipo_de_usuario != 1 %}
+  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
 
-      {% if aluno.opcao_set.all %}
-        <hr>
-        <h3>Propostas Selecionadas</h3>
-        <p id="regular"> 
+    {% if aluno.opcao_set.all %}
+      <hr>
+      <h3>
+        <span lang="pt">Propostas Selecionadas</span>
+        <span lang="en" style="display: none;">Selected Proposals</span>
+      </h3>
+      <p id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
-                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome}})
-                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.proposta %}%|
-                </p>
-                </a>
-            {% endif %}
+          {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
+            <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+            <p><b>{{opcao.prioridade}}</b> - 
+                {{opcao.proposta.titulo}}
+                ({{opcao.proposta.organizacao.nome}})
+                {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                |{% mede_aderencia aluno opcao.proposta %}%|
+            </p>
+            </a>
+          {% endif %}
         {% endfor %}
-        </p>
-        <script>
-            if($.trim($("#regular").html())=='') {
-                $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
-            }
-        </script>
-        <p id="quebra" style="line-height:2px; display:none">
-            --------------------------------------------------------------------------------------
-        </p>
-        {% for opcao in aluno.opcao_set.all %}
-            {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
-                <script>
-                  $("#quebra").show();
-                </script>
-                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <p><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.proposta.titulo}}
-                    ({{opcao.proposta.organizacao.nome}})
-                    {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                    |{% mede_aderencia aluno opcao.proposta %}%|
-                </p>
-                </a>
-            {% endif %}
-        {% endfor %}
+      </p>
+      <script>
+        if($.trim($("#regular").html())=='') {
+          $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
+        }
+      </script>
+      <p id="quebra" style="line-height:2px; display:none">
+          --------------------------------------------------------------------------------------
+      </p>
+      {% for opcao in aluno.opcao_set.all %}
+        {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
+          <script>
+            $("#quebra").show();
+          </script>
+          <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+            <p><b>{{opcao.prioridade}}</b> - 
+                {{opcao.proposta.titulo}}
+                ({{opcao.proposta.organizacao.nome}})
+                {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+                |{% mede_aderencia aluno opcao.proposta %}%|
+            </p>
+          </a>
+        {% endif %}
+      {% endfor %}
     {% endif %}
 
     {% if certificados %}
       <hr>
-      <h3>Certificados</h3>
+      <h3>
+        <span lang="pt">Certificados</span>
+        <span lang="en" style="display: none;">Certificates</span>
+      </h3>
       <ul>
         {% for certificado in certificados %}
           <li>
@@ -161,95 +163,132 @@
     {% endif %}
 
     {% if alocacoes.count > 0 %}
-        <hr>
-        {% if alocacoes.count == 1 %}
-            <h3>Alocação</h3>
-        {% else %}
-            <h3>Alocações</h3>
-        {% endif %}
-        {% for alocado in alocacoes %}
-            <span style="color:black">Projeto: </span>
-            <a href="{% url 'projeto_completo' alocado.projeto.id %}">
-                [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
-                ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
-                {% include "tipo_projeto.html" with projeto=alocado.projeto %}
-            </a>
-            <br>
-            
-            {% include "display_notas_individuais.html" with notas=alocado.get_notas %}
-            <br><br>
-
-            {% if not alocado.get_relatos|empty_zip and alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
-                &nbsp;&nbsp;<span class="tit_rel">Relatos Quinzenais:</span><br>
-                {% for evento, relato, ordem in alocado.get_relatos %}
-                    <p style="padding-left: 0.8em;">
-                    {% if relato %}
-                      <a href="{% url 'relato_visualizar' relato.id %}">
-                        {{ordem|add:1}}&ordm; - 
-                        <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                        <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                        Preenchido <span class="opt_full">pelo estudante em</span>
-                        <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
-                        <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
-                      </a>
-                      {% if relato.avaliacao >= 0 %}
-                        {% if relato.avaliacao > 0 %}
-                          <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
-                        {% else %}
-                          <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
-                        {% endif %}
-                      {% else %}
-                        <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
-                      {% endif %}
-                    {% else %}
-                      {{ordem|add:1}}&ordm; - 
-                      <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                      <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                      Não preenchido por estudante
-                    {% endif %}
-                    </p>
-                {% endfor %}
-                <br>
-            {% endif %}
-            {% if not forloop.last %}
-                <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
-            {% endif %}
-        
-        {% endfor %}
+      <hr>
+      {% if alocacoes.count == 1 %}
+        <h3>
+          <span lang="pt">Alocação</span>
+          <span lang="en" style="display: none;">Allocation</span>
+        </h3>
+      {% else %}
+        <h3>
+          <span lang="pt">Alocações</span>
+          <span lang="en" style="display: none;">Allocations</span>
+        </h3>
       {% endif %}
+      {% for alocado in alocacoes %}
+        <span style="color:black">
+          <strong>
+            <span lang="pt">Projeto:</span>
+            <span lang="en" style="display: none;">Project:</span>
+          </strong>
+        </span>
+        <a href="{% url 'projeto_completo' alocado.projeto.id %}">
+          [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
+          ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
+          {% include "tipo_projeto.html" with projeto=alocado.projeto %}
+        </a>
+        <br>
+        
+        {% include "display_notas_individuais.html" with notas=alocado.get_notas %}
+        <br><br>
 
-    {% endif %}
-
-
-    {% if estilos_respostas %}
-      <br><hr>
-      <h4>Estilos de Comunicação</h4>
-      {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
-      <b>Resultados:</b><br>
-      <table>
-        <tbody>
-          <tr><td>
-          {% for metrica, valor in estilos_respostas.items %}
-            <strong>{{ metrica }}:</strong> {{ valor }}<br>
-            {% if forloop.counter|divisibleby:2 %}</td></tr>
-              {% if not forloop.last %}<tr><td>{% endif %}
-            {% endif %}
+        {% if not alocado.get_relatos|empty_zip and alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
+          &nbsp;&nbsp;<span class="tit_rel">
+            <span lang="pt">Relatos Quinzenais:</span>
+            <span lang="en" style="display: none;">Biweekly Reports</span>
+          </span><br>
+          {% for evento, relato, ordem in alocado.get_relatos %}
+            <p style="padding-left: 0.8em;">
+              {% if relato %}
+                <a href="{% url 'relato_visualizar' relato.id %}">
+                  {{ordem|add:1}}&ordm; - 
+                  <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                  <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                  Preenchido <span class="opt_full">pelo estudante em</span>
+                  <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
+                  <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
+                </a>
+                {% if relato.avaliacao >= 0 %}
+                  {% if relato.avaliacao > 0 %}
+                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
+                  {% else %}
+                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
+                  {% endif %}
+                {% else %}
+                  <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
+                {% endif %}
+              {% else %}
+                {{ordem|add:1}}&ordm; - 
+                <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                <span lang="pt">Não preenchido por estudante</span>
+                <span lang="en" style="display: none;">Not filled by student</span>
+              {% endif %}
+            </p>
           {% endfor %}
-        </tbody>
-      </table>
+          <br>
+        {% endif %}
+
+        {% comment %} BANCAS {% endcomment %}
+        &nbsp;&nbsp;<span class="tit_rel">
+          <span lang="pt">Participação em Bancas</span>
+          <span lang="en" style="display: none;">Examination Boards</span>
+        </span><br>
+        <ul>
+        {% for banca in alocado.get_bancas %}
+          <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.get_tipo_de_banca_display}}</a></li>
+        {% endfor %}
+        </ul>
+        <br>
+
+        {% if not forloop.last %}
+            <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
+        {% endif %}
+      
+      {% endfor %}
     {% endif %}
 
-    {% if user.tipo_de_usuario == 4 %}
-      <a href="{% url 'edita_usuario' aluno.user.id %}">
-        <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
-      </a>
-    {% endif %}
+  {% endif %}
 
-    <script>
-        function carrega_pagina() {  }
-        window.onload = carrega_pagina
-    </script> 
 
-    {% include "linguas.html" %}
+  {% if estilos_respostas %}
+    <br><hr>
+    <h4>
+      <span lang="pt">Estilos de Comunicação</span>
+      <span lang="en" style="display: none;">Communication Styles</span>
+    </h4>
+    {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
+    <b>
+      <span lang="pt">Resultados:</span>
+      <span lang="en" style="display: none;">Results:</span>
+    </b><br>
+    <table>
+      <tbody>
+        <tr><td>
+        {% for metrica, valor in estilos_respostas.items %}
+          <strong>{{ metrica }}:</strong> {{ valor }}<br>
+          {% if forloop.counter|divisibleby:2 %}</td></tr>
+            {% if not forloop.last %}<tr><td>{% endif %}
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if user.tipo_de_usuario == 4 %}
+    <a href="{% url 'edita_usuario' aluno.user.id %}">
+      <button class="btn btn-primary mb-1" style="float: right;">
+        <span lang="pt">Editar</span>
+        <span lang="en" style="display: none;">Edit</span>
+      </button>
+    </a>
+  {% endif %}
+
+  <script>
+      function carrega_pagina() {  }
+      window.onload = carrega_pagina
+  </script> 
+
+  {% include "linguas.html" %}
 
 {% endblock %}

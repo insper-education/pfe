@@ -953,6 +953,12 @@ class Alocacao(models.Model):
         """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
         certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
         return certificados
+    
+    def get_bancas(self):
+        """Retorna as bancas que estudante participou."""
+        bancas_proj = Banca.objects.filter(projeto=self.projeto)
+        bancas_prob = Banca.objects.filter(alocacao=self)
+        return bancas_proj | bancas_prob
 
 
 class UsuarioEstiloComunicacao(models.Model):
