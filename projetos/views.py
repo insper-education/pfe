@@ -989,7 +989,7 @@ def analise_notas(request):
         valor = {"ideal": 7.0, "regular": 5.0}
 
         # Criando espaço para todos as notas
-        notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rpl", "ppf", "api", "apg", "afg", "afi", "p"]
+        notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rp", "ppf", "api", "apg", "afg", "afi", "p"]
         notas = {key: {"ideal": 0, "regular": 0, "inferior": 0} for key in notas_keys}
 
         notas_lista = [x.get_notas for x in medias_semestre]

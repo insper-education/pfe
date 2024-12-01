@@ -499,7 +499,7 @@ class Aluno(models.Model):
 
         return edicao
 
-    @property
+    #@property
     def get_notas(self, request=None, ano=None, semestre=None):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante
