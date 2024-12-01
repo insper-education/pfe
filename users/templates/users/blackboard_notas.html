@@ -9,16 +9,12 @@
   {% load static %}
   {% load coluna %}
   <style>
-    table {
-      border-collapse: collapse;
-    }
+    table {border-collapse: collapse;}
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
     }
-    thead {
-      background-color: #EEF;
-    }
+    thead {background-color: #EEF;}
   </style>
 
 {% endblock %}
@@ -31,7 +27,12 @@
   </span>
 
   {% comment %} {% include "edicoes.html" %}<br> {% endcomment %}
-
+  <b>
+    <span lang="pt">Edição:</span>
+    <span lang="en" style="display: none;">Edition:</span>
+  </b>
+  {{ anosemestre }}<br>
+  
   <div class="atualizar">
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
@@ -82,10 +83,34 @@
         <label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}><br>
       {% endfor %}
       <br>
+
+      <b>
+        <span lang="pt">Cursos</span>
+        <span lang="en" style="display: none;">Programs</span>
+      </b><br>
+      {% for curso in cursos %}
+        <input type="checkbox" id="curso{{curso.id}}" name="curso" value="{{curso.id}}" checked>
+        <label for="curso{{curso.id}}">
+          <span>{{curso}}</span>
+        </label><br>
+      {% endfor %}
+      <br>
+
+      <b>
+        <span lang="pt">Tipo de Arquivo</span>
+        <span lang="en" style="display: none;">File Type</span>
+      </b><br>
+      <input type="radio" id="xls" name="tipo" value="xls" checked>
+      <label for="xls">Tab-separated File (.xls) [utf-16le]</label><br>
+      <input type="radio" id="csv" name="tipo" value="csv">
+      <label for="csv">Comma Separated Values (.csv) [utf-8-sig]</label><br>
+      <br>
+
       <button class="btn btn-primary mb-1" type="submit">
         <span lang="pt">Download Arquivo</span>
         <span lang="en" style="display: none;">Download File</span>
       </button>
+      <br>
 
     </form>
 

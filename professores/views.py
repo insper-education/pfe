@@ -3096,9 +3096,15 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             relatorio_preliminar = []
             relatorio_intermediario = []
             relatorio_final = []
-            banca_intermediaria = []
-            banca_final = []
-            banca_falconi = []
+            
+
+            notas = {}
+            nomes_bancas = ["Banca Final", "Banca Intermediária"]
+            for nome in nomes_bancas:
+                notas[nome] = []
+            nomes_f = ["Falconi"]
+            for nome in nomes_f:
+                notas[nome] = []
 
             for projeto in projetos:
 
@@ -3134,63 +3140,55 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
                     relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
 
-                exame = Exame.objects.get(titulo="Banca Final")
-                aval_banc_final = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
-                nota_banca_final, peso, avaliadores = Aluno.get_banca(None, aval_banc_final, eh_banca=True)
-                if peso is not None:
-                    banca_final.append({"conceito": "{0}".format(converte_letra(nota_banca_final, espaco="&nbsp;")),
-                                                "nota_texto": "{0:5.2f}".format(nota_banca_final),
-                                                "nota": nota_banca_final})                    
-                else:
-                    banca_final.append({"conceito": "&nbsp;-&nbsp;",
-                                                "nota_texto": "",
-                                                "nota": 0})
 
 
-                exame = Exame.objects.get(titulo="Banca Intermediária")
-                aval_banc_interm = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Int.
-                nota_banca_intermediaria, peso, avaliadores = Aluno.get_banca(None, aval_banc_interm, eh_banca=True)
-                if peso is not None:
-                    banca_intermediaria.append({"conceito": "{0}".format(converte_letra(nota_banca_intermediaria, espaco="&nbsp;")),
-                                                "nota_texto": "{0:5.2f}".format(nota_banca_intermediaria),
-                                                "nota": nota_banca_intermediaria})                    
-                else:
-                    banca_intermediaria.append({"conceito": "&nbsp;-&nbsp;",
-                                                "nota_texto": "",
-                                                "nota": 0})
+                
+                for titulo_aval in nomes_bancas:
+                    exame = Exame.objects.get(titulo=titulo_aval)
+                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
+                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=True)
+                    if peso is not None:
+                        notas[titulo_aval].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
+                                                    "nota_texto": "{0:5.2f}".format(nota_b),
+                                                    "nota": nota_b})                    
+                    else:
+                        notas[titulo_aval].append({"conceito": "&nbsp;-&nbsp;",
+                                                    "nota_texto": "",
+                                                    "nota": 0})
+
                     
+                for titulo_aval in nomes_f:
+                    exame = Exame.objects.get(titulo=titulo_aval)
+                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
+                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=False)
+                    if peso is not None:
+                        nomes = ""
+                        for nome in avaliadores:
+                            nomes += "&#8226; "+str(nome)+"<br>"
 
-                exame = Exame.objects.get(titulo="Falconi")
-                aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-                nota_banca_falconi, peso, avaliadores = Aluno.get_banca(None, aval_banc_falconi)
-                if peso is not None:
-                    nomes = ""
-                    for nome in avaliadores:
-                        nomes += "&#8226; "+str(nome)+"<br>"
+                        certificacao = ""
+                        if nota_b >= 8:
+                            certificacao = "E"  # Excelencia FALCONI-INSPER
+                        elif nota_b >= 6:
+                            certificacao = "D"  # Destaque FALCONI-INSPER
 
-                    certificacao = ""
-                    if nota_banca_falconi >= 8:
-                        certificacao = "E"  # Excelencia FALCONI-INSPER
-                    elif nota_banca_falconi >= 6:
-                        certificacao = "D"  # Destaque FALCONI-INSPER
-
-                    banca_falconi.append({"avaliadores": "{0}".format(nomes),
-                                          "nota_texto": "{0:5.2f}".format(nota_banca_falconi),
-                                          "nota": nota_banca_falconi,
-                                          "certificacao": certificacao})
-                    
-                else:
-                    banca_falconi.append({"avaliadores": "&nbsp;-&nbsp;",
-                                          "nota_texto": "",
-                                          "nota": 0,
-                                          "certificacao": ""})
+                        notas[titulo_aval].append({"avaliadores": "{0}".format(nomes),
+                                            "nota_texto": "{0:5.2f}".format(nota_b),
+                                            "nota": nota_b,
+                                            "certificacao": certificacao})
+                        
+                    else:
+                        notas[titulo_aval].append({"avaliadores": "&nbsp;-&nbsp;",
+                                            "nota_texto": "",
+                                            "nota": 0,
+                                            "certificacao": ""})
 
             tabela = zip(projetos,
                          relatorio_intermediario,
                          relatorio_final,
-                         banca_intermediaria,
-                         banca_final,
-                         banca_falconi)
+                         notas["Banca Intermediária"],
+                         notas["Banca Final"],
+                         notas["Falconi"],)
 
             context = {
                     "tabela": tabela,

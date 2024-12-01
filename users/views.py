@@ -382,7 +382,11 @@ def blackboard_notas(request, anosemestre):
 
         dataset.headers = headers
 
-        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__externo__isnull=True)
+        cursos = request.POST["curso"]
+        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos)
+
+        tipo = request.POST["tipo"]
+        
         for alocacao in alocacoes:
             notas = alocacao.get_notas
             linha = [alocacao.aluno.user.first_name]
@@ -400,28 +404,33 @@ def blackboard_notas(request, anosemestre):
                 else:
                     if coluna == "M":
                         linha += [f"{alocacao.get_media['media']:.4f}".replace('.',',')]
-                        #linha += ["MMM"]
                     else:
                         linha += [""]
                     
             dataset.append(linha)
 
-        csv = dataset.export("csv", quotechar='"', dialect="excel")
-        #csv_with_trailing_commas = csv.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
-        response = HttpResponse(csv, content_type="text/csv")
-        response.write(u"\ufeff".encode("utf-8-sig"))
 
-        response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
+        if tipo == "xls":
+            xls = dataset.export("csv", delimiter="\t", quotechar='"', dialect="excel")
+            response = HttpResponse(content_type="text/csv")
+            response.write(u"\ufeff".encode("utf-16le"))
+            response.write(xls.encode("utf-16le"))  # Encode the content in UTF-16LE
+            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".xls"
+        elif tipo == "csv":
+            csv = dataset.export("csv", quotechar='"', dialect="excel")
+            #csv_with_trailing_commas = csv.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
+            response = HttpResponse(csv, content_type="text/csv")
+            response.write(u"\ufeff".encode("utf-8-sig"))
+            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
         
         return response
-    
-    colunas = CodigoColuna.objects.filter(exame__in=exames, ano=ano, semestre=semestre)
 
     context = {
         "titulo": {"pt": "Notas para Blackboard", "en": "Grades for Blackboard"},
         "exames": exames,
-        "colunas": colunas,
+        "colunas": CodigoColuna.objects.filter(exame__in=exames, ano=ano, semestre=semestre),
         "anosemestre": anosemestre,
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
     }
     return render(request, "users/blackboard_notas.html", context=context)
     
