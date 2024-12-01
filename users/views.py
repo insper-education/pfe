@@ -388,7 +388,7 @@ def blackboard_notas(request, anosemestre):
         tipo = request.POST["tipo"]
         
         for alocacao in alocacoes:
-            notas = alocacao.get_notas
+            notas = alocacao.get_notas(checa_banca=False)
             linha = [alocacao.aluno.user.first_name]
             linha += [alocacao.aluno.user.last_name]
             linha += [alocacao.aluno.user.username]

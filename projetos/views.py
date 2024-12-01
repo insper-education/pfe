@@ -992,7 +992,7 @@ def analise_notas(request):
         notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rp", "ppf", "api", "apg", "afg", "afi", "p"]
         notas = {key: {"ideal": 0, "regular": 0, "inferior": 0} for key in notas_keys}
 
-        notas_lista = [x.get_notas for x in medias_semestre]
+        notas_lista = [x.get_notas() for x in medias_semestre]
         for nota2 in notas_lista:
             for nota in nota2:
                 if nota[1] is not None:

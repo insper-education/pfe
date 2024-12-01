@@ -500,7 +500,7 @@ class Aluno(models.Model):
         return edicao
 
     #@property
-    def get_notas(self, request=None, ano=None, semestre=None):
+    def get_notas(self, request=None, ano=None, semestre=None, checa_banca=True):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante
 
@@ -550,15 +550,16 @@ class Aluno(models.Model):
                         if pa[4] >= 0 and banca:  # Banca
                             valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
-                            if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
-                                for membro in banca.membros():
-                                    avaliacao = paval.filter(avaliador=membro).last()
-                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                        valido = False
-                                if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                    avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
-                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                        valido = False
+                            if checa_banca:
+                                if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+                                    for membro in banca.membros():
+                                        avaliacao = paval.filter(avaliador=membro).last()
+                                        if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                            valido = False
+                                    if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                        avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
+                                        if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                            valido = False
 
                             if valido:
                                 pnota, ppeso, _ = Aluno.get_banca(self, paval, eh_banca=True)
@@ -582,34 +583,35 @@ class Aluno(models.Model):
 
         return edicao
 
-    @property
-    def get_medias(self):
-        """Retorna médias."""
-        medias = {}  # dicionário para cada alocação do estudante
+    # CREIO QUE NÃO ESTÁ SENDO USADO
+    # @property
+    # def get_medias(self):
+    #     """Retorna médias."""
+    #     medias = {}  # dicionário para cada alocação do estudante
 
-        edicoes = self.get_notas
+    #     edicoes = self.get_notas
 
-        for ano_semestre, edicao in edicoes.items():
-            nota_final = 0
-            peso_final = 0
-            # for aval, nota, peso in edicao:
-            for _, nota, peso, _ in edicao:
-                peso_final += peso
-                nota_final += nota * peso
-            peso_final = round(peso_final, 2)
-            medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
+    #     for ano_semestre, edicao in edicoes.items():
+    #         nota_final = 0
+    #         peso_final = 0
+    #         # for aval, nota, peso in edicao:
+    #         for _, nota, peso, _ in edicao:
+    #             peso_final += peso
+    #             nota_final += nota * peso
+    #         peso_final = round(peso_final, 2)
+    #         medias[ano_semestre] = {"media": nota_final, "pesos": peso_final}
 
-        alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        for alocacao in alocacoes:
-            reprovacao = Reprovacao.objects.filter(alocacao=alocacao)
-            if reprovacao:
-                ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
-                medias[ano_semestre] = {
-                    "media": reprovacao.last().nota,
-                    "pesos": 1
-                }
+    #     alocacoes = Alocacao.objects.filter(aluno=self.pk)
+    #     for alocacao in alocacoes:
+    #         reprovacao = Reprovacao.objects.filter(alocacao=alocacao)
+    #         if reprovacao:
+    #             ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
+    #             medias[ano_semestre] = {
+    #                 "media": reprovacao.last().nota,
+    #                 "pesos": 1
+    #             }
 
-        return medias
+    #     return medias
 
 
     @property
@@ -624,15 +626,6 @@ class Aluno(models.Model):
             alocacoes[ano_semestre] = alocacao
 
         return alocacoes
-
-    # APARENTEMENTE NÃO MAIS SENDO USADO
-    # @property
-    # def get_peso(self):
-    #     """Retorna soma dos pesos das notas."""
-    #     peso_final = 0
-    #     for _, _, peso, _ in self.get_notas:
-    #         peso_final += peso
-    #     return peso_final
 
     class Meta:
         """Meta para Aluno."""
@@ -750,10 +743,10 @@ class Alocacao(models.Model):
             return edicoes[semestre]
         return None
 
-    @property
-    def get_notas(self):
+    # @property
+    def get_notas(self, checa_banca=True):
         """Retorna notas do estudante no projeto."""
-        edicoes = self.aluno.get_notas(ano=self.projeto.ano, semestre=self.projeto.semestre)
+        edicoes = self.aluno.get_notas(ano=self.projeto.ano, semestre=self.projeto.semestre, checa_banca=checa_banca)
         return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
 
     @property
@@ -763,7 +756,7 @@ class Alocacao(models.Model):
         if reprovacao:
             return {"media": reprovacao.last().nota, "pesos": 1}
 
-        edicao = self.get_notas
+        edicao = self.get_notas()
 
         nota_final = 0
         nota_individual = 0
