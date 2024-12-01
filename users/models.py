@@ -500,189 +500,85 @@ class Aluno(models.Model):
         return edicao
 
     @property
-    def get_notas(self, request=None):
+    def get_notas(self, request=None, ano=None, semestre=None):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante
 
-        alocacoes = Alocacao.objects.filter(aluno=self.pk)
+        if ano and semestre:
+            alocacoes = Alocacao.objects.filter(aluno=self.pk, projeto__ano=ano,projeto__semestre=semestre)
+        else:
+            alocacoes = Alocacao.objects.filter(aluno=self.pk)
+
+        now = datetime.datetime.now()
+
+        # Sigla, Nome, Grupo, Nota/Check, Banca
+        pavaliacoes = [
+            ("RP", "Relatório Preliminar", True, False, -1),
+            ("RII", "Relatório Intermediário Individual", False, True, -1),
+            ("RIG", "Relatório Intermediário de Grupo", True, True, -1),
+            ("RFG", "Relatório Final de Grupo", True, True, -1),
+            ("RFI", "Relatório Final Individual", False, True, -1),
+            # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+            ("PPF", "Planejamento Primeira Fase", True, False, -1),
+            ("API", "Avaliação Parcial Individual", False, True, -1),
+            ("AFI", "Avaliação Final Individual", False, True, -1),
+            ("APG", "Avaliação Parcial de Grupo", True, True, -1),
+            ("AFG", "Avaliação Final de Grupo", True, True, -1),
+            ("P", "Probation", False, True, -1),
+            ("BI", "Banca Intermediária", True, True, 1),
+            ("BF", "Banca Final", True, True, 0),
+        ]
 
         for alocacao in alocacoes:
             
             notas = []  # iniciando uma lista de notas vazia
 
-            try:
-                # Relatório Preliminar (10)
-                relp = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="RP")).\
-                    order_by("momento").last()
-                if relp:
-                    notas.append(("RPL", float(relp.nota) if relp.nota else None, relp.peso/100 if relp.peso else 0,
-                                "Relatório Preliminar"))
+            for pa in pavaliacoes:
+                banca = None
+                if pa[4] >= 0:  # Banca
+                    banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=pa[4]).last()
                     
-                # Relatório Intermediário Individual (21),
-                rii = Avaliacao2.objects.filter(alocacao=alocacao,
-                                                exame=Exame.objects.get(sigla="RII"))
+                try:
+                    exame=Exame.objects.get(sigla=pa[0])
+                    if pa[2]:  # GRUPO
+                        paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
+                    else:  # INDIVIDUAL
+                        paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
 
-                if rii:
-                    nota_rii, peso, avaliadores = Aluno.get_banca(self, rii)
-                    notas.append(("RII", nota_rii, peso/100 if peso else 0,
-                                "Relatório Intermediário Individual"))
+                    if paval:
 
-                # Relatório Intermediário de Grupo (11)
-                rig = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="RIG"))
+                        if pa[4] >= 0 and banca:  # Banca
+                            valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
-                if rig:
-                    nota_rig, peso, avaliadores = Aluno.get_banca(self, rig)
-                    notas.append(("RIG", nota_rig, peso/100 if peso else 0,
-                                "Relatório Intermediário de Grupo"))
+                            if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+                                for membro in banca.membros():
+                                    avaliacao = paval.filter(avaliador=membro).last()
+                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                        valido = False
+                                if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                    avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
+                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                        valido = False
 
+                            if valido:
+                                pnota, ppeso, _ = Aluno.get_banca(self, paval, eh_banca=True)
+                                notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                        else:
+                            if pa[3]:  # Nota
+                                pnota, ppeso, _ = Aluno.get_banca(self, paval)
+                                notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                            else:  # Check
+                                pnp = paval.order_by("momento").last()
+                                notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
+    
+                except Exame.DoesNotExist:
+                    raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
-                # Relatório Final Individual (22)
-                rfi = Avaliacao2.objects.filter(alocacao=alocacao,
-                                                exame=Exame.objects.get(sigla="RFI"))
-
-                if rfi:
-                    nota_rfi, peso, avaliadores = Aluno.get_banca(self, rfi)
-                    notas.append(("RFI", nota_rfi, peso/100 if peso else 0,
-                                "Relatório Final Individual"))
-
-
-                # Relatório Final de Grupo (12),
-                rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="RFG"))
-
-                if rfg:
-                    nota_rfg, peso, avaliadores = Aluno.get_banca(self, rfg)
-                    notas.append(("RFG", nota_rfg, peso/100 if peso else 0,
-                                "Relatório Final de Grupo"))
-                    
-                
-                ### BANCAS TEM UM TRATAMENTO ESPECIAL PARA SÓ FECHAR DEPOIS QUE TODOS MEMBROS POSTAREM AS NOTAS 
-                now = datetime.datetime.now()
-                # Banca Intermediária (1)
-                banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=1).last()  # (1, "Intermediária"),
-                if banca:
-                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                    exame=Exame.objects.get(sigla="BI"))
-                    if avaliacoes:
-                        # Verifica se todos avaliaram a pelo menos 24 horas atrás
-                        valido = True
-
-                        if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
-                            for membro in banca.membros():
-                                avaliacao = avaliacoes.filter(avaliador=membro).last()
-                                if not avaliacao:
-                                    valido = False
-                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                    valido = False
-                            if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
-                                if not avaliacao:
-                                    valido = False
-                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                    valido = False
-
-                        if valido:
-                            nota_banca_interm, peso, avaliadores = Aluno.get_banca(self,
-                                                                    avaliacoes,
-                                                                    eh_banca=True)
-                            notas.append(("BI", nota_banca_interm, peso/100 if peso else 0,
-                                        "Banca Intermediária"))
-
-                # Banca Final (2)
-                banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=0).last()  # (0, "Final"),
-                if banca:
-                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="BF"))
-                    if avaliacoes:
-                        # Verifica se todos avaliaram a pelo menos 24 horas atrás
-                        valido = True
-                        
-                        if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
-                            for membro in banca.membros():
-                                avaliacao = avaliacoes.filter(avaliador=membro).last()
-                                if not avaliacao:
-                                    valido = False
-                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                    valido = False
-                            if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                avaliacao = avaliacoes.filter(avaliador=alocacao.projeto.orientador.user).last()
-                                if not avaliacao:
-                                    valido = False
-                                elif now - avaliacao.momento < datetime.timedelta(hours=24):
-                                    valido = False
-
-                        if valido:
-                            nota_banca_final, peso, avaliadores = Aluno.get_banca(self,
-                                                                    avaliacoes,
-                                                                    eh_banca=True)
-                            notas.append(("BF", nota_banca_final, peso/100 if peso else 0,
-                                        "Banca Final"))
-
-                
-                # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-                # Planejamento Primeira Fase  (50)
-                ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="PPF")).\
-                    order_by('momento').last()
-                if ppf:
-                    notas.append(("PPF", float(ppf.nota) if ppf.nota else None, ppf.peso/100 if ppf.peso else 0,
-                                "Planejamento Primeira Fase"))
-
-                # Avaliação Parcial Individual (51)
-                api = Avaliacao2.objects.filter(alocacao=alocacao,
-                                                exame=Exame.objects.get(sigla="API"))
-
-                if api:
-                    nota_api, peso, avaliadores = Aluno.get_banca(self, api)
-                    notas.append(("API", nota_api, peso/100 if peso else 0,
-                                "Avaliação Parcial Individual"))
-
-                # Avaliação Final Individual (52)
-                afi = Avaliacao2.objects.filter(alocacao=alocacao,
-                                                exame=Exame.objects.get(sigla="AFI"))
-
-                if afi:
-                    nota_afi, peso, avaliadores = Aluno.get_banca(self, afi)
-                    notas.append(("AFI", nota_afi, peso/100 if peso else 0,
-                                "Avaliação Final Individual"))
-
-                # Avaliação Parcial de Grupo (53)
-                apg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="APG"))
-
-                if apg:
-                    nota_apg, peso, avaliadores = Aluno.get_banca(self, apg)
-                    notas.append(("APG", nota_apg, peso/100 if peso else 0,
-                                "Avaliação Parcial de Grupo"))
-
-                # Avaliação Final de Grupo (54)
-                afg = Avaliacao2.objects.filter(projeto=alocacao.projeto,
-                                                exame=Exame.objects.get(sigla="AFG"))
-
-                if afg:
-                    nota_afg, peso, avaliadores = Aluno.get_banca(self, afg)
-                    notas.append(("AFG", nota_afg, peso/100 if peso else 0,
-                                "Avaliação Final de Grupo"))
-
-
-                ## PROBATION ##
-                pro = Avaliacao2.objects.filter(alocacao=alocacao,
-                                                exame=Exame.objects.get(sigla="P"))
-
-                if pro:
-                    nota_pro, peso, avaliadores = Aluno.get_banca(self, pro)
-                    notas.append(("P", nota_pro, peso/100 if peso else 0,
-                                 "Probation"))
-                    
-            except Exame.DoesNotExist:
-                raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
-
-            if str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre) in edicao:
+            key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
+            if key in edicao:
                 logger.error("Erro, duas alocações no mesmo semestre!")
                 raise ValidationError("<h2>Erro, duas alocações no mesmo semestre!</h2>")
-            edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
+            edicao[key] = notas
 
         return edicao
 
@@ -857,7 +753,7 @@ class Alocacao(models.Model):
     @property
     def get_notas(self):
         """Retorna notas do estudante no projeto."""
-        edicoes = self.aluno.get_notas
+        edicoes = self.aluno.get_notas(ano=self.projeto.ano, semestre=self.projeto.semestre)
         return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
 
     @property
