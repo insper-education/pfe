@@ -383,6 +383,11 @@ def blackboard_notas(request, anosemestre):
         dataset.headers = headers
 
         cursos = request.POST.getlist("curso")
+        ext_cursos = ""
+        for curso in cursos:
+            sigla = Curso.objects.get(id=curso).sigla_curta
+            ext_cursos += "_" + sigla
+
         alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos).order_by("aluno__user__last_name", "aluno__user__first_name")
 
         tipo = request.POST["tipo"]
@@ -415,13 +420,13 @@ def blackboard_notas(request, anosemestre):
             response = HttpResponse(content_type="text/csv")
             response.write(u"\ufeff".encode("utf-16le"))
             response.write(xls.encode("utf-16le"))  # Encode the content in UTF-16LE
-            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".xls"
+            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".xls"
         elif tipo == "csv":
             csv = dataset.export("csv", quotechar='"', dialect="excel")
             #csv_with_trailing_commas = csv.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
             response = HttpResponse(csv, content_type="text/csv")
             response.write(u"\ufeff".encode("utf-8-sig"))
-            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+".csv"
+            response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".csv"
         
         return response
 
