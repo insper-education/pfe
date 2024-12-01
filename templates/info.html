@@ -17,6 +17,12 @@
       text-align: justify;
       margin-bottom: 0.8rem;
     }
+    .short-link { display: none; }
+    .full-link { display: inline-block; }
+    @media (max-width: 740px) {
+      .short-link { display: inline-block; }
+      .full-link { display: none; }
+    }
   </style>
 {% endblock %}
 
@@ -39,15 +45,15 @@
             <p>As organizações que propõem os projetos devem se dispor a acompanhar todo o processo de desenvolvimento ao longo do semestre letivo. Isso inclui a designação de um mentor técnico, que idealmente deve realizar encontros semanais com o grupo. Nesse processo também se pede uma imersão dos estudantes no funcionamento da organização.</p>
             <br>
 
-            <p>Você consegue mais detalhes sobre o Capstone em:<br>
-              <a href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone</a>
-            </p>
-            <br>
+            Você consegue mais detalhes sobre o Capstone em:
+            <a class="full-link" href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone</a>
+            <a class="short-link" href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">Capstone</a>
+            <br><br>
 
-            <p>Submissões de projetos em:<br>
-              <a href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">https://pfe.insper.edu.br/organizacoes/proposta_submissao</a>
-            </p>
-            <br>
+            Submissões de projetos em:
+            <a class="full-link" href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">https://pfe.insper.edu.br/organizacoes/proposta_submissao</a>
+            <a class="short-link" href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">Submissão</a>
+            <br><br>
 
             <p>Para o calendário dos próximos projetos, por favor consulte a equipe do Capstone.</p>
             <br>
@@ -69,14 +75,16 @@
             <p>Organizations proposing projects must be willing to follow the entire development process throughout the academic semester. This includes appointing a technical mentor, who should ideally meet weekly with the group. Additionally, the process requires students to immerse themselves in the organization's operations.</p>
             <br>
             
-            <p>You can find more details about the Capstone at:<br>
-              <a href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone</a>
-            </p>
-            <br>
+          
+            You can find more details about the Capstone at:
+            <a class="full-link" href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone</a>
+            <a class="short-link" href="https://hub.insper.edu.br/projetos-inovadores/projetos-academicos-de-inovacao/capstone" target="_blank">Capstone</a>
+            <br><br>
 
-            <p>Project submissions at:<br>
-              <a href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">https://pfe.insper.edu.br/organizacoes/proposta_submissao</a>
-            </p>
+            Project submissions at:
+            <a class="full-link" href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">https://pfe.insper.edu.br/organizacoes/proposta_submissao</a>
+            <a class="short-link" href="https://pfe.insper.edu.br/organizacoes/proposta_submissao" target="_blank">Submission</a>
+            <br>
             <br>
 
             <p>For the calendar of upcoming projects, please consult the Capstone team.</p>
