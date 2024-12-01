@@ -42,6 +42,11 @@
 
         {% if pergunta.resposta %}
           <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
+          {% if pergunta.em_nome_de %}
+            <span lang="pt">em nome de</span>
+            <span lang="en" style="display:none">on behalf of</span>
+            <b>{{ pergunta.em_nome_de.get_full_name }}</b>
+          {% endif %}
           {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
         {% endif %}
         <span lang="pt">Resposta:</span>
@@ -52,12 +57,23 @@
           <span lang="pt">Enviar Resposta</span>
           <span lang="en" style="display:none">Send Answer</span>
         </button>
-        <br><br>
+        &nbsp;&nbsp;
+        <span lang="pt">em nome de</span>
+        <span lang="en" style="display:none">on behalf of</span>
+        <select name="em_nome{{pergunta.id}}" id="em_nome{{pergunta.id}}">
+          <option selected value> ninguem </option>
+          {% for p in proposta.organizacao.parceiro_set.all %}
+            <option value={{p.user.id}}
+              {% if pergunta.em_nome_de %}
+                {% if pergunta.em_nome_de == p.user %}selected{% endif %}
+              {% endif %}
+            >{{p.user.get_full_name}}</option>
+          {% endfor %}  
+        </select>
       </li>
     {% endfor %}
   </ul>
 </form>
-<br>
 
 <script>    
   $(document).ready(function() {
@@ -70,6 +86,7 @@
         alert("Por favor, preencha a resposta antes de enviar.");
         return;
       }
+      var emNome = $('#em_nome' + perguntaId).val();
 
       $.ajax({
           type: "POST",
@@ -77,6 +94,7 @@
           data: {
             "pergunta_id": perguntaId,
             "resposta": resposta,
+            "em_nome": emNome,
             "csrfmiddlewaretoken": "{{ csrf_token }}",
           },
           success: function(response) {

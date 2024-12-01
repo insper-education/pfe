@@ -32,6 +32,9 @@ class PerguntasRespostas(models.Model):
     quem_respondeu = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                         on_delete=models.SET_NULL, related_name="quem_respondeu",
                                         help_text="Quem respondeu a pergunta")
+    em_nome_de = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                        on_delete=models.SET_NULL, related_name="em_nome_de",
+                                        help_text="Em nome de quem respondeu a pergunta")
     
     def __str__(self):
         return self.pergunta

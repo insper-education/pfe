@@ -541,11 +541,18 @@ def ajax_proposta_resposta(request, primarykey=None):
             pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
             pergunta_resposta.resposta = request.POST["resposta"]
             pergunta_resposta.quem_respondeu = request.user
+            
+            print(request.POST)
+            if "em_nome" in request.POST and request.POST["em_nome"]:
+                pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
+            else:
+                pergunta_resposta.em_nome_de = None
+
             pergunta_resposta.data_resposta = timezone.now()
             pergunta_resposta.save()
 
             # Enviando e-mail com mensagem para usuários.
-            mensagem = f"Sua pergunta sobre a proposta <b>{proposta.titulo}</b> foi respondida."
+            mensagem = f"Sua pergunta sobre a proposta <b>[{proposta.organizacao.sigla}] {proposta.titulo}</b> foi respondida."
             mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
             mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
             mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_detalhes/{proposta.id}"

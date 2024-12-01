@@ -39,6 +39,11 @@
 
       {% if pergunta.resposta %}
         <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
+        {% if pergunta.em_nome_de %}
+          <span lang="pt">em nome de</span>
+          <span lang="en" style="display:none">on behalf of</span>
+          <b>{{ pergunta.em_nome_de.get_full_name }}</b>
+        {% endif %}
         {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
         <span lang="pt">Resposta:</span>
         <span lang="en" style="display:none">Answer:</span>

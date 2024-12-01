@@ -54,22 +54,34 @@
     {% include "organizacao.html" %}
   {% endwith %}
 
-  <strong>Submetido por:</strong><br>
+  <strong>
+    <span lang="pt">Submetido por:</span>
+    <span lang="en" style="display: none;">Submitted by:</span>
+  </strong><br>
   {{proposta.nome}}<br><br>
 
   {% if proposta.contatos_tecnicos %}
-    <strong>Contatos Técnicos</strong><br>
+    <strong>
+      <span lang="pt">Contatos Técnicos</span>
+      <span lang="en" style="display: none;">Technical Contacts</span>
+    </strong><br>
     {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
     <br><br>
   {% endif %}
 
   {% if proposta.contatos_administrativos %}
-    <strong>Contatos Administrativos</strong><br>
+    <strong>
+      <span lang="pt">Contatos Administrativos</span>
+      <span lang="en" style="display: none;">Administrative Contacts</span>
+    </strong><br>
     {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
     <br><br>
   {% endif %}
 
-  <h5 style="margin-bottom: 4px;">Áreas de Interesse</h5>
+  <h5 style="margin-bottom: 4px;">
+    <span lang="pt">Áreas de Interesse</span>
+    <span lang="en" style="display: none;">Areas of Interest</span>
+  </h5>
   {% with aa=proposta.areadeinteresse_set.all %}
     {% with vencido=True %}
       {% include "areas.html" %}
@@ -93,7 +105,9 @@
     <div style="margin-top: 22px; margin-bottom: 8px;">
       <b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
         title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-        Analisada por</label></b>:
+        <span lang="pt">Analisada por</span>
+        <span lang="en" style="display: none;">Analyzed by</span>
+      </label></b>:
       <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
           <option value='0'> ---- </option>
           {% for pessoa in comite %}
@@ -104,20 +118,32 @@
       </select>
     </div>
 
-    <b>Conformidade de Proposta: </b>
+    <b>
+      <span lang="pt">Conformidade de Proposta</span>
+      <span lang="en" style="display: none;">Proposal Conformity</span>
+    </b>
     {% include "conformidade.html" %}
 
     <b data-toggle="tooltip" data-html="true" animation="true" 
            title="Mesmo ao disponibilizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-      Disponibilizar:
+      <span lang="pt">Disponibilizar:</span>
+      <span lang="en" style="display: none;">Make Available: </span>
     </b>
     <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="sim"
-      {% if proposta.disponivel %}checked{% endif %}
-    > Sim</label>
+      {% if proposta.disponivel %}checked{% endif %}>
+      <span lang="pt">Sim</span>
+      <span lang="en" style="display: none;">Yes</span>
+    </label>
     <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="nao"
-      {% if not proposta.disponivel %}checked{% endif %}
-    > Não</label>
-    &nbsp;&nbsp;<small style="font-size: 12px; display: block;">Previsão para liberar visualização de propostas para estudantes em: {{liberacao_visualizacao.startDate}}</small> 
+      {% if not proposta.disponivel %}checked{% endif %}>
+      <span lang="pt">Não</span>
+      <span lang="en" style="display: none;">No</span>
+    </label>
+    &nbsp;&nbsp;<small style="font-size: 12px; display: block;">
+      <span lang="pt">Previsão para liberar visualização de propostas para estudantes em:</span>
+      <span lang="en" style="display: none;">Forecast to release proposal visualization for students on:</span>
+      {{liberacao_visualizacao.startDate}}
+    </small> 
 
     <div id="valor_atualizado" style="display: none; width: fit-content;padding-left: 8px;padding-right: 8px;"></div>
 
@@ -169,16 +195,32 @@
 
     <br><br>
     <div style="max-width: 56em; text-align: center;">
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">Editar Proposta</a>
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">Visão do Estudante</a>
+      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">
+        <span lang="pt">Editar Proposta</span>
+        <span lang="en" style="display: none;">Edit Proposal</span>
+      </a>
+      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">
+        <span lang="pt">Visão do Estudante</span>
+        <span lang="en" style="display: none;">Student View</span>
+      </a>
       
       {% for projeto in projetos %}
-        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">Projeto {{projeto.ano}}.{{projeto.semestre}}</a>
-        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')" >Remove Proposta</a>
+        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">
+          <span lang="pt">Projeto</span>
+          <span lang="en" style="display: none;">Project</span>
+          {{projeto.ano}}.{{projeto.semestre}}
+        </a>
+        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')">
+          <span lang="pt">Remover Proposta</span>
+          <span lang="en" style="display: none;">Remove Proposal</span>
+        </a>
       {% empty %}
         <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
         onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
-        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')" >Remove Proposta</a>
+        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')">
+          <span lang="pt">Remover Proposta</span>
+          <span lang="en" style="display: none;">Remove Proposal</span>
+        </a>
       {% endfor %}
     </div>
     <br>
@@ -198,7 +240,10 @@
   {% include "prioridades.html" %}
 
   <br>
-  <h5>Estudantes Aplicando para a Proposta</h5>
+  <h5>
+    <span lang="pt">Estudantes Aplicando para a Proposta</span>
+    <span lang="en" style="display: none;">Students Applying for the Proposal</span>
+  </h5>
 
   {% for estudante in sem_opcao %}
     <a href="{% url 'estudante_detail' estudante.id %}"
@@ -269,7 +314,7 @@
 
   </script>
 
-
   {% include "forum_respostas.html" %}
+  {% include "linguas.html" %}
 
 {% endblock %}
