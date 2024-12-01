@@ -382,8 +382,8 @@ def blackboard_notas(request, anosemestre):
 
         dataset.headers = headers
 
-        cursos = request.POST["curso"]
-        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos)
+        cursos = request.POST.getlist("curso")
+        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__trancado=False, aluno__curso2__id__in=cursos).order_by("aluno__user__last_name", "aluno__user__first_name")
 
         tipo = request.POST["tipo"]
         
