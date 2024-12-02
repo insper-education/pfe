@@ -8,9 +8,10 @@ Data: 17 de Junho de 2023
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
+from administracao.models import Carta
 
 @login_required
 def index_old(request):
@@ -23,11 +24,13 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, "index.html")
     else:
-        return render(request, "info.html")
+        info = get_object_or_404(Carta, template="Informação")
+        return render(request, "info.html", {"info": info})
 
 def info(request):
     """Página com informações."""
-    return render(request, "info.html")
+    info = get_object_or_404(Carta, template="Informação")
+    return render(request, "info.html", {"info": info})
 
 def manutencao(request):
     """Página de Manutenção do sistema."""

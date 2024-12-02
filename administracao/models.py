@@ -10,13 +10,16 @@ from django.db import models
 from django.db.models.functions import Lower
 
 class Carta(models.Model):
-    """Dados das organizações que propõe projetos."""
+    """Textos para serem usados em comunicações."""
 
     template = models.CharField("Nome do Template", max_length=64, unique=True,
                             help_text="Nome do Template")
 
     texto = models.TextField("Texto", max_length=18000, null=True, blank=True,
-                                   help_text="Texto para ser enviado")
+                                help_text="Texto em português para ser usado em comunicações")
+    
+    texto_en = models.TextField("Texto EN", max_length=18000, null=True, blank=True,
+                                   help_text="Texto em inglês para ser usado em comunicações")
     
     class Meta:
         ordering = [ "template",]
