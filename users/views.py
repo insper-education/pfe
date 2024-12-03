@@ -40,7 +40,7 @@ from operacional.models import Curso
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
 from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
-from .support import get_edicoes, adianta_semestre
+from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Exame
 
@@ -508,13 +508,12 @@ def estudantes_objetivos(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_inscritos(request):
-    """Mostra todos os alunos que estão se inscrevendo em projetos."""
+    """Mostra todos os estudantes que estão se inscrevendo em projetos."""
     if request.is_ajax():
         if "edicao" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
 
-            alunos = Aluno.objects.filter(trancado=False)\
-                .filter(anoPFE=ano, semestrePFE=semestre)
+            alunos = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
 
             # Conta soh alunos
             num_alunos = alunos.count()
@@ -533,11 +532,9 @@ def estudantes_inscritos(request):
             opcoestemp = []
             
             for aluno in alunos:
-                opcao = Opcao.objects.filter(aluno=aluno)\
-                    .filter(proposta__ano=ano, proposta__semestre=semestre)
+                opcao = Opcao.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
                 opcoes.append(opcao)
-                opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno)\
-                    .filter(proposta__ano=ano, proposta__semestre=semestre)
+                opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
                 opcoestemp.append(opcaotmp)
                 if opcao.count() >= 5:
                     inscritos += 1
@@ -546,6 +543,15 @@ def estudantes_inscritos(request):
                 else:
                     ninscritos += 1
             alunos_list = zip(alunos, opcoes, opcoestemp)
+
+            rano, rsemestre = retrocede_semestre(ano, semestre)
+            # (123, "Indicação de interesse nas propostas pelos estudante", "#FF69B4 "),
+            if rsemestre == 1:
+                evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=rano, endDate__month__lt=7).last().endDate
+            else:          
+                evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=rano, endDate__month__gt=6).last().endDate
+                
+            prazo_vencido = evento < datetime.date.today()
 
             cabecalhos = [
                 {"pt": "C", "en": "C"},
@@ -564,6 +570,9 @@ def estudantes_inscritos(request):
                 "cursos": cursos,
                 "num_estudantes_curso": num_estudantes_curso,
                 "cabecalhos": cabecalhos,
+                "prazo_vencido": prazo_vencido,
+                "ano": ano,
+                "semestre": semestre,
             }
 
         else:
@@ -583,6 +592,25 @@ def estudantes_inscritos(request):
         }
 
     return render(request, "users/estudantes_inscritos.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def converte_opcoes(request, ano, semestre):
+    """Mostra todos os estudantes que estão se inscrevendo em projetos."""
+
+    for estudante in Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre):
+        opcao = Opcao.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
+        opcaotmp = OpcaoTemporaria.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
+        if opcao.count() >= 5:
+            pass
+        elif opcaotmp.count() >= 5:
+            for otmp in opcaotmp:
+                if otmp.prioridade > 0:  # Caso seja zero, era para ser removido e deve ser ignorado    
+                    opcao_final = Opcao.objects.create(aluno=estudante, proposta=otmp.proposta, prioridade=otmp.prioridade)
+                    opcao_final.save()
+
+    return redirect("estudantes_inscritos")
 
 
 @login_required

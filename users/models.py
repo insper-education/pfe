@@ -697,8 +697,9 @@ class OpcaoTemporaria(models.Model):
         if self.aluno and self.aluno.user and self.aluno.user.username:
             mensagem += self.aluno.user.username
         mensagem += " >>> "
-        if self.proposta and self.proposta.titulo:
-            mensagem += self.proposta.titulo
+        if self.proposta and self.proposta.organizacao.sigla and self.proposta.titulo:
+            mensagem += "[" + self.proposta.organizacao.sigla + "] " + self.proposta.titulo
+        mensagem += " := " + str(self.prioridade)
         return mensagem
 
 

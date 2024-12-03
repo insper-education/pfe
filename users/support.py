@@ -29,6 +29,16 @@ def adianta_semestre(ano, semestre):
     return ano, semestre
 
 
+def retrocede_semestre(ano, semestre):
+    """Adiciona um semestre no par ano, semestre."""
+    if semestre == 2:
+        semestre = 1
+    else:
+        ano -= 1
+        semestre = 2
+
+    return ano, semestre
+
 def adianta_semestre_conf(configiuracao):
     """Adiciona um semestre puxando ano e semestre da configuração."""
     ano = configiuracao.ano
