@@ -146,6 +146,7 @@ def calcula_objetivos(alocacoes):
                         pesos[avaliacao][k] = pesos[avaliacao].get(k, 0) + val[1]
                         objetivos_avaliados.add(k)
 
+
     # Ordena os objetivos pelo indice de ordem deles
     objetivos_avaliados = sorted(objetivos_avaliados, key=lambda oo: oo.ordem)
 

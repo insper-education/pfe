@@ -1854,9 +1854,9 @@ class Avaliacao2(models.Model):
         return avaliacao
 
     class Meta:
-        verbose_name = 'Avaliação2'
-        verbose_name_plural = 'Avaliações2'
-        ordering = ['momento',]
+        verbose_name = "Avaliação2"
+        verbose_name_plural = "Avaliações2"
+        ordering = ["momento",]
 
     def get_conceito(self):
         # Está duplicado, mas é para não quebrar o código
