@@ -3073,7 +3073,6 @@ def relato_avaliar(request, projeto_id, evento_id):
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
-        # print("AJAX")
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -3135,17 +3134,13 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                     "nota_texto": "",
                                                     "nota": 0})
  
-
                 else:
                     relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
                     relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
-
-
-
                 
                 for titulo_aval in nomes_bancas:
                     exame = Exame.objects.get(titulo=titulo_aval)
-                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
+                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=True)
                     if peso is not None:
                         notas[titulo_aval].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
