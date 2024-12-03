@@ -46,22 +46,10 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-import datetime
-from projetos.models import Avaliacao2, ObjetivosDeAprendizagem
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
-    message = "Feito"
-
-    velho_objetivo = ObjetivosDeAprendizagem.objects.get(pk=1)
-    novo_objetivo = ObjetivosDeAprendizagem.objects.get(pk=9)
-    avaliacoes = Avaliacao2.objects.filter(
-        momento__gt=datetime.datetime(2024, 7, 1),
-        objetivo=velho_objetivo)
-    for avaliacao in avaliacoes:
-        avaliacao.objetivo = novo_objetivo
-        avaliacao.save()
+    message = "Nada Feito"
 
     return HttpResponse(message)
