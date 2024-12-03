@@ -12,6 +12,7 @@
   {% load zip_data %}
   {% load l10n %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
@@ -256,23 +257,34 @@
     <h4>
       <span lang="pt">Estilos de Comunicação</span>
       <span lang="en" style="display: none;">Communication Styles</span>
+      <span id="estilo_com" class="seta-baixo"></span>
     </h4>
-    {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
-    <b>
-      <span lang="pt">Resultados:</span>
-      <span lang="en" style="display: none;">Results:</span>
-    </b><br>
-    <table>
-      <tbody>
-        <tr><td>
-        {% for metrica, valor in estilos_respostas.items %}
-          <strong>{{ metrica }}:</strong> {{ valor }}<br>
-          {% if forloop.counter|divisibleby:2 %}</td></tr>
-            {% if not forloop.last %}<tr><td>{% endif %}
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
+    <div id="bloco_estilo" style="display: none;"
+    >
+      {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
+      <b>
+        <span lang="pt">Resultados:</span>
+        <span lang="en" style="display: none;">Results:</span>
+      </b><br>
+      <table>
+        <tbody>
+          <tr><td>
+          {% for metrica, valor in estilos_respostas.items %}
+            <strong>{{ metrica }}:</strong> {{ valor }}<br>
+            {% if forloop.counter|divisibleby:2 %}</td></tr>
+              {% if not forloop.last %}<tr><td>{% endif %}
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <script>
+      $("#estilo_com").on("click", function() {
+        console.log("Clicou");
+        $("#bloco_estilo").toggle(200);
+        $(this).toggleClass("seta-baixo seta-cima");
+      });
+    </script>
   {% endif %}
 
   {% if user.tipo_de_usuario == 4 %}
