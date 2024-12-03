@@ -283,7 +283,9 @@
     </span><br>
     <ul>
       {% for curso, qtds in qtd_estudantes_curso.items %}
-        <li>{{curso.nome}}: {{qtds.opc}}/{{qtds.qtd}} ({% widthratio qtds.opc qtds.qtd 100 %}%)</li>
+        {% if qtds.qtd > 0 %}
+          <li>{{curso.nome}}: {{qtds.opc}}/{{qtds.qtd}} ({% widthratio qtds.opc qtds.qtd 100 %}%)</li>
+        {% endif %}
       {% endfor %}
     </ul>
     <br>
