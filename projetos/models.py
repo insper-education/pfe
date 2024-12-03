@@ -1611,6 +1611,7 @@ class Coorientador(models.Model):
         verbose_name = "Coorientador"
         verbose_name_plural = "Coorientadores"
 
+
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
 
@@ -1774,7 +1775,7 @@ class ObjetivosDeAprendizagem(models.Model):
     ##############################################################
 
 
-    ordem = models.PositiveSmallIntegerField(help_text='ordem para aparecer nas listas')
+    ordem = models.PositiveSmallIntegerField(help_text="ordem para aparecer nas listas")
 
 
     def __str__(self):
@@ -1790,8 +1791,8 @@ class ObjetivosDeAprendizagem(models.Model):
         return texto
 
     class Meta:
-        verbose_name = 'ObjetivosDeAprendizagem'
-        verbose_name_plural = 'ObjetivosDeAprendizagem'
+        verbose_name = "ObjetivosDeAprendizagem"
+        verbose_name_plural = "ObjetivosDeAprendizagem"
 
 
 class Avaliacao2(models.Model):

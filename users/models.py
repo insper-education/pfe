@@ -313,15 +313,15 @@ class Aluno(models.Model):
         for objetivo in ObjetivosDeAprendizagem.objects.all():
             avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")
             if avaliacoes_p_obj:
-                if objetivo.sigla not in lista_objetivos:
-                    lista_objetivos[objetivo.sigla] = {}
+                if objetivo not in lista_objetivos:
+                    lista_objetivos[objetivo] = {}
                 for aval in avaliacoes_p_obj:
-                    if aval.avaliador not in lista_objetivos[objetivo.sigla]:  # Se não for o mesmo avaliador
+                    if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
                         avaliadores.add(aval.avaliador)
                         if aval.na or (aval.nota is None) or (aval.peso is None):
-                            lista_objetivos[objetivo.sigla][aval.avaliador] = None
+                            lista_objetivos[objetivo][aval.avaliador] = None
                         else:
-                            lista_objetivos[objetivo.sigla][aval.avaliador] = (float(aval.nota), float(aval.peso))
+                            lista_objetivos[objetivo][aval.avaliador] = (float(aval.nota), float(aval.peso))
                     # Senão é só uma avaliação de objetivo mais antiga (E IGNORAR)
 
         if not lista_objetivos:
