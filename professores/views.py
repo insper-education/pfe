@@ -738,10 +738,11 @@ def mensagem_email(request, tipo=None, primarykey=None):
         projeto = banca.get_projeto()
 
         para = ""
-        if projeto and projeto.orientador:
-            para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-            for coorientador in projeto.coorientador_set.all():
-                para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
+        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:  # Interm ou Final
+            if projeto and projeto.orientador:
+                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+                for coorientador in projeto.coorientador_set.all():
+                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         if banca:
             for membro in banca.membros():
                 para += membro.get_full_name() + " <" + membro.email + ">; "
@@ -764,10 +765,11 @@ def mensagem_email(request, tipo=None, primarykey=None):
         banca = None
 
         para = ""
-        if projeto and projeto.orientador:
-            para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-            for coorientador in projeto.coorientador_set.all():
-                para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
+        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:  # Interm ou Final
+            if projeto and projeto.orientador:
+                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+                for coorientador in projeto.coorientador_set.all():
+                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         if banca:
             for membro in banca.membros():
                 para += membro.get_full_name() + " <" + membro.email + ">; "
