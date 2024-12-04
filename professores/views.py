@@ -2386,6 +2386,50 @@ def resultado_bancas(request, pk):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def avaliar_bancas(request):
+    """Visualiza os resultados das bancas de um projeto."""
+
+    if request.is_ajax():
+
+        if "edicao" in request.POST:
+            
+
+            bancas_m = (Banca.objects.filter(membro1=request.user) |
+                        Banca.objects.filter(membro2=request.user) |
+                        Banca.objects.filter(membro3=request.user))
+            
+            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+                bancas_o = (Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=0) | # (0, 'Final'),
+                            Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=1))   # (1, 'Intermediária'),
+                bancas = bancas_o | bancas_m
+            else:
+                bancas = bancas_m
+
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = request.POST["edicao"].split('.')
+                bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+        else:
+            return HttpResponse("Erro ao carregar dados.", status=401)
+        
+
+        pk=93
+        context = {
+            "objetivos": ObjetivosDeAprendizagem.objects.all(),
+            "projeto": get_object_or_404(Projeto, pk=pk),
+            "bancas": bancas,
+        }
+    else:
+        context = {
+            "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
+            "edicoes": get_edicoes(Projeto)[0],
+        }
+    return render(request, "professores/avaliar_bancas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by("startDate")
