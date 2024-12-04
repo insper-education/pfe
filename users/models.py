@@ -350,7 +350,7 @@ class Aluno(models.Model):
 
         return val_objetivos, pes_total, avaliadores
 
-    def get_banca(self, avaliacoes_banca, eh_banca=False):
+    def get_banca(self, avaliacoes_banca):
         """Retorna média final das bancas informadas."""
         val_objetivos, pes_total, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca)
 
@@ -372,7 +372,7 @@ class Aluno(models.Model):
             if pes != 0:
                 val = float(val)/pes
             else:
-                val = float(val)/len(val_objetivos)
+                val = float(val)/float(len(val_objetivos))
         else:
             pes = None
 
@@ -553,7 +553,7 @@ class Aluno(models.Model):
                                             valido = False
 
                             if valido:
-                                pnota, ppeso, _ = Aluno.get_banca(self, paval, eh_banca=True)
+                                pnota, ppeso, _ = Aluno.get_banca(self, paval)
                                 notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
                         else:
                             if pa[3]:  # Nota

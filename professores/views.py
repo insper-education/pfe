@@ -170,7 +170,7 @@ def index_professor(request):
 
             # Verifica se todos os projetos do professor orientador têm os agendamentos E AVALIAÇÕES COMPLETAS das bancas
             bancas_index = 'b'
-            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=1).exists()  # (1, 'Intermediária'),
+            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=1).exists()  # (1, "Intermediária"),
             evento = get_evento(14, configuracao)  # (14, "Bancas Intermediárias", "#EE82EE"),
             if evento and (datetime.date.today() - evento.startDate).days > -16:
                 if banca:
@@ -180,7 +180,7 @@ def index_professor(request):
                         bancas_index = 'r'
                     else:
                         bancas_index = 'y'
-            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=0).exists()  # (0, 'Final')
+            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=0).exists()  # (0, "Final")
             evento = get_evento(15, configuracao)  # (15, "Bancas Finais", "#FFFF00"),
             if evento and (datetime.date.today() - evento.startDate).days > -16:
                 if banca:
@@ -3114,6 +3114,37 @@ def relato_avaliar(request, projeto_id, evento_id):
         return render(request, "professores/relato_avaliar.html", context=context)
 
 
+def get_banca_incompleta(projeto, tipo_de_banca, avaliadores):
+    banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=tipo_de_banca).last()
+    now = datetime.datetime.now()
+    banca_incompleta = 0  # 0 se não há banca
+    if banca:
+        if avaliadores:  # 1 se existe banca
+            if banca.membro1:
+                if banca.membro1 not in avaliadores:
+                    banca_incompleta = 1
+            if banca.membro2:
+                if banca.membro2 not in avaliadores:
+                    banca_incompleta = 1
+            if banca.membro3:
+                if banca.membro3 not in avaliadores:
+                    banca_incompleta = 1
+
+            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+                if banca.projeto.orientador:
+                    if banca.projeto.orientador.user not in avaliadores:
+                        banca_incompleta = 1
+
+            if banca_incompleta == 1:
+                if (now - banca.endDate).days > 3:  # muito atrasada
+                    banca_incompleta = 3
+                elif (now - banca.endDate).days > 0:  # pouco atrasada
+                    banca_incompleta = 2
+        else:
+            banca_incompleta = 1
+
+    return banca_incompleta
+
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
@@ -3136,18 +3167,17 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 if projetos_coori.count() == 0:
                     show_orientador = False
 
-            relatorio_preliminar = []
-            relatorio_intermediario = []
-            relatorio_final = []
-            
 
             notas = {}
-            nomes_bancas = ["Banca Final", "Banca Intermediária"]
+            nomes_relatorios = ["Relatório Intermediário", "Relatório Final"]
+            for nome in nomes_relatorios:
+                notas[nome] = []
+            nomes_bancas = [ ("Banca Final", 0), ("Banca Intermediária", 1)]   # (0, 'Final'), (1, 'Intermediária')
             for nome in nomes_bancas:
-                notas[nome] = []
-            nomes_f = ["Falconi"]
+                notas[nome[0]] = []
+            nomes_f = [ ("Falconi", 2)]
             for nome in nomes_f:
-                notas[nome] = []
+                notas[nome[0]] = []
 
             for projeto in projetos:
 
@@ -3160,46 +3190,58 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
-                        relatorio_intermediario.append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                        notas["Relatório Intermediário"].append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                                 "nota_texto": "{0:5.2f}".format(nota),
-                                                "nota": nota})                    
+                                                "nota": nota,
+                                                "certificacao": ""})                    
                     else:
-                        relatorio_intermediario.append({"conceito": "&nbsp;-&nbsp;",
+                        notas["Relatório Intermediário"].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
-                                                    "nota": 0})
+                                                    "nota": 0,
+                                                    "certificacao": ""})
 
                     if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
                         nota = medias["nota_grupo_final"]/medias["peso_grupo_final"]
-                        relatorio_final.append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
+                        notas["Relatório Final"].append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                                 "nota_texto": "{0:5.2f}".format(nota),
-                                                "nota": nota})                    
+                                                "nota": nota,
+                                                "certificacao": ""})                    
                     else:
-                        relatorio_final.append({"conceito": "&nbsp;-&nbsp;",
+                        notas["Relatório Final"].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
-                                                    "nota": 0})
+                                                    "nota": 0,
+                                                    "certificacao": ""})
  
                 else:
-                    relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
-                    relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
+                    notas["Relatório Intermediário"].append(("&nbsp;-&nbsp;", None, 0))
+                    notas["Relatório Final"].append(("&nbsp;-&nbsp;", None, 0))
                 
                 for titulo_aval in nomes_bancas:
-                    exame = Exame.objects.get(titulo=titulo_aval)
+                    exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
-                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=True)
+                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)
+                    banca_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+
                     if peso is not None:
-                        notas[titulo_aval].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
+                        notas[titulo_aval[0]].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
                                                     "nota_texto": "{0:5.2f}".format(nota_b),
-                                                    "nota": nota_b})                    
+                                                    "nota": nota_b,
+                                                    "certificacao": "",
+                                                    "banca_incompleta": banca_incompleta})                    
                     else:
-                        notas[titulo_aval].append({"conceito": "&nbsp;-&nbsp;",
+                        notas[titulo_aval[0]].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
-                                                    "nota": 0})
+                                                    "nota": 0,
+                                                    "certificacao": "",
+                                                    "banca_incompleta": banca_incompleta})
 
                     
                 for titulo_aval in nomes_f:
-                    exame = Exame.objects.get(titulo=titulo_aval)
+                    exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=False)
+                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)                    
+                    banca_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+
                     if peso is not None:
                         nomes = ""
                         for nome in avaliadores:
@@ -3211,20 +3253,22 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                         elif nota_b >= 6:
                             certificacao = "D"  # Destaque FALCONI-INSPER
 
-                        notas[titulo_aval].append({"avaliadores": "{0}".format(nomes),
+                        notas[titulo_aval[0]].append({"avaliadores": "{0}".format(nomes),
                                             "nota_texto": "{0:5.2f}".format(nota_b),
                                             "nota": nota_b,
-                                            "certificacao": certificacao})
+                                            "certificacao": certificacao,
+                                            "banca_incompleta": banca_incompleta})
                         
                     else:
-                        notas[titulo_aval].append({"avaliadores": "&nbsp;-&nbsp;",
+                        notas[titulo_aval[0]].append({"avaliadores": "&nbsp;-&nbsp;",
                                             "nota_texto": "",
                                             "nota": 0,
-                                            "certificacao": ""})
+                                            "certificacao": "",
+                                            "banca_incompleta": banca_incompleta})
 
             tabela = zip(projetos,
-                         relatorio_intermediario,
-                         relatorio_final,
+                         notas["Relatório Intermediário"],
+                         notas["Relatório Final"],
                          notas["Banca Intermediária"],
                          notas["Banca Final"],
                          notas["Falconi"],)

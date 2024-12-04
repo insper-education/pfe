@@ -110,7 +110,7 @@
       
         <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
           {% for banca in bancas %} 
-          <tr class="item {{ banca.tipo_de_banca|get_banca }}">
+          <tr class="item {{ banca.tipo_de_banca|get_tipo_banca }}">
             <td>
 
               {% if banca.get_projeto %}
@@ -166,7 +166,7 @@
               <b lang="pt">Tipo:</b>
               <b lang="en">Type:</b>
               {% if banca.tipo_de_banca is not None %}
-                {{ banca.tipo_de_banca|get_banca }}
+                {{ banca.tipo_de_banca|get_tipo_banca }}
               {% else %}
                 Não definido
               {% endif %}

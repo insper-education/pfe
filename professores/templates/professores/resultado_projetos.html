@@ -171,11 +171,21 @@
                 {% comment %} Banca Intermediária {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                      {% if banca_intermediaria.banca_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="color: darkgrey; font-weight: bold;"
+                      {% elif banca_intermediaria.banca_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="color: orange; font-weight: bold;"
+                      {% elif banca_intermediaria.banca_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="color: red; font-weight: bold;"
+                      {% endif %}
                       {% if banca_intermediaria.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
                         {{ banca_intermediaria.nota_texto|safe }}
                       {% else %}
                       >
+                        {% if banca_intermediaria.banca_incompleta > 0 %}
+                          <i class="fas fa-exclamation-triangle"></i>
+                        {% endif %}
                       {% endif %}
                     </a>
                   </td>
@@ -183,11 +193,21 @@
                   {% comment %} Banca Final {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                      {% if banca_final.banca_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="color: darkgrey; font-weight: bold;"
+                      {% elif banca_final.banca_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="color: orange; font-weight: bold;"
+                      {% elif banca_final.banca_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="color: red; font-weight: bold;"
+                      {% endif %}
                       {% if banca_final.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
                         {{ banca_final.nota_texto|safe }}
                       {% else %}
                       >
+                        {% if banca_final.banca_incompleta > 0 %}
+                          <i class="fas fa-exclamation-triangle"></i>
+                        {% endif %}
                       {% endif %}
                     </a>
                   </td>
@@ -195,12 +215,24 @@
                   {% comment %} Banca Falconi {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                      {% if banca_falconi.banca_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="color: darkgrey; font-weight: bold;"
+                      {% elif banca_falconi.banca_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="color: orange; font-weight: bold;"
+                      {% elif banca_falconi.banca_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="color: red; font-weight: bold;"
+                      {% endif %}
+
                       {% if banca_falconi.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
                         {{ banca_falconi.nota_texto|safe }}
                       {% else %}
                       >
+                        {% if banca_falconi.banca_incompleta > 0 %}
+                          <i class="fas fa-exclamation-triangle"></i>
+                        {% endif %}
                       {% endif %}
+                    
                     </a>
                   </td>
 

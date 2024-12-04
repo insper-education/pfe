@@ -11,7 +11,7 @@ from django import template
 register = template.Library()
 
 @register.filter
-def get_banca(value):
+def get_tipo_banca(value):
     """Retorna a string do tipo de banca."""
     TIPOS = dict(Banca.TIPO_DE_BANCA)
     if value in TIPOS:
