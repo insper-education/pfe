@@ -3120,20 +3120,16 @@ def get_banca_incompleta(projeto, tipo_de_banca, avaliadores):
     banca_incompleta = 0  # 0 se não há banca
     if banca:
         if avaliadores:  # 1 se existe banca
-            if banca.membro1:
-                if banca.membro1 not in avaliadores:
-                    banca_incompleta = 1
-            if banca.membro2:
-                if banca.membro2 not in avaliadores:
-                    banca_incompleta = 1
-            if banca.membro3:
-                if banca.membro3 not in avaliadores:
-                    banca_incompleta = 1
+            if banca.membro1 and banca.membro1 not in avaliadores:
+                banca_incompleta = 1
+            if banca.membro2 and banca.membro2 not in avaliadores:
+                banca_incompleta = 1
+            if banca.membro3 and banca.membro3 not in avaliadores:
+                banca_incompleta = 1
 
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-                if banca.projeto.orientador:
-                    if banca.projeto.orientador.user not in avaliadores:
-                        banca_incompleta = 1
+                if banca.projeto.orientador and banca.projeto.orientador.user not in avaliadores:
+                    banca_incompleta = 1
 
             if banca_incompleta == 1:
                 if (now - banca.endDate).days > 3:  # muito atrasada
