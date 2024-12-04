@@ -2386,6 +2386,50 @@ def resultado_bancas(request, pk):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def avaliar_bancas(request):
+    """Visualiza os resultados das bancas de um projeto."""
+
+    if request.is_ajax():
+
+        if "edicao" in request.POST:
+            
+
+            bancas_m = (Banca.objects.filter(membro1=request.user) |
+                        Banca.objects.filter(membro2=request.user) |
+                        Banca.objects.filter(membro3=request.user))
+            
+            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
+                bancas_o = (Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=0) | # (0, 'Final'),
+                            Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=1))   # (1, 'Intermediária'),
+                bancas = bancas_o | bancas_m
+            else:
+                bancas = bancas_m
+
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = request.POST["edicao"].split('.')
+                bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+        else:
+            return HttpResponse("Erro ao carregar dados.", status=401)
+        
+
+        pk=93
+        context = {
+            "objetivos": ObjetivosDeAprendizagem.objects.all(),
+            "projeto": get_object_or_404(Projeto, pk=pk),
+            "bancas": bancas,
+        }
+    else:
+        context = {
+            "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
+            "edicoes": get_edicoes(Projeto)[0],
+        }
+    return render(request, "professores/avaliar_bancas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by("startDate")
@@ -3073,7 +3117,6 @@ def relato_avaliar(request, projeto_id, evento_id):
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
-        # print("AJAX")
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -3135,17 +3178,13 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                     "nota_texto": "",
                                                     "nota": 0})
  
-
                 else:
                     relatorio_intermediario.append(("&nbsp;-&nbsp;", None, 0))
                     relatorio_final.append(("&nbsp;-&nbsp;", None, 0))
-
-
-
                 
                 for titulo_aval in nomes_bancas:
                     exame = Exame.objects.get(titulo=titulo_aval)
-                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # B. Final
+                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b, eh_banca=True)
                     if peso is not None:
                         notas[titulo_aval].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),

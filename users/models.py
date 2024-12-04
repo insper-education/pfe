@@ -305,26 +305,26 @@ class Aluno(models.Model):
             return str(self.curso2)
         return "Sem curso"
 
-    def get_objetivos(self, avaliacoes, eh_banca=False):
+    def get_objetivos(self, avaliacoes):
         """Retorna objetivos."""
         lista_objetivos = {}
         avaliadores = set()
-        objetivos = ObjetivosDeAprendizagem.objects.all()
-        for objetivo in objetivos:
-            bancas = avaliacoes.filter(objetivo=objetivo).\
-                order_by("avaliador", "-momento")
-            if bancas:
+
+        for objetivo in ObjetivosDeAprendizagem.objects.all():
+            avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")
+            if avaliacoes_p_obj:
+                for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
+                    if objtmp.sigla == objetivo.sigla:
+                        raise ValidationError("<h2>Erro, dois objetivos no mesmo semestre com a mesma sigla!</h2>")
                 lista_objetivos[objetivo] = {}
-            for banca in bancas:
-                # Se não for o mesmo avaliador
-                if banca.avaliador not in lista_objetivos[objetivo]:
-                    avaliadores.add(banca.avaliador)
-                    if banca.na or (banca.nota is None) or (banca.peso is None):
-                        lista_objetivos[objetivo][banca.avaliador] = None
-                    else:
-                        lista_objetivos[objetivo][banca.avaliador] = (float(banca.nota),
-                                                                      float(banca.peso))
-                # Senão é só uma avaliação de objetivo mais antiga
+                for aval in avaliacoes_p_obj:
+                    if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
+                        avaliadores.add(aval.avaliador)
+                        if aval.na or (aval.nota is None) or (aval.peso is None):
+                            lista_objetivos[objetivo][aval.avaliador] = None
+                        else:
+                            lista_objetivos[objetivo][aval.avaliador] = (float(aval.nota), float(aval.peso))
+                    # Senão é só uma avaliação de objetivo mais antiga (E IGNORAR)
 
         if not lista_objetivos:
             return 0, None, None
@@ -332,7 +332,7 @@ class Aluno(models.Model):
         # média por objetivo
         val_objetivos = {}
         pes_total = 0
-        for obj in lista_objetivos:
+        for obj in lista_objetivos:  # Verificando cada objetivo de aprendizado identificado
             val = 0.0
             pes = 0.0
             count = 0
@@ -344,24 +344,15 @@ class Aluno(models.Model):
                         pes += lista_objetivos[obj][avali][1]
                         pes_total += lista_objetivos[obj][avali][1]
                 if count:
-                    valor = val/count
-                    peso = pes/count
-
-                    if eh_banca:
-                        # Para sempre arredondar 5.5 para 6 e 6.5 para 7 por exemplo.
-                        # valor = float(Decimal(valor).quantize(0, ROUND_HALF_UP))
-                        # NÃO USAR MAIS ISSO PARA NÃO TER INCONSISTÊNCIAS DE NOTAS
-                        valor = float(valor)
-                    else:
-                        valor = float(valor)
-
+                    valor = val/float(count)
+                    peso = pes/float(count)
                     val_objetivos[obj] = (valor, peso)
 
         return val_objetivos, pes_total, avaliadores
 
     def get_banca(self, avaliacoes_banca, eh_banca=False):
         """Retorna média final das bancas informadas."""
-        val_objetivos, pes_total, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca, eh_banca=eh_banca)
+        val_objetivos, pes_total, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca)
 
         if not val_objetivos:
             return 0, None, None
@@ -418,16 +409,16 @@ class Aluno(models.Model):
             avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=banca_intermediaria)
 
             if avaliacoes_banca_interm:
-                nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self,
-                                                              avaliacoes_banca_interm, eh_banca=True)
+                #nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_interm, eh_banca=True)
+                nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_interm)
                 notas.append(("BI", nota_banca_interm, peso/100 if peso else 0))
 
             # Banca Final (2)
             avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=banca_final)
 
             if avaliacoes_banca_final:
-                nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self,
-                                                             avaliacoes_banca_final, eh_banca=True)
+                #nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_final, eh_banca=True)
+                nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_final)
                 notas.append(("BF", nota_banca_final, peso/100 if peso else 0))
 
             # vvvvvvvvvv NÃO USA OBJETIVOS DE APREENZAGEM vvvvvvvvvv
@@ -697,8 +688,9 @@ class OpcaoTemporaria(models.Model):
         if self.aluno and self.aluno.user and self.aluno.user.username:
             mensagem += self.aluno.user.username
         mensagem += " >>> "
-        if self.proposta and self.proposta.titulo:
-            mensagem += self.proposta.titulo
+        if self.proposta and self.proposta.organizacao.sigla and self.proposta.titulo:
+            mensagem += "[" + self.proposta.organizacao.sigla + "] " + self.proposta.titulo
+        mensagem += " := " + str(self.prioridade)
         return mensagem
 
 

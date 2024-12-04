@@ -130,6 +130,10 @@ urlpatterns = [
         views.resultado_bancas,
         name="resultado_bancas"),
 
+    path("avaliar_bancas/",
+        views.avaliar_bancas,
+        name="avaliar_bancas"),
+
     path("coorientadores_tabela_completa/",
         views.coorientadores_tabela_completa,
         name="coorientadores_tabela_completa"),

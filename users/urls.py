@@ -36,6 +36,10 @@ urlpatterns = [
         views.estudantes_inscritos,
         name="estudantes_inscritos"),
 
+    path("converte_opcoes/<int:ano>/<int:semestre>",
+        views.converte_opcoes,
+        name="converte_opcoes"),
+
     path("estudante_detail/<int:primarykey>",
         views.estudante_detail,
         name="estudante_detail"),

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 3 de Dezembro de 2024
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    table, th, td {border: 1px solid lightgrey;}
+    tbody tr:nth-child(even) {background-color: #f2f2f2;}
+    tbody tr:nth-child(odd) {background-color: #f9f9f9;}
+    ul,ol {padding-left: 28px;}
+
+  </style>
+
+  {% include "converte_notas.html" %}
+  {% include "avalia_objetivos.html" %}
+
+{% endblock %}
+
+{% block content %}
+
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en">{{ titulo.en }}</span>
+  </span>
+
+  {% include "edicoes.html" %}
+  <br>
+
+  <div class="atualizar">
+
+    {% for banca in bancas %}
+
+      <strong>
+        <span lang="pt">Projeto:</span>
+        <span lang="en" style="display: none;">Project:</span>
+      </strong>
+
+      {% if banca.projeto.organizacao %}
+        [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{banca.projeto.organizacao}}</a>]
+      {% endif %}
+
+      {% if projeto %}
+        <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.get_titulo}}</a><br>
+      {% endif %}
+
+      <strong>
+        <span lang="pt">Semestre:</span>
+        <span lang="en" style="display: none;">Semester:</span>
+      </strong> {{banca.projeto.ano}}.{{banca.projeto.semestre}}<br>
+
+      {% if banca.projeto.orientador %}
+        <strong>
+          <span lang="pt">Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
+          <span lang="en" style="display: none;">Advisor:</span>
+        </strong>
+        <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">
+          {{banca.projeto.orientador.user.get_full_name}}
+        </a>
+        <br>
+      {% endif %}
+
+      {% with coorientadores=banca.projeto.coorientador_set.all %}
+        {% if coorientadores %}
+          <strong>
+            <span lang="pt">Coorientador:</span>
+            <span lang="en" style="display: none;">Co-advisor:</span>
+          </strong>
+          {% for coorientador in coorientadores %}
+              <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+                {{coorientador.usuario.get_full_name}} 
+              </a>
+              {% if not forloop.last %}; {% endif %}
+          {% endfor %}
+          </span>
+          <br>
+        {% endif %}
+      {% endwith %}
+
+      {% include "tipo_projeto.html" with com_tipo=True projeto=banca.projeto %}
+      
+      <strong style="display: inline-block; margin-top: 6px;">
+        <span lang="pt">Grupo:</span>
+        <span lang="en" style="display: none;">Group:</span>
+      </strong>
+      <ul>
+      {% for alocacao in banca.projeto.alocacao_set.all %}
+        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+          <li>
+            {{alocacao.aluno.user.get_full_name}} 
+            [{{ alocacao.aluno.curso2 }}]
+            &lt;{{alocacao.aluno.user.email}}&gt; 
+          </li>
+        </a>
+      {% endfor %}
+      </ul>
+
+      {% for banca2 in projeto.banca_set.all %}
+
+        {% include "dado_banca.html" with banca=banca2 %}
+        <br>
+        
+      {% endfor %}
+
+      <b>
+        <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
+        e depois de 24 horas que a última avaliação foi feita.</span>
+        <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
+          and after 24 hours that the last evaluation was made.</span>
+      </b>
+
+    {% endfor %}
+
+  </div>
+
+  {% include "edicoes_ajax.html" %}
+
+  {% include "linguas.html" %}
+
+{% endblock %}

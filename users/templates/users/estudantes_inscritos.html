@@ -93,6 +93,26 @@
       </table>
     </div>
     <br>
+
+
+    <br>
+    {% if prazo_vencido and tmpinscritos %}
+      <div class="alert alert-warning" role="alert">
+        <span lang="pt">Atenção: O prazo para a seleção provisória de propostas foi encerrado,
+          contudo ainda existem estudantes que não realizaram a seleção final. 
+          Deseja converter as opções provisórias em definitivas?
+        </span>
+        <span lang="en">Attention: The deadline for the provisional selection of proposals has expired,
+          however there are still students who have not made the final selection.
+          Do you want to convert the provisional options into definitive ones?
+        </span>
+        <button type="button" class="btn btn-warning" onclick="window.location.href='{% url 'converte_opcoes' ano semestre %}'">
+          <span lang="pt">Converter Opções</span>
+          <span lang="en">Convert Options</span>
+      </div>
+    {% endif %}
+    <br>
+
     
     {% if num_alunos %}
       <strong lang="pt">Total de Estudantes Aplicando:</strong>

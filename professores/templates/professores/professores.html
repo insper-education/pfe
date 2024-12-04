@@ -45,11 +45,15 @@
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=bancas_index %}</span> <a href="{% url 'bancas_index'%}">
   <span lang="pt">Agendar Bancas</span>
-  <span lang="en" style="display: none;">Schedule Evaluation Boards</span>
+  <span lang="en" style="display: none;">Schedule Examination Boards</span>
 </a></div>
+{% comment %} <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_bancas %}</span> <a href="{% url 'avaliar_bancas' %}">
+  <span lang="pt">Avaliar Bancas</span>
+  <span lang="en" style="display: none;">Evaluate Examination Boards</span>
+</a></div> {% endcomment %}
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacoes_pares %}</span> <a href="{% url 'avaliacoes_pares' %}">
-  <span lang="pt">Avaliação de Pares</span>
-  <span lang="en" style="display: none;">Peer Evaluation</span>
+  <span lang="pt">Ver Avaliação de Pares</span>
+  <span lang="en" style="display: none;">Check Peer Evaluation</span>
 </a></div>
 <br>
 

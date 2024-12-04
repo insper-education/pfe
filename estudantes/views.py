@@ -1000,8 +1000,13 @@ def opcao_temporaria(request):
     except:
         return JsonResponse({"atualizado": False}, status=500)
 
-    reg, _ = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=request.user.aluno)
-    reg.prioridade = prioridade
-    reg.save()
+    if prioridade == 0:
+        regs = OpcaoTemporaria.objects.filter(proposta=proposta, aluno=request.user.aluno)
+        for reg in regs:
+            reg.delete()
+    else:    
+        reg, _ = OpcaoTemporaria.objects.get_or_create(proposta=proposta, aluno=request.user.aluno)
+        reg.prioridade = prioridade
+        reg.save()
 
     return JsonResponse({"atualizado": True,})

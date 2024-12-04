@@ -163,9 +163,16 @@
           </small><br>
 
           <div style="display: flex; margin-top: 8px;">      
-
-            <button class="btn btn-primary mb-1" type="submit" style="margin-right: 14px;"
-                    {% if vencido or not liberadas_propostas or not areas %}disabled{% endif %}>
+            <button class="btn btn-primary mb-1 mr-3" 
+                    {% if vencido or not liberadas_propostas %}disabled{% endif %}
+                    {% if areas %} 
+                      type="submit" 
+                    {% else %} 
+                      style="background-color: #6fa2fa;"
+                      type="button" 
+                      onclick="alert('Selecione suas áreas de interesse e experiências');"
+                    {% endif %}
+                    >
               <span lang="pt">Confirmar</span>
               <span lang="en" style="display:none">Confirm</span>
             </button>
