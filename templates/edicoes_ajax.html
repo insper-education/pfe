@@ -87,7 +87,7 @@
               }
               $(".to_label").removeClass("label_animado");
               $(".filter").attr("disabled",false);
-
+              $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});  {% comment %} <script src="{% static 'js/tooltip.js' %}"></script> {% endcomment %}
               {% include "linguas_ajax.html" %}
 
             } // else {% comment %} Ignorando resposta {% endcomment %}
