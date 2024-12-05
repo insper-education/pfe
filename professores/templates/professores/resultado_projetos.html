@@ -322,29 +322,58 @@
       </table>
       
       <br>
-      &nbsp;<b><span lang="pt">Total de Projetos</span><span lang="en">Total of Projects</span>:
+      <span id="todos_projetos" style="cursor:pointer;">
+        &nbsp;<b><span lang="pt">Total de Projetos</span><span lang="en">Total of Projects</span>:
         <span id="total_projetos"></span></b>
-      
         <span id="filtrados" style="display:none;">
           &nbsp;|&nbsp;Filtrados (visíveis): <span id="visibleRowsCount">0</span>
         </span>
-
+      </span>
       <br>
 
-      &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span id="certificacao_excelencia_label" style="cursor:pointer;">
+        &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span lang="pt">Certificação Excelência FALCONI-INSPER</span>
         <span lang="en">FALCONI-INSPER Excellence Certification</span>
-        (<span id="certificacao_excelencia"></span>)<br>
+        (<span id="certificacao_excelencia"></span>)
+      </span>
+      <br>
 
-      &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span id="certificacao_destaque_label" style="cursor:pointer;">
+        &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span lang="pt">Certificação Destaque FALCONI-INSPER</span>
         <span lang="en">FALCONI-INSPER Highlight Certification</span>
-        (<span id="certificacao_destaque"></span>)<br>
+        (<span id="certificacao_destaque"></span>)
+      </span>
+      <br>
     
       <script>
         $("#total_projetos").html($(".item").length);
         $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
         $("#certificacao_destaque").html($(".certificacao_destaque").length);
+
+        document.getElementById("certificacao_excelencia_label").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var excelenciaItems = document.querySelectorAll(".certificacao_excelencia");
+          items.forEach(function(item) {item.style.display = "none";});
+          excelenciaItems.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("certificacao_destaque_label").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var excelenciaItems = document.querySelectorAll(".certificacao_destaque");
+          items.forEach(function(item) {item.style.display = "none";});
+          excelenciaItems.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("todos_projetos").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          items.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
       </script>
 
     </div>
