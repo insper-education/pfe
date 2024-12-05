@@ -47,7 +47,7 @@ from academica.models import Exame
 from estudantes.models import EstiloComunicacao
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @login_required
 def user_detail(request, primarykey=0):

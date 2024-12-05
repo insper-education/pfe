@@ -27,7 +27,7 @@ from administracao.models import Carta
 from operacional.models import Curso
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""

@@ -74,7 +74,7 @@ celery_app = Celery()
 
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)

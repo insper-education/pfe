@@ -52,7 +52,7 @@ from documentos.models import TipoDocumento
 from administracao.support import usuario_sem_acesso
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 def get_evento(evento_id, configuracao):
     if configuracao.semestre == 1:

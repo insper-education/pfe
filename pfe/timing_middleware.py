@@ -1,7 +1,7 @@
 import time
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 class TimingMiddleware:
     def __init__(self, get_response):

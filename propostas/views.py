@@ -41,7 +41,7 @@ from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

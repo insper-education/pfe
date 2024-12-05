@@ -44,7 +44,7 @@ from .tasks import avisos_do_dia, eventos_do_dia
 from administracao.support import usuario_sem_acesso
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 def get_areas_estudantes(alunos):

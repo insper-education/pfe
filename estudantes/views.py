@@ -46,7 +46,7 @@ from .models import EstiloComunicacao
 from users.models import UsuarioEstiloComunicacao
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @login_required
 def index_estudantes(request):

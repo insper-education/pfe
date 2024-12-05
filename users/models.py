@@ -40,7 +40,7 @@ from estudantes.models import Relato, EstiloComunicacao
 from academica.models import Exame
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 class PFEUser(AbstractUser):
     """Classe base para todos os usuários."""

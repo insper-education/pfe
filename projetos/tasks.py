@@ -25,7 +25,7 @@ from .messages import email, htmlizar
 from users.models import Aluno, Professor, PFEUser
 
 # Get an instance of a logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @shared_task
 def backup():
