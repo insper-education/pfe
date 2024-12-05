@@ -6,7 +6,6 @@ from .models import Composicao, Peso, Exame, CodigoColuna, ExibeNota
 
 def dup_peso(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados."""
-    # Usada em Eventos e Avisos
     for obj in queryset:
         from_id = obj.id
         obj.id = None
@@ -15,6 +14,18 @@ def dup_peso(modeladmin: admin_opt.ModelAdmin, request, queryset):
         modeladmin.log_addition(request=request, object=obj, message=message)
 
 dup_peso.short_description = "Duplicar Entrada(s)"
+
+
+def dup_composicao(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados."""
+    for obj in queryset:
+        from_id = obj.id
+        obj.id = None
+        obj.save()
+        message = "duplicando de {} para {}".format(from_id, obj.id)
+        modeladmin.log_addition(request=request, object=obj, message=message)
+
+dup_composicao.short_description = "Duplicar Entrada(s)"
 
 
 @admin.register(Exame)
@@ -28,6 +39,8 @@ class ComposicaoAdmin(admin.ModelAdmin):
     list_display = ("exame", "tipo_documento", "evento", "entregavel", "data_inicial", "data_final")
     ordering = ("data_inicial",)
     list_filter = ("exame", "tipo_documento", "evento")
+    search_fields = ["exame__titulo",]
+    actions = [dup_composicao]
 
 @admin.register(Peso)
 class PesoAdmin(admin.ModelAdmin):
