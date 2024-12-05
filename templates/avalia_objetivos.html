@@ -97,16 +97,22 @@
 
     media_calculada(){
       
-      let descricao = "&#10149; Nota Final Calculada = "
-
-      descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
-      descricao += ' title="Média usando todos os conceitos intermediários'
-      descricao += '(cálculo usando os conceitos apresentados levaria a nota=' + (this.media()) + ')">'
-      
-      descricao += "<b style='font-size: 1.16em;'>";
-      descricao += this.media_geral();
-      descricao += "</b>";
-      descricao += '</span>';
+      var media = this.media();
+      var media_geral = this.media_geral();
+      let descricao = "&#10149; Nota Final Calculada = ";
+      if (!(media_geral === "" || isNaN(media_geral))) {
+        descricao += '<span data-toggle="tooltip" data-html="true" animation="true" '
+        descricao += ' title="Média usando todos os conceitos intermediários'
+        descricao += '(cálculo usando os conceitos apresentados levaria a nota='
+        descricao += media + ')">'
+        
+        descricao += "<b style='font-size: 1.16em;'>";
+        descricao += media_geral;
+        descricao += "</b>";
+        descricao += '</span>';
+      } else {
+        descricao += "N/A"
+      }
 
       return (descricao)
     }
