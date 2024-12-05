@@ -65,7 +65,6 @@ def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
 
-
 dup_entrada.short_description = "Duplicar Entrada(s)"
 
 

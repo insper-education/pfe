@@ -6,12 +6,17 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Junho de 2023
 """
 
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
 from administracao.models import Carta
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @login_required
 def index_old(request):
@@ -65,5 +70,8 @@ def migracao(request):
     for avaliacao in avaliacoes:
         avaliacao.objetivo = novo_objetivo
         avaliacao.save()
+
+    # Só para testar se envia mensagem
+    logger.error(f"Objetivo de Avaliação Atualizado: {avaliacao}")
 
     return HttpResponse(message)
