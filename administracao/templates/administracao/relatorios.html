@@ -21,28 +21,40 @@
     <span lang="en">{{ titulo.en }}</span>
   </span>
 
-  <form method="post"> {% csrf_token %}
+  {% include "edicoes.html" %}
+  <br>
 
-    {% include "edicoes.html" %}
-    <br>
+  <table>
+    {% for nome, dado in relatorios %}
+      <tr>
+        <td>{{ nome }}</td>
+        <td><a class="html_link" 
+          {{edicoes|last}}
+          href="{% url 'relatorio' dado 'HTML'%}?edicao={{edicoes|last}}"
+          data-href="{% url 'relatorio' dado 'HTML'%}">HTML</a></td>
+        <td><a class="pdf_link"
+          href="{% url 'relatorio' dado 'PDF'%}?edicao={{edicoes|last}}"
+          data-href="{% url 'relatorio' dado 'PDF'%}">PDF</a></td>
+      </tr>
+    {% endfor %}
+  </table>
 
-    <table>
-      {% for nome, dado in relatorios %}
-        <tr>
-          <td>{{ nome }}</td>
-          <td><a href="{% url 'relatorio' dado 'HTML'%}">HTML</a></td>
-          <td><a href="{% url 'relatorio' dado 'PDF'%}">PDF</a></td>
-        </tr>
-      {% endfor %}
-    </table>
-    <br><br>
+  <script>
 
-    {% comment %} <button type="submit" class="btn btn-primary mb-1 mt-2">
-      <span lang="pt">Enviar</span>
-      <span lang="en">Send</span>
-    </button> {% endcomment %}
+    function atualiza_links() {
+      var selectedValue = $(this).val();
+      var links = $(".html_link, .pdf_link");
+      for (var i = 0; i < links.length; i++) {
+          var link = $(links[i]);
+          var href = link.data("href");
+          link.attr("href", href + "?edicao=" + selectedValue);
+      }
+    }
 
-  </form>
+    $(document).ready(function() {
+        $("#filterEdicao").change(atualiza_links);
+    });
+  </script>
 
   {% include "linguas.html" %}
 

@@ -687,8 +687,8 @@ def relatorios(request):
     """gera relatorio dos dados."""
 
     relatorios = [
-        ("Propostas Completas", "propostasc"),
-        ("Propostas Simples", "propostass"),
+        ("Propostas Completas", "propostas"),
+        ("Propostas Simples", "propostas_s"),
         ("Projetos", "projetos"),
         ("Estudantes", "estudantes"),
         ("Feedbacks", "feedbacks"),
@@ -1302,23 +1302,42 @@ def backup(request, formato):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    configuracao = get_object_or_404(Configuracao)
     context = {
         "titulo": {"pt": "Relatório", "en": "Report"},
-        "configuracao": configuracao
         }
 
+    edicao = request.GET.get("edicao", None)
+    if edicao and edicao != "todas":
+        ano, semestre = map(int, edicao.split('.'))
+    else:
+        edicao = None
+   
     if modelo == "propostas":
-        context["propostas"] = Proposta.objects.all()
+        if edicao:
+            context["propostas"] = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+        else:
+            context["propostas"] = Proposta.objects.all(disponivel=True)
         arquivo = "administracao/relatorio_propostas.html"
 
+    if modelo == "propostas_s":
+        if edicao:
+            context["propostas"] = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+        else:
+            context["propostas"] = Proposta.objects.all(disponivel=True)
+        arquivo = "administracao/relatorio_propostas_simples.html"
+
     elif modelo == "projetos":
-        context["projetos"] = Projeto.objects.all()
+        if edicao:
+            context["projetos"] = Projeto.objects.filter(ano=ano, semestre=semestre)
+        else:
+            context["projetos"] = Projeto.objects.all()
         arquivo = "administracao/relatorio_projetos.html"
 
     elif modelo == "estudantes" or modelo == "alunos":
-        context["alunos"] = Aluno.objects.all().filter(anoPFE=configuracao.ano,
-                                                       semestrePFE=configuracao.semestre)
+        if edicao:
+            context["alunos"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
+        else:
+            context["alunos"] = Aluno.objects.all()
         arquivo = "administracao/relatorio_alunos.html"
 
     elif modelo == "feedbacks":
@@ -1326,8 +1345,11 @@ def relatorio(request, modelo, formato):
         arquivo = "administracao/relatorio_feedbacks.html"
 
     elif modelo == "pares":
-        context["projetos"] = Projeto.objects.filter(ano=configuracao.ano,
-                                                     semestre=configuracao.semestre)
+        if edicao:
+            context["projetos"] = Projeto.objects.filter(ano=ano, semestre=semestre)
+        else:
+            context["projetos"] = Projeto.objects.all()
+        
         context["entregas"] = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
         context["iniciativas"] = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
         context["comunicacoes"] = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]

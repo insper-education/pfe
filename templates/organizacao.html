@@ -20,15 +20,7 @@
       width:auto;
       float: right;
     }
-
-    .pulsar {
-      display: inline-block;
-      line-height: 1.1em;
-      font-size: 1.1em;
-      animation: pulse-text ease-in-out infinite;
-      animation-duration: 2s;
-    }
-    
+   
     .entrada_pri {
       font-size: 25px;
       display: inline-block;
@@ -49,12 +41,6 @@
         padding-bottom: 0.05em;  
       }
     } 
-
-    @keyframes pulse-text {
-      0% {font-size: 1em;}
-      50% {font-size: 1.1em;}
-      100% {font-size: 1em;}
-    }
 
   </style>
   
@@ -89,18 +75,14 @@
     {% if completo %}
       <span class="esconder">
         {% if not proposta.organizacao %}
-        <div class="pulsar">
+        <u>Organização não definida.</u>
         {% endif %}
-          <a
-            data-proposta='{{proposta.id}}'
-            class="link-organizacao"
-            href="{% url 'link_organizacao' proposta.id %}"
-            data-url="{% url 'link_organizacao' proposta.id %}"
-            ><small>&#128279;</small></a
-          >
-        {% if not proposta.organizacao %}
-        </div>
-        {% endif %}
+        <a data-proposta='{{proposta.id}}'
+         class="link-organizacao"
+         href="{% url 'link_organizacao' proposta.id %}"
+         data-url="{% url 'link_organizacao' proposta.id %}">
+           <small>&#128279;</small>
+        </a>
       </span>
     {% endif %}
     <br>

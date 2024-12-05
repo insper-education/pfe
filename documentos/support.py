@@ -15,7 +15,7 @@ def render_to_pdf(template_src, context_dict=None):
     if template:
         html_doc = template.render(context_dict)
         result = BytesIO()
-        pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-8")), result)
+        pdf = pisa.pisaDocument(BytesIO(html_doc.encode("utf-16")), result)
         if not pdf.err:
             return result
     return None

@@ -1,0 +1,47 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Dezembro de 2024
+{% endcomment %}
+
+{% block head %}
+    
+  {% load static %}
+  {% load bleach %}
+
+  <style>
+    @page {
+      size: a4 portrait;
+      margin: 1.5cm  1.5cm  1.5cm  1.5cm;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+    
+  <span class="titulo">
+    <span lang="pt">{{ titulo.pt }}</span>
+    <span lang="en" style="display: none;">{{ titulo.en }}</span>
+  </span>
+
+  <h3>Propostas Disponíveis</h3>
+
+  {% for proposta in propostas %} 
+
+    <p style="page-break-before: always"></p>
+
+      {% with completo=False %}
+        {% include "proposta.html" %}
+      {% endwith %}
+
+      {% with completo=False %}
+        {% include "organizacao.html" %}
+      {% endwith %}
+
+    <hr class="striped-border">
+
+  {% empty %}
+    <p>Não existem propostas disponíveis.</p>
+  {% endfor %}
+
+{% endblock %}
