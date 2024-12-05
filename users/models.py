@@ -313,9 +313,9 @@ class Aluno(models.Model):
         for objetivo in ObjetivosDeAprendizagem.objects.all():
             avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")
             if avaliacoes_p_obj:
-                for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
-                    if objtmp.sigla == objetivo.sigla:
-                        raise ValidationError("<h2>Erro, dois objetivos no mesmo semestre com a mesma sigla!</h2>")
+                # for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
+                #     if objtmp.sigla == objetivo.sigla:
+                #         raise ValidationError("<h2>Erro, dois objetivos no mesmo semestre com a mesma sigla!</h2>")
                 lista_objetivos[objetivo] = {}
                 for aval in avaliacoes_p_obj:
                     if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
