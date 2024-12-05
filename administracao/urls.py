@@ -74,14 +74,6 @@ urlpatterns = [
         views.exportar,
         name="exportar"),
 
-    path("dados_backup",
-        views.dados_backup,
-        name="dados_backup"),
-
-    path("dados_backup/<str:modo>",
-        views.dados_backup,
-        name="dados_backup"),
-
     path("export/<str:modelo>/<str:formato>",
         views.export,
         name="export"),

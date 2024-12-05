@@ -23,8 +23,8 @@
 
   <form method="post"> {% csrf_token %}
 
-    {% comment %} {% include "edicoes.html" %}
-    <br> {% endcomment %}
+    {% include "edicoes.html" %}
+    <br>
 
     <table>
       {% for nome, dado in relatorios %}
@@ -37,10 +37,10 @@
     </table>
     <br><br>
 
-    <button type="submit" class="btn btn-primary mb-1 mt-2">
+    {% comment %} <button type="submit" class="btn btn-primary mb-1 mt-2">
       <span lang="pt">Enviar</span>
       <span lang="en">Send</span>
-    </button>
+    </button> {% endcomment %}
 
   </form>
 

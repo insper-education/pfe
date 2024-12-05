@@ -687,7 +687,8 @@ def relatorios(request):
     """gera relatorio dos dados."""
 
     relatorios = [
-        ("Propostas", "propostas"),
+        ("Propostas Completas", "propostasc"),
+        ("Propostas Simples", "propostass"),
         ("Projetos", "projetos"),
         ("Estudantes", "estudantes"),
         ("Feedbacks", "feedbacks"),
@@ -1347,56 +1348,6 @@ def relatorio(request, modelo, formato):
         return HttpResponse(pdf.getvalue(), content_type="application/pdf")
 
     return HttpResponse("Algum erro não identificado.", status=401)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def dados_backup(request, modo=None):
-    """Envia e-mails de backup de segurança."""
-    
-    if modo is None:
-        return HttpResponse("Sistema de envio de backup de dados desligado.")
-    
-    if request.method == "POST" and "email" in request.POST and "sigla" in request.POST:
-
-        subject = "Capstone | Relatórios"
-        message = "Relatórios"
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [request.POST["email"],]
-        mail = EmailMessage(subject, message, email_from, recipient_list)
-        
-        if modo == "relatorios":
-            configuracao = get_object_or_404(Configuracao)
-            context = {
-                "titulo": {"pt": "Relatório", "en": "Report"},
-                "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
-                "alunos": Aluno.objects.filter(anoPFE=configuracao.ano, semestrePFE=configuracao.semestre),
-                "configuracao": configuracao,
-            }
-            pdf_proj = render_to_pdf("administracao/relatorio_projetos.html", context)
-            pdf_alun = render_to_pdf("administracao/relatorio_alunos.html", context)
-            mail.attach("projetos.pdf", pdf_proj.getvalue(), "application/pdf")
-            mail.attach("alunos.pdf", pdf_alun.getvalue(), "application/pdf")
-
-        elif modo=="dados":
-            databook = create_backup()
-            mail.attach("backup.xlsx", databook.xlsx, "application/ms-excel")
-            mail.attach("backup.json", databook.json, "application/json")
-            
-        mail.send()
-        
-        context = {
-            "area_principal": True,
-            "mensagem": "E-mail enviado.",
-        }
-
-        return render(request, "generic.html", context=context)
-    
-    else:
-        raise SuspiciousOperation(f"Chamada irregular.")
-    
-    context = {"titulo": { "pt": "Backup de Dados", "en": "Data Backup" },}
-    return render(request, "administracao/dados_backup.html", context=context)
 
 
 @login_required
