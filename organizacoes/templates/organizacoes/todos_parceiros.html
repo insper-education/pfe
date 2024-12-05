@@ -15,8 +15,6 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder">
-    <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro">&#10133;</a></small>
   </span>
 
   {% comment %} Seletor da edição da pesquisa {% endcomment %}
@@ -88,6 +86,12 @@
     </div> {% comment %} do "tabelas_top.html" {% endcomment %}
 
   </div>
+
+  <br>
+  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}?tipo=parceiro'" type="button" style="float: right;">
+    <span lang="pt">Cadastrar Novo Parceiro</span>
+    <span lang="en" style="display: none;">Register New Partner</span>
+  </button></small><br>
 
   {% include "edicoes_ajax.html" with tabela='Parceiros' %}
 

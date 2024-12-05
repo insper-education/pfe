@@ -33,11 +33,6 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    {% if  user.tipo_de_usuario == 4 %}
-      <small class="esconder"><a class="open-documento"
-        data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-        >&#10133;</a></small>
-    {% endif %}
   </span>
 
   {% comment %} {% include "informacoes.html" %} {% endcomment %}
@@ -128,6 +123,14 @@
     </div>
 
   </div>
+
+  {% if  user.tipo_de_usuario == 4 %}
+    <br>
+    <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'adiciona_documento_tipo' tipo.sigla %}'" type="button" style="float: right;">
+      <span lang="pt">Cadastrar Nova Matéria</span>
+      <span lang="en" style="display: none;">Register New Document</span>
+    </button></small><br>
+  {% endif %}
 
   <script>
     function carrega_pagina() {

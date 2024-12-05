@@ -15,7 +15,6 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder"><a href="{% url 'cadastrar_organizacao' %}">&#10133;</a></small>
   </span>
 
   {% include "tabelas_top_ml.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
@@ -53,6 +52,11 @@
 
     <strong lang="pt">Total de Propostas Submetidas</strong><strong lang="en">Total of Submitted Proposals</strong>: {{ total_submetidos }}<br>
     <strong lang="pt">Total de Projetos Fechados</strong><strong lang="en">Total of Closed Projects</strong>: {{ total_fechados }}<br>
+
+    <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_organizacao" %}'" type="button" style="float: right;">
+      <span lang="pt">Cadastrar Nova Organização</span>
+      <span lang="en" style="display: none;">Register New Organization</span>
+    </button></small><br>
 
   <script>
     function carrega_pagina(){

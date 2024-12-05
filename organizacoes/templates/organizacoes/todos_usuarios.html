@@ -15,7 +15,6 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder"><a href="{% url 'cadastrar_usuario' %}">&#10133;</a></small>
   </span>
 
   <div id="container_edicao" class="container" style="margin: 0px; padding: 0px;">
@@ -53,15 +52,14 @@
 
   </div>
 
+  <br>
+  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}'" type="button" style="float: right;">
+    <span lang="pt">Cadastrar Novo Usuário</span>
+    <span lang="en" style="display: none;">Register New User</span>
+  </button></small><br>
+
   {% include "selecao_ajax.html" with tabela="Usuarios" %}
 
-  {% comment %} <script>
-    function carrega_pagina(){}
-    function carrega_site(){carrega_pagina();};
-    window.onload = carrega_site;
-  </script> {% endcomment %}
-
-  {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}
 
 {% endblock %}

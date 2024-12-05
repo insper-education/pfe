@@ -48,6 +48,14 @@
       }
     }
 
+    .btn-xs {
+      padding: 0.0rem 0.5rem 0.0rem 0.5rem;
+      margin: 0px 0px 0px 0px;
+      font-size: 0.65rem;
+      line-height: 1.5;
+      border-radius: 0.2rem;
+    }
+
   </style>
 
   {% include "heads_calendar.html" %}
@@ -60,48 +68,48 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder">
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Banca" class="open-modal"
-          data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}"> 
-          &#10133;
-        </a>
-    </small>
   </span>
 
-  <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
-    <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
-    {% for edicao in edicoes %}
-      <option value="{{edicao}}"
-        {% if periodo == edicao %}selected{% endif %}
-      >{{edicao}}</option>
-    {% endfor %}
-    <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
-    {% if projeto %}
-      <option value="{{projeto.id}}" selected>{{projeto}}</option>
-    {% endif %}
-  </select>
- 
-  <script>
-    function tipo_banca(selectObject) {
-      var value = selectObject.value;
-      if(value == "todos") {
-        $(".item").show();
-      } else {
-        $(".item").hide();
-        $('.'+value).show();
+  <div>
+    <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
+      <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %}>Todas</option>
+      {% for edicao in edicoes %}
+        <option value="{{edicao}}"
+          {% if periodo == edicao %}selected{% endif %}
+        >{{edicao}}</option>
+      {% endfor %}
+      <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %}>Próximas</option>
+      {% if projeto %}
+        <option value="{{projeto.id}}" selected>{{projeto}}</option>
+      {% endif %}
+    </select>
+  
+    <script>
+      function tipo_banca(selectObject) {
+        var value = selectObject.value;
+        if(value == "todos") {
+          $(".item").show();
+        } else {
+          $(".item").hide();
+          $('.'+value).show();
+        }
       }
-    }
-  </script>
+    </script>
 
-  <select class="esconder" id="tipo" onchange="tipo_banca(this)">
-    <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} >todos</option>
-    <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %}>Intermediária</option>
-    <option value="Final" {% if tipo == "Final" %}selected{% endif %}>Final</option>
-    <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>Falconi</option>
-    <option value="Probation" {% if tipo == "Probation" %}selected{% endif %}>Probation</option>
-  </select>
+    <select class="esconder" id="tipo" onchange="tipo_banca(this)">
+      <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} >todos</option>
+      <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %}>Intermediária</option>
+      <option value="Final" {% if tipo == "Final" %}selected{% endif %}>Final</option>
+      <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>Falconi</option>
+      <option value="Probation" {% if tipo == "Probation" %}selected{% endif %}>Probation</option>
+    </select>
+  
+    <button class="btn btn-light btn-xs esconder open-modal" data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}" type="button">
+      <span lang="pt">Cadastrar Nova Banca</span>
+      <span lang="en" style="display: none;">Register New Examination Board</span>
+    </button>
+  </div>
 
-  <br>
   {% include "informacoes.html" %}
 
   <div id="atualizar">

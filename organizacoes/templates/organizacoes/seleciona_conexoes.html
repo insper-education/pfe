@@ -188,10 +188,10 @@
     </div>
     <br><br><br>
 
-    <small><button class="btn btn-light btn-sm" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
+    <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
       <span lang="pt">Cadastrar Novo Parceiro</span>
       <span lang="en" style="display: none;">Register New Partner</span>
-    </button></small>
+    </button></small><br>
   </form>
 
   <div id="message" class="message"></div>

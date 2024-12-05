@@ -70,10 +70,6 @@
   <span class="titulo">
     <span lang="pt">{{ titulo.pt }}</span>
     <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder">
-    <a class="create-annotation"
-       href="{% url 'anotacao' %}"
-       data-url="{% url 'anotacao' %}">&#10133;</a></small>
   </span>
 
   <div class="container" style="margin: 0px; padding: 0px;">
@@ -110,6 +106,14 @@
               <option value="{{retorno.0}}">{{retorno.1}}</option>
             {% endfor %}
           </select>
+        </div>
+        <div class="input-group input-group-sm mt-1 ml-3 mr-4">
+          <div class="input-group-prepend">
+            <button class="btn btn-light btn-sm esconder create-annotation" href="{% url 'anotacao' %}" data-url="{% url 'anotacao' %}" type="button" style="float: right;">
+              <span lang="pt">Cadastrar Nova Anotação</span>
+              <span lang="en" style="display: none;">Register New Note</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
