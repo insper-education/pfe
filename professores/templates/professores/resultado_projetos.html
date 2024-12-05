@@ -458,8 +458,8 @@
               var columnIndex = columnIndices[sliderId];
               if (cells.length > columnIndex - 1) {
                 var cellValue = parseFloat(cells[columnIndex - 1].innerText || cells[columnIndex - 1].textContent);
-                if (sliderValues[sliderId] > 0 ) {
-                  if (isNaN(cellValue) || cellValue < sliderValues[sliderId]) {
+                if (sliderValues[sliderId] > 0 && isNaN(cellValue) === false) {
+                  if (cellValue < sliderValues[sliderId]) {
                       showRow = false;
                       break;
                   }
