@@ -33,6 +33,68 @@
       background-color:lemonchiffon !important;
     }
   </style>
+
+
+  {% comment %} PARA O PAINEL DE FILTRO DE NOTAS DE BANCAS{% endcomment %}
+  <style>
+    .panel {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .slider-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slider {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 8px;
+      height: 100px;
+      margin: 10px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+
+
 {% endblock %}
 
 {% block content %}
@@ -57,7 +119,13 @@
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
               <th colspan="2" class="text-center"><b><span lang="pt">Relatórios</span><span lang="en">Reports</span></b></th>
-              <th colspan="3" class="text-center"><b><span lang="pt">Bancas</span><span lang="en">Evaluation Committee</span></b></th>
+              <th colspan="3" class="text-center">
+                <b>
+                  <span lang="pt">Bancas</span><span lang="en">Evaluation Committee</span>
+                  <span style="cursor:pointer;" class="fas fa-filter esconder"
+                  onclick="togglePanel()"></span>
+                </b>
+              </th>
             </tr>
             <tr>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')"><span lang="pt">Projeto</span><span lang="en">Project</span></th>
@@ -255,7 +323,13 @@
       
       <br>
       &nbsp;<b><span lang="pt">Total de Projetos</span><span lang="en">Total of Projects</span>:
-        <span id="total_projetos"></span></b><br>
+        <span id="total_projetos"></span></b>
+      
+        <span id="filtrados" style="display:none;">
+          &nbsp;|&nbsp;Filtrados (visíveis): <span id="visibleRowsCount">0</span>
+        </span>
+
+      <br>
 
       &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span lang="pt">Certificação Excelência FALCONI-INSPER</span>
@@ -289,6 +363,123 @@
         $("#ProjetosTable tr > *:nth-child(3)").hide();
         $("#info_"+"Orientador").prop("checked", false);
       {% endif %}
+    </script>
+
+    <div class="overlay" id="overlay" onclick="togglePanel()"></div>
+
+    <div class="panel" id="panel">
+      <button class="close-button" onclick="togglePanel()">×</button>
+      <div class="slider-container mt-4">
+
+        <div class="slider-wrapper text-center">
+          <label for="slider1">Relat. Interm.</label>
+          <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="slider1" data-col="4" oninput="updateValue('slider1', 'value1')">
+          <span id="value1">0</span>
+        </div>
+        
+        <div class="slider-wrapper text-center">
+          <label for="slider2">Relat. Final</label>
+          <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="slider2" data-col="5" oninput="updateValue('slider2', 'value2')">
+          <span id="value2">0</span>
+        </div>
+
+        <div class="slider-wrapper text-center">
+          <label for="slider3">Banca Interm.</label>
+          <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="slider3" data-col="6" oninput="updateValue('slider3', 'value3')">
+          <span id="value3">0</span>
+        </div>
+
+        <div class="slider-wrapper text-center">
+          <label for="slider4">Banca Final</label>
+          <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="slider4" data-col="7" oninput="updateValue('slider4', 'value4')">
+          <span id="value4">0</span>
+        </div>
+
+        <div class="slider-wrapper text-center">
+          <label for="slider5">Banca Falconi</label>
+          <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="slider5" data-col="8" oninput="updateValue('slider5', 'value5')">
+          <span id="value5">0</span>
+        </div>
+          
+      </div>
+    </div>
+
+    <script>
+      function togglePanel() {
+          var panel = document.getElementById("panel");
+          var overlay = document.getElementById("overlay");
+          if (panel.style.display === "none" || panel.style.display === "") {
+              panel.style.display = "block";
+              overlay.style.display = "block";
+          } else {
+              panel.style.display = "none";
+              overlay.style.display = "none";
+          }
+      }
+
+      function updateVisibleRowsCount() {
+        var rows = document.querySelectorAll("#ProjetosTable .item");
+        var visibleCount = 0;
+    
+        rows.forEach(function(row) {
+            if (row.style.display !== "none") {
+                visibleCount++;
+            }
+        });
+    
+        document.getElementById("filtrados").style.display = "inline";
+        document.getElementById("visibleRowsCount").textContent = visibleCount;
+      }
+
+      var sliderValues = {
+        slider1: 0,
+        slider2: 0,
+        slider3: 0,
+        slider4: 0,
+        slider5: 0
+      };
+      
+      function filterRows() {
+        var table = document.getElementById("ProjetosTable");
+        var rows = table.getElementsByTagName("tr");
+        var columnIndices = {
+            slider1: 4,
+            slider2: 5,
+            slider3: 6,
+            slider4: 7,
+            slider5: 8
+        };
+
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            var cells = rows[i].getElementsByTagName("td");
+            var showRow = true;
+
+            for (var sliderId in sliderValues) {
+              var columnIndex = columnIndices[sliderId];
+              if (cells.length > columnIndex - 1) {
+                var cellValue = parseFloat(cells[columnIndex - 1].innerText || cells[columnIndex - 1].textContent);
+                if (sliderValues[sliderId] > 0 ) {
+                  if (isNaN(cellValue) || cellValue < sliderValues[sliderId]) {
+                      showRow = false;
+                      break;
+                  }
+                }
+              }
+            }
+            rows[i].style.display = showRow ? "" : "none";
+        }
+
+        updateVisibleRowsCount();
+      }
+
+      function updateValue(sliderId, valueId) {
+        var slider = document.getElementById(sliderId);
+        var value = document.getElementById(valueId);
+        value.textContent = slider.value;
+        sliderValues[sliderId] = parseFloat(slider.value);
+        filterRows();
+      }
+
     </script>
 
   </div>
