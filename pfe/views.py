@@ -72,6 +72,6 @@ def migracao(request):
         avaliacao.save()
 
     # Só para testar se envia mensagem
-    logger.error(f"SOMENTE UM TESTE DE ERRO")
+    logger.warning(f"SOMENTE UM TESTE DE WARNING")
 
     return HttpResponse(message)

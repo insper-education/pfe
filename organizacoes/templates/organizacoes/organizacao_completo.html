@@ -238,7 +238,11 @@
           <a href="{% url 'projeto_completo' projeto.id %}">
             <li>
               {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
-              {% include "tipo_projeto.html" %}<br>
+              {% include "tipo_projeto.html" %}
+              {% if projeto.orientador %}
+                { {{projeto.orientador.user.get_full_name}} }
+              {% endif %}
+              <br>
             </li>
           </a>
         {% endif %}
