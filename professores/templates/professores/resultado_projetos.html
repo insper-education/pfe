@@ -332,6 +332,9 @@
       </span>
       <br>
 
+      <span id="certificacoes" style="cursor:pointer;">
+        &nbsp;<b><span lang="pt">Certificações</span><span lang="en">Certifications</span>:</b>
+      </span><br>
       <span id="certificacao_excelencia_label" style="cursor:pointer;">
         &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span lang="pt">Certificação Excelência FALCONI-INSPER</span>
@@ -353,6 +356,20 @@
         $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
         $("#certificacao_destaque").html($(".certificacao_destaque").length);
 
+        document.getElementById("todos_projetos").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          items.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("certificacoes").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var certificacoes = document.querySelectorAll(".certificacao_excelencia , .certificacao_destaque");
+          items.forEach(function(item) {item.style.display = "none";});
+          certificacoes.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
         document.getElementById("certificacao_excelencia_label").addEventListener("click", function() {
           var items = document.querySelectorAll(".item");
           var excelenciaItems = document.querySelectorAll(".certificacao_excelencia");
@@ -369,11 +386,6 @@
           updateVisibleRowsCount();
         });
 
-        document.getElementById("todos_projetos").addEventListener("click", function() {
-          var items = document.querySelectorAll(".item");
-          items.forEach(function(item) {item.style.display = "";});
-          updateVisibleRowsCount();
-        });
 
       </script>
 
