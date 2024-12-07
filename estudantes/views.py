@@ -132,15 +132,23 @@ def alocacao_semanal(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     configuracao = get_object_or_404(Configuracao)
     if request.user.tipo_de_usuario == 1:  # Estudante
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
-        alocado = Alocacao.objects.filter(aluno=request.user.aluno).order_by("projeto__ano", "projeto__semestre").last()
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=configuracao.ano , semestre=configuracao.semestre).last()
         if not projeto:
-            return HttpResponse("Erro: Você não está alocado em um projeto!", status=401)
+            mensagem = "Você não está alocado em um projeto esse semestre."
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
     elif request.user.tipo_de_usuario in (2, 4):
         projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
-        alocado = None
     else:
-        return HttpResponse("Você não possui conta de estudante.", status=401)
+        mensagem = "Você não possui conta de estudante."
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic.html", context=context)
     
     horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
     
@@ -148,8 +156,6 @@ def alocacao_semanal(request):
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
         "horarios": horarios,
-        "configuracao": configuracao,
-        "alocado": alocado,
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 
