@@ -163,7 +163,9 @@ def alocacao_semanal(request):
 def alocacao_hora(request):
     """Ajax para definir horarios dos estudantes."""
     if request.user.tipo_de_usuario == 1:
-        alocacao = Alocacao.objects.filter(aluno=request.user.aluno).last()
+        configuracao = get_object_or_404(Configuracao)
+        #alocacao = Alocacao.objects.filter(aluno=request.user.aluno).last()
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         horarios = json.loads(request.POST.get("horarios", None))
         alocacao.horarios = horarios
         alocacao.save()

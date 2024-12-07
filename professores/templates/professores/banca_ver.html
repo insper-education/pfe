@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 {% endblock %}
 
@@ -21,10 +22,36 @@
     <b>
       <span lang="pt">Horário:</span>
       <span lang="en" style="display: none;">Time:</span>
-    </b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
+    </b>
+    <span class="opt_full">
+      {{banca.startDate.date}}
+      <span lang="pt">{% language "pt-br" %}
+        ({{banca.startDate|date:"l"}})
+        das{% endlanguage %}
+      </span>
+      <span lang="en" style="display: none;">{% language "en" %}
+        ({{banca.startDate|date:"l"}})
+        from{% endlanguage %}
+      </span>
+      {{banca.startDate.time}}
+    </span>
+    <span class="opt_short">
+      {{ banca.startDate|date:"d/m/y" }}
+      <span lang="pt">{% language "pt-br" %}
+        ({{banca.startDate|date:"l"}})
+        das{% endlanguage %}
+      </span>
+      <span lang="en" style="display: none;">{% language "en" %}
+        ({{banca.startDate|date:"l"}})
+        from{% endlanguage %}
+      </span>
+      {{ banca.startDate|date:"H:i" }}
+    </span>
   {% endif %}
   {% if banca.endDate %}
-    às {{banca.endDate.time}}
+    <span lang="pt">às</span>
+    <span lang="en" style="display: none;">to</span>
+    {{banca.endDate.time}}
   {% endif %}
   <br>
   <b>
@@ -116,8 +143,9 @@
           <span lang="en" style="display: none;">Advisor:</span>
         </b>
       {% endif %}
-      {{banca.get_projeto.orientador.user.get_full_name}} 
-      <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
+      {{banca.get_projeto.orientador.user.get_full_name}}
+      <span class="opt_full emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
+      <span class="opt_short emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
     <br>
   {% endif %}
   <br>
@@ -131,11 +159,15 @@
       <li>{{banca.get_projeto.orientador.user.get_full_name}} 
         <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
         <span lang="en" style="display: none;">[Advisor]</span>
-        <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a>
+        <span class="opt_full emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
+        <span class="opt_short emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       </li>
     {% endif %}
-    {% for membro in banca.membros %}
-      <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+    {% for membro in banca.membros %}        
+      <li>{{membro.get_full_name}}
+        <span class="opt_full emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
+        <span class="opt_short emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
+      </li>
     {% empty %}
       <b style="color: red;">
         <span lang="pt">Nenhum membro da banca foi definido</span>

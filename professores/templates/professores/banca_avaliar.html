@@ -7,12 +7,32 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   {% load tz %}
   {% load banca_tipo %}
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+
+  <style>
+
+    .borientacoes {
+      border: 1px solid #ccc;
+      padding: 8px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background-color: #ffffdd;
+    }
+
+    {% comment %} REMOVER  vvvvv {% endcomment %}
+    select {
+      max-width: 100%;
+    }
+    {% comment %} REMOVER ^^^^^ {% endcomment %}
+
+  </style>
 
 {% endblock %}
 
@@ -46,7 +66,10 @@
             {% comment %} </a>
             <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
             {% endcomment %} 
-            [{{ alocacao.aluno.curso2 }}]
+
+            {% comment %} [{{ alocacao.aluno.curso2 }}] {% endcomment %}
+            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
+            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
           </li>
         {% endfor %}
       </ul>
@@ -66,7 +89,41 @@
       {% endif %}
 
       <br>
-      <b lang="pt">Data da Banca:</b><b lang="en">Date of Presentation:</b> {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}}<br>
+      <b lang="pt">Data da Banca:</b><b lang="en">Date of Presentation:</b>
+      {% comment %} {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}} {% endcomment %}
+      {% if banca.startDate %}
+        <span class="opt_full">
+          {{banca.startDate.date}}
+          <span lang="pt">{% language "pt-br" %}
+            ({{banca.startDate|date:"l"}})
+            das{% endlanguage %}
+          </span>
+          <span lang="en" style="display: none;">{% language "en" %}
+            ({{banca.startDate|date:"l"}})
+            from{% endlanguage %}
+          </span>
+          {{banca.startDate.time}}
+        </span>
+        <span class="opt_short">
+          {{ banca.startDate|date:"d/m/y" }}
+          <span lang="pt">{% language "pt-br" %}
+            ({{banca.startDate|date:"l"}})
+            das{% endlanguage %}
+          </span>
+          <span lang="en" style="display: none;">{% language "en" %}
+            ({{banca.startDate|date:"l"}})
+            from{% endlanguage %}
+          </span>
+          {{ banca.startDate|date:"H:i" }}
+        </span>
+      {% endif %}
+      {% if banca.endDate %}
+        <span lang="pt">às</span>
+        <span lang="en" style="display: none;">to</span>
+        {{banca.endDate.time}}
+      {% endif %}
+
+      <br>
       {% if banca.location %}
         <b lang="pt">Local:</b><b lang="en">Location:</b> {{banca.location}}<br>
       {% endif %}  
@@ -75,11 +132,10 @@
         <br>
       {% endif %}
       
-      <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b
-      > <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
+      <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b>
+      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
-        oninput="this.setCustomValidity('')"
-        >
+        oninput="this.setCustomValidity('')">
           
           <option disabled selected value id="selecione_avaliador"> -- selecione um avaliador -- </option>
 
@@ -106,21 +162,25 @@
       {% include "ver_documentos.html" %}
 
       {% with site=projeto.get_site %}
-      {% if site %}
-        <b>Site:</b><br>
-        <div style="padding-left: 22px;">
-          &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-        </div><br>
-      {% endif %}
+        {% if site %}
+          <b>Site:</b><br>
+          <div style="padding-left: 22px;">
+            &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+          </div><br>
+        {% endif %}
       {% endwith %}
       
-      <br>
-
       {% if orientacoes %}
-        <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>
-        <span lang="pt">{{orientacoes|safe}}</span>
-        <span lang="en">{{orientacoes_en|safe}}</span>
-        <br>
+        <div class="borientacoes">
+          <h5 style="margin-bottom: 12px;">
+            <span lang="pt">Orientações Gerais</span>
+            <span lang="en">Guidelines</span>
+          </h5>
+          <p style="text-align: justify;">
+            <span lang="pt">{{orientacoes|safe}}</span>
+            <span lang="en">{{orientacoes_en|safe}}</span>
+          </p>
+        </div>
       {% endif %}
 
       {% include "tabela_avaliacao_objetivos.html" %}
