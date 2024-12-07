@@ -6,6 +6,8 @@
 {% endcomment %}
 
 {% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -15,6 +17,13 @@
     <span lang="en" style="display:none">{{ titulo.en }}</span>
   </span>
 
-  {% include "mostra_horarios.html" %}
+  {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
+    <div class="div_arredondado_100">
+      <span lang="pt">Projeto {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} em fase de alocação.</span>
+      <span lang="en" style="display: none;">Projects {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} in the allocation phase.</span>
+    </div>
+  {% else %}
+    {% include "mostra_horarios.html" %}
+  {% endif %}
 
 {% endblock %}

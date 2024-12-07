@@ -133,10 +133,12 @@ def alocacao_semanal(request):
     configuracao = get_object_or_404(Configuracao)
     if request.user.tipo_de_usuario == 1:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
+        alocado = Alocacao.objects.filter(aluno=request.user.aluno).order_by("projeto__ano", "projeto__semestre").last()
         if not projeto:
             return HttpResponse("Erro: Você não está alocado em um projeto!", status=401)
     elif request.user.tipo_de_usuario in (2, 4):
         projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
+        alocado = None
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
     
@@ -146,6 +148,8 @@ def alocacao_semanal(request):
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
         "horarios": horarios,
+        "configuracao": configuracao,
+        "alocado": alocado,
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 
