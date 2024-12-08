@@ -1031,14 +1031,21 @@ class Banca(models.Model):
         peso = 0
         pesos = {}
         for avaliacao in avaliacoes:
-            if avaliacao.objetivo in objetivos:
-                objetivos[avaliacao.objetivo] += avaliacao.nota
-                pesos[avaliacao.objetivo] += 1
+            print("avaliacao.nota", avaliacao.nota)
+            print("avaliacao.peso", avaliacao.peso)
+            if (avaliacao.nota is not None) and (avaliacao.peso is not None):
+                print("NOTA VALIDA")
+                if avaliacao.objetivo in objetivos:
+                    objetivos[avaliacao.objetivo] += avaliacao.nota
+                    pesos[avaliacao.objetivo] += 1
+                else:
+                    objetivos[avaliacao.objetivo] = avaliacao.nota
+                    pesos[avaliacao.objetivo] = 1
+                nota += float(avaliacao.nota) * float(avaliacao.peso)
+                peso += float(avaliacao.peso)
             else:
-                objetivos[avaliacao.objetivo] = avaliacao.nota
-                pesos[avaliacao.objetivo] = 1
-            nota += float(avaliacao.nota) * float(avaliacao.peso)
-            peso += float(avaliacao.peso)
+                print("NOTA INVALIDA")
+
         
         for objetivo in objetivos:
             objetivos[objetivo] = (objetivos[objetivo]/pesos[objetivo], converte_conceitos(objetivos[objetivo]/pesos[objetivo]))

@@ -60,12 +60,12 @@
                 <span id="banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                 <script>
                   $("#banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                    {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
                   );
                   objetivo_tmp = new Objetivo();
                   objetivo_tmp.titulo = "{{objetivo.titulo}}"
                   banca.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota %}
+                  {% if conceito.nota is not None %}
                     banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
                   {% endif %}
                 </script>

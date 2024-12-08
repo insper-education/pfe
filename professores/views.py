@@ -192,6 +192,84 @@ def index_professor(request):
                         bancas_index = 'y'
             context["bancas_index"] = bancas_index
 
+
+
+
+
+
+
+
+
+
+
+
+            # Verifica se todas as bancas do semestre foram avaliadas
+            avaliar_bancas = 'b'
+
+            # Interm ou Final
+            bancas_0_1 = Banca.objects.filter(projeto__ano=configuracao.ano,
+                                              projeto__semestre=configuracao.semestre,
+                                              tipo_de_banca__in=(0, 1))
+            bancas_0_1 = bancas_0_1.filter(membro1=request.user) |\
+                         bancas_0_1.filter(membro2=request.user) |\
+                         bancas_0_1.filter(membro3=request.user) |\
+                         bancas_0_1.filter(projeto__orientador=request.user.professor)
+
+            # Falconi
+            bancas_2 = Banca.objects.filter(projeto__ano=configuracao.ano,
+                                              projeto__semestre=configuracao.semestre,
+                                              tipo_de_banca=2)
+            bancas_2 = bancas_2.filter(membro1=request.user) |\
+                       bancas_2.filter(membro2=request.user) |\
+                       bancas_2.filter(membro3=request.user)
+            
+            # Probation
+            bancas_3 = Banca.objects.filter(alocacao__projeto__ano=configuracao.ano,
+                                            alocacao__projeto__semestre=configuracao.semestre,
+                                            tipo_de_banca=3)
+            bancas_3 = bancas_3.filter(membro1=request.user) |\
+                       bancas_3.filter(membro2=request.user) |\
+                       bancas_3.filter(membro3=request.user)
+            
+            
+            bancas = bancas_0_1 | bancas_2 | bancas_3
+
+            if bancas:
+                avaliar_bancas = 'g'
+
+            for banca in bancas:
+
+                if banca.tipo_de_banca == 0:
+                    exame = Exame.objects.filter(titulo="Banca Final").first()
+                    avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=request.user)
+                elif banca.tipo_de_banca == 1:
+                    exame = Exame.objects.filter(titulo="Banca Intermediária").first()
+                    avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=request.user)
+                elif banca.tipo_de_banca == 2:
+                    exame = Exame.objects.filter(titulo="Certificação Falconi").first()
+                    avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=request.user)
+                elif banca.tipo_de_banca == 3:
+                    exame = Exame.objects.filter(titulo="Probation").first()
+                    avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame=exame, avaliador=request.user)
+                else:
+                    avaliacoes = None
+                if not avaliacoes:
+                    avaliar_bancas = 'r'
+                else:
+                    print("TME")
+            
+
+            context["avaliar_bancas"] = avaliar_bancas
+
+
+
+
+
+
+
+
+
+
             # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
             avaliacoes_pares = 'b'
             evento = get_evento(31, configuracao)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
@@ -229,7 +307,7 @@ def index_professor(request):
         return render(request, "professores/professores.html", context=context)
     else:
         return render(request, "professores/index_professor.html", context=context)
-    
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
