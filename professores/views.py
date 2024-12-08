@@ -340,7 +340,9 @@ def avaliacoes_pares(request, todos=None):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
+        configuracao = get_object_or_404(Configuracao)
         context["edicoes"] = get_edicoes(Pares)[0]
+        context["selecionada"] = f"{configuracao.ano}.{configuracao.semestre}"
 
     return render(request, "professores/avaliacoes_pares.html", context=context)
 

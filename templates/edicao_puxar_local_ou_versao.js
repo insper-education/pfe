@@ -4,25 +4,18 @@
   Data: 21 de Fevereiro de 2024
 {% endcomment %}
 
-{% comment %} {% if not selecionada %} {% endcomment %}
-  // Se veio uma versão definida, não puxar o cache
-  const itemStr = localStorage.getItem("filterEdicao");
-  const item = JSON.parse(itemStr);
-  const filterEdicao = item ? item.value : null;
-  if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-    const prazo = 3600000; // 1 hora
-    const now = new Date().getTime();
-    // Verifica se não venceu
-    if (now > item.expiry + prazo) {
-      localStorage.removeItem("filterEdicao");
-      {% comment %} $("#filterEdicao").trigger("change"); {% endcomment %}  {% comment %} DUPLICANDO LEITURA {% endcomment %}
-    } else {
-      if(filterEdicao != "todas") { // Evita todas pois é muito lento
-        $("#filterEdicao").val(filterEdicao)
-        {% comment %} $("#filterEdicao").trigger("change"); {% endcomment %}   {% comment %} DUPLICANDO LEITURA {% endcomment %}
-      }
+const itemStr = localStorage.getItem("filterEdicao");
+const item = JSON.parse(itemStr);
+const filterEdicao = item ? item.value : null;
+if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
+  const prazo = 3600000; // 1 hora
+  const now = new Date().getTime();
+  // Verifica se não venceu
+  if (now > item.expiry + prazo) {
+    localStorage.removeItem("filterEdicao");
+  } else {
+    if(filterEdicao != "todas") { // Evita todas pois é muito lento
+      $("#filterEdicao").val(filterEdicao)
     }
   }
-{% comment %} {% else %} {% endcomment %}
-  {% comment %} $("#filterEdicao").trigger("change");   {% endcomment %}  {% comment %} DUPLICANDO LEITURA {% endcomment %}
-{% comment %} {% endif %}  {% endcomment %}
+}
