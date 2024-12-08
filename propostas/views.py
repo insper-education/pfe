@@ -541,8 +541,7 @@ def ajax_proposta_resposta(request, primarykey=None):
             pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
             pergunta_resposta.resposta = request.POST["resposta"]
             pergunta_resposta.quem_respondeu = request.user
-            
-            print(request.POST)
+
             if "em_nome" in request.POST and request.POST["em_nome"]:
                 pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
             else:
