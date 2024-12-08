@@ -4,7 +4,7 @@
   Data: 21 de Fevereiro de 2024
 {% endcomment %}
 
-{% if not selecionada %}
+{% comment %} {% if not selecionada %} {% endcomment %}
   // Se veio uma versão definida, não puxar o cache
   const itemStr = localStorage.getItem("filterEdicao");
   const item = JSON.parse(itemStr);
@@ -15,13 +15,14 @@
     // Verifica se não venceu
     if (now > item.expiry + prazo) {
       localStorage.removeItem("filterEdicao");
-      $("#filterEdicao").trigger("change");
+      {% comment %} $("#filterEdicao").trigger("change"); {% endcomment %}  {% comment %} DUPLICANDO LEITURA {% endcomment %}
     } else {
       if(filterEdicao != "todas") { // Evita todas pois é muito lento
-        $("#filterEdicao").val(filterEdicao).trigger("change");
+        $("#filterEdicao").val(filterEdicao)
+        {% comment %} $("#filterEdicao").trigger("change"); {% endcomment %}   {% comment %} DUPLICANDO LEITURA {% endcomment %}
       }
     }
   }
-{% else %}
-  $("#filterEdicao").trigger("change");
-{% endif %}
+{% comment %} {% else %} {% endcomment %}
+  {% comment %} $("#filterEdicao").trigger("change");   {% endcomment %}  {% comment %} DUPLICANDO LEITURA {% endcomment %}
+{% comment %} {% endif %}  {% endcomment %}

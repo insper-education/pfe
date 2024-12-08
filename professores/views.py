@@ -3037,12 +3037,12 @@ def relatos_quinzenais(request, todos=None):
             return HttpResponse("Algum erro não identificado.", status=401)
 
     else:
-
-        edicoes, _, _ = get_edicoes(Relato)
+        configuracao = get_object_or_404(Configuracao)
         context = {
                 "titulo": {"pt": "Relatos Quinzenais", "en": "Biweekly Reports"},
                 "administracao": True,
-                "edicoes": edicoes,
+                "edicoes": get_edicoes(Relato)[0],
+                "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
             }
 
     return render(request, "professores/relatos_quinzenais.html", context=context)
