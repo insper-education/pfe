@@ -93,10 +93,13 @@
 
 </style>
 
-<b>
-  <span lang="pt">Projeto:</span>
-  <span lang="en" style="display:none">Project:</span>
-</b> {{ projeto }}<br>
+<div style="margin-bottom: 3px;">
+  <b>
+    <span lang="pt">Projeto:</span>
+    <span lang="en" style="display:none">Project:</span>
+  </b>
+  {{ projeto }}
+</div>
 {% with alocacoes=projeto.alocacao_set.all %}
 {% for alocacao in alocacoes %}
   <b>
