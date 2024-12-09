@@ -3333,7 +3333,8 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         if ano and semestre:
             selecionada = str(ano) + "." + str(semestre)
         else:
-            selecionada = None
+            configuracao = get_object_or_404(Configuracao)
+            selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
         informacoes = [
             ("#ProjetosTable tr > *:nth-child(2)", "Período"),
