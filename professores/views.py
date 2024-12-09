@@ -3235,27 +3235,77 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
+                        nota_incompleta = 0  # Nota entregue
                         notas["Relatório Intermediário"].append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                                 "nota_texto": "{0:5.2f}".format(nota),
                                                 "nota": nota,
-                                                "certificacao": ""})                    
+                                                "certificacao": "",
+                                                    "nota_incompleta": nota_incompleta})                    
                     else:
+                        # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
+                        # (14, "Bancas Intermediárias", "#EE82EE"),
+                        if projeto.semestre == 1:
+                            evento_r = Evento.objects.filter(tipo_de_evento=22, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_de_evento=14, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                        else:          
+                            evento_r = Evento.objects.filter(tipo_de_evento=22, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_de_evento=14, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                        
+                        if evento_r:
+                            atraso_r = (datetime.date.today() - evento_r.endDate).days
+                            atraso_b = (datetime.date.today() - evento_b.endDate).days
+                            if  atraso_b > 7:  # muito atrasada
+                                nota_incompleta = 3
+                            elif atraso_r > 0:  # pouco atrasada
+                                nota_incompleta = 2
+                            elif atraso_r == 0:  # No dia
+                                nota_incompleta = 1
+                            else:  # Antes do prazo
+                                nota_incompleta = 0
+                        else:
+                            nota_incompleta = 0  # Sem evento
                         notas["Relatório Intermediário"].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
                                                     "nota": 0,
-                                                    "certificacao": ""})
+                                                    "certificacao": "",
+                                                    "nota_incompleta": nota_incompleta})
 
                     if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
                         nota = medias["nota_grupo_final"]/medias["peso_grupo_final"]
+                        nota_incompleta = 0  # Nota entregue
                         notas["Relatório Final"].append({"conceito": "{0}".format(converte_letra(nota, espaco="&nbsp;")),
                                                 "nota_texto": "{0:5.2f}".format(nota),
                                                 "nota": nota,
-                                                "certificacao": ""})                    
+                                                "certificacao": "",
+                                                    "nota_incompleta": nota_incompleta})                    
                     else:
+                        # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
+                        # (15, "Bancas Finais", "#FFFF00"),
+                        if projeto.semestre == 1:
+                            evento_r = Evento.objects.filter(tipo_de_evento=23, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_de_evento=15, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                        else:          
+                            evento_r = Evento.objects.filter(tipo_de_evento=23, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_de_evento=15, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                        
+                        if evento_r:
+                            atraso_r = (datetime.date.today() - evento_r.endDate).days
+                            atraso_b = (datetime.date.today() - evento_b.endDate).days
+                            if  atraso_b > 7:  # muito atrasada
+                                nota_incompleta = 3
+                            elif atraso_r > 0:  # pouco atrasada
+                                nota_incompleta = 2
+                            elif atraso_r == 0:  # No dia
+                                nota_incompleta = 1
+                            else:  # Antes do prazo
+                                nota_incompleta = 0
+                        else:
+                            nota_incompleta = 0  # Sem evento
                         notas["Relatório Final"].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
                                                     "nota": 0,
-                                                    "certificacao": ""})
+                                                    "certificacao": "",
+                                                    "nota_incompleta": nota_incompleta})
  
                 else:
                     notas["Relatório Intermediário"].append(("&nbsp;-&nbsp;", None, 0))
@@ -3265,27 +3315,27 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)
-                    banca_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+                    nota_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
                         notas[titulo_aval[0]].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
                                                     "nota_texto": "{0:5.2f}".format(nota_b),
                                                     "nota": nota_b,
                                                     "certificacao": "",
-                                                    "banca_incompleta": banca_incompleta})                    
+                                                    "nota_incompleta": nota_incompleta})                    
                     else:
                         notas[titulo_aval[0]].append({"conceito": "&nbsp;-&nbsp;",
                                                     "nota_texto": "",
                                                     "nota": 0,
                                                     "certificacao": "",
-                                                    "banca_incompleta": banca_incompleta})
+                                                    "nota_incompleta": nota_incompleta})
 
                     
                 for titulo_aval in nomes_f:
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)                    
-                    banca_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+                    nota_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
                         nomes = ""
@@ -3302,14 +3352,14 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                             "nota_texto": "{0:5.2f}".format(nota_b),
                                             "nota": nota_b,
                                             "certificacao": certificacao,
-                                            "banca_incompleta": banca_incompleta})
+                                            "nota_incompleta": nota_incompleta})
                         
                     else:
                         notas[titulo_aval[0]].append({"avaliadores": "&nbsp;-&nbsp;",
                                             "nota_texto": "",
                                             "nota": 0,
                                             "certificacao": "",
-                                            "banca_incompleta": banca_incompleta})
+                                            "nota_incompleta": nota_incompleta})
 
             tabela = zip(projetos,
                          notas["Relatório Intermediário"],
