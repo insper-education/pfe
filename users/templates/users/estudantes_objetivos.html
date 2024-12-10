@@ -61,33 +61,31 @@
                     {% else %}
                       SEM ORGANIZAÇÃO
                     {% endif %}
-                    {% if alocacao.projeto.avancado %}
-                      <span style="color:red">(Capstone Avançado)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.internacional %}
-                      <span style="color:red">(Internacional)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.intercambio %}
-                      <span style="color:red">(Intercâmbio)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.time_misto %}
-                      <span style="color:red">(Time Misto)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.empreendendo %}
-                      <span style="color:red">(Empreendendo)</span>
-                    {% endif %}
-                    {% if alocacao.projeto.proposta.colaboracao %}
-                      <span style="color:red">(Em colaboração com: {{ alocacao.projeto.proposta.colaboracao }})</span>
-                    {% endif %}
+                    {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
                   {% endif %}
                 {% endfor %}
               {% endif %}
             </td>
             {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-              {% with medias_oo=alocacao.get_medias_oo.media_individual %}
+              {% with oa=alocacao.get_oas_i %}
                 {% for objetivo in objetivos %}
                   <td style="text-align:right;">
-                    {{ medias_oo|get_value:objetivo|get_value:"media"|stringformat:".2f" }}
+                    {% if oa|get_value:objetivo %}
+                      <span data-toggle="tooltip" data-html="true" animation="true" title="
+                        {% for c in oa|get_value:objetivo|get_value:'conceito' %}
+                          <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
+                            {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
+                          </span><br>
+                        {% endfor %}
+                      "
+                      > 
+                        {% with media=oa|get_value:objetivo|get_value:"media" %}
+                          <span style="color: {{ media.2 }};">
+                            {{ media.0 }} ({{ media.1|stringformat:".2f" }})
+                          </span>
+                        {% endwith %}
+                      </span>
+                    {% endif %}
                   </td>
                 {% endfor %}
               {% endwith %}  

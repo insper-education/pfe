@@ -31,8 +31,7 @@ from django.db.models import F
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, Banca
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento, Certificado
-from projetos.support import calcula_objetivos, get_upload_path
-
+from projetos.support import get_upload_path, calcula_objetivos, converte_letra
 from operacional.models import Curso
 
 from estudantes.models import Relato, EstiloComunicacao
@@ -384,112 +383,54 @@ class Aluno(models.Model):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
 
+        siglas = [
+            ("BI", "O"),
+            ("BF", "O"), 
+            ("RP", "N"), 
+            ("RIG", "O"), 
+            ("RFG", "O"), 
+            ("RII", "I"), 
+            ("RFI", "I"), 
+            # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+            ("PPF", "N"), 
+            ("API", "NI"), 
+            ("AFI", "NI"), 
+            ("APG", "O"), 
+            ("AFG", "O"),
+            ]
+        exame = {}
+
+        exame = {sigla: Exame.objects.get(sigla=sigla) for sigla, _ in siglas}
+
         alocacoes = Alocacao.objects.filter(aluno=self.pk)
-
-        try:
-            banca_intermediaria = Exame.objects.get(sigla="BI")
-            banca_final = Exame.objects.get(sigla="BF")
-            relatorio_planejamento = Exame.objects.get(sigla="RP")
-            relatorio_intermediario_grupo = Exame.objects.get(sigla="RIG")
-            relatorio_final_grupo = Exame.objects.get(sigla="RFG")
-            relatorio_intermediario_individual = Exame.objects.get(sigla="RII")
-            relatorio_final_individual = Exame.objects.get(sigla="RFI")
-            planejamento_primeira_fase = Exame.objects.get(sigla="PPF")
-            avaliacao_parcial_individual = Exame.objects.get(sigla="API")
-            avaliacao_final_individual = Exame.objects.get(sigla="AFI")
-            avaliacao_parcial_grupo = Exame.objects.get(sigla="APG")
-            avaliacao_final_grupo = Exame.objects.get(sigla="AFG")
-        except Exame.DoesNotExist:
-            raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
-
         for alocacao in alocacoes:
 
             notas = []  # iniciando uma lista de notas vazia
 
-            # Banca Intermediária (1)
-            avaliacoes_banca_interm = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=banca_intermediaria)
+            for sigla, tipo in siglas:
+                if tipo == "O":  # Avaliações de Objetivos
+                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+                elif tipo == "I":  # Individual
+                    avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
+                elif tipo == "N":  # Notas
+                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+                    avaliacao = avaliacoes.order_by("momento").last()
+                    if avaliacao and avaliacao.nota is not None:
+                        notas.append((sigla, float(avaliacao.nota), avaliacao.peso / 100 if avaliacao.peso else 0))
+                    continue
+                elif tipo == "NI":  # Notas Individuais
+                    avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
 
-            if avaliacoes_banca_interm:
-                #nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_interm, eh_banca=True)
-                nota_banca_interm, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_interm)
-                notas.append(("BI", nota_banca_interm, peso/100 if peso else 0))
+                if avaliacoes:
+                    if tipo in ["O", "I", "NI"]:
+                        nota, peso, _ = Aluno.get_objetivos(self, avaliacoes)
+                        notas.append((sigla, nota, peso / 100 if peso else 0))
 
-            # Banca Final (2)
-            avaliacoes_banca_final = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=banca_final)
-
-            if avaliacoes_banca_final:
-                #nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_final, eh_banca=True)
-                nota_banca_final, peso, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca_final)
-                notas.append(("BF", nota_banca_final, peso/100 if peso else 0))
-
-            # vvvvvvvvvv NÃO USA OBJETIVOS DE APREENZAGEM vvvvvvvvvv
-            # Relatório Preliminar (10)
-            relp = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_planejamento).\
-                order_by("momento").last()
-            if relp and relp.nota is not None:
-                notas.append(("RPL", float(relp.nota), relp.peso/100 if relp.peso else 0))
-            # ^^^^^^^^^^ NÃO USA OBJETIVOS DE APREENZAGEM ^^^^^^^^^^
-
-            # Relatório Intermediário de Grupo (11)
-            rig = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_intermediario_grupo)
-
-            if rig:
-                nota_rig, peso, avaliadores = Aluno.get_objetivos(self, rig)
-                notas.append(("RIG", nota_rig, peso/100 if peso else 0))
-
-            # Relatório Final de Grupo (12)
-            rfg = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=relatorio_final_grupo)
-
-            if rfg:
-                nota_rfg, peso, avaliadores = Aluno.get_objetivos(self, rfg)
-                notas.append(("RFG", nota_rfg, peso/100 if peso else 0))
-
-            # Relatório Intermediário Individual (21)
-            rii = Avaliacao2.objects.filter(alocacao=alocacao, exame=relatorio_intermediario_individual)
-            if rii:
-                nota_rii, peso, avaliadores = Aluno.get_objetivos(self, rii)
-                notas.append(("RII", nota_rii, peso/100 if peso else 0))
-
-            # Relatório Final Individual (22)
-            rfi = Avaliacao2.objects.filter(alocacao=alocacao,exame=relatorio_final_individual)
-            if rfi:
-                nota_rfi, peso, avaliadores = Aluno.get_objetivos(self, rfi)
-                notas.append(("RFI", nota_rfi, peso/100 if peso else 0))
-
-            # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            # Planejamento Primeira Fase  (50)
-            ppf = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=planejamento_primeira_fase).\
-                order_by("momento").last()
-            if ppf:
-                notas.append(("PPF", float(ppf.nota), ppf.peso/100))
-
-            # Avaliação Parcial Individual (51)
-            api = Avaliacao2.objects.filter(alocacao=alocacao, exame=avaliacao_parcial_individual)
-            if api:
-                nota_api, peso, avaliadores = Aluno.get_objetivos(self, api)
-                notas.append(("API", nota_api, peso/100))
-
-            # Avaliação Final Individual (52),
-            afi = Avaliacao2.objects.filter(alocacao=alocacao, exame=avaliacao_final_individual)
-            if afi:
-                nota_afi, peso, avaliadores = Aluno.get_objetivos(self, afi)
-                notas.append(("AFI", nota_afi, peso/100))
-
-            # Avaliação Parcial de Grupo (53)
-            apg = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=avaliacao_parcial_grupo)
-            if apg:
-                nota_apg, peso, avaliadores = Aluno.get_objetivos(self, apg)
-                notas.append(("APG", nota_apg, peso/100))
-
-            # Avaliação Final de Grupo (54)
-            afg = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=avaliacao_final_grupo)
-            if afg:
-                nota_afg, peso, avaliadores = Aluno.get_objetivos(self, afg)
-                notas.append(("AFG", nota_afg, peso/100))
-
-            edicao[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)] = notas
+            edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas
 
         return edicao
+    
+
 
     #@property
     def get_notas(self, request=None, ano=None, semestre=None, checa_banca=True):
@@ -792,11 +733,56 @@ class Alocacao(models.Model):
         }
 
     @property
-    def get_medias_oo(self):
+    def get_medias_oo(self):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
         """Retorna OOs."""
         alocacoes = Alocacao.objects.filter(id=self.id)
         context = calcula_objetivos(alocacoes)
         return context
+
+    def get_oas(self, avaliacoes):
+        """Retorna Objetivos de Aprendizagem da alocação no semestre."""
+        oas = {}
+        for avaliacao in avaliacoes:
+            if avaliacao.objetivo not in oas:
+                oas[avaliacao.objetivo] = {"conceito": []}
+            exame = avaliacao.exame
+            nota = avaliacao.nota
+            peso = avaliacao.peso
+            if nota is not None and peso is not None:
+                oas[avaliacao.objetivo]["conceito"].append( (exame, converte_letra(nota), float(nota), float(peso)) )
+        for oa in oas:
+            notas = oas[oa]["conceito"]
+            val = 0
+            pes = 0
+            cor = "black"
+            for exame, _, nota, peso in notas:
+                if exame.periodo_para_rubricas == 2:  # (2, "Final"),
+                    if nota < 5:
+                        cor = "darkorange"
+                val += nota * peso
+                pes += peso
+            if pes:
+                val = val/pes
+            if val < 5:
+                cor = "red"
+            oas[oa]["media"] = (converte_letra(val), val, cor)
+            oas[oa]["peso"] = pes
+
+        return oas
+
+    def get_oas_i(self):
+        avaliacoes = Avaliacao2.objects.filter(alocacao=self, exame__grupo=False)
+        return self.get_oas(avaliacoes)
+    
+    # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
+    def get_oas_g(self):
+        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
+        return self.get_oas(avaliacoes)
+    
+    # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
+    def get_oas_t(self):
+        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=False) | Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
+        return self.get_oas(avaliacoes)
 
     @property
     def media(self):

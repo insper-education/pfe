@@ -452,22 +452,16 @@ def estudantes_objetivos(request):
             
             # Conta soh alunos não trancados
             alunos_list = Aluno.objects.filter(trancado=False).order_by(Lower("user__first_name"), Lower("user__last_name"))
+            alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
+            alunos_list = alunos_semestre | alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
-            alunos_semestre = alunos_list\
-                .filter(alocacao__projeto__ano=ano,
-                        alocacao__projeto__semestre=semestre)\
-                .distinct()
-
-            alunos_list = alunos_semestre |\
-                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
-            
             #Nao está filtrando todos os semestres
             mes = 3 if semestre == 1 else 9
             data_projeto = datetime.datetime(ano, mes, 1)
 
             # Filtra os Objetivos de Aprendizagem do semestre
             objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
+            #objetivos = ObjetivosDeAprendizagem.objects.all() # Todos os objetivos
             objetivos = objetivos.filter(data_inicial__lt=data_projeto)
             objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
 
@@ -479,7 +473,10 @@ def estudantes_objetivos(request):
                           {"pt": "Projeto", "en": "Project"},
                           ]        
             for objetivo in objetivos:
-                cabecalhos.append({"pt": objetivo.titulo, "en": objetivo.titulo_en})
+                cabecalhos.append({
+                    "pt": objetivo.titulo + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(grupo)"),
+                    "en": objetivo.titulo_en + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(group)"),
+                })
 
             context = {
                 "alunos_list": alunos_list,
@@ -496,10 +493,9 @@ def estudantes_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Aluno)
         context = {
-            "titulo": {"pt": "Objetivos de Aprendizagem por Estudante (Individual)", "en": "Learning Goals by Student (Individual)"},
-            "edicoes": edicoes,
+            "titulo": {"pt": "Objetivos de Aprendizagem por Estudante", "en": "Learning Goals by Student"},
+            "edicoes": get_edicoes(Aluno)[0],
             }
 
     return render(request, "users/estudantes_objetivos.html", context=context)

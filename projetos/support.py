@@ -41,23 +41,36 @@ def converte_conceito(conceito):
 
 def converte_letra(nota, mais="+", espaco=""):
     """Converte de Número para Letra."""
-    if nota > 9.5:
+
+    if nota is None:
+        return None
+    
+    #if nota > 9.5:
+    if nota > 9.99:
         return "A"+mais
-    elif nota >= 8.5:
+    #elif nota >= 8.5:
+    elif nota >= 9:
         return "A"+espaco
-    elif nota >= 7.5:
+    #elif nota >= 7.5:
+    elif nota >= 8:
         return "B"+mais
-    elif nota >= 6.5:
+    #elif nota >= 6.5:
+    elif nota >= 7:
         return "B"+espaco
-    elif nota >= 5.5:
+    #elif nota >= 5.5:
+    elif nota >= 6:
         return "C"+mais
-    elif nota >= 4.5:
+    #elif nota >= 4.5:
+    elif nota >= 5:
         return "C"+espaco
-    elif nota >= 3.5:
+    #elif nota >= 3.5:
+    elif nota >= 4:
         return "D"+mais
-    elif nota >= 2.5:
+    #elif nota >= 2.5:
+    elif nota >= 3:
         return "D"+espaco
-    elif nota >= 1.5:
+    #elif nota >= 1.5:
+    elif nota >= 2:
         return "D"+"-"
     return "I"+espaco
 
@@ -133,18 +146,17 @@ def calcula_objetivos(alocacoes):
     pesos = {key: {} for key in avaliacoes}
     
     notas_lista = [x.get_edicoes for x in alocacoes]
-
+    
     objetivos_avaliados = set()
 
     for nota2 in notas_lista:
-        if nota2:
-            for nota in nota2:
-                avaliacao = nota[0].lower()
-                if avaliacao in notas:
-                    for k, val in nota[1].items():
-                        notas[avaliacao][k] = notas[avaliacao].get(k, 0) + val[0] * val[1]
-                        pesos[avaliacao][k] = pesos[avaliacao].get(k, 0) + val[1]
-                        objetivos_avaliados.add(k)
+        for nota in nota2:
+            avaliacao = nota[0].lower()
+            if avaliacao in notas:
+                for k, val in nota[1].items():
+                    notas[avaliacao][k] = notas[avaliacao].get(k, 0) + val[0] * val[1]
+                    pesos[avaliacao][k] = pesos[avaliacao].get(k, 0) + val[1]
+                    objetivos_avaliados.add(k)
 
 
     # Ordena os objetivos pelo indice de ordem deles

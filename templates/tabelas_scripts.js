@@ -164,6 +164,10 @@ var configuracao_table = {
 
     language: textos_linguas["pt"],
 
+    drawCallback: function(settings) {
+        $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});  {% comment %} <script src="{% static 'js/tooltip.js' %}"></script> {% endcomment %}
+    },
+
 };
 
 function getNumericColumnIndices(tableId) {
