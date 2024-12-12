@@ -14,13 +14,13 @@
   <script>
     function manda(estudantes, estudantes_nomes, orientador, orientador_nome, conexoes, conexoes_nomes, projeto, avancado) {
       mailto = "mailto:";
-      if($('#estudantes:checked').val() && estudantes.trim().length != 0) {
+      if($("#estudantes:checked").val() && estudantes.trim().length != 0) {
         mailto += estudantes;
-        if( ($('#orientador:checked').val() && orientador.trim().length != 0) || ($('#parceiros:checked').val() && conexoes.trim().length != 0) ) {mailto += ",";}
+        if( ($("#orientador:checked").val() && orientador.trim().length != 0) || ($("#parceiros:checked").val() && conexoes.trim().length != 0) ) {mailto += "; ";}
       }
       if($("#orientador:checked").val() && orientador.trim().length != 0) {
         mailto += orientador;
-        if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += ",";}
+        if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += "; ";}
       }
       if($("#parceiros:checked").val() && conexoes.trim().length != 0) {mailto += conexoes;}
       mailto += "?cc={{coordenacao.user.email}}";
@@ -29,15 +29,15 @@
       mailto += "-%20Projeto:%20"
       mailto += projeto
       mailto += "&body=Caros%20"
-      if($('#estudantes:checked').val() && estudantes_nomes.trim().length != 0) {
+      if($("#estudantes:checked").val() && estudantes_nomes.trim().length != 0) {
         mailto += estudantes_nomes;
-        if( ($('#orientador:checked').val() && orientador_nome.trim().length != 0) || ($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) ) {mailto += ", ";}
+        if( ($("#orientador:checked").val() && orientador_nome.trim().length != 0) || ($("#parceiros:checked").val() && conexoes_nomes.trim().length != 0) ) {mailto += ", ";}
       }
-      if($('#orientador:checked').val() && orientador_nome.trim().length != 0) {
+      if($("#orientador:checked").val() && orientador_nome.trim().length != 0) {
         mailto += orientador_nome;
-        if($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) {mailto += ", ";}
+        if($("#parceiros:checked").val() && conexoes_nomes.trim().length != 0) {mailto += ", ";}
       }
-      if($('#parceiros:checked').val() && conexoes_nomes.trim().length != 0) {mailto += conexoes_nomes;}
+      if($("#parceiros:checked").val() && conexoes_nomes.trim().length != 0) {mailto += conexoes_nomes;}
       mailto += ",%0D%0A%0D%0A";
       mailto += "%09atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
       window.open(mailto);
@@ -84,7 +84,7 @@
           <div class="meio_separador input-group-addon"></div>
           <div class="input-group-append  ml-1">
             <a href="
-              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}?cc={{coordenacao.user.email}}
+              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %}; {% endif %}{% endfor %}?cc={{coordenacao.user.email}}
               &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
               atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
             " target="_blank">
@@ -230,7 +230,7 @@
     <br>
     {% if todos_alunos %}
       <a href="
-        mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }},{% endfor %}
+        mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }}; {% endfor %}
         ?cc={{coordenacao.user.email}}
         &amp;subject=Capstone%20&amp;body=Caros%20estudantes,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
@@ -241,7 +241,7 @@
 
     {% if todos_professores %}
       <a href="
-        mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }},{% endfor %}
+        mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }}; {% endfor %}
         ?cc={{coordenacao.user.email}}
         &amp;subject=Capstone&amp;body=Caros%20professores%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
@@ -252,7 +252,7 @@
 
     {% if todos_parceiros %}
       <a href="
-        mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }},{% endfor %}
+        mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }}; {% endfor %}
         ?cc={{coordenacao.user.email}}
         &amp;subject=Capstone&amp;body=Caros%20parceiro%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
@@ -320,7 +320,7 @@
               str += emails.join(';');
 
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              $("#EstudantesInsper").attr("href",str);
+              $("#EstudantesInsper").attr("href", str);
               $("#EstudantesInsper").show();
             }
 
@@ -335,7 +335,7 @@
               str += emails.join(";");
 
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20orientadores,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              $("#Orientadores").attr("href",str);
+              $("#Orientadores").attr("href", str);
               $("#Orientadores").show();
             }
 
@@ -366,7 +366,7 @@
               str += emails.join(';');
 
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
-              $("#Bancas").attr("href",str);
+              $("#Bancas").attr("href", str);
               $("#Bancas").show();
             }
             
@@ -390,7 +390,7 @@
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
-            $("#sequenc_projetos").replaceWith($("#sequenc_projetos",response));
+            $("#sequenc_projetos").replaceWith($("#sequenc_projetos", response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             $("#spinnerProjetos").hide();    
