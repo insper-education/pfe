@@ -8,26 +8,35 @@
 <style>
   .th_objetivos {background-color: #F2F2F2;}
   .td_objetivos {background-color: #FFFFFF;}
+  .th_na {background-color: #F2F2E9;}
+
+  @media only screen and (max-width: 800px) {
+
+  .tab_avaliacao tbody {display: flex;}
+
+  .tab_avaliacao tr {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tab_avaliacao th, .tab_avaliacao td {        
+    flex-basis: 100%;
+    min-height: calc(130px - 5vw);
+  }
+
+}
+
 </style>
 
 {% if objetivos %}
   <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5><br>
   {% for objetivo in objetivos %}
-    <b lang="pt">{{objetivo.titulo}}</b><b lang="en">{{objetivo.titulo_en}}</b>: <span lang="pt">{{objetivo.objetivo}}</span><span lang="en">{{objetivo.objetivo_en}}</span>
+    <b lang="pt">{{objetivo.titulo}}</b><b lang="en">{{objetivo.titulo_en}}</b>:
+     <span lang="pt">{{objetivo.objetivo}}</span><span lang="en">{{objetivo.objetivo_en}}</span>
     
     <div class="table-responsive">
-    <table style="width:100%">
+    <table style="width:100%;" class="tab_avaliacao">
       <tr>
-        {% if not sem_NA %}
-          <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" style="width:10%;">
-            <div class="nav-side">
-              <label class="labels" for="objetivo{{objetivo.id}}NA">
-                N/A
-                <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
-              </label>
-            </div>
-          </th>
-        {% endif %}
 
         {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
         <th class="nav-side-wrapper th_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" style="width:18%">
@@ -36,7 +45,7 @@
             <span class="nivel">
               <span lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>
             </span>(I)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I inputOA" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required />
           </label>
         </div>
         </th>
@@ -48,7 +57,7 @@
             <span class="nivel">
               <span lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>
             </span>(D)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D inputOA" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required />
           </label>
         </div>
         </th>
@@ -59,12 +68,12 @@
             <span class="nivel">
               <span lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>
             </span>(C)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C inputOA" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
           </label>
           {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
-          <label  class="labels" for="objetivo{{objetivo.id}}CX">
+          <label class="labels" for="objetivo{{objetivo.id}}CX">
             (C+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX inputOA" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
           </label>
           {% endif %}
         </div>
@@ -77,11 +86,11 @@
             <span class="nivel">
               <span lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>
             </span>(B)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B inputOA" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required />
           </label>
           <label class="labels" for="objetivo{{objetivo.id}}BX">
             (B+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX inputOA" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required />
           </label>
         </div>
         </th>
@@ -91,11 +100,11 @@
             <span class="nivel">
               <span lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>
             </span>(A)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A inputOA" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required />
           </label>
           <label class="labels" for="objetivo{{objetivo.id}}AX">
             (A+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX inputOA" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required />
           </label>
         </div>
         </th>
@@ -103,9 +112,6 @@
       </tr>
       <tr>
         {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
-          {% if not sem_NA %}
-            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
-          {% endif %}
 
           {% if individual %}
             <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I" lang="pt">{{objetivo.rubrica_intermediaria_individual_I}}</label><label for="objetivo{{objetivo.id}}I" lang="en">{{objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
@@ -122,9 +128,6 @@
           {% endif %}
 
         {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
-          {% if not sem_NA %}
-            <td class="td_objetivos tabela{{objetivo.id}} objetivo{{objetivo.id}}NA"><label for="objetivo{{objetivo.id}}NA" lang="pt">caso prefira não avaliar este objetivo, selecione esta coluna.</label><label for="objetivo{{objetivo.id}}NA" lang="en">if you prefer not to evaluate this objective, select this column.</label></td>
-          {% endif %}
 
           {% if individual %}
             {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
@@ -149,6 +152,22 @@
         {% endif %}
       </tr>
     </table>
+
+    {% if not sem_NA %}
+      <table style="width:100%;">
+        <tr style="width:100%;">
+          <td class="nav-side-wrapper th_na tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" 
+            colspan="{% if banca.tipo_de_banca != 3 %}6{% else %}5{% endif %}">
+              <label style="margin-left: 8px;" for="objetivo{{objetivo.id}}NA">
+                <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA inputNA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
+                <span lang="pt">indique caso prefira não avaliar este objetivo de aprendizagem.</span>
+                <span lang="en">select if you prefer not to evaluate this learning goal.</span>                
+              </label>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
+
     </div>
     <br>
   {% endfor %}

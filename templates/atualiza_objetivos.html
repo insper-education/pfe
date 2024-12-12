@@ -5,24 +5,35 @@
 {% endcomment %}
 
 <script>
-  var branco = '#FFFFFF';
-  var azul = '#DDDDFF';
-  var cinza = '#F2F2F2';
-  var azul_escuro = '#C0C0EB';
+  var branco = "#FFFFFF";
+  var azul = "#DDDDFF";
+  var cinza = "#F2F2F2";
+  var azul_escuro = "#C0C0EB";
+  var cinza_escuro = "#777777";
 
   {% comment %} Para acertar os valores caso venham conceitos por REST   {% endcomment %}
   {% for obj, conceito in conceitos %}
       $("#objetivo{{obj}}"+"{{conceito}}").prop("checked", true);
-      $("td").filter(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul);
-      $("th").filter(".objetivo{{obj}}"+"{{conceito}}").css('backgroundColor', azul_escuro);
+      $("td").filter(".objetivo{{obj}}"+"{{conceito}}").css("backgroundColor", azul);
+      $("th").filter(".objetivo{{obj}}"+"{{conceito}}").css("backgroundColor", azul_escuro);
   {% endfor %}
 
   {% comment %} Mudas as cores conforme objetos são clicados {% endcomment %}
   function cores(e) {
-    $("td").filter("."+e.target.classList[0]).css('backgroundColor', branco);
-    $("td").filter("."+e.target.classList[1]+"").css('backgroundColor', azul);
-    $("th").filter("."+e.target.classList[0]).css('backgroundColor', cinza);
-    $("th").filter("."+e.target.classList[1]+"").css('backgroundColor', azul_escuro);
+    $("td").filter("."+e.target.classList[0]).css("backgroundColor", branco);
+    $("td").filter("."+e.target.classList[1]+"").css("backgroundColor", azul);
+    $("th").filter("."+e.target.classList[0]).css("backgroundColor", cinza);
+    $("th").filter("."+e.target.classList[1]+"").css("backgroundColor", azul_escuro);
   }
-  $('input[type="radio"]').on('click change', cores);
+  $(".inputOA").on("click change", cores);
+
+  {% comment %} // Quando se clica no NA {% endcomment %}
+  function coresNA(e) {
+    $("td").filter("."+e.target.classList[0]).css("backgroundColor", cinza_escuro);
+    $("td").filter("."+e.target.classList[1]+"").css("backgroundColor", azul);
+    $("th").filter("."+e.target.classList[0]).css("backgroundColor", cinza_escuro);
+    $("th").filter("."+e.target.classList[1]+"").css("backgroundColor", azul_escuro);
+  }
+  $(".inputNA").on("click change", coresNA);
+
 </script>

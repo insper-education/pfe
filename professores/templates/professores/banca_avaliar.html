@@ -61,13 +61,7 @@
       <ul style="padding-left: 34px;">
         {% for alocacao in projeto.alocacao_set.all %}
           <li>
-            {% comment %} <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{% endcomment %} 
-              {{alocacao.aluno.user.get_full_name}}
-            {% comment %} </a>
-            <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-            {% endcomment %} 
-
-            {% comment %} [{{ alocacao.aluno.curso2 }}] {% endcomment %}
+            {{alocacao.aluno.user.get_full_name}}
             <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
             <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
           </li>
@@ -184,6 +178,7 @@
       {% endif %}
 
       {% include "tabela_avaliacao_objetivos.html" %}
+      {% include "atualiza_objetivos.html" %}
 
       {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
@@ -222,8 +217,6 @@
     <p lang="pt">Não existe projeto disponível para avaliar.</p>
     <p lang="en">There is no project available to evaluate.</p>
   {% endif %}
-
-  {% include "atualiza_objetivos.html" %}
 
   {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
   {% include "linguas.html" %}

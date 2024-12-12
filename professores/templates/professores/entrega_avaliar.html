@@ -124,6 +124,7 @@
 
       {% if objetivos %}
         {% include "tabela_avaliacao_objetivos.html" with sem_NA=True individual=composicao.exame.grupo|negate %}
+        {% include "atualiza_objetivos.html" %}
       {% else %}
         <b lang="pt">Decisão:</b><b lang="en">Decision:</b><br>
         <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>
@@ -186,8 +187,6 @@
     <p lang="pt">Não existe projeto disponível para avaliar.</p>
     <p lang="en">There is no project available to evaluate.</p>
   {% endif %}
-
-  {% include "atualiza_objetivos.html" %}
 
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
