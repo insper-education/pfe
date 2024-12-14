@@ -126,7 +126,27 @@
                     <span lang="en" style="display: none;">Board's Average Grades:</span>
                   </b><br>
                   {% for objetivo, avaliacao in avaliacao.objetivos.items %}
-                    &nbsp;&#x21A3; {{objetivo.titulo}}: {{avaliacao.0|floatformat:2}} ({{avaliacao.1}})<br>
+                    &nbsp;&#x21A3; {{objetivo.titulo}}: 
+                      {% if banca.tipo_de_banca == 3 %}
+                        {% if avaliacao.0 >= 5 %}
+                          <span style="color: green;">
+                            <span lang="pt">Suficiente</span>
+                            <span lang="en" style="display: none;">Sufficient</span>
+                          </span>
+                        {% else %}
+                          <span style="color: red;">
+                            <span lang="pt">Insuficiente</span>
+                            <span lang="en" style="display: none;">Insufficient</span>
+                          </span>
+                        {% endif %}
+                      {% else %}
+                        {% if avaliacao.0 >= 5 %}
+                          <span style="color: black;">{{avaliacao.0|floatformat:2}}</span>
+                        {% else %}
+                          <span style="color: red;">{{avaliacao.0|floatformat:2}}</span>
+                        {% endif %}
+                      {% endif %}
+                    <br>
                   {% endfor %}
                   {% if avaliacao.peso > 0 %}
                     &#10149;

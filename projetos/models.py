@@ -1020,14 +1020,15 @@ class Banca(models.Model):
         checa_banca = True
 
         # (13, "Evento de encerramento", "#FF4500"),
-        if self.projeto.semestre == 1:
-            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
-        else:
-            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
-        if self.tipo_de_banca != 3 and evento:  # Não é banca de probation e tem evento de encerramento
-            # Após o evento de encerramento liberar todas as notas
-            if now.date() > evento.endDate:
-                checa_banca = False
+        if self.tipo_de_banca != 3:  # Não é banca de probation
+            if self.projeto.semestre == 1:
+                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+            else:
+                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+            if evento:  # tem evento de encerramento
+                # Após o evento de encerramento liberar todas as notas
+                if now.date() > evento.endDate:
+                    checa_banca = False
 
         # Verifica se todos avaliaram a pelo menos 24 horas atrás
         if checa_banca:
