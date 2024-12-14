@@ -421,7 +421,7 @@ def ajax_bancas(request):
                 bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
                 bancas[banca.id]["local"] = banca.location
 
-                if banca.projeto:
+                if banca.projeto: # Banca Final, Intermediária, Falconi
                     bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla if banca.projeto.organizacao else None
                     bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name() if banca.projeto.orientador else None
                     bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
@@ -443,7 +443,10 @@ def ajax_bancas(request):
                         title += "\n• " + banca.projeto.orientador.user.get_full_name() + " (O)"
                     for membro in banca.membros():
                         title += "\n• " + membro.get_full_name()
-                elif banca.alocacao:
+
+                    bancas[banca.id]["estudante"] = None
+
+                elif banca.alocacao:  # Probation
                     bancas[banca.id]["organizacao"] = banca.alocacao.projeto.organizacao.sigla if banca.alocacao.projeto.organizacao else None
                     bancas[banca.id]["orientador"] = banca.alocacao.projeto.orientador.user.get_full_name() if banca.alocacao.projeto.orientador else None
                     bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
@@ -466,6 +469,9 @@ def ajax_bancas(request):
                         title += "\n• " + banca.alocacao.projeto.orientador.user.get_full_name() + " (O)"
                     for membro in banca.membros():
                         title += "\n• " + membro.get_full_name()
+
+                    bancas[banca.id]["estudante"] = banca.alocacao.aluno.user.get_full_name()
+
                 else:
                     title = "Projeto ou alocação não identificados",
                 bancas[banca.id]["title"] = title
