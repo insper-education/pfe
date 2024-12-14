@@ -457,9 +457,10 @@ class Aluno(models.Model):
             ("AFI", "Avaliação Final Individual", False, True, -1),
             ("APG", "Avaliação Parcial de Grupo", True, True, -1),
             ("AFG", "Avaliação Final de Grupo", True, True, -1),
-            ("P", "Probation", False, True, -1),
+            ("P", "Probation", False, True, 3),
             ("BI", "Banca Intermediária", True, True, 1),
             ("BF", "Banca Final", True, True, 0),
+            # A principio não mostra aqui as notas da certificação Falconi
         ]
 
         for alocacao in alocacoes:
@@ -483,7 +484,19 @@ class Aluno(models.Model):
                         if pa[4] >= 0 and banca:  # Banca
                             valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
+                            # Verifica se já passou o evento de encerramento e assim liberar notas
+                            if alocacao.projeto.semestre == 1:
+                                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=alocacao.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+                            else:
+                                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=alocacao.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+                            if pa[4] != 3 and  evento:  # Não é banca probation e tem evento de encerramento
+                                # Após o evento de encerramento liberar todas as notas
+                                if now.date() > evento.endDate:
+                                    checa_banca = False
+
                             if checa_banca:
+
+
                                 if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
                                     for membro in banca.membros():
                                         avaliacao = paval.filter(avaliador=membro).last()

@@ -999,32 +999,51 @@ class Banca(models.Model):
             observacoes = Observacao.objects.none()
         return observacoes
     
-    def get_avaliacoes(self):
-        """Retorna as avaliações da banca, mas somente se todos os membros da banca já avaliaram."""
+    def get_avaliacoes_bancas(self):
+        """Retorna as avaliações da banca (com algumas condições)."""
+        prazo_horas = 24  # prazo para publicar as notas depois que todos avaliaram
         if self.tipo_de_banca == 0:  # Banca Final
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Final")
         elif self.tipo_de_banca == 1:  # Banca Intermediária
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Banca Intermediária")
         elif self.tipo_de_banca == 2:  # Falconi
             avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__titulo="Falconi")
-        else:  # Probation (pelo momento)
+            prazo_horas = 24*14
+        elif self.tipo_de_banca == 3:  # Probation
+            avaliacoes = Avaliacao2.objects.filter(alocacao=self.alocacao, exame__titulo="Probation")
+            prazo_horas = 48
+        else:
             # Não passando avaliações para bancas de probation
             avaliacoes = Avaliacao2.objects.none()
 
-        # Verifica se todos avaliaram a pelo menos 24 horas atrás
         now = datetime.datetime.now()
-        for membro in self.membros():
-            avaliacao = avaliacoes.filter(avaliador=membro).last()
-            if not avaliacao:
-                return None
-            if now - avaliacao.momento < datetime.timedelta(hours=24):
-                return None
-        if self.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-            avaliacao = avaliacoes.filter(avaliador=self.projeto.orientador.user).last()
-            if not avaliacao:
-                return None
-            if now - avaliacao.momento < datetime.timedelta(hours=24):
-                return None
+        checa_banca = True
+
+        # (13, "Evento de encerramento", "#FF4500"),
+        if self.projeto.semestre == 1:
+            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+        else:
+            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+        if self.tipo_de_banca != 3 and evento:  # Não é banca de probation e tem evento de encerramento
+            # Após o evento de encerramento liberar todas as notas
+            if now.date() > evento.endDate:
+                checa_banca = False
+
+        # Verifica se todos avaliaram a pelo menos 24 horas atrás
+        if checa_banca:
+            
+            for membro in self.membros():
+                avaliacao = avaliacoes.filter(avaliador=membro).last()
+                if not avaliacao:
+                    return None
+                if now - avaliacao.momento < datetime.timedelta(hours=prazo_horas):
+                    return None
+            if self.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                avaliacao = avaliacoes.filter(avaliador=self.projeto.orientador.user).last()
+                if not avaliacao:
+                    return None
+                if now - avaliacao.momento < datetime.timedelta(hours=prazo_horas):
+                    return None
         
         objetivos = {}
         nota = 0

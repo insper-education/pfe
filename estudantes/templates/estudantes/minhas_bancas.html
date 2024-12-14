@@ -118,7 +118,7 @@
             {% include "membros_da_banca.html" %}
 
             {% if user.tipo_de_usuario != 1 or banca|exibe_notas_banca %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
-              {% with avaliacao=banca.get_avaliacoes %}
+              {% with avaliacao=banca.get_avaliacoes_bancas %}
                 {% if avaliacao.objetivos %}
                   <hr>
                   <b>
