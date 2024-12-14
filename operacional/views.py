@@ -231,7 +231,7 @@ def edita_aviso(request, primarykey):
 
     context = {
         "aviso": aviso,
-        "eventos": TIPO_EVENTO,
+        "eventos": sorted(TIPO_EVENTO, key=lambda x: x[1]),
     }
 
     return render(request, "operacional/edita_aviso.html", context)
@@ -332,7 +332,7 @@ def cria_aviso(request):
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
     context = {
-        "eventos": TIPO_EVENTO,
+        "eventos": sorted(TIPO_EVENTO, key=lambda x: x[1]),
     }
 
     return render(request, "operacional/edita_aviso.html", context)
