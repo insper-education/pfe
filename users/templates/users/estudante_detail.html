@@ -231,16 +231,20 @@
         {% endif %}
 
         {% comment %} BANCAS {% endcomment %}
-        &nbsp;&nbsp;<span class="tit_rel">
-          <span lang="pt">Participação em Bancas</span>
-          <span lang="en" style="display: none;">Examination Boards</span>
-        </span><br>
-        <ul>
-        {% for banca in alocado.get_bancas %}
-          <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.get_tipo_de_banca_display}}</a></li>
-        {% endfor %}
-        </ul>
-        <br>
+        {% with bancas=alocado.get_bancas %}
+          {% if bancas %}
+            &nbsp;&nbsp;<span class="tit_rel">
+              <span lang="pt">Participação em Bancas</span>
+              <span lang="en" style="display: none;">Examination Boards</span>
+            </span><br>
+            <ul>
+            {% for banca in alocado.get_bancas %}
+              <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.get_tipo_de_banca_display}}</a></li>
+            {% endfor %}
+            </ul>
+            <br>
+          {% endif %}
+        {% endwith %}
 
         {% if not forloop.last %}
             <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
