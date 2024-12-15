@@ -351,10 +351,10 @@ def projetos_fechados(request):
                 # Filtra para projetos com estudantes de um curso específico
                 if curso != "TE":
                     if curso != 'T':
-                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso)
+                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
                     else:
-                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__in=cursos_insper)
-
+                        estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
+                
                 qtd_est.append(len(estudantes_pfe))
                 projetos_selecionados.append(projeto)
 
@@ -371,8 +371,7 @@ def projetos_fechados(request):
                 prioridades = []
                 for estudante in estudantes_pfe:
                     opcoes = Opcao.objects.filter(proposta=projeto.proposta,
-                                                  aluno__user__tipo_de_usuario=1,
-                                                  aluno__alocacao__projeto=projeto,
+                                                #   aluno__alocacao__projeto=projeto,
                                                   aluno=estudante)
                     if opcoes:
                         prioridades.append(opcoes.first().prioridade)
@@ -402,7 +401,7 @@ def projetos_fechados(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, ano, semestre = get_edicoes(Projeto)
+        
         informacoes = [
             (".logo", "Logo"),
             (".descricao", "Descrição"),
@@ -427,7 +426,7 @@ def projetos_fechados(request):
 
         context = {
             "titulo": { "pt": "Projetos", "en": "Projects"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Projeto)[0],
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
             "informacoes": informacoes,
