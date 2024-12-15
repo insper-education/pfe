@@ -202,7 +202,17 @@
 
   {% comment %} Salva a última edição selecionada {% endcomment %}
   <script>
-    window.onbeforeunload = function() {
+    {% comment %} window.onbeforeunload = function() {
+      const now = new Date().getTime();
+      const item = {
+          value: $("#filterEdicao").val(),
+          expiry: now,
+      }
+      localStorage.setItem("filterEdicao", JSON.stringify(item));
+      console.log("Salvando edição: ", item);
+    } {% endcomment %}
+
+    function atualiza_edicao_salva() {
       const now = new Date().getTime();
       const item = {
           value: $("#filterEdicao").val(),
@@ -210,6 +220,13 @@
       }
       localStorage.setItem("filterEdicao", JSON.stringify(item));
     }
+
+    $(document).ready(function() {
+        $("#filterEdicao").change(atualiza_edicao_salva);
+    });
+
+
+
   </script>
 
 {% endif %}
