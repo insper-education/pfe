@@ -912,7 +912,7 @@ class Banca(models.Model):
     slug = models.SlugField("slug", unique=True, max_length=64, null=True, blank=True,
                             help_text="Slug para o endereço da banca")
 
-    location = models.CharField(null=True, blank=True, max_length=50,
+    location = models.CharField(null=True, blank=True, max_length=124,
                                 help_text="sala em que vai ocorrer banca")
     startDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
                                      help_text="Inicio da Banca")
