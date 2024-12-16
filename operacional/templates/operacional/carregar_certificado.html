@@ -23,6 +23,28 @@
 
   <form method="post" enctype="multipart/form-data"> {% csrf_token %}
 
+    <label for="projeto">
+      <span style="display:inline-block; width:7.5ex; text-align:right;">
+        <span lang="pt">Projeto:</span>
+        <span lang="en">Project:</span>
+      </span>
+      <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
+      data-live-search="true" data-width="560px">
+          <option selected value> -- selecione projeto -- </option>
+          <optgroup label="{{projeto.ano}}.{{projeto.semestre}}">
+          {% for projeto in projetos %}
+            {% ifchanged projeto.semestre %}</optgroup><optgroup label="{{projeto.ano}}.{{projeto.semestre}}">{% endifchanged %}
+            {% if projeto %}
+              <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id %}selected{% endif %}>
+              {{projeto.get_titulo}}
+            </option>  
+            {% endif %}
+          {% endfor %}
+          </optgroup>
+      </select>
+    </label>
+    <br><br>
+
     <label for="usuario">
       <span style="display:inline-block; width:7.5ex; text-align:right;">
         <span lang="pt">Usuário:</span>
@@ -34,27 +56,6 @@
           {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
           {% for usuario in usuarios %}
               <option value="{{usuario.id}}">{{usuario}}</option>  
-          {% endfor %}
-          {% comment %} </optgroup> {% endcomment %}
-      </select>
-    </label>
-    <br><br>
-
-    <label for="projeto">
-      <span style="display:inline-block; width:7.5ex; text-align:right;">
-        <span lang="pt">Projeto:</span>
-        <span lang="en">Project:</span>
-      </span>
-      <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
-      data-live-search="true" data-width="560px">
-          <option selected value> -- selecione projeto -- </option>
-          {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
-          {% for projeto in projetos %}
-            {% if projeto %}
-              <option value="{{projeto.id}}" {% if projeto.id == alocacao.aluno.id %}selected{% endif %}>
-              {{projeto.get_titulo}}
-            </option>  
-            {% endif %}
           {% endfor %}
           {% comment %} </optgroup> {% endcomment %}
       </select>

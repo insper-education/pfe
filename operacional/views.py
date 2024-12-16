@@ -14,6 +14,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 
+from django.db.models.functions import Coalesce
+
 from django.shortcuts import render, redirect, get_object_or_404
 
 from projetos.support import get_upload_path, simple_upload
@@ -299,7 +301,11 @@ def carregar_certificado(request):
 
         return render(request, "generic.html", context=context)
 
-    projetos = Projeto.objects.all()
+    #projetos = Projeto.objects.all().order_by("-ano", "-semestre", "titulo_final", "proposta__titulo")
+    projetos = Projeto.objects.annotate(
+        titulo=Coalesce("titulo_final", "proposta__titulo")
+    ).order_by("-ano", "-semestre", "titulo")
+
     usuarios = PFEUser.objects.all()
 
     context = {
