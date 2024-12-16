@@ -27,6 +27,7 @@
       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
       ><i class="fas fa-plus"></i> Adicionar novo documento</a>
     </span>
+    {% include "documento-modal.html" %}
   {% endif %}
 
   <div class="table-responsive">
@@ -74,10 +75,7 @@
       </tbody>
     </table>
   </div>
-
-  {% if user.tipo_de_usuario == 4 %}
-    {% include "documento-modal.html" %}
-  {% endif %}
+  
   {% include "linguas.html" %}
 
 {% endblock %}
