@@ -457,7 +457,7 @@ class Aluno(models.Model):
             ("AFI", "Avaliação Final Individual", False, True, -1),
             ("APG", "Avaliação Parcial de Grupo", True, True, -1),
             ("AFG", "Avaliação Final de Grupo", True, True, -1),
-            ("P", "Probation", False, True, 3),
+            #("P", "Probation", False, True, 3),
             ("BI", "Banca Intermediária", True, True, 1),
             ("BF", "Banca Final", True, True, 0),
             # A principio não mostra aqui as notas da certificação Falconi
