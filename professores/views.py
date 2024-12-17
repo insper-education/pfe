@@ -1233,7 +1233,8 @@ def banca_ver(request, primarykey):
         tipo_documento = TipoDocumento.objects.none()
 
     documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
-    documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+    if banca.alocacao and banca.alocacao.projeto:
+        documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
     documentos = documentos.order_by("tipo_documento", "-data")
 
     context = {
@@ -2123,7 +2124,10 @@ def banca(request, slug):
         tipo_documento = None
     
     if tipo_documento:
-        documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
+        documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+        if banca.alocacao and banca.alocacao.projeto:
+            documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+        documentos = documentos.order_by("tipo_documento", "-data")
     else:
         documentos = None
 
