@@ -53,7 +53,13 @@
       if(peso > 0.0) {
         {% with media=alocado.get_media %}
           {% if media %}
-            document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
+            {% if media.media < 5 %}
+              document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
+            {% elif alocado.em_probation %}
+              document.getElementById("media{{alocado.id}}").innerHTML = "probation";
+            {% else %}
+              document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
+            {% endif %}
           {% else %}
             document.getElementById("media{{alocado.id}}").innerHTML = loc(nota);
           {% endif %}

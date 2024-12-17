@@ -939,6 +939,8 @@ class Banca(models.Model):
     def __str__(self):
         """Retorno padrão textual."""
         texto = "Banca " + self.get_tipo_de_banca_display() + ": "
+        if self.tipo_de_banca == 3:
+            texto += "(" + self.alocacao.aluno.user.get_full_name() + ") "
         texto +=  "[" + self.get_projeto().organizacao.sigla + "] " + self.get_projeto().get_titulo()
         return texto
 
