@@ -706,6 +706,8 @@ class Alocacao(models.Model):
 
         # Sigla, Nome, Grupo, Nota/Check, Banca
         pavaliacoes = [
+            ("P", "Probation", False, True, 3),
+            ### CHECK SE JA FECHOU BANCA DE PROBATION PRIMEIRO ####
             ("RFG", "Relatório Final de Grupo", True, True, -1),
             ("RFI", "Relatório Final Individual", False, True, -1),
             ("BF", "Banca Final", True, True, 0),
@@ -758,6 +760,14 @@ class Alocacao(models.Model):
 
                     else:
                         val_objetivos, _, _ = Aluno.get_objetivos(self, paval)
+
+                    if pa[0] == "P":
+                        if val_objetivos:
+                            for obj in val_objetivos:
+                                if val_objetivos[obj][0] < 5:
+                                    return True # Se tiver algum objetivo com nota menor que 5 mantem em probation
+                            return False  # Se não tiver nenhum objetivo com nota menor que 5 tudo OK com probation
+
                     if val_objetivos:
                         for obj in val_objetivos:
                             if val_objetivos[obj][0] < 5:
