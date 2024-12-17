@@ -33,7 +33,7 @@
       {% if user.tipo_de_usuario != 1 or alocado|exibe_notas:aval %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
         <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
         title="{{descr}} | peso={% widthratio peso 1 100 %}%">
-          <span class="short">{{aval}}</span><span class="long">{{descr}}</span> = {% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+          <span class="short">{{aval}}</span><span class="long">{{descr}}</span> = {% if peso > 0 or aval == "P" %}{{nota|floatformat:1}}{% else %}{% if nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
           {% if peso > 0 %}
             <script>
               nota += {{nota|unlocalize}} * {{peso|unlocalize}};
