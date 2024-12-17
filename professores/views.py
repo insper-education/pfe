@@ -707,7 +707,7 @@ def bancas_criar(request, data=None):
 
     # Originalmente estava: .exclude(orientador=None)
     projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")
 
     professores, _ = professores_membros_bancas()
     falconis, _ = falconi_membros_banca()
@@ -1228,11 +1228,13 @@ def banca_ver(request, primarykey):
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     elif banca.tipo_de_banca == 3:  # (3, "probation"),
         # Repetindo banca final para probation
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+        tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
         tipo_documento = TipoDocumento.objects.none()
 
-    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto).order_by("tipo_documento", "-data")
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+    documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+    documentos = documentos.order_by("tipo_documento", "-data")
 
     context = {
         "titulo": {"pt": "Banca", "en": "Examination Board"},

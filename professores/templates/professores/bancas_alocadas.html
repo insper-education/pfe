@@ -43,6 +43,7 @@
               <b><span class="opt_full">{{ banca.startDate|date:"DATETIME_FORMAT" }}</span>
                  <span class="opt_short">{{ banca.startDate|date:"d/m/y H:i" }}</span></b>
             {% endif %} &#x2726;
+
             {% if user.professor and banca.projeto.orientador == user.professor %}
               <i>(ORIENTADOR{% if user.genero == 'F' %}A{% endif %})</i>
             {% endif %}
@@ -53,46 +54,63 @@
                 {% endif %}
               {% endfor %}
             {% endwith %}
+            
             {% if not user.professor or user.professor and banca.projeto.orientador != user.professor %}
               <i><span class="opt_short">Ori.</span><span class="opt_full">Orientador{% if user.genero == 'F' %}a{% endif %}</span>:
-                {% if banca.projeto.orientador %}{{banca.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}
+                {% if banca.projeto.orientador %}
+                  {{banca.projeto.orientador}}
+                {% elif banca.alocacao.projeto.orientador %}
+                  {{banca.alocacao.projeto.orientador}}
+                {% else %}
+                  SEM ORIENTADOR
+                {% endif %}
               </i>
             {% endif %}
           </a>
         </div>
           
-          {% if banca.projeto %}
-            <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
-            {% if banca.projeto.organizacao %}
-              [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
-            {% endif %}
-          
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
-              {{banca.projeto.get_titulo}}</a>
-              </div>
+        {% if banca.projeto %}
+          <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+          {% if banca.projeto.organizacao %}
+            [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
           {% endif %}
+          <a href="{% url 'projeto_completo' banca.projeto.id %}">
+            {{banca.projeto.get_titulo}}</a>
+            </div>
+        {% elif banca.alocacao.projeto %}
+          <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+          {% if banca.alocacao.aluno %}
+            (<a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno }}</a>)
+          {% endif %}
+          {% if banca.alocacao.projeto.organizacao %}
+            [<a href="{% url 'organizacao_completo' banca.alocacao.projeto.organizacao.id %}">{{ banca.alocacao.projeto.organizacao.nome }}</a>]
+          {% endif %}
+          <a href="{% url 'projeto_completo' banca.alocacao.projeto.id %}">
+            {{banca.alocacao.projeto.get_titulo}}</a>
+            </div>
+        {% endif %}
 
-          <div>
-            {% with relatorio=banca.get_relatorio %}
-              {% if relatorio %}
-                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
-                  target="_blank" rel="noopener noreferrer"><b>[RELATÓRIO]</b>
-                </a>
-              {% endif %}
-            {% endwith %}
+        <div>
+          {% with relatorio=banca.get_relatorio %}
+            {% if relatorio %}
+              <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
+                target="_blank" rel="noopener noreferrer"><b>[RELATÓRIO]</b>
+              </a>
+            {% endif %}
+          {% endwith %}
 
-            {% with site=banca.projeto.get_site %}
-              {% if site %}
-                <a href="{{site}}" target="_blank"><b>[SITE]</b></a>
-              {% endif %}
-            {% endwith %}
+          {% with site=banca.projeto.get_site %}
+            {% if site %}
+              <a href="{{site}}" target="_blank"><b>[SITE]</b></a>
+            {% endif %}
+          {% endwith %}
 
-            {% with certificado=banca|certificado_banca:user %}
-              {% if certificado %}
-                <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a>
-              {% endif %}
-            {% endwith %}
-          </div>
+          {% with certificado=banca|certificado_banca:user %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a>
+            {% endif %}
+          {% endwith %}
+        </div>
 
       </td></tr>
     {% empty %}

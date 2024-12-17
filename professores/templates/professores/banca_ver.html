@@ -206,11 +206,23 @@
       <span lang="pt">Resultados da Banca</span>
       <span lang="en" style="display: none;">Examination Board Results</span>
     </a>
+  
+    {% if banca.tipo_de_banca == 3 %}
+      <a href="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}" class="btn btn-primary mb-1 open-documento" data-url="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}">
+        <span lang="pt">Adicionar Relatório para Probation</span>
+        <span lang="en" style="display: none;">Add Probation para Report</span>
+      </a>
+      {% include "documento-modal.html" %}
+    {% endif %}
+
     <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">
       <span lang="pt">Editar Banca</span>
       <span lang="en" style="display: none;">Edit Examination Board</span>
     </a>
+  
   {% endif %}
+
+  
   
   {% include "janelas-modal.html" %}
 
