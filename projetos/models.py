@@ -2012,10 +2012,10 @@ class Observacao(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text="Objetivo de Aprendizagem")
 
-    observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
+    observacoes_orientador = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas somente com o orientador do projeto")
 
-    observacoes_estudantes = models.TextField(max_length=2048, null=True, blank=True,
+    observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
     @classmethod
@@ -2064,10 +2064,10 @@ class Observacao_Velha(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True,
                                  help_text="Objetivo de Aprendizagem")
 
-    observacoes_orientador = models.TextField(max_length=2048, null=True, blank=True,
+    observacoes_orientador = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas somente com o orientador do projeto")
 
-    observacoes_estudantes = models.TextField(max_length=2048, null=True, blank=True,
+    observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
     @classmethod
