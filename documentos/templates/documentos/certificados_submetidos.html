@@ -53,7 +53,7 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">
+            <label class="to_label input-group-text" for="filterEdicao" onClick="carrega_pagina()"><span class="to_hide">
               <span lang="pt">Tipos</span>
               <span lang="en">Type</span>
             </span></label>
@@ -116,110 +116,97 @@
     <br><br><h4>{{ gerados }} certificados gerados.</h4>
   {% endif %}
 
-  <div class="table-responsive">
-  <table id="certificados">
+  <div class="atualizar">
 
-    {% if certificados %}
+    <div class="table-responsive">
+      <table id="certificados">
 
-      {% for certificado in certificados %}
+        {% if certificados %}
 
-        {% if certificado.tipo_de_certificado < 100 %}
-          <tr class="estudantes certificado">
-        {% elif certificado.tipo_de_certificado == 101 %}
-          <tr class="orientador certificado">
-        {% elif certificado.tipo_de_certificado == 102 %}
-          <tr class="coorientador certificado">
-        {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 or certificado.tipo_de_certificado == 108 %}
-          <tr class="banca certificado">
-        {% elif certificado.tipo_de_certificado == 106 %}
-          <tr class="mentoria_profissional certificado">
-        {% elif certificado.tipo_de_certificado == 107 %}
-          <tr class="mentoria_tecnica certificado">
-        {% endif %}
-        
-         <td>
-          <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
-          <b>Nome:</b>
-          {% if certificado.usuario %}
-            {% if certificado.usuario.tipo_de_usuario == 1 %}
-              <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
-            {% elif certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
-              <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
-            {% else %}
-              {{certificado.usuario.get_full_name}}<br>
+          {% for certificado in certificados %}
+
+            {% if certificado.tipo_de_certificado < 100 %}
+              <tr class="estudantes certificado">
+            {% elif certificado.tipo_de_certificado == 101 %}
+              <tr class="orientador certificado">
+            {% elif certificado.tipo_de_certificado == 102 %}
+              <tr class="coorientador certificado">
+            {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 or certificado.tipo_de_certificado == 108 %}
+              <tr class="banca certificado">
+            {% elif certificado.tipo_de_certificado == 106 %}
+              <tr class="mentoria_profissional certificado">
+            {% elif certificado.tipo_de_certificado == 107 %}
+              <tr class="mentoria_tecnica certificado">
             {% endif %}
-          {% endif %}
+            
+            <td>
+              <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
+              <b>Nome:</b>
+              {% if certificado.usuario %}
+                {% if certificado.usuario.tipo_de_usuario == 1 %}
+                  <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
+                {% elif certificado.usuario.tipo_de_usuario == 2 or certificado.usuario.tipo_de_usuario == 4 %}
+                  <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
+                {% else %}
+                  {{certificado.usuario.get_full_name}}<br>
+                {% endif %}
+              {% endif %}
 
-          {% if certificado.projeto %}
-            <b>Data do certificado:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
-          {% endif %}
+              {% if certificado.projeto %}
+                <b>Data do certificado:</b> {{certificado.data|date:"DATE_FORMAT"}}<br>
+              {% endif %}
 
-          {% if certificado.projeto %}
-            <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
-              {{certificado.projeto.get_titulo}}
-            </a><br>
-            <b>Período de projeto:</b> {{certificado.projeto.ano}}.{{certificado.projeto.semestre}}<br>
-            <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
-          {% endif %}
+              {% if certificado.projeto %}
+                <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
+                  {{certificado.projeto.get_titulo}}
+                </a><br>
+                <b>Período de projeto:</b> {{certificado.projeto.ano}}.{{certificado.projeto.semestre}}<br>
+                <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
+              {% endif %}
 
-          {% if certificado.documento %}
-            {% comment %} <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br> {% endcomment %}
-            <b>Certificado:</b> 
-            <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
-          {% endif %}
-          
-          <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
-            data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
-            &#x2709; Enviar certificado
-          </a>
-        </td>
-      </tr>
+              {% if certificado.documento %}
+                {% comment %} <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br> {% endcomment %}
+                <b>Certificado:</b> 
+                <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
+              {% endif %}
+              
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+                data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
+                &#x2709; Enviar certificado
+              </a>
+            </td>
+          </tr>
 
-      {% endfor %}
-    
-    {% else %}
-      <tr><td style="border: 0px;">Não existem certificados.</td></tr>
-    {% endif %}
-  
-  </table>
-  </div>
+          {% endfor %}
+        
+        {% else %}
+          <tr><td style="border: 0px;">Não existem certificados.</td></tr>
+        {% endif %}
+      
+      </table>
+    </div>
 
-  <br>
-  <div class="contagem">
-    <b>Quantidades</b><br>
-    &bull; Estudantes: <span id="t_estudantes"></span><br>
-    &bull; Orientador: <span id="t_orientador"></span><br>
-    &bull; Coorientação: <span id="t_coorientador"></span><br>
-    &bull; Banca: <span id="t_banca"></span><br>
-    &bull; Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
-    &bull; Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
-    <b>&bull; Total: <span id="t_total"></span><b><br>
+    <br>
+    <div class="contagem">
+      <b>Quantidades</b><br>
+      &bull; Estudantes: <span id="t_estudantes"></span><br>
+      &bull; Orientador: <span id="t_orientador"></span><br>
+      &bull; Coorientação: <span id="t_coorientador"></span><br>
+      &bull; Banca: <span id="t_banca"></span><br>
+      &bull; Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
+      &bull; Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
+      <b>&bull; Total: <span id="t_total"></span><b><br>
+    </div>
+
   </div>
   
   <script>
 
-    function recarregar_pagina() {
-      conta();
-      esconde_mostra_opcoes();
-    };
-
-    function carrega_pagina() {
-      conta();
-      esconde_mostra_opcoes();
-    };
-
-    function carrega_site() {
-      {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
-    };
-
-    window.onload = carrega_site
-   
     var request_ajax_c = null;
 
     var xhrCount = 0;  // Para contar as chamadas e usar somente a última
-
-    $(".filter").change(function(){
+      
+    function recarregar_pagina() {
 
       var seqNumber = ++xhrCount;
 
@@ -236,18 +223,37 @@
         },
         success: function(response){
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
-            $("#certificados").replaceWith($("#certificados",response));
+            $(".atualizar").replaceWith($(".atualizar",response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             if (typeof carrega_pagina === "function") {
               carrega_pagina();
             }
             $(".to_label").removeClass("label_animado");
-          } // else {% comment %} Ignorando resposta {% endcomment %}
+          }
         },
         {% include "ajax_error_function.js" %}
+      });
+    };
+
+    $(".filter").change(recarregar_pagina);
+
+    function carrega_pagina() {
+      conta();
+      esconde_mostra_opcoes();
+    };
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+      setTimeout(function () {
+        recarregar_pagina();
+      }, 20);
+      carrega_pagina();
+    };
+
+    $(document).ready(function() {
+      carrega_site();
     });
-  });
 
   </script>
 

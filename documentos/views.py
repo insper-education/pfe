@@ -106,10 +106,9 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     """Lista os Certificados Emitidos."""
 
     configuracao = get_object_or_404(Configuracao)
-    coordenacao = configuracao.coordenacao
     context = {
         "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
-        "coordenacao": coordenacao,
+        # "coordenacao": configuracao.coordenacao,
         "configuracao": configuracao,
     }
 
