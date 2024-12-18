@@ -858,15 +858,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         if certificado.usuario:
             para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
 
-        subject = "Capstone | Certificado: "
-        if certificado.tipo_de_certificado == 101: subject += "Orientação de Projeto"
-        elif certificado.tipo_de_certificado == 102: subject += "Coorientação de Projeto"
-        elif certificado.tipo_de_certificado == 103: subject += "Membro de Banca Intermediária"
-        elif certificado.tipo_de_certificado == 104: subject += "Membro de Banca Final"
-        elif certificado.tipo_de_certificado == 105: subject += "Membro de Banca Falconi"
-        elif certificado.tipo_de_certificado == 106: subject += "Mentoria de Projeto"
-        elif certificado.tipo_de_certificado == 107: subject += "Mentoria de Projeto"
-        elif certificado.tipo_de_certificado == 108: subject += "Membro de Banca de Probation"
+        subject = "Capstone | Certificado: " + certificado.get_tipo_de_certificado_display()
         
         context_carta = {
             "request": request,
