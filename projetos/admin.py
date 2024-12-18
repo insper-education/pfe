@@ -394,6 +394,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     ordering = ("momento",)
     list_filter = ("exame", )
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "alocacao__aluno__user__username"]
+    actions = [dup_entrada]
 
 
 @admin.register(Observacao_Velha)
