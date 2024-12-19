@@ -16,8 +16,11 @@
       display: inline-block;
     }
     label {
-      margin: 6px 3px 2px 0px;
+      {% comment %} margin: 6px 3px 2px 0px; {% endcomment %}
       max-width: 100%;
+    }
+    .enviar {
+      margin-right: 22px;
     }
     select {max-width: 100%;}
     .bootstrap-select {
@@ -33,13 +36,22 @@
       {% csrf_token %}
       
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="titulo"><b>Aviso:</b>
+        <label for="titulo">
+          <b>
+            <span lang="pt">Aviso:</span>
+            <span lang="en" style="display: none;">Notice:</span>
+          </b>
         <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
       </div><br>
 
       {% comment %} <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;"> {% endcomment %}
       <div style="margin-bottom: 8px; margin-right: 25px; display: block; max-width: 100%;">
-        <label for="evento"><b>Evento relacionado</b>:</label>
+        <label for="evento">
+          <b>
+            <span lang="pt">Evento relacionado:</span>
+            <span lang="en" style="display: none;">Related event:</span>
+          </b>
+        </label>
         <select style="max-width: 100%;" name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
             <option disabled selected value> -- selecione evento -- </option>
             {% for evento in eventos %}
@@ -51,35 +63,66 @@
       </div>
 
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="delta"><b>Delta</b>:
+        <label for="delta">
+          <b>
+            <span lang="pt">Delta:</span>
+            <span lang="en" style="display: none;">Delta:</span>
+          </b>
         <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
       </div><br>
 
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
-        <label for="delta"><b>Mensagem</b>:<br>
+        <label for="delta">
+          <b>
+            <span lang="pt">Mensagem:</span>
+            <span lang="en" style="display: none;">Message:</span>
+          </b>
+          <br>
         <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
       </div><br>
       
       <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+        <b>
+          <span lang="pt">Enviar para:</span>
+          <span lang="en" style="display: none;">Send to:</span>
+        </b><br>
 
-        <label for="coordenacao">Coordenação
-        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}></label>
+        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
+        <label class="enviar" for="coordenacao">
+          <span lang="pt">Coordenação</span>
+          <span lang="en" style="display: none;">Coordination</span>
+        </label>
+        
+        <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}>
+        <label class="enviar" for="operacional">
+          <span lang="pt">Operacional</span>
+          <span lang="en" style="display: none;">Operational</span>
+        </label>
+        
+        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
+        <label class="enviar" for="comite_pfe">
+          <span lang="pt">Comitê</span>
+          <span lang="en" style="display: none;">Committee</span>
+        </label>
 
-        <label for="operacional">Operacional
-        <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}></label>
-  
-        <label for="comite_pfe">Comitê
-        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}></label>
+        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
+        <label class="enviar" for="todos_alunos">
+          <span lang="pt">Estudantes</span>
+          <span lang="en" style="display: none;">Students</span>
+        </label>
 
-        <label for="todos_alunos">Estudantes
-        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}></label>
+        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
+        <label class="enviar" for="todos_orientadores">
+          <span lang="pt">Orientadores</span>
+          <span lang="en" style="display: none;">Advisors</span>
+        </label>
 
-        <label for="todos_orientadores">Orientadores
-        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}></label>
+        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
+        <label class="enviar" for="contatos_nas_organizacoes">
+          <span lang="pt">Organizações</span>
+          <span lang="en" style="display: none;">Organizations</span>
+        </label>
 
-        <label for="contatos_nas_organizacoes">Contatos nas Organizações
-        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}></label>
-      
       </div><br>
 
       {% comment %} Não implementado ainda
@@ -90,13 +133,15 @@
 
       <br>
       <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-        {% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso
+        <span lang="pt">{% if aviso %}Atualizar{% else %}Criar{% endif %} Aviso</span>
+        <span lang="en" style="display: none;">{% if aviso %}Update{% else %}Create{% endif %} Notice</span>
       </button>
 
       {% if aviso %}
         &nbsp;&nbsp;
         <button class="btn btn-primary mb-1" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-          Apagar Aviso
+          <span lang="pt">Apagar Aviso</span>
+          <span lang="en" style="display: none;">Delete Notice</span>
         </button>
 
         <script>
@@ -110,5 +155,7 @@
       {% endif %}
 
     </form>
+
+    {% include "linguas.html" %}
 
 {% endblock %}
