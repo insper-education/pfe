@@ -14,7 +14,13 @@
     Título provisório para a proposta de projeto.
     Durante a execução do projeto o título poderá/deverá sofrer atualizações.
     ">
-      <b>Proposta:</b> [{{proposta.organizacao}}] {{proposta.titulo}}
+      <b>Proposta:</b>
+      {% if proposta.organizacao %}
+        [{{proposta.organizacao}}]
+      {% elif proposta.nome_organizacao %}
+        [{{proposta.nome_organizacao}}]
+      {% endif %}
+      {{proposta.titulo}}
     </h5>
   {% else %}
     <h5 class="titulo">Problema na identificação do título</h5>

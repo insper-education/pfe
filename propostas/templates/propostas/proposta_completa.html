@@ -256,6 +256,12 @@
         &nbsp;CR={{estudante.cr}}
       <br>
     </a>
+  {% empty %}
+    <p>
+      &nbsp;&nbsp;
+      <span lang="pt">Ainda nenhum estudante aplicou para esta proposta.</span>
+      <span lang="en" style="display: none;">No student has applied for this proposal yet.</span>
+    </p>
   {% endfor %}
 
   {% for opcao in proposta.opcao_set.all %}

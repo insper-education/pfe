@@ -74,15 +74,15 @@
     {% endif %}
     {% if completo %}
       <span class="esconder">
-        {% if not proposta.organizacao %}
-        <u>Organização não definida.</u>
-        {% endif %}
         <a data-proposta='{{proposta.id}}'
          class="link-organizacao"
          href="{% url 'link_organizacao' proposta.id %}"
          data-url="{% url 'link_organizacao' proposta.id %}">
            <small>&#128279;</small>
         </a>
+        {% if not proposta.organizacao %}
+          <small style="color:red; font-size: 12px;">(organização não conectada com proposta)</small>
+        {% endif %}
       </span>
     {% endif %}
     <br>
