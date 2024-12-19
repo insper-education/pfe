@@ -49,7 +49,10 @@
   {% endif %}
 
   <span class="entrada_pri">
-    <b>Organização:</b>
+    <b>
+      <span lang="pt">Organização:</span>
+      <span lang="en" style="display:none;">Organization:</span>
+    </b>
     {% if proposta.organizacao and proposta.organizacao.nome %}
         {% if completo %}
             <a id="organizacao_link" data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
@@ -69,7 +72,10 @@
       </a>
     {% else %}
       <a id="organizacao_link">
-        <u>Organização não definida.</u>
+        <u>
+          <span lang="pt">Organização não definida.</span>
+          <span lang="en" style="display:none;">Organization not defined.</span>
+        </u>
       </a>
     {% endif %}
     {% if completo %}
@@ -81,7 +87,10 @@
            <small>&#128279;</small>
         </a>
         {% if not proposta.organizacao %}
-          <small style="color:red; font-size: 12px;">(organização não conectada com proposta)</small>
+          <small style="color:red; font-size: 12px;">
+            <span lang="pt">Organização não conectada com proposta</span>
+            <span lang="en" style="display:none;">Organization not connected with proposal</span>
+          </small>
         {% endif %}
       </span>
     {% endif %}
@@ -93,7 +102,8 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
        Endereço onde os alunos deverão se deslocar para desenvolver o projeto.
       ">
-       Endereço Local:
+        <span lang="pt">Endereço Local:</span>
+        <span lang="en" style="display:none;">Local Address:</span>
       </strong>
       <a id="organizacao_endereco" href="http://maps.google.com/maps?q={{proposta.endereco}}">
         {{proposta.endereco|linebreaks}}
@@ -102,13 +112,21 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
        Endereço da matriz da organização parceira.
       ">
-       Endereço Matriz:
+        <span lang="pt">Endereço Matriz:</span>
+        <span lang="en" style="display:none;">Headquarters Address:</span>
       </strong>
       <a id="organizacao_endereco" href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
         {{proposta.organizacao.endereco|linebreaks}}
       </a>
     {% else %}
-      <strong>Endereço:</strong> <u>não definido</u>
+      <strong>
+        <span lang="pt">Endereço:</span>
+        <span lang="en" style="display:none;">Address:</span>
+      </strong>
+      <u>
+        <span lang="pt">não definido</span>
+        <span lang="en" style="display:none;">not defined</span>
+      </u>
     {% endif %}
     <br>
   </p>
@@ -124,25 +142,39 @@
     {% elif proposta.organizacao and proposta.organizacao.website %}
         <a id="organizacao_website" href="{{proposta.organizacao.website|add_http}}">{{proposta.organizacao.website}}</a>
     {% else %}
-        <a id="organizacao_website"><u>website não definido.</u></a>
+        <a id="organizacao_website">
+          <u>
+            <span lang="pt">website não definido.</span>
+            <span lang="en" style="display:none;">
+          </u>
+        </a>
     {% endif %}
     <br><br>
   </p>
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.descricao_organizacao %}    
-    <p><strong>Informações sobre a empresa:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre a empresa:</span>
+      <span lang="en" style="display:none;">Information about the company:</span>
+    </strong>
     {{proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% elif proposta.organizacao and proposta.organizacao.informacoes %}
-    <p><strong>Informações sobre a empresa:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre a empresa:</span>
+      <span lang="en" style="display:none;">Information about the company:</span>
+    </strong>
     {{proposta.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% endif %}
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.departamento %}
-    <p><strong>Informações sobre o departamento na organização:</strong>
+    <p><strong>
+      <span lang="pt">Informações sobre o departamento na organização:</span>
+      <span lang="en" style="display:none;">Information about the department in the organization:</span>
+    </strong>
     {{proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
 
@@ -150,6 +182,9 @@
 
 {% else %}
 
-    <strong>Não foi possível carregar dados da Organização Parceira!</strong>
+    <strong>
+      <span lang="pt">Não foi possível carregar dados da Organização Parceira!</span>
+      <span lang="en" style="display:none;">It was not possible to load data from the Partner Organization!</span>
+    </strong>
 
 {% endif %}

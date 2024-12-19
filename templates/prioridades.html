@@ -7,8 +7,15 @@
 <hr>
 
 <br>
-<h5 style="margin-bottom: 0px;">Procura da Proposta</h5>
-<small>Quantidade de estudantes em cada opção para esta proposta:<br></small>
+<h5 style="margin-bottom: 0px;">
+  <span lang="pt">Procura da Proposta</span>
+  <span lang="en" style="display:none;">Proposal Demand</span>
+</h5>
+<small>
+  <span lang="pt">Quantidade de estudantes em cada opção para esta proposta:</span>
+  <span lang="en" style="display:none;">Number of students in each option for this proposal:</span>
+  <br>
+</small>
 <div class="container-fluid">
   <div class="row align-self-start" style="max-width: 800px">
     <div class="col">
@@ -19,46 +26,34 @@
 
 <script>
   var config_horizontal = {
-      type: 'horizontalBar',
-      data: {
-        labels: [
-              "Procura",
-            ],
+      type: "horizontalBar",
+      data: { 
+        labels: ["Procura",],
         datasets: [
           {
-            label: 'Opção #1',
-            backgroundColor: 'rgb(0, 250, 0)',
-            data: [
-              {{procura.1}},
-            ],
+            label: "Opção #1",
+            backgroundColor: "rgb(0, 250, 0)",
+            data: [{{procura.1}},],
           },
           {
-            label: 'Opção #2',
-            backgroundColor: 'rgb(210, 230, 30)',
-            data: [
-              {{procura.2}},
-            ],
+            label: "Opção #2",
+            backgroundColor: "rgb(210, 230, 30)",
+            data: [{{procura.2}},],
           },
           {
-            label: 'Opção #3',
-            backgroundColor: 'rgb(210, 190, 35)',
-            data: [
-              {{procura.3}},
-            ],
+            label: "Opção #3",
+            backgroundColor: "rgb(210, 190, 35)",
+            data: [{{procura.3}},],
           },
           {
-            label: 'Opção #4',
-            backgroundColor: 'rgb(180, 180, 120)',
-            data: [
-              {{procura.4}},
-            ],
+            label: "Opção #4",
+            backgroundColor: "rgb(180, 180, 120)",
+            data: [{{procura.4}},],
           },
           {
-            label: 'Opção #5',
-            backgroundColor: 'rgb(180, 200, 160)',
-            data: [
-              {{procura.5}},
-            ],
+            label: "Opção #5",
+            backgroundColor: "rgb(180, 200, 160)",
+            data: [{{procura.5}},],
           }
         ]
       },
@@ -66,23 +61,15 @@
           legend: { display: true },
           title: {
               display: false,
-              text: 'Procura'
+              text: "Procura"
           },
           responsive: true,
           maintainAspectRatio: false,
-          legend: {position: 'bottom'},
-          tooltips: {
-            enabled: false
-          },
+          legend: { position: "bottom" },
+          tooltips: { enabled: false },
           scales: {
-            
-              x: {
-                stacked: true,
-              },
-              y: {
-                stacked: true
-              },
- 
+              x: { stacked: true },
+              y: { stacked: true },
               yAxes: [{
                   stacked: true,
                   ticks: {

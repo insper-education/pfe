@@ -74,7 +74,10 @@
   {% endif %}
     
   {% if not not_outras %}
-    <label style="display: inline-block; vertical-align: top; font-size: 14px;" for="outras">Outras:</label> 
+    <label style="display: inline-block; vertical-align: top; font-size: 14px;" for="outras">
+      <span lang="pt">Outras:</span>
+      <span lang="en" style="display:none;">Others:</span>
+    </label> 
     <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
     {% if vencido %}disabled{% endif %}
     >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
