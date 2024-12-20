@@ -32,6 +32,9 @@
               <td data-sort="{{professor.user.get_full_name}}">
                 <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
               </td>
+              <td style="text-align: center;" data-sort="{{professor.dedicacao}}">
+                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.dedicacao}}</a>
+              </td>
               <td data-sort="{{professor.user.email}}">
                 <a class="imprimir" href="mailto:{{professor.user.email}}">{{professor.user.email}}</a>
               </td>
@@ -46,10 +49,12 @@
 
   </div>
 
-  {% comment %} <script>
-    function carrega_pagina() {};
-    window.onload = carrega_pagina
-  </script> {% endcomment %}
+  <script> 
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
 
   {% include "edicoes_ajax.html" with tabela="Coorientacoes" %}
   {% include "linguas.html" %}

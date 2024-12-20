@@ -2868,6 +2868,7 @@ def orientadores_tabela(request):
             orientacoes = zip(professores, grupos)
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
+                      {"pt": "Tipo", "en": "Type"},
                       {"pt": "e-mail", "en": "e-mail"},
                       {"pt": "Grupos", "en": "Groups"},
                       {"pt": "Projetos", "en": "Projects"}, ]
@@ -2959,6 +2960,7 @@ def coorientadores_tabela(request):
         context = {
             "orientacoes": orientacoes,
             "cabecalhos": [{"pt": "Nome", "en": "Name"},
+                           {"pt": "Tipo", "en": "Type"},
                            {"pt": "e-mail", "en": "e-mail"},
                            {"pt": "Grupos", "en": "Groups"},
                            {"pt": "Projetos", "en": "Projects"}, ],
