@@ -13,23 +13,21 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder">
-      <a data-toggle="tooltip" data-html="true" animation="true" title="Agenda Nova Mentoria" class="open-modal"
-            data-url="{% url 'dinamicas_criar' %}" href="{% url 'dinamicas_criar'%}"> 
-            &#10133;
-        </a>
-    </small>
+  <span class="esconder">
+    <a href="{% url 'dinamicas_criar'%}" class="open-modal" style="cursor:pointer;"
+    data-url="{% url 'dinamicas_criar' %}">
+      <i class="fas fa-plus"></i>
+      <span lang="pt">Agendar Mentoria</span>
+      <span lang="en" style="display: none;">Schedule Mentoring</span>
+    </a>
   </span>
+  {% include "janelas-modal.html" %}
 
   <div id="atualizar">
     {% include "calendario_dinamicas.html" %}
   </div>
     
   <script>
-    function carrega_pagina() {};
     function carrega_site(){
       // recarrega a página a cada 1 hora (evita que usuário não veja atualização de outros)
       window.setInterval("location.reload();", 3600000); // 1 hora

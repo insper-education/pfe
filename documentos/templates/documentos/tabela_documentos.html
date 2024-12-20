@@ -32,11 +32,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% include "edicoes.html" with com_cursos=True %}
   {% include "informacoes.html" %}
   <br><br>

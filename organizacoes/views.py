@@ -422,7 +422,7 @@ def proposta_submissao(request):
     ano_semestre = str(ano)+"."+str(semestre)
 
     context = {
-        "titulo": {"pt": "Submissão de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Submission " + ano_semestre + ")" },
+        "titulo": {"pt": "Submissão de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Submission (Capstone " + ano_semestre + ")" },
         "full_name": full_name,
         "email": email_sub,
         "organizacao": organizacao,

@@ -44,11 +44,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en" style="display:none">{{ titulo.en }}</span>
-  </span>
-
   {% if mensagem %}
     <span class="red-bold">{{mensagem|linebreaks}}</span>
     <br>

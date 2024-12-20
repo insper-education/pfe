@@ -11,12 +11,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with avancados=True %}
 
   <div class="atualizar">

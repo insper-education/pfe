@@ -245,227 +245,222 @@
     var save_image_file_name = "calendario_capstone";
   </script>
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en" style="display: none;">{{ titulo.en }}</span>
-  </span>
+  <div id="calendar" style="overflow-x: visible;"></div>
+  
+  <div style="margin-left: 3vw;">
+    <span lang="pt">Semestre:</span>
+    <span lang="en" style="display: none;">Semester:</span>
+    <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
+  </div>   
 
-    <div id="calendar" style="overflow-x: visible;"></div>
-    
-    <div style="margin-left: 3vw;">
-      <span lang="pt">Semestre:</span>
-      <span lang="en" style="display: none;">Semester:</span>
-      <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
-    </div>   
+  <div id="info_semestre" class="container-fluid">
+    <div class="row justify-content-around">
+      <div id="bloco_eventos" class="col-xl-auto ">
 
-    <div id="info_semestre" class="container-fluid">
-      <div class="row justify-content-around">
-        <div id="bloco_eventos" class="col-xl-auto ">
-
-          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <div class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
-            title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
-              <span lang="pt">Operação</span>
-              <span lang="en" style="display: none;">Operation</span>
-            </div>
-
-            <div id="lista_operacao" class="lista_operacao quad_pfe">
-              {% if coordenacao %}
-                {% nospaces %}
-                  {% for evento in coordenacao|dictsort:"endDate" %} 
-                    <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
-                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
-                        <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
-                        {% if evento.startDate == evento.endDate %} 
-                          {{evento.endDate.day}}/{{evento.endDate.month}}
-                        {% else %}
-                          {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}
-                        {% endif %}
-                      {% else %}
-                        ; {{evento.endDate.day}}/{{evento.endDate.month}}
-                      {% endifchanged %}
-                    </span>
-                  {% endfor %}
-                {% endnospaces %}
-              {% endif %}
-            <br>
-            </div>
-          {% endif %}
-          
-          <div class="tit_agenda" id="titulo_academico">
-            {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-              <span lang="pt">Acadêmico</span>
-              <span lang="en" style="display: none;">Academic</span>
-            {% else %}
-              <span lang="pt">Eventos</span>
-              <span lang="en" style="display: none;">Events</span>
-            {% endif %}
-          </div>
-          
-          <div id="lista_academico" class="lista_academico quad_pfe">
-            
-            {% for tipo_evento, eventos in eventos_academicos.items %}
-              {% if eventos %}
-                {% nospaces %}
-                  {% for evento in eventos|dictsort:"endDate" %}
-                    {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
-                      <span class="ano{{ evento.endDate.year }} ano">
-                        <span class="semestre {% if tipo_evento == "provas" %}prova{% endif %}" data-mes="{{ evento.endDate.month }}" data-dia="{{evento.endDate.day}}">
-                          {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
-                            <br>
-                            {% if tipo_evento == "provas" or tipo_evento == "laboratorios" %}
-                              <font style="background-image : linear-gradient(to bottom, transparent 80%, {{evento.get_color}} 80%">
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                              </font>
-                            {% else %}
-                              <font style="color:{{ evento.get_color }}">
-                                &#9608;
-                              </font>
-                            {% endif %}
-                            &nbsp;{{ evento.get_title }}:
-                            {% if evento.startDate == evento.endDate %} 
-                              {{ evento.endDate.day }}/{{ evento.endDate.month }}
-                            {% else %}
-                              {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
-                            {% endif %}
-                          {% else %}
-                            {% if evento.startDate == evento.endDate %} 
-                              ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
-                            {% else %}
-                              ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
-                            {% endif %}
-                          {% endifchanged %}
-                        </span>
-                      </span>
-                    {% endif %}
-                  {% endfor %}
-                {% endnospaces %}
-              {% endif %}
-            {% endfor %}
-
-
-            {% if eventos_academicos.laboratorios %}
-              <font style="text-decoration: underline solid orange">
-                <span id="linha_lab"><br>
-                  <span lang="pt">Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos</span>
-                  <span lang="en" style="display: none;">Underlined days have availability for project workspace</span>
-                </span>
-              </font>
-            {% endif %}
-            {% if eventos_academicos.provas %}
-              <font style="text-decoration: underline solid red">
-                <span id="linha_provas"><br>
-                  <span lang="pt">Semana de provas sublinhado em vermelho</span>
-                  <span lang="en" style="display: none;">Week of tests underlined in red</span>
-                </span>
-              </font>
-            {% endif %}
-            </div>
-
-        </div> <!--id="bloco_eventos"-->
-
-        <div id="bloco_aulas" class="col-xl-auto">
-
-          <div class="tit_agenda" id="titulo_aulas">
-            <span lang="pt">Aulas</span>
-            <span lang="en" style="display: none;">Classes</span>
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          <div class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
+          title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
+            <span lang="pt">Operação</span>
+            <span lang="en" style="display: none;">Operation</span>
           </div>
 
-          <span id="lista_aulas" class="lista_aulas">
-
-            {% if eventos_academicos.aulas %}
+          <div id="lista_operacao" class="lista_operacao quad_pfe">
+            {% if coordenacao %}
               {% nospaces %}
-              <table class="tab_pfe">
-                <thead><tr>
-                        <th scope="col" class="cabec">
-                          <span lang="pt">Data</span>
-                          <span lang="en" style="display: none;">Date</span>
-                        </th>
-                        <th scope="col" class="cabec header_aula">
-                          <span lang="pt">Aula</span>
-                          <span lang="en" style="display: none;">Class</span>
-                        </th>
-                        <th scope="col" class="cabec header_local">Local</th>
-                </tr></thead>
-                <tbody>
-                  {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}
-                    <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
-                        {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
-                        <th class="colu" scope="row">
-                          {% if user.tipo_de_usuario == 4 %}
-                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
-                          {% else %}
-                            <span>
-                          {% endif %}
-
-                            <span lang="pt">
-                              {% language "pt-br" %}
-                                {{aula.endDate|date:"d/m"}}
-                                <span class="t_f">/{{aula.endDate.year}}</span>
-                                <span class="t_s">/{{aula.endDate|date:"y"}}</span>
-                              {% endlanguage %}
-                            </span>
-                            <span lang="en" style="display:none">
-                              {% language "en" %}
-                                {{aula.endDate|date:"M d"}}
-                                <span class="t_f">, {{aula.endDate.year}}</span>
-                                <span class="t_s">, {{aula.endDate|date:"y"}}</span>
-                              {% endlanguage %}
-                            </span>
-                          </span>
-                        </th>
-                        
-                        <td class="colu" style="cursor:pointer;">
-                          {% if user.tipo_de_usuario == 4 %}
-                            <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
-                          {% else %}
-                            <span
-                          {% endif %}
-                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
-                            {{aula.atividade}}
-                            {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
-                          </span>
-                          {% for documento in aula.documentos %}
-                            {% comment %} Só mostra se data do documento for no passado {% endcomment %}
-                            {% if documento and documento.data|dif_agora < 0 %}
-                              {% if documento.documento %}
-                                <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">
-                                  &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
-                                </a>
-                              {% endif %}  
-                              {% if documento.link %}
-                                <a class="esconder" href="{{documento.link|add_http}}">
-                                  &nbsp;<i class="fa fa-link"></i>
-                                </a>
-                              {% endif %}
-                            {% endif %}
-                          {% endfor %}
-                        </td>
-
-                        <td class="colu local" style="cursor: pointer;">
-                          {% if aula.location %}
-                            <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
-                          {% endif %}
-                        </td>
-                    </tr>
-                  {% endfor %}
-
-                     <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
-                    </td></tr>
-                    
-                </tbody>
-              </table>
+                {% for evento in coordenacao|dictsort:"endDate" %} 
+                  <span class="coordenacao" data-ano="{{evento.endDate.year}}" data-mes="{{evento.endDate.month}}" data-dia="{{evento.endDate.day}}" >
+                    {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
+                      <br><font style="color:{{evento.get_color}}">&#9608;</font>&nbsp;{{evento.get_title}}:
+                      {% if evento.startDate == evento.endDate %} 
+                        {{evento.endDate.day}}/{{evento.endDate.month}}
+                      {% else %}
+                        {{evento.startDate.day}}/{{evento.startDate.month}} à {{evento.endDate.day}}/{{evento.endDate.month}}
+                      {% endif %}
+                    {% else %}
+                      ; {{evento.endDate.day}}/{{evento.endDate.month}}
+                    {% endifchanged %}
+                  </span>
+                {% endfor %}
               {% endnospaces %}
             {% endif %}
+          <br>
+          </div>
+        {% endif %}
+        
+        <div class="tit_agenda" id="titulo_academico">
+          {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+            <span lang="pt">Acadêmico</span>
+            <span lang="en" style="display: none;">Academic</span>
+          {% else %}
+            <span lang="pt">Eventos</span>
+            <span lang="en" style="display: none;">Events</span>
+          {% endif %}
+        </div>
+        
+        <div id="lista_academico" class="lista_academico quad_pfe">
+          
+          {% for tipo_evento, eventos in eventos_academicos.items %}
+            {% if eventos %}
+              {% nospaces %}
+                {% for evento in eventos|dictsort:"endDate" %}
+                  {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
+                    <span class="ano{{ evento.endDate.year }} ano">
+                      <span class="semestre {% if tipo_evento == "provas" %}prova{% endif %}" data-mes="{{ evento.endDate.month }}" data-dia="{{evento.endDate.day}}">
+                        {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
+                          <br>
+                          {% if tipo_evento == "provas" or tipo_evento == "laboratorios" %}
+                            <font style="background-image : linear-gradient(to bottom, transparent 80%, {{evento.get_color}} 80%">
+                              &nbsp;&nbsp;&nbsp;&nbsp;
+                            </font>
+                          {% else %}
+                            <font style="color:{{ evento.get_color }}">
+                              &#9608;
+                            </font>
+                          {% endif %}
+                          &nbsp;{{ evento.get_title }}:
+                          {% if evento.startDate == evento.endDate %} 
+                            {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                          {% else %}
+                            {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                          {% endif %}
+                        {% else %}
+                          {% if evento.startDate == evento.endDate %} 
+                            ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                          {% else %}
+                            ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                          {% endif %}
+                        {% endifchanged %}
+                      </span>
+                    </span>
+                  {% endif %}
+                {% endfor %}
+              {% endnospaces %}
+            {% endif %}
+          {% endfor %}
 
-          </span>
 
-        </div> <!--id="bloco_aulas"-->
-      </div> <!-- class="row" -->
-    </div> <!--id="info_semestre"-->
-    <br>
-    <br>
+          {% if eventos_academicos.laboratorios %}
+            <font style="text-decoration: underline solid orange">
+              <span id="linha_lab"><br>
+                <span lang="pt">Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos</span>
+                <span lang="en" style="display: none;">Underlined days have availability for project workspace</span>
+              </span>
+            </font>
+          {% endif %}
+          {% if eventos_academicos.provas %}
+            <font style="text-decoration: underline solid red">
+              <span id="linha_provas"><br>
+                <span lang="pt">Semana de provas sublinhado em vermelho</span>
+                <span lang="en" style="display: none;">Week of tests underlined in red</span>
+              </span>
+            </font>
+          {% endif %}
+          </div>
+
+      </div> <!--id="bloco_eventos"-->
+
+      <div id="bloco_aulas" class="col-xl-auto">
+
+        <div class="tit_agenda" id="titulo_aulas">
+          <span lang="pt">Aulas</span>
+          <span lang="en" style="display: none;">Classes</span>
+        </div>
+
+        <span id="lista_aulas" class="lista_aulas">
+
+          {% if eventos_academicos.aulas %}
+            {% nospaces %}
+            <table class="tab_pfe">
+              <thead><tr>
+                      <th scope="col" class="cabec">
+                        <span lang="pt">Data</span>
+                        <span lang="en" style="display: none;">Date</span>
+                      </th>
+                      <th scope="col" class="cabec header_aula">
+                        <span lang="pt">Aula</span>
+                        <span lang="en" style="display: none;">Class</span>
+                      </th>
+                      <th scope="col" class="cabec header_local">Local</th>
+              </tr></thead>
+              <tbody>
+                {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}
+                  <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
+                      {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
+                      <th class="colu" scope="row">
+                        {% if user.tipo_de_usuario == 4 %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
+                        {% else %}
+                          <span>
+                        {% endif %}
+
+                          <span lang="pt">
+                            {% language "pt-br" %}
+                              {{aula.endDate|date:"d/m"}}
+                              <span class="t_f">/{{aula.endDate.year}}</span>
+                              <span class="t_s">/{{aula.endDate|date:"y"}}</span>
+                            {% endlanguage %}
+                          </span>
+                          <span lang="en" style="display:none">
+                            {% language "en" %}
+                              {{aula.endDate|date:"M d"}}
+                              <span class="t_f">, {{aula.endDate.year}}</span>
+                              <span class="t_s">, {{aula.endDate|date:"y"}}</span>
+                            {% endlanguage %}
+                          </span>
+                        </span>
+                      </th>
+                      
+                      <td class="colu" style="cursor:pointer;">
+                        {% if user.tipo_de_usuario == 4 %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
+                        {% else %}
+                          <span
+                        {% endif %}
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                          {{aula.atividade}}
+                          {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
+                        </span>
+                        {% for documento in aula.documentos %}
+                          {% comment %} Só mostra se data do documento for no passado {% endcomment %}
+                          {% if documento and documento.data|dif_agora < 0 %}
+                            {% if documento.documento %}
+                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}">
+                                &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
+                              </a>
+                            {% endif %}  
+                            {% if documento.link %}
+                              <a class="esconder" href="{{documento.link|add_http}}">
+                                &nbsp;<i class="fa fa-link"></i>
+                              </a>
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                      </td>
+
+                      <td class="colu local" style="cursor: pointer;">
+                        {% if aula.location %}
+                          <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
+                        {% endif %}
+                      </td>
+                  </tr>
+                {% endfor %}
+
+                    <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                    <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                  </td></tr>
+                  
+              </tbody>
+            </table>
+            {% endnospaces %}
+          {% endif %}
+
+        </span>
+
+      </div> <!--id="bloco_aulas"-->
+    </div> <!-- class="row" -->
+  </div> <!--id="info_semestre"-->
+  <br>
+  <br>
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     {% include "calendario/evento-modal.html" %}

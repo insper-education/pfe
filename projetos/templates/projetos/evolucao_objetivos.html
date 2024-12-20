@@ -29,11 +29,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% include "edicoes.html" with sem_edicao=True com_cursos=True ind_grup=True so_finais=True %}
 
   {% if curso %}

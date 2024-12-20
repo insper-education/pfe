@@ -20,11 +20,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% if edicao and liberadas_propostas %}
     <h3 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h3>
     {% if user.tipo_de_usuario == 4 %} {% comment %} tipo_de_usuario == 4 >>> Administrador {% endcomment %}

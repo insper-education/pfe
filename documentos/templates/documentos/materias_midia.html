@@ -30,11 +30,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% comment %} {% include "informacoes.html" %} {% endcomment %}
 
   {% if user.tipo_de_usuario == 4 %}

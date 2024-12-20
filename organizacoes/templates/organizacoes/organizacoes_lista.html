@@ -12,11 +12,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% include "tabelas_top_ml.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
         {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
           <tr class="item">

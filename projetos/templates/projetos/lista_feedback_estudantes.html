@@ -19,11 +19,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   <div><span lang="pt">Link para pesquisa</span><span lang="en">Form link</span>: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
 
   {% include "edicoes.html" %}

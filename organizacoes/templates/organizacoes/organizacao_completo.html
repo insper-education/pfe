@@ -42,11 +42,6 @@
 
 {% block content %}
   
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% if organizacao.logotipo %}
     <img id="logotipo" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
   {% endif %}

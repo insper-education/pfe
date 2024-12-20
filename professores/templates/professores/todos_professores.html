@@ -11,13 +11,14 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder">
-    <a href="{% url 'cadastrar_usuario' %}?tipo=professor">&#10133;</a></small>
+  <span class="esconder">
+    <a href="{% url 'cadastrar_usuario' %}?tipo=professor" style="cursor:pointer;">
+      <i class="fas fa-plus"></i>
+      <span lang="pt">Cadastrar Usuário</span>
+      <span lang="en" style="display: none;">Register User</span>
+    </a>
   </span>
-
+    
   {% include "tabelas_top_ml.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
       <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}>

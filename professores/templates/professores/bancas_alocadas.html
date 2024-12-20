@@ -20,11 +20,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   <table class="table table-borderless table-sm arredondado">
     {% for banca in bancas %}
       {% ifchanged banca.periodo %}

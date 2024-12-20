@@ -20,11 +20,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-  
   <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
     <i class="far fa-file-alt"></i> {{template.tipo_documento}}
     <span lang="pt">(opcional)</span>

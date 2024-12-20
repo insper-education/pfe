@@ -20,11 +20,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% include "usuario.html" with user=professor.user %}
   
   <strong lang="pt">Tipo:</strong>

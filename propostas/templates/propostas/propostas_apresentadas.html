@@ -66,12 +66,12 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-    <small class="esconder"><a
-      href="{% url 'proposta_submissao' %}"
-    >&#10133;</a></small>
+  <span class="esconder">
+    <a href="{% url 'proposta_submissao'%}" style="cursor:pointer;">
+      <i class="fas fa-plus"></i>
+      <span lang="pt">Adicionar Proposta</span>
+      <span lang="en" style="display: none;">Add Proposal</span>
+    </a>
   </span>
 
   {% include "edicoes.html" %}

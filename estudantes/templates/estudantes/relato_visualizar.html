@@ -15,11 +15,6 @@ textarea {
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en" style="display: none;">{{ titulo.en }}</span>
-  </span>
-  
   <form action="" method="post"> {% csrf_token %}
 
     <b>

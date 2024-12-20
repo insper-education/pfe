@@ -52,20 +52,14 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en" style="display: none;">{{ titulo.en }}</span>
-  </span>
-
   <h4>
-    
-  [{{ projeto.organizacao.sigla }}] {{ projeto.get_titulo }}
-  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-    <span style="font-size: small; padding-left: 0.7em;"><b>
-      <span lang="pt">Título original da proposta:</span>
-      <span lang="en" style="display: none;">Original title of the proposal:</span>
-    </b> {{projeto.proposta.titulo}}</span>
-  {% endif %}
+    [{{ projeto.organizacao.sigla }}] {{ projeto.get_titulo }}
+    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+      <span style="font-size: small; padding-left: 0.7em;"><b>
+        <span lang="pt">Título original da proposta:</span>
+        <span lang="en" style="display: none;">Original title of the proposal:</span>
+      </b> {{projeto.proposta.titulo}}</span>
+    {% endif %}
   </h4>
 
   <strong>

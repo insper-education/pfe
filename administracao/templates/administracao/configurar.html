@@ -18,11 +18,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
     <b lang="pt">Data e Hora do Sistema:</b>

@@ -130,6 +130,15 @@
 
   </div>
   <div id="tudo" style="margin-top: 6px;" class="container-fluid">
+
+    {% if titulo %}
+      <span class="titulo"
+        {% comment %} style="text-align: center;" {% endcomment %}
+        >
+        <span lang="pt">{{ titulo.pt }}</span>
+        <span lang="en" style="display: none;">{{ titulo.en }}</span>
+      </span>
+    {% endif %}
     {% block content %}{% endblock %}
   </div>
   <p>&nbsp;</p>

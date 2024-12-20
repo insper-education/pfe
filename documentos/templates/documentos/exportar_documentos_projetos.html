@@ -12,11 +12,6 @@
 
 {% block content %}
   
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   <form method="POST" id="exportForm">{% csrf_token %}
 
     {% include "edicoes.html" with com_cursos=True n_todas=True  %}

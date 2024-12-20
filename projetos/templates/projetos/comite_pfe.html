@@ -11,11 +11,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% include "tabelas_top_ml.html" with tabela="Membros" cabecalhos=cabecalhos %}
 
     {% for professor in professores %} 

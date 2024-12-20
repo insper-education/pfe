@@ -19,11 +19,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en" style="display: none;">{{ titulo.en }}</span>
-  </span>
-
   <h3>Projetos Disponíveis {{configuracao.ano}}.{{configuracao.semestre}}</h3>
 
   {% for projeto in projetos %} 

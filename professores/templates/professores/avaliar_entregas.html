@@ -41,12 +41,7 @@
 {% endblock %}
 
 {% block content %}
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
 
-  {% comment %} Seletor da edição da pesquisa {% endcomment %}
   {% include "edicoes.html" with com_entregas=tipos_entregas %}
   <br>
 

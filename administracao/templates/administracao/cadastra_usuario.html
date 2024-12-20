@@ -21,11 +21,6 @@
 
 {% block content %}
 
-  <span class="titulo">
-    <span lang="pt">{{ titulo.pt }}</span>
-    <span lang="en">{{ titulo.en }}</span>
-  </span>
-
   {% if mensagem %}
     <div style="border: 2px solid red; padding: 4px; width: fit-content;">
       {{ mensagem|safe|linebreaks }}
