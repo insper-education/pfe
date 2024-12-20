@@ -293,16 +293,23 @@ def avaliacoes_pares(request, todos=None):
 
     if request.is_ajax():
         if "edicao" in request.POST:
-
-            projetos = Projeto.objects.filter(ano__gte=2023).order_by("ano", "semestre")  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
-
-            if todos != "todos":
-                projetos = projetos.filter(orientador=request.user.professor)
-
             edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
+            if todos is not None:
+                if todos == "todos":
+                    projetos = Projeto.objects.filter(ano__gte=2023).order_by("ano", "semestre")  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
+                    if edicao != "todas":
+                        ano, semestre = map(int, edicao.split('.'))
+                        projetos = projetos.filter(ano=ano, semestre=semestre)
+                else:
+                    projeto = get_object_or_404(Projeto, pk=todos)
+                    if (projeto.orientador != request.user.professor) and request.user.tipo_de_usuario != 4:  # Orientador ou Administrador
+                        return HttpResponse("Acesso negado.", status=401)    
+                    projetos = [projeto]
+            else:
+                projetos = Projeto.objects.filter(ano__gte=2023, orientador=request.user.professor).order_by("ano", "semestre")
+                if edicao != "todas":
+                    ano, semestre = map(int, edicao.split('.'))
+                    projetos = projetos.filter(ano=ano, semestre=semestre)
             context["projetos"] = projetos
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
