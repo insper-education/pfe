@@ -41,38 +41,37 @@
         <tbody>
       {% endifchanged %}
       <tr class="{{projeto.periodo}} {% if projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
-      {% for documento in projeto.get_planos_de_orientacao %}
-        <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
-          data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-          {% if projeto.periodo == "Anteriores" %}
-          {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
-            href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
-          {% endwith %}
-          {% else %}
-          class="open-documento"
-          data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}"
-          {% endif %}
-          ><b><i class="fas fa-file-alt"></i>
-      {% empty %}
-        <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
-          data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
-          {% if projeto.periodo != "Anteriores" %}
-          class="open-documento"
-          data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}"
-          {% endif %}
-          ><b><i class="far fa-file"></i>
-      {% endfor %}</b>
+        {% for documento in projeto.get_planos_de_orientacao %}
+          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
+            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+            {% if projeto.periodo == "Anteriores" %}
+            {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
+              href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
+            {% endwith %}
+            {% else %}
+            class="open-documento"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}"
+            {% endif %}
+            ><b><i class="fas fa-file-alt"></i>
+        {% empty %}
+          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
+            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
+            {% if projeto.periodo != "Anteriores" %}
+            class="open-documento"
+            data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}"
+            {% endif %}
+            ><b><i class="far fa-file"></i>
+        {% endfor %}</b>
         {{projeto.ano}}.{{projeto.semestre}} [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-      </a>
-    </td></tr>
-  {% empty %}
-    <span lang="pt">Nenhum plano de orientação encontrado.</span>
-    <span lang="en">No orientation plan found.</span>
-  {% endfor %}
-</tbody></table>
+        </a>
+      </td></tr>
+    {% empty %}
+      <span lang="pt">Nenhum plano de orientação encontrado.</span>
+      <span lang="en">No orientation plan found.</span>
+    {% endfor %}
+  </tbody></table>
 
-{% include "documento-modal.html" %}
-{% include "toggle_anteriores.html" %}
-{% include "linguas.html" %}
+  {% include "documento-modal.html" %}
+  {% include "toggle_anteriores.html" %}
 
 {% endblock %}

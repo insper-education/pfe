@@ -53,12 +53,11 @@
     </div>
   </div>
 
-  <script>
+  {% comment %} <script>
     function carrega_pagina() {};
     window.onload = carrega_pagina
-  </script>
+  </script> {% endcomment %}
 
   {% include "edicoes_ajax.html" with tabela="Mentorias" %}
-  {% include "linguas.html" %}
 
 {% endblock %}

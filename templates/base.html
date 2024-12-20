@@ -27,82 +27,6 @@
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/pega_erro.js' %}"></script>
 
-{% comment %} REMOVER O CSS ABAIXO {% endcomment %}
-<style>
-  #language_button {
-    display: none;
-    user-select: none;
-    border-radius: 10px;
-    border: 2px solid #DDD;
-    float: right;
-    margin-top: 4px;
-    margin-left: 8px;
-    background-color: #999;
-  }
-
-  #logo_insper {
-    width: 59px;
-    height: 23px;
-  }
-
-  #hamburger:hover {
-    color: grey;
-  }
-
-  .logo-container {
-    margin-left: 6px;
-    margin-right: 6px;
-  }
-
-  #barra_do_top_nav {
-    padding: 0px;
-    height: 53px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100%; 
-    justify-content: flex-start;
-  }
-
-  #language_box {
-    margin-left: auto;
-    padding: 8px;
-    margin-right: 48px;
-  }
-
-  @media (max-width: 460px) {
-    .logo-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    #logo_insper {
-        width: 44px;
-        height: 17px;
-    }
-
-    #pfelogo {
-        font-size: 0.6rem;
-        margin-left: 0;
-    }
-  
-    .hidden {
-        display: none;
-    }
-
-    .visible {
-        display: block;
-    }
-
-    #language_button {
-      font-size: 0.8em;
-    }
-  
-}
-</style>
-
   {% block head %}
   {% endblock %}
 </head>
@@ -124,7 +48,6 @@
         <a href="{% url 'login' %}" id="link_username"><i style="font-size: 0.75em;" class="fas fa-question"></i>&nbsp;Login</u></a>
       {% endif %}
       <div id="language_box"><div id="language_button"></div></div>
-    
 
       <div id="links_menu_lat" class="links-container">
         {% if user.is_authenticated %}
@@ -210,6 +133,8 @@
     {% block content %}{% endblock %}
   </div>
   <p>&nbsp;</p>
+
+  {% include "linguas.html" %}
   
   {% if request.get_host == "127.0.0.1:8000" %}
     <p id="pi_the_net" style="cursor: pointer; float: right; margin-right: 12px;">&pi;</p>

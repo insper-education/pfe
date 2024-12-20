@@ -128,15 +128,11 @@
   <script>
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      {% comment %} carrega_pagina(); {% endcomment %}
     };
     window.onload = carrega_site
   </script>
 
   {% include "documento-modal.html" %}
-
   {% include "edicoes_ajax.html" %}
-
-  {% include "linguas.html" %}
 
 {% endblock %}

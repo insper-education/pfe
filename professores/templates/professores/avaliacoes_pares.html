@@ -55,29 +55,25 @@
       {% endfor %}
     {% endif %}
 
-    <script>
+    {% comment %} <script>
       function carrega_pagina(){};
       window.onload = carrega_pagina
-    </script>
-
-    {% comment %} Sistema de controle de exibição de linguas. {% endcomment %}
-    {% include "linguas.html" %}
+    </script> {% endcomment %}
 
   </div> 
 
   <script>
 
-    function carrega_pagina() {};
+    {% comment %} function carrega_pagina() {}; {% endcomment %}
 
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
+      //carrega_pagina();
     };
 
     window.onload = carrega_site
   </script>
 
   {% include "edicoes_ajax.html" %}
-  {% include "linguas.html" %}
   
 {% endblock %}
