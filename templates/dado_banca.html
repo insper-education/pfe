@@ -57,9 +57,9 @@
                   {% else %}
                     "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
                   {% endif %}>
-                <span id="banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
                 <script>
-                  $("#banca{{banca.tipo_de_banca}}_{{projeto.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                  $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
                     {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
                   );
                   objetivo_tmp = new Objetivo();
@@ -94,15 +94,15 @@
         <span lang="pt">Média das Avaliações da Banca</span>
         <span lang="en" style="display: none;">Average of the Examining Board</span>
         {{banca.get_tipo_de_banca_display}}:
-        <ul id="banca{{banca.tipo_de_banca}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
+        <ul id="banca{{banca.id}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
       </b>
-      <span id="banca{{banca.tipo_de_banca}}"></span>
+      <span id="banca{{banca.id}}"></span>
       <script>
         for (var key in banca.dict) {
           if(banca.dict[key].avaliacoes>0) 
-            $("#banca{{banca.tipo_de_banca}}_med_aval").append(banca.dict[key].nota_texto());
+            $("#banca{{banca.id}}_med_aval").append(banca.dict[key].nota_texto());
         }
-        $("#banca{{banca.tipo_de_banca}}").html(banca.media_calculada());
+        $("#banca{{banca.id}}").html(banca.media_calculada());
       </script>
     </td></tr>
   </table>

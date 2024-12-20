@@ -2485,9 +2485,11 @@ def avaliar_bancas(request):
             "bancas": bancas,
         }
     else:
+        configuracao = get_object_or_404(Configuracao)
         context = {
             "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
             "edicoes": get_edicoes(Projeto)[0],
+            "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
         }
     return render(request, "professores/avaliar_bancas.html", context=context)
 

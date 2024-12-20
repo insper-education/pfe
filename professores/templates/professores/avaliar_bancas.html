@@ -45,38 +45,37 @@
 
   <div class="atualizar">
 
-    {% for banca in bancas %}
-
+    {% if projeto %}
       <strong>
         <span lang="pt">Projeto:</span>
         <span lang="en" style="display: none;">Project:</span>
       </strong>
 
-      {% if banca.projeto.organizacao %}
-        [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{banca.projeto.organizacao}}</a>]
+      {% if projeto.organizacao %}
+        [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
       {% endif %}
 
       {% if projeto %}
-        <a href="{% url 'projeto_completo' banca.projeto.id %}">{{banca.projeto.get_titulo}}</a><br>
+        <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
       {% endif %}
 
       <strong>
         <span lang="pt">Semestre:</span>
         <span lang="en" style="display: none;">Semester:</span>
-      </strong> {{banca.projeto.ano}}.{{banca.projeto.semestre}}<br>
+      </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
-      {% if banca.projeto.orientador %}
+      {% if projeto.orientador %}
         <strong>
           <span lang="pt">Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
           <span lang="en" style="display: none;">Advisor:</span>
         </strong>
-        <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">
-          {{banca.projeto.orientador.user.get_full_name}}
+        <a href="{% url 'professor_detail' projeto.orientador.id %}">
+          {{projeto.orientador.user.get_full_name}}
         </a>
         <br>
       {% endif %}
 
-      {% with coorientadores=banca.projeto.coorientador_set.all %}
+      {% with coorientadores=projeto.coorientador_set.all %}
         {% if coorientadores %}
           <strong>
             <span lang="pt">Coorientador:</span>
@@ -93,14 +92,14 @@
         {% endif %}
       {% endwith %}
 
-      {% include "tipo_projeto.html" with com_tipo=True projeto=banca.projeto %}
+      {% include "tipo_projeto.html" with com_tipo=True projeto=projeto %}
       
       <strong style="display: inline-block; margin-top: 6px;">
         <span lang="pt">Grupo:</span>
         <span lang="en" style="display: none;">Group:</span>
       </strong>
       <ul>
-      {% for alocacao in banca.projeto.alocacao_set.all %}
+      {% for alocacao in projeto.alocacao_set.all %}
         <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
           <li>
             {{alocacao.aluno.user.get_full_name}} 
@@ -110,22 +109,18 @@
         </a>
       {% endfor %}
       </ul>
+    {% endif %}
 
-      {% for banca2 in projeto.banca_set.all %}
-
-        {% include "dado_banca.html" with banca=banca2 %}
-        <br>
-        
-      {% endfor %}
-
-      <b>
-        <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
-        e depois de 24 horas que a última avaliação foi feita.</span>
-        <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
-          and after 24 hours that the last evaluation was made.</span>
-      </b>
-
+    {% for banca in bancas %}
+      {% include "dado_banca.html" %}<br>
     {% endfor %}
+
+    <b>
+      <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
+      e depois de 24 horas que a última avaliação foi feita.</span>
+      <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
+        and after 24 hours that the last evaluation was made.</span>
+    </b>
 
   </div>
 
