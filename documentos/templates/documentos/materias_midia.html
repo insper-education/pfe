@@ -37,6 +37,20 @@
 
   {% comment %} {% include "informacoes.html" %} {% endcomment %}
 
+  {% if user.tipo_de_usuario == 4 %}
+    <span class="esconder">
+      <a 
+      href="#"
+      class="open-documento" style="cursor:pointer;"
+      data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}">
+        <i class="fas fa-plus"></i> 
+        <span lang="pt">Cadastrar Nova Matéria</span>
+        <span lang="en" style="display: none;">Register New Document</span>
+      </a>
+    </span>
+    {% include "documento-modal.html" %}
+  {% endif %}
+  
   <div class="atualizar">
 
     {% include "tabelas_top_ml.html" with tabela="Materias" cabecalhos=cabecalhos %}
@@ -124,14 +138,6 @@
 
   </div>
 
-  {% if  user.tipo_de_usuario == 4 %}
-    <br>
-    <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'adiciona_documento_tipo' tipo.sigla %}'" type="button" style="float: right;">
-      <span lang="pt">Cadastrar Nova Matéria</span>
-      <span lang="en" style="display: none;">Register New Document</span>
-    </button></small><br>
-  {% endif %}
-
   <script>
     function carrega_pagina() {
       if($("#MateriasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
@@ -151,8 +157,5 @@
   {% include "edicoes_ajax.html" with tabela="Materias" %}
 
   <br>
-  {% if  user.tipo_de_usuario == 4 %}
-    {% include "documento-modal.html" %}
-  {% endif %}
-
+  
 {% endblock %}
