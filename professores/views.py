@@ -54,27 +54,22 @@ from administracao.support import usuario_sem_acesso
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
-def get_evento(evento_id, configuracao):
-    if configuracao.semestre == 1:
-        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=configuracao.ano, endDate__month__lt=7)
+def get_evento(evento_id, ano, semestre):
+    if semestre == 1:
+        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__lt=7)
     else:
-        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=configuracao.ano, endDate__month__gt=6)
+        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__gt=6)
     return eventos.order_by("endDate", "startDate").last()
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def index_professor(request):
-    """Mostra página principal do usuário professor."""
 
-    configuracao = get_object_or_404(Configuracao)
+def ver_pendencias_professor(user, ano, semestre):
+
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
 
-    context = {
-            "titulo": {"pt": "Área dos Professores", "en": "Professors Area"},
-        }
+    context = {}
 
-    if request.user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
-        projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+    if user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
+        projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
 
         if projetos:
 
@@ -87,7 +82,7 @@ def index_professor(request):
             if feito:
                 planos_de_orientacao = 'g'
             else:
-                evento = get_evento(10, configuracao)  # (10, "Início das aulas", "#FF1010"),
+                evento = get_evento(10, ano, semestre)  # (10, "Início das aulas", "#FF1010"),
                 if evento:
                     planos_de_orientacao = 'b'
                     context["planos_de_orientacao__prazo"] = evento.endDate + datetime.timedelta(days=(PRAZO+5))
@@ -171,7 +166,7 @@ def index_professor(request):
             # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
             bancas_index = 'b'
             banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=1).exists()  # (1, "Intermediária"),
-            evento = get_evento(14, configuracao)  # (14, "Bancas Intermediárias", "#EE82EE"),
+            evento = get_evento(14, ano, semestre)  # (14, "Bancas Intermediárias", "#EE82EE"),
             if evento and (datetime.date.today() - evento.startDate).days > -16:
                 if banca:
                     bancas_index = 'g'
@@ -181,7 +176,7 @@ def index_professor(request):
                     else:
                         bancas_index = 'y'
             banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=0).exists()  # (0, "Final")
-            evento = get_evento(15, configuracao)  # (15, "Bancas Finais", "#FFFF00"),
+            evento = get_evento(15, ano, semestre)  # (15, "Bancas Finais", "#FFFF00"),
             if evento and (datetime.date.today() - evento.startDate).days > -16:
                 if banca:
                     bancas_index = 'g'
@@ -196,14 +191,14 @@ def index_professor(request):
             # Verifica se todas as bancas do semestre foram avaliadas
             avaliar_bancas = 'b'
             
-            bancas_0_1 = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre, tipo_de_banca__in=(0, 1)).\
-                filter(Q(membro1=request.user) | Q(membro2=request.user) | Q(membro3=request.user) | Q(projeto__orientador=request.user.professor)) # Interm ou Final
+            bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca__in=(0, 1)).\
+                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
             
-            bancas_2 = Banca.objects.filter( projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre, tipo_de_banca=2).\
-                filter(Q(membro1=request.user) | Q(membro2=request.user) | Q(membro3=request.user)) # Falconi
+            bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=2).\
+                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Falconi
 
-            bancas_3 = Banca.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre, tipo_de_banca=3).\
-                filter(Q(membro1=request.user) | Q(membro2=request.user) | Q(membro3=request.user)) # Probation
+            bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_de_banca=3).\
+                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Probation
             
             bancas = bancas_0_1 | bancas_2 | bancas_3
 
@@ -222,9 +217,9 @@ def index_professor(request):
                 if exame_title:
                     exame = Exame.objects.filter(titulo=exame_title).first()
                     if banca.tipo_de_banca == 3:
-                        avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame=exame, avaliador=request.user)
+                        avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame=exame, avaliador=user)
                     else:
-                        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=request.user)
+                        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=user)
                 else:
                     avaliacoes = None
 
@@ -239,7 +234,7 @@ def index_professor(request):
 
             # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
             avaliacoes_pares = 'b'
-            evento = get_evento(31, configuracao)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
+            evento = get_evento(31, ano, semestre)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
             if evento and (datetime.date.today() - evento.startDate).days > 0:
                 feito = True
                 for projeto in projetos:
@@ -253,7 +248,7 @@ def index_professor(request):
                         avaliacoes_pares = 'r'
                     elif avaliacoes_pares != 'r':
                         avaliacoes_pares = 'y'
-            evento = get_evento(32, configuracao)  #(32, "Avaliação de Pares Final", "#FFC0DB"),
+            evento = get_evento(32, ano, semestre)  #(32, "Avaliação de Pares Final", "#FFC0DB"),
             if evento and (datetime.date.today() - evento.startDate).days > 0:
                 feito = True
                 for projeto in projetos:
@@ -268,12 +263,62 @@ def index_professor(request):
                     elif avaliacoes_pares != 'r':
                         avaliacoes_pares = 'y'
             context["avaliacoes_pares"] = avaliacoes_pares
-        
+
+    return context
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def index_professor(request):
+    """Mostra página principal do usuário professor."""
+
+    configuracao = get_object_or_404(Configuracao)
     
+    context = ver_pendencias_professor(request.user, configuracao.ano, configuracao.semestre)
+    context["titulo"] = {"pt": "Área dos Professores", "en": "Professors Area"}
+
     if "/professores/professores" in request.path:
         return render(request, "professores/professores.html", context=context)
     else:
         return render(request, "professores/index_professor.html", context=context)
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def pendencias_professores(request):
+    """Mostra pendencias dos professores."""
+
+    configuracao = get_object_or_404(Configuracao)
+    
+    orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
+    orientadores = Professor.objects.filter(id__in=orientadores_ids)
+
+    # ESTUDAR COMO FAZER
+    # membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
+    # membros_banca = set()
+    # for membros in membro_banca:
+    #     membros_banca.update(membros)
+    # membros_banca = Professor.objects.filter(id__in=membros_banca)
+
+    professores = {}
+    for professor in orientadores:
+        professores[professor] = ver_pendencias_professor(professor.user, configuracao.ano, configuracao.semestre)
+
+    tipos = [
+        ("Planos de Orientação", "planos_de_orientacao"),
+        ("Relatos Quinzenais", "relatos_quinzenais"),
+        ("Avaliar Entregas", "avaliar_entregas"),
+        ("Bancas", "bancas_index"),
+        ("Avaliar Bancas", "avaliar_bancas"),
+        ("Avaliações de Pares", "avaliacoes_pares"),
+    ]
+
+    context = {
+        "titulo": {"pt": "Pendências dos Professores", "en": "Professors Pending Tasks"},
+        "professores": professores,
+        "tipos": tipos,
+        }
+    
+    return render(request, "professores/pendencias_professores.html", context=context)
 
 
 @login_required

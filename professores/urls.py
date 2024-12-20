@@ -186,6 +186,10 @@ urlpatterns = [
         views.orientadores_tabela_completa,
         name="orientadores_tabela_completa"),
 
+    path("pendencias_professores/",
+        views.pendencias_professores,
+        name="pendencias_professores"),
+
     path("relato_avaliar/<int:projeto_id>/<int:evento_id>",
         views.relato_avaliar,
         name="relato_avaliar"),
