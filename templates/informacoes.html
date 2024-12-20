@@ -60,14 +60,6 @@
     }
     
   </style>
-
-  <script>
-    $(document).on("click","#informacoes_tag",function(){
-      if($("#toggle").is(":visible")) $("#informacoes_gerais").css("display", "inline-block");
-      else $("#informacoes_gerais").css("display", "block");
-      $("#toggle").toggle("slide");
-    });
-  </script>
  
   <div id="informacoes_gerais" class="esconder">
     <span id="informacoes_tag"><b>
@@ -87,5 +79,23 @@
       &nbsp;&nbsp;
     </div>
   </div>
+
+  <script>
+    $(document).on("click","#informacoes_tag",function(){
+      if($("#toggle").is(":visible")) $("#informacoes_gerais").css("display", "inline-block");
+      else $("#informacoes_gerais").css("display", "block");
+      $("#toggle").toggle("slide");
+    });
+
+    function muda_edicao(event) {        
+      {% for inf in informacoes %}
+        if($(`#info_{{inf.1}}`).prop('checked')) {$(`{{inf.0|safe}}`).show()} else {$(`{{inf.0|safe}}`).hide()};
+      {% endfor %}
+    }
+
+    // Escutar caso a edição tenha mudado
+    document.addEventListener("edicaoEvent", muda_edicao);
+    
+  </script>
 
 {% endif %}

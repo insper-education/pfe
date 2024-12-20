@@ -89,9 +89,18 @@
               $(".filter").attr("disabled",false);
               $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});  {% comment %} <script src="{% static 'js/tooltip.js' %}"></script> {% endcomment %}
               {% include "linguas_ajax.html" %}
+              
+              // Enviando evento que mudou edição
+              var event = new CustomEvent("edicaoEvent", {
+                detail: {
+                  edicao:  typeof edicao !== 'undefined' ? edicao : null,
+                  curso: typeof curso !== 'undefined' ? curso : null,
+                },
+              });
+              document.dispatchEvent(event);
 
-            } // else {% comment %} Ignorando resposta {% endcomment %}
- 
+            } 
+            
           },
           {% include "ajax_error_function.js" %}
       });
