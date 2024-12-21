@@ -22,8 +22,24 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import html, timezone
 
-from users.models import PFEUser, Professor, Aluno, Alocacao
-from users.support import get_edicoes
+from .support import professores_membros_bancas, falconi_membros_banca
+from .support import coleta_membros_banca
+from .support import editar_banca
+from .support import recupera_orientadores_por_semestre
+from .support import recupera_coorientadores_por_semestre
+from .support import move_avaliacoes
+from .support import converte_conceitos, arredonda_conceitos
+from .support import calcula_interseccao_bancas
+
+from academica.models import Exame, Composicao, Peso
+from academica.support import filtra_composicoes, filtra_entregas
+
+from administracao.models import Carta
+from administracao.support import usuario_sem_acesso
+
+from documentos.models import TipoDocumento
+
+from estudantes.models import Relato, Pares
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, Certificado
@@ -33,23 +49,9 @@ from projetos.support import get_objetivos_atuais
 from projetos.messages import email, render_message, htmlizar
 from projetos.arquivos import le_arquivo
 
-from academica.models import Exame, Composicao, Peso
+from users.models import PFEUser, Professor, Aluno, Alocacao
+from users.support import get_edicoes
 
-from .support import professores_membros_bancas, falconi_membros_banca
-from .support import editar_banca
-from .support import recupera_orientadores_por_semestre
-from .support import recupera_coorientadores_por_semestre
-from .support import move_avaliacoes
-from .support import converte_conceitos, arredonda_conceitos
-from .support import calcula_interseccao_bancas
-
-from estudantes.models import Relato, Pares
-
-from academica.support import filtra_composicoes, filtra_entregas
-
-from documentos.models import TipoDocumento
-
-from administracao.support import usuario_sem_acesso
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -2014,60 +2016,23 @@ def banca_avaliar(request, slug, documento_id=None):
         return HttpResponse("Avaliação não submetida.")
     else:
 
-        orientacoes = ""
-        orientacoes_en = ""
+        pessoas, membros = coleta_membros_banca(banca)
 
-        # Intermediária e Final
-        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
-            pessoas, membros = professores_membros_bancas(banca)
-            orientacoes += "Os orientadores são responsáveis por conduzir a banca. Os membros do grupo terão <b>40 minutos para a apresentação</b>. Os membros da banca terão depois <b>50 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja muitas interferências da banca durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto, assim um membro da banca pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar. Caso o grupo demore mais que os 40 minutos a banca poderá definir uma punição em um objetivo de aprendizado, idealmente no objetivo de Comunicação."
-            orientacoes += "<br><br>"
-            orientacoes += "Como ordem recomendada para a arguição da banca, se deve convidar: professores convidados, professores coorientadores, orientador(a) do projeto e por fim demais pessoas assistindo à apresentação. A banca poderá perguntar tanto sobre a apresentação, como o relatório entregue, permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
-            orientacoes += "<br><br>"
-            orientacoes += "As bancas do Capstone servem como mais um evidência de aprendizado, assim, além da percepção dos membros da banca em relação ao nível alcançado nos objetivos de aprendizado pelos membros do grupo, serve também como registro da evolução do projeto. Dessa forma, ao final, a banca terá mais <b>15 minutos para ponderar</b>, nesse momento se pede para dispensar os estudantes e demais convidados externos. Recomendamos 5 minutos para os membros da banca relerem os objetivos de aprendizagem e rubricas, fazerem qualquer anotação e depois 10 minutos para uma discussão final. Cada membro da banca poderá colocar seu veredito sobre grupo, usando as rubricas a seguir."
-            orientacoes += "<br><br>"
-            orientacoes += "No Capstone, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper, se tem os professores automaticamente responsáveis por garantir o sigilo das informações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
-            orientacoes += "<br>"
+        nome_template = {
+            0: "Orientações Banca Regular",    # Final
+            1: "Orientações Banca Regular",    # Intermediária
+            2: "Orientações Banca Falconi",    # Falconi
+            3: "Orientações Banca Probatória"  # Probation
+        }
 
-            orientacoes_en += "The advisors are responsible for leading the presentation. The group members will have <b>40 minutes for the presentation</b>. The evaluation committee members will then have <b>50 minutes for the discussion</b> (which will be divided by the invited members), being able to ask any questions about the project and make their comments. If there is a lot of interference from the examination members during the group's presentation, the presentation time may be extended. <b>all group members should be ready to answer any kind of question</b> about the project, so an evaluation committee member can ask a question directed at a specific student in the group if desired. If a group takes longer than 40 minutes, the evaluation committee will be able to define a punishment in a learning objective, ideally in the Communication objective."
-            orientacoes_en += "<br><br>"
-            orientacoes_en += "As recommended order for the evaluation committee members's argument, the following should be invited: guest professors, co-advisor professors, project supervisor and finally other people watching the presentation. The evaluation committee may ask about the presentation, as well as the report delivered, enabling a clear weighting for the learning objectives rubrics."
-            orientacoes_en += "<br><br>"
-            orientacoes_en += "Presentations of the Capstone serve as another evidence of learning, thus, in addition to the perception of the members of the evaluation committee in relation to the level reached in the learning objectives by the members of the group, it also serves as a record of the evolution of the project. In this way, at the end, the evaluation committee will have more <b>15 minutes to consider</b>, at which point they are asked to dismiss students and other external guests. We recommend 5 minutes for panel members to reread the learning objectives and rubrics, make any notes, and then 10 minutes for a final discussion. Each evaluation committee member will be able to define a verdict for the group, using the rubrics below."
-            orientacoes_en += "<br><br>"
-            orientacoes_en += "In the Capstone, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper, the professors are automatically responsible for guaranteeing the confidentiality of the information. <b>external people can only participate in the presentaions with prior authorization</b>, this includes other students who are not part of the group, family or friends."
-            orientacoes_en += "<br>"
-            
-        
-        # Falconi
-        elif banca.tipo_de_banca == 2:
-            pessoas, membros = falconi_membros_banca(banca)
-            orientacoes += "Os membros do grupo terão <b>10 minutos para a apresentação</b>. Os consultores da Falconi terão depois outros <b>15 minutos para arguição e observações</b>, podendo tirar qualquer dúvida a respeito do projeto e fazerem seus comentários. Caso haja interferências durante a apresentação do grupo, poderá se estender o tempo de apresentação. A dinâmica de apresentação é livre, contudo, <b>todos os membros do grupo devem estar prontos para responder qualquer tipo de pergunta</b> sobre o projeto. Um consultor da Falconi pode fazer uma pergunta direcionada para um estudante específico do grupo se desejar."
-            orientacoes += "<br><br>"
-            orientacoes += "As apresentações para a comissão de consultores da Falconi serão usadas para avaliar os melhores projetos. Cada consultor da Falconi poderá colocar seu veredito sobre grupo, usando as rubricas a seguir. Ao final a coordenação do Capstone irá fazer a média das avaliações e os projetos que atingirem os níveis de excelência pré-estabelecidos irão receber o certificado de destaque."
-            orientacoes += "<br><br>"
-            orientacoes += "No Capstone, a maioria dos projetos está sob sigilo, através de contratos realizados (quando pedido ou necessário) entre a Organização Parceira e o Insper. A Falconi assinou um documento de responsabilidade em manter o sigilo das informações divulgadas nas apresentações. Assim <b>pessoas externas só podem participar das bancas com prévia autorização</b>, isso inclui outros estudantes que não sejam do grupo, familiares ou amigos."
-            orientacoes += "<br>"
-
-            orientacoes_en += "Group members will have <b>15 minutes for the presentation</b>. Falconi consultants will then have another <b>15 minutes for discussion and observations</b>, being able to clarify any doubts about the project and make their comments. If there is interference during the group presentation, the presentation time may be extended. The presentation dynamics is free, however, <b>all group members must be ready to answer any type of question< /b> about the project. A Falconi consultant can ask a question directed at a specific student in the group if desired."
-            orientacoes_en += "<br><br>"
-            orientacoes_en += "The presentations to Falconi's commission of consultants will be used to evaluate the best projects. Each Falconi consultant will be able to put his verdict on the group, using the following rubrics. At the end, the Capstone coordination will average the evaluations and the projects that reach the pre-established levels of excellence will receive the outstanding certificate."
-            orientacoes_en += "<br><br>"
-            orientacoes_en += "In the Capstone, most projects are kept confidential, through contracts made (when requested or necessary) between the Partner Organization and Insper. Falconi signed a document of responsibility to maintain the confidentiality of the information disclosed in the presentations. So <b>external people can only participate in the stands with prior authorization</b>, this includes other students who are not part of the group, family or friends."
-            orientacoes_en += "<br>"
-
-
-        # Probation
-        elif banca.tipo_de_banca == 3:
-            pessoas, membros = professores_membros_bancas(banca)
-            orientacoes += "O estudante em Probation terá <b>20 minutos para a apresentação</b>. Os membros da banca terão depois <b>40 minutos para arguição</b> (que serão divididos pelos membros convidados), podendo tirar qualquer dúvida a respeito da atuação do estudante e fazerem seus comentários."
-            orientacoes += "<br><br>"
-            orientacoes += "A banca poderá perguntar tanto sobre a apresentação, como os relatórios entregues (individual ou de grupo), permitindo uma clara ponderação nas rubricas dos objetivos de aprendizado."
-            orientacoes += "<br><br>"
-            orientacoes += "Ao final, a banca terá mais <b>20 minutos para ponderar</b>, nesse momento se pede para dispensar o estudante. Cada membro da banca poderá colocar seu veredito sobre o estudante, usando as rubricas a seguir."
-            orientacoes += "<br><br>"
-
-            orientacoes_en += ""
+        template_name = nome_template.get(banca.tipo_de_banca)
+        if template_name:
+            carta = get_object_or_404(Carta, template=template_name)
+            orientacoes = carta.texto
+            orientacoes_en = carta.texto_en
+        else:
+            orientacoes = ""
+            orientacoes_en = ""
 
         # Identificando quem seria o avaliador
         if "avaliador" in request.GET:
@@ -2090,23 +2055,14 @@ def banca_avaliar(request, slug, documento_id=None):
             tmp_conceito = request.GET.get("conceito"+str(i), '')
             conceitos[i] = (tmp_objetivo, tmp_conceito)
 
-        observacoes_orientador = unquote(request.GET.get("observacoes_orientador", ''))
-        observacoes_estudantes = unquote(request.GET.get("observacoes_estudantes", ''))
-        
-        tipo_documento = None
-        if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
-            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-        elif banca.tipo_de_banca == 0:  # (0, 'final'),
-            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-        elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
-            tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-        elif banca.tipo_de_banca == 3:  # (3, 'probation'),
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+        map_tipo_documento = {
+            0: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            1: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
+            2: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            3: TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
+        }
 
-        if banca.tipo_de_banca == 3:  # (3, 'probation')
-            sub_titulo = banca.alocacao.aluno.user.get_full_name() + " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
-        else:
-            sub_titulo = " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+        tipo_documento = map_tipo_documento.get(banca.tipo_de_banca)
 
         documentos = None
         if tipo_documento:
@@ -2126,8 +2082,8 @@ def banca_avaliar(request, slug, documento_id=None):
             "avaliador": avaliador_id,
             "conceitos": conceitos,
             "documentos": documentos,
-            "observacoes_orientador": observacoes_orientador,
-            "observacoes_estudantes": observacoes_estudantes,
+            "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
+            "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
             "today": datetime.datetime.now(),
             "mensagem": mensagem,
             "periodo_para_rubricas": 1 if banca.tipo_de_banca==1 else 2,  # Dois indices parecidos, mas não iguais

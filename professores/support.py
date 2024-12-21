@@ -131,6 +131,37 @@ def editar_banca(banca, request):
     return None, banca
 
 
+def coleta_membros_banca(banca=None):
+    if banca is None:
+        return None, None
+    
+    id_membros = []
+    if banca.tipo_de_banca in [0, 1, 3]:  # Banca Final, Intermediária e Probation
+        professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+        administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+        pessoas = professores | administradores
+        if banca.tipo_de_banca != 3:  # Banca Probation
+            if banca.get_projeto() and banca.get_projeto().orientador:
+                id_membros.append(banca.get_projeto().orientador.user.id) # orientador
+
+    elif banca.tipo_de_banca == 2:  # Banca Falconi
+        try:
+            organizacao = Organizacao.objects.get(sigla="Falconi")
+        except Organizacao.DoesNotExist:
+            return None
+        pessoas = PFEUser.objects.filter(parceiro__organizacao=organizacao)
+    
+    for membro in banca.membros():
+        id_membros.append(membro.id)
+    membros = pessoas.filter(pk__in=id_membros)
+
+    # Ordenando nomes com acentos
+    pessoas = ordena_nomes(pessoas)
+    membros = ordena_nomes(membros)
+    return pessoas, membros
+
+
+## PARAR DE USAR ESSE PARA USAR O ACIMA
 def professores_membros_bancas(banca=None):
     """Retorna potenciais usuários que podem ser membros de uma banca."""
     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
@@ -155,7 +186,7 @@ def professores_membros_bancas(banca=None):
 
     return pessoas, membros
 
-
+## PARAR DE USAR ESSE PARA USAR O ACIMA
 def falconi_membros_banca(banca=None):
     """Coleta registros de possiveis membros de banca para Falconi."""
     try:
