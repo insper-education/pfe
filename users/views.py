@@ -798,11 +798,14 @@ def professor_detail(request, primarykey):
 
     context["coorientacoes"] = Coorientador.objects.filter(usuario=context["professor"].user).order_by("projeto__ano", "projeto__semestre")
 
-    context["bancas"] = ((Banca.objects.filter(membro1=context["professor"].user) |
-                          Banca.objects.filter(membro2=context["professor"].user) |
-                          Banca.objects.filter(membro3=context["professor"].user) |
-                          Banca.objects.filter(projeto__orientador=context["professor"])
-                            )).order_by("startDate")
+    bancas = (Banca.objects.filter(membro1=context["professor"].user) |
+              Banca.objects.filter(membro2=context["professor"].user) |
+              Banca.objects.filter(membro3=context["professor"].user))
+
+    #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
+    bancas = bancas | Banca.objects.filter(projeto__orientador=context["professor"], tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+
+    context["bancas"] = bancas.order_by("startDate")
     
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     

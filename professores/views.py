@@ -377,7 +377,6 @@ def bancas_alocadas(request):
     if request.user.professor:
         #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
         bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
-        # bancas = bancas | Banca.objects.filter(projeto__coorientador__usuario=request.user)  # Coorientador precisa ser indicado para ser membro de banca
 
     # Usado para inverter as datas das bancas atuais
     periodo = timezone.now().date() - datetime.timedelta(days=30)
@@ -2509,18 +2508,14 @@ def avaliar_bancas(request):
 
         if "edicao" in request.POST:
             
-
-            bancas_m = (Banca.objects.filter(membro1=request.user) |
-                        Banca.objects.filter(membro2=request.user) |
-                        Banca.objects.filter(membro3=request.user))
+            bancas = (Banca.objects.filter(membro1=request.user) |
+                      Banca.objects.filter(membro2=request.user) |
+                      Banca.objects.filter(membro3=request.user))
             
-            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
-                bancas_o = (Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=0) | # (0, 'Final'),
-                            Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca=1))   # (1, 'Intermediária'),
-                bancas = bancas_o | bancas_m
-            else:
-                bancas = bancas_m
-
+            if request.user.professor:
+                #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
+                bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+            
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
@@ -2529,11 +2524,8 @@ def avaliar_bancas(request):
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
         
-
-        pk=93
         context = {
             "objetivos": ObjetivosDeAprendizagem.objects.all(),
-            "projeto": get_object_or_404(Projeto, pk=pk),
             "bancas": bancas,
         }
     else:
