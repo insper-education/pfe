@@ -329,9 +329,7 @@ def avaliacoes_pares(request, todos=None):
     if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
-    context = {
-            "titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},
-        }
+    context = {"titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},}
 
     if request.user.tipo_de_usuario == 4:  # Administrador
         context["administracao"] = True
@@ -399,10 +397,9 @@ def bancas_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def orientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    projetos = Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre")
     context = {
         "titulo": {"pt": "Projetos Orientados", "en": "Projects Oriented"},
-        "projetos": projetos,
+        "projetos": Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre"),
         }
     return render(request, "professores/orientacoes_alocadas.html", context=context)
 
@@ -411,11 +408,9 @@ def orientacoes_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def coorientacoes_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    coorientacoes = Coorientador.objects.filter(usuario=request.user)\
-        .order_by("-projeto__ano", "-projeto__semestre")
     context = {
         "titulo": {"pt": "Projetos Coorientados", "en": "Cooriented Projects"},
-        "coorientacoes": coorientacoes,
+        "coorientacoes": Coorientador.objects.filter(usuario=request.user).order_by("-projeto__ano", "-projeto__semestre"),
         }
     return render(request, "professores/coorientacoes_alocadas.html", context=context)
 
@@ -570,42 +565,36 @@ def ajax_bancas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_banca(request):
     """Atualiza os dados de uma banca por ajax."""
-
-    if request.is_ajax():
-        
-        if "id" in request.POST and "start" in request.POST and "end" in request.POST:
-            start = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-            end = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
-            banca = Banca.objects.get(id = request.POST["id"])
-            banca.startDate = start
-            banca.endDate = end
+    if request.is_ajax() and all(key in request.POST for key in ("id", "start", "end")):
+        try:
+            banca = Banca.objects.get(id=request.POST["id"])
+            banca.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+            banca.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
             banca.save()
-
-            context = {"atualizado": True,}
-            return JsonResponse(context)
-    
-    return HttpResponse("Erro.", status=401)    
+            return JsonResponse({"atualizado": True})
+        except Banca.DoesNotExist:
+            return HttpResponse("Banca não encontrada", status=404)
+        except ValueError:
+            return HttpResponse("Formado de data inválido", status=400)
+    return HttpResponse("Erro.", status=400)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_dinamica(request):
     """Atualiza os dados de uma dinamica por ajax."""
-
-    if request.is_ajax():
-        
-        if "id" in request.POST and "start" in request.POST and "end" in request.POST:
-            start = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-            end = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
+    if request.is_ajax() and all(key in request.POST for key in ("id", "start", "end")):
+        try:
             encontro = Encontro.objects.get(id = request.POST["id"])
-            encontro.startDate = start
-            encontro.endDate = end
+            encontro.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+            encontro.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
             encontro.save()
-
-            context = {"atualizado": True,}
-            return JsonResponse(context)
-    
-    return HttpResponse("Erro.", status=401)    
+            return JsonResponse({"atualizado": True,})
+        except Encontro.DoesNotExist:
+            return HttpResponse("Encontro não encontrada", status=404)
+        except ValueError:
+            return HttpResponse("Formado de data inválido", status=400)
+    return HttpResponse("Erro.", status=400)
 
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
@@ -1188,18 +1177,17 @@ def aulas_tabela(request):
                     aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__gt=6)
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
-                        {"pt": "e-mail", "en": "e-mail"},
-                        {"pt": "Aula/Data", "en": "Class/Date"}]
+                      {"pt": "e-mail", "en": "e-mail"},
+                      {"pt": "Aula/Data", "en": "Class/Date"}]
         context = {
             "aulas": aulas,
             "cabecalhos": cabecalhos,
             }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto, anual=True)
         context = {
             "titulo": { "pt": "Alocação em Aulas", "en": "Class Allocation" },
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
             }
 
     return render(request, "professores/aulas_tabela.html", context)
@@ -1218,12 +1206,10 @@ def bancas_tabela_alocacao_completa(request):
     semestre = 2
     while True:
         membros = dict()
-        bancas = Banca.objects.all().filter(projeto__ano=ano)\
-            .filter(projeto__semestre=semestre)
+        bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
         for banca in bancas:
             if banca.projeto.orientador:
-                membros.setdefault(banca.projeto.orientador.user, [])\
-                    .append(banca)
+                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
             for membro in banca.membros():
                 membros.setdefault(membro, []).append(banca)
 
@@ -3599,17 +3585,10 @@ def ver_pares_projeto(request, projeto_id, momento):
 @permission_required("users.altera_professor", raise_exception=True)
 def planos_de_orientacao(request):
     """Mostra os planos de orientação do professor."""
-    projetos = Projeto.objects.filter(orientador=request.user.professor)\
-        .order_by("-ano", "-semestre")
-
-    tipo = TipoDocumento.objects.get(sigla="TPO")  # Template de Plano de Orientação
-    template = Documento.objects.filter(tipo_documento=tipo).last()
-
     context = {
         "titulo": {"pt": "Planos de Orientação", "en": "Advising Plans"},
-        "projetos": projetos,
-        "configuracao": get_object_or_404(Configuracao),
-        "template": template,
+        "projetos": Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre"),
+        "template": Documento.objects.filter(tipo_documento__sigla="TPO").last(),  # Template de Plano de Orientação
     }
     return render(request, "professores/planos_de_orientacao.html", context=context)
 
