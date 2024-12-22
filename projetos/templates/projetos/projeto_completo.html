@@ -232,7 +232,12 @@
               {% else %}
                 {{ conexao.parceiro.user.get_full_name }}
               {% endif %}
-              <a href="mailto:{{conexao.parceiro.user.email}}"> &lt;{{conexao.parceiro.user.email}}&gt;</a>
+
+              <a href="mailto:{{conexao.parceiro.user.email}}">
+                <span class="opt_full">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                <span class="opt_short"><i class="far fa-envelope"></i></span>
+              </a>
+
             {% else %}
               <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
               <span lang="en" style="display: none;">ORGANIZATION NOT REGISTERED</span>
@@ -249,14 +254,17 @@
               <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
                 {{ conexao.parceiro.user.get_full_name }}
               </a>
-              <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"> &lt;{{conexao.parceiro.user.email}}&gt;</a><br>
+              <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">
+                <span class="opt_full">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                <span class="opt_short"><i class="far fa-envelope"></i></span>
+              </a>
             {% else %}
               <span style="color: lightgrey;">
                 <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
                 <span lang="en" style="display: none;">ORGANIZATION NOT REGISTERED</span>
               </span>
             {% endif %}
-            <span  style="color: lightgrey; border: 0px; padding-left: 12px;">
+            <span style="color: lightgrey; border: 0px; ">
               {% for papel in conexao.get_papeis %}
                 <span class="opt_full">[{{papel.0}}]</span>
                 <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
@@ -294,7 +302,10 @@
       {% else %}
         {{projeto.orientador.user.get_full_name}}
       {% endif %}
-      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+      <a href="mailto:{{projeto.orientador.user.email}}">
+        <span class="opt_full">&lt;{{projeto.orientador.user.email}}&gt;</span>
+        <span class="opt_short"><i class="far fa-envelope"></i></span>
+      </a>
     </div>
   {% else %}
     <h4>
@@ -318,7 +329,10 @@
       <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
         {{ coorientador.usuario.get_full_name }}
       </a>
-      <a href="mailto:{{coorientador.usuario.email}}"> &lt;{{coorientador.usuario.email}}&gt;</a>
+      <a href="mailto:{{coorientador.usuario.email}}">
+        <span class="opt_full">&lt;{{coorientador.usuario.email}}&gt;</span>
+        <span class="opt_short"><i class="far fa-envelope"></i></span>
+      </a>
       {% if coorientador.observacao %}
         &nbsp;&nbsp;obs: {{coorientador.observacao}}
       {% endif %}
@@ -350,8 +364,10 @@
       <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
       <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
       
-      <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-      <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+      <a href="mailto:{{alocacao.aluno.user.email}}">
+        <span class="opt_full">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+        <span class="opt_short"><i class="far fa-envelope"></i></span>
+      </a>
 
       {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
     </li>
