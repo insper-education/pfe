@@ -159,15 +159,15 @@
         {% endif %}
       {% endwith %}
       
-      {% if orientacoes %}
+      {% if composicao %}
         <div class="borientacoes">
           <h5 style="margin-bottom: 12px;">
             <span lang="pt">Orientações Gerais</span>
             <span lang="en">Guidelines</span>
           </h5>
           <p style="text-align: justify;">
-            <span lang="pt">{{orientacoes|safe}}</span>
-            <span lang="en">{{orientacoes_en|safe}}</span>
+            <span lang="pt">{{composicao.orientacoes|safe}}</span>
+            <span lang="en">{{composicao.orientacoes_en|safe}}</span>
           </p>
         </div>
       {% endif %}

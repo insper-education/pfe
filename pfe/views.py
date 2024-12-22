@@ -77,7 +77,4 @@ def migracao(request):
     #     banca.composicao = composicao
     #     banca.save()
 
-    # Só para testar se envia mensagem
-    logger.warning(f"SOMENTE UM TESTE DE WARNING")
-
     return HttpResponse(message)

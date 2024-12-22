@@ -66,10 +66,16 @@ class Composicao(models.Model):
                                     help_text="Pesos dos Objetivos de Aprendizado por Avaliação")
 
     data_inicial = models.DateField("Data Inicial", null=True, blank=True,
-                                    help_text='Data Inicial de Uso')
+                                    help_text="Data Inicial de Uso")
 
     data_final = models.DateField("Data Final", null=True, blank=True,
-                                  help_text='Data Final de Uso')
+                                  help_text="Data Final de Uso")
+
+    orientacoes = models.TextField(max_length=4096, null=True, blank=True,
+                                   help_text="orientações para a avaliação em português")
+    
+    orientacoes_en = models.TextField(max_length=4096, null=True, blank=True,
+                                      help_text="orientações para a avaliação em inglês")
 
     def __str__(self):
         texto = str(self.exame) + "  [ "

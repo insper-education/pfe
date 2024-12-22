@@ -314,7 +314,7 @@ class Aluno(models.Model):
             if avaliacoes_p_obj:
                 for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
                     if objtmp.sigla == objetivo.sigla:
-                        logger.warning("Erro, dois objetivos no mesmo semestre com a mesma sigla!")
+                        logger.error("Erro, dois objetivos no mesmo semestre com a mesma sigla!")
                         # raise ValidationError("<h2>Erro, dois objetivos no mesmo semestre com a mesma sigla!</h2>")
                 lista_objetivos[objetivo] = {}
                 for aval in avaliacoes_p_obj:
@@ -524,7 +524,7 @@ class Aluno(models.Model):
 
             key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
             if key in edicao:
-                logger.warning("Erro, duas alocações no mesmo semestre! " + self.get_full_name() + " " + key)
+                logger.error("Erro, duas alocações no mesmo semestre! " + self.get_full_name() + " " + key)
             edicao[key] = notas
 
         return edicao

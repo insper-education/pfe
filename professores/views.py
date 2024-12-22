@@ -2017,34 +2017,17 @@ def banca_avaliar(request, slug, documento_id=None):
     else:
 
         pessoas, membros = coleta_membros_banca(banca)
-
-        nome_template = {
-            0: "Orientações Banca Regular",    # Final
-            1: "Orientações Banca Regular",    # Intermediária
-            2: "Orientações Banca Falconi",    # Falconi
-            3: "Orientações Banca Probatória"  # Probation
-        }
-
-        template_name = nome_template.get(banca.tipo_de_banca)
-        if template_name:
-            carta = get_object_or_404(Carta, template=template_name)
-            orientacoes = carta.texto
-            orientacoes_en = carta.texto_en
-        else:
-            orientacoes = ""
-            orientacoes_en = ""
+        composicao = banca.composicao
 
         # Identificando quem seria o avaliador
-        if "avaliador" in request.GET:
+        avaliador_id = request.GET.get("avaliador")
+        if avaliador_id:
             try:
-                avaliador_id = int(request.GET.get("avaliador", '0'))  # Carregando dados REST
+                avaliador_id = int(avaliador_id)
             except ValueError:
                 return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
         else:
-            if request.user and request.user.is_authenticated:
-                avaliador_id = request.user.pk
-            else:
-                avaliador_id = None
+            avaliador_id = request.user.pk if request.user.is_authenticated else None
         
         conceitos = [None]*len(objetivos)
         for i in range(len(objetivos)):
@@ -2077,8 +2060,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "membros": membros,
             "objetivos": objetivos,
             "banca": banca,
-            "orientacoes": orientacoes,
-            "orientacoes_en": orientacoes_en,
+            "composicao": composicao,
             "avaliador": avaliador_id,
             "conceitos": conceitos,
             "documentos": documentos,
