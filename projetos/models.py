@@ -936,6 +936,10 @@ class Banca(models.Model):
     link = models.CharField(max_length=512, blank=True,
                             help_text="Link para transmissão pela internet se houver")
     
+    composicao = models.ForeignKey("academica.Composicao", null=True, blank=True, on_delete=models.SET_NULL,
+                                   help_text="tipo de composição para exame de avaliação da banca")
+
+
     def __str__(self):
         """Retorno padrão textual."""
         texto = "Banca " + self.get_tipo_de_banca_display() + ": "

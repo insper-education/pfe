@@ -19,6 +19,8 @@ from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao
 
+from academica.models import Composicao
+
 
 def calcula_interseccao_bancas(banca, startDate, endDate):
     configuracao = get_object_or_404(Configuracao)
@@ -74,7 +76,7 @@ def editar_banca(banca, request):
         banca.tipo_de_banca = int(request.POST["tipo"])
     else:
         return "Tipo de banca não informado!", None
-
+    
     if banca.tipo_de_banca == 3:  # Banca Probation
 
         if "alocacao" in request.POST:
@@ -104,6 +106,19 @@ def editar_banca(banca, request):
             banca.endDate = dateutil.parser.parse(request.POST["fim"])
         except (ValueError, OverflowError):
             banca.endDate = None
+
+    if banca.tipo_de_banca == 0:  # Banca Final
+        composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    elif banca.tipo_de_banca == 1:  # Banca Intermediária
+        composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    elif banca.tipo_de_banca == 2:  # Banca Falconi
+        composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    elif banca.tipo_de_banca == 3: # Banca Probation
+        composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    else:
+        return "Tipo de banca invalido", None
+    banca.composicao = composicao
+
 
     if "local" in request.POST:
         banca.location = request.POST["local"]

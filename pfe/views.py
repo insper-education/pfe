@@ -50,10 +50,9 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
+from projetos.models import Banca
+from academica.models import Composicao
 
-
-import datetime
-from projetos.models import Avaliacao2, ObjetivosDeAprendizagem
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -62,14 +61,21 @@ def migracao(request):
     message = "Nada Feito"
     message = "Feito"
 
-    velho_objetivo = ObjetivosDeAprendizagem.objects.get(pk=1)
-    novo_objetivo = ObjetivosDeAprendizagem.objects.get(pk=9)
-    avaliacoes = Avaliacao2.objects.filter(
-        momento__gt=datetime.datetime(2024, 7, 1),
-        objetivo=velho_objetivo)
-    for avaliacao in avaliacoes:
-        avaliacao.objetivo = novo_objetivo
-        avaliacao.save()
+    bancas = Banca.objects.all()
+    for banca in bancas:
+        if banca.tipo_de_banca == 0:  # Banca Final
+            composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        elif banca.tipo_de_banca == 1:  # Banca Intermediária
+            composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        elif banca.tipo_de_banca == 2:  # Banca Falconi
+            composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        elif banca.tipo_de_banca == 3: # Banca Probation
+            composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        else:
+            return HttpResponse("Tipo de Banca não reconhecido")
+
+        banca.composicao = composicao
+        banca.save()
 
     # Só para testar se envia mensagem
     logger.warning(f"SOMENTE UM TESTE DE WARNING")
