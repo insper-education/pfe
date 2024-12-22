@@ -300,16 +300,12 @@ def estudantes_notas(request, professor=None):
                     return render(request, "generic.html", context=context)
                 
                 # Incluindo também se coorientação
-                projetos = Projeto.objects.all()
                 coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
-                projetos = projetos.filter(orientador=user.professor) | projetos.filter(id__in=coorientacoes)
+                projetos = Projeto.objects.filter(orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes)
                 alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
 
             # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
-            alunos_semestre = alunos_list\
-                .filter(alocacao__projeto__ano=ano,
-                        alocacao__projeto__semestre=semestre)\
-                .distinct()
+            alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
 
             # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
             alunos_list = alunos_semestre |\
@@ -326,11 +322,9 @@ def estudantes_notas(request, professor=None):
 
             context = {
                 "alunos_list": alunos_list,
-                "configuracao": configuracao,
                 "ano": ano,
                 "semestre": semestre,
                 "ano_semestre": str(ano)+"."+str(semestre),
-                "loop_anos": range(2018, configuracao.ano+1),
                 "cabecalhos": cabecalhos,
             }
 
@@ -338,12 +332,12 @@ def estudantes_notas(request, professor=None):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
         informacoes = [
-            (".pesos_aval", "Pesos", False),
+            (".pesos_aval", "Pesos", "Weights", False),
         ]
-        edicoes, _, _ = get_edicoes(Aluno)
+        
         context = {
             "titulo": {"pt": "Avaliações por Estudante", "en": "Assessments by Student"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Aluno)[0],
             "informacoes": informacoes,
         }
 

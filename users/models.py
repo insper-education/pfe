@@ -819,7 +819,7 @@ class Alocacao(models.Model):
         peso_final = round(peso_final, 9)
 
         # Caso a nota individual seja menor que 5, a nota final é a menor das notas        
-        if individual < 5:
+        if individual is not None and individual < 5:
             if individual < nota_final:
                 nota_final = individual
 

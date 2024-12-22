@@ -127,8 +127,8 @@ def mapeamento_estudantes_propostas(request):
     else:
 
         informacoes = [
-            ("#MapeamentoTable tr > *:nth-child(2)", "Curso"),
-            ("#MapeamentoTable tr > *:nth-child(3)", "CR", False),
+            ("#MapeamentoTable tr > *:nth-child(2)", "Curso", "Program"),
+            ("#MapeamentoTable tr > *:nth-child(3)", "CR", "GPA", False),
         ]
 
         context = {

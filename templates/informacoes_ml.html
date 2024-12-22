@@ -1,15 +1,8 @@
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 24 de Outubro de 2023
+  Data: 22 de Dezembro de 2024
 {% endcomment %}
-
-
-
-{% comment %} 
-
-A PRINCIPIO NAO USAR MAIS, ESSE ARQUIVO FOI SUBSTITUIDO PELO informacoes_ml.html
-
 
 {% if informacoes %}
 
@@ -75,11 +68,13 @@ A PRINCIPIO NAO USAR MAIS, ESSE ARQUIVO FOI SUBSTITUIDO PELO informacoes_ml.html
       <i class="arrow right"></i>&nbsp;</b></span>
     <div id="toggle">
       {% for inf in informacoes %}
-        <label {% if inf.2 is not None and inf.2 != False %}class="{{inf.2}}"{% endif %}>
+        {% comment %} O quarto campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
+        <label {% if inf.3 is not None and inf.3 != False %}class="{{inf.3}}"{% endif %}>
           <input id="info_{{inf.1}}"
                  onchange="($(this).prop('checked') ? $(`{{inf.0|safe}}`).show() : $(`{{inf.0|safe}}`).hide())"
-                 type="checkbox" {% if inf.2 is None or inf.2 != False %}checked{% endif %} /> 
-          {{inf.1}}
+                 type="checkbox" {% if inf.3 is None or inf.3 != False %}checked{% endif %} />
+          <span lang="pt">{{inf.1}}</span>
+          <span lang="en" style="display: none;">{{inf.2}}</span>
         </label>
       {% endfor %}
       &nbsp;&nbsp;
@@ -105,5 +100,3 @@ A PRINCIPIO NAO USAR MAIS, ESSE ARQUIVO FOI SUBSTITUIDO PELO informacoes_ml.html
   </script>
 
 {% endif %}
-
-{% endcomment %}

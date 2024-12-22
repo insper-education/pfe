@@ -386,7 +386,7 @@ def relatorios_publicos(request, edicao=None):
                       {"pt": "Estudantes", "en": "Students"},
                       {"pt": "Orientador", "en": "Advisor"},
                       {"pt": "Organização", "en": "Company"},
-                      {"pt": "Banca Final", "en": "Evaluation Committee"},
+                      {"pt": "Banca Final", "en": "Examination Board"},
                       {"pt": "Período", "en": "Semester"},
                       {"pt": "Documentos", "en": "Documents"},]
         
@@ -441,7 +441,7 @@ def tabela_documentos(request):
                         {"pt": "Orientador", "en": "Advisor"},
                         {"pt": "Período", "en": "Semester"},
                         {"pt": "Organização", "en": "Company"},
-                        {"pt": "Banca Final", "en": "Evaluation Committee"},
+                        {"pt": "Banca Final", "en": "Examination Board"},
                         {"pt": "Documentos", "en": "Documents"},]
 
         context = {
@@ -453,10 +453,10 @@ def tabela_documentos(request):
     else:
     
         informacoes = [
-            (".tit_ori", "Título Original"),
-            (".curso", "Curso"),
-            (".coorientadores", "Coorientadores"),
-            (".confidencial", "Confidenciais"),
+            (".tit_ori", "Título Original", "Original Title"),
+            (".curso", "Curso", "Program"),
+            (".coorientadores", "Coorientadores", "Co-advisors"),
+            (".confidencial", "Confidenciais", "Confidential"),
         ]
 
         context = {

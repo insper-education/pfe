@@ -1054,17 +1054,17 @@ def bancas_lista(request, periodo_projeto):
     context["dias_bancas"] = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
 
     context["informacoes"] = [
-            (".local", "local"),
-            (".link", "video-conferência"),
-            (".grupo", "grupo"),
-            (".orientacao", "orientação"),
-            (".curso", "curso"),
-            (".banca", "avaliadores"),
-            (".avaliacao", "link avaliação"),
-            (".agendamento", "agendamento"),
-            (".email", "e-mail"),
-            (".editar", "editar"),
-            (".sem_agendamento", "sem agendamento"),
+            (".local", "local", "local"),
+            (".link", "video-conferência", "video-conference"),
+            (".grupo", "grupo", "group"),
+            (".orientacao", "orientação", "supervision"),
+            (".curso", "curso", "program"),
+            (".banca", "avaliadores", "examiners"),
+            (".avaliacao", "link avaliação", "evaluation link"),
+            (".agendamento", "agendamento", "schedule"),
+            (".email", "e-mail", "e-mail"),
+            (".editar", "editar", "edit"),
+            (".sem_agendamento", "sem agendamento", "without schedule"),
         ]
     
     # Usando para #atualizar a página raiz no edit da banca
@@ -1231,9 +1231,9 @@ def bancas_tabela_alocacao_completa(request):
     anos = zip(membros_pfe[::-1], periodo[::-1])
 
     informacoes = [
-        ("#MembrosTable tr > *:nth-child(2)", "e-mail"),
-        ("#MembrosTable tr > *:nth-child(3)", "Quantidade"),
-        ("#MembrosTable tr > *:nth-child(4)", "Projetos"),
+        ("#MembrosTable tr > *:nth-child(2)", "e-mail", "e-mail"),
+        ("#MembrosTable tr > *:nth-child(3)", "Quantidade", "Quantity"),
+        ("#MembrosTable tr > *:nth-child(4)", "Projetos", "Projects"),
     ]
 
     context = {
@@ -2715,12 +2715,12 @@ def dinamicas_lista(request):
     else:
 
         informacoes = [
-            (".orientador", "orientador"),
-            (".local", "local"),
-            (".grupo", "grupo"),
-            (".curso", "curso"),
-            (".facilitador", "facilitador"),
-            (".sem_agendamento", "sem agendamento"),
+            (".orientador", "orientador", "advisor"),
+            (".local", "local", "location"),
+            (".grupo", "grupo", "group"),
+            (".curso", "curso", "program"),
+            (".facilitador", "facilitador", "facilitator"),
+            (".sem_agendamento", "sem agendamento", "no schedule"),
         ]
 
         edicoes, _, _ = get_edicoes(Projeto)
@@ -2815,10 +2815,10 @@ def orientadores_tabela(request):
     else:
         
         informacoes = [
-            (".semestre", "Semestre"),
-            (".organizacao", "Organização"),
-            (".titulo_projeto", "Título do Projeto"),
-            (".tamanho_grupo", "Tamanho do Grupo"),
+            (".semestre", "Semestre", "Semester"),
+            (".organizacao", "Organização", "Organization"),
+            (".titulo_projeto", "Título do Projeto", "Project Title"),
+            (".tamanho_grupo", "Tamanho do Grupo", "Group Size"),
         ]
 
         context = {
@@ -2902,10 +2902,10 @@ def coorientadores_tabela(request):
 
     else:
         informacoes = [
-            (".semestre", "Semestre"),
-            (".organizacao", "Organização"),
-            (".titulo_projeto", "Título do Projeto"),
-            (".tamanho_grupo", "Tamanho do Grupo"),
+            (".semestre", "Semestre", "Semester"),
+            (".organizacao", "Organização", "Organization"),
+            (".titulo_projeto", "Título do Projeto", "Project Title"),
+            (".tamanho_grupo", "Tamanho do Grupo", "Group Size"),
         ]
 
         context = {
@@ -3392,16 +3392,16 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
         informacoes = [
-            ("#ProjetosTable tr > *:nth-child(2)", "Período"),
-            ("#ProjetosTable tr > *:nth-child(3)", "Orientador"),
+            ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
+            ("#ProjetosTable tr > *:nth-child(3)", "Orientador", "Advisor"),
             ("""#ProjetosTable tr > *:nth-child(4),
                 #ProjetosTable tr > *:nth-child(5),
                 #ProjetosTable tr > *:nth-child(6),
                 #ProjetosTable tr > *:nth-child(7),
-                #ProjetosTable tr > *:nth-child(8)""", "Notas"),
-            (".grupo", "Grupo"),
-            (".email", "e-mail", "grupo"),
-            (".curso", "curso", "grupo"),
+                #ProjetosTable tr > *:nth-child(8)""", "Notas", "Grades"),
+            (".grupo", "Grupo", "Group"),
+            (".email", "e-mail", "e-mail", "grupo"),
+            (".curso", "curso", "program", "grupo"),
         ]
 
         context = {
