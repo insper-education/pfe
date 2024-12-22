@@ -59,23 +59,23 @@ from academica.models import Composicao
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = "Feito"
+    # message = "Feito"
 
-    bancas = Banca.objects.all()
-    for banca in bancas:
-        if banca.tipo_de_banca == 0:  # Banca Final
-            composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        elif banca.tipo_de_banca == 1:  # Banca Intermediária
-            composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        elif banca.tipo_de_banca == 2:  # Banca Falconi
-            composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        elif banca.tipo_de_banca == 3: # Banca Probation
-            composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        else:
-            return HttpResponse("Tipo de Banca não reconhecido")
+    # bancas = Banca.objects.all()
+    # for banca in bancas:
+    #     if banca.tipo_de_banca == 0:  # Banca Final
+    #         composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    #     elif banca.tipo_de_banca == 1:  # Banca Intermediária
+    #         composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    #     elif banca.tipo_de_banca == 2:  # Banca Falconi
+    #         composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    #     elif banca.tipo_de_banca == 3: # Banca Probation
+    #         composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    #     else:
+    #         return HttpResponse("Tipo de Banca não reconhecido")
 
-        banca.composicao = composicao
-        banca.save()
+    #     banca.composicao = composicao
+    #     banca.save()
 
     # Só para testar se envia mensagem
     logger.warning(f"SOMENTE UM TESTE DE WARNING")
