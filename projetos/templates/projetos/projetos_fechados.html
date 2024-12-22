@@ -147,8 +147,10 @@
                     <span lang="en"><b>Advisor:</b></span>
                   {% endif %}
                   <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
-                  <span class="opt_full emails"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-                  <span class="opt_short emails"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+                  <span class="emails">
+                    <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+                    <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+                  </span>
                 {% else %}
                   Orientador: Não definido
                 {% endif %}
@@ -161,8 +163,10 @@
                     <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
                       {{ coorientador.usuario.get_full_name }}
                     </a>
-                    <span class="opt_full emails"><a href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a></span>
-                    <span class="opt_short emails"><a href="mailto:{{coorientador.usuario.email}}"><i class="far fa-envelope"></i></a></span>
+                    <span class="emails">
+                      <span class="opt_full"><a href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a></span>
+                      <span class="opt_short"><a href="mailto:{{coorientador.usuario.email}}"><i class="far fa-envelope"></i></a></span>
+                    </span>
                   {% endfor %}
                 {% endif %}
               {% endwith %}
@@ -196,8 +200,10 @@
                       </a>
                       {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
                       <div class="prioridade" style="display: none;">{{prioridade}}</div> <!-- para mostrar no gráfico -->
-                      <span class="opt_full emails"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
-                      <span class="opt_short emails"><a href="mailto:{{aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                      <span class="emails">
+                        <span class="opt_full"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
+                        <span class="opt_short"><a href="mailto:{{aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                      </span>
                   </li>
                 {% endfor %}
                 </ol>
@@ -215,10 +221,12 @@
                     {{ projeto.organizacao.nome }}
                   </a>
                   {% if projeto.organizacao.website %}
-                  <span class="opt_full website">(<a href="{{projeto.organizacao.website|add_http}}"
-                    >{{ projeto.organizacao.website }}</a>)</a></span>
-                  <span class="opt_short website"><a href="{{projeto.organizacao.website|add_http}}"
-                    ><i class="fas fa-link"></i></a></span>
+                    <span class="website">
+                      <span class="opt_full">(<a href="{{projeto.organizacao.website|add_http}}"
+                        >{{ projeto.organizacao.website }}</a>)</a></span>
+                      <span class="opt_short"><a href="{{projeto.organizacao.website|add_http}}"
+                        ><i class="fas fa-link"></i></a></span>
+                    </span>
                   {% endif %}
                   {% for cooperacao in cooperacoes %}
                     {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
@@ -226,10 +234,12 @@
                       <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
                         {{ cooperacao.parceiro.organizacao.nome }}</a>
                         {% if cooperacao.parceiro.organizacao.website %}
-                        <span class="opt_full website">(<a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
-                          >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
-                        <span class="opt_short website"><a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
-                          ><i class="fas fa-link"></i></a></span>
+                          <span class="website">
+                            <span class="opt_full">(<a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
+                              >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
+                            <span class="opt_short"><a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
+                              ><i class="fas fa-link"></i></a></span>
+                          </span>
                         {% endif %}
                     {% endif %}
                   {% endfor %}
@@ -263,8 +273,10 @@
                     
                     </span>
                   </a>
-                  <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-                  <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
+                  <span class="emails">
+                    <span class="opt_full"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+                    <span class="opt_short"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
+                  </span>
                 {% else %}
                   <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
                     {{ conexao.parceiro.user.get_full_name }}
@@ -278,8 +290,10 @@
                     {% endif %}
                     </span>
                   </a>
-                  <span class="opt_full emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-                  <span class="opt_short emails"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"><i class="far fa-envelope"></i></a></span>
+                  <span class="emails">
+                    <span class="opt_full"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+                    <span class="opt_short"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"><i class="far fa-envelope"></i></a></span>
+                  </span>
                   <br>
                 {% endif %}
                 </li>
