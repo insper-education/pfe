@@ -93,13 +93,6 @@
 
 </style>
 
-<div style="margin-bottom: 3px;">
-  <b>
-    <span lang="pt">Projeto:</span>
-    <span lang="en" style="display:none">Project:</span>
-  </b>
-  {{ projeto }}
-</div>
 {% with alocacoes=projeto.alocacao_set.all %}
 {% for alocacao in alocacoes %}
   <b>
@@ -109,7 +102,8 @@
   </b> 
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
   {% if request.user.tipo_de_usuario != 1 %}
-    (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> horas)
+    (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
+    <span lang="pt">horas</span><span lang="en" style="display:none">hours</span>)
   {% endif %}
   <br>
 {% endfor %}
