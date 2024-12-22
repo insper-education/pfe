@@ -9,14 +9,13 @@
   {% load static %}
   {% load i18n %}
   {% load tz %}
-  {% load banca_tipo %}
+  {% comment %} {% load banca_tipo %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
-
     .borientacoes {
       border: 1px solid #ccc;
       padding: 8px;
@@ -25,13 +24,6 @@
       border-radius: 8px;
       background-color: #ffffdd;
     }
-
-    {% comment %} REMOVER  vvvvv {% endcomment %}
-    select {
-      max-width: 100%;
-    }
-    {% comment %} REMOVER ^^^^^ {% endcomment %}
-
   </style>
 
 {% endblock %}
@@ -66,7 +58,7 @@
       {% if banca.tipo_de_banca is not None %}
         <b lang="pt">Tipo de Banca:</b>
         <b lang="en">Presentation:</b>
-        {{ banca.tipo_de_banca|get_tipo_banca }}
+        {{ banca.composicao.exame }}
         <br>
       {% endif %}
 
@@ -159,7 +151,7 @@
         {% endif %}
       {% endwith %}
       
-      {% if composicao %}
+      {% if composicao.orientacoes %}
         <div class="borientacoes">
           <h5 style="margin-bottom: 12px;">
             <span lang="pt">Orientações Gerais</span>

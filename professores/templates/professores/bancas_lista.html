@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  {% load banca_tipo %}
+  {% comment %} {% load banca_tipo %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
@@ -113,7 +113,7 @@
       
         <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
           {% for banca in bancas %} 
-          <tr class="item {{ banca.tipo_de_banca|get_tipo_banca }}">
+          <tr class="item {{banca.composicao.exame}}">
             <td>
 
               {% if banca.get_projeto %}
@@ -168,8 +168,8 @@
 
               <b lang="pt">Tipo:</b>
               <b lang="en">Type:</b>
-              {% if banca.tipo_de_banca is not None %}
-                {{ banca.tipo_de_banca|get_tipo_banca }}
+              {% if banca.composicao is not None %}
+                {{ banca.composicao.exame }}
               {% else %}
                 Não definido
               {% endif %}
