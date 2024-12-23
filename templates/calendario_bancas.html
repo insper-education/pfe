@@ -151,6 +151,13 @@
             
             info.el.innerHTML = "<b>" + time_s + " - " + time_e + "</b><br><nobr style='color:#FAD2D2'>" + avaliar + "</nobr><br><nobr style='color:#F6F5A3'>" + local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
           }
+          if (info.view.type === 'listMonth') {
+            info.el.innerHTML = `
+            <td class="fc-list-item-time">${info.timeText}</td>
+            <td class="fc-list-item-marker"><span class="fc-event-dot" style="background-color: ${info.event.backgroundColor};"></span></td>
+            <td class="fc-list-item-title">${info.event.title}</td>
+        `;
+          }
         }              
       },
 
@@ -178,12 +185,12 @@
                         orientador: value.orientador,
                         local: value.local ? value.local : "",
                         color: value.color,
-                        title: value.title,
                         membro1: value.membro1,
                         membro2: value.membro2,
                         membro3: value.membro3,
                         estudante: value.estudante,
-                        description: value.description ? value.description : "",
+                        title: value.title ? value.title : "",
+                        description: value.title ? value.title : "",
                         editable: value.editable,
                         //className: value.className,
                       });

@@ -239,89 +239,45 @@ def bancas_index(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_bancas(request):
     """Retorna as bancas do ano."""
+    if request.is_ajax() and "start" in request.POST and "end" in request.POST:
+        start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
+        end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
+        bancas = {}
 
-    if request.is_ajax():
-        
-        if "start" in request.POST and "end" in request.POST:
-            start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
-            end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
-            bancas = {}
-            for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
-                bancas[banca.id] = {}
-                bancas[banca.id]["start"] = banca.startDate.strftime("%Y-%m-%dT%H:%M:%S")
-                bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
-                bancas[banca.id]["local"] = banca.location
+        for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
+            projeto = banca.get_projeto()
+            orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
+            organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
+            estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
+            membros = [membro.get_full_name() for membro in banca.membros()]
+            editable = request.user.tipo_de_usuario == 4 or (projeto and projeto.orientador == request.user.professor)
 
-                bancas[banca.id]["organizacao"] = banca.get_projeto().organizacao.sigla if banca.get_projeto().organizacao else None
-                bancas[banca.id]["orientador"] = banca.get_projeto().orientador.user.get_full_name() if banca.get_projeto().orientador else None
-                for num, membro in enumerate(banca.membros()):
-                    bancas[banca.id]["membro"+str(num+1)] = membro.get_full_name()
+            title = f"[{organizacao_sigla}] {projeto.get_titulo()}" if projeto else "Projeto ou alocação não identificados"
+            if banca.alocacao:
+                title = f"Estudante: {estudante} - [{organizacao_sigla}] {projeto.get_titulo()}"
+            if banca.location:
+                title += f"\n<br>Local: {banca.location}"
+            title += "\n<br>Banca:"
+            if banca.composicao.exame.sigla in ["Bi", "BF"] and projeto.orientador:
+                title += f"\n<br>&bull; {orientador} (O)"
+            title += "".join([f"\n<br>&bull; {membro}" for membro in membros])
 
-                if request.user.tipo_de_usuario == 4:  # Administrador
-                    bancas[banca.id]["editable"] = True
-                elif banca.get_projeto().orientador and request.user.professor:
-                    bancas[banca.id]["editable"] = banca.get_projeto().orientador == request.user.professor
-                else:
-                    bancas[banca.id]["editable"] = False
-                
-                bancas[banca.id]["estudante"] = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
+            bancas[banca.id] = {
+                "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
+                "end": banca.endDate.strftime("%Y-%m-%dT%H:%M:%S"),
+                "local": banca.location,
+                "organizacao": organizacao_sigla,
+                "orientador": orientador,
+                "estudante": estudante,
+                "color": f"#{banca.composicao.exame.cor}",
+                "editable": editable,
+                "title": title,
+                **{f"membro{num+1}": membro for num, membro in enumerate(membros)}
+            }
 
-                if banca.alocacao:  # Probation
-                    title = "Estudante: " + banca.alocacao.aluno.user.get_full_name()
-                    title += " - [" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
-                elif banca.projeto: # Banca Final, Intermediária, Falconi
-                    title = "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
-                else:
-                    title = "Projeto ou alocação não identificados",
-                
-                if banca.location:
-                    title += "\nLocal: " + banca.location
-                title += "\nBanca:"
-                if banca.get_projeto().orientador:
-                    title += "\n• " + banca.get_projeto().orientador.user.get_full_name() + " (O)"
-                for membro in banca.membros():
-                    title += "\n• " + membro.get_full_name()
+        return JsonResponse(bancas)
 
-                bancas[banca.id]["title"] = title
-                
-                bancas[banca.id]["color"] = "#" + banca.composicao.exame.cor
-                # if banca.tipo_de_banca == 0: # Banca Final
-                #     bancas[banca.id]["color"] = "#74a559"
-                #     #bancas[banca.id]["className"] = "b_final"
-                # elif banca.tipo_de_banca == 1:  # Banca Intermediária
-                #     bancas[banca.id]["color"] = "#e6b734"
-                #     #bancas[banca.id]["className"] = "b_intermediaria"
-                # elif banca.tipo_de_banca == 2: # Banca Falconi
-                #     bancas[banca.id]["color"] = "#ff38a6"
-                #     #bancas[banca.id]["className"] = "b_falconi"
-                # elif banca.tipo_de_banca == 3: # Probation
-                #     bancas[banca.id]["color"] = "#FF8C00"
-                #     #bancas[banca.id]["className"] = "b_probation"
-                # else:
-                #     bancas[banca.id]["color"] = "#777777"
-
-                if banca.projeto:
-                    description = "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
-                elif banca.alocacao:
-                    description = "Estudante: " + banca.alocacao.aluno.user.get_full_name() + " - "
-                    description += "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
-                else:
-                    description = "Projeto não identificado"
-
-                if banca.location:
-                    description += "\n<br>Local: " + banca.location
-
-                description += "\n<br>Banca:"
-                if banca.composicao.exame.sigla in ["Bi", "BF"] and banca.projeto.orientador:
-                    description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
-                for membro in banca.membros():
-                    description += "\n<br>&bull; " + membro.get_full_name()
-
-                bancas[banca.id]["description"] = description
-                
-            return JsonResponse(bancas)
-    
-    return HttpResponse("Erro.", status=401)    
+    return HttpResponse("Erro.", status=401)
 
 
 @login_required
