@@ -11,6 +11,7 @@ import dateutil.parser
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 from users.models import PFEUser, Professor, Aluno, Parceiro, Alocacao
 from users.support import adianta_semestre, ordena_nomes
@@ -77,35 +78,25 @@ def editar_banca(banca, request):
     else:
         return "Tipo de banca não informado!", None
     
-    if banca.tipo_de_banca == 3:  # Banca Probation
-
-        if "alocacao" in request.POST:
-            try:
-                banca.alocacao = Alocacao.objects.get(id=int(request.POST["alocacao"]))
-            except Alocacao.DoesNotExist:
-                return "Alocação não encontrada!", None
-        else:
-            return "Alocação não informada!", None
+    if banca.tipo_de_banca == 3:  # Banca Probation      
+        try:
+            banca.alocacao = Alocacao.objects.get(id=int(request.POST.get("alocacao")))
+        except Alocacao.DoesNotExist:
+            return "Alocação não encontrada!", None
     else:
-
-        if "projeto" in request.POST:
-            try:
-                banca.projeto = Projeto.objects.get(id=int(request.POST["projeto"]))
-            except Projeto.DoesNotExist:
-                return "Projeto não encontrado!", None
-        else:
-            return "Projeto não informado!", None
-
-    if "inicio" in request.POST:
         try:
-            banca.startDate = dateutil.parser.parse(request.POST["inicio"])
-        except (ValueError, OverflowError):
-            banca.startDate = None
-    if "fim" in request.POST:
-        try:
-            banca.endDate = dateutil.parser.parse(request.POST["fim"])
-        except (ValueError, OverflowError):
-            banca.endDate = None
+            banca.projeto = Projeto.objects.get(id=int(request.POST.get("projeto")))
+        except Projeto.DoesNotExist:
+            return "Projeto não encontrado!", None
+    
+    try:
+        banca.startDate = dateutil.parser.parse(request.POST.get("inicio"))
+    except (ValueError, OverflowError):
+        banca.startDate = None
+    try:
+        banca.endDate = dateutil.parser.parse(request.POST.get("fim"))
+    except (ValueError, OverflowError):
+        banca.endDate = None
 
     if banca.tipo_de_banca == 0:  # Banca Final
         composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
@@ -119,11 +110,8 @@ def editar_banca(banca, request):
         return "Tipo de banca invalido", None
     banca.composicao = composicao
 
-
-    if "local" in request.POST:
-        banca.location = request.POST["local"]
-    if "link" in request.POST:
-        banca.link = request.POST["link"]
+    banca.location = request.POST.get("local")
+    banca.link = request.POST.get("link")
 
     try:
         if "membro1" in request.POST and request.POST["membro1"].isnumeric():
@@ -147,82 +135,72 @@ def editar_banca(banca, request):
 
 
 def coleta_membros_banca(banca=None):
-    if banca is None:
-        return None, None
-    
+    # Se banca informada, retorna todas as pessoas para a Banca e os membros da banca
+    # senão retorna todos os professores e todos os falconis
+    sigla = banca.composicao.exame.sigla if banca else None
     id_membros = []
-    if banca.tipo_de_banca in [0, 1, 3]:  # Banca Final, Intermediária e Probation
-        professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-        administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
-        pessoas = professores | administradores
-        if banca.tipo_de_banca != 3:  # Banca Probation
+
+    if (banca is None) or sigla in ["BF", "BI", "P"]:  # Banca Final, Intermediária e Probation
+        academicos = PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])
+        if banca and sigla in ["BF", "BI"]:  # Banca Final, Intermediária
             if banca.get_projeto() and banca.get_projeto().orientador:
                 id_membros.append(banca.get_projeto().orientador.user.id) # orientador
 
-    elif banca.tipo_de_banca == 2:  # Banca Falconi
+    if (banca is None) or sigla == "F":  # Banca Falconi
         try:
             organizacao = Organizacao.objects.get(sigla="Falconi")
+            falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
         except Organizacao.DoesNotExist:
-            return None
-        pessoas = PFEUser.objects.filter(parceiro__organizacao=organizacao)
-    
-    for membro in banca.membros():
-        id_membros.append(membro.id)
-    membros = pessoas.filter(pk__in=id_membros)
+            raise Http404("Organização Falconi não encontrada!")
 
-    # Ordenando nomes com acentos
-    pessoas = ordena_nomes(pessoas)
-    membros = ordena_nomes(membros)
-    return pessoas, membros
+    if banca:
+        id_membros.extend(membro.id for membro in banca.membros())
+        if sigla == "F":    
+            pessoas = ordena_nomes(falconis)
+            membros = ordena_nomes(falconis.filter(pk__in=id_membros))
+        else:
+            pessoas = ordena_nomes(academicos)
+            membros = ordena_nomes(academicos.filter(pk__in=id_membros))
+        return pessoas, membros
+    else:
+        academicos = ordena_nomes(academicos)
+        falconis = ordena_nomes(falconis)
+        return academicos, falconis
 
 
 ## PARAR DE USAR ESSE PARA USAR O ACIMA
-def professores_membros_bancas(banca=None):
-    """Retorna potenciais usuários que podem ser membros de uma banca."""
-    professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-    administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+# def professores_membros_bancas(banca=None):
+#     """Retorna potenciais usuários que podem ser membros de uma banca."""
+#     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
+#     administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
+#     pessoas = professores | administradores
+#     id_membros = []
+#     if banca:
+#         if banca.get_projeto() and banca.get_projeto().orientador:
+#             id_membros.append(banca.get_projeto().orientador.user.id) # orientador
+#         for membro in banca.membros():
+#             id_membros.append(membro.id)
+#     membros = pessoas.filter(pk__in=id_membros)
+#     pessoas = ordena_nomes(pessoas)
+#     membros = ordena_nomes(membros)
+#     return pessoas, membros
 
-    # Combine the querysets first
-    pessoas = professores | administradores
-
-    id_membros = []
-
-    if banca:
-        if banca.get_projeto() and banca.get_projeto().orientador:
-            id_membros.append(banca.get_projeto().orientador.user.id) # orientador
-        for membro in banca.membros():
-            id_membros.append(membro.id)
-
-    membros = pessoas.filter(pk__in=id_membros)
-
-    # Ordenando nomes com acentos
-    pessoas = ordena_nomes(pessoas)
-    membros = ordena_nomes(membros)
-
-    return pessoas, membros
-
-## PARAR DE USAR ESSE PARA USAR O ACIMA
-def falconi_membros_banca(banca=None):
-    """Coleta registros de possiveis membros de banca para Falconi."""
-    try:
-        organizacao = Organizacao.objects.get(sigla="Falconi")
-    except Organizacao.DoesNotExist:
-        return None
-
-    falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
-
-    id_membros = []
-    if banca:
-        for membro in banca.membros():
-            id_membros.append(membro.id)
-
-    membros = falconis.filter(pk__in=id_membros)
-
-    # Ordenando nomes com acentos
-    falconis = ordena_nomes(falconis)
-    membros = ordena_nomes(membros)
-
-    return falconis, membros
+# ## PARAR DE USAR ESSE PARA USAR O ACIMA
+# def falconi_membros_banca(banca=None):
+#     """Coleta registros de possiveis membros de banca para Falconi."""
+#     try:
+#         organizacao = Organizacao.objects.get(sigla="Falconi")
+#     except Organizacao.DoesNotExist:
+#         return None
+#     falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
+#     id_membros = []
+#     if banca:
+#         for membro in banca.membros():
+#             id_membros.append(membro.id)
+#     membros = falconis.filter(pk__in=id_membros)
+#     falconis = ordena_nomes(falconis)
+#     membros = ordena_nomes(membros)
+#     return falconis, membros
 
 
 def recupera_orientadores_por_semestre(configuracao):

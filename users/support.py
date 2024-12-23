@@ -165,7 +165,9 @@ def normalize_string(s):
 
 
 def ordena_nomes(queryset):
-    # Normalize the names and order by them
+    # Ajusta nomes e ordena eles
+    if not queryset:
+        return []
     users = list(queryset)
     for user in users:
         user.normalized_first_name = normalize_string(user.first_name)

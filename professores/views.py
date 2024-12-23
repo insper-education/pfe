@@ -22,7 +22,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import html, timezone
 
-from .support import professores_membros_bancas, falconi_membros_banca
+# from .support import professores_membros_bancas, falconi_membros_banca
 from .support import coleta_membros_banca
 from .support import editar_banca
 from .support import recupera_orientadores_por_semestre
@@ -749,10 +749,8 @@ def bancas_criar(request, data=None):
 
     # Originalmente estava: .exclude(orientador=None)
     projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")
-
-    professores, _ = professores_membros_bancas()
-    falconis, _ = falconi_membros_banca()
+    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")    
+    professores, falconis = coleta_membros_banca()
 
     # Coletando bancas agendadas a partir de hoje
     hoje = datetime.date.today()
@@ -960,9 +958,9 @@ def bancas_editar(request, primarykey=None):
     semestre = configuracao.semestre
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
     alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-
-    professores, _ = professores_membros_bancas()
-    falconis, _ = falconi_membros_banca()
+    professores, falconis = coleta_membros_banca()
+    # professores, _ = professores_membros_bancas()
+    # falconis, _ = falconi_membros_banca()
 
     configuracao = get_object_or_404(Configuracao)
     if configuracao.semestre == 1:
