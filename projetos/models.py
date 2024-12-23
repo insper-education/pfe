@@ -896,6 +896,14 @@ class Evento(models.Model):
         """Retorna os documentos do evento."""
         return [self.documento, self.documento2]
     
+    @staticmethod
+    def get_evento(evento_id, ano, semestre):
+        if semestre == 1:
+            eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__lt=7)
+        else:
+            eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__gt=6)
+        return eventos.order_by("endDate", "startDate").last()
+
     class Meta:
         ordering = ["startDate"]
 
@@ -2022,11 +2030,12 @@ class Observacao(models.Model):
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
-    @classmethod
-    def create(cls, projeto):
-        """Cria um objeto (entrada) em Observacao."""
-        observacao = cls(projeto=projeto)
-        return observacao
+    ### CREIO SER DESNECESSÁRIO
+    # @classmethod
+    # def create(cls, projeto):
+    #     """Cria um objeto (entrada) em Observacao."""
+    #     observacao = cls(projeto=projeto)
+    #     return observacao
 
     def __str__(self):
         return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes_orientador)[:6] + "..."

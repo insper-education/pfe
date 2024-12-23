@@ -16,20 +16,20 @@ from urllib.parse import quote, unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Q, Case, When, Value, F, Func, FloatField
+# from django.db.models import Q
+from django.db.models import Case, When, Value, F, Func, FloatField
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.utils import html, timezone
 
 # from .support import professores_membros_bancas, falconi_membros_banca
-from .support import coleta_membros_banca
-from .support import editar_banca
+from .support import coleta_membros_banca, editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
-from .support import move_avaliacoes
 from .support import converte_conceitos, arredonda_conceitos
-from .support import calcula_interseccao_bancas
+from .support import calcula_interseccao_bancas, move_avaliacoes
+from .support import ver_pendencias_professor
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
@@ -56,228 +56,13 @@ from users.support import get_edicoes
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
-def get_evento(evento_id, ano, semestre):
-    if semestre == 1:
-        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__lt=7)
-    else:
-        eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__gt=6)
-    return eventos.order_by("endDate", "startDate").last()
-
-
-def ver_pendencias_professor(user, ano, semestre):
-
-    PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
-
-    context = {}
-
-    if user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
-        projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
-
-        if projetos:
-
-            # Verifica se todos os projetos do professor orientador têm o plano de orientação
-            tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
-            feito = True
-            planos_de_orientacao = 'b'
-            for projeto in projetos:
-                feito = feito and Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists()
-            if feito:
-                planos_de_orientacao = 'g'
-            else:
-                evento = get_evento(10, ano, semestre)  # (10, "Início das aulas", "#FF1010"),
-                if evento:
-                    planos_de_orientacao = 'b'
-                    context["planos_de_orientacao__prazo"] = evento.endDate + datetime.timedelta(days=(PRAZO+5))
-                    if datetime.date.today() < evento.endDate:
-                        planos_de_orientacao = 'b'
-                    elif datetime.date.today() > context["planos_de_orientacao__prazo"]:
-                        planos_de_orientacao = 'r'
-                    else:
-                        planos_de_orientacao = 'y'
-            context["planos_de_orientacao"] = planos_de_orientacao
-
-            # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
-            relatos_quinzenais = 'b'
-            for projeto in projetos:
-                for evento, relatos, avaliados, observacoes in projeto.get_relatos():
-                    if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
-                        if relatos:
-                            if avaliados and relatos_quinzenais != 'r' and relatos_quinzenais != 'y':
-                                relatos_quinzenais = 'g'
-                            else:
-                                if evento and evento.endDate and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
-                                    relatos_quinzenais = 'r'
-                                else:
-                                    if relatos_quinzenais != 'r':
-                                        relatos_quinzenais = 'y'
-                        else:
-                            if relatos_quinzenais != 'r' and relatos_quinzenais != 'y':
-                                relatos_quinzenais = 'g'
-            context["relatos_quinzenais"] = relatos_quinzenais
-
-            # Verifica se todos os projetos do professor orientador têm as avaliações das entregas
-            avaliar_entregas = 'b'
-            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-            for projeto in projetos:
-                entregas = filtra_entregas(composicoes, projeto)
-                for item in entregas:
-                    if item["evento"] and item["evento"].endDate:
-                        dias_passados = datetime.date.today() - item["evento"].data_aval()
-                        if dias_passados.days > 0:
-                            if item["composicao"] and item["composicao"].exame:
-                                if item["composicao"].exame.grupo:
-                                    for documento in item["documentos"]:
-                                        if item["avaliacoes"]:
-                                            diff_entrega = (documento.data - item["avaliacoes"].first().momento)
-                                            if diff_entrega.days > PRAZO:
-                                                avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                            elif diff_entrega.total_seconds() > 0:
-                                                if avaliar_entregas != 'r':
-                                                    avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                            else:
-                                                if avaliar_entregas != 'r' and avaliar_entregas != 'y':
-                                                    avaliar_entregas = 'g'  # Avaliação feita!
-                                        else:
-                                            if dias_passados.days > PRAZO:
-                                                avaliar_entregas = 'r'  # Avaliação urgente!
-                                            else:
-                                                if avaliar_entregas != 'r':
-                                                    avaliar_entregas = 'y'  # Avaliação pendente!
-                                else:
-                                    if item["alocacoes"]:
-                                        for _, values in item["alocacoes"].items():
-                                            for documento in values["documentos"]:
-                                                if values["avaliacoes"]:
-                                                    diff_entrega = (documento.data - values["avaliacoes"].first().momento)
-                                                    if diff_entrega.days > PRAZO:
-                                                        avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                                    elif diff_entrega.total_seconds() > 0:
-                                                        if avaliar_entregas != 'r':
-                                                            avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                                    else:
-                                                        if avaliar_entregas != 'r' and avaliar_entregas != 'y':
-                                                            avaliar_entregas = 'g'  # Avaliação feita!
-                                                else:
-                                                    if dias_passados.days > PRAZO:
-                                                        avaliar_entregas = 'r'  # Avaliação urgente!
-                                                    else:
-                                                        if avaliar_entregas != 'r':
-                                                            avaliar_entregas = 'y'  # Avaliação pendente!
-            context["avaliar_entregas"] = avaliar_entregas
-
-            # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
-            bancas_index = 'b'
-            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=1).exists()  # (1, "Intermediária"),
-            evento = get_evento(14, ano, semestre)  # (14, "Bancas Intermediárias", "#EE82EE"),
-            if evento and (datetime.date.today() - evento.startDate).days > -16:
-                if banca:
-                    bancas_index = 'g'
-                else:
-                    if evento and (datetime.date.today() - evento.startDate).days > -9:
-                        bancas_index = 'r'
-                    else:
-                        bancas_index = 'y'
-            banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=0).exists()  # (0, "Final")
-            evento = get_evento(15, ano, semestre)  # (15, "Bancas Finais", "#FFFF00"),
-            if evento and (datetime.date.today() - evento.startDate).days > -16:
-                if banca:
-                    bancas_index = 'g'
-                else:
-                    if evento and (datetime.date.today() - evento.startDate).days > -9:
-                        bancas_index = 'r'
-                    else:
-                        bancas_index = 'y'
-            context["bancas_index"] = bancas_index
-
-
-            # Verifica se todas as bancas do semestre foram avaliadas
-            avaliar_bancas = 'b'
-            
-            bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca__in=(0, 1)).\
-                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
-            
-            bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=2).\
-                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Falconi
-
-            bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_de_banca=3).\
-                filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Probation
-            
-            bancas = bancas_0_1 | bancas_2 | bancas_3
-
-            if bancas.exists():
-                avaliar_bancas = 'g'
-
-            exame_titles = {
-                0: "Banca Final",
-                1: "Banca Intermediária",
-                2: "Certificação Falconi",
-                3: "Probation"
-            }
-
-            for banca in bancas:
-                exame_title = exame_titles.get(banca.tipo_de_banca)
-                if exame_title:
-                    exame = Exame.objects.filter(titulo=exame_title).first()
-                    if banca.tipo_de_banca == 3:
-                        avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame=exame, avaliador=user)
-                    else:
-                        avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=user)
-                else:
-                    avaliacoes = None
-
-                if not avaliacoes:
-                    if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > 2:
-                        avaliar_bancas = 'r'
-                    else:
-                        avaliar_bancas = 'y'         
-
-            context["avaliar_bancas"] = avaliar_bancas
-
-
-            # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
-            avaliacoes_pares = 'b'
-            evento = get_evento(31, ano, semestre)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
-            if evento and (datetime.date.today() - evento.startDate).days > 0:
-                feito = True
-                for projeto in projetos:
-                    for alocacao in Alocacao.objects.filter(projeto=projeto):
-                        if Pares.objects.filter(alocacao_de=alocacao, tipo=0).first():  # Intermediaria
-                            feito = feito and alocacao.avaliacao_intermediaria
-                if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
-                    avaliacoes_pares = 'g'
-                else:
-                    if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
-                        avaliacoes_pares = 'r'
-                    elif avaliacoes_pares != 'r':
-                        avaliacoes_pares = 'y'
-            evento = get_evento(32, ano, semestre)  #(32, "Avaliação de Pares Final", "#FFC0DB"),
-            if evento and (datetime.date.today() - evento.startDate).days > 0:
-                feito = True
-                for projeto in projetos:
-                    for alocacao in Alocacao.objects.filter(projeto=projeto):
-                        if Pares.objects.filter(alocacao_de=alocacao, tipo=1).first():  # Final
-                            feito = feito and alocacao.avaliacao_final
-                if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
-                    avaliacoes_pares = 'g'
-                else:
-                    if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
-                        avaliacoes_pares = 'r'
-                    elif avaliacoes_pares != 'r':
-                        avaliacoes_pares = 'y'
-            context["avaliacoes_pares"] = avaliacoes_pares
-
-    return context
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def index_professor(request):
     """Mostra página principal do usuário professor."""
-
     configuracao = get_object_or_404(Configuracao)
-    
     context = ver_pendencias_professor(request.user, configuracao.ano, configuracao.semestre)
     context["titulo"] = {"pt": "Área dos Professores", "en": "Professors Area"}
-
     if "/professores/professores" in request.path:
         return render(request, "professores/professores.html", context=context)
     else:
@@ -288,9 +73,7 @@ def index_professor(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def pendencias_professores(request):
     """Mostra pendencias dos professores."""
-
     configuracao = get_object_or_404(Configuracao)
-    
     orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
     orientadores = Professor.objects.filter(id__in=orientadores_ids)
 
@@ -469,81 +252,59 @@ def ajax_bancas(request):
                 bancas[banca.id]["end"] = banca.endDate.strftime("%Y-%m-%dT%H:%M:%S")
                 bancas[banca.id]["local"] = banca.location
 
-                if banca.projeto: # Banca Final, Intermediária, Falconi
-                    bancas[banca.id]["organizacao"] = banca.projeto.organizacao.sigla if banca.projeto.organizacao else None
-                    bancas[banca.id]["orientador"] = banca.projeto.orientador.user.get_full_name() if banca.projeto.orientador else None
-                    bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
-                    bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
-                    bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
+                bancas[banca.id]["organizacao"] = banca.get_projeto().organizacao.sigla if banca.get_projeto().organizacao else None
+                bancas[banca.id]["orientador"] = banca.get_projeto().orientador.user.get_full_name() if banca.get_projeto().orientador else None
+                for num, membro in enumerate(banca.membros()):
+                    bancas[banca.id]["membro"+str(num+1)] = membro.get_full_name()
 
-                    if request.user.tipo_de_usuario == 4:  # Administrador
-                        bancas[banca.id]["editable"] = True
-                    elif banca.projeto.orientador and request.user.professor:
-                        bancas[banca.id]["editable"] = banca.projeto.orientador == request.user.professor
-                    else:
-                        bancas[banca.id]["editable"] = False
+                if request.user.tipo_de_usuario == 4:  # Administrador
+                    bancas[banca.id]["editable"] = True
+                elif banca.get_projeto().orientador and request.user.professor:
+                    bancas[banca.id]["editable"] = banca.get_projeto().orientador == request.user.professor
+                else:
+                    bancas[banca.id]["editable"] = False
+                
+                bancas[banca.id]["estudante"] = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
 
-                    title = "[" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo()
-                    if banca.location:
-                        title += "\nLocal: " + banca.location
-                    title += "\nBanca:"
-                    if banca.projeto.orientador:
-                        title += "\n• " + banca.projeto.orientador.user.get_full_name() + " (O)"
-                    for membro in banca.membros():
-                        title += "\n• " + membro.get_full_name()
-
-                    bancas[banca.id]["estudante"] = None
-
-                elif banca.alocacao:  # Probation
-                    bancas[banca.id]["organizacao"] = banca.alocacao.projeto.organizacao.sigla if banca.alocacao.projeto.organizacao else None
-                    bancas[banca.id]["orientador"] = banca.alocacao.projeto.orientador.user.get_full_name() if banca.alocacao.projeto.orientador else None
-                    bancas[banca.id]["membro1"] = banca.membro1.get_full_name() if banca.membro1 else ""
-                    bancas[banca.id]["membro2"] = banca.membro2.get_full_name() if banca.membro2 else ""
-                    bancas[banca.id]["membro3"] = banca.membro3.get_full_name() if banca.membro3 else ""
-
-                    if request.user.tipo_de_usuario == 4:  # Administrador
-                        bancas[banca.id]["editable"] = True
-                    elif banca.alocacao.projeto.orientador and request.user.professor:
-                        bancas[banca.id]["editable"] = banca.alocacao.projeto.orientador == request.user.professor
-                    else:
-                        bancas[banca.id]["editable"] = False
-
+                if banca.alocacao:  # Probation
                     title = "Estudante: " + banca.alocacao.aluno.user.get_full_name()
-                    title += " - [" + banca.alocacao.projeto.organizacao.sigla + "] " + banca.alocacao.projeto.get_titulo()
-                    if banca.location:
-                        title += "\nLocal: " + banca.location
-                    title += "\nBanca:"
-                    if banca.alocacao.projeto.orientador:
-                        title += "\n• " + banca.alocacao.projeto.orientador.user.get_full_name() + " (O)"
-                    for membro in banca.membros():
-                        title += "\n• " + membro.get_full_name()
-
-                    bancas[banca.id]["estudante"] = banca.alocacao.aluno.user.get_full_name()
-
+                    title += " - [" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
+                elif banca.projeto: # Banca Final, Intermediária, Falconi
+                    title = "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
                 else:
                     title = "Projeto ou alocação não identificados",
+                
+                if banca.location:
+                    title += "\nLocal: " + banca.location
+                title += "\nBanca:"
+                if banca.get_projeto().orientador:
+                    title += "\n• " + banca.get_projeto().orientador.user.get_full_name() + " (O)"
+                for membro in banca.membros():
+                    title += "\n• " + membro.get_full_name()
+
                 bancas[banca.id]["title"] = title
                 
-                if banca.tipo_de_banca == 0: # Banca Final
-                    bancas[banca.id]["color"] = "#74a559"
-                    bancas[banca.id]["className"] = "b_final"
-                elif banca.tipo_de_banca == 1:  # Banca Intermediária
-                    bancas[banca.id]["color"] = "#e6b734"
-                    bancas[banca.id]["className"] = "b_intermediaria"
-                elif banca.tipo_de_banca == 2: # Banca Falconi
-                    bancas[banca.id]["color"] = "#ff38a6"
-                    bancas[banca.id]["className"] = "b_falconi"
-                elif banca.tipo_de_banca == 3: # Probation
-                    bancas[banca.id]["color"] = "#FF8C00"
-                    bancas[banca.id]["className"] = "b_probation"
-                else:
-                    bancas[banca.id]["color"] = "#777777"
+                bancas[banca.id]["color"] = "#" + banca.composicao.exame.cor
+                # if banca.tipo_de_banca == 0: # Banca Final
+                #     bancas[banca.id]["color"] = "#74a559"
+                #     #bancas[banca.id]["className"] = "b_final"
+                # elif banca.tipo_de_banca == 1:  # Banca Intermediária
+                #     bancas[banca.id]["color"] = "#e6b734"
+                #     #bancas[banca.id]["className"] = "b_intermediaria"
+                # elif banca.tipo_de_banca == 2: # Banca Falconi
+                #     bancas[banca.id]["color"] = "#ff38a6"
+                #     #bancas[banca.id]["className"] = "b_falconi"
+                # elif banca.tipo_de_banca == 3: # Probation
+                #     bancas[banca.id]["color"] = "#FF8C00"
+                #     #bancas[banca.id]["className"] = "b_probation"
+                # else:
+                #     bancas[banca.id]["color"] = "#777777"
 
                 if banca.projeto:
-                    description = "[" + banca.projeto.organizacao.sigla + "] " + banca.projeto.get_titulo()
+                    description = "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
                 elif banca.alocacao:
-                    description = "Estudante: " + banca.alocacao.aluno.user.get_full_name()
-                    description += " - [" + banca.alocacao.projeto.proposta.organizacao.nome + "] " + banca.alocacao.projeto.get_titulo()
+                    description = "Estudante: " + banca.alocacao.aluno.user.get_full_name() + " - "
+                    description += "[" + banca.get_projeto().organizacao.sigla + "] " + banca.get_projeto().get_titulo()
                 else:
                     description = "Projeto não identificado"
 
@@ -551,7 +312,7 @@ def ajax_bancas(request):
                     description += "\n<br>Local: " + banca.location
 
                 description += "\n<br>Banca:"
-                if banca.projeto and banca.projeto.orientador:
+                if banca.composicao.exame.sigla in ["Bi", "BF"] and banca.projeto.orientador:
                     description += "\n<br>&bull; " + banca.projeto.orientador.user.get_full_name() + " (O)"
                 for membro in banca.membros():
                     description += "\n<br>&bull; " + membro.get_full_name()
@@ -1806,45 +1567,29 @@ def mensagem_orientador(banca, geral=False):
 def banca_avaliar(request, slug, documento_id=None):
     """Cria uma tela para preencher avaliações de bancas."""
     configuracao = get_object_or_404(Configuracao)
-    coordenacao = configuracao.coordenacao
-    
-    prazo_preencher_banca = configuracao.prazo_preencher_banca
-
     mensagem = ""
 
     try:
         banca = Banca.objects.get(slug=slug)
-
-        adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
-
-        vencida = banca.endDate.date() + datetime.timedelta(days=prazo_preencher_banca) < datetime.date.today()
-
-        if vencida:  # prazo vencido
-            mensagem += "<div style='border: 2px solid red; width: fit-content; padding: 6px;'>Prazo de submissão da Avaliação de Banca vencido.<br>"
-            mensagem += "Data do encerramento da banca: " + banca.endDate.strftime("%d/%m/%Y - %H:%M:%S") + "<br>"
-            mensagem += "Número de dias de prazo para preenchimento: " + str(prazo_preencher_banca) + " dias.</div><br>"
-            mensagem += "Entre em contato com a coordenação do Capstone para enviar sua avaliação:<br>"
-            mensagem += coordenacao.user.get_full_name()
-            mensagem += " <a href='mailto:" + coordenacao.user.email + "'>"
-            mensagem += " &lt;" + coordenacao.user.email + "&gt;</a>.<br>"
-
-        if vencida and (not adm):  # se administrador passa direto
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
-
         if banca.projeto is None and banca.alocacao is None:
             return HttpResponseNotFound("<h1>Banca não registrada corretamente!</h1>")
+        
+        adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
+        vencida = banca.endDate.date() + datetime.timedelta(days=configuracao.prazo_preencher_banca) < datetime.date.today()
+
+        if vencida:  # prazo vencido
+            mensagem += render_message("Banca Vencida", {"banca": banca, "configuracao": configuracao})
+            if not adm:  # se administrador passa direto
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, "generic.html", context=context)
 
     except Banca.DoesNotExist:
-        return HttpResponseNotFound('<h1>Banca não encontrada!</h1>')
+        return HttpResponseNotFound("<h1>Banca não encontrada!</h1>")
 
-    if banca.tipo_de_banca == 3:  # (3, 'probation')
-        projeto = banca.alocacao.projeto
-    else:
-        projeto = banca.projeto
+    projeto = banca.get_projeto()
 
     # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
     if documento_id:
@@ -1861,11 +1606,12 @@ def banca_avaliar(request, slug, documento_id=None):
     # Subistituir por:     objetivos = composicao.pesos.all()
     objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
     # Banca(Intermediária, Final, Probation) ou Falconi
-    if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+    sigla = banca.composicao.exame.sigla
+    if sigla in ["BI", "BF"]:
         objetivos = objetivos.filter(avaliacao_banca=True)
-    elif banca.tipo_de_banca == 2:  # Falconi
+    elif sigla == "F":  # Falconi
         objetivos = objetivos.filter(avaliacao_falconi=True)
-    elif banca.tipo_de_banca == 3:  # Probation
+    elif sigla == "P":  # Probation
         objetivos = objetivos.filter(avaliacao_aluno=True)
     else:
         return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
@@ -1874,17 +1620,8 @@ def banca_avaliar(request, slug, documento_id=None):
     if request.method == "POST":
         if "avaliador" in request.POST:
 
-            avaliador = get_object_or_404(PFEUser,
-                                          pk=int(request.POST["avaliador"]))
-
-            if banca.tipo_de_banca == 1:  # (1, 'intermediaria'),
-                exame = Exame.objects.get(titulo="Banca Intermediária")
-            elif banca.tipo_de_banca == 0:  # (0, 'final'),
-                exame = Exame.objects.get(titulo="Banca Final")
-            elif banca.tipo_de_banca == 2:  # (2, 'falconi'),
-                exame = Exame.objects.get(titulo="Falconi")
-            elif banca.tipo_de_banca == 3:  # (3, 'probation'),
-                exame = Exame.objects.get(titulo="Probation")
+            avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
+            exame = banca.composicao.exame
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
@@ -1905,24 +1642,16 @@ def banca_avaliar(request, slug, documento_id=None):
 
             for i, aval in enumerate(avaliacoes):
 
-                obj_nota = request.POST[aval]
-                conceito = obj_nota.split('.')[1]
-                julgamento[i] = Avaliacao2.create(projeto=projeto)
-                if banca.alocacao:
-                    julgamento[i].alocacao = banca.alocacao
-                julgamento[i].avaliador = avaliador
-
-                pk_objetivo = int(obj_nota.split('.')[0])
-                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem,
-                                                            pk=pk_objetivo)
-
-                julgamento[i].exame = exame
+                pk_objetivo, conceito = request.POST[aval].split('.')
+                julgamento[i] = Avaliacao2.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
+                julgamento[i].alocacao = banca.alocacao  # Caso Probation
+                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
 
                 if conceito == "NA":
                     julgamento[i].na = True
                 else:
+                    julgamento[i].na = False
                     julgamento[i].nota = converte_conceito(conceito)
-
                     if exame.titulo == "Banca Intermediária":    
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
                     elif exame.titulo == "Banca Final":
@@ -1930,40 +1659,27 @@ def banca_avaliar(request, slug, documento_id=None):
                     elif exame.titulo == "Falconi":
                         julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
                     elif exame.titulo == "Probation":
-                        #julgamento[i].peso = julgamento[i].objetivo.peso_banca_probation
                         julgamento[i].peso = 0.0
                     else:
                         julgamento[i].peso = 0.0 
 
-                    julgamento[i].na = False
                 julgamento[i].save()
 
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
                ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
-                julgamento_observacoes = Observacao.create(projeto=projeto)
-                if banca.alocacao:
-                    julgamento_observacoes.alocacao = banca.alocacao
-                julgamento_observacoes.avaliador = avaliador
-                if "observacoes_orientador" in request.POST:
-                    julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
-                if "observacoes_estudantes" in request.POST:
-                    julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
-                julgamento_observacoes.exame = exame
+                julgamento_observacoes = Observacao.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
+                julgamento_observacoes.alocacao = banca.alocacao  # Caso Probation
+                julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
+                julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
                 julgamento_observacoes.save()
 
-
-            subject = "Capstone | Avaliação de Banca "
-            if banca.tipo_de_banca == 0:
-                subject += "Banca Final : "
-            elif banca.tipo_de_banca == 1:
-                subject += "Banca Intermediária : " 
-            elif banca.tipo_de_banca == 2:
-                subject += "Banca Falconi : "
-            elif banca.tipo_de_banca == 3:
-                subject += "Probation : " + banca.alocacao.aluno.user.get_full_name()
+            subject = "Capstone | Avaliação de Banca - "
+            subject += banca.composicao.exame.titulo + " "
+            if banca.composicao.exame.sigla == "P":
+                subject += banca.alocacao.aluno.user.get_full_name()
             subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
-            
+
             # Se não houver erro a mensagem deve permanecer vazia
             error_message = ""
 
@@ -1985,7 +1701,7 @@ def banca_avaliar(request, slug, documento_id=None):
             if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
                 recipient_list = [projeto.orientador.user.email, ]
             else: # banca.tipo_de_banca == 2 or banca.tipo_de_banca == 3:  # Falconi ou Probation
-                recipient_list = [coordenacao.user.email, ]
+                recipient_list = [configuracao.coordenacao.user.email, ]
             try:
                 check = email(subject, recipient_list, message)
                 if check != 1:
@@ -2183,8 +1899,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                     exame=composicao.exame, 
                                                                     objetivo=None,
-                                                                    avaliador=projeto.orientador.user
-                                                                    )
+                                                                    avaliador=projeto.orientador.user)
             julgamento[0] = avaliacao
 
             if "decisao" in request.POST:
@@ -2203,22 +1918,20 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
            ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
             
             if composicao.exame.grupo:
-                observacao, _created2 = Observacao.objects.get_or_create(projeto=projeto,
+                observacao, _ = Observacao.objects.get_or_create(projeto=projeto,
                                                                         exame=composicao.exame,
-                                                                        avaliador=projeto.orientador.user
-                                                                        )
+                                                                        avaliador=projeto.orientador.user)
             else:
                 if not estudante or not alocacao:
                     return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
-                observacao, _created2 = Observacao.objects.get_or_create(projeto=projeto,
+                observacao, _ = Observacao.objects.get_or_create(projeto=projeto,
                                                                         exame=composicao.exame,
                                                                         avaliador=projeto.orientador.user,
-                                                                        alocacao=alocacao
-                                                                        )
+                                                                        alocacao=alocacao)
 
             julgamento_observacoes = observacao
-            julgamento_observacoes.observacoes_orientador = request.POST["observacoes_orientador"]
-            julgamento_observacoes.observacoes_estudantes = request.POST["observacoes_estudantes"]
+            julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
+            julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
             julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
 
@@ -2286,7 +1999,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                                                 )
         else:
             if not estudante or not alocacao:
-                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                return HttpResponseNotFound("<h1>Estudante não encontrado!</h1>")
             avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
                                                 exame=composicao.exame, 
                                                 avaliador=projeto.orientador.user,

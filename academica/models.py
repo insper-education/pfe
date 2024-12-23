@@ -18,10 +18,10 @@ class Exame(models.Model):
                               help_text="Título do Exame")
     
     sigla = models.TextField("Sigla", max_length=3, null=True, blank=True, unique=True,
-                              help_text="Sigla do Exame")
+                             help_text="Sigla do Exame")
 
     grupo = models.BooleanField("Grupo", default=False,
-                             help_text="Caso Verdadeiro é em Grupo, se Falso é individual")
+                                help_text="Caso Verdadeiro é em Grupo, se Falso é individual")
     
     PERIODOS_RUBRICAS = (
         (0, "Não Aplicável"),
@@ -31,7 +31,10 @@ class Exame(models.Model):
     periodo_para_rubricas = models.PositiveSmallIntegerField(choices=PERIODOS_RUBRICAS, default=0)
     
     comentario = models.TextField(max_length=256, null=True, blank=True,
-                                help_text="qualquer observação relevante")
+                                  help_text="qualquer observação relevante")
+    
+    cor = models.TextField("Cor", max_length=6, null=True, blank=True, default="777777",
+                           help_text="Cor do Exame em hexadecimal")
     
     def __str__(self):
         return str(self.titulo) 
