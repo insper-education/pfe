@@ -23,16 +23,15 @@
 
     if (localStorage.getItem("lingua") == "pt") {
       $("#language_button").html(text_pt);
-      $('[lang="pt"]').css("display", "initial");
-      $('[lang="en"]').css("display", "none");
       {% if titulo.pt %}document.title = "Capstone - {{ titulo.pt }}";{% endif %}
     } else {
       $("#language_button").html(text_en);
-      $('[lang="pt"]').css("display", "none");
-      $('[lang="en"]').css("display", "initial");
       {% if titulo.en %}document.title = "Capstone - {{ titulo.en }}";{% endif %}
     }
 
+    // Evitando redundância de código
+    {% include "linguas_ajax.html" %}
+    
   }
   
   function handleLanguageChange() {

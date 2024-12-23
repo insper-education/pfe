@@ -90,198 +90,222 @@
 
     var calendarEl = document.getElementById("calendar");
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
-      header: {
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
-      },
-      defaultView: {% if view %}"{{view}}"{% else %}defaultView{% endif %},
-      defaultDate: {% if date %}"{{date}}"{% else %}defaultDate{% endif %},
-      locale: "pt-br",
-      navLinks: true, // can click day/week names to navigate views
-      businessHours: true, // display business hours
-      editable: true,
-      height: "auto",
-      eventTimeFormat: {
-        hour: "2-digit", //2-digit, numeric
-        minute: "2-digit", //2-digit, numeric
-        meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
-        hour12: false //true, false
-      },
-      businessHours: [ // Horas indicadas para as bancas
-        {
-          daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
-          startTime: "07:30",
-          endTime: "20:00"
+    function cria_calendario(locale="pt-br") {
+      calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ "interaction", "dayGrid", "timeGrid", "list" ],
+        header: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
         },
-      ],
-      eventTextColor: "#FAFAFA",
-      eventRender: function(info) {
-      
-        if (!info.event.allDay) {
-          let time_s = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
-          let time_e = info.event.end.getHours() + ':' + info.event.end.getMinutes().toString().replace(/^(\d)$/, '0$1');
-          if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
-            let local = info.event.extendedProps.local;
-            let nome_orientador = "";
-            if (info.event.extendedProps.orientador) {
-              let orientador = info.event.extendedProps.orientador.split(" ");
-              nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];
-              {% if user %}
-                if (info.event.extendedProps.orientador == "{{user.get_full_name}}") {
-                  info.el.style.boxShadow = "0 0 3px 4px red";
-                } else {
-                  if ( info.event.extendedProps.membro1 == "{{user.get_full_name}}" ||
-                       info.event.extendedProps.membro2 == "{{user.get_full_name}}" ||
-                       info.event.extendedProps.membro3 == "{{user.get_full_name}}"
-                  ) {
-                    info.el.style.boxShadow = "0 0 3px 4px darkblue";
-                  }
-                }
-              {% endif %}
-            }
-            let avaliar = "";
-            if (info.event.extendedProps.estudante) {
-              avaliar = info.event.extendedProps.estudante;
-            } else {
-              avaliar = info.event.extendedProps.organizacao;
-            }
-            info.el.innerHTML = "<b>" + time_s + " - " + time_e + "</b><br><nobr style='color:#FAD2D2'>" + avaliar + "</nobr><br><nobr style='color:#F6F5A3'>" + local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
-          }
-          if (info.view.type === 'listMonth') {
-            info.el.innerHTML = `
-            <td class="fc-list-item-time">${time_s} - ${time_e}</td>
-            <td class="fc-list-item-marker"><span class="fc-event-dot" style="background-color: ${info.event.backgroundColor};"></span></td>
-            <td class="fc-list-item-title">${info.event.title}</td>
-        `;
-          }
-        }              
-      },
-
-      eventSources: [
-      
-        {
-          events:  function(info, successCallback, failureCallback) {
-            $.ajax({
-                url: "{% url 'ajax_bancas' %}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                  "csrfmiddlewaretoken": "{{ csrf_token }}",
-                  start: info.startStr.split('T')[0],
-                  end: info.endStr.split('T')[0],
-                },
-                success: function(response) {
-                    var eventsList = [];
-                    for (const [key, value] of Object.entries(response)) {
-                      eventsList.push({
-                        id: key,
-                        start: value.start,
-                        end: value.end,
-                        organizacao: value.organizacao,
-                        orientador: value.orientador,
-                        local: value.local ? value.local : "",
-                        color: value.color,
-                        membro1: value.membro1,
-                        membro2: value.membro2,
-                        membro3: value.membro3,
-                        estudante: value.estudante,
-                        title: value.title ? value.title : "",
-                        description: value.title ? value.title : "",
-                        editable: value.editable,
-                        //className: value.className,
-                      });
-                    }
-                    successCallback(eventsList);
-                },
-                failure : function() {
-                  failureCallback("erro ao recuperar eventos.");
-              }
-            });
+        defaultView: {% if view %}"{{view}}"{% else %}defaultView{% endif %},
+        defaultDate: {% if date %}"{{date}}"{% else %}defaultDate{% endif %},
+        //locale: "pt-br",
+        locale: locale,
+        navLinks: true, // can click day/week names to navigate views
+        businessHours: true, // display business hours
+        editable: true,
+        height: "auto",
+        eventTimeFormat: {
+          hour: "2-digit", //2-digit, numeric
+          minute: "2-digit", //2-digit, numeric
+          meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+          hour12: false //true, false
+        },
+        businessHours: [ // Horas indicadas para as bancas
+          {
+            daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda, Terça, Quarta, Quinta, Sexta
+            startTime: "07:30",
+            endTime: "20:00"
           },
+        ],
+        eventTextColor: "#FAFAFA",
+        eventRender: function(info) {
+        
+          if (!info.event.allDay) {
+            let time_s = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            let time_e = info.event.end.getHours() + ':' + info.event.end.getMinutes().toString().replace(/^(\d)$/, '0$1');
+            if (info.view.type === "dayGridMonth" || info.view.type === "timeGridWeek") {
+              let local = info.event.extendedProps.local;
+              let nome_orientador = "";
+              if (info.event.extendedProps.orientador) {
+                let orientador = info.event.extendedProps.orientador.split(" ");
+                nome_orientador = orientador[0] + ' ' + orientador[orientador.length - 1];
+                {% if user %}
+                  if (info.event.extendedProps.orientador == "{{user.get_full_name}}") {
+                    info.el.style.boxShadow = "0 0 3px 4px red";
+                  } else {
+                    if ( info.event.extendedProps.membro1 == "{{user.get_full_name}}" ||
+                        info.event.extendedProps.membro2 == "{{user.get_full_name}}" ||
+                        info.event.extendedProps.membro3 == "{{user.get_full_name}}"
+                    ) {
+                      info.el.style.boxShadow = "0 0 3px 4px darkblue";
+                    }
+                  }
+                {% endif %}
+              }
+              let avaliar = "";
+              if (info.event.extendedProps.estudante) {
+                avaliar = info.event.extendedProps.estudante;
+              } else {
+                avaliar = info.event.extendedProps.organizacao;
+              }
+              info.el.innerHTML = "<b>" + time_s + " - " + time_e + "</b><br><nobr style='color:#FAD2D2'>" + avaliar + "</nobr><br><nobr style='color:#F6F5A3'>" + local + "</nobr><br><nobr style='color:#E8E8E8'>" + nome_orientador + "</nobr>";
+            }
+            if (info.view.type === 'listMonth') {
+              info.el.innerHTML = `
+              <td class="fc-list-item-time">${time_s} - ${time_e}</td>
+              <td class="fc-list-item-marker"><span class="fc-event-dot" style="background-color: ${info.event.backgroundColor};"></span></td>
+              <td class="fc-list-item-title">${info.event.title}</td>
+          `;
+            }
+          }              
         },
 
-        {
-          events: [
-          // area onde as bancas podem ser alocadas
-          {% for dias in dias_bancas %} 
-            {
-              // groupId: 'grupo{{dias.id}}',
-              {% with start=dias.startDate %}
-                start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
-              {% endwith %}
-              {% with end=dias.endDate|plus_days:1 %}
-                end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
-              {% endwith %}
-              rendering: "background",
-
-              {% if dias.tipo_de_evento == 15 %} // Banca Final
-                color: color_banca_final,
-                description: "<b>período de bancas finais</b>",
-              {% elif dias.tipo_de_evento == 14 %} // Banca Intermediária 
-                color: color_banca_intermediaria,
-                description: "<b>período de bancas intermediárias</b>",
-              {% elif dias.tipo_de_evento == 18 %} // Probation
-                color: color_probation,
-                description: "<b>período de probation</b>",
-              {% elif dias.tipo_de_evento == 50 %} // Banca Falconi
-                color: color_banca_falconi,
-                description: "<b>período de bancas Falconi</b>",
-              {% else %}
-                color: '#777777',
-              {% endif %}
-
+        eventSources: [
+        
+          {
+            events:  function(info, successCallback, failureCallback) {
+              $.ajax({
+                  url: "{% url 'ajax_bancas' %}",
+                  type: "POST",
+                  dataType: "json",
+                  data: {
+                    "csrfmiddlewaretoken": "{{ csrf_token }}",
+                    start: info.startStr.split('T')[0],
+                    end: info.endStr.split('T')[0],
+                  },
+                  success: function(response) {
+                      var eventsList = [];
+                      for (const [key, value] of Object.entries(response)) {
+                        eventsList.push({
+                          id: key,
+                          start: value.start,
+                          end: value.end,
+                          organizacao: value.organizacao,
+                          orientador: value.orientador,
+                          local: value.local ? value.local : "",
+                          color: value.color,
+                          membro1: value.membro1,
+                          membro2: value.membro2,
+                          membro3: value.membro3,
+                          estudante: value.estudante,
+                          title: value.title ? value.title : "",
+                          description: value.title ? value.title : "",
+                          editable: value.editable,
+                          //className: value.className,
+                        });
+                      }
+                      successCallback(eventsList);
+                  },
+                  failure : function() {
+                    failureCallback("erro ao recuperar eventos.");
+                }
+              });
             },
-          {% endfor %}
-          ],
-        }
-      ],
+          },
 
-      eventClick: function(event, jsEvent, view) {
-        // Para editar uma banca
-        $(".tooltip").remove();
-        if(event.event.id) {
+          {
+            events: [
+            // area onde as bancas podem ser alocadas
+            {% for dias in dias_bancas %} 
+              {
+                // groupId: 'grupo{{dias.id}}',
+                {% with start=dias.startDate %}
+                  start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
+                {% endwith %}
+                {% with end=dias.endDate|plus_days:1 %}
+                  end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
+                {% endwith %}
+                rendering: "background",
+
+                {% if dias.tipo_de_evento == 15 %} // Banca Final
+                  color: color_banca_final,
+                  description: "<b>período de bancas finais</b>",
+                {% elif dias.tipo_de_evento == 14 %} // Banca Intermediária 
+                  color: color_banca_intermediaria,
+                  description: "<b>período de bancas intermediárias</b>",
+                {% elif dias.tipo_de_evento == 18 %} // Probation
+                  color: color_probation,
+                  description: "<b>período de probation</b>",
+                {% elif dias.tipo_de_evento == 50 %} // Banca Falconi
+                  color: color_banca_falconi,
+                  description: "<b>período de bancas Falconi</b>",
+                {% else %}
+                  color: '#777777',
+                {% endif %}
+
+              },
+            {% endfor %}
+            ],
+          }
+        ],
+
+        eventClick: function(event, jsEvent, view) {
+          // Para editar uma banca
+          $(".tooltip").remove();
+          if(event.event.id) {
+            var elem = document.createElement( "span" );
+            $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+            abrir_modal.call(elem, null);
+          }
+        },
+
+        dateClick: function(info) {
+          // Para criar uma nova banca, reproveitando a data clicada
+          $(".tooltip").remove();
           var elem = document.createElement( "span" );
-          $( elem ).data( "url", "{% url 'bancas_editar' %}"+event.event.id);
+          $( elem ).data( "url", "{% url 'bancas_criar' %}");
+          $( elem ).data( "data", info.dateStr);
           abrir_modal.call(elem, null);
+        },
+
+        eventMouseEnter: function (info) {
+          $(info.el).tooltip({
+                title: info.event.extendedProps.description,
+                html: true,
+          }).tooltip("show");
+        },
+
+        eventDragStart: function(info) {
+          $(".tooltip").remove();
+        },
+        
+        eventResize: function(info) {
+          $(".tooltip").remove();
+          atualiza(info.event);
+        },
+
+        eventDrop: function(info) {
+          $(".tooltip").remove();
+          atualiza(info.event);
+        },
+
+      });
+
+      calendar.render();
+
+    }
+
+    $(document).ready(function() {
+
+      function lingua_calendario() {
+        if(calendar) calendar.destroy();
+        if(localStorage.getItem("lingua") == "pt") {
+          cria_calendario("pt-br");
+        } else {
+          cria_calendario("en");
         }
-      },
+      }
 
-      dateClick: function(info) {
-        // Para criar uma nova banca, reproveitando a data clicada
-        $(".tooltip").remove();
-        var elem = document.createElement( "span" );
-        $( elem ).data( "url", "{% url 'bancas_criar' %}");
-        $( elem ).data( "data", info.dateStr);
-        abrir_modal.call(elem, null);
-      },
+      lingua_calendario();
 
-      eventMouseEnter: function (info) {
-        $(info.el).tooltip({
-              title: info.event.extendedProps.description,
-              html: true,
-        }).tooltip("show");
-      },
-
-      eventDragStart: function(info) {
-        $(".tooltip").remove();
-      },
-      
-      eventResize: function(info) {
-        $(".tooltip").remove();
-        atualiza(info.event);
-      },
-
-      eventDrop: function(info) {
-        $(".tooltip").remove();
-        atualiza(info.event);
-      },
+      document.addEventListener("languageChanged", function() {
+        lingua_calendario();
+      });
 
     });
 
-    calendar.render();
 
     $("#color_banca_intermediaria").css("color", color_banca_intermediaria);
     $("#color_banca_final").css("color", color_banca_final);

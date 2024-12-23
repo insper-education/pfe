@@ -712,55 +712,42 @@ def bancas_editar(request, primarykey=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_lista(request, periodo_projeto):
+def bancas_lista(request, edicao):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {
         "titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},
-        "periodo": periodo_projeto
+        "periodo": edicao
         }
 
-    if periodo_projeto == "proximas":
+    if edicao == "proximas":
         # Coletando bancas agendadas a partir de hoje
         hoje = datetime.date.today()
         bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
 
         # checando se projetos atuais tem banca marcada
         configuracao = get_object_or_404(Configuracao)
-        projetos = Projeto.objects.filter(ano=configuracao.ano,
-                                          semestre=configuracao.semestre)
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
         for banca in bancas:
             if banca.projeto:
                 projetos = projetos.exclude(id=banca.projeto.id)
         context["sem_banca"] = projetos
 
-    elif periodo_projeto == "todas":
+    elif edicao == "todas":
         bancas = Banca.objects.all().order_by("startDate")
 
-    elif '.' in periodo_projeto:
-        periodo = periodo_projeto.split('.')
-        try:
-            ano = int(periodo[0])
-            semestre = int(periodo[1])
-        except ValueError:
-            return HttpResponseNotFound("<h1>Erro em!</h1>")
-
-        bancas_p = Banca.objects.filter(projeto__ano=ano)\
-            .filter(projeto__semestre=semestre)
-
-        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano)\
-            .filter(alocacao__projeto__semestre=semestre)
-
+    elif '.' in edicao:
+        ano, semestre = map(int, edicao.split('.'))
+        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
         bancas = (bancas_p | bancas_a).order_by("startDate")
 
     else:
-        projeto = get_object_or_404(Projeto, id=periodo_projeto)
+        projeto = get_object_or_404(Projeto, id=edicao)
         context["projeto"] = projeto
         bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
 
     context["bancas"] = bancas
-
-    edicoes, _, _ = get_edicoes(Projeto)
-    context["edicoes"] = edicoes
+    context["edicoes"] = get_edicoes(Projeto)[0]
 
     # (14, "Bancas Intermediárias", "#EE82EE"),
     # (15, "Bancas Finais", "#FFFF00"),

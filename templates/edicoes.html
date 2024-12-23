@@ -61,7 +61,7 @@
             <optgroup class="opt_edi">
             {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
             {% if not n_todas %}
-              <option class="opt_edi" value="todas">Todas</option>
+              <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">Todas</option>
             {% endif %}
             {% for edicao in edicoes %}
                 <option class="opt_edi" value="{{edicao}}" 
@@ -84,7 +84,7 @@
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Curso</span><span lang="en" style="display: none;">Program</span></span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto" id="filterCurso" name="curso">
-              <option class="opt_edi" value="T">Todos Insper</option>
+              <option class="opt_edi troca_lingua" value="T" data-pt="Todos Insper" data-en="All Insper">Todos Insper</option>
               {% if cursos %}
                 {% for c in cursos %}
                   {% if c.curso_do_insper %}
@@ -92,7 +92,7 @@
                   {% endif %}
                 {% endfor %}
                 {% if cursos_externos %}
-                  <option class="opt_edi" value="TE" {% if com_externos %}selected{% endif %}>Todos Insper + Externos</option>
+                  <option class="opt_edi troca_lingua" value="TE" {% if com_externos %}selected{% endif %} data-pt="Todos Insper + Externos" data-en="All Insper + External">Todos Insper + Externos</option>
                   {% for c in cursos_externos %}
                     {% if not c.curso_do_insper %}
                       <option class="opt_edi text-info" value="{{c.sigla_curta}}" {% if curso == c.sigla_curta %}selected{% endif %}>&nbsp;&nbsp;&rdsh;&nbsp;{{c.nome}}</option>
@@ -162,9 +162,15 @@
             <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Tipo</span><span lang="en" style="display: none;">Type</span></span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto form-control" id="filterTipo" name="tipo">
-            <option class="opt_edi" value="estudantes">Estudantes</option>
-            <option class="opt_edi" value="propostas">Propostas</option>
-            <option class="opt_edi" value="projetos">Projetos</option>
+            <option class="opt_edi troca_lingua" value="estudantes" data-pt="Estudantes" data-en="Students">
+              Estudantes
+            </option>
+            <option class="opt_edi troca_lingua" value="propostas" data-pt="Propostas" data-en="Proposals">
+              Propostas
+            </option>
+            <option class="opt_edi troca_lingua" value="projetos" data-pt="Projetos" data-en="Projects">
+              Projetos
+            </option>
           </select>
           <div class="separador input-group-addon"></div>
         </div>
@@ -176,7 +182,9 @@
               <label class="input-group-text" for="filterEntregas"><span class="to_hide">Tipo</span></label>
             </div>
             <select class="custom-select w-auto" id="filterEntregas" name="entregas">
-              <option class="opt_edi" value="todas">Todas</option>
+              <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">
+                Todas
+              </option>
               {% for entrega in com_entregas %}
                 <option class="opt_edi" value="{{entrega.id}}">{{entrega}}</option>
               {% endfor %}

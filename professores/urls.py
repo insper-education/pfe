@@ -82,7 +82,7 @@ urlpatterns = [
         views.bancas_index,
         name="bancas_index"),
 
-    path("bancas_lista/<str:periodo_projeto>",
+    path("bancas_lista/<str:edicao>",
         views.bancas_lista,
         name="bancas_lista"),
 

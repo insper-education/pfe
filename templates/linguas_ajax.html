@@ -13,3 +13,14 @@ if (lingua_atual == "en") {
   $('[lang="pt"]').css("display", "initial");
   $('[lang="en"]').css("display", "none");
 }
+
+$(".troca_lingua").each(function() {
+  var option = $(this);
+  var opt_pt = option.data("pt");
+  var opt_en = option.data("en");
+  if (localStorage.getItem("lingua") == "pt") {
+      option.text(opt_pt);
+  } else if (localStorage.getItem("lingua") == "en") {
+      option.text(opt_en);
+  }
+});
