@@ -22,16 +22,9 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
-from professores.support import recupera_orientadores
-from professores.support import recupera_coorientadores
-from professores.support import recupera_bancas_intermediarias
-from professores.support import recupera_bancas_finais
-from professores.support import recupera_bancas_probation
-from professores.support import recupera_bancas_falconi
-from professores.support import recupera_mentorias
-from professores.support import recupera_mentorias_técnica
+from professores.support import recupera_avaliadores_bancas
 
-from projetos.models import Documento, Configuracao, Projeto, Certificado
+from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
 from projetos.support import get_upload_path
 
 from users.support import get_edicoes
@@ -60,7 +53,6 @@ def index_documentos(request):
         return render(request, "documentos/index_documentos.html", context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def biblioteca_link(request, primarykey=None):
@@ -81,7 +73,6 @@ def biblioteca_link(request, primarykey=None):
             relatorio.link = request.POST["link"].strip()
             relatorio.save()
             atualizado = True
-
         else:
             return HttpResponse("Atualização não realizada.", status=401)
 
@@ -105,34 +96,33 @@ def biblioteca_link(request, primarykey=None):
 def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     """Lista os Certificados Emitidos."""
 
-    configuracao = get_object_or_404(Configuracao)
-    context = {
-        "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
-        # "coordenacao": configuracao.coordenacao,
-        "configuracao": configuracao,
-    }
-
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
-                certificados = Certificado.objects.all()
+                context = { "certificados": Certificado.objects.all()}
             else:
                 ano, semestre = request.POST["edicao"].split('.')
-                certificados = Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-            context["certificados"] = certificados
+                context = { "certificados": Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)}
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, ano, semestre = get_edicoes(Certificado)
-        context["edicoes"] = edicoes
-        if edicao:
-            context["selecionada"] = edicao
-        if tipos:
-            context["tipos"] = tipos.split(',')
-        if gerados:
-            context["gerados"] = gerados
-
+        tipos_certificados = [
+            ("Estudantes (Certificação Falconi, etc)", "Student (Falconi Certification, etc)", "E"),
+            ("Orientadores", "Advisor", "O"),
+            ("Coorientadores", "Co-advisor", "C"),
+            ("Bancas", "Examination Boards", "B"),
+            ("Mentorias Profissionais (antiga Mentorial Falconi)", "Professional Mentoring (former Falconi Mentoring)", "MP"),
+            ("Mentorias Técnicas", "Technical Mentoring", "MT"),
+        ]
+        context = {
+            "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
+            "tipos_certificados": tipos_certificados,
+            "edicoes": get_edicoes(Certificado)[0],
+            "selecionada": edicao,
+            "tipos": tipos.split(',') if tipos else None,
+            "gerados": gerados,
+        }
 
     return render(request, "documentos/certificados_submetidos.html", context)
 
@@ -141,7 +131,7 @@ def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None, aloca
     """Atualiza os certificados."""
     configuracao = get_object_or_404(Configuracao)
 
-    (certificado, _) = \
+    certificado, _ = \
         Certificado.objects.get_or_create(usuario=usuario,
                                           projeto=projeto,
                                           tipo_de_certificado=tipo_cert,
@@ -241,104 +231,59 @@ def gerar_certificados(request):
        not os.path.exists(settings.MEDIA_ROOT+"/"+str(papel_timbrado.documento)):
         return HttpResponse("Papel timbrado não encontrado.", status=401)
 
-    if "edicao" in request.POST:
-        ano, semestre = request.POST["edicao"].split('.')
-    else:
+    if "edicao" not in request.POST:
         return HttpResponse("Algum erro não identificado.", status=401)
+    ano, semestre = request.POST["edicao"].split('.')
 
     tipos = []
-
-    certificados = []
+    qcertificados = 0
     if "orientador" in request.POST:
-        # (101, "Orientação de Projeto"),
-        orientadores = recupera_orientadores(ano, semestre)
-        arquivo = "documentos/certificado_orientador.html"
+        arquivo = "documentos/certificado_orientador.html"  # (101, "Orientação de Projeto")
         tipos.append("O")
-        for orientador in orientadores:
-            for projeto in orientador[1]:
-                certificado = atualiza_certificado(orientador[0].user, projeto, 101, arquivo)
-                if certificado:
-                    certificados.append(certificado)
+        projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+        for projeto in projetos:
+            if projeto.orientador:
+                certificado = atualiza_certificado(projeto.orientador.user, projeto, 101, arquivo)
+                qcertificados += 1 if certificado else 0
 
     if "coorientador" in request.POST:
-        # (102, "Coorientação de Projeto"),
-        coorientadores = recupera_coorientadores(ano, semestre)
-        arquivo = "documentos/certificado_coorientador.html"
+        arquivo = "documentos/certificado_coorientador.html"  # (102, "Coorientação de Projeto")
         tipos.append("C")
-        for coorientador in coorientadores:
-            for projeto in coorientador[1]:
-                certificado = atualiza_certificado(coorientador[0].user, projeto, 102, arquivo)
-                if certificado:
-                    certificados.append(certificado)
+        for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
+            certificado = atualiza_certificado(coorientador.usuario, coorientador.projeto, 102, arquivo)
+            qcertificados += 1 if certificado else 0
 
     if "banca" in request.POST:
-        # (103, "Membro de Banca Intermediária"),
-        membro_banca = recupera_bancas_intermediarias(ano, semestre)
-        arquivo = "documentos/certificado_banca_intermediaria.html"
         tipos.append("B")
-        for membro in membro_banca:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 103, arquivo, banca=banca)
-                if certificado:
-                    certificados.append(certificado)
-
-    if "banca" in request.POST:
-        # (104, "Membro de Banca Final"),
-        membro_banca = recupera_bancas_finais(ano, semestre)
-        arquivo = "documentos/certificado_banca_final.html"
-        tipos.append("B")
-        for membro in membro_banca:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 104, arquivo, banca=banca)
-                if certificado:
-                    certificados.append(certificado)
-
-    if "banca" in request.POST:
-        # (108, "Membro de Banca de Probation"),
-        membro_banca = recupera_bancas_probation(ano, semestre)
-        arquivo = "documentos/certificado_banca_probation.html"
-        tipos.append("B")
-        for membro in membro_banca:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 108, arquivo, banca=banca, alocacao=banca.alocacao)
-                if certificado:
-                    certificados.append(certificado)
-
-    if "banca" in request.POST:
-        # (105, "Membro de Banca Falconi"),
-        membro_banca = recupera_bancas_falconi(ano, semestre)
-        arquivo = "documentos/certificado_banca_falconi.html"
-        tipos.append("B")
-        for membro in membro_banca:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0].user, banca.get_projeto(), 105, arquivo, banca=banca)
-                if certificado:
-                    certificados.append(certificado)
+        banca_types = [
+            ("BI", 103, "documentos/certificado_banca_intermediaria.html"),
+            ("BF", 104, "documentos/certificado_banca_final.html"),
+            ("P", 108, "documentos/certificado_banca_probation.html"),
+            ("F", 105, "documentos/certificado_banca_falconi.html")
+        ]
+        for sigla, tipo_id, arquivo in banca_types:
+            membro_banca = recupera_avaliadores_bancas(sigla, ano, semestre)
+            for membro in membro_banca:
+                for banca in membro[1]:
+                    certificado = atualiza_certificado(membro[0], banca.get_projeto(), tipo_id, arquivo, banca=banca, alocacao=banca.alocacao)
+                    qcertificados += 1 if certificado else 0
 
     if "mentoria_profissional" in request.POST:
-        # (106, "Mentoria de Grupo"),  # mentor Profissional (antiga Mentoria Falconi)
-        membro_banca = recupera_mentorias(ano, semestre)
-        arquivo = "documentos/certificado_mentoria.html"
+        arquivo = "documentos/certificado_mentoria.html"  # (106, "Mentoria de Grupo"),  # mentor Profissional (antiga Mentoria Falconi)
         tipos.append("MP")
-        for membro in membro_banca:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0], banca.get_projeto(), 106, arquivo, banca=banca)
-                if certificado:
-                    certificados.append(certificado)
+        for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
+            certificado = atualiza_certificado(encontro.facilitador, encontro.get_projeto(), 106, arquivo, banca=encontro)
+            qcertificados += 1 if certificado else 0
 
     if "mentoria_tecnica" in request.POST:
-        # (107, "Mentoria Técnica"),  # mentor da empresa
-        membros = recupera_mentorias_técnica(ano, semestre)
-        arquivo = "documentos/certificado_mentoria_tecnica.html"
+        arquivo = "documentos/certificado_mentoria_tecnica.html"  # (107, "Mentoria Técnica"),  # mentor da empresa
         tipos.append("MT")
-        for membro in membros:
-            for banca in membro[1]:
-                certificado = atualiza_certificado(membro[0], banca.get_projeto(), 107, arquivo, banca=banca)
-                if certificado:
-                    certificados.append(certificado)
+        for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
+            print(conexao.parceiro.user, conexao.get_projeto())
+            certificado = atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), 107, arquivo, banca=banca)
+            qcertificados += 1 if certificado else 0
 
-
-    return redirect("certificados_submetidos", edicao=request.POST["edicao"], tipos=",".join(tipos), gerados=len(certificados))
+    return redirect("certificados_submetidos", edicao=request.POST["edicao"], tipos=",".join(tipos), gerados=qcertificados)
 
 
 def materias_midia(request):

@@ -67,3 +67,20 @@ TIPO_EVENTO = (
     (142, "Orientações para Bancas Finais", "#CCBFAA"),
 
 )
+
+
+TIPO_DE_CERTIFICADO = (
+    (0, "Não definido"),
+    (1, "Estudante destaque"),
+    (2, "Equipe destaque"),
+    (11, "Destaque Falconi"),
+    (12, "Excelência Falconi"),
+    (101, "Orientação de Projeto"),
+    (102, "Coorientação de Projeto"),
+    (103, "Membro de Banca Intermediária"),
+    (104, "Membro de Banca Final"),
+    (105, "Membro da Banca Falconi"),
+    (106, "Mentoria Profissional"),  # antigo mentor na Falconi
+    (107, "Mentoria Técnica"),  # mentor da empresa
+    (108, "Membro de Banca de Probation"),
+)

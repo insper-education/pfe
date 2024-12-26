@@ -8,7 +8,7 @@ Data: 17 de Dezembro de 2020
 
 import datetime
 import dateutil.parser
-# import logging
+import logging
 
 from django.conf import settings
 from django.db.models import Q
@@ -31,7 +31,7 @@ from projetos.models import Configuracao, Documento, Evento, Avaliacao2
 from users.models import PFEUser, Professor, Aluno, Parceiro, Alocacao
 from users.support import adianta_semestre, ordena_nomes
 
-# logger = logging.getLogger("django")  # Para marcar mensagens de log
+logger = logging.getLogger("django")  # Para marcar mensagens de log
 
 def calcula_interseccao_bancas(banca, startDate, endDate):
     """Calcula se a banca intersecta com outras bancas (e trata se for criada ou editada)."""
@@ -76,7 +76,7 @@ def editar_banca(banca, request):
     else:
         return "Tipo de banca não informado!", None
     
-    if banca.tipo_de_banca == 3:  # Banca Probation      
+    if banca.alocacao == 3:  # Banca Probation      
         try:
             banca.alocacao = Alocacao.objects.get(id=int(request.POST.get("alocacao")))
         except Alocacao.DoesNotExist:
@@ -281,161 +281,26 @@ def recupera_coorientadores_por_semestre(configuracao):
     return zip(professores_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
 
 
-def recupera_orientadores(ano, semestre):
-    """Recupera listas de todos os orientadores de projetos."""
-    professores = []
-    grupos = []
+def recupera_avaliadores_bancas(sigla, ano, semestre):
+    """Recupera listas de todos os membros das bancas especificadas."""
+    pessoas = []
+    bancas = []
 
-    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                      Lower("user__last_name")):
+    bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
+    for pessoa in PFEUser.objects.all():
 
-        count_grupos = []
-        grupos_pfe = Projeto.objects.filter(orientador=professor)
+        bancas_m = bancas_f.filter(membro1=pessoa) | bancas_f.filter(membro2=pessoa) | bancas_f.filter(membro3=pessoa)
+        if sigla in ["BI", "BF"]:  # Em bancas intermediárias e finais, orientadores também são membros
+            bancas_o = bancas_f.filter(projeto__orientador__user=pessoa)
+        else:
+            bancas_o = bancas_f.none()
+        bancas_t = bancas_m | bancas_o
 
-        grupos_pfe = grupos_pfe.filter(ano=ano, semestre=semestre)
+        if bancas_t.exists():
+            pessoas.append(pessoa)
+            bancas.append(bancas_t)
 
-        if grupos_pfe:
-            for grupo in grupos_pfe:  # garante que tem alunos no projeto
-                alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
-                if alunos_pfe:
-                    count_grupos.append(grupo)
-            if count_grupos:
-                professores.append(professor)
-                grupos.append(count_grupos)
-
-    return zip(professores, grupos)
-
-
-def recupera_coorientadores(ano, semestre):
-    """Recupera listas de todos os orientadores de projetos."""
-    professores = []
-    grupos = []
-
-    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                      Lower("user__last_name")):
-
-        count_grupos = []
-        grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor)
-        grupos_pfe = grupos_pfe.filter(ano=ano, semestre=semestre)
-
-        if grupos_pfe:
-            for grupo in grupos_pfe: # garante que tem alunos no projeto
-                alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
-                if alunos_pfe:
-                    count_grupos.append(grupo)
-            if count_grupos:
-                professores.append(professor)
-                grupos.append(count_grupos)
-
-    return zip(professores, grupos)
-
-
-def recupera_bancas_intermediarias(ano, semestre):
-    """Recupera listas de todos os membros de bancas intermediárias."""
-    professores = []
-    grupos = []
-
-    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                      Lower("user__last_name")):
-
-        count_bancas = []
-
-        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=1)  # (1, 'Intermediária'),
-
-        bancas = bancas.filter(membro1=professor.user) |\
-                 bancas.filter(membro2=professor.user) |\
-                 bancas.filter(membro3=professor.user) |\
-                 bancas.filter(projeto__orientador=professor)
-
-        if bancas:
-            for banca in bancas:
-                count_bancas.append(banca)
-            if count_bancas:
-                professores.append(professor)
-                grupos.append(count_bancas)
-
-    return zip(professores, grupos)
-
-
-def recupera_bancas_finais(ano, semestre):
-    """Recupera listas de todos os membros de bancas intermediárias."""
-    professores = []
-    grupos = []
-
-    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                      Lower("user__last_name")):
-
-        count_bancas = []
-
-        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=0)  # (0, 'Final')
-
-        bancas = bancas.filter(membro1=professor.user) |\
-                 bancas.filter(membro2=professor.user) |\
-                 bancas.filter(membro3=professor.user) |\
-                 bancas.filter(projeto__orientador=professor)
-
-        if bancas:
-            for banca in bancas:
-                count_bancas.append(banca)
-            if count_bancas:
-                professores.append(professor)
-                grupos.append(count_bancas)
-
-    return zip(professores, grupos)
-
-
-def recupera_bancas_probation(ano, semestre):
-    """Recupera listas de todos os membros de bancas de probation."""
-    professores = []
-    grupos = []
-    for professor in Professor.objects.all().order_by(Lower("user__first_name"),
-                                                      Lower("user__last_name")):
-
-        count_bancas = []
-
-        bancas = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_de_banca=3)  # (3, 'Probation')
-        bancas = bancas.filter(membro1=professor.user) |\
-                 bancas.filter(membro2=professor.user) |\
-                 bancas.filter(membro3=professor.user)
-
-        if bancas:
-            for banca in bancas:
-                count_bancas.append(banca)
-            if count_bancas:
-                professores.append(professor)
-                grupos.append(count_bancas)
-
-    return zip(professores, grupos)
-
-
-
-def recupera_bancas_falconi(ano, semestre):
-    """Recupera listas de todos os membros de bancas falconi."""
-    membros = []
-    grupos = []
-
-    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
-    falconis = Parceiro.objects.filter(organizacao=organizacao).order_by(Lower("user__first_name"),
-                                                                         Lower("user__last_name"))
-
-    for membro in falconis:
-
-        count_bancas = []
-
-        bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=2)  #  (2, 'Certificação Falconi'),
-
-        bancas = bancas.filter(membro1=membro.user) |\
-                 bancas.filter(membro2=membro.user) |\
-                 bancas.filter(membro3=membro.user)
-
-        if bancas:
-            for banca in bancas:
-                count_bancas.append(banca)
-            if count_bancas:
-                membros.append(membro)
-                grupos.append(count_bancas)
-
-    return zip(membros, grupos)
+    return zip(pessoas, bancas)
 
 
 def recupera_mentorias(ano, semestre):
@@ -443,9 +308,7 @@ def recupera_mentorias(ano, semestre):
     membros = []
     grupos = []
 
-    mentores = PFEUser.objects.filter(tipo_de_usuario__gt=1, is_active=True)  # estudantes não entram nos mentores
-    mentores = mentores.order_by(Lower("first_name"), Lower("last_name"))
-
+    mentores = PFEUser.objects.all()
     for mentor in mentores:
 
         count_encontros = []
@@ -463,30 +326,6 @@ def recupera_mentorias(ano, semestre):
             if count_encontros:
                 membros.append(mentor)
                 grupos.append(count_encontros)
-
-    return zip(membros, grupos)
-
-
-def recupera_mentorias_técnica(ano, semestre):
-    """Recupera listas de todos os mentores nas empresas no semestre."""
-    membros = []
-    grupos = []
-
-    mentores = PFEUser.objects.filter(tipo_de_usuario=3, is_active=True)  # soh parceiros ativos
-    mentores = mentores.order_by(Lower("first_name"), Lower("last_name"))
-
-    for mentor in mentores:
-
-        count_conexoes = []
-
-        conexoes = Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, parceiro=mentor.parceiro, mentor_tecnico=True)
-
-        if conexoes:
-            for conexao in conexoes:
-                count_conexoes.append(conexao)
-            if count_conexoes:
-                membros.append(mentor)
-                grupos.append(count_conexoes)
 
     return zip(membros, grupos)
 

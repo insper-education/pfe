@@ -54,14 +54,12 @@
             </span></label>
           </div>
           <select id="tipos" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
-                  title="Nada selecionado"
-                  multiple>
-            <option {% if not tipos or "E" in tipos %}selected="selected"{% endif %} title="E">Estudantes (Certificação Falconi, etc)</option>
-            <option {% if not tipos or "O" in tipos %}selected="selected"{% endif %} title="O">Orientadores</option>
-            <option {% if not tipos or "C" in tipos %}selected="selected"{% endif %} title="C">Coorientadores</option>
-            <option {% if not tipos or "B" in tipos %}selected="selected"{% endif %} title="B">Bancas</option>
-            <option {% if not tipos or "MT" in tipos %}selected="selected"{% endif %} title="MT">Mentorias Técnicas</option>
-            <option {% if not tipos or "MP" in tipos %}selected="selected"{% endif %} title="MP">Mentorias Profissional (antiga Mentorial Falconi)</option>
+                  title="Nada selecionado" multiple>
+            {% for tipo in tipos_certificados %}
+              <option {% if not tipos or tipo.2 in tipos %}selected="selected"{% endif %} 
+              class="troca_lingua" data-pt="{{ tipo.0 }}" data-en="{{ tipo.1 }}"
+              title="{{ tipo.2 }}">{{ tipo.0 }}</option>
+            {% endfor %}
           </select>
       </div>
     </div>
@@ -108,7 +106,12 @@
   </script>
 
   {% if gerados %}
-    <br><br><h4>{{ gerados }} certificados gerados.</h4>
+    <br><br>
+    <h4>
+      {{ gerados }}
+      <span lang="pt">novos certificados gerados.</span>
+      <span lang="en" style="display: none;">new certificates generated.</span>
+    </h4>
   {% endif %}
 
   <div class="atualizar">
@@ -240,9 +243,7 @@
 
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      setTimeout(function () {
-        recarregar_pagina();
-      }, 20);
+      setTimeout(function () {recarregar_pagina();}, 20);
       carrega_pagina();
     };
 

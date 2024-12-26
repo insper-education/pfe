@@ -30,7 +30,7 @@ from operacional.models import Curso
 from academica.models import Exame
 import users.models
 
-from .tipos import TIPO_EVENTO
+from .tipos import TIPO_EVENTO, TIPO_DE_CERTIFICADO
 from documentos.models import TipoDocumento
 
 #from professores.support import converte_conceitos
@@ -2110,22 +2110,6 @@ class Certificado(models.Model):
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="data do certificado")
 
-    TIPO_DE_CERTIFICADO = (  # não mudar a ordem dos números
-        (0, "Não definido"),
-        (1, "Estudante destaque"),
-        (2, "Equipe destaque"),
-        (11, "Destaque Falconi"),
-        (12, "Excelência Falconi"),
-        (101, "Orientação de Projeto"),
-        (102, "Coorientação de Projeto"),
-        (103, "Membro de Banca Intermediária"),
-        (104, "Membro de Banca Final"),
-        (105, "Membro da Banca Falconi"),
-        (106, "Mentoria Profissional"),  # antigo mentor na Falconi
-        (107, "Mentoria Técnica"),  # mentor da empresa
-        (108, "Membro de Banca de Probation"),
-    )
-
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
 
     observacao = models.TextField(max_length=256, null=True, blank=True,
@@ -2137,7 +2121,7 @@ class Certificado(models.Model):
     # Usar get_tipo_de_certificado_display
     def get_certificado(self):
         """Retorna em string o nome do certificado."""
-        for entry in Certificado.TIPO_DE_CERTIFICADO:
+        for entry in TIPO_DE_CERTIFICADO:
             if self.tipo_de_certificado == entry[0]:
                 return entry[1]
         return None
