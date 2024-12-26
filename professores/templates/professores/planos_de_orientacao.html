@@ -20,6 +20,10 @@
 
 {% block content %}
 
+  {% if professor != user.professor %}
+    <span><b>Professor:</b> {{professor}}</span><br><br>
+  {% endif %}
+
   <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
     <i class="far fa-file-alt"></i> {{template.tipo_documento}}
     <span lang="pt">(opcional)</span>

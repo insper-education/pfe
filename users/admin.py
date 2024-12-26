@@ -103,16 +103,16 @@ class UsuarioEstiloComunicacaoAdmin(admin.ModelAdmin):
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro."""
-    list_display = ("get_full_name", "get_sigla", "email")
+    list_display = ("user", "get_sigla", "email")
     ordering = ("user__first_name", "user__last_name")
     list_filter = (FirstLetterFilter, )
     search_fields = ["user__first_name", "user__last_name", ]
 
-    def get_full_name(self, obj):
-        """Retorna o nome completo do usuário"""
-        return obj.user.first_name+' '+obj.user.last_name
-    get_full_name.short_description = "Nome Completo"
-    get_full_name.admin_order_field = "user__first_name"
+    # def get_full_name(self, obj):
+    #     """Retorna o nome completo do usuário"""
+    #     return obj.user.first_name+' '+obj.user.last_name
+    # get_full_name.short_description = "Nome Completo"
+    # get_full_name.admin_order_field = "user__first_name"
 
     def get_sigla(self, obj):
         """Retorna a silga da organização"""
@@ -126,7 +126,7 @@ class ParceiroAdmin(admin.ModelAdmin):
     def email(self, obj):
         """Retorna o e-mail do usuário"""
         return obj.user.email
-    get_full_name.short_description = "e-mail"
+    email.short_description = "e-mail"
 
 
 @admin.register(Professor)

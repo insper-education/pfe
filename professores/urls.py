@@ -26,7 +26,11 @@ urlpatterns = [
         views.avaliacoes_pares,
         name="avaliacoes_pares"),
 
-    path("avaliacoes_pares/<str:todos>",
+    path("avaliacoes_pares/<str:prof_id>",
+        views.avaliacoes_pares,
+        name="avaliacoes_pares"),
+
+    path("avaliacoes_pares/<str:prof_id>/<str:proj_id>",
         views.avaliacoes_pares,
         name="avaliacoes_pares"),
 
@@ -34,7 +38,11 @@ urlpatterns = [
         views.avaliar_entregas,
         name="avaliar_entregas"),
 
-    path("avaliar_entregas/<str:selecao>",
+    path("avaliar_entregas/<str:prof_id>",
+        views.avaliar_entregas,
+        name="avaliar_entregas"),
+
+    path("avaliar_entregas/<str:prof_id>/<str:selecao>",
         views.avaliar_entregas,
         name="avaliar_entregas"),
 
@@ -81,7 +89,11 @@ urlpatterns = [
     path("bancas_index/",
         views.bancas_index,
         name="bancas_index"),
-
+    
+    path("bancas_index/<str:prof_id>",
+        views.bancas_index,
+        name="bancas_index"),
+    
     path("bancas_lista/<str:edicao>",
         views.bancas_lista,
         name="bancas_lista"),
@@ -131,6 +143,10 @@ urlpatterns = [
         name="resultado_bancas"),
 
     path("avaliar_bancas/",
+        views.avaliar_bancas,
+        name="avaliar_bancas"),
+
+    path("avaliar_bancas/<str:prof_id>",
         views.avaliar_bancas,
         name="avaliar_bancas"),
 
@@ -206,7 +222,11 @@ urlpatterns = [
         views.planos_de_orientacao_todos,
         name="planos_de_orientacao_todos"),
 
-     path("planos_de_orientacao/",
+    path("planos_de_orientacao/",
+        views.planos_de_orientacao,
+        name="planos_de_orientacao"),
+
+    path("planos_de_orientacao/<int:prof_id>",
         views.planos_de_orientacao,
         name="planos_de_orientacao"),
 

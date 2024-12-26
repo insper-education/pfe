@@ -36,7 +36,9 @@
             </td>
             {% for tipo in tipos %}
               <td class="text-center">
-                <span class="circulo">{% include "circulo_estados.html" with estado=pendencias|get_value:tipo.1 %}</span>
+                <a href="{% url tipo.1 professor.id %}">
+                  <span class="circulo">{% include "circulo_estados.html" with estado=pendencias|get_value:tipo.1 %}</span>
+                </a>
               </td>
             {% endfor %}
           </tr>

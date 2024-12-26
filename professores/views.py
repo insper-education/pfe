@@ -22,6 +22,7 @@ from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import html, timezone
+from django.core.exceptions import PermissionDenied  # Para lançar 403
 
 # from .support import professores_membros_bancas, falconi_membros_banca
 from .support import coleta_membros_banca, editar_banca
@@ -29,7 +30,7 @@ from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import converte_conceitos, arredonda_conceitos
 from .support import calcula_interseccao_bancas, move_avaliacoes
-from .support import ver_pendencias_professor
+from .support import ver_pendencias_professor, mensagem_edicao_banca
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
@@ -76,23 +77,22 @@ def pendencias_professores(request):
     configuracao = get_object_or_404(Configuracao)
     orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
     orientadores = Professor.objects.filter(id__in=orientadores_ids)
-
-    # ESTUDAR COMO FAZER
-    # membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
-    # membros_banca = set()
-    # for membros in membro_banca:
-    #     membros_banca.update(membros)
-    # membros_banca = Professor.objects.filter(id__in=membros_banca)
+    
+    membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
+    membros_banca = set()
+    for membros in membro_banca:
+        membros_banca.update(membros)
+    membros_banca = Professor.objects.filter(user__id__in=membros_banca)  
 
     professores = {}
-    for professor in orientadores:
+    for professor in orientadores | membros_banca:
         professores[professor] = ver_pendencias_professor(professor.user, configuracao.ano, configuracao.semestre)
 
     tipos = [
         ("Planos de Orientação", "planos_de_orientacao"),
         ("Relatos Quinzenais", "relatos_quinzenais"),
         ("Avaliar Entregas", "avaliar_entregas"),
-        ("Bancas", "bancas_index"),
+        ("Agendar Bancas", "bancas_index"),
         ("Avaliar Bancas", "avaliar_bancas"),
         ("Avaliações de Pares", "avaliacoes_pares"),
     ]
@@ -108,37 +108,34 @@ def pendencias_professores(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliacoes_pares(request, todos=None):
+def avaliacoes_pares(request, prof_id=None, proj_id=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-
-    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Acesso negado.", status=401)
-
     context = {"titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},}
-
-    if request.user.tipo_de_usuario == 4:  # Administrador
-        context["administracao"] = True
+    context["administracao"] = request.user.tipo_de_usuario == 4  # Administrador
 
     if request.is_ajax():
         if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if todos is not None:
-                if todos == "todos":
-                    projetos = Projeto.objects.filter(ano__gte=2023).order_by("ano", "semestre")  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
-                    if edicao != "todas":
-                        ano, semestre = map(int, edicao.split('.'))
-                        projetos = projetos.filter(ano=ano, semestre=semestre)
+            projetos = Projeto.objects.filter(ano__gte=2023)  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
+            
+            if prof_id is not None:
+                if prof_id == "todos":
+                    if request.user.tipo_de_usuario != 4:
+                        return HttpResponse("Acesso negado.", status=401)
                 else:
-                    projeto = get_object_or_404(Projeto, pk=todos)
-                    if (projeto.orientador != request.user.professor) and request.user.tipo_de_usuario != 4:  # Orientador ou Administrador
-                        return HttpResponse("Acesso negado.", status=401)    
-                    projetos = [projeto]
+                    orientador = get_object_or_404(Professor, pk=prof_id)
+                    if (orientador != request.user.professor) and request.user.tipo_de_usuario != 4:  # Orientador ou Administrador
+                        return HttpResponse("Acesso negado.", status=401)
+                    projetos = projetos.filter(orientador=orientador)
+                    if proj_id is not None:
+                        projetos = projetos.filter(id=proj_id)
             else:
-                projetos = Projeto.objects.filter(ano__gte=2023, orientador=request.user.professor).order_by("ano", "semestre")
-                if edicao != "todas":
-                    ano, semestre = map(int, edicao.split('.'))
-                    projetos = projetos.filter(ano=ano, semestre=semestre)
-            context["projetos"] = projetos
+                projetos = projetos.filter(orientador=request.user.professor)
+                
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = map(int, edicao.split('.'))
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+            context["projetos"] = projetos.order_by("ano", "semestre")
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
@@ -215,10 +212,24 @@ def mentorias_alocadas(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_index(request):
+def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
     dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
+
+    if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+        professor = get_object_or_404(Professor, pk=prof_id)
+    else:
+        professor = request.user.professor
+
+    # checando se projetos atuais tem banca marcada
+    configuracao = get_object_or_404(Configuracao)
+    hoje = datetime.date.today()
+    bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    sem_banca = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, orientador=professor)
+    for banca in bancas:
+        if banca.projeto:
+            sem_banca = sem_banca.exclude(id=banca.projeto.id)
 
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
@@ -229,6 +240,7 @@ def bancas_index(request):
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
         "usuario": request.user,
+        "sem_banca": sem_banca,
         "root_page_url": request.session["root_page_url"],  # Usando para #atualizar a página raiz no edit da banca
     }
 
@@ -315,133 +327,6 @@ def ajax_atualiza_dinamica(request):
             return HttpResponse("Formado de data inválido", status=400)
     return HttpResponse("Erro.", status=400)
 
-
-def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
-
-    error_message = None
-
-    subject = "Capstone | Banca "
-    if banca.tipo_de_banca == 0:
-        subject += "Final "
-    elif banca.tipo_de_banca == 1:
-        subject += "Intermediária "
-    elif banca.tipo_de_banca == 2:
-        subject += "Falconi "
-    elif banca.tipo_de_banca == 3:
-        subject += "Probation "
-    
-    if excluida:
-        subject += "Cancelada"
-    else:
-        subject += "Reagendada" if atualizada else "Agendada"
-
-    if banca.tipo_de_banca == 3:
-        projeto = banca.alocacao.projeto
-        subject += " - Estudante: " + banca.alocacao.aluno.user.get_full_name() + " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
-    else:
-        projeto = banca.projeto
-        subject += " - Projeto: [" + projeto.proposta.organizacao.nome + "] " + projeto.get_titulo()
-
-    if excluida:
-        mensagem = '<span style="color: red; font-weight: bold;">Banca Capstone Cancelada.</span><br><br>'
-    elif atualizada:
-        mensagem = '<span style="color: #FF5733; font-weight: bold;">Banca Capstone Reagendada.</span><br><br>'
-    else:
-        mensagem = "Banca Capstone Agendada.<br><br>"
-
-    mensagem += "Projeto: "
-    mensagem += "<a href='" + settings.SERVER + "/projetos/projeto/" + str(projeto.id) + "'>"
-    mensagem += "[" + projeto.proposta.organizacao.nome + "] " + projeto.get_titulo()
-    mensagem += "</a><br>"
-
-    if banca.tipo_de_banca == 0:
-        mensagem += "Tipo: Banca Final<br>"
-    elif banca.tipo_de_banca == 1:
-        mensagem += "Tipo: Banca Intermediária<br>"
-    elif banca.tipo_de_banca == 2:
-        mensagem += "Tipo: Banca Falconi<br>"
-    elif banca.tipo_de_banca == 3:
-        mensagem += "Tipo: Banca Probation<br>"
-
-    if banca.location:
-        mensagem += "Local: " + banca.location + "<br>"
-
-    if banca.link:
-        mensagem += "Link: " + banca.link + "<br>"
-
-    mensagem += "Data: " + banca.startDate.strftime("%d/%m/%Y das %H:%M") + " às " + banca.endDate.strftime("%H:%M") + "<br><br>"
-
-    BLOQUEAR = True
-    configuracao = get_object_or_404(Configuracao)
-    if not excluida:
-        if calcula_interseccao_bancas(banca, banca.startDate, banca.endDate):
-
-            if BLOQUEAR:
-                return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado."
-            
-            mensagem += "<span style='color: red; font-weight: bold;'>"
-            mensagem += "Mais de duas bancas agendadas para o mesmo horário!<br>"
-            mensagem += "Agendamento realizado, contudo poderá não ser possível alocar uma sala para esse horário.<br>"
-            mensagem += "</span><br>"
-
-    recipient_list = []
-
-    mensagem += "Membros da Banca:<br>"
-
-    if banca.tipo_de_banca in (0, 1):
-        # Orientador
-        if projeto.orientador:
-            mensagem += "&nbsp;&bull; " + projeto.orientador.user.get_full_name() + " [orientador] "
-            mensagem += '<a href="mailto:' + projeto.orientador.user.email + '">&lt;' + projeto.orientador.user.email + "&gt;</a><br>"
-            recipient_list.append(projeto.orientador.user.email)
-
-        # coorientadores
-        for coorientador in projeto.coorientador_set.all():
-            mensagem += "&nbsp;&bull; " + coorientador.usuario.get_full_name() + " [coorientador] "
-            mensagem += '<a href="mailto:' + coorientador.usuario.email + '">&lt;' + coorientador.usuario.email + "&gt;</a><br>"
-            recipient_list.append(coorientador.usuario.email)
-
-    # membros
-    for membro in banca.membros():
-        mensagem += "&nbsp;&bull; " + membro.get_full_name() + " [membro da banca] "
-        mensagem += '<a href="mailto:' + membro.email + '">&lt;' + membro.email + "&gt;</a><br>"
-        recipient_list.append(membro.email)
-    mensagem += "<br>"
-
-    if banca.tipo_de_banca == 3:  # Probation
-        # Estudante em Probation
-        mensagem += "Estudante:<br>"
-        mensagem += " - " + banca.alocacao.aluno.user.get_full_name()
-        mensagem += "<br>"
-        recipient_list.append(banca.alocacao.aluno.user.email)
-    else: 
-        mensagem += "Grupo de Estudantes:<br>"
-        # estudantes
-        for alocacao in projeto.alocacao_set.all():
-            mensagem += "&nbsp;&bull; " + alocacao.aluno.user.get_full_name()
-            mensagem += " [" + str(alocacao.aluno.curso2) + "] "
-            mensagem += '<a href="mailto:' + alocacao.aluno.user.email + '">&lt;' + alocacao.aluno.user.email + "&gt;</a><br>"
-            recipient_list.append(alocacao.aluno.user.email)
-        mensagem += "<br>"
-
-    # Adiciona coordenacao e operacaos
-    configuracao = get_object_or_404(Configuracao)
-    if configuracao.coordenacao:
-        recipient_list.append(str(configuracao.coordenacao.user.email))
-    if configuracao.operacao:
-        recipient_list.append(str(configuracao.operacao.email))
-
-    if enviar:
-        try:
-            check = email(subject, recipient_list, mensagem)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-        except Exception as e:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-            logger.error(error_message)
-    
-    return error_message
     
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -676,8 +561,6 @@ def bancas_editar(request, primarykey=None):
     projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
     alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
     professores, falconis = coleta_membros_banca()
-    # professores, _ = professores_membros_bancas()
-    # falconis, _ = falconi_membros_banca()
 
     configuracao = get_object_or_404(Configuracao)
     if configuracao.semestre == 1:
@@ -2079,21 +1962,25 @@ def resultado_bancas(request, pk):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliar_bancas(request):
+def avaliar_bancas(request, prof_id=None):
     """Visualiza os resultados das bancas de um projeto."""
 
     if request.is_ajax():
 
         if "edicao" in request.POST:
+
+            if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+                professor = get_object_or_404(Professor, pk=prof_id)
+            else:
+                professor = request.user.professor
             
-            bancas = (Banca.objects.filter(membro1=request.user) |
-                      Banca.objects.filter(membro2=request.user) |
-                      Banca.objects.filter(membro3=request.user))
-            
-            if request.user.professor:
-                #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
-                bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
-            
+            bancas = (Banca.objects.filter(membro1=professor.user) |
+                      Banca.objects.filter(membro2=professor.user) |
+                      Banca.objects.filter(membro3=professor.user))
+
+            #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
+            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+        
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
@@ -2555,7 +2442,7 @@ def coorientadores_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliar_entregas(request, selecao=None):
+def avaliar_entregas(request, prof_id=None, selecao=None):
     """Página para fzer e ver avaliação de entregas dos estudantes."""
 
     if selecao == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
@@ -2564,22 +2451,26 @@ def avaliar_entregas(request, selecao=None):
     if request.is_ajax():
 
         projetos = Projeto.objects.all().order_by("ano", "semestre")
-        
+        if prof_id is not None:
+            if prof_id == "todos":
+                if request.user.tipo_de_usuario != 4:
+                    raise PermissionDenied("Sem acesso a estes projetos.")
+            else:
+                professor = get_object_or_404(Professor, pk=prof_id)
+                if (professor != request.user.professor) and (request.user.tipo_de_usuario != 4):
+                    raise PermissionDenied("Sem acesso a estes projetos.")
+                projetos = projetos.filter(orientador=professor)
+                if selecao:
+                    projetos = projetos.filter(id=selecao)
+        else:
+            projetos = projetos.filter(orientador=request.user.professor)
+
         edicao = None
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-
-        if selecao:
-            if selecao != "todos":
-                try:
-                    projetos = projetos.filter(id=selecao)
-                except:
-                    return HttpResponse("Erro ao buscar projeto.", status=401)
-                edicao = "nenhuma"
-
         else:
             projetos = projetos.filter(orientador=request.user.professor)
             
@@ -2621,7 +2512,7 @@ def avaliar_entregas(request, selecao=None):
 def relatos_quinzenais(request, todos=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
-    if todos == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+    if todos is not None and request.user.tipo_de_usuario != 4:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
     if request.is_ajax():
@@ -2629,7 +2520,12 @@ def relatos_quinzenais(request, todos=None):
         if "edicao" in request.POST:
 
             projetos = Projeto.objects.all().order_by("ano", "semestre")
-            if todos != "todos":
+            if todos == "todos":
+                pass
+            elif todos is not None:
+                professor = get_object_or_404(Professor, pk=todos)
+                projetos = projetos.filter(orientador=professor)
+            else:
                 projetos = projetos.filter(orientador=request.user.professor)
 
             edicao = request.POST["edicao"]
@@ -3175,12 +3071,18 @@ def ver_pares_projeto(request, projeto_id, momento):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def planos_de_orientacao(request):
+def planos_de_orientacao(request, prof_id=None):
     """Mostra os planos de orientação do professor."""
+    if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+        professor = get_object_or_404(Professor, pk=prof_id)
+    else:
+        professor = request.user.professor
+
     context = {
         "titulo": {"pt": "Planos de Orientação", "en": "Advising Plans"},
-        "projetos": Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre"),
+        "projetos": Projeto.objects.filter(orientador=professor).order_by("-ano", "-semestre"),
         "template": Documento.objects.filter(tipo_documento__sigla="TPO").last(),  # Template de Plano de Orientação
+        "professor": professor,
     }
     return render(request, "professores/planos_de_orientacao.html", context=context)
 

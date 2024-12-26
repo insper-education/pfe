@@ -9,19 +9,28 @@
   {% load static %}
   {% include "heads_calendar.html" %}
   {% include "cores_bancas_mentorias.html" %}
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 {% endblock %}
 
 {% block content %}
 
+  <span class="esconder">
+    <a href="{% url 'bancas_criar'%}"
+    class="open-modal" style="cursor:pointer;"
+    data-url="{% url 'bancas_criar' %}">
+      <i class="fas fa-plus"></i>
+      <span lang="pt">Cadastrar Nova Banca</span>
+      <span lang="en" style="display: none;">Register New Examination Board</span>
+    </a>
+  </span>
+  <br><br>
+
   <div id="atualizar">
     {% include "calendario_bancas.html" %}
+    <br>
+    {% include "sem_banca.html" %}
   </div>
-
-  <br>
-  <small><button class="btn btn-light btn-sm esconder open-modal" data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}" type="button" style="float: right;">
-    <span lang="pt">Cadastrar Nova Banca</span>
-    <span lang="en" style="display: none;">Register New Examination Board</span>
-  </button></small><br>
 
   <script>
     function carrega_site(){

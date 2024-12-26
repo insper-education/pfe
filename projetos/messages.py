@@ -8,6 +8,7 @@ Data: 18 de Outubro de 2019
 
 from celery import shared_task
 from datetime import datetime, timedelta
+import logging
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -21,13 +22,15 @@ from .models import AreaDeInteresse
 
 from administracao.models import Carta
 
+logger = logging.getLogger("django")  # Para marcar mensagens de log
 
-def render_message(template, context):
+def render_message(template, context, urlize=True):
     """Recebe o nome da Carta a renderizar como texto."""
     carta = get_object_or_404(Carta, template=template)
     t = Template(carta.texto)
     message = t.render(Context(context))
-    message = html.urlize(message) # Faz links de e-mail e outros links funcionarem
+    if urlize:
+        message = html.urlize(message) # Faz links de e-mail e outros links funcionarem
     return message
 
 def htmlizar(text):
@@ -52,19 +55,24 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
     # Removing "\\r\\n' from header 'Subject' to avoid breaking the email
     subject = subject.replace('\r', '').replace('\n', '')
     
-    if delay_seconds == 0:
-        # Envia e-mail imediatamente
-        send_mail_task.delay(subject, message, email_from, recipient_list,
-                             fail_silently=True, auth_user=auth_user, html_message=message)
-    else:
-        # Agenda tarefa para enviar e-mail com possibilidade de atraso
-        send_mail_task.apply_async(
-            args=[subject, message, email_from, recipient_list],
-            kwargs={"fail_silently": True, "auth_user": auth_user, "html_message": message},
-            countdown=delay_seconds
-        )
+    try:
+        if delay_seconds == 0:
+            # Envia e-mail imediatamente
+            send_mail_task.delay(subject, message, email_from, recipient_list,
+                                fail_silently=True, auth_user=auth_user, html_message=message)
+        else:
+            # Agenda tarefa para enviar e-mail com possibilidade de atraso
+            send_mail_task.apply_async(
+                args=[subject, message, email_from, recipient_list],
+                kwargs={"fail_silently": True, "auth_user": auth_user, "html_message": message},
+                countdown=delay_seconds
+            )
 
-    return 1  # Solução temporária para manter compatibilidade
+    except Exception as e:
+        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
+        logger.error(error_message)
+
+
 
 def create_message(estudante, ano, semestre):
     """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""

@@ -3,12 +3,15 @@
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 24 de Abril de 2024
 {% endcomment %}
-{% if estado == 'r' %}
-  <span style="padding-right: 2px;" data-toggle="tooltip" data-html="true" animation="true" title="você está atrasado para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128308;</span>
-{% elif estado == 'y' %}
-  <span style="padding-right: 2px;" data-toggle="tooltip" data-html="true" animation="true" title="você está no prazo para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128993;</span>
-{% elif estado == 'g' %}
-  <span style="padding-right: 2px;" data-toggle="tooltip" data-html="true" animation="true" title="você está em dia com esse ponto">&#128994;</span>
-{% else %}
-  <span style="padding-right: 2px;">&#9899;</span>
-{% endif %}
+
+<span style="padding-right: 2px;" data-toggle="tooltip" data-html="true" animation="true" title=
+  {% if estado == 'r' %}
+    "atrasado para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128308;
+  {% elif estado == 'y' %}
+    "no prazo para concluir esse ponto{% if prazo %} ({{prazo}}){% endif %}">&#128993;
+  {% elif estado == 'g' %}
+    "em dia com esse ponto">&#128994;
+  {% else %}
+    "">&#9899;
+  {% endif %}
+</span>

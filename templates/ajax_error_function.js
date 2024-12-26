@@ -5,16 +5,13 @@
 {% endcomment %}
 
 error: function(request, status, error) {
-  {% comment %} {% if user.tipo_de_usuario == 4 and debug %}  {% endcomment %}
-  {% if user.tipo_de_usuario == 4 %} 
-    if(request.responseText){
-      alert(request.responseText);
-      jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+  if(request.responseText) {
+    {% if user.tipo_de_usuario == 4 %} 
       console.log("error"+request.responseText);
-    } else {
-      jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-    }
-  {% else %}
+      //alert(request.responseText);
+    {% endif %}
+    jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+  } else {
     jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-  {% endif %}
+  }
 }

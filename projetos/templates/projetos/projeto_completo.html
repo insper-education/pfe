@@ -604,14 +604,14 @@
 
       <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
        data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
-       href="{% url 'avaliar_entregas' projeto.id %}">
+       href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}">
         <span lang="pt">Avaliar Entregas</span>
         <span lang="en" style="display: none;">Evaluate Deliveries</span>
       </a>
 
       <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
        data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
-       href="{% url 'avaliacoes_pares' projeto.id %}">
+       href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}">
         <span lang="pt">Avaliação de Pares</span>
         <span lang="en" style="display: none;">Peer Evaluation</span>
       </a>

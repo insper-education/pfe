@@ -301,72 +301,13 @@
 
     <h4 lang="pt">Calendário</h4><h4 lang="en">Calendar</h4>
     {% include "calendario_bancas.html" %}
-
+    <br>
+    
     <div class="sem_agendamento">
       {% if sem_banca %}
-        <br>
         <h5 lang="pt">Projetos ativos sem bancas agendadas:</h5>
         <h5 lang="en">Active projects without scheduled examination boards:</h5>
-
-        <table id="SemBancasTable" class="table table-borderless table-sm arredondado"><tbody>
-          {% for projeto in sem_banca %}
-
-            <tr class="item">
-              <td>
-                <div class="agendamento">
-                  <div>
-                    <b lang="pt">Projeto:</b>
-                    <b lang="en">Project:</b>
-                    {% if projeto.organizacao %}
-                      [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
-                    {% endif %}
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-                      {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                        {{projeto.titulo_final}}</a><br>
-                        <small>&nbsp;&nbsp;
-                          <span lang="pt">Título original da proposta:</span>
-                          <span lang="en">Original title of the proposal:</span>
-                          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}</a>
-                        </small>
-                      {% else %}
-                        {{projeto.get_titulo}}</a>
-                      {% endif %}
-                    {% include "tipo_projeto.html" %}
-                    <br>
-                  
-                    <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-                    <b lang="en">Advisor:</b>
-
-                    {% if projeto.orientador %}
-                      <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
-                        {{projeto.orientador.user.get_full_name}}:
-                      </a>
-                    {% endif %}
-                    <br>
-                
-                    <b lang="pt">Mensagem:</b>
-                    <b lang="en">Message:</b>
-                    <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
-                      data-url="{% url 'mensagem_email' 'banca_projeto' projeto.pk %}" href="{% url 'mensagem_email' 'banca_projeto' projeto.pk %}"> 
-                      avaliadores
-                    </a>
-                  </div>
-  
-                  <div class="editar esconder">
-                    <a class="open-modal"
-                      data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}">
-                      <button class="btn btn-primary mb-1"
-                      {% if user.tipo_de_usuario != 4 and user != projeto.orientador.user %}disabled{% endif %}
-                      >
-                        <span lang="pt">Criar</span>
-                        <span lang="en">Create</span>
-                      </button>
-                    </a>
-                  </div>
-                </div>
-          
-          {% endfor %}
-        </tbody></table>
+        {% include "sem_banca.html" %}
       {% endif %}
     </div>
 
