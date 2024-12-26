@@ -99,60 +99,42 @@ def avisos_do_dia():
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_coordenacoes)
-                logger.error(error_message)
-
+            email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            
         if aviso.operacional:
             email_operacional = []
             email_operacional.append(str(configuracao.operacao.email))
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + email_operacional)
-                logger.error(error_message)                
+            email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
                 
         if aviso.comite_pfe:
             comite = PFEUser.objects.filter(membro_comite=True)
             lista_comite = [obj.email for obj in comite]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_comite)
-                logger.error(error_message)
+            email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
                 
         if aviso.todos_alunos:
             estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
             lista_estudantes = [obj.user.email for obj in estudantes]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_estudantes)
-                logger.error(error_message)
+            email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
 
         if aviso.todos_orientadores:
             orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
             lista_orientadores = [obj.user.email for obj in orientadores]
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            check = email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list + lista_orientadores)
-                logger.error(error_message)
-
+            email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
+            
         if aviso.contatos_nas_organizacoes:
             recipient_list += []
             context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
-            # check = email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
-            # if check != 1:
-            #     error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + htmlizar(mensagem_final) + ", recipient_list=" + str(recipient_list)
-            #     logger.error(error_message)
-                
+            # email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
+    
 
 def eventos_do_dia():
     # Checa eventos do calendário e envia e-mail para coordenador(es)
@@ -202,10 +184,8 @@ def eventos_do_dia():
                     # documento (não implementado)
                     message += "<br>\n<br>\n<br>\n"
 
-                    check = email(subject, recipient_list, message)
-                    if check != 1:
-                        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                        logger.error(error_message)
+                    email(subject, recipient_list, message)
+
 
 @shared_task
 def envia_aviso():

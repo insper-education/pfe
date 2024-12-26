@@ -264,22 +264,10 @@ def encontros_marcar(request):
             # coordenadoção
             recipient_list.append(str(configuracao.coordenacao.user.email))
 
-            error_message = ""
             message = message_agendamento(agendado, cancelado)
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
-
+            email(subject, recipient_list, message)
             horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
-            mensagem = ""
-            if error_message:
-                mensagem += "Erro ao enviar e-mail de confirmação de agendamento. Contudo agendamento foi salvo no servidor<br>"
-            mensagem += "Dinâmica agendada: " + horario
+            mensagem = "Dinâmica agendada: " + horario
 
             context = {
                 "area_principal": True,
@@ -327,25 +315,12 @@ def encontros_cancelar(request, evento_id):
     recipient_list.append(str(configuracao.coordenacao.user.email))
 
     message = message_cancelamento(encontro)
-    error_message = ""
-    try:
-        check = email(subject, recipient_list, message)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
-    except Exception as e:
-        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-        logger.error(error_message)
-
+    email(subject, recipient_list, message)
     encontro.projeto = None
     encontro.save()
 
     horario = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
-    
-    mensagem = ""
-    if error_message:
-        mensagem += "Erro ao enviar e-mail de confirmação de cancelamento. Contudo cancelamento foi registrado no servidor<br>"
-    mensagem += "Mentoria/Dinâmica cancelada: " + horario
+    mensagem = "Mentoria/Dinâmica cancelada: " + horario
     
     context = {
         "area_principal": True,
@@ -389,15 +364,7 @@ def estilo_comunicacao(request):
 
             subject = "Capstone | Estilo de Comunicação"
             recipient_list = [request.user.email, ]
-            check = email(subject, recipient_list, mensagem_resposta)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem_resposta + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-                mensagem = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
-            else:
-                logger.info("E-mail enviado para " + request.user.email + " com sucesso.")
-
-
+            email(subject, recipient_list, mensagem_resposta)
             mensagem += mensagem_resposta
 
         else:
@@ -592,14 +559,7 @@ def avaliacao_pares(request, momento):
                     message += "Acesse o sistema para visualizar as avaliações.<br>"
                     message += "<a href='https://pfe.insper.edu.br/professores/avaliacoes_pares/'>https://pfe.insper.edu.br/professores/avaliacoes_pares/</a><br><br>"
                     
-                    try:
-                        check = email(subject, recipient_list, message)
-                        if check != 1:
-                            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                            logger.error(error_message)
-                    except Exception as e:
-                        error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                        logger.error(error_message)
+                    email(subject, recipient_list, message)
 
             return render(request, "users/atualizado.html",)
         
@@ -956,11 +916,7 @@ def selecao_propostas(request):
 
                 subject = "Capstone | Propostas Selecionadas: " + aluno.user.username
                 recipient_list = [aluno.user.email, ]
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-                    message = "Erro no envio de e-mail, contacte:lpsoares@insper.edu.br"
+                email(subject, recipient_list, message)
 
                 context = {
                     "message": message,

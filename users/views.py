@@ -925,11 +925,7 @@ def envia_contas_senhas(request):
             # Enviando e-mail com mensagem para usuário.
             subject = "Capstone | Conta: " + estudante.user.get_full_name()
             recipient_list = [estudante.user.email, ]
-            check = email(subject, recipient_list, message_email)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message_email + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
+            email(subject, recipient_list, message_email)
 
         context = {
             "area_principal": True,

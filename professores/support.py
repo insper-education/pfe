@@ -756,8 +756,6 @@ def ver_pendencias_professor(user, ano, semestre):
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
-    error_message = None
-
     subject = "Capstone | Banca - "
     subject += banca.composicao.exame.titulo + " "
     if excluida:
@@ -812,13 +810,4 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
 
     if enviar:
-        try:
-            check = email(subject, recipient_list, mensagem)
-            if check != 1:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-        except Exception as e:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + mensagem + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-            logger.error(error_message)
-    
-    return error_message
+        email(subject, recipient_list, mensagem)

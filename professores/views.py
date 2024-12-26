@@ -427,10 +427,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         recipient_list = para.split(';')
         recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
 
-        check = email(assunto, recipient_list, mensagem)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
+        email(assunto, recipient_list, mensagem)
 
         context = {
                 "atualizado": True,
@@ -1506,20 +1503,10 @@ def banca_avaliar(request, slug, documento_id=None):
                 subject += banca.alocacao.aluno.user.get_full_name()
             subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
 
-            # Se não houver erro a mensagem deve permanecer vazia
-            error_message = ""
-
             # Envio de mensagem para Avaliador
             message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
             recipient_list = [avaliador.email, ]
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
+            email(subject, recipient_list, message)
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
@@ -1528,22 +1515,11 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [projeto.orientador.user.email, ]
             else: # banca.tipo_de_banca == 2 or banca.tipo_de_banca == 3:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
+            email(subject, recipient_list, message)
             
-            resposta = ""
-            if error_message:
-                resposta += "Erro ao enviar e-mail de confirmação de avaliação de banca. Contudo avaliação foi salva no servidor<br>"
-            else:                
-                resposta += "Avaliação submetida e enviada para:<br>"
-                for recipient in recipient_list:
-                    resposta += "&bull; {0}<br>".format(recipient)
+            resposta = "Avaliação submetida e enviada para:<br>"
+            for recipient in recipient_list:
+                resposta += "&bull; {0}<br>".format(recipient)
             if realizada:
                 resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
             resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
@@ -1765,8 +1741,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
         envia = "envia" in request.POST
         if envia:
-
-            error_message = ""
             subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
             
             message = mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observacoes, objetivos_possiveis)
@@ -1780,15 +1754,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 for alocacao in alocacoes:
                     recipient_list.append(alocacao.aluno.user.email)
 
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
-
+            email(subject, recipient_list, message)
             resposta += "<br>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos<br>"
         
         if request.user.professor:
@@ -1890,26 +1856,11 @@ def informe_bancas(request, tipo):
     if request.method == "POST":
 
         for banca in bancas:
-
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca, geral=True)
             subject = "Capstone | Resultado Geral da Avaliação de Banca: {0}".format(banca.projeto)
-
             recipient_list = [banca.projeto.orientador.user.email, ]
-            try:
-                check = email(subject, recipient_list, message)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-                    message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-                    context = {"mensagem": message,}
-                    return render(request, "generic.html", context=context)
-            except Exception as e:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list) + ", error=" + str(e)
-                logger.error(error_message)
-                message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-                context = {"mensagem": message,}
-                return render(request, "generic.html", context=context)
+            email(subject, recipient_list, message)
 
         resposta = "Informe enviado para:<br>"
 

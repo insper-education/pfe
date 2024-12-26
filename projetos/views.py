@@ -660,12 +660,8 @@ def reembolso_pedir(request):
             if projeto.orientador:  # mandar para o orientador se houver
                 recipient_list.append(projeto.orientador.user.email)
         message = message_reembolso(usuario, projeto, reembolso, cpf)
-        check = email(subject, recipient_list, message)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
-            message = "Algum problema de conexão, contacte: lpsoares@insper.edu.br"
-            
+        email(subject, recipient_list, message)
+    
         return HttpResponse(message)
 
     bancos = Banco.objects.all().order_by(Lower("nome"), "codigo")

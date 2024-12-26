@@ -496,25 +496,7 @@ def ajax_proposta_pergunta(request, primarykey=None):
             if proposta.autorizado:
                 recipient_list.append(str(proposta.autorizado.email))
 
-            try:
-                check = email(subject, recipient_list, mensagem)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                    codigo = 400
-                else:
-                    mensagem = "<br><br>Enviado mensagem com senha para: "
-                    mensagem += request.user.get_full_name() + " " +\
-                            "&lt;" + request.user.email + "&gt;<br>\n"
-                    codigo = 200
-            except:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                codigo = 400
-
-
+            email(subject, recipient_list, mensagem)
             data = {
                 "atualizado": True,
                 "data_hora": pergunta_resposta.data_pergunta.strftime("%d/%m/%Y %H:%M"),
@@ -562,29 +544,8 @@ def ajax_proposta_resposta(request, primarykey=None):
                 str(configuracao.coordenacao.user.email)
                 ]
 
-            try:
-                check = email(subject, recipient_list, mensagem)
-                if check != 1:
-                    error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-                    logger.error(error_message)
-                    mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                    codigo = 400
-                else:
-                    mensagem = "<br><br>Enviado mensagem com senha para: "
-                    mensagem += request.user.get_full_name() + " " +\
-                            "&lt;" + request.user.email + "&gt;<br>\n"
-                    codigo = 200
-            except:
-                error_message = "Problema no envio de e-mail, subject=" + subject + ", message_email=" + mensagem + ", recipient_list=" + str(recipient_list)
-                logger.error(error_message)
-                mensagem = "Erro de conexão, contacte:lpsoares@insper.edu.br"
-                codigo = 400
-
-
-            data = {
-                "atualizado": True,
-                }
-            return JsonResponse(data)
+            email(subject, recipient_list, mensagem)
+            return JsonResponse({"atualizado": True,})
     
     return HttpResponse("Erro não identificado.", status=401)
 

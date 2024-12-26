@@ -320,11 +320,7 @@ def envia_proposta(proposta, request, enviar=True):
         configuracao = get_object_or_404(Configuracao)
         recipient_list.append(str(configuracao.coordenacao.user.email))
 
-        check = email(subject, recipient_list, message)
-        if check != 1:
-            error_message = "Problema no envio de e-mail, subject=" + subject + ", message=" + message + ", recipient_list=" + str(recipient_list)
-            logger.error(error_message)
-            message = "<b>Algum problema de conexão, contacte: lpsoares@insper.edu.br</b>"
+        email(subject, recipient_list, message)
 
     return message
 
