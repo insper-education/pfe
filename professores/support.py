@@ -285,21 +285,15 @@ def recupera_avaliadores_bancas(sigla, ano, semestre):
     """Recupera listas de todos os membros das bancas especificadas."""
     pessoas = []
     bancas = []
-
     bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
-    for pessoa in PFEUser.objects.all():
-
-        bancas_m = bancas_f.filter(membro1=pessoa) | bancas_f.filter(membro2=pessoa) | bancas_f.filter(membro3=pessoa)
+    for banca in bancas_f:
+        for membro in banca.membros():
+            if membro:
+                pessoas.append(membro)
+                bancas.append(banca)
         if sigla in ["BI", "BF"]:  # Em bancas intermediárias e finais, orientadores também são membros
-            bancas_o = bancas_f.filter(projeto__orientador__user=pessoa)
-        else:
-            bancas_o = bancas_f.none()
-        bancas_t = bancas_m | bancas_o
-
-        if bancas_t.exists():
-            pessoas.append(pessoa)
-            bancas.append(bancas_t)
-
+            pessoas.append(banca.projeto.orientador.user)
+            bancas.append(banca)
     return zip(pessoas, bancas)
 
 

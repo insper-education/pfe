@@ -38,7 +38,7 @@
             <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
         {% else %}
           {% if documento.documento %}
-            <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.get_tipo_de_certificado_display}}</a>
+            <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>
           {% endif %}
           {% if documento.link %}
             <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>

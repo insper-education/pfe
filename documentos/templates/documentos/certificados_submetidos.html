@@ -44,9 +44,9 @@
 
   {% include "edicoes.html" %}
 
-  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
+  <div class="row align-items-start mb-1" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3 form-inline">
+      <div class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterEdicao" onClick="carrega_pagina()"><span class="to_hide">
               <span lang="pt">Tipos</span>
@@ -123,22 +123,22 @@
 
           {% for certificado in certificados %}
 
-            {% if certificado.tipo_de_certificado < 100 %}
+            {% if certificado.tipo_certificado.grupo_cert == "E" %}
               <tr class="estudantes certificado">
-            {% elif certificado.tipo_de_certificado == 101 %}
+            {% elif certificado.tipo_certificado.grupo_cert == "O" %}
               <tr class="orientador certificado">
-            {% elif certificado.tipo_de_certificado == 102 %}
+            {% elif certificado.tipo_certificado.grupo_cert == "C" %}
               <tr class="coorientador certificado">
-            {% elif certificado.tipo_de_certificado == 103 or certificado.tipo_de_certificado == 104 or certificado.tipo_de_certificado == 105 or certificado.tipo_de_certificado == 108 %}
+            {% elif certificado.tipo_certificado.grupo_cert == "B" %}
               <tr class="banca certificado">
-            {% elif certificado.tipo_de_certificado == 106 %}
+            {% elif certificado.tipo_certificado.grupo_cert == "MP" %}
               <tr class="mentoria_profissional certificado">
-            {% elif certificado.tipo_de_certificado == 107 %}
+            {% elif certificado.tipo_certificado.grupo_cert == "MT" %}
               <tr class="mentoria_tecnica certificado">
             {% endif %}
-            
+
             <td>
-              <b style="font-weight: bold; font-size: 1.2em;">{{certificado.get_certificado}}</b><br>
+              <b style="font-weight: bold; font-size: 1.2em;">{{certificado.tipo_certificado}}</b><br>
               <b>Nome:</b>
               {% if certificado.usuario %}
                 {% if certificado.usuario.tipo_de_usuario == 1 %}

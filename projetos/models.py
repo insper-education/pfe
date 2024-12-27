@@ -24,14 +24,20 @@ from django.utils.encoding import force_text
 from django.shortcuts import get_object_or_404
 
 from .support import get_upload_path
+from .tipos import TIPO_EVENTO, TIPO_DE_CERTIFICADO
+
+from academica.models import Exame
+
+from administracao.models import TipoCertificado
+
+from documentos.models import TipoDocumento
 
 from estudantes.models import Relato, Pares
+
 from operacional.models import Curso
-from academica.models import Exame
+
 import users.models
 
-from .tipos import TIPO_EVENTO, TIPO_DE_CERTIFICADO
-from documentos.models import TipoDocumento
 
 #from professores.support import converte_conceitos
 def converte_conceitos(nota):
@@ -178,7 +184,8 @@ class Projeto(models.Model):
 
     def certificado_orientador(self):
         """Retorna link do certificado."""
-        certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_de_certificado=101)
+        tipo_certificado = get_object_or_404(TipoCertificado, nome="Orientação de Projeto")
+        certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
         return certificado
 
     def __str__(self):
@@ -1639,7 +1646,8 @@ class Coorientador(models.Model):
 
     def certificado_coorientador(self):
         """Se o coorientador pode emitir certificado."""
-        certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_de_certificado=102)  # (102, "Coorientação de Projeto"),
+        tipo_certificado = get_object_or_404(TipoCertificado, nome="Coorientação de Projeto")
+        certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_certificado=tipo_certificado)
         return certificado
 
     class Meta:
@@ -2122,14 +2130,6 @@ class Certificado(models.Model):
     documento = models.FileField("Documento", upload_to=get_upload_path, null=True, blank=True,
                                  help_text="Documento Digital")
 
-    # Usar get_tipo_de_certificado_display
-    def get_certificado(self):
-        """Retorna em string o nome do certificado."""
-        for entry in TIPO_DE_CERTIFICADO:
-            if self.tipo_de_certificado == entry[0]:
-                return entry[1]
-        return None
-
     @classmethod
     def create(cls):
         """Cria um objeto (entrada) em Certificado."""
@@ -2150,13 +2150,13 @@ class Certificado(models.Model):
     def get_banca(self):
         """Retorna banca relacionada ao certificado."""
         if self.projeto:
-            if self.tipo_de_certificado == 103:  # (103, "Membro de Banca Intermediária"),
+            if self.tipo_certificado.titulo == "Membro de Banca Intermediária": 
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=1).last()  # (1, "Intermediária"),
-            if self.tipo_de_certificado == 104:  # (104, "Membro de Banca Final"),
+            if self.tipo_certificado.titulo == "Membro de Banca Final":
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=0).last()  # (0, "Final"),
-            if self.tipo_de_certificado == 105:  # (105, "Membro da Banca Falconi"),
+            if self.tipo_certificado.titulo == "Membro da Banca Falconi":
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=2).last()  # (2, "Certificação Falconi"),
-            if self.tipo_de_certificado == 108:  # (108, "Membro de Banca de Probation"),
+            if self.tipo_certificado.titulo == "Membro de Banca de Probation":
                 return Banca.objects.filter(projeto=self.projeto, tipo_de_banca=3).last()  # (3, "Probation"),
         return None
     

@@ -18,6 +18,8 @@ from django.db.models.functions import Coalesce
 
 from django.shortcuts import render, redirect, get_object_or_404
 
+from administracao.models import TipoCertificado
+
 from projetos.support import get_upload_path, simple_upload
 
 from projetos.models import Aviso, Certificado, Evento, Configuracao
@@ -263,8 +265,10 @@ def carregar_certificado(request):
             else:
                 certificado.data = datetime.date.today()
 
+            # TROCAR O NUMERO POR UM TEXTO
             tipo = request.POST.get("tipo", None)
-            certificado.tipo_de_certificado = int(tipo) if tipo else None
+            tipocertificado = get_object_or_404(TipoCertificado, tmpID=tipo) if tipo else None
+            certificado.tipo_certificado = tipocertificado
 
             certificado.observacao = request.POST.get("observacao", None)
 
@@ -279,7 +283,7 @@ def carregar_certificado(request):
             mensagem += "<br><b>Usuário</b>: " + str(certificado.usuario)
             mensagem += "<br><b>Projeto</b>: " + str(certificado.projeto)
             mensagem += "<br><b>Data</b>: " + str(certificado.data)
-            mensagem += "<br><b>Tipo</b>: " + str(certificado.tipo_de_certificado)
+            mensagem += "<br><b>Tipo</b>: " + str(certificado.tipo_certificado.titulo)
             if certificado.observacao:
                 mensagem += "<br><b>Observação</b>: " + str(certificado.observacao)
             

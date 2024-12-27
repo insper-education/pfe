@@ -497,7 +497,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         if certificado.usuario:
             para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
 
-        subject = "Capstone | Certificado: " + certificado.get_tipo_de_certificado_display()
+        subject = "Capstone | Certificado: " + certificado.tipo_certificado.titulo
         
         context_carta = {
             "request": request,

@@ -27,7 +27,7 @@ from .support import render_from_text_to_pdf_file
 
 from academica.models import Exame, ExibeNota
 
-from administracao.models import Carta, TipoCertificado
+from administracao.models import TipoCertificado
 
 from documentos.models import TipoDocumento
 
@@ -162,7 +162,7 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
 
         filename = full_path + "certificado" + subtitulo + ".pdf"
 
-        pdf = render_from_text_to_pdf_file(tipo.template, context, filename)
+        pdf = render_from_text_to_pdf_file(tipo.template.texto, context, filename)
 
         if (not pdf) or pdf.err:
             return HttpResponse("Erro ao gerar certificados.", status=401)
@@ -181,10 +181,19 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
+    tipos_certificados = {}
+    for tipo in TipoCertificado.objects.all():
+        if tipo.grupo_cert:
+            if tipo.grupo_cert in tipos_certificados:
+                tipos_certificados[tipo.grupo_cert].append(tipo.titulo)
+            else:
+                tipos_certificados[tipo.grupo_cert] = [tipo.titulo]
+
     context = {
         "titulo": {"pt": "Seleção de Geração de Certificados", "en": "Certificate Generation Selection"},
         "edicoes": get_edicoes(Projeto)[0],
         "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
+        "tipos_certificados": tipos_certificados,
         }
     return render(request, "documentos/selecao_geracao_certificados.html", context)
 
@@ -212,7 +221,7 @@ def gerar_certificados(request):
 
     tipos = []
     qcertificados = 0
-    if "orientador" in request.POST:
+    if "O" in request.POST:
         tipo = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
         tipos.append("O")
         projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
@@ -221,14 +230,14 @@ def gerar_certificados(request):
                 certificado = atualiza_certificado(projeto.orientador.user, projeto, tipo)
                 qcertificados += 1 if certificado else 0
 
-    if "coorientador" in request.POST:
+    if "C" in request.POST:
         tipo = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
         tipos.append("C")
         for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
             certificado = atualiza_certificado(coorientador.usuario, coorientador.projeto, tipo)
             qcertificados += 1 if certificado else 0
 
-    if "banca" in request.POST:
+    if "B" in request.POST:
         tipos.append("B")
         banca_types = [
             ("BI", get_object_or_404(TipoCertificado, titulo="Membro de Banca Intermediária")),
@@ -238,25 +247,26 @@ def gerar_certificados(request):
         ]
         for sigla, tipo in banca_types:
             membro_banca = recupera_avaliadores_bancas(sigla, ano, semestre)
-            for membro in membro_banca:
-                for banca in membro[1]:
-                    certificado = atualiza_certificado(membro[0], banca.get_projeto(), tipo, contexto={"banca": banca}, alocacao=banca.alocacao)
-                    qcertificados += 1 if certificado else 0
+            for membro, banca in membro_banca:
+                certificado = atualiza_certificado(membro, banca.get_projeto(), tipo, contexto={"banca": banca}, alocacao=banca.alocacao)
+                qcertificados += 1 if certificado else 0
 
-    if "mentoria_profissional" in request.POST:
+    if "MP" in request.POST:
         tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Profissional")
         tipos.append("MP")
         for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
             certificado = atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
             qcertificados += 1 if certificado else 0
 
-    if "mentoria_tecnica" in request.POST:
+    if "MT" in request.POST:
         tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Técnica")
         tipos.append("MT")
         for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
             certificado = atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), tipo)
             qcertificados += 1 if certificado else 0
 
+    if not tipos:
+        return HttpResponse("Nenhum tipo de certificado selecionado.", status=401)
     return redirect("certificados_submetidos", edicao=request.POST["edicao"], tipos=",".join(tipos), gerados=qcertificados)
 
 

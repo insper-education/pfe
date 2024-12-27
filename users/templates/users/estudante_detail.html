@@ -146,7 +146,7 @@
       <ul>
         {% for certificado in certificados %}
           <li>
-            {{certificado.get_certificado}}
+            {{certificado.tipo_certificado}}
             {% if certificado.data %}
                 em {{certificado.data|date:"DATE_FORMAT"}}
             {% endif %}

@@ -6,31 +6,33 @@
 {% endcomment %}
 
 {% block head %}
+  <style>
+    .lab {
+      margin-left: 8px;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
-  <br>
-
-  <span lang="pt">Selecione a data e os tipos de certificados a serem gerados:</span>
-  <span lang="en">Select the date and the types of certificates to be generated:</span>
   
-  <br>
-
   <form method="post" action="{% url 'gerar_certificados' %}" enctype="multipart/form-data"> {% csrf_token %}
 
-    {% comment %} Seletor da edição da pesquisa {% endcomment %}
     {% include "edicoes.html" %}
-    <br>
-
-    {% comment %} <label><input id="estudantes" name="estudantes" type="checkbox" checked /> Estudantes</label>&nbsp;&nbsp;&nbsp; {% endcomment %}
-    <label><input id="orientador" name="orientador" type="checkbox" checked /> Orientadores</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="coorientador" name="coorientador" type="checkbox" checked /> Coorientadores</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="banca" name="banca" type="checkbox" checked /> Bancas</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="mentoria_tecnica" name="mentoria_tecnica" type="checkbox" checked /> Mentorias Técnicas</label>&nbsp;&nbsp;&nbsp;
-    <label><input id="mentoria_profissional" name="mentoria_profissional" type="checkbox" checked /> Mentorias Profissionais (antiga Mentoria Falconi)</label>&nbsp;&nbsp;&nbsp;
+    <span lang="pt">Gera os certificados dos tipos e datas especificadas.</span>
+    <span lang="en">Generates certificates of the specified types and dates.</span>
     <br><br>
 
-    {% comment %} <input class="btn btn-primary" type="submit" value="Gerar"> {% endcomment %}
+    {% for tipo, items in tipos_certificados.items %}
+      <label class="lab"><input id="{{ tipo }}" name="{{ tipo }}" type="checkbox" checked />
+        {% for item in items %}
+          {{ item }}
+          {% if not forloop.last %} / {% endif %}
+        {% endfor %}
+      </label><br>
+    {% endfor %}
+    <br><br>
+
     <button class="btn btn-primary mb-1 mt-2" type="submit">
       <span lang="pt">Gerar Certificados</span>
       <span lang="en">Generate Certificates</span>

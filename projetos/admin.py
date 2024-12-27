@@ -418,9 +418,9 @@ class RecomendadaAdmin(admin.ModelAdmin):
 class CertificadoAdmin(admin.ModelAdmin):
     """Certificados emitidos."""
 
-    list_display = ("data", "usuario", "projeto", "tipo_de_certificado", )
+    list_display = ("data", "usuario", "projeto", "tipo_certificado", )
     ordering = ("data",)
-    list_filter = ("tipo_de_certificado", "data", "projeto__ano", "projeto__semestre",)
+    list_filter = ("tipo_certificado", "data", "projeto__ano", "projeto__semestre",)
     search_fields = ["usuario__username", "projeto__organizacao__sigla",
                      "projeto__titulo_final", "projeto__proposta__titulo",]
 
