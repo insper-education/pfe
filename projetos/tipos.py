@@ -69,6 +69,7 @@ TIPO_EVENTO = (
 )
 
 
+# NAO USAR MAIS E USAR O TIPO DE DADOS tipo_certificado
 TIPO_DE_CERTIFICADO = (
     (0, "Não definido"),
     (1, "Estudante destaque"),

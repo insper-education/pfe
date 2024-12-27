@@ -2097,7 +2097,6 @@ class Observacao_Velha(models.Model):
         verbose_name_plural = "Observações Velhas"
         
 
-
 class Certificado(models.Model):
     """Certificados."""
 
@@ -2110,7 +2109,12 @@ class Certificado(models.Model):
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="data do certificado")
 
+    # REMOVEU-SE O TIPO DE CERTIFICADO, USAR TIPO DE CERTIFICADO vvvv
     tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
+    # REMOVERT ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
+
+    tipo_certificado = models.ForeignKey("administracao.TipoCertificado", null=True, blank=True, on_delete=models.SET_NULL,
+                                         help_text="Tipo de certificado")
 
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text="qualquer observação relevante")

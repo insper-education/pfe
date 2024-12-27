@@ -1,0 +1,81 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Dezembro de 2024
+{% endcomment %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<head>  
+  <style>
+    @page {
+      size: a4 portrait;
+      margin: 5.0cm  1.3cm  1.3cm  1.5cm;
+      background-image: url("{{papel_timbrado}}");
+    }
+  </style>
+
+  <style>
+    .titulo_certificado { 
+      font-family: Verdana;
+      font-weight: bold;
+      font-size: 24px;
+      text-align: center;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
+    }
+
+    .corpo_certificado { 
+      font-family: Verdana;
+      font-size: 17px;
+      text-align: left;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
+    }
+
+    .data_certificado { 
+      font-family: Verdana;
+      font-size: 17px;
+      text-align: right;
+      display:block;
+      margin-left: 1.3cm;
+      margin-right: 1.3cm;
+    }
+
+    .signature {
+      width: 250px;
+      border-bottom: 2px solid #000;
+    }
+
+  </style>
+
+  {% block head %}
+  {% endblock %}
+
+</head>
+
+<body>
+
+  {% block content %}{% endblock %}
+
+  <span class="data_certificado">
+    São Paulo,
+    {% now "j \d\e F \d\e Y" %}.
+    <br><br>
+  </span>
+
+  <span class="corpo_certificado">
+    <br><br>
+    Atenciosamente,<br><br>
+    <img class="signature" src="{{configuracao.coordenacao.assinatura.url|slice:'1:'}}">
+    <br>
+    {{configuracao.coordenacao.nome_para_certificados}}<br>
+    <small>Coordenador do Capstone do Insper</small><br>
+  </span>
+
+</body>
+</html>

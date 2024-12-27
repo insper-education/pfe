@@ -22,6 +22,17 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
+#from .support import render_pdf_file
+from .support import render_from_text_to_pdf_file
+
+from academica.models import Exame, ExibeNota
+
+from administracao.models import Carta, TipoCertificado
+
+from documentos.models import TipoDocumento
+
+from operacional.models import Curso
+
 from professores.support import recupera_avaliadores_bancas
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
@@ -29,12 +40,6 @@ from projetos.support import get_upload_path
 
 from users.support import get_edicoes
 
-from operacional.models import Curso
-
-from .support import render_pdf_file
-
-from documentos.models import TipoDocumento
-from academica.models import Exame, ExibeNota
 
 #@login_required
 def index_documentos(request):
@@ -127,71 +132,42 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     return render(request, "documentos/certificados_submetidos.html", context)
 
 
-def atualiza_certificado(usuario, projeto, tipo_cert, arquivo, banca=None, alocacao=None):
+def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
     """Atualiza os certificados."""
     configuracao = get_object_or_404(Configuracao)
 
     certificado, _ = \
-        Certificado.objects.get_or_create(usuario=usuario,
-                                          projeto=projeto,
-                                          tipo_de_certificado=tipo_cert,
-                                          alocacao=alocacao)
-
-    tipo_documento = TipoDocumento.objects.get(sigla="PT")
-    papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
-
-    context = {
-        "projeto": projeto,
-        "configuracao": configuracao,
-        "papel_timbrado": papel_timbrado.documento.url[1:],
-    }
+        Certificado.objects.get_or_create(usuario=usuario, projeto=projeto, tipo_certificado=tipo, alocacao=alocacao)
 
     if projeto and not certificado.documento:
-        if tipo_cert == 101:
-            tipo = "_orientacao"
-        elif tipo_cert == 102:
-            context["usuario"] = usuario
-            tipo = "_coorientacao"
-        elif tipo_cert == 103:
-            context["usuario"] = usuario
-            context["banca"] = banca
-            tipo = "_banca_intermediaria"
-        elif tipo_cert == 104:
-            context["usuario"] = usuario
-            context["banca"] = banca
-            tipo = "_banca_final"
-        elif tipo_cert == 105:
-            context["usuario"] = usuario
-            context["banca"] = banca
-            tipo = "_banca_falconi"
-        elif tipo_cert == 106:
-            context["usuario"] = usuario
-            context["dinamica"] = banca
-            tipo = "_mentoria_profissional"
-        elif tipo_cert == 107:
-            context["usuario"] = usuario
-            context["count_projetos"] = banca
-            tipo = "_mentoria_tecnica"
-        elif tipo_cert == 108:
-            context["usuario"] = usuario
-            context["banca"] = banca
-            tipo = "_banca_probation"
-        else:
-            tipo = ""
+
+        tipo_documento = TipoDocumento.objects.get(sigla="PT")
+        papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
+
+        context = {
+            "usuario": usuario,
+            "projeto": projeto,
+            "configuracao": configuracao,
+            "papel_timbrado": papel_timbrado.documento.url[1:],
+        }
+        if contexto:
+            context.update(contexto)
+
+        subtitulo = tipo.subtitulo if tipo.subtitulo else ""
 
         path = get_upload_path(certificado, "")
 
         full_path = settings.MEDIA_ROOT + "/" + path
         os.makedirs(full_path, mode=0o777, exist_ok=True)
 
-        filename = full_path + "certificado" + tipo + ".pdf"
+        filename = full_path + "certificado" + subtitulo + ".pdf"
 
-        pdf = render_pdf_file(arquivo, context, filename)
+        pdf = render_from_text_to_pdf_file(tipo.template, context, filename)
 
         if (not pdf) or pdf.err:
             return HttpResponse("Erro ao gerar certificados.", status=401)
 
-        certificado.documento = path + "certificado" + tipo + ".pdf"
+        certificado.documento = path + "certificado" + subtitulo + ".pdf"
         certificado.save()
 
         return certificado
@@ -220,11 +196,10 @@ def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
 
-    if not configuracao.coordenacao or\
-       not configuracao.coordenacao.assinatura or\
+    # Verifica se arquivo com assinatura e papel timbrado estão disponíveis
+    if not configuracao.coordenacao or not configuracao.coordenacao.assinatura or\
        not os.path.exists(settings.MEDIA_ROOT+"/"+str(configuracao.coordenacao.assinatura)):
         return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
-    
     tipo_documento = TipoDocumento.objects.get(sigla="PT")  # Papel Timbrado
     papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
     if not papel_timbrado or\
@@ -238,49 +213,48 @@ def gerar_certificados(request):
     tipos = []
     qcertificados = 0
     if "orientador" in request.POST:
-        arquivo = "documentos/certificado_orientador.html"  # (101, "Orientação de Projeto")
+        tipo = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
         tipos.append("O")
         projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
         for projeto in projetos:
             if projeto.orientador:
-                certificado = atualiza_certificado(projeto.orientador.user, projeto, 101, arquivo)
+                certificado = atualiza_certificado(projeto.orientador.user, projeto, tipo)
                 qcertificados += 1 if certificado else 0
 
     if "coorientador" in request.POST:
-        arquivo = "documentos/certificado_coorientador.html"  # (102, "Coorientação de Projeto")
+        tipo = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
         tipos.append("C")
         for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
-            certificado = atualiza_certificado(coorientador.usuario, coorientador.projeto, 102, arquivo)
+            certificado = atualiza_certificado(coorientador.usuario, coorientador.projeto, tipo)
             qcertificados += 1 if certificado else 0
 
     if "banca" in request.POST:
         tipos.append("B")
         banca_types = [
-            ("BI", 103, "documentos/certificado_banca_intermediaria.html"),
-            ("BF", 104, "documentos/certificado_banca_final.html"),
-            ("P", 108, "documentos/certificado_banca_probation.html"),
-            ("F", 105, "documentos/certificado_banca_falconi.html")
+            ("BI", get_object_or_404(TipoCertificado, titulo="Membro de Banca Intermediária")),
+            ("BF", get_object_or_404(TipoCertificado, titulo="Membro de Banca Final")),
+            ("P", get_object_or_404(TipoCertificado, titulo="Membro de Banca de Probation")),
+            ("F", get_object_or_404(TipoCertificado, titulo="Membro da Banca Falconi"))
         ]
-        for sigla, tipo_id, arquivo in banca_types:
+        for sigla, tipo in banca_types:
             membro_banca = recupera_avaliadores_bancas(sigla, ano, semestre)
             for membro in membro_banca:
                 for banca in membro[1]:
-                    certificado = atualiza_certificado(membro[0], banca.get_projeto(), tipo_id, arquivo, banca=banca, alocacao=banca.alocacao)
+                    certificado = atualiza_certificado(membro[0], banca.get_projeto(), tipo, contexto={"banca": banca}, alocacao=banca.alocacao)
                     qcertificados += 1 if certificado else 0
 
     if "mentoria_profissional" in request.POST:
-        arquivo = "documentos/certificado_mentoria.html"  # (106, "Mentoria de Grupo"),  # mentor Profissional (antiga Mentoria Falconi)
+        tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Profissional")
         tipos.append("MP")
         for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
-            certificado = atualiza_certificado(encontro.facilitador, encontro.get_projeto(), 106, arquivo, banca=encontro)
+            certificado = atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
             qcertificados += 1 if certificado else 0
 
     if "mentoria_tecnica" in request.POST:
-        arquivo = "documentos/certificado_mentoria_tecnica.html"  # (107, "Mentoria Técnica"),  # mentor da empresa
+        tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Técnica")
         tipos.append("MT")
         for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
-            print(conexao.parceiro.user, conexao.get_projeto())
-            certificado = atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), 107, arquivo, banca=banca)
+            certificado = atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), tipo)
             qcertificados += 1 if certificado else 0
 
     return redirect("certificados_submetidos", edicao=request.POST["edicao"], tipos=",".join(tipos), gerados=qcertificados)

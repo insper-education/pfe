@@ -50,31 +50,77 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-from projetos.models import Banca
-from academica.models import Composicao
 
+from administracao.models import TipoCertificado
+from projetos.tipos import TIPO_DE_CERTIFICADO
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    # message = "Feito"
+    message = "Feito"
 
-    # bancas = Banca.objects.all()
-    # for banca in bancas:
-    #     if banca.tipo_de_banca == 0:  # Banca Final
-    #         composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    #     elif banca.tipo_de_banca == 1:  # Banca Intermediária
-    #         composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    #     elif banca.tipo_de_banca == 2:  # Banca Falconi
-    #         composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    #     elif banca.tipo_de_banca == 3: # Banca Probation
-    #         composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    #     else:
-    #         return HttpResponse("Tipo de Banca não reconhecido")
+    for tipo in TIPO_DE_CERTIFICADO:
+        obj, _ = TipoCertificado.objects.get_or_create(tmpID=tipo[0], titulo=tipo[1])
+        
+        if tipo[0] == 1:
+            tipo = "_estudante_destaque"
+            template = None
+            grupo_cert = "E"
+        elif tipo[0] == 2:
+            tipo = "_equipe_destaque"
+            template = None
+            grupo_cert = "E"
+        elif tipo[0] == 11:
+            tipo = "_estudantes_destaque_falconi"
+            template = None
+            grupo_cert = "E"
+        elif tipo[0] == 12:
+            tipo = "_estudantes_excelencia_falconi"
+            template = None
+            grupo_cert = "E"
+        if tipo[0] == 101:
+            tipo = "_orientacao"
+            template = get_object_or_404(Carta, template="Certificado Orientador") # 101
+            grupo_cert = "O"
+        elif tipo[0] == 102:
+            tipo = "_coorientacao"
+            template = get_object_or_404(Carta, template="Certificado Coorientador")  # (102, "Coorientação de Projeto")
+            grupo_cert = "C"
+        elif tipo[0] == 103:
+            tipo = "_banca_intermediaria"
+            template = get_object_or_404(Carta, template="Certificado Banca Intermediária"),
+            grupo_cert = "B"
+        elif tipo[0] == 104:
+            tipo = "_banca_final"
+            template = get_object_or_404(Carta, template="Certificado Banca Final")
+            grupo_cert = "B"
+        elif tipo[0] == 105:
+            tipo = "_banca_falconi"
+            template = get_object_or_404(Carta, template="Certificado Banca Falconi")
+            grupo_cert = "B"
+        elif tipo[0] == 106:
+            tipo = "_mentoria_profissional"
+            template = get_object_or_404(Carta, template="Certificado Mentoria Profissional")
+            grupo_cert = "MP"
+        elif tipo[0] == 107:
+            tipo = "_mentoria_tecnica"
+            template = get_object_or_404(Carta, template="Certificado Mentoria Técnica")
+            grupo_cert = "MT"
+        elif tipo[0] == 108:
+            tipo = "_banca_probation"
+            template = get_object_or_404(Carta, template="Certificado Banca Probatória")
+            grupo_cert = "B"
+        else:
+            tipo = ""
+            template = None
+            grupo_cert = ""
+        
+        obj.subtitulo = tipo
+        obj.template = template
+        obj.grupo_cert = grupo_cert
 
-    #     banca.composicao = composicao
-    #     banca.save()
+        obj.save()
 
     return HttpResponse(message)

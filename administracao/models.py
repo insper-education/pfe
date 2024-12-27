@@ -35,3 +35,32 @@ class Carta(models.Model):
     def __str__(self):
         """Retorno padrão textual."""
         return self.template
+
+
+class TipoCertificado(models.Model):
+    """Tipos de certificados."""
+    
+    titulo = models.CharField("Título", max_length=48, null=True, blank=True,
+                              help_text="Título do tipo de certificado")
+
+    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+                                help_text="Descrição do tipo de certificado")
+    
+    tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
+                                            help_text="ID temporário para migração de dados de certificados")
+
+    grupo_cert = models.CharField("Grupo de Certificado", max_length=4, null=True, blank=True,
+                                  help_text="Grupo de certificado")
+    
+    subtitulo = models.CharField("Subtítulo", max_length=48, null=True, blank=True,
+                                 help_text="Subtítulo do tipo de certificado, para o nome dos arquivos")
+    
+    template = models.ForeignKey("administracao.Carta", null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text="Template de certificado")
+
+    def __str__(self):
+        return self.titulo
+
+    class Meta:
+        verbose_name = "Tipo de Certificado"
+        verbose_name_plural = "Tipos de Certificados"
