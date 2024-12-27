@@ -53,6 +53,7 @@ def custom_400(request, exception):
 
 from administracao.models import TipoCertificado
 from projetos.tipos import TIPO_DE_CERTIFICADO
+from projetos.models import Certificado
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -90,7 +91,7 @@ def migracao(request):
             grupo_cert = "C"
         elif tipo[0] == 103:
             tipo = "_banca_intermediaria"
-            template = get_object_or_404(Carta, template="Certificado Banca Intermediária"),
+            template = get_object_or_404(Carta, template="Certificado Banca Intermediária")
             grupo_cert = "B"
         elif tipo[0] == 104:
             tipo = "_banca_final"
@@ -122,5 +123,11 @@ def migracao(request):
         obj.grupo_cert = grupo_cert
 
         obj.save()
+
+
+    for certificado in Certificado.objects.all():   
+        tipo = TipoCertificado.objects.get(tmpID=certificado.tipo_de_certificado)
+        certificado.tipo_certificado = tipo
+        certificado.save()
 
     return HttpResponse(message)
