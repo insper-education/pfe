@@ -267,7 +267,7 @@ def carregar_certificado(request):
 
             # TROCAR O NUMERO POR UM TEXTO
             tipo = request.POST.get("tipo", None)
-            tipocertificado = get_object_or_404(TipoCertificado, tmpID=tipo) if tipo else None
+            tipocertificado = get_object_or_404(TipoCertificado, id=tipo) if tipo else None
             certificado.tipo_certificado = tipocertificado
 
             certificado.observacao = request.POST.get("observacao", None)
@@ -305,16 +305,17 @@ def carregar_certificado(request):
 
         return render(request, "generic.html", context=context)
 
-    #projetos = Projeto.objects.all().order_by("-ano", "-semestre", "titulo_final", "proposta__titulo")
     projetos = Projeto.objects.annotate(
         titulo=Coalesce("titulo_final", "proposta__titulo")
     ).order_by("-ano", "-semestre", "titulo")
 
     usuarios = PFEUser.objects.all()
 
+    tipos_certificados = TipoCertificado.objects.all()
+
     context = {
         "titulo": {"pt": "Carregar Certificado", "en": "Load Certificate"},
-        "TIPO_DE_CERTIFICADO": Certificado.TIPO_DE_CERTIFICADO,
+        "tipos_certificados": tipos_certificados,
         "projetos": projetos,
         "usuarios": usuarios,
     }

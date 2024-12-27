@@ -46,8 +46,10 @@ class TipoCertificado(models.Model):
     descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
                                 help_text="Descrição do tipo de certificado")
     
+    # REMOVER, após migração de dados
     tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
                                             help_text="ID temporário para migração de dados de certificados")
+    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 
     grupo_cert = models.CharField("Grupo de Certificado", max_length=4, null=True, blank=True,
                                   help_text="Grupo de certificado")

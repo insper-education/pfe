@@ -76,10 +76,10 @@
       data-live-search="true" data-width="560px" required>
           <option disabled selected value> -- selecione tipo de certificado -- </option>
           {% comment %} <optgroup label="Semestre Capstone"> {% endcomment %}
-          {% for tipo in TIPO_DE_CERTIFICADO %}
+          {% for tipo in tipos_certificados %}
             {% if tipo %}
-              <option value="{{tipo.0}}" {% if tipo.0 == alocacao.aluno.id %}selected{% endif %}>
-              {{tipo.1}}
+              <option value="{{tipo.id}}">
+              {{tipo.titulo}}
             </option>  
             {% endif %}
           {% endfor %}
