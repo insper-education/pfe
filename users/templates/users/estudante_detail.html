@@ -234,7 +234,7 @@
             </span><br>
             <ul>
             {% for banca in alocado.get_bancas %}
-              <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.get_tipo_de_banca_display}}</a></li>
+              <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.composicao.exame}}</a></li>
             {% endfor %}
             </ul>
             <br>

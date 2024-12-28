@@ -16,7 +16,7 @@
   <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
     <span lang="pt">Banca</span>
     <span lang="en" style="display: none;">Examining Board</span>
-    {{banca.get_tipo_de_banca_display}} ({{banca.startDate|date:"d/m/y"}})
+    {{banca.composicao.exame}} ({{banca.startDate|date:"d/m/y"}})
     </a>
     <br><small style="font-size: 11px;">★ 
       <span lang="pt">Formulário:</span>
@@ -93,7 +93,7 @@
       <b>
         <span lang="pt">Média das Avaliações da Banca</span>
         <span lang="en" style="display: none;">Average of the Examining Board</span>
-        {{banca.get_tipo_de_banca_display}}:
+        {{banca.composicao.exame}}:
         <ul id="banca{{banca.id}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
       </b>
       <span id="banca{{banca.id}}"></span>

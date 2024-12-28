@@ -899,14 +899,6 @@ class Evento(models.Model):
         """Retorna os documentos do evento."""
         return [self.documento, self.documento2]
     
-    # @staticmethod
-    # def get_evento(evento_id, ano, semestre):
-    #     if semestre == 1:
-    #         eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__lt=7)
-    #     else:
-    #         eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__gt=6)
-    #     return eventos.order_by("endDate", "startDate").last()
-
     @staticmethod
     def get_evento_sigla(sigla, ano, semestre):
         if semestre == 1:
@@ -961,8 +953,8 @@ class Banca(models.Model):
 
     def __str__(self):
         """Retorno padrão textual."""
-        texto = "Banca " + self.get_tipo_de_banca_display() + ": "
-        if self.tipo_de_banca == 3:
+        texto = "Banca " + self.composicao.exame + ": "
+        if self.alocacao:
             texto += "(" + self.alocacao.aluno.user.get_full_name() + ") "
         texto +=  "[" + self.get_projeto().organizacao.sigla + "] " + self.get_projeto().get_titulo()
         return texto
@@ -1003,7 +995,7 @@ class Banca(models.Model):
 
     def get_tipo(self):
         """Retorna o tipo da banca."""
-        return self.get_tipo_de_banca_display()
+        return self.composicao.exame
     
     @property
     def periodo(self):
@@ -1044,7 +1036,7 @@ class Banca(models.Model):
         now = datetime.datetime.now()
         checa_banca = True
 
-        # (13, "Evento de encerramento", "#FF4500"),
+        # Evento de encerramento
         if self.alocacao is None:  # Não é banca de probation
             if self.projeto.semestre == 1:
                 evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()

@@ -53,7 +53,7 @@
     {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
     {% for banca in bancas %}
       <tr class="item" data-user="{{banca.get_tipo_de_banca_display}}">
-        <td>{{banca.get_tipo_de_banca_display}}</td>
+        <td>{{banca.composicao.exame}}</td>
         {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
         <td><span class="data_full">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
             <span class="data_short">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
