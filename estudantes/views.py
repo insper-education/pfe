@@ -44,6 +44,65 @@ from users.support import configuracao_estudante_vencida, configuracao_pares_ven
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
+
+def check_alocacao_semanal(user, ano, semestre, PRAZO):
+    # Verifica se todas as bancas do semestre foram avaliadas
+    context = {}
+    alocacao_semanal = 'b'
+    alocacao_semanal__prazo = None
+    alocacao = Alocacao.objects.filter(aluno=user.aluno, projeto__ano=ano, projeto__semestre=semestre).last()
+    if alocacao:
+        if len(alocacao.horarios) >= 11*8:
+            alocacao_semanal = 'g'
+        else:
+            evento = Evento.get_evento_sigla("IA", ano, semestre)  # Início das aulas
+            if evento:
+                alocacao_semanal__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+4))
+                if datetime.date.today() < evento.endDate + datetime.timedelta(days=4):
+                    alocacao_semanal = 'b'
+                elif datetime.date.today() > alocacao_semanal__prazo:
+                    alocacao_semanal = 'r'
+                else:
+                    alocacao_semanal = 'y'
+    context["alocacao_semanal"] = (alocacao_semanal, alocacao_semanal__prazo)
+    return context
+
+
+def check_relato_quinzenal(user, ano, semestre, PRAZO):
+    # Verifica se o relato quinzenal foi submetido
+    configuracao = get_object_or_404(Configuracao)
+    context = {}
+    relato_quinzenal = 'b'
+    relato_quinzenal__prazo = None
+    alocacao = Alocacao.objects.filter(aluno=user.aluno, projeto__ano=ano, projeto__semestre=semestre).last()
+    if alocacao:
+        hoje = datetime.date.today()
+        tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
+        prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
+
+        if prazo and prazo.endDate - hoje <= datetime.timedelta(days=configuracao.periodo_relato):
+            relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
+            prazo_anterior = relato_anterior.endDate if relato_anterior else None
+            relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).exists() if prazo_anterior else False
+
+            if relato:
+                relato_quinzenal = 'g'
+            else:
+                relato_quinzenal__prazo = prazo.endDate
+                relato_quinzenal = 'r' if prazo.endDate == hoje else 'y'
+
+    context["relato_quinzenal"] = (relato_quinzenal, relato_quinzenal__prazo)
+    return context
+
+def ver_pendencias_estudante(user, ano, semestre):
+    #PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
+    PRAZO = 7
+    context = {}
+    if user.tipo_de_usuario in [1,2,4]:  # Estudante, Professor ou Administrador
+        context.update(check_alocacao_semanal(user, ano, semestre, PRAZO))
+        context.update(check_relato_quinzenal(user, ano, semestre, PRAZO))
+    return context
+
 @login_required
 def index_estudantes(request):
     """Mostra página principal do usuário estudante."""
@@ -108,6 +167,9 @@ def index_estudantes(request):
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_evento=tenevento).last().startDate
     context["titulo"] = {"pt": "Área dos Estudantes", "en": "Students Area"}
 
+    context_pend = ver_pendencias_estudante(request.user, configuracao.ano, configuracao.semestre)
+    context.update(context_pend)
+
     if "/estudantes/estudantes" in request.path:
         return render(request, "estudantes/estudantes.html", context=context)
     else:
@@ -159,7 +221,6 @@ def alocacao_hora(request):
     """Ajax para definir horarios dos estudantes."""
     if request.user.tipo_de_usuario == 1:
         configuracao = get_object_or_404(Configuracao)
-        #alocacao = Alocacao.objects.filter(aluno=request.user.aluno).last()
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         horarios = json.loads(request.POST.get("horarios", None))
         alocacao.horarios = horarios

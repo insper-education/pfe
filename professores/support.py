@@ -372,21 +372,21 @@ def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     context = {}
     tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
     feito = all(Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists() for projeto in projetos)
-
+    planos_de_orientacao__prazo = None
     planos_de_orientacao = 'b'
     if feito:
         planos_de_orientacao = 'g'
     else:
-        evento = Evento.get_evento(10, ano, semestre)  # (10, "Início das aulas", "#FF1010"),
+        evento = Evento.get_evento_sigla("IA", ano, semestre)  # Início das aulas
         if evento:
-            context["planos_de_orientacao__prazo"] = evento.endDate + datetime.timedelta(days=(PRAZO+5))
+            planos_de_orientacao__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+5))
             if datetime.date.today() < evento.endDate:
                 planos_de_orientacao = 'b'
-            elif datetime.date.today() > context["planos_de_orientacao__prazo"]:
+            elif datetime.date.today() > planos_de_orientacao__prazo:
                 planos_de_orientacao = 'r'
             else:
                 planos_de_orientacao = 'y'
-    context["planos_de_orientacao"] = planos_de_orientacao
+    context["planos_de_orientacao"] = (planos_de_orientacao, planos_de_orientacao__prazo)
     return context
 
 
@@ -406,7 +406,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                         relatos_quinzenais = 'y'
                 elif relatos_quinzenais not in ['r', 'y']:
                     relatos_quinzenais = 'g'
-    context["relatos_quinzenais"] = relatos_quinzenais
+    context["relatos_quinzenais"] = (relatos_quinzenais, None)
     return context
 
 
@@ -460,7 +460,7 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
                                             else:
                                                 if avaliar_entregas != 'r':
                                                     avaliar_entregas = 'y'  # Avaliação pendente!
-    context["avaliar_entregas"] = avaliar_entregas
+    context["avaliar_entregas"] = (avaliar_entregas, None)
     return context
 
 
@@ -468,12 +468,12 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
     context = {}
     bancas_index = 'b'
-    tipos_de_banca = [("BI", 14), ("BF", 15)]  # (sigla, evento_id)
+    tipos_de_banca = [("BI", "BI"), ("BF", "BF")]  # (sigla banca, sigla evento)
 
     for projeto in projetos:
-        for sigla, evento_id in tipos_de_banca:
-            banca_exists = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla).exists()
-            evento = Evento.get_evento(evento_id, ano, semestre)
+        for sigla_b, sigla_e in tipos_de_banca:
+            banca_exists = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla_b).exists()
+            evento = Evento.get_evento_sigla(sigla_e, ano, semestre)
             if evento:
                 days_diff = (datetime.date.today() - evento.startDate).days
                 if days_diff > -16:
@@ -485,7 +485,7 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
                         elif bancas_index != 'r':
                             bancas_index = 'y'
 
-    context["bancas_index"] = bancas_index
+    context["bancas_index"] = (bancas_index, None)
     return context
 
 
@@ -493,7 +493,7 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
     context = {}
     avaliacoes_pares = 'b'
-    evento = Evento.get_evento(31, ano, semestre)  # (31, "Avaliação de Pares Intermediária", "#FFC0CB"),
+    evento = Evento.get_evento_sigla("API", ano, semestre)  # "Avaliação de Pares Intermediária"
     if evento and (datetime.date.today() - evento.startDate).days > 0:
         feito = True
         for projeto in projetos:
@@ -507,7 +507,7 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
                 avaliacoes_pares = 'r'
             elif avaliacoes_pares != 'r':
                 avaliacoes_pares = 'y'
-    evento = Evento.get_evento(32, ano, semestre)  #(32, "Avaliação de Pares Final", "#FFC0DB"),
+    evento = Evento.get_evento_sigla("APF", ano, semestre)  #"Avaliação de Pares Final"
     if evento and (datetime.date.today() - evento.startDate).days > 0:
         feito = True
         for projeto in projetos:
@@ -521,7 +521,7 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
                 avaliacoes_pares = 'r'
             elif avaliacoes_pares != 'r':
                 avaliacoes_pares = 'y'
-    context["avaliacoes_pares"] = avaliacoes_pares
+    context["avaliacoes_pares"] = (avaliacoes_pares, None)
     return context
 
 
@@ -568,7 +568,7 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
             else:
                 avaliar_bancas = 'y'         
 
-    context["avaliar_bancas"] = avaliar_bancas
+    context["avaliar_bancas"] = (avaliar_bancas, None)
     return context
 
 

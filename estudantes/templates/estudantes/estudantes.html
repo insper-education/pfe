@@ -53,8 +53,8 @@
 <br>
 
 <h5>
-  <span lang="pt">Projeto</span>
-  <span lang="en" style="display: none;">Project</span>
+  <span lang="pt">Informações Gerais</span>
+  <span lang="en" style="display: none;">General Information</span>
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a
@@ -73,17 +73,31 @@
     {% endif %}
   >Meu Projeto</a>
 </div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'alocacao_semanal' %}">
+<div class="item_lista"><span class="circulo">&#9899;</span>
+  <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
+    <span lang="pt">Informações das Bancas</span>
+    <span lang="en" style="display: none;">Information of the Examination Boards</span>
+  </a>
+</div>
+<br>
+
+<h5>
+  <span lang="pt">Entregas/Tarefas</span>
+  <span lang="en" style="display: none;">Deliverables/Tasks</span>
+</h5>
+
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=alocacao_semanal %}</span> <a href="{% url 'alocacao_semanal' %}">
   <span lang="pt">Alocação Semanal</span>
   <span lang="en" style="display: none;">Weekly Allocation</span>
 </a></div>
-{% comment %} <li><a href="{% url 'alinhamentos_gerais' %}">Alinhamentos Gerais</a></li> {% endcomment %}
-<div class="item_lista"><span class="circulo">&#9899;</span>
+
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relato_quinzenal %}</span>
   <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
     <span lang="pt">Relato Quinzenal</span>
     <span lang="en" style="display: none;">Biweekly Report</span>
   </a>
 </div>
+
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% comment %} Submissão de Documentos {% endcomment %}
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -102,18 +116,13 @@
 </div>
 
 <div class="item_lista"><span class="circulo">&#9899;</span>
-  <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
-    <span lang="pt">Informações das Bancas</span>
-    <span lang="en" style="display: none;">Information of the Examination Boards</span>
-  </a>
-</div>
-<div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')"
           {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
     <span lang="pt">Agendar Mentorias</span>
     <span lang="en" style="display: none;">Schedule Mentoring</span>
   </a>
 </div>
+
 <div class="item_lista"><span class="circulo">&#9899;</span>
   <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
       {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
@@ -130,6 +139,12 @@
         <span lang="en" style="display: none;">Final Peer Evaluation</span>
   </a>
 </div>
+<div class="item_lista"><span class="circulo">&#9899;</span>
+  <a href="{% url 'estilo_comunicacao' %}">
+    <span lang="pt">Estilos de Comunicação</span>
+    <span lang="en" style="display: none;">Communication Styles</span>
+  </a>
+</div>
 <br>
 
 <h5>
@@ -144,16 +159,7 @@
 </div>
 <br>
 
-<h5>
-  <span lang="pt">Outros</span>
-  <span lang="en" style="display: none;">Others</span>
-</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  <a href="{% url 'estilo_comunicacao' %}">
-    <span lang="pt">Estilos de Comunicação</span>
-    <span lang="en" style="display: none;">Communication Styles</span>
-  </a>
-</div>
+
 
 {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}
 <div class="mensagem" id="projeto">

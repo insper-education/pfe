@@ -307,7 +307,7 @@
 
         // Ajax para salvar a alocação
         $.ajax({
-          url: "{% url "alocacao_hora" %}",
+          url: "{% url 'alocacao_hora' %}",
           type: "POST",
           data: { 
             horarios : JSON.stringify(horarios),

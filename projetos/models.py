@@ -899,12 +899,20 @@ class Evento(models.Model):
         """Retorna os documentos do evento."""
         return [self.documento, self.documento2]
     
+    # @staticmethod
+    # def get_evento(evento_id, ano, semestre):
+    #     if semestre == 1:
+    #         eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__lt=7)
+    #     else:
+    #         eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__gt=6)
+    #     return eventos.order_by("endDate", "startDate").last()
+
     @staticmethod
-    def get_evento(evento_id, ano, semestre):
+    def get_evento_sigla(sigla, ano, semestre):
         if semestre == 1:
-            eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__lt=7)
+            eventos = Evento.objects.filter(tipo_evento__sigla=sigla, endDate__year=ano, endDate__month__lt=7)
         else:
-            eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__gt=6)
+            eventos = Evento.objects.filter(tipo_evento__sigla=sigla, endDate__year=ano, endDate__month__gt=6)
         return eventos.order_by("endDate", "startDate").last()
 
     class Meta:
