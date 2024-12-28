@@ -41,7 +41,8 @@
             responsavel: {% if evento.responsavel %}{{ evento.responsavel.id }}{% else %}0{% endif %},
             material: {% if evento.documento %}{{ evento.documento.id }}{% else %}0{% endif %},
             material2: {% if evento.documento2 %}{{ evento.documento2.id }}{% else %}0{% endif %},
-            type: "{{ evento.tipo_evento.id }}",
+            type: "{{ evento.tipo_evento.id }}",  // ID do evento
+            sigla: "{{evento.tipo_evento.sigla}}",
             startDate: new Date({{ evento.startDate.year }}, {{ evento.startDate.month|add:-1 }}, {{ evento.startDate.day }}),
             endDate: new Date({{ evento.endDate.year }}, {{ evento.endDate.month|add:-1 }}, {{ evento.endDate.day }}),
             color: "{{ evento.get_color }}",
@@ -63,7 +64,8 @@
               responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
               material: {% if evento.documento %}{{evento.documento.id}}{% else %}0{% endif %},
               material2: {% if evento.documento2 %}{{evento.documento2.id}}{% else %}0{% endif %},
-              type: "{{evento.tipo_evento.id}}",
+              type: "{{evento.tipo_evento.id}}",  // ID do evento
+              sigla: "{{evento.tipo_evento.sigla}}",
               startDate: new Date({{evento.startDate.year}},{{evento.startDate.month|add:-1}},{{evento.startDate.day}}),
               endDate: new Date({{evento.endDate.year}},{{evento.endDate.month|add:-1}},{{evento.endDate.day}}),
               color: "{{evento.get_color}}",
@@ -94,12 +96,12 @@
           let laboratorio = false;
 
           event.forEach(e => {
-            if (e.type == 40) {
+            if (e.sigla == "L") {
               laboratorio = e.color;
-            } else if (e.type == 41) {
+            } else if (e.sigla == "SP") {
               semana_provas = e.color;
             } else {
-              if (e.type == 0) feriado = true;
+              if (e.sigla == "FERI") feriado = true;
               eventos.push(e);
             }
           });

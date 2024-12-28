@@ -51,61 +51,9 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from administracao.models import TipoEvento
-from projetos.tipos import TIPO_EVENTO, TIPO_EVENTO_EN
-from projetos.models import Evento, Aviso
-from academica.models import Composicao
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = "Feito<br><br>"
-
-    # Criar os tipos de eventos
-    for tipo in TIPO_EVENTO:
-        evento, _created = TipoEvento.objects.get_or_create(tmpID=tipo[0], nome=tipo[1])
-        if tipo[0] >= 100:
-            evento.coordenacao = True
-        evento.cor = tipo[2].replace("#", "")
-        for tipo_en in TIPO_EVENTO_EN:
-            if tipo_en[0] == tipo[0]:
-                evento.nome_en = tipo_en[1]
-        evento.save()
-        message += f"<br>{tipo[0]} - {tipo[1]}"
-
-    # Criar as composições
-    for composicao in Composicao.objects.all():
-        if composicao.evento is not None:
-            if TipoEvento.objects.filter(tmpID=composicao.evento).exists():
-                tipo_evento = TipoEvento.objects.get(tmpID=composicao.evento)
-                composicao.tipo_evento = tipo_evento
-                composicao.save()
-                message += f"<br>{composicao.id} - {composicao.evento} - {tipo_evento.nome} - Atualizado"
-            else:
-                message += f"<br>{composicao.id} - {composicao.evento} - Não encontrado"
-    
-    # Criar os eventos
-    for evento in Evento.objects.all():
-        if evento.tipo_de_evento is not None:
-            if TipoEvento.objects.filter(tmpID=evento.tipo_de_evento).exists():
-                tipo_evento = TipoEvento.objects.get(tmpID=evento.tipo_de_evento)
-                evento.tipo_evento = tipo_evento
-                evento.save()
-                message += f"<br>{evento.id} - {evento.tipo_de_evento} - {tipo_evento.nome} - Atualizado"
-            else:
-                message += f"<br>{evento.id} - {evento.tipo_de_evento} - Não encontrado"
-
-    # Criar os avisos
-    for aviso in Aviso.objects.all():
-        if aviso.tipo_de_evento is not None:
-            if TipoEvento.objects.filter(tmpID=aviso.tipo_de_evento).exists():
-                tipo_evento = TipoEvento.objects.get(tmpID=aviso.tipo_de_evento)
-                aviso.tipo_evento = tipo_evento
-                aviso.save()
-                message += f"<br>{aviso.id} - {aviso.tipo_de_evento} - {tipo_evento.nome} - Atualizado"
-            else:
-                message += f"<br>{aviso.id} - {aviso.tipo_de_evento} - Não encontrado"
-    
     return HttpResponse(message)

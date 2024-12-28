@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied  # Para erro 400
 from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
+from django.http import Http404
 
 from administracao.models import TipoEvento
 
@@ -45,13 +46,30 @@ def get_evento_p_nome_data(nome, ano, semestre):
     """Retorna o evento com o nome dado por dados."""
     return get_eventos_p_nome_data(nome, ano, semestre).last()
 
+def get_evento_p_sigla(sigla, configuracao=None):
+    """Retorna o evento com a sigla dada."""
+    if configuracao is None:
+        configuracao = get_object_or_404(Configuracao)
+
+    try:
+        tevento = TipoEvento.objects.get(sigla=sigla)
+    except TipoEvento.DoesNotExist:
+        raise Http404(f'Evento "{sigla}" não encontrado.')
+    if configuracao.semestre == 1:
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+    else:
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    return evento
 
 def get_evento_p_nome(nome, configuracao=None):
     """Retorna o evento com o nome dado."""
     if configuracao is None:
         configuracao = get_object_or_404(Configuracao)
 
-    tevento = TipoEvento.objects.get(nome=nome)
+    try:
+        tevento = TipoEvento.objects.get(nome=nome)
+    except TipoEvento.DoesNotExist:
+        raise Http404(f'Evento "{nome}" não encontrado.')
     if configuracao.semestre == 1:
         evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
     else:
@@ -59,8 +77,7 @@ def get_evento_p_nome(nome, configuracao=None):
     return evento
 
 def get_limite_propostas(configuracao):
-    # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
-    evento = get_evento_p_nome("Indicação de interesse nos projetos do próximo semestre pelos estudante", configuracao)
+    evento = get_evento_p_sigla("IIPE", configuracao)
     if evento is not None:
         return evento.endDate
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
@@ -68,16 +85,15 @@ def get_limite_propostas(configuracao):
 
 # Melhor dar preferência para essa rotina que retorna None se não houver data planejada
 def get_limite_propostas2(configuracao):
-    # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
-    evento = get_evento_p_nome("Indicação de interesse nos projetos do próximo semestre pelos estudante", configuracao)
+    evento = get_evento_p_sigla("IIPE", configuracao)
     if evento is None:
         return None    
     return evento.endDate
     
 def get_data_planejada(configuracao):
     """Retorna a data planejada para a liberação das propostas"""
-    evento = get_evento_p_nome("Apresentação das propostas de projetos disponíveis para estudantes", configuracao)
-    # (113, "Apresentação das propostas de projetos disponíveis para estudantes", "darkslategray"),
+    evento = get_evento_p_sigla("APDE", configuracao)
+    
     if evento is not None:
         return evento.endDate
     return None
