@@ -29,7 +29,7 @@ from projetos.models import ObjetivosDeAprendizagem, Evento
 from projetos.messages import email
 from projetos.support import calcula_objetivos
 
-from administracao.support import get_limite_propostas, usuario_sem_acesso
+from administracao.support import get_limite_propostas, usuario_sem_acesso, get_evento_p_nome_data
 from administracao.models import Carta
 
 from academica.models import Composicao, CodigoColuna
@@ -535,13 +535,10 @@ def estudantes_inscritos(request):
             alunos_list = zip(alunos, opcoes, opcoestemp)
 
             rano, rsemestre = retrocede_semestre(ano, semestre)
-            # (123, "Indicação de interesse nas propostas pelos estudante", "#FF69B4 "),
-            if rsemestre == 1:
-                evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=rano, endDate__month__lt=7).last().endDate
-            else:          
-                evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=rano, endDate__month__gt=6).last().endDate
-                
-            prazo_vencido = evento < datetime.date.today()
+
+            evento = get_evento_p_nome_data("Indicação de interesse nas propostas pelos estudante", rano, rsemestre)
+
+            prazo_vencido = evento.endDate < datetime.date.today()
 
             cabecalhos = [
                 {"pt": "C", "en": "C"},
@@ -800,7 +797,7 @@ def professor_detail(request, primarykey):
     
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     
-    context["aulas"] = Evento.objects.filter(tipo_de_evento=12, responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
+    context["aulas"] = Evento.objects.filter(tipo_evento__sigla="A", responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
 
     context["estilos"] = EstiloComunicacao.objects.all()
 
@@ -830,7 +827,7 @@ def parceiro_detail(request, primarykey=None):
         "parceiro": parceiro,
         "conexoes": Conexao.objects.filter(parceiro=parceiro),
         "mentorias": Encontro.objects.filter(facilitador=parceiro.user),
-        "aulas": Evento.objects.filter(tipo_de_evento=12, responsavel=parceiro.user),
+        "aulas": Evento.objects.filter(tipo_evento__sigla="A", responsavel=parceiro.user),
         "bancas": bancas,
     }
     return render(request, "users/parceiro_detail.html", context=context)

@@ -162,9 +162,9 @@ class EventoFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             if self.value() == "academicos":
-                return queryset.distinct().filter(tipo_de_evento__lt=100)
+                return queryset.distinct().filter(tipo_evento__coodenacao=False)
             if self.value() == "coordenacao":
-                return queryset.distinct().filter(tipo_de_evento__gte=100)
+                return queryset.distinct().filter(tipo_evento__coodenacao=True)
             if self.value().split(".")[1] == "1":
                 return queryset.distinct().filter(startDate__year=int(self.value().split('.')[0]),
                                                   startDate__month__lte=7)
@@ -286,7 +286,7 @@ class BancaAdmin(admin.ModelAdmin):
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ("titulo", "tipo_de_evento", "delta", "realizado", "data_realizado",)
+    list_display = ("titulo", "tipo_evento", "delta", "realizado", "data_realizado",)
     list_filter = ("realizado", "coordenacao", "comite_pfe", "todos_alunos",
                    "todos_orientadores", "contatos_nas_organizacoes",)
     ordering = ("delta",)
@@ -294,7 +294,7 @@ class AvisoAdmin(admin.ModelAdmin):
     # fieldsets = \
     #     ((None,
     #       {"fields":
-    #        ("titulo", "tipo_de_evento", "delta", "mensagem", "realizado", "data_realizado")
+    #        ("titulo", "tipo_evento", "delta", "mensagem", "realizado", "data_realizado")
     #       }),
     #      ("Interesse", {
     #          "fields": ("coordenacao", "comite_pfe", "todos_alunos",
@@ -308,7 +308,7 @@ class EventoAdmin(admin.ModelAdmin):
 
     list_display = ("get_title", "startDate", "endDate", "location", "atividade", "observacao")
     actions = [dup_entrada, dup_event_182]
-    list_filter = (EventoFilter, "tipo_de_evento")
+    list_filter = (EventoFilter, "tipo_evento")
     ordering = ("-startDate",)
     search_fields = ["atividade", "location", "observacao",]
 

@@ -270,11 +270,11 @@
               <div class="col-sm-8">
                 <select id="event-type" name="event-type" class="form-control">
                   {% for tipo in tipos_eventos %}
-                    {% ifchanged tipo.3 %}
+                    {% ifchanged tipo.coordenacao %}
                       {% if not forloop.first %}</optgroup>{% endif %}
-                      <optgroup label="{% if tipo.3 %}{{tipo.3}}{% else %}-----------{% endif %}">
+                      <optgroup label="{% if tipo.coordenacao %}Operação{% else %}Acadêmico{% endif %}">
                     {% endifchanged %}
-                    <option value="{{tipo.0}}" data-color="{{tipo.2}}">{{tipo.1}}</option>
+                    <option value="{{tipo.id}}" data-color="#{{tipo.cor}}">{{tipo.nome}}</option>
                   {% endfor %}
                   </optgroup>
                 </select>

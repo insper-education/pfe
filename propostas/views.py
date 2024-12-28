@@ -588,7 +588,7 @@ def proposta_completa(request, primarykey):
         "areast": Area.objects.filter(ativa=True),
         "procura": procura,
         "cursos": Curso.objects.all().order_by("id"),
-        "liberacao_visualizacao": Evento.objects.filter(tipo_de_evento=113).last(),
+        "liberacao_visualizacao": Evento.objects.filter(tipo_evento__sigla="APDE").last(),
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 

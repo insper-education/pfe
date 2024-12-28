@@ -52,7 +52,7 @@ def custom_400(request, exception):
 
 
 from administracao.models import TipoEvento
-from projetos.tipos import TIPO_EVENTO
+from projetos.tipos import TIPO_EVENTO, TIPO_EVENTO_EN
 from projetos.models import Evento, Aviso
 from academica.models import Composicao
 
@@ -61,17 +61,19 @@ from academica.models import Composicao
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = "Feito"
+    message = "Feito<br><br>"
 
     # Criar os tipos de eventos
     for tipo in TIPO_EVENTO:
-        if TipoEvento.objects.filter(tmpID=tipo[0]).exists():
-            message += f"<br>{tipo[0]} - {tipo[1]} - Já existe"
-        else:
-            cor = tipo[2].replace("#", "")
-            TipoEvento.objects.create(tmpID=tipo[0], nome=tipo[1], cor=cor)
-            message += f"<br>{tipo[0]} - {tipo[1]} - Criado"
-
+        evento, _created = TipoEvento.objects.get_or_create(tmpID=tipo[0], nome=tipo[1])
+        if tipo[0] >= 100:
+            evento.coordenacao = True
+        evento.cor = tipo[2].replace("#", "")
+        for tipo_en in TIPO_EVENTO_EN:
+            if tipo_en[0] == tipo[0]:
+                evento.nome_en = tipo_en[1]
+        evento.save()
+        message += f"<br>{tipo[0]} - {tipo[1]}"
 
     # Criar as composições
     for composicao in Composicao.objects.all():

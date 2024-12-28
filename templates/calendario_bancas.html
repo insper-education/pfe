@@ -219,16 +219,16 @@
                 {% endwith %}
                 rendering: "background",
 
-                {% if dias.tipo_evento.tmpID == 15 %} // Banca Final
+                {% if dias.tipo_evento.sigla == "BF" %} // Banca Final
                   color: color_banca_final,
                   description: "<b>período de bancas finais</b>",
-                {% elif dias.tipo_evento.tmpID == 14 %} // Banca Intermediária 
+                {% elif dias.tipo_evento.sigla == "BI" %} // Banca Intermediária 
                   color: color_banca_intermediaria,
                   description: "<b>período de bancas intermediárias</b>",
-                {% elif dias.tipo_evento.tmpID == 18 %} // Probation
+                {% elif dias.tipo_evento.sigla == "P" %} // Probation
                   color: color_probation,
                   description: "<b>período de probation</b>",
-                {% elif dias.tipo_evento.tmpID == 50 %} // Banca Falconi
+                {% elif dias.tipo_evento.sigla == "F" %} // Banca Falconi
                   color: color_banca_falconi,
                   description: "<b>período de bancas Falconi</b>",
                 {% else %}

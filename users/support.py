@@ -85,8 +85,6 @@ def configuracao_pares_vencida(estudante, tipo, prazo=10):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    #prazo = 10
-    
     if estudante is not None and estudante.anoPFE is not None and estudante.semestrePFE is not None:
         if estudante.anoPFE < ano:
             return True, None, None
@@ -95,7 +93,7 @@ def configuracao_pares_vencida(estudante, tipo, prazo=10):
     
     hoje = datetime.date.today()
     delta = datetime.timedelta(days=prazo)
-    evento = Evento.objects.filter(tipo_de_evento=tipo, startDate__gte=hoje, startDate__lt=hoje+delta).last()
+    evento = Evento.objects.filter(tipo_evento__id=tipo, startDate__gte=hoje, startDate__lt=hoje+delta).last()
 
     if not evento:
         return True, None, None

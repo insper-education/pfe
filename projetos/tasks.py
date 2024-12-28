@@ -76,7 +76,7 @@ def avisos_do_dia():
     # Checa avisos do dia
     avisos = []
     for evento in eventos:
-        for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
+        for aviso in Aviso.objects.filter(tipo_evento=evento.tipo_evento):
             data_evento = evento.get_data() + datetime.timedelta(days=aviso.delta)
             if data_evento == datetime.date.today():
                 avisos.append(aviso)
@@ -153,7 +153,7 @@ def eventos_do_dia():
                     recipient_list = []
                     recipient_list.append(str(configuracao.coordenacao.user.email))
 
-                    if acao.tipo_de_evento == 12:  # Aula
+                    if acao.tipo_evento.sigla == "A":  # Aula
                         # Adicionando Orientadores
                         orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
                         recipient_list += [obj.user.email for obj in orientadores]

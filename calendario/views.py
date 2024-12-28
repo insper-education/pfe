@@ -49,22 +49,23 @@ def get_calendario_context(user=None):
 
     tipos_eventos_sorter = sorted(TIPO_EVENTO, key=lambda x: (x[0]>100, x[1]))
     tipos_eventos = [list(tipo) + ["Operação"] if tipo[0] > 100 else list(tipo) + ["Acadêmico"] for tipo in tipos_eventos_sorter]
+    # tipos_eventos = None
 
+    tipos_eventos = TipoEvento.objects.all().order_by("coordenacao", "nome")
 
     eventos_academicos = {
-        #"eventos": eventos.exclude(tipo_evento__in=[12, 40, 41, 20, 30]).exclude(tipo_evento__gte=100),
-        "eventos": eventos.exclude(tipo_evento__tmpID__in=[12, 40, 41, 20, 30]).exclude(tipo_evento__tmpID__gte=100),
-        "aulas": eventos.filter(tipo_evento__tmpID=12),  # 12, 'Aula'
-        "quinzenais": eventos.filter(tipo_evento__tmpID=20),  # 20, 'Relato Quinzenal'
-        "feedbacks": eventos.filter(tipo_evento__tmpID=30),  # 30, 'Feedback dos Estudantes sobre Capstone'
-        "provas": eventos.filter(tipo_evento__tmpID=41),  # 41, 'Semana de Provas'
-        "laboratorios": eventos.filter(tipo_evento__tmpID=40),  # 40, 'Laboratório'
+        "eventos": eventos.exclude(tipo_evento__sigla__in=["A", "L", "SP", "RQ", "FE"]).exclude(tipo_evento__coordenacao=True),
+        "aulas": eventos.filter(tipo_evento__sigla="A"), # 12, 'Aula'
+        "quinzenais": eventos.filter(tipo_evento__sigla="RQ"),  # 20, 'Relato Quinzenal'
+        "feedbacks": eventos.filter(tipo_evento__sigla="FE"),  # 30, 'Feedback dos Estudantes sobre Capstone'
+        "provas": eventos.filter(tipo_evento__sigla="SP"),  # 41, 'Semana de Provas'
+        "laboratorios": eventos.filter(tipo_evento__sigla="L"),  # 40, 'Laboratório'
     }
     
     context = {
         "configuracao": configuracao,
         "eventos_academicos": eventos_academicos,
-        "coordenacao": Evento.objects.filter(tipo_evento__tmpID__gte=100),  # Eventos da coordenação
+        "coordenacao": Evento.objects.filter(tipo_evento__coordenacao=True),  # Eventos da coordenação
         "tipos_eventos": tipos_eventos,
         "Evento": Evento,
     }
@@ -236,8 +237,7 @@ def atualiza_evento(request):
 
     type = request.POST.get("event-type", None)
     if type:
-        evento.tipo_de_evento = int(type)   # REMOVER ESSE CAMPO
-        tevento = TipoEvento.objects.get(tmpID=type)
+        tevento = TipoEvento.objects.get(id=type)
         evento.tipo_evento = tevento
     
     startDate = request.POST.get("startDate", None)  # Data foi ajustada para YYYY-MM-DD
@@ -326,7 +326,6 @@ def copia_calendario(request):
         if not Evento.objects.filter(startDate=evento.startDate, endDate=evento.endDate,
                                      location=evento.location,
                                      tipo_evento=evento.tipo_evento,
-                                     tipo_de_evento=evento.tipo_de_evento,  # REMOVER ESSE CAMPO
                                      atividade=evento.atividade).exists():
             evento.save()
 

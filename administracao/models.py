@@ -15,6 +15,9 @@ class Carta(models.Model):
     template = models.CharField("Nome do Template", max_length=64, unique=True,
                                 help_text="Nome do Template")
 
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
+                            help_text="Sigla do template")
+
     texto = models.TextField("Texto", max_length=18000, null=True, blank=True,
                              help_text="Texto em português para ser usado em comunicações")
     
@@ -43,7 +46,7 @@ class TipoCertificado(models.Model):
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text="Título do tipo de certificado")
     
-    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True,
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
                                 help_text="Sigla do tipo de certificado")
 
     descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
@@ -74,17 +77,24 @@ class TipoCertificado(models.Model):
 class TipoEvento(models.Model):
     """Tipos de eventos."""
 
-    nome = models.CharField("Nome", max_length=64, unique=True,
-                            help_text="Nome do tipo de evento") 
+    nome = models.CharField("Nome", max_length=128, unique=True,
+                            help_text="Nome do tipo de evento")
+    
+    nome_en = models.CharField("Nome EN", max_length=128, null=True, blank=True,
+                               help_text="Nome do tipo de evento em inglês")
     
     cor = models.CharField("Cor", max_length=6, null=True, blank=True,
                             help_text="Cor do tipo de evento em hexadecimal")
     
-    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True,
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
                             help_text="Sigla do tipo de evento")
+    
+    coordenacao = models.BooleanField("Coordenação", default=False,
+                                      help_text="Evento de coordenação, senão é para estudantes")
     
     tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
                                             help_text="ID temporário para migração de dados de eventos")
+                                            
 
     def __str__(self):
         return self.nome

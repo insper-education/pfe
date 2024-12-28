@@ -202,8 +202,8 @@ def trata_aviso(aviso, request):
         aviso.delta = int(request.POST["delta"])
         aviso.mensagem = request.POST["mensagem"]
 
-        aviso.tipo_de_evento = int(request.POST["evento"])
-        tipo_evento = TipoEvento.objects.get(tmpID=aviso.tipo_de_evento)
+        id_evento = int(request.POST["evento"])
+        tipo_evento = TipoEvento.objects.get(id=id_evento)
         aviso.tipo_evento = tipo_evento
 
         aviso.coordenacao = "coordenacao" in request.POST
@@ -239,7 +239,7 @@ def edita_aviso(request, primarykey):
 
     context = {
         "aviso": aviso,
-        "eventos": sorted(TIPO_EVENTO, key=lambda x: x[1]),
+        "eventos": TipoEvento.objects.all(),
     }
 
     return render(request, "operacional/edita_aviso.html", context)
@@ -347,7 +347,7 @@ def cria_aviso(request):
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
     context = {
-        "eventos": sorted(TIPO_EVENTO, key=lambda x: x[1]),
+        "eventos": TipoEvento.objects.all(),
     }
 
     return render(request, "operacional/edita_aviso.html", context)

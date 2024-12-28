@@ -31,14 +31,19 @@ def limpa_texto(texto):
     return texto.replace("\x00", "\uFFFD") if texto else None
 
 
-def get_evento_p_nome_data(nome, ano, semestre):
+def get_eventos_p_nome_data(nome, ano, semestre):
     """Retorna o evento com o nome dado por dados."""
     tevento = TipoEvento.objects.get(nome=nome)
     if semestre == 1:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__lt=7).order_by("endDate", "startDate")
     else:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__gt=6).order_by("endDate", "startDate")
     return evento
+
+
+def get_evento_p_nome_data(nome, ano, semestre):
+    """Retorna o evento com o nome dado por dados."""
+    return get_eventos_p_nome_data(nome, ano, semestre).last()
 
 
 def get_evento_p_nome(nome, configuracao=None):

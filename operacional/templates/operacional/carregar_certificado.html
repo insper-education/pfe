@@ -22,7 +22,7 @@
     <label for="projeto">
       <span style="display:inline-block; width:7.5ex; text-align:right;">
         <span lang="pt">Projeto:</span>
-        <span lang="en">Project:</span>
+        <span lang="en" style="display:none;">Project:</span>
       </span>
       <select class="selectpicker show-tick" name="projeto" id="projeto" title="Selecione projeto"
       data-live-search="true" data-width="560px">
@@ -44,7 +44,7 @@
     <label for="usuario">
       <span style="display:inline-block; width:7.5ex; text-align:right;">
         <span lang="pt">Usuário:</span>
-        <span lang="en">User:</span>
+        <span lang="en" style="display:none;">User:</span>
       </span>
       <select class="selectpicker show-tick" name="usuario" id="usuario" title="Selecione usuário"
       data-live-search="true" data-width="560px">
@@ -61,7 +61,7 @@
     <label for="data">
       <span style="display:inline-block; width:7.5ex; text-align:right;">
         <span lang="pt">Data:</span>
-        <span lang="en">Date:</span>
+        <span lang="en" style="display:none;">Date:</span>
       </span>
       <input id="data" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
     </label>
@@ -70,7 +70,7 @@
     <label for="tipo">
       <span style="display:inline-block; width:7.5ex; text-align:right;">
         <span lang="pt">Tipo:</span>
-        <span lang="en">Type:</span>
+        <span lang="en" style="display:none;">Type:</span>
       </span>
       <select class="selectpicker show-tick" name="tipo" id="tipo" title="Selecione tipo de certificado"
       data-live-search="true" data-width="560px" required>
@@ -90,20 +90,20 @@
 
     <label for="observacao">
       <span lang="pt">Observação:</span>
-      <span lang="en">Observation:</span>
+      <span lang="en" style="display:none;">Observation:</span>
     </label><br>
     <textarea id="observacao" name="observacao" rows="3" cols="80" maxlength="1000">{{observacao}}</textarea>
     <br><br>
 
     <label for="documento">
       <span lang="pt">Certificado:</span>
-      <span lang="en">Certificate:</span>
+      <span lang="en" style="display:none;">Certificate:</span>
     </label>
     {% include "selecionar_arquivo.html" with arquivo_nome="documento" arquivo_accept="*" required=True %}<br><br>
 
     <button type="submit" class="btn btn-primary">
       <span lang="pt">Cadastrar Certificado</span>
-      <span lang="en">Register Certificate</span>
+      <span lang="en" style="display:none;">Register Certificate</span>
     </button>
 
   </form>

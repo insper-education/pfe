@@ -215,9 +215,9 @@ class Projeto(models.Model):
             return Evento.objects.none()
         
         if self.semestre == 1:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__lt=7)
+            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.ano, endDate__month__lt=7)
         else:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.ano, endDate__month__gt=6)
+            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.ano, endDate__month__gt=6)
 
         return eventos
 
@@ -779,9 +779,11 @@ class Evento(models.Model):
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text="Fim do Evento")
 
+    # REMOVER TIPO DE EVENTO
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text="Define o tipo do evento a ocorrer")
+    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
     
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text="Tipo de evento")
@@ -823,20 +825,15 @@ class Evento(models.Model):
 
     def get_title(self):
         """Retorna em string o nome do evento."""
-        return self.get_tipo_de_evento_display()
+        return self.tipo_evento.nome
   
     def get_color(self):
         """Retorna uma cor característica do evento para desenhar no calendário."""
-        for entry in TIPO_EVENTO:
-            if self.tipo_de_evento == entry[0]:
-                return entry[2]
-        return None
+        return "#"+self.tipo_evento.cor
 
     def get_semester(self):
         """Retorna o semestre do evento."""
-        if self.startDate.month <= 6:
-            return 1
-        return 2
+        return 1 if self.startDate.month <= 6 else 2
 
     def get_data(self):
         """Retorna a data do evento."""
@@ -852,14 +849,12 @@ class Evento(models.Model):
         # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
         # (14, "Bancas Intermediárias", "#EE82EE"),
         # (15, "Bancas Finais", "#FFFF00"),
-        if self.tipo_de_evento in [22, 23]:
-            if self.tipo_de_evento == 22:
-                evento = Evento.objects.filter(tipo_de_evento=14, startDate__gt=self.endDate).order_by("startDate").first()
-                # return evento.endDate
+        if self.tipo_evento.sigla in ["ERI", "ERF"]:
+            if self.tipo_evento.sigla == "ERI":
+                evento = Evento.objects.filter(tipo_evento__sigla="BI", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.startDate if evento else None
             else: # 23
-                evento = Evento.objects.filter(tipo_de_evento=15, startDate__gt=self.endDate).order_by("startDate").first()
-                #return evento.endDate
+                evento = Evento.objects.filter(tipo_evento__sigla="BF", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.startDate if evento else None
         return self.startDate
 
@@ -869,14 +864,12 @@ class Evento(models.Model):
         # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
         # (14, "Bancas Intermediárias", "#EE82EE"),
         # (15, "Bancas Finais", "#FFFF00"),
-        if self.tipo_de_evento in [22, 23]:
-            if self.tipo_de_evento == 22:
-                evento = Evento.objects.filter(tipo_de_evento=14, startDate__gt=self.endDate).order_by("startDate").first()
-                # return evento.endDate
+        if self.tipo_evento.sigla in ["ERI", "ERF"]:
+            if self.tipo_evento.sigla == "ERI":
+                evento = Evento.objects.filter(tipo_evento__sigla="BI", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.endDate if evento else None
-            else: # 23
-                evento = Evento.objects.filter(tipo_de_evento=15, startDate__gt=self.endDate).order_by("startDate").first()
-                #return evento.endDate
+            else: # 23 "ERF"
+                evento = Evento.objects.filter(tipo_evento__sigla="BF", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.endDate if evento else None
         return self.endDate
 
@@ -909,9 +902,9 @@ class Evento(models.Model):
     @staticmethod
     def get_evento(evento_id, ano, semestre):
         if semestre == 1:
-            eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__lt=7)
+            eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__lt=7)
         else:
-            eventos = Evento.objects.filter(tipo_de_evento=evento_id, endDate__year=ano, endDate__month__gt=6)
+            eventos = Evento.objects.filter(tipo_evento__id=evento_id, endDate__year=ano, endDate__month__gt=6)
         return eventos.order_by("endDate", "startDate").last()
 
     class Meta:
@@ -1044,11 +1037,11 @@ class Banca(models.Model):
         checa_banca = True
 
         # (13, "Evento de encerramento", "#FF4500"),
-        if self.tipo_de_banca != 3:  # Não é banca de probation
+        if self.alocacao is None:  # Não é banca de probation
             if self.projeto.semestre == 1:
-                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
             else:
-                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
             if evento:  # tem evento de encerramento
                 # Após o evento de encerramento liberar todas as notas
                 if now.date() > evento.endDate:
@@ -1437,12 +1430,10 @@ class Aviso(models.Model):
     contatos_nas_organizacoes = \
         models.BooleanField(default=False, help_text="Para contatos nas organizações parceiras")
 
-    # Usar get_tipo_de_evento_display em vez disso
     def get_evento(self):
         """Retorna em string o nome do evento."""
-        for entry in TIPO_EVENTO:
-            if self.tipo_de_evento == entry[0]:
-                return entry[1]
+        if self.tipo_evento:
+            return self.tipo_evento.nome
         return "Sem evento"
 
     def __str__(self):

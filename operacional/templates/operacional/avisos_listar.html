@@ -31,16 +31,24 @@
 
 {% block content %}
 
-  <label for="filter"><span lang="pt">Filtro</span><span lang="en">Filter</span>:</label>
+  <label for="filter"><span lang="pt">Filtro</span><span lang="en" style="display:none;">Filter</span>:</label>
   <select id="filter" class="filter" data-tableId="projetos">
-    <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}>todos</option>
-    <option value="Co" {% if filtro == "Co" %}selected="selected"{% endif %}>Coordenação</option>
-    <option value="Op" {% if filtro == "Op" %}selected="selected"{% endif %}>Operacional</option>
-    <option value="Cm" {% if filtro == "Cm" %}selected="selected"{% endif %}>Comitê Capstone</option>
-    <option value="Es" {% if filtro == "Es" %}selected="selected"{% endif %}>Estudantes</option>
-    <option value="Or" {% if filtro == "Or" %}selected="selected"{% endif %}>Orientadores</option>
-    <option value="Og" {% if filtro == "Og" %}selected="selected"{% endif %}>Contatos nas Organizacoes</option>
-    <option value="Ev" {% if filtro == "Ev" %}selected="selected"{% endif %}>Evento</option>
+    <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="todos" data-en="all">todos</option>
+    <option value="Co" {% if filtro == "Co" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Coordenação" data-en="Coordination">Coordenação</option>
+    <option value="Op" {% if filtro == "Op" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Operacional" data-en="Operational">Operacional</option>
+    <option value="Cm" {% if filtro == "Cm" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Comitê Capstone" data-en="Capstone Committee">Comitê Capstone</option>
+    <option value="Es" {% if filtro == "Es" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Estudantes" data-en="Students">Estudantes</option>
+    <option value="Or" {% if filtro == "Or" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Orientadores" data-en="Advisors">Orientadores</option>
+    <option value="Og" {% if filtro == "Og" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Contatos nas Organizacoes" data-en="Contacts in Organizations">Contatos nas Organizacoes</option>
+    <option value="Ev" {% if filtro == "Ev" %}selected="selected"{% endif %}
+     class="troca_lingua" data-pt="Evento" data-en="Event">Evento</option>
   </select>
   <br>
 
@@ -51,20 +59,29 @@
       <table class="table table-sm">
         <caption>
           <small>
-            <b>Co</b>: Coordenação;
-            <b>Op</b>: Operacional;
-            <b>Cm</b>: Comitê Capstone;
-            <b>Es</b>: Estudantes;
-            <b>Or</b>: Orientadores;
-            <b>Og</b>: Contatos nas Organizacoes.
+            <b>Co</b>: <span lang="pt">Coordenação</span><span lang="en" style="display:none;">Coordination</span>;
+            <b>Op</b>: <span lang="pt">Equipe Operacional</span><span lang="en" style="display:none;">Operational Team</span>;
+            <b>Cm</b>: <span lang="pt">Comitê Capstone</span><span lang="en" style="display:none;">Capstone Committee</span>;
+            <b>Es</b>: <span lang="pt">Estudantes</span><span lang="en" style="display:none;">Students</span>;
+            <b>Or</b>: <span lang="pt">Orientadores</span><span lang="en" style="display:none;">Advisors</span>;
+            <b>Og</b>: <span lang="pt">Contatos nas Organizações</span><span lang="en" style="display:none;">Contacts in Organizations</span>;
           </small>
         </caption>
         <thead class="table-info">
           <tr>
             <th scope="col" style="width: 1em;">&#10003;</th>
-            <th scope="col">Data</th>
-            <th scope="col">Público</th>
-            <th scope="col">Título</th>
+            <th scope="col">
+              <span lang="pt">Data</span>
+              <span lang="en" style="display:none;">Date</span>
+            </th>
+            <th scope="col">
+              <span lang="pt">Público</span>
+              <span lang="en" style="display:none;">Target</span>
+            </th>
+            <th scope="col">
+              <span lang="pt">Título</span>
+              <span lang="en" style="display:none;">Title</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -80,11 +97,12 @@
               <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
                   {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
-                  {% if a.evento.tipo_de_evento == 12 %}Or{% endif %}
+                  {% if a.evento.tipo_evento.sigla == "A" %}Or{% endif %}
                 </span>
               </td>
               <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
-                {{a.evento.get_title}}
+                <span lang="pt">{{a.evento.tipo_evento.nome}}</span>
+                <span lang="en" style="display:none;">{{a.evento.tipo_evento.nome_en}}</span>
               </td>
             </tr>
 
@@ -119,13 +137,14 @@
               {% endif %}
             </th>
             
-            <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_de_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
+            <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
               <label style="line-height: 0px;" for="{{forloop.counter}}">
                 {% if a.data%}
                   <span class="data_longa">{{a.data}}</span>
                   <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
                 {% else %}
-                  Sem evento no semestre
+                  <span lang="pt">Sem evento no semestre</span>
+                  <span lang="en" style="display:none;">No event this semester</span>
                 {% endif %}
               </label>
             </td>
@@ -165,18 +184,19 @@
       </div>
 
     {% else %}
-      <p>Não existem avisos.</p>
+      <p lang="pt">Não existem avisos.</p>
+      <p lang="en" style="display:none;">There are no notices.</p>
     {% endif %}
 
   
     <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
       <span lang="pt">Cria Aviso</span>
-      <span lang="en">Create Notice</span>
+      <span lang="en" style="display:none;">Create Notice</span>
     </a>
     <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
        onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
       <span lang="pt">Reenviar Avisos do Dia</span>
-      <span lang="en">Resend Daily Notices</span>
+      <span lang="en" style="display:none;">Resend Daily Notices</span>
     </a>
 
   </form>

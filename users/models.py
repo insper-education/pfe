@@ -28,15 +28,16 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.db.models import F
 
+from academica.models import Exame
+
+from estudantes.models import Relato, EstiloComunicacao
+
+from operacional.models import Curso
 
 from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, Banca
 from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento, Certificado
 from projetos.support import get_upload_path, calcula_objetivos, converte_letra
-from operacional.models import Curso
 
-from estudantes.models import Relato, EstiloComunicacao
-
-from academica.models import Exame
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -488,9 +489,9 @@ class Aluno(models.Model):
 
                             # Verifica se já passou o evento de encerramento e assim liberar notas
                             if alocacao.projeto.semestre == 1:
-                                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=alocacao.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+                                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=alocacao.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
                             else:
-                                evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=alocacao.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+                                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=alocacao.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
                             if pa[4] != 3 and  evento:  # Não é banca probation e tem evento de encerramento
                                 # Após o evento de encerramento liberar todas as notas
                                 if now.date() > evento.endDate:
@@ -737,9 +738,9 @@ class Alocacao(models.Model):
 
                         # Verifica se já passou o evento de encerramento e assim liberar notas
                         if self.projeto.semestre == 1:
-                            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
+                            evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
                         else:
-                            evento = Evento.objects.filter(tipo_de_evento=13, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+                            evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
                         if evento:
                             # Após o evento de encerramento liberar todas as notas
                             if now.date() > evento.endDate:
@@ -900,12 +901,11 @@ class Alocacao(models.Model):
         """Retorna todos os possiveis relatos quinzenais da alocacao."""
         
         if self.projeto.semestre == 1:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.projeto.ano, endDate__month__lt=7).order_by('endDate')
+            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by('endDate')
         else:
-            eventos = Evento.objects.filter(tipo_de_evento=20, endDate__year=self.projeto.ano, endDate__month__gt=6).order_by('endDate')
+            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.projeto.ano, endDate__month__gt=6).order_by('endDate')
 
         relatos = []
-        # avals = []
 
         for index in range(len(eventos)):
             if not index: # index == 0:

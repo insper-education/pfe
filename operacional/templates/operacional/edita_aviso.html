@@ -55,8 +55,8 @@
         <select style="max-width: 100%;" name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
             <option disabled selected value> -- selecione evento -- </option>
             {% for evento in eventos %}
-              <option value="{{evento.0}}" {% if aviso.tipo_de_evento == evento.0 %}selected="selected"{% endif %}>
-                {{evento.1}}
+              <option value="{{evento.id}}" {% if aviso.tipo_evento.id == evento.id %}selected="selected"{% endif %}>
+                {{evento.nome}}
               </option>
             {% endfor %}
         </select>

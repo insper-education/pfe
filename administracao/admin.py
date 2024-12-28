@@ -15,10 +15,15 @@ from .models import TipoCertificado, TipoEvento
 @admin.register(Carta)
 class CartaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-
     list_display = ("template",)
     ordering = ("template",)
     search_fields = ["template",]
 
 admin.site.register(TipoCertificado)
-admin.site.register(TipoEvento)
+
+@admin.register(TipoEvento)
+class TipoEventoAdmin(admin.ModelAdmin):
+    """Definição do que aparece no sistema de administração do Django."""
+    list_display = ("nome", "sigla", "cor")
+    ordering = ("nome",)
+    search_fields = ["nome", "sigla"]

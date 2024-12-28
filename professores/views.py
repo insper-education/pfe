@@ -215,7 +215,7 @@ def mentorias_alocadas(request):
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
-    dias_bancas = Evento.objects.filter(tipo_evento__tmpID__in=(14, 15, 18, 50))
+    dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
     if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
         professor = get_object_or_404(Professor, pk=prof_id)
@@ -365,10 +365,10 @@ def bancas_criar(request, data=None):
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi' / 18, 'Probation'
-    bancas_intermediarias = eventos.filter(tipo_de_evento=14)
-    bancas_finais = eventos.filter(tipo_de_evento=15)
-    bancas_probation = eventos.filter(tipo_de_evento=18)
-    bancas_falconi = eventos.filter(tipo_de_evento=50)
+    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
+    bancas_finais = eventos.filter(tipo_evento__sigla="BF")
+    bancas_probation = eventos.filter(tipo_evento__sigla="P")
+    bancas_falconi = eventos.filter(tipo_evento__sigla="F")
 
     context = {
         "projetos": projetos,
@@ -566,10 +566,10 @@ def bancas_editar(request, primarykey=None):
         eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
 
     # 14, "Banca intermediária" / 15, "Bancas finais" / 50, "Certificação Falconi"
-    bancas_intermediarias = eventos.filter(tipo_de_evento=14).order_by("startDate")
-    bancas_finais = eventos.filter(tipo_de_evento=15).order_by("startDate")
-    bancas_probation = eventos.filter(tipo_de_evento=18).order_by("startDate")
-    bancas_falconi = eventos.filter(tipo_de_evento=50).order_by("startDate")
+    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI").order_by("startDate")
+    bancas_finais = eventos.filter(tipo_evento__sigla="BF").order_by("startDate")
+    bancas_probation = eventos.filter(tipo_evento__sigla="P").order_by("startDate")
+    bancas_falconi = eventos.filter(tipo_evento__sigla="F").order_by("startDate")
 
     context = {
         "projetos": projetos,  # Creio que não seja necessário
@@ -633,7 +633,7 @@ def bancas_lista(request, edicao):
     # (15, "Bancas Finais", "#FFFF00"),
     # (18, "Probation", "#B0C4DE"),
     # (50, "Apresentação para Certificação Falconi", "#FF8C00"),
-    context["dias_bancas"] = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
+    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
     context["informacoes"] = [
             (".local", "local", "local"),
@@ -750,15 +750,15 @@ def aulas_tabela(request):
             edicao = request.POST["edicao"]
 
             if edicao == "todas":
-                aulas = Evento.objects.filter(tipo_de_evento=12)   #.order_by("endDate", "startDate").last()
+                aulas = Evento.objects.filter(tipo_evento__sigla="A")
             else:
                 ano, semestre = edicao.split('.')
                 if semestre == "1/2":
-                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano)
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano)
                 elif semestre == '1':
-                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__lt=7)
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__lt=7)
                 else:  # semestre == '2':
-                    aulas = Evento.objects.filter(tipo_de_evento=12, endDate__year=ano, endDate__month__gt=6)
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__gt=6)
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
                       {"pt": "e-mail", "en": "e-mail"},
@@ -1780,9 +1780,9 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto)
 
         if projeto.semestre == 1:
-            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
+            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
         else:          
-            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
+            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
 
         if composicao.exame.grupo:
             avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
@@ -2514,7 +2514,7 @@ def relato_avaliar(request, projeto_id, evento_id):
     projeto = get_object_or_404(Projeto, pk=projeto_id)
     evento = get_object_or_404(Evento, pk=evento_id)
 
-    evento_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=evento.endDate).order_by("endDate").last()
+    evento_anterior = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__lt=evento.endDate).order_by("endDate").last()
     
     alocacoes = Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True)
 
@@ -2733,11 +2733,11 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                         # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
                         # (14, "Bancas Intermediárias", "#EE82EE"),
                         if projeto.semestre == 1:
-                            evento_r = Evento.objects.filter(tipo_de_evento=22, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_de_evento=14, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERI", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_evento__sigla="BI", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
                         else:          
-                            evento_r = Evento.objects.filter(tipo_de_evento=22, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_de_evento=14, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERI", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_evento__sigla="BI", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
                         
                         if evento_r:
                             atraso_r = (datetime.date.today() - evento_r.endDate).days
@@ -2765,16 +2765,16 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                 "nota_texto": "{0:5.2f}".format(nota),
                                                 "nota": nota,
                                                 "certificacao": "",
-                                                    "nota_incompleta": nota_incompleta})                    
+                                                "nota_incompleta": nota_incompleta})                    
                     else:
                         # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
                         # (15, "Bancas Finais", "#FFFF00"),
                         if projeto.semestre == 1:
-                            evento_r = Evento.objects.filter(tipo_de_evento=23, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_de_evento=15, endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERF", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_evento__sigla="BF", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
                         else:          
-                            evento_r = Evento.objects.filter(tipo_de_evento=23, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_de_evento=15, endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERF", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+                            evento_b = Evento.objects.filter(tipo_evento__sigla="BF", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
                         
                         if evento_r:
                             atraso_r = (datetime.date.today() - evento_r.endDate).days
