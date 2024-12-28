@@ -24,11 +24,11 @@ from django.utils.encoding import force_text
 from django.shortcuts import get_object_or_404
 
 from .support import get_upload_path
-from .tipos import TIPO_EVENTO, TIPO_DE_CERTIFICADO
+from .tipos import TIPO_EVENTO
 
 from academica.models import Exame
 
-from administracao.models import TipoCertificado
+from administracao.models import TipoCertificado, TipoEvento
 
 from documentos.models import TipoDocumento
 
@@ -782,6 +782,9 @@ class Evento(models.Model):
     tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text="Define o tipo do evento a ocorrer")
+    
+    tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
+                                      help_text="Tipo de evento")
 
     atividade = models.CharField(max_length=200, blank=True,
                                  help_text="nome da atividade do evento")
@@ -1401,6 +1404,9 @@ class Aviso(models.Model):
         PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                   null=True, blank=True,
                                   help_text="Define o tipo do evento de referência")
+    
+    tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text="Tipo de evento")
 
     delta = models.SmallIntegerField(default=0,
                                      help_text="dias passados do evento definido")
@@ -2116,10 +2122,6 @@ class Certificado(models.Model):
                                 help_text="alocação relacionada ao certificado")
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="data do certificado")
-
-    # REMOVEU-SE O TIPO DE CERTIFICADO, USAR TIPO DE CERTIFICADO vvvv
-    tipo_de_certificado = models.PositiveSmallIntegerField(choices=TIPO_DE_CERTIFICADO, default=0)
-    # REMOVERT ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 
     tipo_certificado = models.ForeignKey("administracao.TipoCertificado", null=True, blank=True, on_delete=models.SET_NULL,
                                          help_text="Tipo de certificado")

@@ -10,7 +10,7 @@ Data: 14 de Novembro de 2019
 from django.contrib import admin
 
 from .models import Carta
-from .models import TipoCertificado
+from .models import TipoCertificado, TipoEvento
 
 @admin.register(Carta)
 class CartaAdmin(admin.ModelAdmin):
@@ -21,3 +21,4 @@ class CartaAdmin(admin.ModelAdmin):
     search_fields = ["template",]
 
 admin.site.register(TipoCertificado)
+admin.site.register(TipoEvento)

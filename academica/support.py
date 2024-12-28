@@ -47,10 +47,9 @@ def filtra_entregas(composicoes, projeto, user=None):
     for composicao in composicoes:
 
         if projeto.semestre == 1:
-            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
+            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
         else:          
-            evento = Evento.objects.filter(tipo_de_evento=composicao.evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
-
+            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
 
         if composicao.exame.grupo:
             documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,

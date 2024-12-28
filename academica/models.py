@@ -9,6 +9,8 @@ Data: 4 de Novembro de 2023
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+from administracao.models import TipoEvento
+
 from projetos.tipos import TIPO_EVENTO
 
 class Exame(models.Model):
@@ -62,6 +64,9 @@ class Composicao(models.Model):
     evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
                                                       null=True, blank=True,
                                                       help_text="Tipo do evento esperado para uma entrega")
+    
+    tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
+                                      help_text="Tipo de evento")
     
     entregavel = models.BooleanField(default=True, help_text="Entregável")
 

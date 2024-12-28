@@ -18,7 +18,8 @@ from django.db.models.functions import Coalesce
 
 from django.shortcuts import render, redirect, get_object_or_404
 
-from administracao.models import TipoCertificado
+from administracao.models import TipoCertificado, TipoEvento
+from administracao.support import get_evento_p_nome_data
 
 from projetos.support import get_upload_path, simple_upload
 
@@ -69,7 +70,7 @@ def avisos_listar(request):
              "id": None,
             })
 
-        for aviso in Aviso.objects.filter(tipo_de_evento=evento.tipo_de_evento):
+        for aviso in Aviso.objects.filter(tipo_evento=evento.tipo_evento):
             avisos.append(
                 {"class": "Aviso",
                  "aviso": aviso,
@@ -200,7 +201,10 @@ def trata_aviso(aviso, request):
         aviso.titulo = request.POST["titulo"]
         aviso.delta = int(request.POST["delta"])
         aviso.mensagem = request.POST["mensagem"]
+
         aviso.tipo_de_evento = int(request.POST["evento"])
+        tipo_evento = TipoEvento.objects.get(tmpID=aviso.tipo_de_evento)
+        aviso.tipo_evento = tipo_evento
 
         aviso.coordenacao = "coordenacao" in request.POST
         aviso.operacional = "operacional" in request.POST
@@ -366,29 +370,18 @@ def plano_aulas(request):
     if request.is_ajax():
 
         if "edicao" in request.POST:
-            
             ano, semestre = request.POST["edicao"].split('.')
-            eventos = Evento.objects.filter(startDate__year=ano, tipo_de_evento=12)  # 12, "Aula"
-
-            if semestre == "1":
-                eventos = eventos.filter(startDate__month__lte=6)
-            else:
-                eventos = eventos.filter(startDate__month__gte=7)            
-
-            composicoes = filtra_composicoes(Composicao.objects.all(), ano, semestre)
-    
             context = {
-                "aulas": eventos,
-                "composicoes": composicoes,
+                "aulas": get_evento_p_nome_data("Aula", ano, semestre),
+                "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),
                 }
             return render(request, "operacional/plano_aulas.html", context=context)
         
         return HttpResponse("Algum erro não identificado.", status=401)
     
-    edicoes, _, _ = get_edicoes(Projeto)
     context = {
         "titulo": { "pt": "Plano de Aulas", "en": "Class Schedule" },
-        "edicoes": edicoes,
+        "edicoes": get_edicoes(Projeto)[0],
     }
     return render(request, "operacional/plano_aulas.html", context=context)
 

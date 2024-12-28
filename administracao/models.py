@@ -42,6 +42,9 @@ class TipoCertificado(models.Model):
     
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text="Título do tipo de certificado")
+    
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True,
+                                help_text="Sigla do tipo de certificado")
 
     descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
                                 help_text="Descrição do tipo de certificado")
@@ -66,3 +69,28 @@ class TipoCertificado(models.Model):
     class Meta:
         verbose_name = "Tipo de Certificado"
         verbose_name_plural = "Tipos de Certificados"
+
+
+class TipoEvento(models.Model):
+    """Tipos de eventos."""
+
+    nome = models.CharField("Nome", max_length=64, unique=True,
+                            help_text="Nome do tipo de evento") 
+    
+    cor = models.CharField("Cor", max_length=6, null=True, blank=True,
+                            help_text="Cor do tipo de evento em hexadecimal")
+    
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True,
+                            help_text="Sigla do tipo de evento")
+    
+    tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
+                                            help_text="ID temporário para migração de dados de eventos")
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        ordering = [ "nome",]
+        verbose_name = "Tipo de Evento"
+        verbose_name_plural = "Tipos de Eventos"
+        

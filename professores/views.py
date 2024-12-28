@@ -215,7 +215,7 @@ def mentorias_alocadas(request):
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
-    dias_bancas = Evento.objects.filter(tipo_de_evento__in=(14, 15, 18, 50))
+    dias_bancas = Evento.objects.filter(tipo_evento__tmpID__in=(14, 15, 18, 50))
 
     if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
         professor = get_object_or_404(Professor, pk=prof_id)

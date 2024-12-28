@@ -769,10 +769,7 @@ def estudante_detail(request, primarykey=None):
     context["aluno"] = estudante
     context["alocacoes"] = alocacoes
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
-    context["TIPO_DE_CERTIFICADO"] = Certificado.TIPO_DE_CERTIFICADO
     context["areast"] = Area.objects.filter(ativa=True)
-    context["estilos"] = EstiloComunicacao.objects.all()
-    
     context["estilos"] = EstiloComunicacao.objects.all()
     context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(estudante.user)
 

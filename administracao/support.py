@@ -12,12 +12,15 @@ from django.conf import settings
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied  # Para erro 400
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
+
+from administracao.models import TipoEvento
 
 from users.models import PFEUser, Aluno, Professor, Parceiro
 
 from projetos.models import Organizacao, Evento
+from projetos.models import Configuracao
 from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
@@ -28,42 +31,50 @@ def limpa_texto(texto):
     return texto.replace("\x00", "\uFFFD") if texto else None
 
 
-def get_limite_propostas(configuracao):
-    if configuracao.semestre == 1:
-        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+def get_evento_p_nome_data(nome, ano, semestre):
+    """Retorna o evento com o nome dado por dados."""
+    tevento = TipoEvento.objects.get(nome=nome)
+    if semestre == 1:
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
     else:
-        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-    # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    return evento
 
+
+def get_evento_p_nome(nome, configuracao=None):
+    """Retorna o evento com o nome dado."""
+    if configuracao is None:
+        configuracao = get_object_or_404(Configuracao)
+
+    tevento = TipoEvento.objects.get(nome=nome)
+    if configuracao.semestre == 1:
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
+    else:
+        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    return evento
+
+def get_limite_propostas(configuracao):
+    # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
+    evento = get_evento_p_nome("Indicação de interesse nos projetos do próximo semestre pelos estudante", configuracao)
     if evento is not None:
         return evento.endDate
-    
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
     return inicio_pfe
 
 # Melhor dar preferência para essa rotina que retorna None se não houver data planejada
 def get_limite_propostas2(configuracao):
-    if configuracao.semestre == 1:
-        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-    else:
-        evento = Evento.objects.filter(tipo_de_evento=123, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
     # (123, 'Indicação de interesse nos projetos do próximo semestre pelos estudante')
-
+    evento = get_evento_p_nome("Indicação de interesse nos projetos do próximo semestre pelos estudante", configuracao)
     if evento is None:
         return None    
     return evento.endDate
     
 def get_data_planejada(configuracao):
     """Retorna a data planejada para a liberação das propostas"""
-    if configuracao.semestre == 1:
-        evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-    else:
-        evento = Evento.objects.filter(tipo_de_evento=113, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
+    evento = get_evento_p_nome("Apresentação das propostas de projetos disponíveis para estudantes", configuracao)
     # (113, "Apresentação das propostas de projetos disponíveis para estudantes", "darkslategray"),
-
     if evento is not None:
         return evento.endDate
-
     return None
 
 def propostas_liberadas(configuracao):

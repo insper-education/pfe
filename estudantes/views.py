@@ -11,6 +11,7 @@ import json
 
 from hashids import Hashids
 
+from django import forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ValidationError
@@ -19,31 +20,26 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
-from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
-
+from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante
-
-from projetos.messages import email, message_agendamento, create_message, message_cancelamento
-
-from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
-
-from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre, adianta_semestre_conf
 
 from academica.models import Composicao
 from academica.support import filtra_composicoes, filtra_entregas
 
-from .models import Relato, Pares
-
+from administracao.models import Carta, TipoEvento
+from administracao.support import propostas_liberadas, get_evento_p_nome_data
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
-from administracao.models import Carta
-from administracao.support import propostas_liberadas
 from documentos.models import TipoDocumento
 
-from django import forms
-from .models import EstiloComunicacao
+from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
+from projetos.models import Encontro, Banca, Entidade, FeedbackEstudante, Evento, Documento
+from projetos.messages import email, message_agendamento, create_message, message_cancelamento
+
+from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 from users.models import UsuarioEstiloComunicacao
+from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre, adianta_semestre_conf
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -82,16 +78,13 @@ def index_estudantes(request):
             context["vencido"] = True
 
         if projeto:
-            hoje = datetime.date.today()
+            
+            # (15, "Bancas Finais", "#FFFF00"),
+            evento_banca_final = get_evento_p_nome_data("Bancas Finais", projeto.ano, projeto.semestre)
 
-            eventos = Evento.objects.filter(startDate__year=projeto.ano)
-            if projeto.semestre == 1:
-                banca_final = eventos.filter(tipo_de_evento=15, startDate__month__lt=7).last()
-            else:
-                banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
-
-            if banca_final:
-                context["fase_final"] = hoje > banca_final.endDate
+            if evento_banca_final:
+                hoje = datetime.date.today()
+                context["fase_final"] = hoje > evento_banca_final.endDate
 
         # Avaliações de Pares
         context["fora_fase_feedback_intermediario"], _, _ = configuracao_pares_vencida(request.user.aluno, 31) # 31, 'Avaliação de Pares Intermediária'
@@ -110,7 +103,9 @@ def index_estudantes(request):
     #get_limite_propostas2 return None caso não haja limite
     context["limite_propostas"] = get_limite_propostas2(configuracao)
 
-    context["liberacao_visualizacao"] = Evento.objects.filter(tipo_de_evento=113).last().startDate
+    #(113, "Apresentação das propostas disponíveis para estudantes", "#2E8B57"),
+    tenevento = TipoEvento.objects.get(nome="Apresentação das propostas disponíveis para estudantes")
+    context["liberacao_visualizacao"] = Evento.objects.filter(tipo_evento=tenevento).last().startDate
     context["titulo"] = {"pt": "Área dos Estudantes", "en": "Students Area"}
 
     if "/estudantes/estudantes" in request.path:
@@ -397,13 +392,8 @@ def estudante_feedback_geral(request, usuario):
     elif usuario.tipo_de_usuario == 1: # Estudante
         hoje = datetime.date.today()
         projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
-        eventos = Evento.objects.filter(startDate__year=projeto.ano)
-        if projeto.semestre == 1:
-            banca_final = eventos.filter(tipo_de_evento=15, startDate__month__lt=7).last()
-        else:
-            banca_final = eventos.filter(tipo_de_evento=15, startDate__month__gt=6).last()
-
-        if not banca_final or (banca_final and hoje <= banca_final.endDate):
+        evento_banca_final = get_evento_p_nome_data("Bancas Finais", projeto.ano, projeto.semestre)
+        if not evento_banca_final or (evento_banca_final and hoje <= evento_banca_final.endDate):
             mensagem = "Fora do período de feedback do Capstone!"
             context = {"mensagem": mensagem,}
             return render(request, "generic.html", context=context)
@@ -695,7 +685,8 @@ def relato_quinzenal(request):
     hoje = datetime.date.today()
 
     # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
-    prazo = Evento.objects.filter(tipo_de_evento=20, endDate__gte=hoje).order_by("endDate").first()
+    tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
+    prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
 
     if prazo:
         # Só mostra o relato N (config.periodo_relato) dias antes do prazo
@@ -759,7 +750,8 @@ def relato_quinzenal(request):
             return render(request, "generic.html", context=context)
 
 
-        relato_anterior = Evento.objects.filter(tipo_de_evento=20, endDate__lt=hoje).order_by("endDate").last()
+        tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
+        relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
         
         if not relato_anterior:
             return HttpResponseNotFound("<h1>Erro ao buscar prazos!</h1>")
