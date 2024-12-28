@@ -20,8 +20,10 @@ class ParesAdmin(admin.ModelAdmin):
     list_filter = ("momento", "tipo")
     search_fields = ["alocacao_de__aluno__user__first_name",
                      "alocacao_de__aluno__user__last_name",
+                     "alocacao_de__aluno__user__username",
                      "alocacao_para__aluno__user__first_name",
                      "alocacao_para__aluno__user__last_name",
+                     "alocacao_para__aluno__user__username",
                      "alocacao_de__projeto__proposta__titulo",
                      ]
 

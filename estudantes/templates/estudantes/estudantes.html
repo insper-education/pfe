@@ -98,7 +98,7 @@
   </a>
 </div>
 
-<div class="item_lista"><span class="circulo">&#9899;</span>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=submissao_documento %}</span>
   <a {% comment %} Submissão de Documentos {% endcomment %}
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         href="{% url 'submissao_documento' %}"
@@ -115,7 +115,7 @@
   </a>
 </div>
 
-<div class="item_lista"><span class="circulo">&#9899;</span>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=encontros_marcar %}</span>
   <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')"
           {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
     <span lang="pt">Agendar Mentorias</span>
@@ -123,7 +123,7 @@
   </a>
 </div>
 
-<div class="item_lista"><span class="circulo">&#9899;</span>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
   <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
       {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
       href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
@@ -131,7 +131,8 @@
       <span lang="en" style="display: none;">Intermediate Peer Evaluation</span>
   </a>
 </div>
-<div class="item_lista"><span class="circulo">&#9899;</span>
+
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
   <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
       {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
       href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
