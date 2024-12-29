@@ -75,16 +75,19 @@
             <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
           </div>
           <select id="periodo" class="periodo to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
-            <option value="1">1 mês</option>
-            <option value="2">2 mêses</option>
-            <option value="3" selected>3 mêses</option>
-            <option value="6">6 mêses</option>
-            <option value="12">12 mêses</option>
-            <option value="9999">tudo</option>
+            <option value="1" class="troca_lingua" data-pt="1 mês" data-en="1 month">1 mês</option>
+            <option value="2" class="troca_lingua" data-pt="2 mêses" data-en="2 months">2 mêses</option>
+            <option value="3" selected class="troca_lingua" data-pt="3 mêses" data-en="3 months">3 mêses</option>
+            <option value="6" class="troca_lingua" data-pt="6 mêses" data-en="6 months">6 mêses</option>
+            <option value="12" class="troca_lingua" data-pt="12 mêses" data-en="12 months">12 mêses</option>
+            <option value="9999" class="troca_lingua" data-pt="tudo" data-en="all">tudo</option>
           </select>
           &nbsp;&nbsp;&nbsp;
           <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
-            <span class="sr-only">Carregando...</span>
+            <span class="sr-only">
+              <span lang="pt">Carregando...</span>
+              <span lang="en" style="display: none;">Loading...</span>
+            </span>
           </div>
           &nbsp;&nbsp;&nbsp;
         </div>
@@ -95,24 +98,27 @@
             </label>
           </div>
           <select id="filter" class="selectpicker filter custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
-            <option value="todas">todas contactadas</option>
+            <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
             {% for retorno in TIPO_DE_RETORNO %}
               {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
               <option value="{{retorno.0}}">{{retorno.1}}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="input-group input-group-sm mt-1 ml-3 mr-4">
-          <div class="input-group-prepend">
-            <button class="btn btn-light btn-sm esconder create-annotation" href="{% url 'anotacao' %}" data-url="{% url 'anotacao' %}" type="button" style="float: right;">
-              <span lang="pt">Cadastrar Nova Anotação</span>
-              <span lang="en" style="display: none;">Register New Note</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
+
+  <span class="esconder">
+    <a 
+    href="{% url 'anotacao' %}"
+    class="create-annotation" style="cursor:pointer;"
+    data-url={% url 'anotacao' %}
+    ><i class="fas fa-plus"></i>
+      <span lang="pt">Cadastrar Nova Anotação</span>
+      <span lang="en" style="display: none;">Register New Note</span>
+    </a>
+  </span>
 
   <div id="atualizar">
 

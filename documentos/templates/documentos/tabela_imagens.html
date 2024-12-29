@@ -20,7 +20,10 @@
       href="#"
       class="open-documento" style="cursor:pointer;"
       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-      ><i class="fas fa-plus"></i> Adicionar novo documento</a>
+      ><i class="fas fa-plus"></i>
+        <span lang="pt">Adicionar novo documento</span>
+        <span lang="en" style="display: none;">Add new document</span>
+    </a>
     </span>
     {% include "documento-modal.html" %}
   {% endif %}

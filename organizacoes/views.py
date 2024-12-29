@@ -16,7 +16,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count, Prefetch
+from django.db.models import Prefetch
 
 from organizacoes.support import get_form_fields, cria_documento
 
@@ -70,11 +70,10 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
         anotacao_obj.texto = request.POST["texto"]
         anotacao_obj.tipo_de_retorno = int(request.POST["tipo_de_retorno"])
-        anotacao_obj.save()
+        
         if "data_hora" in request.POST:
             try:
-                anotacao_obj.momento = dateutil.parser\
-                    .parse(request.POST["data_hora"])
+                anotacao_obj.momento = dateutil.parser.parse(request.POST["data_hora"])
             except (ValueError, OverflowError):
                 anotacao_obj.momento = datetime.datetime.now()
         anotacao_obj.save()
@@ -82,28 +81,21 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
         data = {
             "data": anotacao_obj.momento.strftime("%d/%m/%y"),
             "data_full": anotacao_obj.momento.strftime("%d/%m/%Y"),
-            "autor_nome": str(anotacao_obj.autor.get_full_name().split(' ', 1)[0]),
-            "autor_sobrenome": str(anotacao_obj.autor.get_full_name().split(' ', 1)[1]),
+            "autor_nome": anotacao_obj.autor.first_name,
+            "autor_sobrenome": anotacao_obj.autor.last_name,
             "anotacao_id": anotacao_obj.id,
             "atualizado": True,
         }
 
         return JsonResponse(data)
 
-
-    anotacao_obj = None
-
-    if anotacao_id:
-        anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
-        data_hora = anotacao_obj.momento
-    else:
-        data_hora = datetime.datetime.now()
+    anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id) if anotacao_id else None
 
     context = {
         "organizacao": organizacao,
         "TIPO_DE_RETORNO": sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1])),
-        "data_hora": data_hora,
         "anotacao": anotacao_obj,
+        "data_hora": anotacao_obj.momento if anotacao_obj else datetime.datetime.now(),
         "organizacoes": Organizacao.objects.all(),
     }
 
@@ -803,7 +795,6 @@ def todos_parceiros(request):
                     projeto__semestre=semestre).values_list("parceiro", flat=True)
                 parceiros = parceiros.filter(id__in=conexoes)
 
-    edicoes, _, _ = get_edicoes(Projeto)    
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
                   { "pt": "Cargo", "en": "Position", }, 
                   { "pt": "Organização", "en": "Organization", }, 
@@ -814,7 +805,7 @@ def todos_parceiros(request):
         "parceiros": parceiros,
         "cabecalhos": cabecalhos,
         "titulo": { "pt": "Parceiros Profissionais", "en": "Professional Partners", },
-        "edicoes": edicoes,
+        "edicoes": get_edicoes(Conexao)[0],
         "edicao": edicao,
         "Conexao": Conexao,
         }
