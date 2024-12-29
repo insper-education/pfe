@@ -17,34 +17,32 @@ from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import Context, Template
 from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
-from django.template import Context, Template
+
+from .forms import PFEUserCreationForm
+from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
+from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
+from .support import get_edicoes, adianta_semestre, retrocede_semestre
+
+from academica.models import Composicao, CodigoColuna, Exame
+from academica.support import filtra_composicoes
+
+from administracao.models import Carta
+from administracao.support import get_limite_propostas, usuario_sem_acesso, get_evento_p_nome_data
+
+from estudantes.models import EstiloComunicacao
+
+from operacional.models import Curso
 
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.models import ObjetivosDeAprendizagem, Evento
-
 from projetos.messages import email
 from projetos.support import calcula_objetivos
 
-from administracao.support import get_limite_propostas, usuario_sem_acesso, get_evento_p_nome_data
-from administracao.models import Carta
-
-from academica.models import Composicao, CodigoColuna
-from academica.support import filtra_composicoes
-
-from operacional.models import Curso
-
-from .forms import PFEUserCreationForm
-from .models import PFEUser, Aluno, Professor, Parceiro, Opcao, Administrador
-from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
-from .support import get_edicoes, adianta_semestre, retrocede_semestre
-
-from academica.models import Exame
-
-from estudantes.models import EstiloComunicacao
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -103,16 +101,9 @@ def estudantes_lista(request):
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
-            if edicao == "todas":
-                anosemestre = "todos"
-            elif edicao == "trancou":
-                anosemestre = "trancou"
-            else:
-                anosemestre = edicao
-
+            
             # Conta soh estudantes
-            alunos_todos = Aluno.objects\
-                .order_by(Lower("user__first_name"), Lower("user__last_name"))
+            alunos_todos = Aluno.objects.order_by(Lower("user__first_name"), Lower("user__last_name"))
 
             ano = 0
             semestre = 0
@@ -125,16 +116,16 @@ def estudantes_lista(request):
             # Filtra para estudantes de um curso específico
             if "curso" in request.POST:
                 curso_sel = request.POST["curso"]
-                if curso_sel != "TE":
-                    if curso_sel != 'T':
+                if curso_sel != "TE":  # Todos os estudantes (com externos)
+                    if curso_sel != 'T':  # Todos os estudantes (sem externos)
                         alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso_sel)
                     else:
                         alunos_todos = alunos_todos.filter(curso2__in=cursos_insper)
         
             
-            if anosemestre not in ("todos", "trancou"):
+            if edicao not in ("todas", "trancou"):
                 # Estudantes de um semestre em particular
-                ano, semestre = map(int, anosemestre.split('.'))
+                ano, semestre = map(int, edicao.split('.'))
 
                 alunos_list = alunos_todos.filter(trancado=False)
 
@@ -151,14 +142,11 @@ def estudantes_lista(request):
                     if count_estud > 0:
                         if curso not in cursos:
                             cursos.append(curso)
-                        tabela_alunos[ano][semestre][curso.sigla] =\
-                            alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
-                        totais[curso.sigla] = tabela_alunos[ano][semestre][curso.sigla]
-                        totais["total"] += tabela_alunos[ano][semestre][curso.sigla]
+                        tabela_alunos[ano][semestre][curso.sigla] = count_estud
+                        totais[curso.sigla] = count_estud
+                        totais["total"] += count_estud
 
-
-                tabela_alunos[ano][semestre]["total"] =\
-                    alunos_semestre.count()
+                tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
                 
                 alunos_list = alunos_semestre |\
                     alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
@@ -166,7 +154,7 @@ def estudantes_lista(request):
             else:
                 
                 # Essa parte está em loop para pegar todos os alunos de todos os semestres
-                if anosemestre == "todos":
+                if edicao == "todas":
                     alunos_list = alunos_todos.filter(trancado=False)
                 else:
                     alunos_list = alunos_todos.filter(trancado=True)
@@ -203,14 +191,13 @@ def estudantes_lista(request):
                         if count_estud > 0:
                             if curso not in cursos:
                                 cursos.append(curso)
-                            tabela_alunos[ano_tmp][semestre_tmp][curso.sigla] =\
-                                alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                            tabela_alunos[ano_tmp][semestre_tmp][curso.sigla] = count_estud
                             if curso.sigla in totais:
-                                totais[curso.sigla] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
+                                totais[curso.sigla] += count_estud
                             else:
-                                totais[curso.sigla] = tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
-                            tabela_alunos[ano_tmp][semestre_tmp]["total"] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
-                            totais["total"] += tabela_alunos[ano_tmp][semestre_tmp][curso.sigla]
+                                totais[curso.sigla] = count_estud
+                            tabela_alunos[ano_tmp][semestre_tmp]["total"] += count_estud
+                            totais["total"] += count_estud
 
                     if semestre_tmp == 1:
                         semestre_tmp = 2
@@ -244,19 +231,16 @@ def estudantes_lista(request):
                 "alunos_list": alunos_list,
                 "total_estudantes": total_estudantes,
                 "num_estudantes": num_estudantes,
-
                 "num_alunos_masculino": num_alunos_masculino,
                 "num_alunos_feminino": num_alunos_feminino,
-
                 "configuracao": configuracao,
                 "cursos": cursos,
                 "tabela_alunos": tabela_alunos,
-
                 "totais": totais,
                 "ano": ano,
                 "semestre": semestre,
-                "ano_semestre": str(ano)+"."+str(semestre),
-                "loop_anos": range(2018, configuracao.ano+1),
+                #"ano_semestre": str(ano)+"."+str(semestre),
+                #"loop_anos": range(2018, configuracao.ano+1),
                 "cabecalhos": cabecalhos,
                 "curso_sel": curso_sel,
             }
@@ -264,10 +248,9 @@ def estudantes_lista(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Aluno)
 
         context = {
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Aluno)[0],
             "titulo": {"pt": "Estudantes", "en": "Students"},
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
@@ -280,7 +263,7 @@ def estudantes_lista(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_notas(request, professor=None):
     """Gera lista com todos os alunos já registrados."""
-    configuracao = get_object_or_404(Configuracao)
+    # configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
         if "edicao" in request.POST:
@@ -566,15 +549,13 @@ def estudantes_inscritos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
 
-        edicoes, _, _ = get_edicoes(Aluno)
-
         configuracao = get_object_or_404(Configuracao)
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
         selecionada = str(ano) + "." + str(semestre)
 
         context = {
             "titulo": {"pt": "Estudantes Inscritos", "en": "Enrolled Students"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Aluno)[0],
             "selecionada": selecionada,
         }
 
@@ -794,13 +775,9 @@ def professor_detail(request, primarykey):
     bancas = bancas | Banca.objects.filter(projeto__orientador=context["professor"], tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
 
     context["bancas"] = bancas.order_by("startDate")
-    
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
-    
     context["aulas"] = Evento.objects.filter(tipo_evento__sigla="A", responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
-
     context["estilos"] = EstiloComunicacao.objects.all()
-
     context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(context["professor"].user)
 
     return render(request, "users/professor_detail.html", context=context)

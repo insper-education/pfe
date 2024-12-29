@@ -72,6 +72,9 @@
                     {% endif %}
                 >{{edicao}}</option>
             {% endfor %}
+            {% if com_trancou %}
+              <option class="opt_edi troca_lingua" value="trancou" data-pt="trancou" data-en="on hold">trancou</option>
+            {% endif %}
             </optgroup>
           </select>
           <div class="separador input-group-addon"></div>

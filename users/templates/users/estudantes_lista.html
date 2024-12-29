@@ -6,19 +6,14 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load dictionary %}
-
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  
+  {% include "tabelas_includes.html" %}
+  {% include "reload.html" %}
+
   {% comment %} Melhor não usar números absolutos de gênero visto que os estudantes não foram consultados sobre isso. {% endcomment %}
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
-
-  {% include "tabelas_includes.html" %}
-  
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
-  {% include "reload.html" %}
 
   <style>
     th {padding: 1px 4px 1px 4px;}
@@ -28,6 +23,7 @@
 
 {% block content %}
 
+  {% include "edicoes.html" with com_cursos=True com_trancou=True %}
   <span class="esconder">
     <a href="{% url 'cadastrar_usuario' %}?tipo=estudante" style="cursor:pointer;">
       <i class="fas fa-plus"></i>
@@ -35,15 +31,6 @@
       <span lang="en" style="display: none;">Add user</span>
     </a>
   </span>
-
-  {% include "edicoes.html" with com_cursos=True %}
-
-  <script>
-    $("#filterEdicao").append($("<option>", {
-        value: "trancou",
-        text: "trancou"
-    }));
-  </script>
   
   <div class="atualizar">
 
@@ -56,19 +43,13 @@
             </a>
           </th>
           <td style="text-align: right;">
-            {% if aluno.matricula %}
-              {{aluno.matricula}}
-            {% else %}
-              N/I
-            {% endif %}
+            {% if aluno.matricula %}{{aluno.matricula}}{% else %}N/I{% endif %}
           </td>
           <td>
             <a href="mailto:{{aluno.user.email}}">{{aluno.user.email}}</a>
           </td>
           {% if aluno.curso2 %}
-            <td style="color:#{{ aluno.curso2.cor }};">
-              {{ aluno.curso2 }}
-            </td>
+            <td style="color:#{{ aluno.curso2.cor }};">{{ aluno.curso2 }}</td>
           {% else %}
             <td>Indefinido</td>
           {% endif %}
@@ -109,9 +90,9 @@
           {% endwith %}
 
           <td>
-          {% if aluno.user.linkedin %}
-            <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
-          {% endif %}
+            {% if aluno.user.linkedin %}
+              <a href="{{ aluno.user.linkedin }}">{{ aluno.user.linkedin }}</a>
+            {% endif %}
           </td>
 
           <td>
@@ -120,7 +101,10 @@
 
         </tr>
         {% endfor %}
-        <caption style="text-align:right"><small>Projetos <u>sublinhados</u> são de Capstone Avançado</small></caption>
+        <caption style="text-align:right"><small>
+          <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
+          <span lang="en" style="display: none;">Projects <u>underlined</u> are Advanced Capstone</span>
+        </small></caption>
       </table>
     </div>
     <br>
@@ -129,12 +113,18 @@
     {{curso}}
     {% if totais.total > 0 %}
       <br><br>
-      <h5>Quantidade de estudantes alocados em projetos</h5>
+      <h5>
+        <span lang="pt">Quantidade de estudantes alocados em projetos por curso</span>
+        <span lang="en" style="display: none;">Number of students allocated in projects by course</span>
+      </h5>
       <div class="table-responsive">
       <table id="AlunosTable" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
-              <th class="text-center" style="border-right: solid 3px;">Período</th>
+              <th class="text-center" style="border-right: solid 3px;">
+                <span lang="pt">Período</span>
+                <span lang="en" style="display: none;">Semester</span>
+              </th>
               {% for curso in cursos %}
                 <th class="text-center">{{curso.sigla}}</th>
               {% endfor %}
@@ -163,7 +153,10 @@
         {% endfor %}
         {% if ano == 0 or semestre == 0 %}
           <tr class="item">
-            <td class="text-center" style="border-right: solid 3px; border-top: double;"> Totais </td>
+            <td class="text-center" style="border-right: solid 3px; border-top: double;">
+              <span lang="pt">Totais</span>
+              <span lang="en" style="display: none;">Totals</span>
+            </td>
               {% for curso in cursos %}
                 <td class="text-center" style="border-top: double;">
                   {% with qtd=totais|dict_key:curso.sigla %}
@@ -179,7 +172,10 @@
         </tbody>
       </table>
       {% if ano == 0 or semestre == 0 %}
-        <small>estudantes reprovados e do Capstone avançado contam mais de uma vez</small>
+        <small>
+          <span lang="pt">Estudantes reprovados e do Capstone avançado contam mais de uma vez</span>
+          <span lang="en" style="display: none;">Failed students and Advanced Capstone students count more than once</span>
+        </small>
       {% endif %}
       </div>
       <br>
@@ -342,19 +338,14 @@
       var table = null;
 
       function carrega_pagina() {
-
         if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-
           table = $("#EstudantesTable").dataTable();
-
           if(table) {
             // Hide/Esconde certas colunas
             table.fnSetColumnVis( 1, false );  // esconde Matrícula
             table.fnSetColumnVis( 6, false );  // esconde Linkedin
             table.fnSetColumnVis( 7, false );  // esconde Telefone
-
             {% include "linguas_ajax.html" %}
-
           }
         }
       };
