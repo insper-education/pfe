@@ -19,11 +19,17 @@ class Exame(models.Model):
     titulo = models.TextField("Título", max_length=128, null=True, blank=True, unique=True,
                               help_text="Título do Exame")
     
+    titulo_en = models.TextField("Título (Inglês)", max_length=128, null=True, blank=True,
+                                 help_text="Título do Exame em Inglês")
+    
     sigla = models.TextField("Sigla", max_length=3, null=True, blank=True, unique=True,
                              help_text="Sigla do Exame")
 
     grupo = models.BooleanField("Grupo", default=False,
                                 help_text="Caso Verdadeiro é em Grupo, se Falso é individual")
+    
+    banca = models.BooleanField("Banca", default=False,
+                                help_text="Caso Verdadeiro é um exame em formato de Banca")
     
     PERIODOS_RUBRICAS = (
         (0, "Não Aplicável"),

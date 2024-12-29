@@ -940,7 +940,7 @@ class Banca(models.Model):
     TIPO_DE_BANCA = ( # não mudar a ordem dos números
         (0, "Final"),
         (1, "Intermediária"),
-        (2, "Certificação Falconi"),
+        (2, "Falconi"),
         (3, "Probation"),
     )
     tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
@@ -950,6 +950,9 @@ class Banca(models.Model):
     composicao = models.ForeignKey("academica.Composicao", null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text="tipo de composição para exame de avaliação da banca")
 
+    def get_sigla(self):
+        """Retorna a sigla do tipo de banca."""
+        return self.composicao.exame.sigla
 
     def __str__(self):
         """Retorno padrão textual."""

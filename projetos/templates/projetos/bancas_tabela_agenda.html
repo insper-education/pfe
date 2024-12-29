@@ -33,17 +33,17 @@
             <label class="to_label input-group-text" for="tipob">
               <span class="to_hide">
                 <span lang="pt">Tipo</span>
-                <span lang="en">Type</span>
+                <span lang="en" style="display:none">Type</span>
               </span>
             </label>
           </div>
           <select id="tipob" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="19em"
                   title="Nada selecionado"
                   multiple>
-            <option selected="selected" title="Intermediária">Intermediária</option>
-            <option selected="selected" title="Final">Final</option>
-            <option selected="selected" title="Certificação Falconi">Certificação Falconi</option>
-            <option selected="selected" title="Probation">Probation</option>
+                  {% for tipo in tipos_bancas %}
+                    <option selected="selected" value="{{tipo.sigla}}"  title="{{tipo.sigla}}"
+                     class="troca_lingua" data-pt="{{tipo.titulo}}" data-en="{{tipo.titulo_en}}">{{tipo.titulo}}</option>
+                  {% endfor %}
           </select>
       </div>
     </div>
@@ -52,7 +52,7 @@
   <div class="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
     {% for banca in bancas %}
-      <tr class="item" data-user="{{banca.get_tipo_de_banca_display}}">
+      <tr class="item" data-user="{{banca.get_sigla}}">
         <td>{{banca.composicao.exame}}</td>
         {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
         <td><span class="data_full">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
@@ -159,6 +159,12 @@
      );
      table.draw();
     });
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    }
+    window.onload = carrega_site
+  
   </script>
 
 {% endblock %}

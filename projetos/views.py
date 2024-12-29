@@ -480,8 +480,8 @@ def projetos_lista(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela_agenda(request):
-    """Lista todos os projetos."""
-    edicoes = []
+    """Lista todos as bancas por semestre."""
+    
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -490,7 +490,7 @@ def bancas_tabela_agenda(request):
             else:
                 ano, semestre = edicao.split('.')
                 bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-                bancas_a = Banca.objects.filter(alocacao__isnull=False)  # Probation
+                bancas_a = Banca.objects.filter(alocacao__isnull=False, alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)  # Probation
                 bancas = bancas_p | bancas_a
 
             cabecalhos = [{"pt": "Tipo", "en": "Type"},
@@ -505,10 +505,11 @@ def bancas_tabela_agenda(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
+
         context = {
             "titulo": {"pt": "Tabela de Agenda das Bancas", "en": "Examination Boards Schedule Table"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Projeto)[0],
+            "tipos_bancas": Exame.objects.filter(banca=True),
         }
 
     return render(request, "projetos/bancas_tabela_agenda.html", context)
