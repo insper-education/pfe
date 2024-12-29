@@ -11,7 +11,7 @@ import unicodedata
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
-from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Projeto
+from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Projeto, Documento
 from .models import Aluno
 from estudantes.models import Relato, Pares
 
@@ -122,6 +122,9 @@ def get_edicoes(tipo, anual=False):
         elif tipo == Avaliacao2:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
                 existe = True
+        elif tipo == Documento:
+            if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
+                existe = True
         elif tipo == Relato:  # Relato no sistema do Capstone só começaram a ser feitos em 2022.1
             if ano_tmp < 2022:
                 ano_tmp = 2022
@@ -150,7 +153,7 @@ def get_edicoes(tipo, anual=False):
                 break
 
         if semestre_tmp == 1:
-            semestre_tmp += 1
+            semestre_tmp = 2
         else:
             ano_tmp += 1
             semestre_tmp = 1

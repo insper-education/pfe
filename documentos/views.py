@@ -295,19 +295,16 @@ def materias_midia(request):
 def relatorios_publicos(request, edicao=None):
     """Exibe relatórios públicos."""
 
+    relatorios = Documento.objects.filter(tipo_documento__sigla="RPU", confidencial=False)\
+                    .order_by("projeto__ano", "projeto__semestre")  # Relatório Publicado
+                                
     if request.is_ajax():
         
-        tipo_documento = TipoDocumento.objects.get(nome="Relatório Publicado")
-
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
-
-            relatorios = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False)\
-                            .order_by("-projeto__ano", "-projeto__semestre")
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
                 relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
-
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
         
@@ -327,9 +324,12 @@ def relatorios_publicos(request, edicao=None):
 
     else:
 
+        relatorios = relatorios.values_list("projeto__ano", "projeto__semestre").distinct()
+        edicoes = [f"{ano}.{semestre}" for ano, semestre in relatorios]
+
         context = {
             "titulo": {"pt": "Documentos Públicos", "en": "Public Documents"},
-            "edicoes": get_edicoes(Projeto)[0],
+            "edicoes": edicoes,  #relatorios publicos
             "selecionada": edicao,
         }
     
