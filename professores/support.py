@@ -72,11 +72,13 @@ def editar_banca(banca, request):
         banca = Banca.create()
 
     if "tipo" in request.POST and request.POST["tipo"] != "":
-        banca.tipo_de_banca = int(request.POST["tipo"])
+        exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
+        composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+        banca.composicao = composicao
     else:
         return "Tipo de banca não informado!", None
     
-    if banca.alocacao == 3:  # Banca Probation      
+    if banca.alocacao:  # Banca Probation      
         try:
             banca.alocacao = Alocacao.objects.get(id=int(request.POST.get("alocacao")))
         except Alocacao.DoesNotExist:
@@ -95,18 +97,6 @@ def editar_banca(banca, request):
         banca.endDate = dateutil.parser.parse(request.POST.get("fim"))
     except (ValueError, OverflowError):
         banca.endDate = None
-
-    if banca.composicao.exame == 0:  # Banca Final
-        composicao = Composicao.objects.filter(exame__sigla="BF", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    elif banca.tipo_de_banca == 1:  # Banca Intermediária
-        composicao = Composicao.objects.filter(exame__sigla="BI", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    elif banca.tipo_de_banca == 2:  # Banca Falconi
-        composicao = Composicao.objects.filter(exame__sigla="F", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    elif banca.tipo_de_banca == 3: # Banca Probation
-        composicao = Composicao.objects.filter(exame__sigla="P", data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    else:
-        return "Tipo de banca invalido", None
-    banca.composicao = composicao
 
     banca.location = request.POST.get("local")
     banca.link = request.POST.get("link")
@@ -530,13 +520,13 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     context = {}
     avaliar_bancas = 'b'
     
-    bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca__in=(0, 1)).\
+    bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
     
-    bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=2).\
+    bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla="F").\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Falconi
 
-    bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_de_banca=3).\
+    bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, composicao__exame__sigla="P").\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Probation
     
     bancas = bancas_0_1 | bancas_2 | bancas_3
@@ -545,14 +535,14 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
         avaliar_bancas = 'g'
 
     exame_titles = {
-        0: "Banca Final",
-        1: "Banca Intermediária",
-        2: "Certificação Falconi",
-        3: "Probation"
+        "BF": "Banca Final",
+        "BI": "Banca Intermediária",
+        "F": "Certificação Falconi",
+        "P": "Probation"
     }
 
     for banca in bancas:
-        exame_title = exame_titles.get(banca.tipo_de_banca)
+        exame_title = exame_titles.get(banca.composicao.exame.sigla)
         if exame_title:
             exame = Exame.objects.filter(titulo=exame_title).first()
             if banca.alocacao:

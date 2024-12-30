@@ -795,9 +795,7 @@ def minhas_bancas(request):
         # Banca do aluno (probation)
         bancai = Banca.objects.filter(alocacao=alocacao).order_by("-startDate")
         
-        bancas = bancag | bancai
-        
-        context["bancas"] = bancas
+        context["bancas"] =  bancag | bancai
     else:
         context["mensagem"] = "Você não está cadastrado como estudante."
     return render(request, "estudantes/minhas_bancas.html", context)

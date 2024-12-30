@@ -19,16 +19,10 @@
   
     <div class="atualizar">
       {% include "mostrar_notas.html" with titulo_lista="Exame" com_borda=True %}
-      <script>
-        {% comment %} function carrega_pagina() {}; {% endcomment %}
-        function carrega_site() {};
-        window.onload = carrega_site
-      </script>
-
     </div>
     <br>
 
-    <button type="button" class="btn btn-primary" type="submit" id="atualizarButton">
+    <button class="btn btn-primary" type="submit" id="atualizarButton">
       <span lang="pt">Atualizar</span>
       <span lang="en">Update</span>
     </button>

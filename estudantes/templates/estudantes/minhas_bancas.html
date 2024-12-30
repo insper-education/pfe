@@ -40,17 +40,8 @@
               <span lang="pt">Tipo:</span>
               <span lang="en" style="display: none;">Type:</span>
             </b> 
-            {% if banca.tipo_de_banca == 0 %}
-              <span lang="pt">Final</span><span lang="en" style="display: none;">Final</span>
-            {% elif banca.tipo_de_banca == 1 %}
-              <span lang="pt">Intermediária</span><span lang="en" style="display: none;">Intermediate</span>
-            {% elif banca.tipo_de_banca == 2 %}
-              <span lang="pt">Certificação Falconi</span><span lang="en" style="display: none;">Falconi Certification</span>
-            {% elif banca.tipo_de_banca == 3 %}
-              <span lang="pt">Probation</span><span lang="en" style="display: none;">Probation</span>
-            {% else %}
-              <span lang="pt">Não identificada</span><span lang="en" style="display: none;">Not identified</span>
-            {% endif %}
+            <span lang="pt">{{banca.composicao.exame.titulo}}</span>
+            <span lang="en" style="display: none;">{{banca.composicao.exame.titulo_en}}</span>
           </div>
           
           {% if banca.get_projeto %}
@@ -122,7 +113,7 @@
                   </b><br>
                   {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                     &nbsp;&#x21A3; {{objetivo.titulo}}: 
-                      {% if banca.tipo_de_banca == 3 %}
+                      {% if banca.alocacao %} {% comment %} PROBATION {% endcomment %}
                         {% if avaliacao.0 >= 5 %}
                           <span style="color: green;">
                             <span lang="pt">Suficiente</span>
@@ -152,25 +143,25 @@
                     </b><br>
                   {% endif %}
                   {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
+                {% endif %}
 
-                  {% if banca.get_observacoes_estudantes %}
+                {% with observacoes_estudantes=banca.get_observacoes_estudantes %}
+                  {% if observacoes_estudantes %}
                     <b style="display: inline-block; margin-top: 14px;">
                       <span lang="pt">Observações realizadas pelos membros da banca:</span>
                       <span lang="en" style="display: none;">Observations made by the examination board members:</span>
                     </b>
-                    
-                      {% for observacao in banca.get_observacoes_estudantes %}
-                        {% if observacao.observacoes_estudantes %}
-                        <div class="pintern" style="padding: 6px;">
-                            <b>{{observacao.avaliador.get_full_name}}</b>:<br>
-                            {{observacao.observacoes_estudantes|linebreaks}}
-                        </div>
-                        {% endif %}
-                      {% endfor %}
-                        
-                  {% endif %}
-      
-                {% endif %}
+                    {% for observacao in observacoes_estudantes %}
+                      {% if observacao.observacoes_estudantes %}
+                      <div class="pintern" style="padding: 6px;">
+                          <b>{{observacao.avaliador.get_full_name}}</b>:<br>
+                          {{observacao.observacoes_estudantes|linebreaks}}
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}      
+                {% endwith %}
+     
               {% endwith %}
             {% endif %}
           </div>

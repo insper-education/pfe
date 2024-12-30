@@ -33,22 +33,11 @@ def exibe_notas_proj(projeto, exame):
 @register.filter
 def exibe_notas_banca(banca):
     """Verifica se nota pode ser exibida para estudantes."""
-    if banca.tipo_de_banca == 0:
-        exame = "BF"
-    elif banca.tipo_de_banca == 1:
-        exame = "BI"
-    elif banca.tipo_de_banca == 2:  # Banca Falconi
-        exame = "F"
-    elif banca.tipo_de_banca == 3:  # Banca Probation
-        exame = "P"
-    else:
-        return True
-    
     try:
-        exibe = ExibeNota.objects.get(exame__sigla=exame, ano=banca.get_projeto().ano, semestre=banca.get_projeto().semestre)
+        projeto = banca.get_projeto()
+        exibe = ExibeNota.objects.get(exame=banca.composicao.exame, ano=projeto.ano, semestre=projeto.semestre)
     except Exception as e:
         return True
-    
     return exibe.exibe
 
 

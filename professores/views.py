@@ -155,8 +155,8 @@ def bancas_alocadas(request):
               Banca.objects.filter(membro3=request.user))
     
     if request.user.professor:
-        #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
-        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+        # Orientador é automaticamente membro de banca final e intermediária
+        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, composicao__exame__sigla__in=("BI", "BF"))
 
     # Usado para inverter as datas das bancas atuais
     periodo = timezone.now().date() - datetime.timedelta(days=30)
@@ -327,82 +327,6 @@ def ajax_atualiza_dinamica(request):
             return HttpResponse("Formado de data inválido", status=400)
     return HttpResponse("Erro.", status=400)
 
-    
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_criar(request, data=None):
-    """Cria uma banca de avaliação para o projeto."""
-    configuracao = get_object_or_404(Configuracao)
-
-    if request.is_ajax() and request.method == "POST":
-
-        atualizado = True
-        mensagem, banca = editar_banca(None, request)
-        if mensagem is None:
-            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
-        else:
-            atualizado = False
-
-        context = {
-            "atualizado": atualizado,
-            "mensagem": mensagem,
-        }
-        return JsonResponse(context)
-
-    # Originalmente estava: .exclude(orientador=None)
-    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")    
-    professores, falconis = coleta_membros_banca()
-
-    # Coletando bancas agendadas a partir de hoje
-    hoje = datetime.date.today()
-    bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-    projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
-
-    if configuracao.semestre == 1:
-        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
-    else:
-        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
-
-    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Falconi' / 18, 'Probation'
-    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
-    bancas_finais = eventos.filter(tipo_evento__sigla="BF")
-    bancas_probation = eventos.filter(tipo_evento__sigla="P")
-    bancas_falconi = eventos.filter(tipo_evento__sigla="F")
-
-    context = {
-        "projetos": projetos,
-        "alocacoes": alocacoes,
-        "professores": professores,
-        "Banca": Banca,
-        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi"), (3, "Probation")),  # Para ficar na ordem que desejo
-        "falconis": falconis,
-        "projetos_agendados": projetos_agendados,
-        "bancas_intermediarias": bancas_intermediarias,
-        "bancas_finais": bancas_finais,
-        "bancas_probation": bancas_probation,
-        "bancas_falconi": bancas_falconi,
-        "url": request.get_full_path(),
-        "root_page_url": request.session.get("root_page_url", '/'),
-    }
-
-    if data:
-        context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
-        datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
-        if bancas_finais and bancas_finais.first().startDate and bancas_finais.last().endDate:
-            if datar >= bancas_finais.first().startDate and datar <= bancas_finais.last().endDate:
-                context["tipob"] = 0
-        if bancas_intermediarias and bancas_intermediarias.first().startDate and bancas_intermediarias.last().endDate:
-            if datar >= bancas_intermediarias.first().startDate and datar <= bancas_intermediarias.last().endDate:
-                context["tipob"] = 1
-        if bancas_falconi and bancas_falconi.first().startDate and bancas_falconi.last().endDate:
-            if datar >= bancas_falconi.first().startDate and datar <= bancas_falconi.last().endDate:
-                context["tipob"] = 2
-        if bancas_probation and bancas_probation.first().startDate and bancas_probation.last().endDate:
-            if datar >= bancas_probation.first().startDate and datar <= bancas_probation.last().endDate:
-                context["tipob"] = 3
-        
-    return render(request, "professores/bancas_view.html", context)
 
 
 @login_required
@@ -441,7 +365,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         projeto = banca.get_projeto()
 
         para = ""
-        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:  # Interm ou Final
+        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
             if projeto and projeto.orientador:
                 para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
                 for coorientador in projeto.coorientador_set.all():
@@ -468,7 +392,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         banca = None
 
         para = ""
-        if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:  # Interm ou Final
+        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
             if projeto and projeto.orientador:
                 para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
                 for coorientador in projeto.coorientador_set.all():
@@ -521,6 +445,80 @@ def mensagem_email(request, tipo=None, primarykey=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def bancas_criar(request, data=None):
+    """Cria uma banca de avaliação para o projeto."""
+    configuracao = get_object_or_404(Configuracao)
+
+    if request.is_ajax() and request.method == "POST":
+
+        atualizado = True
+        mensagem, banca = editar_banca(None, request)
+        if mensagem is None:
+            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
+        else:
+            atualizado = False
+
+        context = {
+            "atualizado": atualizado,
+            "mensagem": mensagem,
+        }
+        return JsonResponse(context)
+
+    # Originalmente estava: .exclude(orientador=None)
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")    
+    professores, falconis = coleta_membros_banca()
+
+    # Coletando bancas agendadas a partir de hoje
+    hoje = datetime.date.today()
+    bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
+
+    eventos = Evento.get_eventos(configuracao)
+    tipos_banca = Composicao.get_composicoes(configuracao.ano, configuracao.semestre).filter(exame__banca=True)  #.order_by("exame__id")
+
+    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
+    bancas_finais = eventos.filter(tipo_evento__sigla="BF")
+    bancas_probation = eventos.filter(tipo_evento__sigla="P")
+    bancas_falconi = eventos.filter(tipo_evento__sigla="F")
+
+    context = {
+        "projetos": projetos,
+        "alocacoes": alocacoes,
+        "professores": professores,
+        "Banca": Banca,
+        "tipos_banca": tipos_banca,
+        "falconis": falconis,
+        "projetos_agendados": projetos_agendados,
+        "bancas_intermediarias": bancas_intermediarias,
+        "bancas_finais": bancas_finais,
+        "bancas_probation": bancas_probation,
+        "bancas_falconi": bancas_falconi,
+        "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
+    }
+
+    if data:
+        context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
+        datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
+        if bancas_finais and bancas_finais.first().startDate and bancas_finais.last().endDate:
+            if datar >= bancas_finais.first().startDate and datar <= bancas_finais.last().endDate:
+                context["tipob"] = "BF"
+        if bancas_intermediarias and bancas_intermediarias.first().startDate and bancas_intermediarias.last().endDate:
+            if datar >= bancas_intermediarias.first().startDate and datar <= bancas_intermediarias.last().endDate:
+                context["tipob"] = "BI"
+        if bancas_falconi and bancas_falconi.first().startDate and bancas_falconi.last().endDate:
+            if datar >= bancas_falconi.first().startDate and datar <= bancas_falconi.last().endDate:
+                context["tipob"] = "F"
+        if bancas_probation and bancas_probation.first().startDate and bancas_probation.last().endDate:
+            if datar >= bancas_probation.first().startDate and datar <= bancas_probation.last().endDate:
+                context["tipob"] = "P"
+        
+    return render(request, "professores/bancas_view.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
     configuracao = get_object_or_404(Configuracao)
@@ -559,13 +557,9 @@ def bancas_editar(request, primarykey=None):
     alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
     professores, falconis = coleta_membros_banca()
 
-    configuracao = get_object_or_404(Configuracao)
-    if configuracao.semestre == 1:
-        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
-    else:
-        eventos = Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gt=7)
+    eventos = Evento.get_eventos(configuracao)
+    tipos_banca = Composicao.get_composicoes(ano, semestre).filter(exame__banca=True)  #.order_by("exame__id")
 
-    # 14, "Banca intermediária" / 15, "Bancas finais" / 50, "Certificação Falconi"
     bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI").order_by("startDate")
     bancas_finais = eventos.filter(tipo_evento__sigla="BF").order_by("startDate")
     bancas_probation = eventos.filter(tipo_evento__sigla="P").order_by("startDate")
@@ -577,7 +571,7 @@ def bancas_editar(request, primarykey=None):
         "professores": professores,
         "banca": banca,
         "Banca": Banca,
-        "TIPO_DE_BANCA": ((1, "Intermediária"), (0, "Final"), (2, "Certificação Falconi"), (3, "Probation")), # Para ficar na ordem que desejo
+        "tipos_banca": tipos_banca,
         "falconis": falconis,
         "bancas_intermediarias": bancas_intermediarias,
         "bancas_finais": bancas_finais,
@@ -676,7 +670,7 @@ def bancas_tabela_alocacao(request):
             
             for banca in bancas:
                 if banca.projeto and banca.projeto.orientador:
-                    if banca.tipo_de_banca != 2:  # Nao eh Falconi
+                    if banca.composicao.exame.sigla != "F":  # Nao eh Falconi
                         membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 for membro in banca.membros():
                     membros.setdefault(membro, []).append(banca)
@@ -832,14 +826,14 @@ def bancas_tabela_alocacao_completa(request):
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
-    if banca.tipo_de_banca == 1:  # (1, "intermediaria"),
+    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.tipo_de_banca == 0:  # (0, "final"),
+    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
         # Repetindo banca final para falconi
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.tipo_de_banca == 3:  # (3, "probation"),
+    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
         # Repetindo banca final para probation
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
@@ -870,11 +864,8 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
         message += "<h3 style='color:red;text-align:center;'>"
         message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
         message += "</h3><br><br>"
-
-    if banca.tipo_de_banca == 3:
-        projeto = banca.alocacao.projeto
-    else:
-        projeto = banca.projeto
+    
+    projeto = banca.get_projeto()
 
     message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
     message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
@@ -883,12 +874,8 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
     message += "<b>Data da Banca:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
 
     message += "<b>Tipo de Banca:</b> "
-    tipos = dict(Banca.TIPO_DE_BANCA)
-    if banca.tipo_de_banca in tipos:
-        message += tipos[banca.tipo_de_banca]
-    else:
-        message += "Tipo de banca não definido"
-
+    message += banca.composicao.exame.titulo + "<br>\n"
+    
     if banca.alocacao:
         message += "<br><b>Estudante em Probation:</b> {0}<br>\n".format(banca.alocacao.aluno.user.get_full_name())
 
@@ -1006,7 +993,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
-            if banca.tipo_de_banca == 1:
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_I)
@@ -1018,7 +1005,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
-            if banca.tipo_de_banca == 1:
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_D)
@@ -1029,7 +1016,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
-            if banca.tipo_de_banca == 1:
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_C)
@@ -1040,7 +1027,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
-            if banca.tipo_de_banca == 1:
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_B)
@@ -1051,7 +1038,7 @@ def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, obj
                 message += destaque
             else:
                 message += "<td style='border: 1px solid black;'>"
-            if banca.tipo_de_banca == 1:
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
                 message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
             else:
                 message += "{0}".format(julg.objetivo.rubrica_final_A)
@@ -1323,22 +1310,9 @@ def calcula_media_notas_bancas(obj_avaliados):
 
 # Mensagem preparada para o orientador/coordenador
 def mensagem_orientador(banca, geral=False):
-    objetivos = ObjetivosDeAprendizagem.objects.all()
-
-    # Trocando tipo de banca para tipo de avaliação
-    if banca.tipo_de_banca == 0: #Banca Final
-        exame = Exame.objects.get(titulo="Banca Final")
-    elif banca.tipo_de_banca == 1: #Banca Itermediária
-        exame = Exame.objects.get(titulo="Banca Intermediária")
-    elif banca.tipo_de_banca == 2: #Banca Falconi
-        exame = Exame.objects.get(titulo="Falconi")
-    elif banca.tipo_de_banca == 3: #Banca Probation
-        exame = Exame.objects.get(titulo="Probation")
-
-    if banca.tipo_de_banca == 3:
-        projeto = banca.alocacao.projeto
-    else:
-        projeto = banca.projeto
+    objetivos = ObjetivosDeAprendizagem.objects.all()  
+    exame = banca.composicao.exame
+    projeto = banca.get_projeto()
 
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
@@ -1510,10 +1484,10 @@ def banca_avaliar(request, slug, documento_id=None):
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
-            # Intermediária e Final
-            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+            
+            if banca.composicao.exame.sigla in ["BI", "BF"]:  # Intermediária e Final
                 recipient_list = [projeto.orientador.user.email, ]
-            else: # banca.tipo_de_banca == 2 or banca.tipo_de_banca == 3:  # Falconi ou Probation
+            else:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
             email(subject, recipient_list, message)
             
@@ -1555,13 +1529,13 @@ def banca_avaliar(request, slug, documento_id=None):
             conceitos[i] = (tmp_objetivo, tmp_conceito)
 
         map_tipo_documento = {
-            0: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            1: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
-            2: TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            3: TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
+            "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
+            "F": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            "P": TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
         }
 
-        tipo_documento = map_tipo_documento.get(banca.tipo_de_banca)
+        tipo_documento = map_tipo_documento.get(banca.composicao.exame.sigla)
 
         documentos = None
         if tipo_documento:
@@ -1570,8 +1544,8 @@ def banca_avaliar(request, slug, documento_id=None):
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
-            "estudante": banca.alocacao.aluno if banca.tipo_de_banca == 3 else None,
-            "individual": True if banca.tipo_de_banca == 3 else False,
+            "estudante": banca.alocacao.aluno if banca.alocacao else None,
+            "individual": True if banca.alocacao else False,
             "pessoas": pessoas,
             "membros": membros,
             "objetivos": objetivos,
@@ -1584,7 +1558,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
             "today": datetime.datetime.now(),
             "mensagem": mensagem,
-            "periodo_para_rubricas": 1 if banca.tipo_de_banca==1 else 2,  # Dois indices parecidos, mas não iguais
+            "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
         }
         return render(request, "professores/banca_avaliar.html", context=context)
 
@@ -1593,14 +1567,15 @@ def banca_avaliar(request, slug, documento_id=None):
 def banca(request, slug):
     """Somente ve a banca, sem edição."""
     banca = get_object_or_404(Banca, slug=slug)
-    if banca.tipo_de_banca == 1:  # (1, "intermediaria"),
+
+    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.tipo_de_banca == 0:  # (0, "final"),
+    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.tipo_de_banca == 2:  # (2, "falconi"),
+    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
         # Reaproveita o tipo de documento da banca final
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.tipo_de_banca == 3:  # (3, "probation"),
+    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
         # Reaproveita o tipo de documento da banca final
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
@@ -1843,15 +1818,14 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def informe_bancas(request, tipo):
+def informe_bancas(request, sigla):
     """Avisa todos os orientadores dos resultados das Bancas Intermediárias."""
 
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    #(0, 'Final'),  (1, 'Intermediária'),
-    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_de_banca=tipo)
+    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
 
     if request.method == "POST":
 
@@ -1877,10 +1851,9 @@ def informe_bancas(request, tipo):
         return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": {"pt": "Informe de Bancas Finais" if tipo==0 else "Informe de Bancas Intermediárias",
-                   "en": "Final Examination Boards Report" if tipo==0 else "Intermediate Examination Boards Report"},
+        "titulo": {"pt": "Informe de Bancas Finais" if sigla=="BF" else "Informe de Bancas Intermediárias",
+                   "en": "Final Examination Boards Report" if sigla=="BF" else "Intermediate Examination Boards Report"},
         "bancas": bancas,
-        "tipo": tipo,
     }
     return render(request, "professores/informe_bancas.html", context=context)
 
@@ -1929,8 +1902,8 @@ def avaliar_bancas(request, prof_id=None):
                       Banca.objects.filter(membro2=professor.user) |
                       Banca.objects.filter(membro3=professor.user))
 
-            #TIPO_DE_BANCA = (0, "Final"), (1, "Intermediária"), (2, "Certificação Falconi"), (3, "Probation"),
-            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, tipo_de_banca__in=(0, 1))  # Orientador é automaticamente membro de banca final e intermediária
+            # Orientador é automaticamente membro de banca final e intermediária
+            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, composicao__exame__sigla__in=["BI", "BF"])
         
             edicao = request.POST["edicao"]
             if edicao != "todas":
@@ -2651,8 +2624,9 @@ def relato_avaliar(request, projeto_id, evento_id):
         return render(request, "professores/relato_avaliar.html", context=context)
 
 
-def get_banca_incompleta(projeto, tipo_de_banca, avaliadores):
-    banca = Banca.objects.filter(projeto=projeto, tipo_de_banca=tipo_de_banca).last()
+def get_banca_incompleta(projeto, sigla, avaliadores):
+    """Verifica se todas as avaliações da banca estão completas."""
+    banca = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla).last()
     now = datetime.datetime.now()
     banca_incompleta = 0  # 0 se não há banca
     if banca:
@@ -2664,7 +2638,7 @@ def get_banca_incompleta(projeto, tipo_de_banca, avaliadores):
             if banca.membro3 and banca.membro3 not in avaliadores:
                 banca_incompleta = 1
 
-            if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1:
+            if banca.composicao.exame.sigla in ["BF", "BI"]:
                 if banca.projeto.orientador and banca.projeto.orientador.user not in avaliadores:
                     banca_incompleta = 1
 
@@ -2705,10 +2679,10 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             nomes_relatorios = ["Relatório Intermediário", "Relatório Final"]
             for nome in nomes_relatorios:
                 notas[nome] = []
-            nomes_bancas = [ ("Banca Final", 0), ("Banca Intermediária", 1)]   # (0, 'Final'), (1, 'Intermediária')
+            nomes_bancas = [ ("Banca Final", "BF"), ("Banca Intermediária", "BI")]
             for nome in nomes_bancas:
                 notas[nome[0]] = []
-            nomes_f = [ ("Falconi", 2)]
+            nomes_f = [ ("Falconi", "F")]
             for nome in nomes_f:
                 notas[nome[0]] = []
 
@@ -2803,7 +2777,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)
-                    nota_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+                    nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
                         notas[titulo_aval[0]].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),
@@ -2823,7 +2797,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
                     nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)                    
-                    nota_incompleta = get_banca_incompleta(projeto=projeto, tipo_de_banca=titulo_aval[1], avaliadores=avaliadores)
+                    nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
                         nomes = ""

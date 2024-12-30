@@ -91,6 +91,10 @@ class Composicao(models.Model):
     orientacoes_en = models.TextField(max_length=4096, null=True, blank=True,
                                       help_text="orientações para a avaliação em inglês")
 
+    duracao_banca = models.PositiveSmallIntegerField("Duração da Banca", default=0,
+                                                     help_text="Duração da Banca em minutos (se for uma banca)")
+
+
     def __str__(self):
         texto = str(self.exame) + "  [ "
         if self.data_inicial:
@@ -108,6 +112,17 @@ class Composicao(models.Model):
         """Cria um objeto (entrada) em Composicao."""
         anotacao = cls(organizacao=organizacao)
         return anotacao
+
+    def get_composicoes(ano, semestre):
+        """Filtra composições para um semestre."""
+        composicoes = Composicao.objects.all()\
+            .exclude(data_final__year__lt=ano)\
+            .exclude(data_inicial__year__gt=ano)
+        if semestre == 1:
+            composicoes = composicoes.exclude(data_inicial__year=ano, data_inicial__month__gt=6)
+        else:
+            composicoes = composicoes.exclude(data_final__year=ano, data_final__month__lt=8)
+        return composicoes
 
     class Meta:
         verbose_name = "Composição"

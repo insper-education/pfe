@@ -112,7 +112,6 @@
       <input type="hidden" name="projeto" value="{{banca.projeto.id}}">
     {% endif %}
 
-
     {% if not banca.alocacao %}
       <div id="div_alocacoes" class="form-group">
       <span style="margin-top: 12px;" for="alocacao">
@@ -245,15 +244,14 @@
         <b lang="pt">Tipo de Banca:</b>
         <b lang="en" style="display: none;">Presentation:</b>
       </span>
-      {% for numero, texto in TIPO_DE_BANCA %}
+      {% for tipo in tipos_banca %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
-          <label for="tipo{{numero}}"><input class="tipo_banca" id="tipo{{numero}}" type="radio" name="tipo" value="{{numero}}"
-            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-            {% if banca.tipo_de_banca == numero or tipob == numero %}checked{% endif %} required> {{texto}}
-            <span lang="pt">(duração padrão:</span>
-            <span lang="en" style="display: none;">(standard duration:</span>
-            {% if numero == 2 %}30{% elif numero == 3 %}90{% else %}120{% endif %}min)</label>
-            <br>
+          <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo.exame.sigla}}" type="radio" name="tipo" value="{{tipo.exame.sigla}}"
+           {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+           {% if banca.composicao.exame.sigla == tipo.exame.sigla or tipo.exame.sigla == tipob %}checked{% endif %} required>
+            <span lang="pt">{{tipo.exame.titulo}} (duração padrão:</span>
+            <span lang="en" style="display: none;">{{tipo.exame.titulo_en}} (standard duration:</span>
+            {{tipo.duracao_banca}} min)</label>
         </div>
       {% endfor %}
     </div>
@@ -263,7 +261,7 @@
     $(document).ready(function(){
         $(".tipo_banca").change(function(){
             var tipo = $(this).val();
-            if(tipo == 2) {  // Banca Falconi
+            if(tipo == "F") {  // Banca Falconi
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
@@ -271,7 +269,7 @@
                 document.getElementById("fim").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=30;
-            } else if(tipo == 3) {  // Banca Probation
+            } else if(tipo == "P") {  // Banca Probation
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
@@ -279,7 +277,7 @@
                 document.getElementById("fim").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=60;
-            } else if(tipo == 1) {  // Banca Intermediária
+            } else if(tipo == "BI") {  // Banca Intermediária
               {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
@@ -419,7 +417,7 @@
             oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
             oninput="this.setCustomValidity('')"
             >
-              <option selected value> -- selecione membro da banca -- </option>
+              <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
           </select>
         </td>
       </tr>
@@ -437,7 +435,7 @@
             oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
             oninput="this.setCustomValidity('')"
             >
-              <option selected value> -- selecione membro da banca -- </option>
+            <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
           </select>
         </td>
       </tr>
@@ -451,7 +449,7 @@
         <td>
           <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca"
             {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}>
-            <option selected value> -- selecione membro da banca -- </option>
+            <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
           </select>
         </td>
       </tr>
@@ -523,6 +521,7 @@
 <script>
 
   var operacao = "agendar";
+  var botao_anterior = "BI"; // só para ir para o lugar certo de primeira
 
   function verifica_certo() {
     var membros  = $(".membros")
@@ -572,18 +571,12 @@
     {% endfor %}
   }
 
-  {% if banca %}
-    var botao_anterior = {% if banca.tipo_de_banca == 2 %}0{% else %}2{% endif %};
-  {% else %}    
-    var botao_anterior = 2; // só para ir para o lugar certo de primeira
-  {% endif %}
-
   function carrega_modal() {
     
     {% comment %} Preenche com as pessoas possíveis conforme o tipo de banca {% endcomment %}
     var tipo = $("input[name='tipo']:checked").val();
 
-    if (tipo == 3) {
+    if (tipo == "P") {
       // Hide div_projetos
       $("#div_projetos").hide();
       $("#div_alocacoes").show();
@@ -602,18 +595,27 @@
     }
 
     {% comment %} Verifica se mudou de estado {% endcomment %}
-    if (botao_anterior != 2) {
-      {% comment %} Consuladores da Falconi {% endcomment %}
-      if (tipo == 2) {
+    if (botao_anterior != "F") {
+      {% comment %} Consuladores da Falconi {% endcomment %}  
+      if (tipo == "F") {
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for pessoa in falconis %}
           $(".pessoas").append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
         {% endfor %}
         recupera_selecao();
+      } else {
+        {% comment %} Professores do Insper {% endcomment %}
+        $(".pessoas").empty();
+        $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
+        {% for professor in professores %}
+          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+        {% endfor %}
+        recupera_selecao();
       }
     } else {
-      if (tipo != 2 || tipo==undefined ) {
+      console.log("entrou");
+      if (tipo != "F" || tipo==undefined ) {
         {% comment %} Professores do Insper {% endcomment %}
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
@@ -627,6 +629,11 @@
   }
 
   $(document).ready(function () {
+    {% if banca %}
+      botao_anterior = {% if banca.composicao.exame.sigla == "F" %}"BI"{% else %}"F"{% endif %};
+    {% else %}
+
+    {% endif %}
     carrega_modal();
     $("#projeto").change(function(){
       var titulo = $(this).children(":selected").data("titulo");

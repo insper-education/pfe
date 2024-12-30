@@ -104,7 +104,7 @@
     <ol>{% for banca in bancas %}
         <li>
           <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.tipo_de_banca == 2 %}
+          {% if banca.composicao.exame.sigla == "F" %}
             Certificação Falconi,
           {% else %}
             Desconhecido,

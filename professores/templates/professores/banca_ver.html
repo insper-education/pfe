@@ -53,17 +53,8 @@
     <span lang="pt">Tipo:</span>
     <span lang="en" style="display: none;">Type:</span>
   </b>
-  {% if banca.tipo_de_banca == 0 %}
-    <span lang="pt">Final</span><span lang="en" style="display: none;">Final</span>
-  {% elif banca.tipo_de_banca == 1 %}
-    <span lang="pt">Intermediária</span><span lang="en" style="display: none;">Intermediate</span>
-  {% elif banca.tipo_de_banca == 2 %}
-    <span lang="pt">Certificação Falconi</span><span lang="en" style="display: none;">Falconi Certification</span>
-  {% elif banca.tipo_de_banca == 3 %}
-    <span lang="pt">Probation</span><span lang="en" style="display: none;">Probation</span>
-  {% else %}
-    <span lang="pt">NÃO DEFINIDA</span><span lang="en" style="display: none;">NOT DEFINED</span>
-  {% endif %}
+  <span lang="pt">{{banca.composicao.exame.titulo}}</span>
+  <span lang="en" style="display: none;">{{banca.composicao.exame.titulo_en}}</span>
   <br>
 
   {% if banca.get_projeto %}
@@ -150,7 +141,7 @@
     <span lang="en" style="display: none;">Examination Board Members</span>
   </b>
   <ol>
-    {% if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %} {% comment %} Intermediária ou Final {% endcomment %}
+    {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %} {% comment %} Intermediária ou Final {% endcomment %}
       <li>{{banca.get_projeto.orientador.user.get_full_name}} 
         <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
         <span lang="en" style="display: none;">[Advisor]</span>
@@ -175,7 +166,7 @@
   <br>
 
   {% comment %} PROBATION {% endcomment %}
-  {% if banca.tipo_de_banca == 3 %}
+  {% if banca.alocacao %}
     <b>
       <span lang="pt">Estudante:</span>
       <span lang="en" style="display: none;">Student:</span>
@@ -202,7 +193,7 @@
       <span lang="en" style="display: none;">Examination Board Results</span>
     </a>
   
-    {% if banca.tipo_de_banca == 3 %}
+    {% if banca.alocacao %}
       <a href="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}" class="btn btn-primary mb-1 open-documento" data-url="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}">
         <span lang="pt">Adicionar Relatório para Probation</span>
         <span lang="en" style="display: none;">Add Probation para Report</span>

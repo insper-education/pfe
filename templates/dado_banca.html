@@ -52,7 +52,7 @@
                 <li>
                   <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
                   <span data-toggle="tooltip" data-html="true" animation="true" title=
-                  {% if banca.tipo_de_banca == 1 %} 
+                  {% if banca.composicao.exame.sigla == "BI" %} 
                     "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
                   {% else %}
                     "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"

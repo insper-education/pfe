@@ -115,10 +115,8 @@
 
               <td> {% comment %} Banca Final {% endcomment %}
                 <small>
-                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
-                {% for banca in relatorio.projeto.banca_set.all %}
-                  {% if banca.tipo_de_banca == 0 %}
-                    {% for membro in banca.membros %}
+                  <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                    {% for membro in relatorio.projeto.get_banca_final.membros %}
                       <li>
                         {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                           <a class="imprimir" href="{% url 'user_detail' membro.id %}">
@@ -129,9 +127,7 @@
                         {% endif %}
                       </li>
                     {% endfor %}
-                  {% endif %}
-                {% endfor %}
-                </ul>
+                  </ul>
                 </small>
               </td>
 

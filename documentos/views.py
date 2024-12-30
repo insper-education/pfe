@@ -540,7 +540,7 @@ def exportar_documentos_projetos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def exibir_ocultar_notas(request):
     """Controla que notas exibir ou ocultar para os alunos."""
-    
+
     exames = Exame.objects.all()
     context = {
         "titulo": {"pt": "Exibir ou Ocultar Notas", "en": "Show or Hide Grades"},

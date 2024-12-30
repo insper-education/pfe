@@ -19,6 +19,15 @@
     line-height:0.6em;
     margin-bottom: 0px;
   }
+
+  .com_borda {
+    display: inline-block;
+    border-radius: 8px;
+    border: 2px solid #636DD1;
+    padding: 6px;
+    width: fit-content;
+    margin: 0.1em 0px 0.5em 0px;
+  }
 </style>
 
 {% if lista %}
@@ -30,7 +39,7 @@
   </script>
 
   {% if com_borda %}
-    <div style="display: inline-block; border-radius: 8px; border: 2px solid #636DD1; padding: 6px; width: fit-content; margin: 0.1em 0px 0.5em 0px;">
+    <div class="com_borda">
   {% endif %}
 
   <table class="sem_b">
@@ -44,22 +53,23 @@
       </tr>
     {% endif %}
     {% for elemento in lista %}
-        <tr><td class="ar_in">
-                <input style="position: relative; top: 2px;" type="checkbox" name="selection" id="{{elemento.id}}" value="{{elemento.sigla}}" class="filtra_area"
-                  {% if edicao|exibe_notas_semestre:elemento %}checked{% endif %}>
-            </td>
-            <td class="ar_in">
-                <label for="{{elemento.id}}" class="ar_la">{{elemento.titulo}}</label>
-            </td>
+        <tr>
+          <td class="ar_in">
+            <input style="position: relative; top: 2px;" type="checkbox" name="selection"
+              id="{{elemento.id}}" value="{{elemento.sigla}}" class="filtra_area"
+              {% if edicao|exibe_notas_semestre:elemento %}checked{% endif %}>
+          </td>
+          <td class="ar_in">
+            <label for="{{elemento.id}}" class="ar_la">{{elemento.titulo}}</label>
+          </td>
         </tr>
     {% endfor %}
   </table>
-  {% if not com_borda %}
-      <div style="height:8px;font-size:8px;">&nbsp;</div>
-  {% endif %}
 
   {% if com_borda %}
     </div>
+  {% else %}
+    <div style="height:8px;font-size:8px;">&nbsp;</div>
   {% endif %}
 
   {% if titulo_lista %}

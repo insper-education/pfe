@@ -288,11 +288,11 @@
                       {{projeto}}
                     </a><br>
                     {% for banca in projeto.banca_set.all %}
-                    {% if banca.tipo_de_banca == 2 %}    
-                      <a class="imprimir" style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-                        Banca Falconi ({{banca.startDate|date:"d/m/y"}})
-                      </a>
-                    {% endif %}
+                      {% if banca.composicao.exame.sigla == "F" %}    
+                        <a class="imprimir" style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+                          Banca Falconi ({{banca.startDate|date:"d/m/y"}})
+                        </a>
+                      {% endif %}
                     {% endfor %}
                   </h6>
 

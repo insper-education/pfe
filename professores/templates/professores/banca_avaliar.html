@@ -55,7 +55,7 @@
         {% endfor %}
       </ul>
 
-      {% if banca.tipo_de_banca is not None %}
+      {% if banca.composicao.exame is not None %}
         <b lang="pt">Tipo de Banca:</b>
         <b lang="en">Presentation:</b>
         {{ banca.composicao.exame }}
@@ -167,7 +167,7 @@
       {% include "tabela_avaliacao_objetivos.html" %}
       {% include "atualiza_objetivos.html" %}
 
-      {% if banca.tipo_de_banca != 3 %}{% comment %} Não é probation {% endcomment %}
+      {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
         <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
               title="Insira qualquer observação que achar relavante para o grupo de estudantes.">

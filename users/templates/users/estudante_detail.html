@@ -94,10 +94,10 @@
 
     {% if aluno.opcao_set.all %}
       <hr>
-      <h3>
+      <h4>
         <span lang="pt">Propostas Selecionadas</span>
         <span lang="en" style="display: none;">Selected Proposals</span>
-      </h3>
+      </h4>
       <p id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
           {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
@@ -139,10 +139,10 @@
 
     {% if certificados %}
       <hr>
-      <h3>
+      <h4>
         <span lang="pt">Certificados</span>
         <span lang="en" style="display: none;">Certificates</span>
-      </h3>
+      </h4>
       <ul>
         {% for certificado in certificados %}
           <li>
@@ -160,17 +160,15 @@
 
     {% if alocacoes.count > 0 %}
       <hr>
-      {% if alocacoes.count == 1 %}
-        <h3>
+      <h4>
+        {% if alocacoes.count == 1 %}
           <span lang="pt">Alocação</span>
           <span lang="en" style="display: none;">Allocation</span>
-        </h3>
-      {% else %}
-        <h3>
+        {% else %}
           <span lang="pt">Alocações</span>
           <span lang="en" style="display: none;">Allocations</span>
-        </h3>
-      {% endif %}
+        {% endif %}
+      </h4>
       {% for alocado in alocacoes %}
         <span style="color:black">
           <strong>

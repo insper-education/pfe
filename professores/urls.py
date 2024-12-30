@@ -182,7 +182,7 @@ urlpatterns = [
         views.dinamicas_lista,
         name="dinamicas_lista"),
 
-    path("informe_bancas/<int:tipo>",
+    path("informe_bancas/<str:sigla>",
         views.informe_bancas,
         name="informe_bancas"),
 

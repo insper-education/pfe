@@ -18,16 +18,16 @@ register = template.Library()
 @register.filter
 def certificado_banca(banca, usuario):
     """Retorna o certificado de um membro de banca."""
-    if banca.tipo_de_banca == 0:  # (0, 'Final'),
-        tipo = get_object_or_404(TipoCertificado, titulo="Membro de Banca Final")
-        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_certificado=tipo)
-    elif banca.tipo_de_banca == 1:  # (1, 'Intermediária'),
+    if banca.composicao.exame.sigla == "BI":  # (1, 'Intermediária'),
         tipo = get_object_or_404(TipoCertificado, titulo="Membro de Banca Intermediária")
         certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_certificado=tipo)
-    elif banca.tipo_de_banca == 2:  # (2, 'Certificação Falconi'),
+    elif banca.composicao.exame.sigla == "BF":  # (0, 'Final'),
+        tipo = get_object_or_404(TipoCertificado, titulo="Membro de Banca Final")
+        certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_certificado=tipo)
+    elif banca.composicao.exame.sigla == "F":  # (2, 'Certificação Falconi'),
         tipo = get_object_or_404(TipoCertificado, titulo="Membro da Banca Falconi")
         certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_certificado=tipo)
-    elif banca.tipo_de_banca == 3:  # (3, 'Probation'),
+    elif banca.composicao.exame.sigla == "P":  # (3, 'Probation'),
         tipo = get_object_or_404(TipoCertificado, titulo="Membro de Banca de Probation")
         certificado = Certificado.objects.filter(usuario=usuario, projeto=banca.get_projeto(), tipo_certificado=tipo)
     else:

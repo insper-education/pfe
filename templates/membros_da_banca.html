@@ -5,7 +5,7 @@
 {% endcomment %}
 
 <ol>
-  {% if banca.get_projeto.orientador and banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}
+  {% if banca.get_projeto.orientador and banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
     <li> {{banca.get_projeto.orientador.user.get_full_name}} [orientador] <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></li>
   {% endif %}
   {% for membro in banca.membros %}

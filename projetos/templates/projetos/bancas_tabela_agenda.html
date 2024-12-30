@@ -59,7 +59,7 @@
             <span class="data_short">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
         <td data-order="{{banca.projeto.get_titulo}}" style="width: 48%;">
           {% comment %} Probation {% endcomment %}
-          {% if banca.tipo_de_banca == 3 %}
+          {% if banca.alocacao %}
             Projeto: 
             {% if banca.alocacao.projeto.organizacao %}
               [<a href="{% url 'organizacao_completo' banca.alocacao.projeto.organizacao.id %}">{{ banca.alocacao.projeto.organizacao.nome }}</a>]
@@ -125,7 +125,7 @@
         </td> {% endcomment %}
         <td>
           <ul>
-            {% if banca.tipo_de_banca == 0 or banca.tipo_de_banca == 1 %}
+            {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
               <li>
                 <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">{{ banca.projeto.orientador }} [orientador]</a>
                 <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a>

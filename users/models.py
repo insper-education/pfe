@@ -447,20 +447,20 @@ class Aluno(models.Model):
 
         # Sigla, Nome, Grupo, Nota/Check, Banca
         pavaliacoes = [
-            ("RP", "Relatório Preliminar", True, False, -1),
-            ("RII", "Relatório Intermediário Individual", False, True, -1),
-            ("RIG", "Relatório Intermediário de Grupo", True, True, -1),
-            ("BI", "Banca Intermediária", True, True, 1),
-            ("RFG", "Relatório Final de Grupo", True, True, -1),
-            ("RFI", "Relatório Final Individual", False, True, -1),
-            ("BF", "Banca Final", True, True, 0),
-            ("P", "Probation", False, True, 3),
+            ("RP", "Relatório Preliminar", True, False, None),
+            ("RII", "Relatório Intermediário Individual", False, True, None),
+            ("RIG", "Relatório Intermediário de Grupo", True, True, None),
+            ("BI", "Banca Intermediária", True, True, "BI"),
+            ("RFG", "Relatório Final de Grupo", True, True, None),
+            ("RFI", "Relatório Final Individual", False, True, None),
+            ("BF", "Banca Final", True, True, "BF"),
+            ("P", "Probation", False, True, "P"),
             # ABAIXO NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            ("PPF", "Planejamento Primeira Fase", True, False, -1),
-            ("API", "Avaliação Parcial Individual", False, True, -1),
-            ("AFI", "Avaliação Final Individual", False, True, -1),
-            ("APG", "Avaliação Parcial de Grupo", True, True, -1),
-            ("AFG", "Avaliação Final de Grupo", True, True, -1),
+            ("PPF", "Planejamento Primeira Fase", True, False, None),
+            ("API", "Avaliação Parcial Individual", False, True, None),
+            ("AFI", "Avaliação Final Individual", False, True, None),
+            ("APG", "Avaliação Parcial de Grupo", True, True, None),
+            ("AFG", "Avaliação Final de Grupo", True, True, None),
             # A principio não mostra aqui as notas da certificação Falconi
         ]
 
@@ -471,11 +471,11 @@ class Aluno(models.Model):
             for pa in pavaliacoes:
                 checa_b = checa_banca
                 banca = None
-                if pa[4] >= 0:  # Banca
+                if pa[4]:  # Banca
                     if pa[2]:  # Grupo - Intermediária/Final
-                        banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_de_banca=pa[4]).last()
+                        banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
                     else:  # Individual - Probation
-                        banca = Banca.objects.filter(alocacao=alocacao, tipo_de_banca=pa[4]).last()
+                        banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
                 try:
                     exame=Exame.objects.get(sigla=pa[0])
                     if pa[2]:  # GRUPO
@@ -504,7 +504,7 @@ class Aluno(models.Model):
                                         avaliacao = paval.filter(avaliador=membro).last()
                                         if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                             valido = False
-                                    if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                    if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
                                         avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
                                         if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                             valido = False
@@ -707,23 +707,23 @@ class Alocacao(models.Model):
 
         # Sigla, Nome, Grupo, Nota/Check, Banca
         pavaliacoes = [
-            ("P", "Probation", False, True, 3),
+            ("P", "Probation", False, True, "P"),
             ### CHECK SE JA FECHOU BANCA DE PROBATION PRIMEIRO ####
-            ("RFG", "Relatório Final de Grupo", True, True, -1),
-            ("RFI", "Relatório Final Individual", False, True, -1),
-            ("BF", "Banca Final", True, True, 0),
-            ("AFI", "Avaliação Final Individual", False, True, -1),
-            ("AFG", "Avaliação Final de Grupo", True, True, -1),
+            ("RFG", "Relatório Final de Grupo", True, True, None),
+            ("RFI", "Relatório Final Individual", False, True, None),
+            ("BF", "Banca Final", True, True, "BF"),
+            ("AFI", "Avaliação Final Individual", False, True, None),
+            ("AFG", "Avaliação Final de Grupo", True, True, None),
         ]
 
         for pa in pavaliacoes:
             checa_b = True
             banca = None
-            if pa[4] >= 0:  # Banca
+            if pa[4]:  # Banca
                 if pa[2]:  # Grupo - Intermediária/Final
-                    banca = Banca.objects.filter(projeto=self.projeto, tipo_de_banca=pa[4]).last()
+                    banca = Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla=pa[4]).last()
                 else:  # Individual - Probation
-                    banca = Banca.objects.filter(alocacao=self, tipo_de_banca=pa[4]).last()
+                    banca = Banca.objects.filter(alocacao=self, composicao__exame__sigla=pa[4]).last()
             try:
                 exame=Exame.objects.get(sigla=pa[0])
                 if pa[2]:  # GRUPO
@@ -751,7 +751,7 @@ class Alocacao(models.Model):
                                 avaliacao = paval.filter(avaliador=membro).last()
                                 if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                     valido = False
-                            if banca.tipo_de_banca in [0, 1]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                            if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
                                 avaliacao = paval.filter(avaliador=self.projeto.orientador.user).last()
                                 if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                     valido = False

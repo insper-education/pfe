@@ -119,15 +119,11 @@
                 <!-- Somente Banca Final, as outras não são listadas -->
                 <td>
                   <small>
-                  <ul class="grupo">
-                  {% for banca in projeto.banca_set.all %}
-                    {% if banca.tipo_de_banca == 0 %}
-                      {% for membro in banca.membros %}
-                        <li><a class="imprimir" href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}} </a></li>
+                    <ul class="grupo">
+                      {% for membro in projeto.get_banca_final.membros %}
+                        <li><a class="imprimir" href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
                       {% endfor %}
-                    {% endif %}
-                  {% endfor %}
-                  </ul>
+                    </ul>
                   </small>
                 </td>
               
