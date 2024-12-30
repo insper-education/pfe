@@ -485,18 +485,15 @@ def estudantes_inscritos(request):
     if request.is_ajax():
         if "edicao" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
-
             alunos = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
-
-            # Conta soh alunos
-            num_alunos = alunos.count()
 
             # Conta estudantes de cada curso
             cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
             num_estudantes_curso = {}
             for curso in cursos:
                 qtd = alunos.filter(curso2__sigla__exact=curso.sigla).count()
-                if qtd: num_estudantes_curso[curso] = qtd
+                if qtd:
+                    num_estudantes_curso[curso] = qtd
 
             inscritos = 0
             ninscritos = 0
@@ -519,9 +516,7 @@ def estudantes_inscritos(request):
 
             rano, rsemestre = retrocede_semestre(ano, semestre)
 
-            evento = Evento.get_evento_nome("Indicação de interesse nas propostas pelos estudante", rano, rsemestre)
-
-            prazo_vencido = evento.endDate < datetime.date.today()
+            evento = Evento.get_evento(nome="Indicação de interesse nas propostas pelos estudante", ano=rano, semestre=rsemestre)
 
             cabecalhos = [
                 {"pt": "C", "en": "C"},
@@ -533,14 +528,14 @@ def estudantes_inscritos(request):
 
             context = {
                 "alunos_list": alunos_list,
-                "num_alunos": num_alunos,
+                "num_alunos": alunos.count(),  # Conta soh alunos,
                 "inscritos": inscritos,
                 "ninscritos": ninscritos,
                 "tmpinscritos": tmpinscritos,
                 "cursos": cursos,
                 "num_estudantes_curso": num_estudantes_curso,
                 "cabecalhos": cabecalhos,
-                "prazo_vencido": prazo_vencido,
+                "prazo_vencido": evento.endDate < datetime.date.today(),
                 "ano": ano,
                 "semestre": semestre,
             }

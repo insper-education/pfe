@@ -33,7 +33,7 @@
               {% elif opcoestemp.count >= 5 %}
                 text-warning" data-sort="1"
               {% else %}
-              text-danger" data-sort="0"
+                text-danger" data-sort="0"
               {% endif %}>
               &#x2B24;
             </td>
@@ -87,10 +87,8 @@
         </caption>
       </table>
     </div>
-    <br>
+    <br><br>
 
-
-    <br>
     {% if prazo_vencido and tmpinscritos %}
       <div class="alert alert-warning" role="alert">
         <span lang="pt">Atenção: O prazo para a seleção provisória de propostas foi encerrado,
@@ -108,7 +106,6 @@
     {% endif %}
     <br>
 
-    
     {% if num_alunos %}
       <strong lang="pt">Total de Estudantes Aplicando:</strong>
       <strong lang="en">Total of Applying Students:</strong>

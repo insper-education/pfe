@@ -14,14 +14,16 @@ import axes.utils
 import datetime
 import logging
 
-from itertools import groupby
+from celery import Celery
+
+# from itertools import groupby
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-from django.core.exceptions import SuspiciousOperation  # Para erro 400
-from django.core.mail import EmailMessage
+# from django.core.exceptions import SuspiciousOperation  # Para erro 400
+# from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
@@ -31,16 +33,20 @@ from django.utils import timezone
 
 from axes.models import AccessAttempt, AccessLog
 
+from .support import get_upload_path, registra_organizacao, registro_usuario
+from .support import usuario_sem_acesso
+
 from documentos.support import render_to_pdf
+
+from estudantes.models import Pares
+
+from operacional.models import Curso
+
+from propostas.support import ordena_propostas
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, Feedback, Disciplina
 from projetos.messages import email
-
-from .support import get_upload_path, registra_organizacao, registro_usuario
-
-from projetos.support import simple_upload
-
 from projetos.resources import DisciplinasResource
 from projetos.resources import Avaliacoes2Resource
 from projetos.resources import ProjetosResource
@@ -54,24 +60,14 @@ from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
 from projetos.resources import ParesResource
 from projetos.resources import AlocacoesResource
-
+from projetos.support import simple_upload
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
-
 from users.support import adianta_semestre, adianta_semestre_conf, get_edicoes
 
-from estudantes.models import Pares
 
-from propostas.support import ordena_propostas
-
-from operacional.models import Curso
-
-from .support import usuario_sem_acesso
-
-from celery import Celery
 celery_app = Celery()
-
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -93,9 +89,7 @@ def index_administracao(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def index_carregar(request):
     """Para carregar dados de arquivos para o servidor."""
-    context = {
-        "titulo": {"pt": "Carregar Dados", "en": "Load Data"},
-        }
+    context = {"titulo": {"pt": "Carregar Dados", "en": "Load Data"},}
     return render(request, "administracao/carregar.html", context=context)
 
 
@@ -513,7 +507,6 @@ def configurar(request):
                 
                 configuracao.ano = int(request.POST["periodo_ano"])
                 configuracao.semestre = int(request.POST["periodo_semestre"])
-
                 configuracao.prazo_avaliar = int(request.POST["prazo_avaliar"])
                 configuracao.prazo_preencher_banca = int(request.POST["prazo_preencher_banca"])
 

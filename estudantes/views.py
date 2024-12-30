@@ -77,7 +77,7 @@ def index_estudantes(request):
             context["vencido"] = True
 
         if projeto:
-            evento_banca_final = Evento.get_evento_nome("Bancas Finais", projeto.ano, projeto.semestre)
+            evento_banca_final = Evento.get_evento(nome="Bancas Finais", ano=projeto.ano, semestre=projeto.semestre)
             if evento_banca_final:
                 hoje = datetime.date.today()
                 context["fase_final"] = hoje > evento_banca_final.endDate
@@ -387,7 +387,7 @@ def estudante_feedback_geral(request, usuario):
     elif usuario.tipo_de_usuario == 1: # Estudante
         hoje = datetime.date.today()
         projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
-        evento_banca_final = Evento.get_evento_nome("Bancas Finais", projeto.ano, projeto.semestre)
+        evento_banca_final = Evento.get_evento(nome="Bancas Finais", ano=projeto.ano, semestre=projeto.semestre)
         if not evento_banca_final or (evento_banca_final and hoje <= evento_banca_final.endDate):
             mensagem = "Fora do período de feedback do Capstone!"
             context = {"mensagem": mensagem,}
@@ -461,17 +461,14 @@ def avaliacao_pares(request, momento):
     configuracao = get_object_or_404(Configuracao)
 
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
-    
-    estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
 
-    # Avaliações de Pares
-    # 31, 'Avaliação de Pares Intermediária'
-    # 32, 'Avaliação de Pares Final'
+    estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
+    
     if momento=="intermediaria":
-        prazo, inicio, fim = configuracao_pares_vencida(estudante, 31)
+        prazo, inicio, fim = configuracao_pares_vencida(estudante, "API")  # Avaliação de Pares Intermediária
         tipo=0
     else:  # Final
-        prazo, inicio, fim = configuracao_pares_vencida(estudante, 32)
+        prazo, inicio, fim = configuracao_pares_vencida(estudante, "APF")  # Avaliação de Pares Final
         tipo=1
 
     context = {
