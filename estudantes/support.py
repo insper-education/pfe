@@ -60,7 +60,7 @@ def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     if len(alocacao.horarios) >= 11*8:
         alocacao_semanal = 'g'
     else:
-        evento = Evento.get_evento_sigla("IA", ano, semestre)  # Início das aulas
+        evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
         if evento:
             alocacao_semanal__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+4))
             if hoje < evento.endDate + datetime.timedelta(days=4):

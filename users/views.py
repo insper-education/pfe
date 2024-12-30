@@ -31,7 +31,7 @@ from academica.models import Composicao, CodigoColuna, Exame
 from academica.support import filtra_composicoes
 
 from administracao.models import Carta
-from administracao.support import get_limite_propostas, usuario_sem_acesso, get_evento_p_nome_data
+from administracao.support import get_limite_propostas, usuario_sem_acesso
 
 from estudantes.models import EstiloComunicacao
 
@@ -519,7 +519,7 @@ def estudantes_inscritos(request):
 
             rano, rsemestre = retrocede_semestre(ano, semestre)
 
-            evento = get_evento_p_nome_data("Indicação de interesse nas propostas pelos estudante", rano, rsemestre)
+            evento = Evento.get_evento_nome("Indicação de interesse nas propostas pelos estudante", rano, rsemestre)
 
             prazo_vencido = evento.endDate < datetime.date.today()
 

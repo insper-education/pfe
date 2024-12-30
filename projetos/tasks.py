@@ -66,12 +66,7 @@ def avisos_do_dia():
     except Configuracao.DoesNotExist:
         return None
 
-    # Filtra avisos do semestre
-    eventos = Evento.objects.filter(startDate__year=configuracao.ano)
-    if configuracao.semestre == 1:
-        eventos = eventos.filter(startDate__month__lt=7)
-    else:
-        eventos = eventos.filter(startDate__month__gt=6)
+    eventos = Evento.get_eventos(configuracao=configuracao)  # Filtra avisos do semestre
 
     # Checa avisos do dia
     avisos = []

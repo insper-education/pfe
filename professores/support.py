@@ -367,7 +367,7 @@ def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     if feito:
         planos_de_orientacao = 'g'
     else:
-        evento = Evento.get_evento_sigla("IA", ano, semestre)  # Início das aulas
+        evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
         if evento:
             planos_de_orientacao__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+5))
             if datetime.date.today() < evento.endDate:
@@ -463,7 +463,7 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
     for projeto in projetos:
         for sigla_b, sigla_e in tipos_de_banca:
             banca_exists = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla_b).exists()
-            evento = Evento.get_evento_sigla(sigla_e, ano, semestre)
+            evento = Evento.get_evento(sigla=sigla_e, ano=ano, semestre=semestre)
             if evento:
                 days_diff = (datetime.date.today() - evento.startDate).days
                 if days_diff > -16:
@@ -483,7 +483,7 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
     context = {}
     avaliacoes_pares = 'b'
-    evento = Evento.get_evento_sigla("API", ano, semestre)  # "Avaliação de Pares Intermediária"
+    evento = Evento.get_evento(sigla="API", ano=ano, semestre=semestre)  # "Avaliação de Pares Intermediária"
     if evento and (datetime.date.today() - evento.startDate).days > 0:
         feito = True
         for projeto in projetos:
@@ -497,7 +497,7 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
                 avaliacoes_pares = 'r'
             elif avaliacoes_pares != 'r':
                 avaliacoes_pares = 'y'
-    evento = Evento.get_evento_sigla("APF", ano, semestre)  #"Avaliação de Pares Final"
+    evento = Evento.get_evento(sigla="APF", ano=ano, semestre=semestre)  #"Avaliação de Pares Final"
     if evento and (datetime.date.today() - evento.startDate).days > 0:
         feito = True
         for projeto in projetos:

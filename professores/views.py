@@ -214,9 +214,7 @@ def mentorias_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
-    # 14, 'Banca intermediária' / 15, 'Bancas finais' / 50, 'Certificação Profissional (antiga Falconi)', / 18, 'Probation'
     dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-
     if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
         professor = get_object_or_404(Professor, pk=prof_id)
     else:
@@ -474,7 +472,7 @@ def bancas_criar(request, data=None):
     bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
     projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
 
-    eventos = Evento.get_eventos(configuracao)
+    eventos = Evento.get_eventos(configuracao=configuracao)
     tipos_banca = Composicao.get_composicoes(configuracao.ano, configuracao.semestre).filter(exame__banca=True)  #.order_by("exame__id")
 
     bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
@@ -557,7 +555,7 @@ def bancas_editar(request, primarykey=None):
     alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
     professores, falconis = coleta_membros_banca()
 
-    eventos = Evento.get_eventos(configuracao)
+    eventos = Evento.get_eventos(configuracao=configuracao)
     tipos_banca = Composicao.get_composicoes(ano, semestre).filter(exame__banca=True)  #.order_by("exame__id")
 
     bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI").order_by("startDate")
@@ -622,11 +620,6 @@ def bancas_lista(request, edicao):
 
     context["bancas"] = bancas
     context["edicoes"] = get_edicoes(Projeto)[0]
-
-    # (14, "Bancas Intermediárias", "#EE82EE"),
-    # (15, "Bancas Finais", "#FFFF00"),
-    # (18, "Probation", "#B0C4DE"),
-    # (50, "Apresentação para Certificação Falconi", "#FF8C00"),
     context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
     context["informacoes"] = [
@@ -1754,10 +1747,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
         else:
             documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento, projeto=projeto)
 
-        if projeto.semestre == 1:
-            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__lt=7).last()
-        else:          
-            evento = Evento.objects.filter(tipo_evento=composicao.tipo_evento, endDate__year=projeto.ano, endDate__month__gt=6).last()
+        evento = Evento.get_evento(tipo=composicao.tipo_evento, ano=projeto.ano, semestre=projeto.semestre)
 
         if composicao.exame.grupo:
             avaliacoes = Avaliacao2.objects.filter(projeto=projeto, 
@@ -2704,15 +2694,10 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                 "certificacao": "",
                                                     "nota_incompleta": nota_incompleta})                    
                     else:
-                        # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
-                        # (14, "Bancas Intermediárias", "#EE82EE"),
-                        if projeto.semestre == 1:
-                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERI", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_evento__sigla="BI", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                        else:          
-                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERI", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_evento__sigla="BI", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                        
+
+                        evento_r = Evento.get_evento(sigla="ERI", ano=projeto.ano, semestre=projeto.semestre)  # Entrega do Relatório Intermediário (Grupo e Individual)
+                        evento_b = Evento.get_evento(sigla="BI", ano=projeto.ano, semestre=projeto.semestre)  # Bancas Intermediárias
+
                         if evento_r:
                             atraso_r = (datetime.date.today() - evento_r.endDate).days
                             atraso_b = (datetime.date.today() - evento_b.endDate).days
@@ -2741,15 +2726,10 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                 "certificacao": "",
                                                 "nota_incompleta": nota_incompleta})                    
                     else:
-                        # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
-                        # (15, "Bancas Finais", "#FFFF00"),
-                        if projeto.semestre == 1:
-                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERF", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_evento__sigla="BF", endDate__year=projeto.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-                        else:          
-                            evento_r = Evento.objects.filter(tipo_evento__sigla="ERF", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                            evento_b = Evento.objects.filter(tipo_evento__sigla="BF", endDate__year=projeto.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-                        
+
+                        evento_r = Evento.get_evento(sigla="ERF", ano=projeto.ano, semestre=projeto.semestre)  # Entrega do Relatório Final (Grupo e Individual)
+                        evento_b = Evento.get_evento(sigla="BF", ano=projeto.ano, semestre=projeto.semestre)  # Bancas Finais
+
                         if evento_r:
                             atraso_r = (datetime.date.today() - evento_r.endDate).days
                             atraso_b = (datetime.date.today() - evento_b.endDate).days

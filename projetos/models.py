@@ -28,7 +28,7 @@ from .tipos import TIPO_EVENTO
 
 from academica.models import Exame
 
-from administracao.models import TipoCertificado, TipoEvento
+from administracao.models import TipoCertificado
 
 from documentos.models import TipoDocumento
 
@@ -208,18 +208,12 @@ class Projeto(models.Model):
 
     def tem_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""
-        
         # Antes de 2022 os relatos quinzenais era realizados no Blackboard
         # Essa função em hardcode não é ideal, mas resolve o problema
         if self.ano < 2022:
             return Evento.objects.none()
-        
-        if self.semestre == 1:
-            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.ano, endDate__month__lt=7)
         else:
-            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.ano, endDate__month__gt=6)
-
-        return eventos
+            return Evento.get_eventos(sigla="RQ", ano=self.ano, semestre=self.semestre)
 
     def get_alocacoes(self):
         """Retorna todas as alocações do projeto."""
@@ -903,21 +897,40 @@ class Evento(models.Model):
     def documentos(self):
         """Retorna os documentos do evento."""
         return [self.documento, self.documento2]
-    
-    @staticmethod
-    def get_evento_sigla(sigla, ano, semestre):
-        if semestre == 1:
-            eventos = Evento.objects.filter(tipo_evento__sigla=sigla, endDate__year=ano, endDate__month__lt=7)
-        else:
-            eventos = Evento.objects.filter(tipo_evento__sigla=sigla, endDate__year=ano, endDate__month__gt=6)
-        return eventos.order_by("endDate", "startDate").last()
 
-    def get_eventos(configuracao):
-        """Retorna todos os eventos de um ano e semestre."""
-        if configuracao.semestre == 1:
-            return Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__lt=7)
+    @staticmethod
+    def get_evento(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
+        """Retorna o último evento do ano/semestre conforme tipo de evento."""
+        return Evento.get_eventos(sigla=sigla, tipo=tipo, nome=nome, configuracao=configuracao, ano=ano, semestre=semestre).last()
+
+    @staticmethod
+    def get_eventos(sigla=None, tipo=None, nome=None, configuracao=None, ano=None, semestre=None):
+        """Retorna todos os eventos de um ano e semestre conforme tipo de evento selecionado."""
+
+        if configuracao:
+            ano = configuracao.ano
+            semestre = configuracao.semestre
+        elif ano and semestre:
+            pass
         else:
-            return Evento.objects.filter(startDate__year=configuracao.ano, startDate__month__gte=7)
+            configuracao = get_object_or_404(Configuracao)
+            ano = configuracao.ano
+            semestre = configuracao.semestre
+
+        if semestre == 1:
+            eventos = Evento.objects.filter(startDate__year=ano, startDate__month__lt=7)
+        else:
+            eventos = Evento.objects.filter(startDate__year=ano, startDate__month__gte=7)
+
+        if sigla:
+            eventos = eventos.filter(tipo_evento__sigla=sigla)
+        elif tipo:
+            eventos = eventos.filter(tipo_evento=tipo)
+        elif nome:
+            eventos = eventos.filter(tipo_evento__nome=nome)
+        
+        return eventos.order_by("endDate", "startDate")
+            
 
     class Meta:
         ordering = ["startDate"]
@@ -1043,7 +1056,7 @@ class Banca(models.Model):
 
         # Evento de encerramento
         if self.alocacao is None:  # Não é banca de probation
-            evento = Evento.get_evento_sigla("EE", self.projeto.ano, self.projeto.semestre)                
+            evento = Evento.get_evento(sigla="EE", ano=self.projeto.ano, semestre=self.projeto.semestre)                
             if evento and now.date() > evento.endDate:  # Após o evento de encerramento liberar todas as notas
                 checa_banca = False
 

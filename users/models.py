@@ -484,15 +484,12 @@ class Aluno(models.Model):
                         paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
 
                     if paval:
-                        if pa[4] >= 0 and banca:  # Banca
+                        if pa[4] and banca:  # Banca
                             valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
                             # Verifica se já passou o evento de encerramento e assim liberar notas
-                            if alocacao.projeto.semestre == 1:
-                                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=alocacao.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
-                            else:
-                                evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=alocacao.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
-                            if pa[4] != 3 and  evento:  # Não é banca probation e tem evento de encerramento
+                            evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                            if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
                                 # Após o evento de encerramento liberar todas as notas
                                 if now.date() > evento.endDate:
                                     checa_b = False
@@ -733,14 +730,11 @@ class Alocacao(models.Model):
 
                 if paval:
                     val_objetivos = None
-                    if pa[4] >= 0 and banca:  # Banca
+                    if pa[4] and banca:  # Banca
                         valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
                         # Verifica se já passou o evento de encerramento e assim liberar notas
-                        if self.projeto.semestre == 1:
-                            evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by("endDate").last()
-                        else:
-                            evento = Evento.objects.filter(tipo_evento__sigla="EE", endDate__year=self.projeto.ano, endDate__month__gt=6).order_by("endDate").last()
+                        evento = Evento.get_evento(sigla="EE", ano=self.projeto.ano, semestre=self.projeto.semestre)
                         if evento:
                             # Após o evento de encerramento liberar todas as notas
                             if now.date() > evento.endDate:
@@ -900,13 +894,8 @@ class Alocacao(models.Model):
     def get_relatos(self):
         """Retorna todos os possiveis relatos quinzenais da alocacao."""
         
-        if self.projeto.semestre == 1:
-            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.projeto.ano, endDate__month__lt=7).order_by('endDate')
-        else:
-            eventos = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__year=self.projeto.ano, endDate__month__gt=6).order_by('endDate')
-
+        eventos = Evento.get_eventos(sigla="RQ", ano=self.projeto.ano, semestre=self.projeto.semestre)
         relatos = []
-
         for index in range(len(eventos)):
             if not index: # index == 0:
                 relato = Relato.objects.filter(alocacao=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()

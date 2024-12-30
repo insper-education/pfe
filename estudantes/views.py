@@ -26,7 +26,7 @@ from academica.models import Composicao
 from academica.support import filtra_composicoes, filtra_entregas
 
 from administracao.models import Carta, TipoEvento
-from administracao.support import propostas_liberadas, get_evento_p_nome_data
+from administracao.support import propostas_liberadas
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
@@ -77,10 +77,7 @@ def index_estudantes(request):
             context["vencido"] = True
 
         if projeto:
-            
-            # (15, "Bancas Finais", "#FFFF00"),
-            evento_banca_final = get_evento_p_nome_data("Bancas Finais", projeto.ano, projeto.semestre)
-
+            evento_banca_final = Evento.get_evento_nome("Bancas Finais", projeto.ano, projeto.semestre)
             if evento_banca_final:
                 hoje = datetime.date.today()
                 context["fase_final"] = hoje > evento_banca_final.endDate
@@ -390,7 +387,7 @@ def estudante_feedback_geral(request, usuario):
     elif usuario.tipo_de_usuario == 1: # Estudante
         hoje = datetime.date.today()
         projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
-        evento_banca_final = get_evento_p_nome_data("Bancas Finais", projeto.ano, projeto.semestre)
+        evento_banca_final = Evento.get_evento_nome("Bancas Finais", projeto.ano, projeto.semestre)
         if not evento_banca_final or (evento_banca_final and hoje <= evento_banca_final.endDate):
             mensagem = "Fora do período de feedback do Capstone!"
             context = {"mensagem": mensagem,}
@@ -677,10 +674,7 @@ def relato_quinzenal(request):
     """Perguntas aos estudantes de trabalho/entidades/social/familia."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
-
     hoje = datetime.date.today()
-
-    # (20, 'Relato quinzenal (Individual)', 'aquamarine'),
     tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
     prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
 
@@ -744,7 +738,6 @@ def relato_quinzenal(request):
                 "mensagem": mensagem,
             }
             return render(request, "generic.html", context=context)
-
 
         tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
         relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()

@@ -19,7 +19,6 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect, get_object_or_404
 
 from administracao.models import TipoCertificado, TipoEvento
-from administracao.support import get_evento_p_nome_data
 
 from projetos.support import get_upload_path, simple_upload
 
@@ -54,12 +53,7 @@ def index_operacional(request):
 def avisos_listar(request):
     """Mostra toda a tabela de avisos da coordenação."""
     configuracao = get_object_or_404(Configuracao)
-
-    eventos = Evento.objects.filter(startDate__year=configuracao.ano)
-    if configuracao.semestre == 1:
-        eventos = eventos.filter(startDate__month__lt=7)
-    else:
-        eventos = eventos.filter(startDate__month__gt=6)
+    eventos = Evento.get_eventos(configuracao=configuracao)
 
     avisos = []
     for evento in eventos:
@@ -372,7 +366,7 @@ def plano_aulas(request):
         if "edicao" in request.POST:
             ano, semestre = request.POST["edicao"].split('.')
             context = {
-                "aulas": get_evento_p_nome_data("Aula", ano, semestre),
+                "aulas": Evento.get_evento_nome("Aula", ano, semestre),
                 "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),
                 }
             return render(request, "operacional/plano_aulas.html", context=context)

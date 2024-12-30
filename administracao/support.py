@@ -31,53 +31,8 @@ def limpa_texto(texto):
     """Remove caracteres especiais do texto."""
     return texto.replace("\x00", "\uFFFD") if texto else None
 
-
-def get_eventos_p_nome_data(nome, ano, semestre):
-    """Retorna o evento com o nome dado por dados."""
-    tevento = TipoEvento.objects.get(nome=nome)
-    if semestre == 1:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__lt=7).order_by("endDate", "startDate")
-    else:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=ano, endDate__month__gt=6).order_by("endDate", "startDate")
-    return evento
-
-
-def get_evento_p_nome_data(nome, ano, semestre):
-    """Retorna o evento com o nome dado por dados."""
-    return get_eventos_p_nome_data(nome, ano, semestre).last()
-
-def get_evento_p_sigla(sigla, configuracao=None):
-    """Retorna o evento com a sigla dada."""
-    if configuracao is None:
-        configuracao = get_object_or_404(Configuracao)
-
-    try:
-        tevento = TipoEvento.objects.get(sigla=sigla)
-    except TipoEvento.DoesNotExist:
-        raise Http404(f'Evento "{sigla}" não encontrado.')
-    if configuracao.semestre == 1:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-    else:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-    return evento
-
-def get_evento_p_nome(nome, configuracao=None):
-    """Retorna o evento com o nome dado."""
-    if configuracao is None:
-        configuracao = get_object_or_404(Configuracao)
-
-    try:
-        tevento = TipoEvento.objects.get(nome=nome)
-    except TipoEvento.DoesNotExist:
-        raise Http404(f'Evento "{nome}" não encontrado.')
-    if configuracao.semestre == 1:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__lt=7).order_by("endDate", "startDate").last()
-    else:
-        evento = Evento.objects.filter(tipo_evento=tevento, endDate__year=configuracao.ano, endDate__month__gt=6).order_by("endDate", "startDate").last()
-    return evento
-
 def get_limite_propostas(configuracao):
-    evento = get_evento_p_sigla("IIPE", configuracao)
+    evento = Evento.get_evento(sigla="IIPE", configuracao=configuracao)
     if evento is not None:
         return evento.endDate
     inicio_pfe = dateutil.parser.parse("07/06/2018").date()
@@ -85,18 +40,13 @@ def get_limite_propostas(configuracao):
 
 # Melhor dar preferência para essa rotina que retorna None se não houver data planejada
 def get_limite_propostas2(configuracao):
-    evento = get_evento_p_sigla("IIPE", configuracao)
-    if evento is None:
-        return None    
-    return evento.endDate
+    evento = Evento.get_evento(sigla="IIPE", configuracao=configuracao) 
+    return evento.endDate if evento else None
     
 def get_data_planejada(configuracao):
     """Retorna a data planejada para a liberação das propostas"""
-    evento = get_evento_p_sigla("APDE", configuracao)
-    
-    if evento is not None:
-        return evento.endDate
-    return None
+    evento = Evento.get_evento(sigla="APDE", configuracao=configuracao)
+    return evento.endDate if evento else None
 
 def propostas_liberadas(configuracao):
     """Verifica se as propostas estão liberadas."""
@@ -107,27 +57,11 @@ def propostas_liberadas(configuracao):
     return False
 
 def usuario_sem_acesso(request, acessos):
-    
+    """Verifica se o usuário tem acesso a determinada área."""
     if (not request.user.is_authenticated) or (request.user is None):
         raise PermissionDenied("Você não está autenticado!")
-        mensagem = "Você não está autenticado!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        return render(request, "generic.html", context=context)
-
     if request.user.tipo_de_usuario not in acessos:
         raise PermissionDenied("Você não tem privilégios de acesso a essa área!")
-    
-        mensagem = "Você não tem privilégios de acesso a essa área!"
-        context = {
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-        raise render(request, "generic.html", context=context)
-    
-
 
 def registra_organizacao(request, org=None):
     """Rotina para cadastrar organizacao no sistema."""

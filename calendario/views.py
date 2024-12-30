@@ -232,6 +232,7 @@ def atualiza_evento(request):
             evento = Evento.objects.get(id=event_id)
         else:
             evento = Evento.create()
+            
     except Evento.DoesNotExist:
         return HttpResponseNotFound("<h1>Evento não encontrado!</h1>")
 
