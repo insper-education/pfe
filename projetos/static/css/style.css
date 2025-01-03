@@ -3,7 +3,6 @@ input {max-width: 100%;}
 select {max-width: 100%;}
 
 .hidden {display: none;}
-
 .visible {display: block;}
 
 .disabled {
@@ -166,13 +165,6 @@ p {
 .tooltip-inner {
   max-width: 100% !important;
   text-align: left;
-}
-
-table, th, td {
-  border-collapse: collapse;
-  border: 1px solid black;
-  text-align: left;
-  font-size: 16px;
 }
 
 #projetos, #pth, #ptd {

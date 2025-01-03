@@ -463,7 +463,7 @@ def avaliacao_pares(request, momento):
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
 
     estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
-    
+
     if momento=="intermediaria":
         prazo, inicio, fim = configuracao_pares_vencida(estudante, "API")  # Avaliação de Pares Intermediária
         tipo=0
@@ -899,10 +899,11 @@ def selecao_propostas(request):
             }
             return render(request, "projetos/projetosincompleto.html", context)
 
-        opcoes_temporarias = OpcaoTemporaria.objects.filter(aluno=aluno)
+        opcoes_t = OpcaoTemporaria.objects.filter(aluno=aluno)
+        opcoes_temporarias = { opcao.proposta.id: opcao.prioridade for opcao in opcoes_t }
 
     elif request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
-        opcoes_temporarias = []
+        opcoes_temporarias = {}
 
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     

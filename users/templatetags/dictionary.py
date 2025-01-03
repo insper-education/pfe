@@ -21,4 +21,13 @@ def get_value(dictionary, key):
     if dictionary and isinstance(dictionary, dict):
         return dictionary.get(key)
     return None
-    
+
+@register.filter
+def has_key(dictionary, key):
+    if dictionary and isinstance(dictionary, dict):
+        return key in dictionary
+    return False
+
+@register.filter
+def to_range(value):
+    return range(1, value + 1)
