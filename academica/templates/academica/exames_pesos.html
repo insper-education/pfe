@@ -77,7 +77,7 @@
                     {% for peso in composicao.peso_set.all %}
                       [<span 
                       {% if peso.objetivo %}
-                        data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>[Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
+                        data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
                       </span>
                       {% if peso.peso %}
                       <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
