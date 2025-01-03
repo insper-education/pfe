@@ -74,9 +74,11 @@
                   <span style="display: inline-block; width: 34em;">
                     <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
                     <script> peso_tmp = 0; </script>
-                    {% for peso in composicao.peso_set.all %} 
-                      {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}"
-                      >{{peso.objetivo.sigla}}</span>{% else %}[Única{% endif %}={{peso.peso|floatformat:2}}] 
+                    {% for peso in composicao.peso_set.all %}
+                      [<span 
+                      {% if peso.objetivo %}
+                        data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>[Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
+                      </span>
                       {% if peso.peso %}
                       <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
                       {% endif %}
