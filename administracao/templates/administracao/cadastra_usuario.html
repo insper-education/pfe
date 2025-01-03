@@ -119,8 +119,8 @@
  
       <label for="curso">
         <span lang="pt">Curso:</span>
-        <span lang="en">Program</span>
-      </label>:
+        <span lang="en">Program:</span>
+      </label>
       <select id="curso" name="curso" title="Curso">
         <option disabled selected value class="troca_lingua" data-pt="-- selecione curso --" data-en="-- select program --">
           -- selecione curso --
@@ -150,18 +150,21 @@
 
       <br>
       {% with externo=usuario.aluno.externo %}
-        <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
+        
         <label for="externo_check">
           <span lang="pt">Estudante Externo</span>
           <span lang="en">External Student</span>
+          <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
         </label>
+
         <label for="externo" id="externo_label" {% if not externo %}style="display: none;"{% endif %}>
           &rarr; 
           <span lang="pt">Instituição:</span>
           <span lang="en">Institution:</span>
           <input type="text" size="20" maxlength="{% max_length Estudante 'externo' %}" id="externo" name="externo" {% if externo %}value="{{externo}}"{% endif %}>
+          <br>
         </label> 
-        <br>
+        
       {% endwith %}
 
       <script>
@@ -170,12 +173,12 @@
           } else { $("#externo_label").hide(); }
         });
       </script>
-
-      <br><br>
-      <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
+      <br>
+      
       <label for="estudante_trancado">
         <span lang="pt">Estudante Trancado</span>
         <span lang="en">Student on Leave</span>
+        <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
       </label><br>
 
     </div>
@@ -276,9 +279,10 @@
 
     {% if usuario %}
       <input type="hidden" value='0' name="comite">
-      <label for="comite"><input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
+      <label for="comite">
         <span lang="pt">Membro Comitê</span>
         <span lang="en">Committee Member</span>
+        <input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
       </label>
       <br>
     {% endif %}
