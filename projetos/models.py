@@ -1818,6 +1818,7 @@ class ObjetivosDeAprendizagem(models.Model):
     class Meta:
         verbose_name = "ObjetivosDeAprendizagem"
         verbose_name_plural = "ObjetivosDeAprendizagem"
+        ordering = ["ordem", "data_inicial"]
 
 
 class Avaliacao2(models.Model):

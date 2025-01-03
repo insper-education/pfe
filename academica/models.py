@@ -127,6 +127,7 @@ class Composicao(models.Model):
     class Meta:
         verbose_name = "Composição"
         verbose_name_plural = "Composições"
+        ordering = [ "exame", "data_inicial",]
 
 
 class Peso(models.Model):
