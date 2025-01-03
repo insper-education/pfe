@@ -1955,19 +1955,19 @@ class Avaliacao_Velha(models.Model):
         return avaliacao
 
     class Meta:
-        verbose_name = 'Avaliação Velha'
-        verbose_name_plural = 'Avaliações Velhas'
-        ordering = ['momento',]
+        verbose_name = "Avaliação Velha"
+        verbose_name_plural = "Avaliações Velhas"
+        ordering = ["momento",]
 
 
 class Reprovacao(models.Model):
     """Reprovações controladas por falha em Objetivos de Aprendizagem."""
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey('users.Alocacao', null=True,
+    alocacao = models.ForeignKey("users.Alocacao", null=True,
                                  on_delete=models.SET_NULL,
-                                 related_name='projeto_alocado_reprovacao',
-                                 help_text='alocação que sofreu reprovação')
+                                 related_name="projeto_alocado_reprovacao",
+                                 help_text="alocação que sofreu reprovação")
 
     # A nota será convertida para rubricas se necessário
     nota = models.DecimalField(max_digits=4, decimal_places=2)
@@ -1982,8 +1982,8 @@ class Reprovacao(models.Model):
         return reprovacao
 
     class Meta:
-        verbose_name = 'Reprovação'
-        verbose_name_plural = 'Reprovações'
+        verbose_name = "Reprovação"
+        verbose_name_plural = "Reprovações"
 
 
 class Observacao(models.Model):

@@ -385,7 +385,11 @@ def blackboard_notas(request, anosemestre):
                     linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
                 else:
                     if coluna == "M":
-                        linha += [f"{alocacao.get_media['media']:.4f}".replace('.',',')]
+                        media = alocacao.get_media['media']
+                        if media:
+                            linha += [f"{media:.4f}".replace('.',',')]
+                        else:
+                            linha += [""]
                     else:
                         linha += [""]
                     
@@ -674,16 +678,22 @@ def edita_notas(request, primarykey):
                 reg = Reprovacao.create(alocacao=alocacao)
             reg.nota = rep
             reg.save()
+        else:
+            for f in falha:
+                f.delete()
 
         mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
         mensagem += "</b> atualizadas:<br>\n"
 
-        mensagem += "&nbsp;&nbsp;Peso Final = "
-        mensagem += str(round(alocacao.get_media["pesos"]*100, 2)) + "% <br>\n"
-
-        mensagem += "&nbsp;&nbsp;Média Final = "
-        mensagem += str(round(alocacao.get_media["media"], 2)) + "<br>\n"
-        mensagem += "<br>\n"
+        media = alocacao.get_media["media"]
+        if media is not None:
+            if media["pesos"] is not None:
+                mensagem += "&nbsp;&nbsp;Peso Final = "
+                mensagem += str(round(media["pesos"]*100, 2)) + "% <br>\n"
+            if media["media"] is not None:
+                mensagem += "&nbsp;&nbsp;Média Final = "
+                mensagem += str(round(media["media"], 2)) + "<br>\n"
+            mensagem += "<br>\n"
 
         for avaliacao in avaliacoes:
             mensagem += str(avaliacao.exame)

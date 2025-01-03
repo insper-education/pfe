@@ -29,7 +29,8 @@
 
 <span style="display: block; margin-bottom: 14px">
   {% if alocado.projeto.titulo_final and alocado.projeto.titulo_final != alocado.projeto.proposta.titulo %}
-    <h3>{{alocado.projeto.titulo_final}} [{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h3>
+    <h3>[{{alocado.projeto.organizacao}}]
+       {{alocado.projeto.titulo_final}} ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})</h3>
     <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>
       <span lang="pt">Título original da proposta</span>
       <span lang="en" style="display:none">Original title of the proposal</span>

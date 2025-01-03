@@ -34,80 +34,80 @@
 
   {% for alocado in alocados %}
 
-  <div class="div_arredondado_100">
-    {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
-      <span lang="pt">Projeto {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} em fase de alocação.</span>
-      <span lang="en" style="display: none;">Projects {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} in the allocation phase.</span>
-      <br>
+    <div class="div_arredondado_100">
+      {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
+        <span lang="pt">Projeto {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} em fase de alocação.</span>
+        <span lang="en" style="display: none;">Projects {{alocado.projeto.ano}}.{{alocado.projeto.semestre}} in the allocation phase.</span>
+        <br>
 
-    {% else %}
+      {% else %}
 
-      {% include "projeto.html" %}
+        {% include "projeto.html" %}
 
-      {% with notas=alocado.get_notas %}
-        {% if notas %}
-          <div>
-            <h5>
-              <span lang="pt">Resultados</span>
-              <span lang="en" style="display: none;">Results</span>
-            </h5>
-            <div style="background: #FFFFFF; padding: 6px;">
-            {% include "display_notas_individuais.html" %}
+        {% with notas=alocado.get_notas %}
+          {% if notas %}
+            <div>
+              <h5>
+                <span lang="pt">Resultados</span>
+                <span lang="en" style="display: none;">Results</span>
+              </h5>
+              <div style="background: #FFFFFF; padding: 6px;">
+              {% include "display_notas_individuais.html" %}
+              </div>
             </div>
-          </div>
-        {% endif %}
-      {% endwith %}
+          {% endif %}
+        {% endwith %}
 
-      {% with encontros=alocado.projeto.encontro_set.all %}
-      {% if encontros %}
-      <div>
-        <h5>
-          <span lang="pt">Mentorias Marcadas</span>
-          <span lang="en" style="display: none;">Scheduled Mentoring Sessions</span>
-        </h5>
-        <ul>
-          {% for dinamica in encontros %} 
-            <li>
-              {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
-              {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
-              {% if dinamica.facilitador %}; facilitador: {{dinamica.facilitador}} {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% endwith %}
-
-      {% with certificados=alocado.get_certificados %}
-      {% if certificados %}
-      <div>
-        <h5>
-          <span lang="pt">Certificados Recebidos</span>
-          <span lang="en" style="display: none;">Certificates Received</span>
-        </h5>
-        <ul>
-          {% for documento in certificados %} 
-            <li>
-              {% if documento.documento and documento.link %}
-                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-              {% else %}
-                {% if documento.documento %}
-                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>
-                {% endif %}
-                {% if documento.link %}
-                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-                {% endif %}
-              {% endif %}
-              ({{documento.data}})
+        {% with encontros=alocado.projeto.encontro_set.all %}
+        {% if encontros %}
+        <div>
+          <h5>
+            <span lang="pt">Mentorias Marcadas</span>
+            <span lang="en" style="display: none;">Scheduled Mentoring Sessions</span>
+          </h5>
+          <ul>
+            {% for dinamica in encontros %} 
+              <li>
+                {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+                {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
+                {% if dinamica.facilitador %}; facilitador: {{dinamica.facilitador}} {% endif %}
               </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% endwith %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
 
-    {% endif %}
+        {% with certificados=alocado.get_certificados %}
+        {% if certificados %}
+        <div>
+          <h5>
+            <span lang="pt">Certificados Recebidos</span>
+            <span lang="en" style="display: none;">Certificates Received</span>
+          </h5>
+          <ul>
+            {% for documento in certificados %} 
+              <li>
+                {% if documento.documento and documento.link %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                {% else %}
+                  {% if documento.documento %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>
+                  {% endif %}
+                  {% if documento.link %}
+                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                  {% endif %}
+                {% endif %}
+                ({{documento.data}})
+                </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+      {% endif %}
 
     </div>
 

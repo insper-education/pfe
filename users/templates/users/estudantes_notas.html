@@ -9,6 +9,7 @@
   {% load static %}
   {% load dictionary %}
   {% load l10n %}
+  {% load i18n %}
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -47,7 +48,7 @@
             {% else %}
               <td>
                 <span lang="pt">Indefinido</span>
-                <span lang="en">Undefined</span>
+                <span lang="en" style="display:none;">Undefined</span>
               </td>
             {% endif %}
 
@@ -59,7 +60,7 @@
                       [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
                     {% else %}
                       <span lang="pt">[SEM ORGANIZAÇÃO]</span>
-                      <span lang="en">[NO ORGANIZATION]</span>
+                      <span lang="en" style="display:none;">[NO ORGANIZATION]</span>
                     {% endif %}
                     <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
                     {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
@@ -80,7 +81,10 @@
                     <span data-toggle="tooltip" data-html="true" animation="true" 
                     title="{{descr}}">
                       {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
-                      >={% if peso > 0 %}{{nota|floatformat:1}}{% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+                      >={% if peso > 0 %}<span
+                         lang="pt">{% language "pt-br" %}{{nota|floatformat:1}}{% endlanguage %}</span><span
+                         lang="en" style="display:none">{% language "en" %}{{ nota|floatformat:1}}{% endlanguage %}</span>
+                      {% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                       {% if nota == None %}
                         <span style="color:red">??,??</span>
                       {% endif %}
@@ -98,53 +102,46 @@
                 {% endfor %}
               </td>
 
-              <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
-                {% if alocacao %}
-                  <script>
-                    var indiv_tag = $("#indiv{{aluno.id}}");
-                    peso_indiv = +peso_indiv.toFixed(7); // arredonda valores
-                    if (peso_indiv>0) {
-                      var mindiv = nota_indiv/peso_indiv;
-                      mindiv = +mindiv.toFixed(6); // arredonda valores
-                      tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
-                      if(mindiv < 5) {
-                        tag_txt += 'style="color:red"'
-                      }
-                      tag_txt += '>' + mindiv.toFixed(2)
-                      indiv_tag.html(tag_txt);
-                    }
-                  </script>
-                {% endif %}
-              </td>
+              {% if alocacao %}
+                {% with media=alocacao.get_media %}
+                  <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
+                    <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
+                      {% if media.media < 5 %}style="color:red;"{% endif %}
+                      >
+                      <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                      <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                    </a>
+                  </td>
 
-              <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
-                {% if alocacao %}
-                  <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"></a>
-                  <script>
-                    var media_tag = $("#media{{aluno.id}}");
+                  <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
 
-                    {% if alocacao.projeto_alocado_reprovacao.all %}
-                      media_tag.html('<a style="color:red" data-toggle="tooltip" data-html="true" animation="true" title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">{{ alocacao.projeto_alocado_reprovacao.last.nota|stringformat:".2f"|unlocalize }}</a>');
-                    {% else %}
-                      peso_linha = +peso_linha.toFixed(7); // arredonda valores
-                      if (peso_linha>0) {
-                        var media = nota_linha/peso_linha;
-                        media = +media.toFixed(6); // arredonda valores
-                        if(peso_linha != 1) {
-                          media_tag.html('<a style="color:orange" data-toggle="tooltip" data-html="true" animation="true" title="Pesos da média diferente de 100% (' + (peso_linha*100).toFixed(1)+ '%)" href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer">' + media.toFixed(2) + '</a>');
-                        } else {
-                          tag_txt = '<a {% if alocacao %}href="{% url 'edita_notas' alocacao.id %}"{% endif %} target="_blank" rel="noopener noreferrer" '
-                          if(media < 5) {
-                            tag_txt += 'style="color:red"'
-                          }
-                          tag_txt += '>' + media.toFixed(2) + '</a>'
-                          media_tag.html(tag_txt);
-                        }
-                      }
-                    {% endif %}
-                  </script>
-                {% endif %}
-              </td>
+                    <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
+                    data-toggle="tooltip" data-html="true" animation="true" 
+                      
+                      {% if media.probation %}
+                        style="color:#e6a10f;" title="Estudante em Probatório">P
+                      {% elif alocacao.projeto_alocado_reprovacao.all %}
+                        style="color:red;"
+                        title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente"
+                        >
+                      {% else %}
+                        {% if media.pesos != 1 %}
+                          style="color:orange;"
+                          title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
+                        {% elif media.media < 5 %}
+                          style="color:red;">
+                        {% else %}
+                          >
+                        {% endif %}
+                      {% endif %}
+                      <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                      <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                    </a>
+                  </td>
+                {% endwith %}
+              {% else %}
+                <td></td><td></td>
+              {% endif %}
             {% endwith %}
           </tr>
           {% endfor %}
@@ -166,15 +163,15 @@
    
     {% if alunos_list %}
       <div id="medias" style="padding: 4px;">
-        <b><span lang="pt">Média no semestre</span><span lang="en">Semester average</span> = <span id="media"></span></b><br>
-        <b><span lang="pt">Desvio padrão no semestre</span><span lang="en">Standard deviation in the semester</span> = <span id="desvio"></span></b><br>
+        <b><span lang="pt">Média no semestre</span><span lang="en" style="display:none;">Semester average</span> = <span id="media"></span></b><br>
+        <b><span lang="pt">Desvio padrão no semestre</span><span lang="en" style="display:none;">Standard deviation in the semester</span> = <span id="desvio"></span></b><br>
       </div>
       {% if user.tipo_de_usuario == 4 %}
         <br>
         <div style="padding-left: 46px"> 
           <a target="_blank" rel="noopener noreferrer" href="{% url 'blackboard_notas' ano_semestre %}">
             <span lang="pt">Tabela para Blackboard</span>
-            <span lang="en">Table for Blackboard</span>
+            <span lang="en" style="display:none;">Table for Blackboard</span>
           </a>
         </div>
       {% endif %}

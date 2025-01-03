@@ -315,8 +315,7 @@ class Aluno(models.Model):
             if avaliacoes_p_obj:
                 for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
                     if objtmp.sigla == objetivo.sigla:
-                        logger.error("Erro, dois objetivos no mesmo semestre com a mesma sigla!")
-                        # raise ValidationError("<h2>Erro, dois objetivos no mesmo semestre com a mesma sigla!</h2>")
+                        logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! {self} {objetivo.sigla}")
                 lista_objetivos[objetivo] = {}
                 for aval in avaliacoes_p_obj:
                     if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
@@ -818,6 +817,13 @@ class Alocacao(models.Model):
             if individual < nota_final:
                 nota_final = individual
 
+        # Se a nota final permite passar, mas o estudante estiver em probation, a nota final é None
+        if nota_final > 5.0 and self.em_probation():
+            probation = True
+            nota_final = None
+        else:
+            probation = False
+
         return {
             "media": nota_final,
             "pesos": peso_final,
@@ -826,6 +832,7 @@ class Alocacao(models.Model):
             "peso_grupo_final": peso_grupo_final,
             "nota_grupo_final": nota_grupo_final,
             "individual": individual,
+            "probation": probation,
         }
 
     @property
