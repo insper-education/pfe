@@ -500,8 +500,11 @@ def estudantes_inscritos(request):
                     num_estudantes_curso[curso] = qtd
 
             inscritos = 0
+            inscritos_emails = []
             ninscritos = 0
+            ninscritos_emails = []
             tmpinscritos = 0
+            tmpinscritos_emails = []
             opcoes = []
             opcoestemp = []
             
@@ -512,10 +515,13 @@ def estudantes_inscritos(request):
                 opcoestemp.append(opcaotmp)
                 if opcao.count() >= 5:
                     inscritos += 1
+                    inscritos_emails.append(aluno.user.email)
                 elif opcaotmp.count() >= 5:
                     tmpinscritos += 1
+                    tmpinscritos_emails.append(aluno.user.email)
                 else:
                     ninscritos += 1
+                    ninscritos_emails.append(aluno.user.email)
             alunos_list = zip(alunos, opcoes, opcoestemp)
 
             rano, rsemestre = retrocede_semestre(ano, semestre)
@@ -536,10 +542,13 @@ def estudantes_inscritos(request):
                 "inscritos": inscritos,
                 "ninscritos": ninscritos,
                 "tmpinscritos": tmpinscritos,
+                "inscritos_emails": inscritos_emails,
+                "ninscritos_emails": ninscritos_emails,
+                "tmpinscritos_emails": tmpinscritos_emails,
                 "cursos": cursos,
                 "num_estudantes_curso": num_estudantes_curso,
                 "cabecalhos": cabecalhos,
-                "prazo_vencido": evento.endDate < datetime.date.today(),
+                "prazo_vencido": evento.endDate < datetime.date.today() if evento and evento.endDate else True,
                 "ano": ano,
                 "semestre": semestre,
             }

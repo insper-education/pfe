@@ -24,7 +24,7 @@
 
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
 
-        {% for aluno,opcoes,opcoestemp in alunos_list %}
+        {% for aluno, opcoes, opcoestemp in alunos_list %}
           <tr class="item">
             <td 
               class="text-center 
@@ -73,17 +73,36 @@
           <text class="text-success">&#x2B24;</text>
           <span lang="pt">Estudante já selecionou propostas</span>
           <span lang="en">Student already selected proposals</span>
-          ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]<br>
+          ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]
+          <span class="emails esconder">
+            <a href="mailto:{% for email in inscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+              <i class="fas fa-mail-bulk"></i>
+            </a>
+          </span>
+          <br>
 
           <text class="text-warning">&#x2B24;</text> 
           <span lang="pt">Estudante realizou seleção provisória</span>
           <span lang="en">Student performed temporary selection</span>
-          ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]<br>
+          ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]
+          <span class="emails esconder">
+            <a href="mailto:{% for email in tmpinscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+              <i class="fas fa-mail-bulk"></i>
+            </a>
+          </span>
+          <br>
           
           <text class="text-danger">&#x2B24;</text>
           <span lang="pt">Estudante ainda precisa selecionar propostas</span>
           <span lang="en">Student still needs to select proposals</span>
-          ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]<br>
+          ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]
+          <span class="emails esconder">
+            <a href="mailto:{% for email in ninscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+              <i class="fas fa-mail-bulk"></i>
+            </a>
+          </span>
+          <br>
+
         </caption>
       </table>
     </div>
