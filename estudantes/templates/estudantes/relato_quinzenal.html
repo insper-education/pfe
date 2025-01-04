@@ -9,7 +9,6 @@
   {% load static %}
   {% load get_field %}
   {% load get_prazo %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
@@ -21,7 +20,6 @@
       border: 2px solid black;
       border-radius: 10px;
       width: 85em;
-      max-width: 100%;
     }
 
     td, th {
@@ -68,21 +66,21 @@
         <span lang="pt">Próxima entrega será entre</span>
         <span lang="en" style="display: none;">Next delivery will be between</span>
         <b style='color:green;'>
-          <span class="opt_full">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
-          <span class="opt_short">{{inicio_periodo|date:"d/m/y" }}</span>
+          <span class="texto-longo">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
+          <span class="texto-curto">{{inicio_periodo|date:"d/m/y" }}</span>
         </b>
         <span lang="pt">e</span>
         <span lang="en" style="display: none;">and</span>
         <b style='color:green;'>
-          <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
-          <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
+          <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
+          <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
       {% else %}
         <span lang="pt">Prazo para a submissão do relato:</span>
         <span lang="en" style="display: none;">Deadline for submitting the report:</span>
         <b style='color:red;'>
-          <span class="opt_full">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
-          <span class="opt_short">{{prazo.endDate|date:"d/m/y" }}</span>
+          <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
+          <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
       {% endif %}
     {% else %}

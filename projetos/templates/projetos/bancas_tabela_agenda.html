@@ -11,14 +11,7 @@
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
   {% include "tabelas_includes.html" %}
   <style>
-    ul {padding-left: 20px;}
     table {table-layout: auto;}
-    .data_short {display: none;}
-    .data_full {display: inline;}
-    @media screen and (max-width: 1400px) {
-      .data_short {display: inline;}
-      .data_full {display: none;}
-    }
   </style>
 {% endblock %}
 
@@ -55,8 +48,8 @@
       <tr class="item" data-user="{{banca.get_sigla}}">
         <td>{{banca.composicao.exame}}</td>
         {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
-        <td><span class="data_full">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
-            <span class="data_short">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
+        <td><span class="texto-longo">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
+            <span class="texto-curto">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
         <td data-order="{{banca.projeto.get_titulo}}" style="width: 48%;">
           {% comment %} Probation {% endcomment %}
           {% if banca.alocacao %}

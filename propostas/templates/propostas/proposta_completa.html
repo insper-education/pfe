@@ -18,23 +18,11 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
   <style>
-    .t_f {display: inline;}
-    .t_s {display: none;}
-
     label {
       margin-bottom: 2px;
       line-height: 1.0;
     }
-
-    select {
-      max-width:100%;
-      margin-bottom: 12px;
-    }
-    
-    @media only screen and (max-width: 700px) {
-      .t_f {display: none;}
-      .t_s {display: inline;}
-    }
+    select {margin-bottom: 12px;}
   </style>
 
 {% endblock %}
@@ -243,7 +231,7 @@
   {% for estudante in sem_opcao %}
     <a href="{% url 'estudante_detail' estudante.id %}"
       class="dark-green-bold">
-        {{estudante.user.get_full_name}}
+        {{estudante.user.getexto-longoull_name}}
         [{{ estudante.curso2 }}]
         &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
         &nbsp;|
@@ -268,12 +256,12 @@
         {% if opcao.prioridade <= 5 %}green-normal{% else %}yellow-normal{% endif %}
        {% endif %}
        ">
-        {{opcao.aluno.user.get_full_name}}
-        <span class="t_f">
+        {{opcao.aluno.user.getexto-longoull_name}}
+        <span class="texto-longo">
           [{{ opcao.aluno.curso2 }}]
           &#10140; opção 
         </span>
-        <span class="t_s">
+        <span class="texto-curto">
           [{{ opcao.aluno.curso2.sigla_curta }}]
           &#10140; op
         </span>
@@ -307,7 +295,7 @@
         pulsa_texto(response.atualizado, "valor_atualizado");
       };
 
-      {% include "ajax_default_function.js" %}
+      {% include "ajax_defaultexto-longounction.js" %}
     
     }
 

@@ -79,15 +79,15 @@
       <br>
       
       {% with conexoes=projeto.conexao_set.all %}
-      <table class="table table-borderless table-sm" style="max-width: 100%; width: 47em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
+      <table class="table table-borderless table-sm" style="width: 47em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
         <tbody>
           {% for parceiro in projeto.organizacao.parceiro_set.all %}
             <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
               <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
               <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
               {% for papel in parceiro.get_papeis %}
-                <span class="opt_full">[{{papel.0}}]</span>
-                <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                <span class="texto-longo">[{{papel.0}}]</span>
+                <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
               {% endfor %}
               {% if parceiro.observacao %}&nbsp;&nbsp;obs: {{parceiro.observacao}}{% endif %}
 

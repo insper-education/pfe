@@ -7,15 +7,10 @@
 
 {% block head %}
   {% load static %}
-  
   {% load certificados %}
   {% load addhttp %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  <style>
-    ol {padding-left: 1.8em;}
-  </style>
+  <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}
 
 {% block content %}

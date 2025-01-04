@@ -12,7 +12,6 @@
   {% comment %} {% load banca_tipo %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
@@ -49,8 +48,8 @@
         {% for alocacao in projeto.alocacao_set.all %}
           <li>
             {{alocacao.aluno.user.get_full_name}}
-            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
+            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+            <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
           </li>
         {% endfor %}
       </ul>
@@ -73,7 +72,7 @@
       <b lang="pt">Data da Banca:</b><b lang="en">Date of Presentation:</b>
       {% comment %} {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}} {% endcomment %}
       {% if banca.startDate %}
-        <span class="opt_full">
+        <span class="texto-longo">
           {{banca.startDate.date}}
           <span lang="pt">{% language "pt-br" %}
             ({{banca.startDate|date:"l"}})
@@ -85,7 +84,7 @@
           </span>
           {{banca.startDate.time}}
         </span>
-        <span class="opt_short">
+        <span class="texto-curto">
           {{ banca.startDate|date:"d/m/y" }}
           <span lang="pt">{% language "pt-br" %}
             ({{banca.startDate|date:"l"}})

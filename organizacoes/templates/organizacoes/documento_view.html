@@ -207,7 +207,7 @@
       <div class="mb-3 row text-truncate">
         <label for="link" class="col1 col-form-label">Link</label>
         <div class="col2">
-          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" 
+          <input class="form-control" type="text" style="display: block;" size="73" 
                  maxlength="{% max_length Documento "link" %}" id="link" name="link" placeholder="https://"
                  {% if documento.link %}value="{{documento.link}}"{% endif %}>
         </div>
@@ -228,7 +228,7 @@
       <div class="mb-3 row text-truncate">
         <label for="anotacao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">Anotação</label>
         <div class="col2">
-          <input class="form-control" type="text" style="max-width:100%;display:block" size="73" 
+          <input class="form-control" type="text" style="display: block;" size="73" 
                  maxlength="{% max_length Documento "anotacao" %}" id="anotacao" name="anotacao"
                  {% if anotacao %}value="{{anotacao}}"{% endif %}
                  >

@@ -24,7 +24,6 @@
     table, th, td {border: 1px solid lightgrey;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-    ul,ol {padding-left: 28px;}
 
   </style>
 
@@ -103,12 +102,12 @@
     <u>
     {% if banca.alocacao %}
       <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
-      <span class="opt_full curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
-      <span class="opt_short curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
-      <span class="opt_full emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
-      <span class="opt_short emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+      <span class="texto-longo curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
+      <span class="texto-curto curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
+      <span class="texto-longo emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
+      <span class="texto-curto emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
     {% else %}
-      <span class="opt_full">Estudante não alocado</span>
+      <span class="texto-longo">Estudante não alocado</span>
     {% endif %}
     </u>
     <br><br>

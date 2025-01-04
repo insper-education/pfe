@@ -19,68 +19,40 @@ from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
-from users.support import adianta_semestre, get_edicoes
-
-from operacional.models import Curso
+from .messages import email, message_reembolso
 
 from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
-
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
 from .models import Area, AreaDeInteresse, Banca
 
-from .messages import email, message_reembolso
-
-from academica.models import Exame
-
 from .support import simple_upload, calcula_objetivos, cap_name, media
 from .support import divide57
+from .support2 import get_areas_propostas, get_areas_estudantes
 
 from .tasks import avisos_do_dia, eventos_do_dia
 
+from academica.models import Exame
+
 from administracao.support import usuario_sem_acesso
+
+from operacional.models import Curso
+
+from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
+from users.support import adianta_semestre, get_edicoes
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
-
-
-def get_areas_estudantes(alunos):
-    """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    usuarios = [aluno.user for aluno in alunos]
-
-    todas_areas = Area.objects.filter(ativa=True)
-    areaspfe = {
-        area.titulo: (AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area), area.descricao)
-        for area in todas_areas
-    }
-
-    outras = AreaDeInteresse.objects.filter(usuario__in=usuarios, area__isnull=True)
-
-    return areaspfe, outras
-
-def get_areas_propostas(propostas):
-    """Retorna dicionário com as áreas de interesse da lista de entrada."""
-    areaspfe = {
-        area.titulo: (AreaDeInteresse.objects.filter(proposta__in=propostas, area=area), area.descricao)
-        for area in Area.objects.filter(ativa=True)
-    }
-
-    outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
-
-    return areaspfe, outras
 
 
 @login_required
 @permission_required("projetos.view_projeto", raise_exception=True)
 def index_projetos(request):
     """Página principal dos Projetos."""
-    context = {
-            "titulo": { "pt": "Projetos", "en": "Projects"},
-        }
-
+    context = {"titulo": { "pt": "Projetos", "en": "Projects"},}
     if "/projetos/projetos" in request.path:
         return render(request, "projetos/projetos.html", context=context)
     else:
@@ -92,8 +64,7 @@ def projeto_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudantes."""
     projeto = get_object_or_404(Projeto, pk=primarykey)
 
-    # Se usuário não for Professor nem Admin
-    if request.user and request.user.tipo_de_usuario != 2 and request.user.tipo_de_usuario != 4:
+    if request.user and request.user.tipo_de_usuario not in [2, 4]:  # Se usuário não for Professor nem Admin
         configuracao = get_object_or_404(Configuracao)
         alocacoes = Alocacao.objects.filter(aluno=request.user.aluno, projeto=projeto)
         
@@ -114,8 +85,8 @@ def projeto_detalhes(request, primarykey):
             return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
-        "projeto": projeto,
+            "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
+            "projeto": projeto,
         }
 
     return render(request, "projetos/projeto_detalhes.html", context=context)

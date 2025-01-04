@@ -1,9 +1,39 @@
-textarea {max-width:100%;}
-input {max-width: 100%;}
-select {max-width: 100%;}
+/* Evita que objetos sejam maiors que a tela. */
+textarea, input, select, label, table, div {max-width:100%;}
 
+/* O espaço padrão é muito grande (uso em vários lugares) */
+ul, ol {
+  /* padding-left: 28px; */
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.94rem;
+  /* margin: 0px 0px 8px 0px; */
+}
+
+/* Não me parece uma boa ideia */
+/* p {
+  display: block;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 0;
+  margin-right: 0;
+} */
+
+
+/* Para esconder e mostrar elementos */
 .hidden {display: none;}
 .visible {display: block;}
+
+/* Para adaptar o conteúdo conforme tamanho da tela */
+.texto-curto { display: none; white-space: nowrap; }
+.texto-longo { display: inline-block; white-space: nowrap; }
+@media (max-width: 800px) {
+  .texto-curto { display: inline-block; }
+  .texto-longo { display: none; }
+}
+@media (max-width: 480px) {
+  .texto-curto { font-size: small; }
+}
 
 .disabled {
   cursor: default;
@@ -20,139 +50,15 @@ select {max-width: 100%;}
   outline-offset: 5px;
 }
 
-.mobile-container {
+/* Não mais usado */
+/* .mobile-container {
   max-width: 480px;
   margin: auto;
   background-color: #555;
   height: 500px;
   color: white;
   border-radius: 10px;
-}
-
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-  position: relative;
-}
-
-.topnav #links_menu_lat {
-  display: none;
-}
-
-.links-container {
-  display: none;
-  position: fixed;
-  top: 50px;
-  right: 20px;
-  width: 200px;
-  background-color: #000e4d;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  z-index: 1000;
-  padding: 0px;
-}
-
-.links-container a {
-  padding: 5px 16px;
-  display: block;
-  color: #333;
-  text-decoration: none;
-  border-bottom: 1px solid #eee;
-}
-
-.links-container a:last-child {
-  border-bottom: none;
-}
-
-.links-container a:hover {
-  background-color: #4971bb;
-}
-
-.logo-container {
-  margin-left: 6px;
-  margin-right: 6px;
-}
-
-#barra_do_top_nav {
-  padding: 0px;
-  height: 53px;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 100%; 
-  justify-content: flex-start;
-}
-
-#barra_do_top_nav a.icon {
-  background: black;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-#links_menu_lat a {
-  color: white;
-  text-decoration: none;
-}
-
-#hamburger {
-  color: white;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  display: block;
-}
-
-#hamburger.icon {
-  cursor: pointer;
-  background-color: black;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 54px;
-}
-
-#hamburger:hover {
-  color: grey;
-}
-
-.active {
-  background-color: rgb(255, 0, 0);
-  color: white;
-}
-
-.active_local {
-  background-color: rgb(255, 166, 0);
-  color: white;
-}
-
-#pfelogo { 
-  color: rgb(50, 50, 50);
-  font-size: 15px;
-  vertical-align: bottom;
-}
-
-#username { 
-  color: rgb(250, 250, 250);
-  font-size: 12px;
-  vertical-align: middle;
-  display: inline-block;
-  width: 57%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-p {
-  display: block;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-left: 0;
-  margin-right: 0;
-}
+} */
 
 .striped-border {
   border: 2px dashed #000;
@@ -184,21 +90,6 @@ p {
   width:450px;
 }
 
-.titulo {
-  font-size: 30px;
-  display: block;
-  padding-bottom: 0.25em;
-  padding-top: 10px;
-  line-height: 1.35;
-  margin-bottom: 0.4em;
-}
-
-.titulo i {
-  display: block;
-  font-size: 0.5em;
-  margin: 0.5em 0px 0px 1.2em;
-}
-
 .unselectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -213,13 +104,29 @@ p {
   line-height: 1.0;
 }
 
+.logotipo {
+  max-height: 128px;
+  max-width: 128px;
+  height: auto;
+  width: auto;
+  margin-bottom: 4px;
+}
+
+.logotipo_pequeno {
+  max-height: 64px; 
+  max-width: 64px;
+  height: auto;
+  width: auto;
+}
+
+.flutua_dir {
+  float: right;
+  margin-left: 10px;
+}
+
 @media only screen and (max-width: 740px) {
   table, th, td {
     font-size: 14px;
-  }
-  .titulo {
-    font-size: 21px;
-    padding-bottom: 0.15em;  
   }
   h3 {font-size: 1.17em;}
   h4 {font-size: 1.12em;}
@@ -227,10 +134,6 @@ p {
 
 @media only screen and (max-width: 480px) {
   #canvas-holder {width:100%;}
-  .titulo {
-    font-size: 20px;
-    padding-bottom: 0.05em;  
-  }
   h3 {font-size: 1.09em;}
   h4 {font-size: 1.05em;}
 } 
@@ -239,85 +142,4 @@ p {
   .container-fluid {padding-right: 8px;padding-left: 8px;}
 }
 
-@page {
-  size: auto;
-}
-
-.caixa_rolante {
-  overflow-y: auto;
-  max-height: 16em;
-}
-
-#language_button {
-  display: none;
-  user-select: none;
-  border-radius: 10px;
-  border: 2px solid #DDD;
-  float: right;
-  margin-top: 4px;
-  margin-left: 8px;
-  background-color: #999;
-}
-
-#language_box {
-  margin-left: auto;
-  padding: 8px;
-  margin-right: 48px;
-}
-
-/* Remove decorações de links */
-a#logo_inicial {
-  text-decoration: none;
-  display: inline-block;
-  margin-right: 5px;
-}
-a#logo_inicial:hover {
-  opacity: 0.8;
-}
-
-#link_username {
-  color: white;
-  text-decoration: none;
-  font-size: 0.9em; 
-}
-
-#link_username:hover {
-  text-decoration: underline;
-}
-
-#logo_insper {
-  width: 59px;
-  height: 23px;        
-}
-
-#pfelogo {
-  margin-left: 3px;
-  font-size: 1rem;
-}
-
-@media (max-width: 460px) {
-  .logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #logo_insper {
-    width: 44px;
-    height: 17px;
-  }
-
-  #pfelogo {
-    font-size: 0.6rem;
-    margin-left: 0;
-  }
-
-  #link_username {
-    font-size: 0.7em;
-  }
-
-  #language_button {
-    font-size: 0.8em;
-  }
-  
-}
+@page {size: auto;}

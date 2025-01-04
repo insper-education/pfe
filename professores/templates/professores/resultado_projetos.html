@@ -8,7 +8,6 @@
 {% block head %}
   {% load static %}
   <script src="{% static 'js/sort.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <style>
     th {
       background-color: #BEE5EB;
@@ -27,11 +26,9 @@
     }
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-    ul {
-      margin-bottom: 6px;
-      padding-left: 1.4em;
+    {% comment %} ul {
       font-size: 0.9em;
-    }
+    } {% endcomment %}
     .certificacao_excelencia {
       background-color:lightgreen !important;
     }
@@ -162,12 +159,12 @@
                         <li>
                           <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
                           <span class="curso">
-                            <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-                            <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+                            <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
                           </span>
                           <span class="email">
-                            <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                            <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                            <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                            <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
                           </span>
                           {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
                         </li>

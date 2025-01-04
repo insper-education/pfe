@@ -16,8 +16,8 @@
             {{documento.tipo_documento}}:
             {% if documento.documento and documento.link %} 
             <span lang="pt">Entregue</span><span lang="en">Submitted</span>
-            <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-            <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+            <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+            <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
             <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer">(documento)</a>
@@ -29,16 +29,16 @@
                 <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 href="{% url 'banca_avaliar' banca.slug %}/{{documento.id}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
-                <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
             {% endif %}
             {% if documento.link %}
                 <a
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
-                <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
             {% endif %}
             {% endif %}

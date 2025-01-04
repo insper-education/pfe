@@ -21,10 +21,7 @@
       padding-left: 4px;
       padding-right: 4px;
     }
-    ul {
-      margin: 4px;
-      padding: 0px 0px 0px 1.0em;
-    }
+
   </style>
 
 {% endblock %}
@@ -36,19 +33,19 @@
 
     <div class="table-responsive">
 
-    <table id="ExamesPesosTable">
+    <table id="ExamesPesosTable" class="table-sm table-striped table-hover table-bordered">
       <thead><tr>
         <th onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">
           <span lang="pt">Semestre</span>
-          <span lang="en">Semester</span>
+          <span lang="en" style="display:none">Semester</span>
         </th>
         <th>
           <span lang="pt">Exames</span>
-          <span lang="en">Evaluation</span>
+          <span lang="en" style="display:none">Evaluation</span>
         </th>
         <th style="display: none;">
           <span lang="pt">Peso</span>
-          <span lang="en">Weight</span>
+          <span lang="en" style="display:none">Weight</span>
         </th>
       </tr></thead>
       <tbody>
@@ -68,7 +65,7 @@
                     <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
                   {% else %}
                     <span lang="pt">atualmente</span>
-                    <span lang="en">currently</span>
+                    <span lang="en" style="display:none">currently</span>
                   {% endif %}):</span>
                   
                   <span style="display: inline-block; width: 34em;">
@@ -110,6 +107,6 @@
       }
     </script>
     <small lang="pt">Terminar o semestre até junho e iniciar a partir de agosto.</small>
-    <small lang="en">End the semester by June and start from August.</small>
+    <small lang="en" style="display:none">End the semester by June and start from August.</small>
 
 {% endblock %}

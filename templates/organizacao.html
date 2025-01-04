@@ -13,14 +13,6 @@
   <hr>
 
   <style>
-    #logotipo {
-      max-height:128px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-    }
-   
     .entrada_pri {
       font-size: 25px;
       display: inline-block;
@@ -45,7 +37,7 @@
   </style>
   
   {% if proposta.organizacao.logotipo %}
-    <img id="logotipo" src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
+    <img id="logotipo" class="logotipo flutua_dir"  src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
   {% endif %}
 
   <span class="entrada_pri">

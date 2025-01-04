@@ -16,6 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'fontawesome-free-5.15.1-web/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/cores.css' %}">
 
@@ -32,7 +33,7 @@
 </head>
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
   <div class="topnav">
-    <div style="cursor: pointer;" id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
+    <div id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
       {% if user.is_authenticated %}<a id="logo_inicial" href="{% url 'index' %}">{% endif %}
         <div class="logo-container">
           <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Insper" >
@@ -40,12 +41,12 @@
         </div>
       {% if user.is_authenticated %}</a>{% endif %}
       {% if user.is_authenticated %}
-        <a href="{% url 'perfil' %}" id="link_username"><i style="font-size: 0.65em;" class="fas fa-user"></i>&nbsp;
+        <a href="{% url 'perfil' %}" id="link_username"><i class="fas fa-user icone_usuario"></i>&nbsp;
           <span class="first_name">{{user.first_name}}</span>
           <span class="last_name">{{user.last_name}}</span>
         </u></a>
       {% else %}
-        <a href="{% url 'login' %}" id="link_username"><i style="font-size: 0.75em;" class="fas fa-question"></i>&nbsp;Login</u></a>
+        <a href="{% url 'login' %}" id="link_username"><i class="fas fa-question interrogacao"></i>&nbsp;Login</u></a>
       {% endif %}
       <div id="language_box"><div id="language_button"></div></div>
 
@@ -129,12 +130,10 @@
     </div>
 
   </div>
-  <div id="tudo" style="margin-top: 6px;" class="container-fluid">
+  <div id="tudo" class="container-fluid">
 
     {% if titulo %}
-      <span class="titulo"
-        {% comment %} style="text-align: center;" {% endcomment %}
-        >
+      <span class="titulo">
         <span lang="pt">{{ titulo.pt }}</span>
         <span lang="en" style="display: none;">{{ titulo.en }}</span>
       </span>

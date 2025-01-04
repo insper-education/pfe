@@ -7,7 +7,6 @@
 
 {% block head %}
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
@@ -99,8 +98,8 @@
                 <label title="Horário livre!"
               {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" for="din{{e.id}}">
                 <span class="spa_1">
-                  <span class="opt_full">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
-                  <span class="opt_short">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                  <span class="texto-longo">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                  <span class="texto-curto">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 </span>
                 {% if e.facilitador %}<div class="bot_tag">
                   <span lang="pt">Facilitador:</span>

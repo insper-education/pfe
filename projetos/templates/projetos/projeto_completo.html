@@ -10,44 +10,8 @@
   {% load bleach %}
   {% load l10n %}
   {% load alocacoes %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
-
+  <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
-
-  <style>
-    .logotipo {
-      max-height:128px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-      margin-left: 12px;
-    }
-  
-    .logotipo_left {
-      max-height:64px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-      margin-left: 10px;
-    }
-
-    ul, ol {padding-left: 1.6em;}
-
-    {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
-    ::-webkit-scrollbar {
-      -webkit-appearance: none;
-      width: 7px;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgba(0, 0, 0, .5);
-      box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-    }
-    
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -104,13 +68,13 @@
   {% for conexao in cooperacoes %}
     {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
       <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-        <img class="logotipo_left" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+        <img class="logotipo flutua_dir" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
       </a>
     {% endif %}
   {% endfor %}
 
   {% if projeto.organizacao and projeto.organizacao.logotipo %}
-    <img class="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+    <img class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
   <h5>
@@ -234,8 +198,8 @@
               {% endif %}
 
               <a href="mailto:{{conexao.parceiro.user.email}}">
-                <span class="opt_full">&lt;{{conexao.parceiro.user.email}}&gt;</span>
-                <span class="opt_short"><i class="far fa-envelope"></i></span>
+                <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                <span class="texto-curto"><i class="far fa-envelope"></i></span>
               </a>
 
             {% else %}
@@ -243,8 +207,8 @@
               <span lang="en" style="display: none;">ORGANIZATION NOT REGISTERED</span>
             {% endif %}
             {% for papel in conexao.get_papeis %}
-              <span class="opt_full">[{{papel.0}}]</span>
-              <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+              <span class="texto-longo">[{{papel.0}}]</span>
+              <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
             {% endfor %}
             {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
           </li>
@@ -255,8 +219,8 @@
                 {{ conexao.parceiro.user.get_full_name }}
               </a>
               <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">
-                <span class="opt_full">&lt;{{conexao.parceiro.user.email}}&gt;</span>
-                <span class="opt_short"><i class="far fa-envelope"></i></span>
+                <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                <span class="texto-curto"><i class="far fa-envelope"></i></span>
               </a>
             {% else %}
               <span style="color: lightgrey;">
@@ -266,8 +230,8 @@
             {% endif %}
             <span style="color: lightgrey; border: 0px; ">
               {% for papel in conexao.get_papeis %}
-                <span class="opt_full">[{{papel.0}}]</span>
-                <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                <span class="texto-longo">[{{papel.0}}]</span>
+                <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
               {% endfor %}
               {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
             </span>
@@ -303,8 +267,8 @@
         {{projeto.orientador.user.get_full_name}}
       {% endif %}
       <a href="mailto:{{projeto.orientador.user.email}}">
-        <span class="opt_full">&lt;{{projeto.orientador.user.email}}&gt;</span>
-        <span class="opt_short"><i class="far fa-envelope"></i></span>
+        <span class="texto-longo">&lt;{{projeto.orientador.user.email}}&gt;</span>
+        <span class="texto-curto"><i class="far fa-envelope"></i></span>
       </a>
     </div>
   {% else %}
@@ -330,8 +294,8 @@
         {{ coorientador.usuario.get_full_name }}
       </a>
       <a href="mailto:{{coorientador.usuario.email}}">
-        <span class="opt_full">&lt;{{coorientador.usuario.email}}&gt;</span>
-        <span class="opt_short"><i class="far fa-envelope"></i></span>
+        <span class="texto-longo">&lt;{{coorientador.usuario.email}}&gt;</span>
+        <span class="texto-curto"><i class="far fa-envelope"></i></span>
       </a>
       {% if coorientador.observacao %}
         &nbsp;&nbsp;obs: {{coorientador.observacao}}
@@ -361,12 +325,12 @@
       {% else %}
         {{alocacao.aluno.user.get_full_name}}
       {% endif %}
-      <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-      <span class="opt_short" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+      <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+      <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
       
       <a href="mailto:{{alocacao.aluno.user.email}}">
-        <span class="opt_full">&lt;{{alocacao.aluno.user.email}}&gt;</span>
-        <span class="opt_short"><i class="far fa-envelope"></i></span>
+        <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+        <span class="texto-curto"><i class="far fa-envelope"></i></span>
       </a>
 
       {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}

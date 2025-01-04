@@ -9,23 +9,9 @@
 {% load get_field %}
 {% load addhttp %}
 
-<style>
-  #logotipo {
-    max-height:128px;
-    max-width:128px;
-    height:auto;
-    width:auto;
-    float: right;
-  }
-  ul {
-    padding-left: 1.4em;
-  }
-  textarea {
-    width:100%;
-    max-width:100%;
-  }
-
-</style>
+{% comment %} <style>
+  textarea {width: 100%;}
+</style> {% endcomment %}
 
 <span style="display: block; margin-bottom: 14px">
   {% if alocado.projeto.titulo_final and alocado.projeto.titulo_final != alocado.projeto.proposta.titulo %}
@@ -198,7 +184,7 @@
 
 <div>
   {% if alocado.projeto.organizacao.logotipo %}
-    <img id="logotipo" src="{{ alocado.projeto.organizacao.logotipo.url }}" alt="{{ alocado.projeto.organizacao.sigla }}">
+    <img id="logotipo" class="logotipo flutua_dir" src="{{ alocado.projeto.organizacao.logotipo.url }}" alt="{{ alocado.projeto.organizacao.sigla }}">
   {% endif %}
 
   <h5>
@@ -221,8 +207,8 @@
     </h5>
     <ul>
       <li><a href="mailto:{{alocado.projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}}</a>
-        <span class="opt_full emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}">&lt;{{alocado.projeto.orientador.user.email}}&gt;</a></span>
-        <span class="opt_short emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+        <span class="texto-longo emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}">&lt;{{alocado.projeto.orientador.user.email}}&gt;</a></span>
+        <span class="texto-curto emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       </li>
     </ul>
   {% endif %}
@@ -235,11 +221,11 @@
     {% for membro in alocado.projeto.alocacao_set.all %} 
       <li>
         <a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.get_full_name}}</a>
-        <span class="opt_full curso unselectable">[{{ membro.aluno.curso2 }}]</span>
-        <span class="opt_short curso unselectable">[{{ membro.aluno.curso2.sigla_curta }}]</span>
+        <span class="texto-longo curso unselectable">[{{ membro.aluno.curso2 }}]</span>
+        <span class="texto-curto curso unselectable">[{{ membro.aluno.curso2.sigla_curta }}]</span>
         {% if membro.aluno.externo %}<span style="color:red">[{{membro.aluno.externo}}]</span>{% endif %}
-        <span class="opt_full emails"><a class="email" href="mailto:{{membro.aluno.user.email}}">&lt;{{membro.aluno.user.email}}&gt;</a></span>
-        <span class="opt_short emails"><a class="email" href="mailto:{{membro.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+        <span class="texto-longo emails"><a class="email" href="mailto:{{membro.aluno.user.email}}">&lt;{{membro.aluno.user.email}}&gt;</a></span>
+        <span class="texto-curto emails"><a class="email" href="mailto:{{membro.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
       </a></li>
     {% endfor %}
   </ul>

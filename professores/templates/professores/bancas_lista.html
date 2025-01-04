@@ -11,19 +11,12 @@
   {% comment %} {% load banca_tipo %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
   <style>
     select {
-      max-width: 100%;
       margin-right: 16px;
     }
   
-    ul,ol {
-      margin: 0px 0px 8px 0px;
-      padding: 0px 0px 0px 1.5em;
-    }
-
     .agendamento {
       display: flex;
       flex-wrap: wrap;
@@ -158,8 +151,8 @@
               {% if banca.startDate %}
                 <b lang="pt">Horário:</b>
                 <b lang="en">Time:</b>
-                <span class="opt_full">{{banca.startDate.date}}</span>
-                <span class="opt_short">{{banca.startDate.date|date:"d/m/Y"}}</span>
+                <span class="texto-longo">{{banca.startDate.date}}</span>
+                <span class="texto-curto">{{banca.startDate.date|date:"d/m/Y"}}</span>
                 ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
                 {% if banca.endDate %}
                   às {{banca.endDate.time}}
@@ -215,8 +208,8 @@
                             <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
                             <span lang="en">[Advisor]</span>
                           {% endif %}
-                          <span class="opt_full emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
-                          <span class="opt_short emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+                          <span class="texto-longo emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
+                          <span class="texto-curto emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
                           
                         </li>
                       {% endif %}
@@ -231,8 +224,8 @@
                               <span lang="pt">[Coorientador{% if membro.genero == 'F' %}a{% endif %}]</span>
                               <span lang="en">[Co-Advisor]</span>
                             {% endif %}
-                            <span class="opt_full emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
-                            <span class="opt_short emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
+                            <span class="texto-longo emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
+                            <span class="texto-curto emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
                             
                           </li>
                         {% endfor %}

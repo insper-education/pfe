@@ -30,8 +30,8 @@
         <b lang="en" style="display:none">Advisor:</b>
       {% endif %}
       <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-      <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-      <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+      <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+      <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
     {% else %}
       <span lang="pt">Orientador: Não definido</span>
       <span lang="en" style="display:none">Advisor: Not defined</span>
@@ -77,8 +77,8 @@
     {% endif %}
       {{projeto.orientador.user.get_full_name}}
       {% if com_email %}
-        <span class="opt_full"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-        <span class="opt_short"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+        <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       {% endif %}<br>
   {% else %}
     <span lang="pt">Orientador: Não definido</span>

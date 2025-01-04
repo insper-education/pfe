@@ -10,7 +10,6 @@
   {% load get_field %} \
   <style>  
     thead {background-color: #BEE5EB;}
-    textarea {max-width:100%;}
     table {margin-top: 10px;}
     th, td {padding: 1px 5px 1px 5px;}
   </style>
@@ -25,7 +24,7 @@
     <label for="nome">
       <span lang="pt">Nome da Disciplina:</span>
       <span lang="en">Course Name:</span>
-    </label> <input type="text" size="48" style="max-width:100%;display:block"
+    </label> <input type="text" size="48" style="display: block;"
            maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
 
     <button class="btn btn-primary mb-1 mt-2" type="submit">

@@ -11,16 +11,6 @@
   {% load bleach %}
   {% load addhttp %}
 
-  <style>
-    #logotipo {
-      max-height:128px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -98,7 +88,7 @@
   <hr>
 
   {% if projeto.organizacao.logotipo %}
-    <img id="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+    <img id="logotipo" class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
   <h4 data-toggle="tooltip" data-html="true" animation="true" title="

@@ -10,9 +10,8 @@ import datetime
 import re
 
 from django.core.files.storage import FileSystemStorage
-from django.utils import text
-
 from django.template.defaultfilters import slugify
+from django.utils import text
 from django.utils.encoding import force_text
 
 
@@ -282,3 +281,4 @@ def divide57(notas_lista):
             else:
                 valores[1] += 1
     return valores
+

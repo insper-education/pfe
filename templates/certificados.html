@@ -5,13 +5,6 @@
 {% endcomment %}
 
 <style>
-  .opt_short {display: none;}
-  .opt_full {display: inline;}
-  @media screen and (max-width: 800px) {
-    .opt_short {display: inline;}
-    .opt_full {display: none;}
-  }
-
   {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
   ::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -62,8 +55,8 @@
 
       <div style="white-space: nowrap;">
         {% if documento.data %}
-          <span class="opt_full">: {{ documento.data|date:"DATE_FORMAT" }}</span>
-          <span class="opt_short">: {{ documento.data|date:"d/m/Y" }}</span>
+          <span class="texto-longo">: {{ documento.data|date:"DATE_FORMAT" }}</span>
+          <span class="texto-curto">: {{ documento.data|date:"d/m/Y" }}</span>
         {% endif %}
         {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
           <sup>(Inglês)</sup>

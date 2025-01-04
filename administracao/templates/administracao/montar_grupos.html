@@ -9,7 +9,6 @@
   {% load static %}
   {% load nospaces %}
   {% load aderencia_aluno %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"/></script>
   
   <style>
@@ -95,13 +94,6 @@
       padding-right: 2px;
     }
 
-    .logotipo {
-      max-height:64px;
-      max-width:64px;
-      height:auto;
-      width:auto;
-    }
-
     .l_curso {
       padding-right: 2px;
       padding-left: 2px;
@@ -169,7 +161,7 @@
         <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
 
           <div style="width: 64px; text-align: center;">
-            <img class="logotipo" 
+            <img class="logotipo_pequeno" 
               {% if proposta.organizacao.logotipo %}
                 src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}"
               {% elif proposta.organizacao %}
@@ -445,8 +437,8 @@
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
-        <span class="opt_full esconder">CR:&nbsp;</span><span class="opt_short esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
-        <div class="opcao imprimir_div" style="float: right;"><div class="opt_full">opção </div><div class="opt_short">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
+        <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
+        <div class="opcao imprimir_div" style="float: right;"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
         <br></div>
       `
       

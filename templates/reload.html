@@ -4,6 +4,7 @@
   Data: 11 de Setembro de 2022
 {% endcomment %}
 
+{% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
 <script>
   $(window).bind("pageshow", function(event) {
     if (event.persisted || event.originalEvent.persisted || window.performance.getEntriesByType("navigation")[0].type === 'back_forward') {

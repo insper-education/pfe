@@ -13,7 +13,6 @@
   {% include "reload.html" %}
   
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   
   <style>
     ol {margin-bottom: 3px;}
@@ -71,13 +70,13 @@
                   <li>
                     <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
                       <span class="curso">
-                        <span class="opt_full">[{{ alocacao.aluno.curso2 }}]</span>
-                        <span class="opt_short">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                        <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+                        <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
                       </span>
                     </a>
                     <span class="email">
-                      <span class="opt_full"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                      <span class="opt_short"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                      <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                      <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
                     </span>
                   </li>
                 {% endfor %}

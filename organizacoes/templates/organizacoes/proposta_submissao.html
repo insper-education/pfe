@@ -11,10 +11,7 @@
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
-    textarea {
-      max-width:100%;
-      margin-bottom: 4px; 
-    }
+    textarea {margin-bottom: 4px; }
 
     .quad_pfe {
       border: solid black 2px;
@@ -72,9 +69,9 @@
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
 
-            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="nome">Nome:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% elif request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
+            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="nome">Nome:</label> <input class="requiredField" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% elif request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
               pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
-            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" style="max-width: 100%;" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% elif request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
+            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% elif request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
               pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <small class="obs">Identifique quem está enviando ou atualizando a proposta</small>
             <hr>
@@ -84,7 +81,7 @@
             </label><br>
             <textarea class="requiredField" id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.nome_organizacao %}{{ proposta.nome_organizacao }}{% endif %}</textarea>
 
-            <label class="topico" for="website">website:</label> <input class="requiredField" style="max-width: 100%;" type="text" size="75"  maxlength="250" id="website" name="website" {% if proposta.website %}value="{{proposta.website}}"{% endif %} placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+            <label class="topico" for="website">website:</label> <input class="requiredField" type="text" size="75"  maxlength="250" id="website" name="website" {% if proposta.website %}value="{{proposta.website}}"{% endif %} placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
             <label class="topico" for="endereco">Endereço<br>
             <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)</small>
@@ -120,7 +117,7 @@
             <label class="topico" for="titulo">Título provisório do projeto<br>
             <small class="obs">um título para ser apresentado aos estudantes e ao longo do projeto, será possível revisar esse título</small>
             </label><br>
-            <input class="requiredField" type="text" size="80" maxlength="160" style="max-width: 100%;" id="titulo_prop" name="titulo_prop" {% if proposta.titulo %}value="{{proposta.titulo}}"{% endif %} required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+            <input class="requiredField" type="text" size="80" maxlength="160" id="titulo_prop" name="titulo_prop" {% if proposta.titulo %}value="{{proposta.titulo}}"{% endif %} required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
             <label class="topico" for="desc_projeto">Descrição da Proposta de Projeto<br>

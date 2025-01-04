@@ -8,19 +8,7 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  
-  <style>
-    #logotipo {
-      max-height:128px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-    }
-  </style>
 {% endblock %}
 
 {% block content %}

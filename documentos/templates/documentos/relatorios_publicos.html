@@ -15,15 +15,6 @@
   {% include "tabelas_includes.html" %}
   <style>
     td {padding: 8px;}
-    .short-text { display: none; white-space: nowrap; }
-    .full-text { display: inline-block; white-space: nowrap; }
-    @media (max-width: 1200px) {
-        .short-text { display: inline-block; }
-        .full-text { display: none; }
-    }
-    @media (max-width: 480px) {
-      .short-text { font-size: x-small; }
-    }
   </style>
 
 {% endblock %}
@@ -142,8 +133,8 @@
                   {% if relatorio.link %}
                     <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
                       href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                      <span class="short-text" style="width: 6em;">Relatório<sup>B</sup></span>
-                      <span class="full-text" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
+                      <span class="texto-curto" style="width: 6em;">Relatório<sup>B</sup></span>
+                      <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
                       {% if user.tipo_de_usuario == 4 %}
                         <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
                           <i class="fas fa-pencil-alt"></i>
@@ -155,8 +146,8 @@
                 {% if relatorio.documento %}
                   <a class="btn btn-light btn-outline-info btn-sm mt-1"
                     href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span class="short-text" style="width: 6em;">Relatório<sup>S</sup></span>
-                    <span class="full-text" style="width: 13em;">Relatório&nbsp;(Servidor)</span>
+                    <span class="texto-curto" style="width: 6em;">Relatório<sup>S</sup></span>
+                    <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(Servidor)</span>
                   </a><br>
                   {% if user.tipo_de_usuario == 4 and not relatorio.link %}
                     <a id="c{{relatorio.pk}}"
@@ -164,8 +155,8 @@
                       href="{% url 'biblioteca_link' relatorio.pk %}"
                       data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
                       target="_blank" rel="noopener noreferrer">
-                      <span class="short-text" style="width: 6em;">+&nbsp;DSpace</span>
-                      <span class="full-text" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
+                      <span class="texto-curto" style="width: 6em;">+&nbsp;DSpace</span>
+                      <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
                     </a><br>
                   {% endif %}
                 {% endif %}
@@ -174,14 +165,14 @@
                   {% if publico.documento %}
                     <a class="btn btn-light btn-outline-info btn-sm mt-1"
                       href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
-                      <span class="short-text" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                      <span class="full-text" style="width: 13em;">{{publico.tipo_documento}}</span>
+                      <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                      <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
                     </a><br>
                   {% elif publico.link %}
                     <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
                       href="{{publico.link}}" target="_blank" rel="noopener noreferrer">
-                      <span class="short-text" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                      <span class="full-text" style="width: 13em;">{{publico.tipo_documento}}</span>
+                      <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                      <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
                     </a><br>
                   {% endif %}
                 {% endfor %}

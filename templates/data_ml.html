@@ -9,13 +9,13 @@
 
 <span lang="pt">
   {% language "pt-br" %}
-    <span class="opt_full">{{date|date:"DATE_FORMAT"}}</span>
-    <span class="opt_short">{{date|date:"d/m/y"}}</span>
+    <span class="texto-longo">{{date|date:"DATE_FORMAT"}}</span>
+    <span class="texto-curto">{{date|date:"d/m/y"}}</span>
   {% endlanguage %}
 </span>
 <span lang="en" style="display:none">
   {% language "en" %}
-    <span class="opt_full">{{date|date:"F d, Y" }}</span>
-    <span class="opt_short">{{date|date:"M d, Y" }}</span>
+    <span class="texto-longo">{{date|date:"F d, Y" }}</span>
+    <span class="texto-curto">{{date|date:"M d, Y" }}</span>
   {% endlanguage %}
 </span>

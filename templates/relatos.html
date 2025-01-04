@@ -6,7 +6,6 @@
 
 {% load static %}
 {% load i18n %}
-<link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
 <style>
@@ -27,14 +26,14 @@
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>
           <span lang="pt">
             {% language "pt-br" %}
-              <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
-              <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}</span>
+              <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
+              <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}</span>
             {% endlanguage %}
           </span>
           <span lang="en" style="display:none">
             {% language "en" %}
-              <span class="opt_full">{{ evento.endDate|date:"F d, Y" }}</span>
-              <span class="opt_short">{{ evento.endDate|date:"M d, Y" }}</span>
+              <span class="texto-longo">{{ evento.endDate|date:"F d, Y" }}</span>
+              <span class="texto-curto">{{ evento.endDate|date:"M d, Y" }}</span>
             {% endlanguage %}
           </span>
         </a></td>

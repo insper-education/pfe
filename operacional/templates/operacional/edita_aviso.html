@@ -12,17 +12,11 @@
 
   <style>
     input {
-      max-width: 100%;
       display: inline-block;
-    }
-    label {
-      {% comment %} margin: 6px 3px 2px 0px; {% endcomment %}
-      max-width: 100%;
     }
     .enviar {
       margin-right: 22px;
     }
-    select {max-width: 100%;}
     .bootstrap-select {
       max-width: 100%;
     }
@@ -35,7 +29,7 @@
     <form method="post" id="edita_aviso" enctype="multipart/form-data">
       {% csrf_token %}
       
-      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+      <div style="margin-bottom: 8px; display: inline-block;">
         <label for="titulo">
           <b>
             <span lang="pt">Aviso:</span>
@@ -44,15 +38,14 @@
         <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
       </div><br>
 
-      {% comment %} <div style="margin-bottom: 8px; margin-right: 25px; display: inline-block; max-width: 100%;"> {% endcomment %}
-      <div style="margin-bottom: 8px; margin-right: 25px; display: block; max-width: 100%;">
+      <div style="margin-bottom: 8px; margin-right: 25px; display: block;">
         <label for="evento">
           <b>
             <span lang="pt">Evento relacionado:</span>
             <span lang="en" style="display: none;">Related event:</span>
           </b>
         </label>
-        <select style="max-width: 100%;" name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
+        <select name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
             <option disabled selected value> -- selecione evento -- </option>
             {% for evento in eventos %}
               <option value="{{evento.id}}" {% if aviso.tipo_evento.id == evento.id %}selected="selected"{% endif %}>
@@ -62,7 +55,7 @@
         </select>
       </div>
 
-      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+      <div style="margin-bottom: 8px; display: inline-block;">
         <label for="delta">
           <b>
             <span lang="pt">Delta:</span>
@@ -71,7 +64,7 @@
         <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
       </div><br>
 
-      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+      <div style="margin-bottom: 8px; display: inline-block;">
         <label for="delta">
           <b>
             <span lang="pt">Mensagem:</span>
@@ -81,7 +74,7 @@
         <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
       </div><br>
       
-      <div style="margin-bottom: 8px; display: inline-block; max-width: 100%;">
+      <div style="margin-bottom: 8px; display: inline-block;">
         <b>
           <span lang="pt">Enviar para:</span>
           <span lang="en" style="display: none;">Send to:</span>

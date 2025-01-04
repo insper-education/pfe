@@ -6,35 +6,15 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
-
   {% load format_cnpj %}
   {% load order_by %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  
+  <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
+
   <style>
-    #logotipo {
-      max-height:128px;
-      max-width:128px;
-      height:auto;
-      width:auto;
-      float: right;
-    }
-
-    ul, ol {padding-left: 1.6em;}
-
-    {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
-    ::-webkit-scrollbar {
-      -webkit-appearance: none;
-      width: 7px;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgba(0, 0, 0, .5);
-      box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    .desativado, .desativado a {
+      color: lightgrey;
     }
   </style>
 
@@ -43,7 +23,7 @@
 {% block content %}
   
   {% if organizacao.logotipo %}
-    <img id="logotipo" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
+    <img id="logotipo" class="logotipo flutua_dir" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
   {% endif %}
 
   <h4>{{organizacao.nome}}</h4>
@@ -63,69 +43,48 @@
   <br><strong>contato(s):</strong>
   <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
   <br>
-  {% for parceiro in organizacao.parceiro_set.all|order_by:"-principal_contato,user" %}
-    {% if parceiro.user.is_active %}
-    <li style="margin-bottom: 6px;" >
-      <a href="{% url 'parceiro_detail' parceiro.id %}">
-        {{parceiro.user.get_full_name}}
-      </a>
+  <ul>
+  {% for parceiro in organizacao.parceiro_set.all|order_by:"-user__is_active, -principal_contato, user" %}
+    <li style="margin-bottom: 6px;" {% if not parceiro.user.is_active %}class="desativado"{% endif %}> 
+      <a href="{% url 'parceiro_detail' parceiro.id %}">{{parceiro.user.get_full_name}}</a>
       {% if parceiro.principal_contato %}
-        <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
-          &#x2B50;
-        </span>
+        <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">&#x2B50;</span>
       {% endif %}
-      &nbsp;
-      {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
-      <p style="line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-envelope"></i> <a href="mailto:{{parceiro.user.email}}">&nbsp;{{parceiro.user.email}}</a></p>
-
-      {% if parceiro.user.telefone %}&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; 
-        <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>&nbsp;<br>
+      {% if parceiro.cargo %}
+        <div style="margin-top: -4px; font-size:13px; line-height:1.3;">{{parceiro.cargo}}</div>
       {% endif %}
-
-      {% if parceiro.user.celular %}&nbsp;&nbsp;&nbsp;&nbsp;&#x1F4F1;
-        <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>&nbsp;
-        <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
-        <br>
+      <div style="line-height:0.95;">
+        <i class="far fa-envelope"></i>
+        <a href="mailto:{{parceiro.user.email}}">{{parceiro.user.email}}</a>
+      </div>
+      {% if parceiro.user.telefone %}
+        <div style="line-height:0.95;">
+          &#x260F;
+          <a href="tel:{{parceiro.user.telefone}}">{{parceiro.user.telefone}}</a>
+        </div>
       {% endif %}
-      
-      {% if parceiro.user.instant_messaging %}&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
-        {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}{{parceiro.user.instant_messaging}}{% comment %}</a>{% endcomment %}&nbsp;<br> 
+      {% if parceiro.user.celular %}
+        <div>
+          {% if not parceiro.user.is_active %}<span style="color: transparent; text-shadow: 0 0 0 lightgrey;">&#x1F4F1;</span>{% else %}&#x1F4F1;{% endif %}
+          <a href="tel:{{parceiro.user.celular}}">{{parceiro.user.celular}}</a>&nbsp;
+          <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px; {% if not parceiro.user.is_active %}opacity: 0.4;filter: alpha(opacity=40);{% endif %}"></a>
+        </div>
       {% endif %}
-
+      {% if parceiro.user.instant_messaging %}
+        <div>
+          <img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
+          {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}
+          {{parceiro.user.instant_messaging}}
+          {% comment %}</a>{% endcomment %} 
+        </div>
+      {% endif %}
     </li>
-    {% endif %}
   {% endfor %}
+  </ul>
 
-  {% for parceiro in organizacao.parceiro_set.all|dictsort:"principal_contato" %}
-    {% if not parceiro.user.is_active %}
-    <li style="color: lightgrey;">
-      <a href="{% url 'parceiro_detail' parceiro.id %}" style="color: LightBlue;">
-        {{parceiro.user.get_full_name}}
-      </a>
-      {% if parceiro.principal_contato %}
-        <span style="color: transparent; text-shadow: 0 0 0 lightgrey;" data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
-          &#x2B50;
-        </span>
-      {% endif %}
-      &nbsp;
-      {% if parceiro.cargo %} <p style="margin-top: -4px; font-size:13px; line-height:1.3;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{parceiro.cargo}}</p>{% endif %}
-      <p style="color: transparent; text-shadow: 0 0 0 lightgrey;line-height:0.95;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-envelope"></i> <a href="mailto:{{parceiro.user.email}}" style="color: LightBlue; pointer-events: none; cursor: default;">&nbsp;{{parceiro.user.email}}</a></p>
-      {% if parceiro.user.telefone %} <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#x260F; {{parceiro.user.telefone}} &nbsp;</p>{% endif %}
-      {% if parceiro.user.celular %} 
-        <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">
-          &nbsp;&nbsp;&nbsp; &#x1F4F1; {{parceiro.user.celular}}
-          <a href="https://wa.me/{{parceiro.user.celular|cut:' '}}" style="pointer-events: none; cursor: default;"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);"></a>
-        </p>
-      {% endif %}
-      {% if parceiro.user.instant_messaging %} <p style="color: transparent; text-shadow: 0 0 0 lightgrey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;opacity: 0.4;filter: alpha(opacity=40);">
-      {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}" style="color: LightBlue;"> {% endcomment %}
-      {{parceiro.user.instant_messaging}}
-      {% comment %} </a> {% endcomment %}
-      &nbsp;</p>{% endif %}
-
-    </li>
-    {% endif %}
-  {% endfor %}
+         
+        
+        
 
   <br>
   <strong>Dados Cadastrais:</strong><br>

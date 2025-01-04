@@ -13,7 +13,6 @@
   {% include "reload.html" %}
   
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
 
 {% endblock %}
@@ -35,8 +34,8 @@
           <a href="{% url 'banca_ver' banca.id %}">
             <b>{{ banca.get_tipo }}</b> &#x2726;
             {% if banca.startDate %}
-              <b><span class="opt_full">{{ banca.startDate|date:"DATETIME_FORMAT" }}</span>
-                 <span class="opt_short">{{ banca.startDate|date:"d/m/y H:i" }}</span></b>
+              <b><span class="texto-longo">{{ banca.startDate|date:"DATETIME_FORMAT" }}</span>
+                 <span class="texto-curto">{{ banca.startDate|date:"d/m/y H:i" }}</span></b>
             {% endif %} &#x2726;
 
             {% if user.professor and banca.projeto.orientador == user.professor %}
@@ -51,7 +50,7 @@
             {% endwith %}
             
             {% if not user.professor or user.professor and banca.projeto.orientador != user.professor %}
-              <i><span class="opt_short">Ori.</span><span class="opt_full">Orientador{% if user.genero == 'F' %}a{% endif %}</span>:
+              <i><span class="texto-curto">Ori.</span><span class="texto-longo">Orientador{% if user.genero == 'F' %}a{% endif %}</span>:
                 {% if banca.projeto.orientador %}
                   {{banca.projeto.orientador}}
                 {% elif banca.alocacao.projeto.orientador %}
@@ -65,7 +64,7 @@
         </div>
           
         {% if banca.projeto %}
-          <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+          <div class="tresp" style="display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
           {% if banca.projeto.organizacao %}
             [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
           {% endif %}
@@ -73,7 +72,7 @@
             {{banca.projeto.get_titulo}}</a>
             </div>
         {% elif banca.alocacao.projeto %}
-          <div class="tresp" style="max-width: 100%; display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+          <div class="tresp" style="display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
           {% if banca.alocacao.aluno %}
             (<a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno }}</a>)
           {% endif %}

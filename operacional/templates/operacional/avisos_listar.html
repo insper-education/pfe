@@ -13,14 +13,6 @@
   {% include "reload.html" %}
 
   <style>
-    .data_curta {display: block;}
-    .data_longa {display: none;}
-
-    @media screen and (min-width: 1200px) {
-      .data_curta {display: none;}
-      .data_longa {display: block;}
-    }
-
     th {
       text-align:center;
       border: 1px solid black !important;
@@ -92,7 +84,7 @@
              class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
               <th scope="row"></th>
               <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                <span class="data_longa">{{a.evento.get_data}}</span><span class="data_curta">{{a.evento.get_data|date:"d/m/y"}}</span>
+                <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
               </td>
               <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
                 <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
@@ -140,8 +132,8 @@
             <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
               <label style="line-height: 0px;" for="{{forloop.counter}}">
                 {% if a.data%}
-                  <span class="data_longa">{{a.data}}</span>
-                  <span class="data_curta">{{a.data|date:"d/m/y"}}</span>
+                  <span class="texto-longo">{{a.data}}</span>
+                  <span class="texto-curto">{{a.data|date:"d/m/y"}}</span>
                 {% else %}
                   <span lang="pt">Sem evento no semestre</span>
                   <span lang="en" style="display:none;">No event this semester</span>

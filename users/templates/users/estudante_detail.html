@@ -11,7 +11,6 @@
   {% load dictionary %}
   {% load zip_data %}
   {% load l10n %}
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -196,11 +195,11 @@
               {% if relato %}
                 <a href="{% url 'relato_visualizar' relato.id %}">
                   {{ordem|add:1}}&ordm; - 
-                  <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                  <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                  Preenchido <span class="opt_full">pelo estudante em</span>
-                  <span class="opt_full">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
-                  <span class="opt_short">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
+                  <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                  <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                  Preenchido <span class="texto-longo">pelo estudante em</span>
+                  <span class="texto-longo">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
+                  <span class="texto-curto">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
                 </a>
                 {% if relato.avaliacao >= 0 %}
                   {% if relato.avaliacao > 0 %}
@@ -213,8 +212,8 @@
                 {% endif %}
               {% else %}
                 {{ordem|add:1}}&ordm; - 
-                <span class="opt_full">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                <span class="opt_short">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
                 <span lang="pt">Não preenchido por estudante</span>
                 <span lang="en" style="display: none;">Not filled by student</span>
               {% endif %}

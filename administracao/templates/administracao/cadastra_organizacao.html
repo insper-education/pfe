@@ -10,8 +10,6 @@
   {% load get_field %}
 
   <style>
-    textarea {max-width:100%;}
-    input[type="text"] {max-width:100%;}
     label {
       margin-top: 8px;
       margin-bottom: 2px;
@@ -33,7 +31,7 @@
 {% block content %}
   <br>
 
-  <form id="organizacaoform" method="post" style="width: 850px; max-width: 100%;" enctype="multipart/form-data"> {% csrf_token %}
+  <form id="organizacaoform" method="post" style="width: 850px;" enctype="multipart/form-data"> {% csrf_token %}
     
     <label for="organizacao">
       <span lang="pt">Nome da Organização:</span>

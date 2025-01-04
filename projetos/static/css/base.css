@@ -1,0 +1,224 @@
+/* Tem os parâmetros para o topnav e outros elementos comuns a todas as páginas. */
+
+.titulo {
+  font-size: 30px;
+  display: block;
+  padding-bottom: 0.25em;
+  padding-top: 10px;
+  line-height: 1.35;
+  margin-bottom: 0.4em;
+}
+
+/* Para a barra superior de navegação */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+  position: relative;
+}
+
+.topnav #links_menu_lat { display: none; }
+
+.links-container {
+  display: none;
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  width: 200px;
+  background-color: #000e4d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 0px;
+}
+
+.links-container a {
+  padding: 5px 16px;
+  display: block;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+
+.links-container a:last-child {
+  border-bottom: none;
+}
+
+.links-container a:hover {
+  background-color: #4971bb;
+}
+
+.logo-container {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+#barra_do_top_nav {
+  padding: 0px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%; 
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+#barra_do_top_nav a.icon {
+  background: black;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#links_menu_lat a {
+  color: white;
+  text-decoration: none;
+}
+
+#hamburger {
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  display: block;
+}
+
+#hamburger.icon {
+  cursor: pointer;
+  background-color: black;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 54px;
+}
+
+#hamburger:hover {
+  color: grey;
+}
+
+.active {
+  background-color: rgb(255, 0, 0);
+  color: white;
+}
+
+.active_local {
+  background-color: rgb(255, 166, 0);
+  color: white;
+}
+
+#pfelogo { 
+  color: rgb(50, 50, 50);
+  vertical-align: bottom;
+  margin-left: 3px;
+  font-size: 1rem;
+}
+
+#language_button {
+  /* display: none; */
+  user-select: none;
+  border-radius: 10px;
+  border: 2px solid #DDD;
+  float: right;
+  margin-top: 4px;
+  margin-left: 8px;
+  background-color: #999;
+}
+
+#language_box {
+  margin-left: auto;
+  padding: 8px;
+  margin-right: 48px;
+}
+
+/* Remove decorações de links */
+a#logo_inicial {
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 5px;
+}
+a#logo_inicial:hover {
+  opacity: 0.8;
+}
+
+#link_username {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9em; 
+}
+
+#link_username:hover {
+  text-decoration: underline;
+}
+
+.icone_usuario {
+  font-size: 0.65em;
+}
+
+.interrogacao {
+  font-size: 0.8em;
+}
+
+#logo_insper {
+  width: 59px;
+  height: 23px;        
+}
+
+#tudo {
+  margin-top: 6px;
+}
+
+@media (max-width: 460px) {
+  .logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #logo_insper {
+    width: 44px;
+    height: 17px;
+  }
+
+  #pfelogo {
+    font-size: 0.6rem;
+    margin-left: 0;
+  }
+
+  #link_username {
+    font-size: 0.7em;
+  }
+
+  #language_button {
+    font-size: 0.8em;
+  }
+  
+}
+
+/* Aparentemente não mais usado */
+/* #username { 
+  color: rgb(250, 250, 250);
+  font-size: 12px;
+  vertical-align: middle;
+  display: inline-block;
+  width: 57%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+} */
+
+@media only screen and (max-width: 740px) {
+  .titulo {
+    font-size: 21px;
+    padding-bottom: 0.15em;  
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .titulo {
+    font-size: 20px;
+    padding-bottom: 0.05em;  
+  }
+} 

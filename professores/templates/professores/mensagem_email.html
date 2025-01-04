@@ -7,31 +7,6 @@
 {% load static %}
 {% load get_field %}
 
-{% comment %} <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
-<script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/short_full.css' %}"> {% endcomment %}
-
-<style>
-  input, textarea {max-width: 100%;}
-  table, th, td { border: 0px; }
-  {% comment %} 
-  .btn-group.bootstrap-select select {
-    width: 1px !important;
-  }
-  .url_reativo {font-size: 16px;}
-  @media (max-width: 460px) {
-    .url_reativo {font-size: 14px;}
-  }
-  /*Para seleção de projeto não vazar a tela*/
-  .bootstrap-select > .dropdown-menu { 
-    width: 100vw;
-    max-width: fit-content;
-  }
-  label {
-    display: inline;
-  } {% endcomment %}
-</style>
-
   <form id="enviamensagemform" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
@@ -76,7 +51,7 @@
         </tbody></table>
         
         <br>Mensagem:
-        <textarea id="mensagem" name="mensagem" rows="18" cols="256" style="max-width: 100%;"
+        <textarea id="mensagem" name="mensagem" rows="18" cols="256"
           >{% if mensagem %}{{ mensagem }}{% endif %}</textarea>
 
       </div>

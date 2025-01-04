@@ -10,11 +10,11 @@
   {% else %}
     {{alocacao.aluno.user.get_full_name}}
   {% endif %}
-  <span class="opt_full curso unselectable">[{{ alocacao.aluno.curso2 }}]</span>
-  <span class="opt_short curso unselectable">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+  <span class="texto-longo curso unselectable">[{{ alocacao.aluno.curso2 }}]</span>
+  <span class="texto-curto curso unselectable">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
   {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-  <span class="opt_full emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-  <span class="opt_short emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+  <span class="texto-longo emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+  <span class="texto-curto emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
 {% else %}
-  <span class="opt_full">Estudante não alocado</span>
+  <span class="texto-longo">Estudante não alocado</span>
 {% endif %}

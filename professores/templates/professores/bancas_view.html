@@ -9,10 +9,8 @@
 
 <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 <style>
-  input, textarea {max-width: 100%;}
   table, th, td { border: 0px; }
   .btn-group.bootstrap-select select {
     width: 1px !important;
@@ -365,11 +363,11 @@
       <span lang="en" style="display: none;">Local:</span>
     </label> 
     <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
-    {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-    style="max-width: 100%;" placeholder="alocado pela equipe de reservas"
-    {% if banca and banca.location %}
+     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+     placeholder="alocado pela equipe de reservas"
+     {% if banca and banca.location %}
       value="{{banca.location}}"
-    {% endif %}
+     {% endif %}
     />
     <span id="aviso_local" style="color: red;"></span>
     <br><br>
@@ -394,11 +392,11 @@
       <span lang="en" style="display: none;">Video-conference Link:</span>
     </label>
     <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
-    {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-    style="max-width: 100%;" placeholder="somente se necessário"
-    {% if banca and banca.link %}
+     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+     placeholder="somente se necessário"
+     {% if banca and banca.link %}
       value="{{banca.link}}"
-    {% endif %} 
+     {% endif %} 
     />
     <br><br>
 
@@ -406,8 +404,8 @@
       <tr>
         <td>
           <label for="membro1">
-            <span lang="pt">Membro&nbsp;1<span class="opt_full"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="opt_full">Board </span>Member&nbsp;1:</span>
+            <span lang="pt">Membro&nbsp;1<span class="texto-longo"> da Banca</span>:</span>
+            <span lang="en" style="display: none;"><span class="texto-longo">Board </span>Member&nbsp;1:</span>
           </label>
         </td>
         <td>
@@ -424,8 +422,8 @@
       <tr>
         <td>
           <label for="membro2">
-            <span lang="pt">Membro&nbsp;2<span class="opt_full"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="opt_full">Board </span>Member&nbsp;2:</span>
+            <span lang="pt">Membro&nbsp;2<span class="texto-longo"> da Banca</span>:</span>
+            <span lang="en" style="display: none;"><span class="texto-longo">Board </span>Member&nbsp;2:</span>
           </label>
         </td>
         <td>
@@ -442,8 +440,8 @@
       <tr>
         <td>
           <label for="membro3">
-            <span lang="pt">Membro&nbsp;3<span class="opt_full"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="opt_full">Board </span>Member&nbsp;3:</span>
+            <span lang="pt">Membro&nbsp;3<span class="texto-longo"> da Banca</span>:</span>
+            <span lang="en" style="display: none;"><span class="texto-longo">Board </span>Member&nbsp;3:</span>
           </label>
         </td>
         <td>

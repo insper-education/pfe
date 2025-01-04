@@ -12,18 +12,6 @@
   <style>
     td {padding: 8px;}
     th {text-align: center;}
-
-    .short-text { display: none; white-space: nowrap; }
-    .full-text { display: inline-block; white-space: nowrap; }
-
-    @media (max-width: 1400px) {
-        .short-text { display: inline-block; }
-        .full-text { display: none; }
-    }
-
-    @media (max-width: 480px) {
-      .short-text { font-size: x-small; }
-    }
   </style>
 
 {% endblock %}
@@ -94,15 +82,15 @@
                     {% if relatorio.link%}
                       <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;"
                         href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                        <span class="full-text" style="width: 9em;">Link da Matéria</span>
-                        <span class="short-text" style="width: 3em;">Link</span>
+                        <span class="texto-longo" style="width: 9em;">Link da Matéria</span>
+                        <span class="texto-curto" style="width: 3em;">Link</span>
                       </a><br>
                     {% endif %}
                     {% if relatorio.documento%}
                       <a class="btn btn-light btn-outline-info btn-sm" 
                         href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                        <span class="full-text" style="width: 9em;">Cópia no Servidor</span>
-                        <span class="short-text" style="width: 3em;">Cópia</span>
+                        <span class="texto-longo" style="width: 9em;">Cópia no Servidor</span>
+                        <span class="texto-curto" style="width: 3em;">Cópia</span>
                       </a>
                     {% endif %}
                 </td>

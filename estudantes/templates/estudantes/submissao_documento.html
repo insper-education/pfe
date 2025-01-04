@@ -8,35 +8,8 @@
 {% block head %}
   {% load static %}
   {% load date_extras %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-  <style>
-    ul {
-      margin-bottom: 6px;
-      width: 100%;
-    }
-
-    // REMOVER O ESTILO ABAIXO PINTERM
-    .pintern {
-      border: 1px solid grey;
-      display:block;
-      margin: 8px 0px 0px 0px;
-      background-color: #FAFAF3;
-    }
-    .lightgrey,
-    .lightgrey:link,
-    .lightgrey:visited,
-    .lightgrey:hover,
-    .lightgrey:active
-      {color:lightgrey;}
-    .nome_entrega {
-      font-size: 0.9em;
-      margin-left: 0.4em;
-    }
-  </style>
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/short_full.css' %}">
   {% include "style_display_avaliacoes.html" %}
 
 {% endblock %}
@@ -69,12 +42,12 @@
           <b>{{item.composicao.exame.titulo}}</b>
         {% endif %}
         {% if item.evento.endDate %}
-          <span class="opt_full">
+          <span class="texto-longo">
             <span lang="pt">[prazo</span>
             <span lang="en" style="display:none">[deadline</span>
             {{ item.evento.endDate|date:"DATE_FORMAT" }}]
           </span>
-          <span class="opt_short">
+          <span class="texto-curto">
             <span lang="pt">[prazo</span>
             <span lang="en" style="display:none">[deadline</span>
             {{ item.evento.endDate|date:"d/m/y" }}]
@@ -103,8 +76,8 @@
             {% if documento.documento and documento.link %}
               <span lang="pt">Entregue</span>
               <span lang="en" style="display:none">Delivered</span>
-              <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-              <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+              <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+              <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
@@ -121,8 +94,8 @@
                   href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
                   <span lang="pt">Entregue</span>
                   <span lang="en" style="display:none">Delivered</span>
-                  <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                  <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                  <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
               {% endif %}
               {% if documento.link %}
@@ -132,8 +105,8 @@
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
                   <span lang="pt">Entregue</span>
                   <span lang="en" style="display:none">Delivered</span>
-                  <span class="opt_full">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                  <span class="opt_short">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
+                  <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
               {% endif %}
             {% endif %}

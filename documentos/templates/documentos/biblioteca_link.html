@@ -9,10 +9,8 @@
 
 <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/short_full.css' %}">
 
 <style>
-  input, textarea {max-width: 100%;}
   table, th, td { border: 0px; }
   .btn-group.bootstrap-select select {
     width: 1px !important;
@@ -94,8 +92,8 @@
     <br>
     <label for="link">Link:</label>
     <input id="link" name="link" type="text" size="58" maxlength="{% max_length Documento "link" %}" 
-    style="max-width: 100%;" placeholder="https://repositorio.insper.edu.br/handle/XXXXX/XXXX"
-      {% if relatorio.link %}value="{{relatorio.link}}"{% endif %} 
+     placeholder="https://repositorio.insper.edu.br/handle/XXXXX/XXXX"
+     {% if relatorio.link %}value="{{relatorio.link}}"{% endif %} 
     />
     <br><br>
 
@@ -143,8 +141,8 @@
             ancora = `
               <a class="btn btn-light btn-outline-info btn-sm" style="margin-bottom: 5px;" 
                 href="` + data.link + `" target="_blank" rel="noopener noreferrer">
-                <span class="short-text" style="width: 4em;">DSpace</span>
-                <span class="full-text" style="width: 12em;">Link&nbsp;Biblioteca&nbsp;(DSpace)</span>`
+                <span class="texto-curto style="width: 4em;">DSpace</span>
+                <span class="texto-longo" style="width: 12em;">Link&nbsp;Biblioteca&nbsp;(DSpace)</span>`
             {% if user.tipo_de_usuario == 4 %}
               ancora += `
                 <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
@@ -160,8 +158,8 @@
                 href="{% url 'biblioteca_link' relatorio.pk %}"
                 data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
                 target="_blank" rel="noopener noreferrer">
-                <span class="short-text" style="width: 4em;">+&nbsp;DSpace</span>
-                <span class="full-text" style="width: 12em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
+                <span class="texto-curto" style="width: 4em;">+&nbsp;DSpace</span>
+                <span class="texto-longo" style="width: 12em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
               </a><br>`;
           }
 
