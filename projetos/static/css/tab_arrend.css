@@ -1,11 +1,10 @@
 .arredondado {
 	table-layout: fixed;
-	max-width: 100%;
 	border-collapse:separate;
-	border-spacing: 4px 6px;
+	border-spacing: 4px 10px;
 	margin-left: 6px;
 	margin-right: 12px;
-	margin-bottom: 6px;
+	margin-bottom: 10px;
 	border: 0px;
 	width: auto;
 }
@@ -18,9 +17,10 @@
 .arredondado td {
 	background: #F0F0F0;
 	vertical-align: middle;
-	border: 1px solid grey;
-	border-radius: 6px;
+	border: 1px solid rgb(112, 112, 112);
+	border-radius: 10px;
 	max-width: calc(99vw - 34px);
+	padding: 8px;
 }
 
 .arredondado th {

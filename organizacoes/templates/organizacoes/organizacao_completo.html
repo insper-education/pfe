@@ -11,13 +11,6 @@
   {% load order_by %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
-
-  <style>
-    .desativado, .desativado a {
-      color: lightgrey;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -45,7 +38,7 @@
   <br>
   <ul>
   {% for parceiro in organizacao.parceiro_set.all|order_by:"-user__is_active, -principal_contato, user" %}
-    <li style="margin-bottom: 6px;" {% if not parceiro.user.is_active %}class="desativado"{% endif %}> 
+    <li style="margin-bottom: 6px;" {% if not parceiro.user.is_active %}class="links-claros"{% endif %}> 
       <a href="{% url 'parceiro_detail' parceiro.id %}">{{parceiro.user.get_full_name}}</a>
       {% if parceiro.principal_contato %}
         <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">&#x2B50;</span>

@@ -376,7 +376,7 @@ def projetos_fechados(request):
         informacoes = [
             (".logo", "Logo", "Logo"),
             (".descricao", "Descrição", "Description"),
-            (".titulo_original", "Título original", "Original Title"),
+            (".titulo_original", "Título original", "Original Title", False),
             (".resumo", "Resumo", "Abstract (pt)"),
             (".abstract", "Abstract", "Abstract (en)"),
             (".palavras_chave", "Palavras-chave", "Keywords"),

@@ -35,12 +35,27 @@ ul, ol {
   .texto-curto { font-size: small; }
 }
 
+.texto-alinhado {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  text-align: justify;
+}
+
+.linha-concisa {
+  font-size: 0.85em;
+  line-height: 1.15;
+  margin-bottom: 0.3em;
+}
+
 .disabled {
   cursor: default;
   text-decoration: none;
   color: grey;
   opacity: 0.6;
 }
+
+.links-claros {color: lightblue;}
+.links-claros a {color: lightblue;}
 
 .boxed {
   border: 1px solid green ;
@@ -71,15 +86,6 @@ ul, ol {
 .tooltip-inner {
   max-width: 100% !important;
   text-align: left;
-}
-
-#projetos, #pth, #ptd {
-  border-collapse: collapse;
-  border: 0px solid black;
-  padding-left: 5px;
-  padding-right: 5px;
-  text-align: left;
-  font-size: 16px;
 }
 
 .tabulado {

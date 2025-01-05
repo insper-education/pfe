@@ -9,38 +9,8 @@
   {% load static %}
   {% load zip_data %}
   {% load addhttp %}
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">  
   <script src="{% static 'js/Chart.min.js' %}"/></script>
-
-  <style>
-
-    .projline {
-      margin-bottom:2em;
-      border-width: 1px;
-      padding:8px;
-      border-radius: 18px;
-      border-style: solid;
-      border-color: LightGray;
-      width: 100%;
-    }
-
-    .appres_projeto {
-      font-size: 0.9em;
-      line-height: 1.2;
-      margin-bottom: 0.3em;
-      max-width: 100%;
-    }
-
-    .pess_proj {margin-left:0.5em;}
-
-    .texto {
-      width: 100%;
-      word-break: break-word;
-      overflow-wrap: break-word;
-      text-align: justify;
-    }
-
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -53,12 +23,13 @@
   <div class="atualizar">
     
     {% if projetos %}
-      <table id="projetos">
+      <table id="projetos" class="table table-borderless table-sm arredondado">
         {% for projeto, prioridades, cooperacoes, conexoes, qtd_est in projetos %}
-          <tr class="row no-gutters {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
+          <tr class="linha no-gutters {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
            {% if qtd_est == 0 %}style="opacity: 0.3;"{% endif %}>
               
-            <td class="projline">
+            <td>
+            {% comment %} <td class="projline"> {% endcomment %}
               
               {% if projeto.organizacao %}
                 <div class="logo">
@@ -84,49 +55,59 @@
                   <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
                   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
                     {{projeto.titulo_final}}</a>
-                    <small class="titulo_original" style="display: block;">Título original da proposta: 
-                    <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.proposta.titulo}}</a></small>
+                    <small class="titulo_original">
+                      <br>Título original da proposta: 
+                      <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.proposta.titulo}}</a>
+                    </small>
                   {% else %}
                     {{projeto.get_titulo}}</a>
                   {% endif %}
                 </p>
               </div>
               
-              {% if projeto.resumo %}
-                <div class="resumo appres_projeto" style="margin-top: 6px;"><b lang="pt">Resumo:</b><b lang="en" style="display: none;">Abstract(pt):</b> <p class="texto">{{projeto.resumo}}</p></div>
-              {% endif %}
+              {% if projeto.resumo or projeto.abstract or projeto.palavras_chave %}
 
-              {% if projeto.abstract %}
-                <div class="abstract appres_projeto" style="margin-top: 6px;"><b>Abstract:</b> <p class="texto">{{projeto.abstract}}</p></div>
-              {% endif %}
+                {% if projeto.resumo %}
+                  <div class="resumo linha-concisa mt-1"><b lang="pt">Resumo:</b><b lang="en" style="display: none;">Abstract(pt):</b> <p class="texto-alinhado">{{projeto.resumo}}</p></div>
+                {% endif %}
 
-              {% if projeto.palavras_chave %}
-                <div class="palavras_chave appres_projeto" style="margin-top: 6px;"><b lang="pt">Palavras-chave:</b><b lang="en" style="display: none;">Keywords:</b>{{projeto.palavras_chave}}</div>
+                {% if projeto.abstract %}
+                  <div class="abstract linha-concisa mt-1"><b>Abstract:</b> <p class="texto-alinhado">{{projeto.abstract}}</p></div>
+                {% endif %}
+
+                {% if projeto.palavras_chave %}
+                  <div class="palavras_chave linha-concisa mt-1"><b lang="pt">Palavras-chave:</b><b lang="en" style="display: none;">Keywords:</b>{{projeto.palavras_chave}}</div>
+                {% endif %}
+
+                <hr>
+
               {% endif %}
 
               {% if projeto.proposta.descricao %}
-                <div class="descricao appres_projeto" style="margin-top: 6px;">
+                <div class="descricao linha-concisa mt-1">
                   <b lang="pt">Descrição da proposta de projeto:</b>
                   <b lang="en" style="display: none;">Project proposal description:</b>
-                  <p class="texto">{{projeto.proposta.descricao}}</p>
+                  <p class="texto-alinhado">{{projeto.proposta.descricao}}</p>
                 </div>
               {% endif %}
 
               {% if projeto.proposta.descricao_organizacao %}
-                <div class="apresentacao_organizacao apresentacao appres_projeto"><b lang="pt">Apresentação da Organização Parceira:</b><b lang="en" style="display: none;">Partner Organization Presentation:</b> <p class="texto">{{projeto.proposta.descricao_organizacao}}</p></div>  
+                <div class="apresentacao_organizacao apresentacao linha-concisa mt-1"><b lang="pt">Apresentação da Organização Parceira:</b><b lang="en" style="display: none;">Partner Organization Presentation:</b> <p class="texto-alinhado">{{projeto.proposta.descricao_organizacao}}</p></div>  
               {% endif %}
 
               {% if projeto.proposta.departamento %}
-                <div class="apresentacao_departamento apresentacao appres_projeto"><b lang="pt">Apresentação do Departamento:</b><b lang="en" style="display: none;">Department Presentation:</b> <p class="texto">{{projeto.proposta.departamento}}</p></div>
+                <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b lang="pt">Apresentação do Departamento:</b><b lang="en" style="display: none;">Department Presentation:</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
               {% endif %}
 
-              {% include "tipo_projeto.html" with com_tipo=True %}
+              <div class="ml-1 mb-1">
+                {% include "tipo_projeto.html" with com_tipo=True %}
+              </div>
 
-              <p class="semestre pess_proj" style="display: none;">
+              <p class="semestre ml-1" style="display: none;">
                 <b lang="pt">Semestre:</b><b lang="en" style="display: none;">Semester:</b> {{projeto.ano}}.{{projeto.semestre}}
               </p>
 
-              <p class="orientador pess_proj">
+              <div class="orientador ml-1 mb-1">
                 {% if projeto.orientador %}
                   {% if projeto.proposta.intercambio %}
                     <span lang="pt"><b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b></span>
@@ -143,12 +124,12 @@
                 {% else %}
                   Orientador: Não definido
                 {% endif %}
-              </p>
+              </div>
 
               {% with coorientadores=projeto.coorientador_set.all %}
                 {% if coorientadores %}
                   {% for coorientador in coorientadores %}
-                    <p class="coorientador pess_proj"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
+                    <p class="coorientador ml-1"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
                     <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
                       {{ coorientador.usuario.get_full_name }}
                     </a>
@@ -160,7 +141,7 @@
                 {% endif %}
               {% endwith %}
 
-              <div class="estudantes pess_proj">
+              <div class="estudantes ml-1 mb-1">
                 <b lang="pt">Estudantes:</b>
                 <b lang="en" style="display: none;">Students:</b>
                 {% with alocacoes=projeto.alocacao_set.all %}
@@ -172,7 +153,7 @@
                     </span>
                   {% endif %}
                 {% endwith %}
-                <ol class="estudantes" style="margin-bottom:5px;">
+                <ol class="estudantes">
                 {% for aluno,prioridade in prioridades %}
                   <li><a class="imprimir" href="{% url 'estudante_detail' aluno.id %}"
                       data-toggle="tooltip" data-html="true" animation="true" title="
@@ -187,7 +168,7 @@
                           <span class="texto-curto">[{{ aluno.curso2.sigla_curta }}]</span>
                         </span>
                       </a>
-                      {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+                      {% if aluno.externo %}<span class="red-normal">[{{aluno.externo}}]</span>{% endif %}
                       <div class="prioridade hidden">{{prioridade}}</div> <!-- para contar para  mostrar no gráfico -->
                       <span class="emails">
                         <span class="texto-longo"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
@@ -198,11 +179,10 @@
                 </ol>
               </div>
               
-              {% comment %} Separador {% endcomment %}
+              {% comment %} Separador (conveniente para copiar e colar o texto) {% endcomment %}
               <div style="height: 1px;">&nbsp;</div>
 
-              <div class="organizacao pess_proj">
-                <p>
+              <div class="organizacao ml-1 mb-1">
                 <b lang="pt">Organização:</b>
                 <b lang="en" style="display: none;">Organization:</b>
                 {% if projeto.organizacao %}
@@ -240,13 +220,11 @@
                 <span class="emails esconder"><a 
                   href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank"><i class="fas fa-mail-bulk"></i></a></span>
                 {% endif %}
-                </p>
               </div>
 
-              <ol class="conexoes" style="margin-bottom:0px;">
+              <ol class="conexoes">
               {% for conexao in conexoes %}
-                <li>
-                {% if conexao.parceiro.user.is_active %}
+                <li {% if not conexao.parceiro.user.is_active %}class="links-claros"{% endif %}>
                   <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
                     {{ conexao.parceiro.user.get_full_name }}
                     <span class="papeis">
@@ -266,25 +244,6 @@
                     <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
                     <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
                   </span>
-                {% else %}
-                  <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
-                    {{ conexao.parceiro.user.get_full_name }}
-                    <span style="color: lightgrey;">
-                    {% for papel in conexao.get_papeis %}
-                      <span class="texto-longo">[{{papel.0}}]</span>
-                      <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-                    {% endfor %}
-                    {% if conexao.observacao %}
-                      &nbsp;&nbsp;obs: {{conexao.observacao}}
-                    {% endif %}
-                    </span>
-                  </a>
-                  <span class="emails">
-                    <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-                    <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;"><i class="far fa-envelope"></i></a></span>
-                  </span>
-                  <br>
-                {% endif %}
                 </li>
               {% endfor %}
               </ol>
@@ -346,8 +305,8 @@
 
         function filtra_data() {  // REFERENTE AO SELETOR DE DATAS
 
-          var row = $(".row"); 
-          row.each(function(i, el) {
+          var linha = $(".linha"); 
+          linha.each(function(i, el) {
 
             count_projects = count_projects + 1;
             var alunos = $(el).find("TD").find("OL");
