@@ -9,34 +9,9 @@
   {% load static %}
   <script src="{% static 'js/sort.js' %}"></script>
   <style>
-    th {
-      background-color: #BEE5EB;
-      padding: 0px 3px 0px 3px;
-    }
-    thead tr:nth-of-type(2) th {
-      cursor:pointer;
-      text-align: center;
-    }
-    tr, th {
-      border: 1px solid #999;
-    }
-    td {
-      padding: 4px;
-      border: 1px solid #ddd;
-    }
-    tbody tr:nth-child(even) {background-color: #f2f2f2;}
-    tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-    {% comment %} ul {
-      font-size: 0.9em;
-    } {% endcomment %}
-    .certificacao_excelencia {
-      background-color:lightgreen !important;
-    }
-    .certificacao_destaque {
-      background-color:lemonchiffon !important;
-    }
+    .certificacao_excelencia {background-color:lightgreen !important;}
+    .certificacao_destaque {background-color:lemonchiffon !important;}
   </style>
-
 
   {% comment %} PARA O PAINEL DE FILTRO DE NOTAS DE BANCAS{% endcomment %}
   <style>
@@ -108,7 +83,7 @@
   <div class="atualizar">
 
     <div class="table-responsive">
-      <table id="ProjetosTable" class="projetos">
+      <table id="ProjetosTable" class="projetos tabela-padrao table-striped">
 
         {% if tabela %}
           <thead>

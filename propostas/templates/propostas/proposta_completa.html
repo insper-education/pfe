@@ -231,7 +231,7 @@
   {% for estudante in sem_opcao %}
     <a href="{% url 'estudante_detail' estudante.id %}"
       class="dark-green-bold">
-        {{estudante.user.getexto-longoull_name}}
+        {{estudante.user.get_full_name}}
         [{{ estudante.curso2 }}]
         &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
         &nbsp;|
@@ -256,7 +256,7 @@
         {% if opcao.prioridade <= 5 %}green-normal{% else %}yellow-normal{% endif %}
        {% endif %}
        ">
-        {{opcao.aluno.user.getexto-longoull_name}}
+        {{opcao.aluno.user.get_full_name}}
         <span class="texto-longo">
           [{{ opcao.aluno.curso2 }}]
           &#10140; opção 
@@ -295,7 +295,7 @@
         pulsa_texto(response.atualizado, "valor_atualizado");
       };
 
-      {% include "ajax_defaultexto-longounction.js" %}
+      {% include "ajax_default_function.js" %}
     
     }
 

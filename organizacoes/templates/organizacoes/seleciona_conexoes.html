@@ -15,7 +15,6 @@
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
-    thead {background-color: #bee5eb;}
 
     .message {
       position: fixed;
@@ -64,7 +63,7 @@
 
     {% if parceiros %}
       <div class="table-responsive">
-      <table id="ParceirosTable" class="table table-bordered table-hover table-sm">
+      <table id="ParceirosTable" class="tabela-padrao table-bordered table-hover table-sm">
         <caption style="text-align: right">
           {% for _,captions  in Conexao.papel.items %}
             <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
@@ -93,7 +92,7 @@
         </thead>
         {% for parceiro in parceiros %}
         {% with conexoes=parceiro.conexao_set.all %}
-          <tr class="item" {% if not parceiro.user.is_active %} style="color: lightgrey;" {% endif %}>
+          <tr class="item {% if not parceiro.user.is_active %}links-claros{% endif %}">
             <th scope="row" style="text-align: center;">
               <input class="conexao" type="checkbox" name="gestor_responsavel" value="{{parceiro.id}}"
                 {% for conexao in conexoes %}
@@ -127,21 +126,16 @@
                 {% endfor %}
               >   
             </th>
-            <td>    
-              <a href="{% url 'parceiro_detail' parceiro.id %}"
-              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-                {{parceiro.user.get_full_name}} 
-              </a>
+            <td {% if not parceiro.user.is_active %}class="links-claros"{% endif %}>
+              <a href="{% url 'parceiro_detail' parceiro.id %}">{{parceiro.user.get_full_name}}</a>
             </td>
+
             <td>
               {{parceiro.cargo}} 
             </td>
             
-            <td>
-              <a href="mailto:{{parceiro.user.email}}"
-              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-                &lt;{{parceiro.user.email}}&gt;
-              </a>
+            <td {% if not parceiro.user.is_active %}class="links-claros"{% endif %}>
+              <a href="mailto:{{parceiro.user.email}}">&lt;{{parceiro.user.email}}&gt;</a>
             </td>
             <td>
               {% if parceiro.user.telefone %}

@@ -1,0 +1,86 @@
+.tabela-horarios {
+  border-collapse: collapse;
+  user-select: none; /* Prevent text selection */
+}
+
+.tabela-horarios td, 
+.tabela-horarios th {
+  border: 1px solid black;
+  padding: 4px;
+  text-align: center;
+  border-width: 1px;
+  background-color: white;
+}
+
+.tabela-horarios th {
+  background-color: #BEE5EB;
+}
+
+.tabela-horarios thead tr:first-child th {
+  width: 10em;
+}
+
+.highlight {
+  background-color: yellow; /* Change this to your desired color */
+}
+
+.meu {
+  border-color: red !important;
+  border-width: 3px !important;
+}
+
+.overlay {
+  position: relative;
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05); /* Semi-transparent grey overlay */
+  pointer-events: none; /* Allow clicks to pass through */
+  z-index: 1; /* Ensure the overlay is above the <td> content */
+}
+
+.overlay td {
+  position: relative;
+  z-index: 2; /* Ensure the <td> content is above the overlay */
+}
+
+.borderhighlight {
+  box-shadow: inset 0 0 33px rgba(0, 255, 0, 1.0);
+}
+
+.hifen {
+  display: inline; /* Default display */
+}
+
+.hifen::after {
+  display: inline;
+  content: "-";
+  white-space: pre;
+}
+
+@media (max-width: 600px) {
+  .hifen::after {
+    content: "\A";
+  }
+  .horario {
+    font-size: 10px;
+    padding: 1px;
+  }
+  .estud {
+    font-size: 12px;
+    padding: 1px;
+  }
+  
+  table th:first-child,
+  table td:first-child {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+}

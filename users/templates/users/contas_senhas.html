@@ -9,11 +9,6 @@
   {% load static %}
   {% load get_field %}
   <script src="{% static 'js/sort.js' %}"></script>
-  <style>
-    th {cursor:pointer; text-align: center;}
-    td {padding: 1px 4px 1px 4px;}
-    thead {background-color: #bee5eb;}
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +18,7 @@
   <div class="atualizar">
 
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
-      <table id="EstudantesTable"><thead><tr>
+      <table id="EstudantesTable" class="tabela-padrao" ><thead><tr>
             <th>&nbsp;<input type="checkbox" id="todos_estudantes" checked>&nbsp;</th>
             <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')"><span lang="pt">Estudante</span><span lang="en">Student</span></th>
             <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>

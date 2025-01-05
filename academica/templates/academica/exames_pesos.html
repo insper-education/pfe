@@ -10,20 +10,6 @@
   {% load i18n %}
   {% load l10n %}
   <script src="{% static 'js/sort.js' %}"></script>
-
-  <style>
-    th {
-      cursor:pointer;
-      text-align: center;
-      background-color: #bee5eb;
-    }
-    th, td {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -33,9 +19,9 @@
 
     <div class="table-responsive">
 
-    <table id="ExamesPesosTable" class="table-sm table-striped table-hover table-bordered">
+    <table id="ExamesPesosTable" class="tabela-padrao table-sm table-striped table-hover table-bordered">
       <thead><tr>
-        <th onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">
+        <th class="apontavel" onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">
           <span lang="pt">Semestre</span>
           <span lang="en" style="display:none">Semester</span>
         </th>

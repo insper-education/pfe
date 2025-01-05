@@ -6,15 +6,8 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load l10n %}
-
-  <style>
-    td {padding: 2px 5px 2px 5px;}
-    thead {background-color: #bee5eb;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -23,21 +16,18 @@
   <span lang="en" style="display: none;">Send message to advisors with their boards and evaluations already held.</span>
   <br>
   
-    <form method="post" id="informe_bancas" enctype="multipart/form-data">
-      {% csrf_token %}
-
-      {% if bancas %}
-      <table>
+    <form method="post" id="informe_bancas" enctype="multipart/form-data">{% csrf_token %}
+      <table class="tabela-padrao table-striped">
         <thead><tr>
-            <th scope="col" style="text-align:center;"><b>
+            <th scope="col"><b>
               <span lang="pt">Orientador</span>
               <span lang="en" style="display: none;">Advisor</span>
             </b></th>
-            <th scope="col" style="text-align:center;"><b>
+            <th scope="col"><b>
               <span lang="pt">Projeto</span>
               <span lang="en" style="display: none;">Project</span>
             </b></th>
-            <th scope="col" style="text-align:center;"><b>
+            <th scope="col"><b>
               <span lang="pt">Organização</span>
               <span lang="en" style="display: none;">Organization</span>
             </b></th>
@@ -69,6 +59,13 @@
               </td>
 
             </tr>
+          {% else %}
+            <tr>
+              <td colspan="3">
+                <span lang="pt">Nenhuma banca identificada.</span>
+                <span lang="en" style="display: none;">No examination board identified.</span>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -80,11 +77,5 @@
       </button>
 
     </form>
-  {% else %}
-    <p>
-      <span lang="pt">Nenhuma banca identificada.</span>
-      <span lang="en" style="display: none;">No examination board identified.</span>
-    </p>
-  {% endif %}
-
+  
 {% endblock %}

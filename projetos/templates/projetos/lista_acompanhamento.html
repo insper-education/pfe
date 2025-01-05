@@ -8,14 +8,6 @@
 {% block head %}
   {% load static %}
   <script src="{% static 'js/sort.js' %}"></script>
-  <style>
-    thead {background-color: #bee5eb;}
-    th {
-      cursor:pointer;
-      text-align: center;
-    }
-    th, td {padding: 1px 5px 1px 5px;}
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -30,7 +22,8 @@
   </span>
 
   <div class="table-responsive">
-    <table id="AcompanhamentoTable"><thead>
+    <table id="AcompanhamentoTable" class="tabela-padrao">
+      <thead>
       <tr>
         <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')"><span lang="pt">Autor</span><span lang="en">Author</span></th>
         <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')"><span lang="pt">Organização</span><span lang="en">Organization</span></th>

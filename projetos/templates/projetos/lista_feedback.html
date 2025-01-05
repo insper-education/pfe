@@ -9,14 +9,6 @@
   {% load static %}
   <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  <style>
-    thead {background-color: #bee5eb;}
-    th {
-      cursor:pointer;
-      text-align: center;
-    }
-    th, td {padding: 1px 5px 1px 5px;}
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -28,7 +20,7 @@
   </div><br>
 
   <div class="table-responsive">
-    <table id="FeedbacksTable" class="table-bordered table-sm">
+    <table id="FeedbacksTable" class="tabela-padrao table-bordered table-sm">
       <thead class="table-info">
         <tr>
           <th>ver</th>
