@@ -8,17 +8,14 @@
 {% block head %}
   {% load static %}
   {% include "reload.html" %}
-
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
   <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
-
 {% endblock %}
 
 {% block content %}
 
   {% include "edicoes.html" %}
-  <br>
 
   <div class="atualizar">
 
@@ -46,22 +43,12 @@
       {% endfor %}
     {% endif %}
 
-    {% comment %} <script>
-      function carrega_pagina(){};
-      window.onload = carrega_pagina
-    </script> {% endcomment %}
-
   </div> 
 
   <script>
-
-    {% comment %} function carrega_pagina() {}; {% endcomment %}
-
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      //carrega_pagina();
     };
-
     window.onload = carrega_site
   </script>
 

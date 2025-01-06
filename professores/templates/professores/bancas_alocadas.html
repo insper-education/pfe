@@ -8,13 +8,9 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
-  {% include "reload.html" %}
-  
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
-
+  {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}

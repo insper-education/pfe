@@ -9,13 +9,6 @@
   {% load static %}
   {% load get_field %}
 
-  <style>
-    label {
-      margin-top: 8px;
-      margin-bottom: 2px;
-    }
-  </style>
-
   {% comment %} <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script> {% endcomment %}
   {% comment %} <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
@@ -29,7 +22,6 @@
 {% endblock %}
 
 {% block content %}
-  <br>
 
   <form id="organizacaoform" method="post" style="width: 850px;" enctype="multipart/form-data"> {% csrf_token %}
     

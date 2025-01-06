@@ -25,68 +25,68 @@
   </h5>
   {% include "membros_da_banca.html" %}
 
-  <table>    
+  <table class="table table-bordered table-striped">
     {% for avaliador, objs in banca.get_avaliadores.items %}
-        <tr><td>
+      <tr><td>
+        <strong>
+          <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
+          <span lang="en" style="display: none;">Evaluator:</span>
+        </strong>
+        <a href="{% url 'user_detail' avaliador.id %}">
+          {{avaliador.get_full_name}}
+        </a><br>
+        {% if objs.momento %}
           <strong>
-            <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
-            <span lang="en" style="display: none;">Evaluator:</span>
+            <span lang="pt">Avaliado em:</span>
+            <span lang="en" style="display: none;">Evaluated on:</span>
           </strong>
-          <a href="{% url 'user_detail' avaliador.id %}">
-            {{avaliador.get_full_name}}
-          </a><br>
-          {% if objs.momento %}
-            <strong>
-              <span lang="pt">Avaliado em:</span>
-              <span lang="en" style="display: none;">Evaluated on:</span>
-            </strong>
-            {{objs.momento}}<br>
-          {% endif %}
-          {% if objs.items %}
-            <strong>
-              <span lang="pt">Conceitos:</span>
-              <span lang="en" style="display: none;">Grades:</span>
-            </strong><br>
-            <ul style="list-style-type: '&#x21A3; ';">
-              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
-                <li>
-                  <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
-                  <span data-toggle="tooltip" data-html="true" animation="true" title=
-                  {% if banca.composicao.exame.sigla == "BI" %} 
-                    "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
-                  {% else %}
-                    "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
-                  {% endif %}>
-                <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-                <script>
-                  $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                    {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                  );
-                  objetivo_tmp = new Objetivo();
-                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                  banca.add_objetivo(objetivo_tmp)
-                  {% if conceito.nota is not None %}
-                    banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
-                  {% endif %}
-                </script>
+          {{objs.momento}}<br>
+        {% endif %}
+        {% if objs.items %}
+          <strong>
+            <span lang="pt">Conceitos:</span>
+            <span lang="en" style="display: none;">Grades:</span>
+          </strong><br>
+          <ul style="list-style-type: '&#x21A3; ';">
+            {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+              <li>
+                <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                <span data-toggle="tooltip" data-html="true" animation="true" title=
+                {% if banca.composicao.exame.sigla == "BI" %} 
+                  "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
+                {% else %}
+                  "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
+                {% endif %}>
+              <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+              <script>
+                $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                  {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                );
+                objetivo_tmp = new Objetivo();
+                objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                banca.add_objetivo(objetivo_tmp)
+                {% if conceito.nota is not None %}
+                  banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                {% endif %}
+              </script>
 
-              {% endif %}{% endfor %}
-            </ul>
-          {% endif %}
-          {% if objs.observacoes_estudantes %}  
-            &nbsp;<u><span style="font-weight: 500;">
-              <span lang="pt">Observações para Estudantes</span>
-              <span lang="en" style="display: none;">Observations for Students</span>
-            </span>:</u> {{objs.observacoes_estudantes}}<br>
-            {% if objs.observacoes_orientador %}<br>{% endif %}
-          {% endif %}
-          {% if objs.observacoes_orientador %}  
-            &nbsp;<u><span style="font-weight: 500;">
-              <span lang="pt">Observações para Orientador</span>
-              <span lang="en" style="display: none;">Observations for Advisor</span>
-            </span>:</u> {{objs.observacoes_orientador}}<br>
-          {% endif %}
-        </td></tr>
+            {% endif %}{% endfor %}
+          </ul>
+        {% endif %}
+        {% if objs.observacoes_estudantes %}  
+          &nbsp;<u><span style="font-weight: 500;">
+            <span lang="pt">Observações para Estudantes</span>
+            <span lang="en" style="display: none;">Observations for Students</span>
+          </span>:</u> {{objs.observacoes_estudantes}}<br>
+          {% if objs.observacoes_orientador %}<br>{% endif %}
+        {% endif %}
+        {% if objs.observacoes_orientador %}  
+          &nbsp;<u><span style="font-weight: 500;">
+            <span lang="pt">Observações para Orientador</span>
+            <span lang="en" style="display: none;">Observations for Advisor</span>
+          </span>:</u> {{objs.observacoes_orientador}}<br>
+        {% endif %}
+      </td></tr>
     {% endfor %}
 
     <tr style="background-color: {{banca.get_cor}}; color: darkslategrey"><td>

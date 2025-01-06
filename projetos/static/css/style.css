@@ -30,7 +30,7 @@ ul, ol {
 }
 
 .tabela-padrao thead tr,
-.tabela-padrao th {
+.tabela-padrao thead tr th {
   border: 1px solid #85cfda;
 }
 
@@ -39,6 +39,10 @@ ul, ol {
   border: 1px solid #ddd;
 }
 
+label {
+  /* margin-top: .25rem; Não alterar, senão edições da problema */
+  margin-bottom: .25rem;
+}
 
 /*
 VAI QUE PRECISA
@@ -49,7 +53,10 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   cursor: pointer;
 }
 
-
+.signature {
+  width: 250px;
+  border-bottom: 2px solid #000;
+}
 
 /* Para esconder e mostrar elementos */
 .hidden {display: none;}

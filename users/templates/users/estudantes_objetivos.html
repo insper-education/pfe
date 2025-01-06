@@ -18,10 +18,8 @@
   {% include "edicoes.html" with n_todas=True %}
   
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
-
-          {% for aluno in alunos_list %} 
+        {% for aluno in alunos_list %} 
           <tr class="item">
             <th scope="row" data-order="{{aluno.user.get_full_name}}">
               <a href="{% url 'estudante_detail' aluno.id %}">
@@ -86,21 +84,21 @@
               {% endwith %}  
             {% endwith %}
           </tr>
-          {% endfor %}
-          </tbody>
-          <caption style="text-align:right">
-            <small>
-              {% for curso in cursos %}
-                <span style="white-space: nowrap;"><span style="color:#{{ curso.cor }};">{{ curso.sigla_curta }}</span>: {{curso.nome}}</span>
-                {% if not forloop.last %} |{% endif %}
-              {% endfor %}
-              <br>
-              <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
-              <span lang="en">Projects <u>underlined</u> are Advanced Capstone</span>
-            </small>
-          </caption>
-        </table>
-      </div>
+        {% endfor %}
+        </tbody>
+        <caption style="text-align:right">
+          <small>
+            {% for curso in cursos %}
+              <span style="white-space: nowrap;"><span style="color:#{{ curso.cor }};">{{ curso.sigla_curta }}</span>: {{curso.nome}}</span>
+              {% if not forloop.last %} |{% endif %}
+            {% endfor %}
+            <br>
+            <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
+            <span lang="en">Projects <u>underlined</u> are Advanced Capstone</span>
+          </small>
+        </caption>
+      </table>
+    </div>
     <br>
 
     <script>

@@ -776,10 +776,18 @@ def exames_pesos(request):
         for semestre in range(1, 3):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
+    cabecalhos = [
+        {"pt": "Semestre", "en": "Semester", "tsort": "1"},
+        {"pt": "Exames", "en": "Evaluation"},
+        {"pt": "Peso", "en": "Weight", "esconder": True},
+    ]
+
     context = {
         "titulo": {"pt": "Exames e Pesos", "en": "Exams and Weights"},
         "semestres": semestres,
-        }
+        "cabecalhos": cabecalhos,
+    }
+
     return render(request, "academica/exames_pesos.html", context)
 
 

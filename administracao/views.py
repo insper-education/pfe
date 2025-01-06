@@ -98,10 +98,14 @@ def index_carregar(request):
 @permission_required("projetos.add_disciplina", raise_exception=True)
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados."""
+    cabecalhos = [
+        {"pt": "Disciplinas Cadastradas", "en": "Registered Courses"},
+    ]
     context = {
         "titulo": {"pt": "Cadastro de Disciplina", "en": "Course Registration"},
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "Disciplina": Disciplina,
+        "cabecalhos": cabecalhos,
     }
     if request.method == "POST":
         try:

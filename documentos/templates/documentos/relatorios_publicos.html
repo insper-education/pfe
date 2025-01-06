@@ -40,152 +40,143 @@
   </div>
   
   <div class="atualizar">
-
-
     {% include "tabelas_top_ml.html" with tabela="Relatorios" cabecalhos=cabecalhos %}
-
-        {% for relatorio in relatorios %}
-
-          {% if relatorio.link or relatorio.documento and relatorio.projeto %}
-
-            <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
-              <td> {% comment %} Projeto {% endcomment %}
-                {% if relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
-                  {% endif %}
-                  {{relatorio.projeto.get_titulo}}
-                  {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    </a>
-                  {% endif %}
+      {% for relatorio in relatorios %}
+        {% if relatorio.link or relatorio.documento and relatorio.projeto %}
+          <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
+            <td> {% comment %} Projeto {% endcomment %}
+              {% if relatorio.projeto %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
                 {% endif %}
-                {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %}
-              </td>
-
-              <td> {% comment %} Estudante {% endcomment %}
-                {% if relatorio.projeto %}
-                  {% for alocacao in relatorio.projeto.alocacao_set.all %}
-                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                      <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                    {% endif %}
-                        &bull; {{alocacao.aluno.user.get_full_name}}
-                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                      </a>
-                    {% endif %}
-                    {% if not forloop.last %}<br>{% endif %}
-                  {% endfor %}
+                {{relatorio.projeto.get_titulo}}
+                {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
                 {% endif %}
-              </td>
+              {% endif %}
+              {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %}
+            </td>
 
-              <td> {% comment %} Orientador {% endcomment %}
-                {% if relatorio.projeto and relatorio.projeto.orientador %}
-                  {% if relatorio.projeto.orientador %}
-                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                      <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
-                    {% endif %}
-                      {{relatorio.projeto.orientador}}
-                    {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                      </a>
-                    {% endif %}
-                  {% endif %}
-                {% endif %}
-              </td>
-
-              <td> {% comment %} Organização {% endcomment %}
-                {% if relatorio.projeto and relatorio.projeto.organizacao %}
+            <td> {% comment %} Estudante {% endcomment %}
+              {% if relatorio.projeto %}
+                {% for alocacao in relatorio.projeto.alocacao_set.all %}
                   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                    <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
+                    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
                   {% endif %}
-                    {{ relatorio.projeto.organizacao.nome }}
+                      &bull; {{alocacao.aluno.user.get_full_name}}
                   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
                     </a>
                   {% endif %}
-                {% endif %}
-              </td>
-
-              <td> {% comment %} Banca Final {% endcomment %}
-                <small>
-                  <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
-                    {% for membro in relatorio.projeto.get_banca_final.membros %}
-                      <li>
-                        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                          <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                        {% endif %}
-                        {{membro.get_full_name}}
-                        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-                          </a>
-                        {% endif %}
-                      </li>
-                    {% endfor %}
-                  </ul>
-                </small>
-              </td>
-
-              <td style="text-align:center"> {% comment %} Período {% endcomment %}
-                {% if relatorio.projeto %}
-                  {{relatorio.projeto.ano}}.{{relatorio.projeto.semestre}}
-                {% endif %}
-              </td>
-
-              <td style="text-align:center"> {% comment %} Documento {% endcomment %}
-                <span id="p{{relatorio.pk}}">
-                  {% if relatorio.link %}
-                    <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
-                      href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                      <span class="texto-curto" style="width: 6em;">Relatório<sup>B</sup></span>
-                      <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
-                      {% if user.tipo_de_usuario == 4 %}
-                        <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
-                          <i class="fas fa-pencil-alt"></i>
-                      </span>
-                      {% endif %}
-                    </a><br>
-                  {% endif %}
-                </span>
-                {% if relatorio.documento %}
-                  <a class="btn btn-light btn-outline-info btn-sm mt-1"
-                    href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">Relatório<sup>S</sup></span>
-                    <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(Servidor)</span>
-                  </a><br>
-                  {% if user.tipo_de_usuario == 4 and not relatorio.link %}
-                    <a id="c{{relatorio.pk}}"
-                      class="btn btn-warning btn-outline-dark btn-sm open-modal mt-1"
-                      href="{% url 'biblioteca_link' relatorio.pk %}"
-                      data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
-                      target="_blank" rel="noopener noreferrer">
-                      <span class="texto-curto" style="width: 6em;">+&nbsp;DSpace</span>
-                      <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
-                    </a><br>
-                  {% endif %}
-                {% endif %}
-
-                {% for publico in relatorio.projeto.get_documentos_publicos %}
-                  {% if publico.documento %}
-                    <a class="btn btn-light btn-outline-info btn-sm mt-1"
-                      href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
-                      <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                      <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
-                    </a><br>
-                  {% elif publico.link %}
-                    <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
-                      href="{{publico.link}}" target="_blank" rel="noopener noreferrer">
-                      <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                      <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
-                    </a><br>
-                  {% endif %}
+                  {% if not forloop.last %}<br>{% endif %}
                 {% endfor %}
+              {% endif %}
+            </td>
 
-              </td>
+            <td> {% comment %} Orientador {% endcomment %}
+              {% if relatorio.projeto and relatorio.projeto.orientador %}
+                {% if relatorio.projeto.orientador %}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    <a href="{% url 'professor_detail' relatorio.projeto.orientador.id %}">
+                  {% endif %}
+                    {{relatorio.projeto.orientador}}
+                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                    </a>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            </td>
 
-            </tr>
+            <td> {% comment %} Organização {% endcomment %}
+              {% if relatorio.projeto and relatorio.projeto.organizacao %}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  <a href="{% url 'organizacao_completo' relatorio.projeto.organizacao.id %}">
+                {% endif %}
+                  {{ relatorio.projeto.organizacao.nome }}
+                {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  </a>
+                {% endif %}
+              {% endif %}
+            </td>
 
-            {% endif %}
+            <td> {% comment %} Banca Final {% endcomment %}
+              <small>
+                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
+                  {% for membro in relatorio.projeto.get_banca_final.membros %}
+                    <li>
+                      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                        <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                      {% endif %}
+                      {{membro.get_full_name}}
+                      {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                        </a>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </small>
+            </td>
 
-        {% endfor %}
-        </tbody>
-        <caption style="text-align:right"><small><b>B</b>: Biblioteca | <b>S</b>: Servidor</small></caption>
+            <td style="text-align:center"> {% comment %} Período {% endcomment %}
+              {% if relatorio.projeto %}
+                {{relatorio.projeto.ano}}.{{relatorio.projeto.semestre}}
+              {% endif %}
+            </td>
+
+            <td style="text-align:center"> {% comment %} Documento {% endcomment %}
+              <span id="p{{relatorio.pk}}">
+                {% if relatorio.link %}
+                  <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
+                    href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
+                    <span class="texto-curto" style="width: 6em;">Relatório<sup>B</sup></span>
+                    <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
+                    {% if user.tipo_de_usuario == 4 %}
+                      <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
+                        <i class="fas fa-pencil-alt"></i>
+                    </span>
+                    {% endif %}
+                  </a><br>
+                {% endif %}
+              </span>
+              {% if relatorio.documento %}
+                <a class="btn btn-light btn-outline-info btn-sm mt-1"
+                  href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  <span class="texto-curto" style="width: 6em;">Relatório<sup>S</sup></span>
+                  <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(Servidor)</span>
+                </a><br>
+                {% if user.tipo_de_usuario == 4 and not relatorio.link %}
+                  <a id="c{{relatorio.pk}}"
+                    class="btn btn-warning btn-outline-dark btn-sm open-modal mt-1"
+                    href="{% url 'biblioteca_link' relatorio.pk %}"
+                    data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
+                    target="_blank" rel="noopener noreferrer">
+                    <span class="texto-curto" style="width: 6em;">+&nbsp;DSpace</span>
+                    <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
+                  </a><br>
+                {% endif %}
+              {% endif %}
+
+              {% for publico in relatorio.projeto.get_documentos_publicos %}
+                {% if publico.documento %}
+                  <a class="btn btn-light btn-outline-info btn-sm mt-1"
+                    href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
+                    <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                    <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
+                  </a><br>
+                {% elif publico.link %}
+                  <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
+                    href="{{publico.link}}" target="_blank" rel="noopener noreferrer">
+                    <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
+                    <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
+                  </a><br>
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+      {% endfor %}
+      </tbody>
+      <caption style="text-align:right"><small><b>B</b>: Biblioteca | <b>S</b>: Servidor</small></caption>
       </table>
     </div>
 

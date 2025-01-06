@@ -8,10 +8,9 @@
 {% block head %}
   {% load static %}
   {% load escape_emails %}
-  {% comment %} {% load banca_tipo %} {% endcomment %}
-
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-
+  {% include "heads_calendar.html" %}
+  {% include "cores_bancas_mentorias.html" %}
   <style>
     select {
       margin-right: 16px;
@@ -50,10 +49,6 @@
     }
 
   </style>
-
-  {% include "heads_calendar.html" %}
-  {% include "cores_bancas_mentorias.html" %}
-
 {% endblock %}
 
 {% block content %}

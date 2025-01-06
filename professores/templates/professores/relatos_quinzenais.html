@@ -7,20 +7,15 @@
 
 {% block head %}
   {% load static %}
-  
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
-
 {% endblock %}
 
 {% block content %}
   
   {% include "edicoes.html" %}
-  <br>
-
+  
   <div class="atualizar">
 
     {% if not edicoes %}

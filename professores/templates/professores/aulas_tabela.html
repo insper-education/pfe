@@ -7,12 +7,9 @@
 
 {% block head %}
   {% load static %}
-
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
   {% include "tabelas_includes.html" %}
-
 {% endblock %}
 
 {% block content %}
@@ -36,35 +33,27 @@
   </div>
 
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Aulas" cabecalhos=cabecalhos %}
-          {% for aula in aulas %}
-            {% if aula.responsavel %}
-              {% if aula.responsavel.tipo_de_usuario == 2 or aula.responsavel.tipo_de_usuario == 4 %}
-                <tr class="item" data-user="Insper">
-                  <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' aula.responsavel.professor.id %}">{{aula.responsavel.get_full_name}}</a>
-              {% elif aula.responsavel.tipo_de_usuario == 3 %}
-                <tr class="item" data-user="Externo">
-                  <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
-              {% else %}
-                <tr class="item"><td>
-                  <span lang="pt">Erro ao identificar usuário</span>
-                  <span lang="en">Error identifying user</span>
-              {% endif %}</td>
-                <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
-                <td style="text-align: left;">{{aula.atividade}} ({{aula.startDate}}) {% if aula.descricao %} - {{aula.descricao}}{% endif %}</td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+      {% for aula in aulas %}
+        {% if aula.responsavel %}
+          {% if aula.responsavel.tipo_de_usuario == 2 or aula.responsavel.tipo_de_usuario == 4 %}
+            <tr class="item" data-user="Insper">
+              <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' aula.responsavel.professor.id %}">{{aula.responsavel.get_full_name}}</a>
+          {% elif aula.responsavel.tipo_de_usuario == 3 %}
+            <tr class="item" data-user="Externo">
+              <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
+          {% else %}
+            <tr class="item"><td>
+              <span lang="pt">Erro ao identificar usuário</span>
+              <span lang="en">Error identifying user</span>
+          {% endif %}</td>
+            <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
+            <td style="text-align: left;">{{aula.atividade}} ({{aula.startDate}}) {% if aula.descricao %} - {{aula.descricao}}{% endif %}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
   </div>
-
-  {% comment %} <script>
-    function carrega_pagina() {};
-    window.onload = carrega_pagina
-  </script> {% endcomment %}
 
   {% include "edicoes_ajax.html" with tabela="Aulas" %}
 

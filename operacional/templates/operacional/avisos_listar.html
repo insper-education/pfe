@@ -8,17 +8,7 @@
 {% block head %}
   {% load static %}
   {% load class_tag %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
-
-  <style>
-    th {
-      text-align:center;
-      border: 1px solid black !important;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -44,41 +34,10 @@
   </select>
   <br>
 
-  <form method="post">
-    {% csrf_token %}
-    {% if avisos %}
-    <div class="table-responsive">
-      <table class="table table-sm">
-        <caption>
-          <small>
-            <b>Co</b>: <span lang="pt">Coordenação</span><span lang="en" style="display:none;">Coordination</span>;
-            <b>Op</b>: <span lang="pt">Equipe Operacional</span><span lang="en" style="display:none;">Operational Team</span>;
-            <b>Cm</b>: <span lang="pt">Comitê Capstone</span><span lang="en" style="display:none;">Capstone Committee</span>;
-            <b>Es</b>: <span lang="pt">Estudantes</span><span lang="en" style="display:none;">Students</span>;
-            <b>Or</b>: <span lang="pt">Orientadores</span><span lang="en" style="display:none;">Advisors</span>;
-            <b>Og</b>: <span lang="pt">Contatos nas Organizações</span><span lang="en" style="display:none;">Contacts in Organizations</span>;
-          </small>
-        </caption>
-        <thead class="table-info">
-          <tr>
-            <th scope="col" style="width: 1em;">&#10003;</th>
-            <th scope="col">
-              <span lang="pt">Data</span>
-              <span lang="en" style="display:none;">Date</span>
-            </th>
-            <th scope="col">
-              <span lang="pt">Público</span>
-              <span lang="en" style="display:none;">Target</span>
-            </th>
-            <th scope="col">
-              <span lang="pt">Título</span>
-              <span lang="en" style="display:none;">Title</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for a in avisos %}
+  <form method="post">{% csrf_token %}
 
+    {% include "tabelas_top_ml.html" with tabela="Avisos" cabecalhos=cabecalhos tabela_simples=True %}
+        {% for a in avisos %}
           {% if a.class == "Evento" %}
             <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
              class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
@@ -170,17 +129,24 @@
           </tr>
           {% endif %}
 
+        {% empty %}
+          <p lang="pt">Não existem avisos.</p>
+          <p lang="en" style="display:none;">There are no notices.</p>
         {% endfor %}
         </tbody>
+        <caption>
+          <small>
+            <b>Co</b>: <span lang="pt">Coordenação</span><span lang="en" style="display:none;">Coordination</span>;
+            <b>Op</b>: <span lang="pt">Equipe Operacional</span><span lang="en" style="display:none;">Operational Team</span>;
+            <b>Cm</b>: <span lang="pt">Comitê Capstone</span><span lang="en" style="display:none;">Capstone Committee</span>;
+            <b>Es</b>: <span lang="pt">Estudantes</span><span lang="en" style="display:none;">Students</span>;
+            <b>Or</b>: <span lang="pt">Orientadores</span><span lang="en" style="display:none;">Advisors</span>;
+            <b>Og</b>: <span lang="pt">Contatos nas Organizações</span><span lang="en" style="display:none;">Contacts in Organizations</span>;
+          </small>
+        </caption>
       </table>
-      </div>
+    </div>
 
-    {% else %}
-      <p lang="pt">Não existem avisos.</p>
-      <p lang="en" style="display:none;">There are no notices.</p>
-    {% endif %}
-
-  
     <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
       <span lang="pt">Cria Aviso</span>
       <span lang="en" style="display:none;">Create Notice</span>
@@ -228,17 +194,12 @@
     });
 
     $(".aviso").change(function () {
-
-      var aviso = $(this).prop("name");
-      var checked = $(this).prop("checked");
-      var value = $(this).val();
-
       $.ajax({
         url: "{% url 'validate_aviso' %}",
         data: {
-          "aviso": aviso,
-          "checked": checked,
-          "value": value,
+          "aviso": $(this).prop("name"),
+          "checked": $(this).prop("checked"),
+          "value": $(this).val(),
         },
         dataType: "JSON",
         success: function (data) {},

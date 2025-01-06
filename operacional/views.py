@@ -85,11 +85,19 @@ def avisos_listar(request):
                  "id": aviso.id,
                 })
 
+    cabecalhos = [
+        {"pt": "&#10003;", "en": "&#10003;"},
+        {"pt": "Data", "en": "Date"},
+        {"pt": "Público", "en": "Target"},
+        {"pt": "Título", "en": "Title"},
+    ]
+
     context = {
         "titulo": { "pt": "Avisos", "en": "Notices" },
         "avisos": avisos,
         "hoje" : datetime.date.today(),
         "filtro" : "todos",
+        "cabecalhos": cabecalhos,
     }
 
     return render(request, "operacional/avisos_listar.html", context)

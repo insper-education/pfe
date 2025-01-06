@@ -6,12 +6,23 @@
 
 {% comment %} Somente para a parte de cima das tabelas comuns {% endcomment %}
 <div class="table-responsive">
-  <table id="{{tabela}}Table" class="table table-bordered table-hover table-sm" style="width: 100%;">
-  <thead class="table-info">
-    <tr>
-      {% for cabecalho in cabecalhos %}
-        <th scope="col" class="text-center" {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
-            data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
-      {% endfor %}
-    </tr>
-  </thead>
+  <table id="{{tabela}}Table"
+   {% if tabela_simples %}
+    class="tabela-padrao table-sm table-striped table-hover table-bordered"
+   {% else %}
+    class="table table-bordered table-hover table-sm"
+    style="width: 100%;"
+   {% endif %}>
+    <thead class="table-info">
+      <tr>
+        {% for cabecalho in cabecalhos %}
+          <th scope="col"
+            {% if cabecalho.esconder %}style="display: none;"{% endif %}
+            class="text-center {% if cabecalho.tsort %}apontavel" onclick="sort('#{{tabela}}Table', '.item', 'td:nth-child({{cabecalho.tsort}})'){% endif %}"
+            {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
+            data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
+            ><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>

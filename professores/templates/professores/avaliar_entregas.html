@@ -34,7 +34,6 @@
 {% block content %}
 
   {% include "edicoes.html" with com_entregas=tipos_entregas %}
-  <br>
 
   <div class="atualizar">
     {% if not edicoes %}
@@ -42,7 +41,9 @@
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
 
-            <div class="tresp">
+            {% comment %} {% include "cabecalho_projeto.html" %} {% endcomment %}
+
+            <div>
               <strong>
                 <span lang="pt">Projeto:</span>
                 <span lang="en">Project:</span>
@@ -258,7 +259,6 @@
 
                 {% endif %}
 
-
               </div>
             {% endwith %}
           {% endfor %}
@@ -280,8 +280,6 @@
   </div> 
 
   <script>
-
-    function carrega_pagina() {};
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
       {% if tipos_entregas %}

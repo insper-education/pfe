@@ -12,7 +12,7 @@
 
 {% block content %}
 
-  <form method="post" id="disciplinaform" enctype="multipart/form-data"> {% csrf_token %}
+  <form method="post" id="disciplinaform" enctype="multipart/form-data">{% csrf_token %}
     
     <label for="nome">
       <span lang="pt">Nome da Disciplina:</span>
@@ -29,33 +29,24 @@
     {% if mensagem %}
       <span id="message" class="red-bold">{{mensagem|linebreaks}}</span>
       <script>
-        setTimeout(function() {
-          $("#message").fadeOut("fast");
-        }, 5000);
+        setTimeout(function() {$("#message").fadeOut("fast");}, 5000);
       </script>
     {% endif %}
     <br>
 
-    <table id="disciplinas" class="tabela-padrao">
-      <thead><tr><th>
-        <span lang="pt">Disciplinas Cadastradas</span>
-        <span lang="en" style="display: none;">Registered Courses</span>
-      </th></tr></thead>
-      <tbody>
+    {% include "tabelas_top_ml.html" with tabela="Disciplinas" cabecalhos=cabecalhos tabela_simples=True %}
       {% for disciplina in disciplinas %}
         <tr id="disciplina{{disciplina.id}}"><td>
-            {{disciplina.nome}}
-              <div class="esconder" style="float:right;">
-                &nbsp;
-                <a onclick="event.preventDefault(); exclui_disciplina($(this));"
-                   data-disciplina='{{disciplina.id}}'>
-                  <i class="far fa-trash-alt"></i>
-                </a>
-              </div>
+          {{disciplina.nome}}
+          <div class="esconder" style="float: right; margin-left: 1em;">
+            <a onclick="event.preventDefault(); exclui_disciplina($(this));"
+              data-disciplina='{{disciplina.id}}'>
+              <i class="far fa-trash-alt"></i>
+            </a>
+          </div>
         </td></tr>
       {% endfor %}
-      </tbody>
-    </table>
+    {% include "tabelas_bottom.html" %}
 
   </form>
 
@@ -65,9 +56,7 @@
         url = "{% url 'excluir_disciplina' %}";
         disciplina = aqui.data("disciplina");
         data = { "disciplina_id": disciplina };
-        function success(response){
-          $("#disciplina"+disciplina).remove();
-        }
+        function success(response){$("#disciplina"+disciplina).remove();}
         {% include "ajax_default_function.js" %}
       }
     }

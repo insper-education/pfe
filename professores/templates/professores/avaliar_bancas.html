@@ -7,42 +7,16 @@
 
 {% block head %}
   {% load static %}
-  
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 8px;
-    }
-
-    table, th, td {border: 1px solid lightgrey;}
-    tbody tr:nth-child(even) {background-color: #f2f2f2;}
-    tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-
-  </style>
-
   {% include "converte_notas.html" %}
   {% include "avalia_objetivos.html" %}
-
 {% endblock %}
 
 {% block content %}
-
   {% include "edicoes.html" %}
-  <br>
-
   <div class="atualizar">
-
     {% for banca in bancas %}
-
       {% with projeto=banca.projeto %}
-
         {% ifchanged projeto %}
           {% if projeto %}
             <strong>

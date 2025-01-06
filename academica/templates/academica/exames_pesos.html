@@ -15,84 +15,59 @@
 {% block content %}
 
   <div class="atualizar">
-    <script>var show = false;</script>
+    {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %}
+      {% for ano, semestre, composicoes in semestres reversed %}
+        <script> var peso = 0; </script>
+        <tr class="item" id="peso{{forloop.counter0}}">
+          <td class="text-center">{{ano}}.{{semestre}}</td>
+          <td>
+            <ul>
+            {% for composicao in composicoes %}
+              <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
+                (
+                <span lang="pt">{% language "pt-br" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
+                <span lang="en" style="display:none">{% language "en" %}{{composicao.data_inicial|date:"M d, Y" }}{% endlanguage %} to</span>
+                {% if composicao.data_final%}
+                  <span lang="pt">{% language "pt-br" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
+                {% else %}
+                  <span lang="pt">atualmente</span>
+                  <span lang="en" style="display:none">currently</span>
+                {% endif %}):</span>
+                
+                <span style="display: inline-block; width: 34em;">
+                  <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
+                  <script> peso_tmp = 0; </script>
+                  {% for peso in composicao.peso_set.all %}
+                    [<span 
+                    {% if peso.objetivo %}
+                      data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
+                    </span>
+                    {% if peso.peso %}
+                    <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
+                    {% endif %}
+                  {% endfor %}
+                </span>
+              </li>
+              <script> peso += peso_tmp; </script>
+              <script> document.getElementById("m{{ano}}{{semestre}}{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2)+"%"; </script>
+            {% endfor %}
+            </ul>
+          </td>
+          <td style="display: none;"><span id="peso2{{forloop.counter0}}"></span></td>
+        </tr>
+        <script>
+          document.getElementById("peso2{{forloop.counter0}}").innerHTML = peso.toFixed(2);
+          if (peso > 100.1 || peso < 99.9) {
+            document.getElementById("peso{{forloop.counter0}}").style.background = "LightSalmon";
+            $("#ExamesPesosTable tr > *:nth-child(3)").show();
+          }
+        </script>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+  </div>
 
-    <div class="table-responsive">
-
-    <table id="ExamesPesosTable" class="tabela-padrao table-sm table-striped table-hover table-bordered">
-      <thead><tr>
-        <th class="apontavel" onclick="sort('#ExamesPesosTable', '.item', 'td:nth-child(1)')">
-          <span lang="pt">Semestre</span>
-          <span lang="en" style="display:none">Semester</span>
-        </th>
-        <th>
-          <span lang="pt">Exames</span>
-          <span lang="en" style="display:none">Evaluation</span>
-        </th>
-        <th style="display: none;">
-          <span lang="pt">Peso</span>
-          <span lang="en" style="display:none">Weight</span>
-        </th>
-      </tr></thead>
-      <tbody>
-        {% for ano, semestre, composicoes in semestres reversed %}
-          <script> var peso = 0; </script>
-          <tr class="item" id="peso{{forloop.counter0}}">
-            <td class="text-center">{{ano}}.{{semestre}}</td>
-            <td>
-              <ul>
-              {% for composicao in composicoes %}
-                <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
-                  (
-                  <span lang="pt">{% language "pt-br" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
-                  <span lang="en" style="display:none">{% language "en" %}{{composicao.data_inicial|date:"M d, Y" }}{% endlanguage %} to</span>
-                  {% if composicao.data_final%}
-                    <span lang="pt">{% language "pt-br" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
-                    <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
-                  {% else %}
-                    <span lang="pt">atualmente</span>
-                    <span lang="en" style="display:none">currently</span>
-                  {% endif %}):</span>
-                  
-                  <span style="display: inline-block; width: 34em;">
-                    <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
-                    <script> peso_tmp = 0; </script>
-                    {% for peso in composicao.peso_set.all %}
-                      [<span 
-                      {% if peso.objetivo %}
-                        data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
-                      </span>
-                      {% if peso.peso %}
-                      <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
-                      {% endif %}
-                    {% endfor %}
-                  </span>
-                </li>
-                <script> peso += peso_tmp; </script>
-                <script> document.getElementById("m{{ano}}{{semestre}}{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2)+"%"; </script>
-              {% endfor %}
-              </ul>
-            </td>
-            <td style="display: none;"><span id="peso2{{forloop.counter0}}"></span></td>
-          </tr>
-          <script>
-            document.getElementById("peso2{{forloop.counter0}}").innerHTML = peso.toFixed(2);
-            if (peso > 100.1 || peso < 99.9) {
-              document.getElementById("peso{{forloop.counter0}}").style.background = "LightSalmon";
-              show = true;
-            }
-          </script>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    </div>
-    <script>
-      if (show) {
-        $("#ExamesPesosTable tr > *:nth-child(3)").show();
-      }
-    </script>
-    <small lang="pt">Terminar o semestre até junho e iniciar a partir de agosto.</small>
-    <small lang="en" style="display:none">End the semester by June and start from August.</small>
+  <small lang="pt">Terminar o semestre até junho e iniciar a partir de agosto.</small>
+  <small lang="en" style="display:none">End the semester by June and start from August.</small>
 
 {% endblock %}

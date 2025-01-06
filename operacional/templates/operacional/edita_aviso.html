@@ -26,8 +26,7 @@
 
 {% block content %}
   
-    <form method="post" id="edita_aviso" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="post" id="edita_aviso" enctype="multipart/form-data">{% csrf_token %}
       
       <div style="margin-bottom: 8px; display: inline-block;">
         <label for="titulo">
@@ -117,12 +116,6 @@
         </label>
 
       </div><br>
-
-      {% comment %} Não implementado ainda
-      {% verbatim %}
-        <br>Variáveis: {{projeto}}
-      {% endverbatim %}
-      {% endcomment %}
 
       <br>
       <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
