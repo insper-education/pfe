@@ -178,10 +178,11 @@ class EventoFilter(SimpleListFilter):
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
 
-    list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
+    list_display = ("ano", "semestre", "orientador", "get_titulo",)
+    #list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
     list_filter = (FechadoFilter, "ano", "semestre",)
     actions = [dup_projeto]
-    search_fields = ["titulo_final", "organizacao__sigla", ]
+    #search_fields = ["titulo_final", "organizacao__sigla", ]
 
 
 @admin.register(Proposta)

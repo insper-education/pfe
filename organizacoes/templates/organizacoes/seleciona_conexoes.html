@@ -7,12 +7,9 @@
 
 {% block head %}
   {% load static %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
-  {% include "reload.html" %}
-
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+  {% include "reload.html" %}
 
   <style>
 
@@ -51,7 +48,6 @@
 
 {% block content %}
 
-  <br>
   <span>
     <span lang="pt">Projeto:</span>
     <span lang="en" style="display: none;">Project:</span>
@@ -61,15 +57,11 @@
 
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
 
-    {% if parceiros %}
+
+    {% comment %} {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %} {% endcomment %}
+
       <div class="table-responsive">
       <table id="ParceirosTable" class="tabela-padrao table-bordered table-hover table-sm">
-        <caption style="text-align: right">
-          {% for _,captions  in Conexao.papel.items %}
-            <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
-            {% if not forloop.last %}/{% endif %}
-          {% endfor %}
-        </caption>
         <thead class="table">
           <tr>
             <th scope="col" class="text-center">GR</th>
@@ -90,6 +82,7 @@
             </th>
           </tr>
         </thead>
+        <tbody>
         {% for parceiro in parceiros %}
         {% with conexoes=parceiro.conexao_set.all %}
           <tr class="item {% if not parceiro.user.is_active %}links-claros{% endif %}">
@@ -135,8 +128,9 @@
             </td>
             
             <td {% if not parceiro.user.is_active %}class="links-claros"{% endif %}>
-              <a href="mailto:{{parceiro.user.email}}">&lt;{{parceiro.user.email}}&gt;</a>
+              <a href="mailto:{{parceiro.user.email}}">{{parceiro.user.email}}</a>
             </td>
+
             <td>
               {% if parceiro.user.telefone %}
                 {{parceiro.user.telefone}}
@@ -150,12 +144,23 @@
             </td>
           </tr>
         {% endwith %}
+        
+
         {% endfor %}
+        
+        </tbody>
+        <caption style="text-align: right">
+          {% for _,captions  in Conexao.papel.items %}
+            <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
+            {% if not forloop.last %}/{% endif %}
+          {% endfor %}
+        </caption>
+
       </table>
       </div>
-    {% else %}
-      <p>Não existem parceiros cadastradas para essa organização.</p>
-    {% endif %}
+    
+      {% comment %} <p>Não existem parceiros cadastradas para essa organização.</p> {% endcomment %}
+    
 
     
     <label for="colaboracao">
