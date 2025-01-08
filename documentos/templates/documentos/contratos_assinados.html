@@ -47,10 +47,12 @@
             <small>
             <ul style="padding-left: 20px;margin-bottom: 0px;">
               {% for conexao in projeto.conexao_set.all %}
-                <li>
-                  <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
-                  {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
-                </li>
+                {% if conexao.parceiro %}
+                  <li>
+                    <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
+                    {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+                  </li>
+                {% endif %}
               {% endfor %}
             </ul>
             </small>

@@ -1556,11 +1556,11 @@ class FeedbackEstudante(models.Model):
 class Conexao(models.Model):
     """Controla como um usuário se conecta a um projeto."""
 
-    parceiro = models.ForeignKey("users.Parceiro", null=True, blank=True,
+    parceiro = models.ForeignKey("users.Parceiro", null=True,
                                  on_delete=models.SET_NULL,
                                  help_text="parceiro que se conecta ao projeto")
 
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+    projeto = models.ForeignKey(Projeto, null=True, on_delete=models.SET_NULL,
                                 help_text="projeto que possui vínculo da conexão")
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text="qualquer observação relevante")
