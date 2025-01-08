@@ -315,11 +315,17 @@ def relatorios_publicos(request, edicao=None):
                       {"pt": "Banca Final", "en": "Examination Board"},
                       {"pt": "Período", "en": "Semester"},
                       {"pt": "Documentos", "en": "Documents"},]
-        
+            
+        captions = [
+            {"sigla": "B", "pt": "Biblioteca", "en": "Library"},
+            {"sigla": "S", "pt": "Servidor", "en": "Server"},
+        ]
+
         context = {
             "relatorios": relatorios,
             "edicao": edicao,
             "cabecalhos": cabecalhos,
+            "captions": captions,
         }
 
     else:

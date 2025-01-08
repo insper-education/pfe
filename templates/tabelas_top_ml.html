@@ -17,12 +17,24 @@
       <tr>
         {% for cabecalho in cabecalhos %}
           <th scope="col"
-            {% if cabecalho.esconder %}style="display: none;"{% endif %}
-            class="text-center {% if cabecalho.tsort %}apontavel" onclick="sort('#{{tabela}}Table', '.item', 'td:nth-child({{cabecalho.tsort}})'){% endif %}"
+            style="{% if cabecalho.esconder %}display: none;{% endif %} {% if cabecalho.font %}font-size: {{cabecalho.font}};{% endif %}"
+            class="text-center {% if cabecalho.classes %}{{cabecalho.classes}}{% endif %} {% if cabecalho.tsort %}apontavel" onclick="sort('#{{tabela}}Table', '.item', 'td:nth-child({{cabecalho.tsort}})'){% endif %}"
+            {% if cabecalho.tooltip %}data-toggle="tooltip" data-html="true" animation="true" title="{{cabecalho.tooltip|safe}}"{% endif %}
             {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
             data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
             ><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
         {% endfor %}
       </tr>
     </thead>
+    {% if captions %}
+      <caption style="text-align: right"><small>
+        {% for caption in captions %}
+          <span style="white-space: nowrap;"><b>{{caption.sigla}}</b>:
+            <span lang="pt">{{caption.pt|safe}}</span>
+            <span lang="en" style="display: none;">{{caption.en|safe}}</span>
+          </span>
+          {% if not forloop.last %}|{% endif %}
+        {% endfor %}
+      </small></caption>
+    {% endif %}
     <tbody>

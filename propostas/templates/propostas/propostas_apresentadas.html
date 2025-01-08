@@ -25,15 +25,15 @@
         content: "\1F9D1 \200D \1F393";
         font-size: 14px;
       }
-      #autorizado-icon:before {
+      .autorizado-icon:before {
         content: "\1F441";
         font-size: 16px;
       }
-      #disponivel-icon:before {
+      .disponivel-icon:before {
         content: "\1F44D";
         font-size: 16px;
       }
-      #fechado-icon:before {
+      .fechado-icon:before {
         content: "\1F91D";
         font-size: 16px;
       }
@@ -46,15 +46,15 @@
     
     @media screen and (min-width: 1201px) {
       .estudante-icon:before {
-        content: "Estudante";
+        content: "EstudanteXX";
       }
-      #autorizado-icon:before {
+      .autorizado-icon:before {
         content: "Analisada";
       }
-      #disponivel-icon:before {
+      .disponivel-icon:before {
         content: "Disponível";
       }
-      #fechado-icon:before {
+      .fechado-icon:before {
         content: "Fechada";
       }
     }
@@ -83,34 +83,31 @@
       var fechados = 0
     </script>
 
+
+
+    {% comment %} {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos captions=captions %} {% endcomment %}
+
     <div class="table-responsive">
       <table id="PropostasTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
           <tr>
             <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Algum professor do comitê analisou que a proposta seja publicada para os estudantes" 
-            {% comment %} data-lang-pt="Analisada" data-lang-en="Analyzed" {% endcomment %}
-            ><span id="autorizado-icon"></span></th>
+            ><span class="autorizado-icon"></span></th>
             <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"
-             {% comment %} data-lang-pt="Disponível" data-lang-en="Available" {% endcomment %}
-            ><span id="disponivel-icon"></span></th>
+            ><span class="disponivel-icon"></span></th>
             <th scope="col" class="estados text-center" style="font-size: 12px;" data-toggle="tooltip" data-html="true" animation="true" title="Foi formado um grupo de estudantes para essa proposta de projeto"
-             {% comment %} data-lang-pt="Fechada" data-lang-en="Confirmed" {% endcomment %}
-            ><span id="fechado-icon"></span></th>
+            ><span class="fechado-icon"></span></th>
             <th scope="col" class="text-center" data-lang-pt="Proposta" data-lang-en="Proposal">Proposta</th>
             <th scope="col" class="periodo text-center" data-lang-pt="Período" data-lang-en="Semester">Período</th>
             <th scope="col" class="text-center organizacao" data-lang-pt="Organização" data-lang-en="Organization">Organização</th>
             <th scope="col" class="text-center" style="font-size: 12px;" data-lang-pt="Tipo" data-lang-en="Type">Tipo</th>
             <th scope="col" class="estudantes text-center" style="font-size: 12px;" 
-             {% comment %} data-lang-pt="Estudante1" data-lang-en="Student1" {% endcomment %}
              ><span class="estudante-icon"></span>1</th>
             <th scope="col" class="estudantes text-center" style="font-size: 12px;" 
-             {% comment %} data-lang-pt="Estudante2" data-lang-en="Student2" {% endcomment %}
              ><span class="estudante-icon"></span>2</th>
             <th scope="col" class="estudantes text-center" style="font-size: 12px;" 
-             {% comment %} data-lang-pt="Estudante3" data-lang-en="Student3" {% endcomment %}
              ><span class="estudante-icon"></span>3</th>
             <th scope="col" class="estudantes text-center" style="font-size: 12px;"
-             {% comment %} data-lang-pt="Estudante4" data-lang-en="Student4" {% endcomment %}
              ><span class="estudante-icon"></span>4</th>
             <th scope="col" class="text-center" style="font-size: 12px;" data-lang-pt="Disciplinas Recomendadas" data-lang-en="Recommended Courses">Disciplinas Recomendadas</th>
           </tr>

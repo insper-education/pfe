@@ -634,7 +634,7 @@ def organizacoes_lista(request):
         else:
             contato.append("---------")
 
-        projetos = organizacao.projeto_set.all()
+        projetos = Projeto.objects.filter(proposta__organizacao=organizacao).order_by("ano", "semestre")
         fechados.append(projetos.count())
 
         tipo_estudantes = ""
@@ -658,6 +658,12 @@ def organizacoes_lista(request):
         {"pt": "Projetos <br>Fechados", "en": "Closed <br>Projects", },
         {"pt": "Grupos de Estudantes", "en": "Group of Students", },    
     ]
+
+    captions = []
+    for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
+        captions.append({"sigla": curso.sigla_curta,
+                          "pt": curso.nome,
+                          "en": curso.nome_en,})
     
     context = {
         "titulo": {"pt": "Organizações Parceiras", "en": "Partnership Companies"},
@@ -669,7 +675,7 @@ def organizacoes_lista(request):
         "filtro": "todas",
         "grupos": grupos,
         "cabecalhos": cabecalhos,
-        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"), 
+        "captions": captions,
     }
 
     return render(request, "organizacoes/organizacoes_lista.html", context)
@@ -685,6 +691,7 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
     context = {
         "titulo": {"pt": "Organização Parceira", "en": "Partnership Organization"},
         "organizacao": organizacao,
+        "projetos": Projeto.objects.filter(proposta__organizacao=organizacao).order_by("ano", "semestre"),
         "cursos": Curso.objects.all().order_by("id"),
     }
     return render(request, "organizacoes/organizacao_completo.html", context=context)
@@ -801,13 +808,20 @@ def todos_parceiros(request):
                   { "pt": "e-mail", "en": "e-mail", }, 
                   { "pt": "telefone", "en": "phone", }, 
                   { "pt": "papel", "en": "role", }, ]
+    
+    captions = []
+    for _, caption in Conexao.papel.items():
+        captions.append({"sigla": caption[1],
+                         "pt": caption[0],
+                         "en": caption[0], })
+
     context = {
         "parceiros": parceiros,
         "cabecalhos": cabecalhos,
         "titulo": { "pt": "Parceiros Profissionais", "en": "Professional Partners", },
         "edicoes": get_edicoes(Conexao)[0],
         "edicao": edicao,
-        "Conexao": Conexao,
+        "captions": captions,
         }
 
     return render(request, "organizacoes/todos_parceiros.html", context)
@@ -915,13 +929,31 @@ def seleciona_conexoes(request):
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
     colaboradores = cooperacoes.last().parceiro if cooperacoes else None
 
+    
+    cabecalhos = [
+        {"pt": "GR", "en": "GR", },
+        {"pt": "MT", "en": "MT", },
+        {"pt": "AA", "en": "AA", },
+        {"pt": "Nome", "en": "Name", },
+        {"pt": "Cargo", "en": "Position", },
+        {"pt": "e-mail", "en": "e-mail", },
+        {"pt": "Telefone", "en": "Phone", },
+    ]
+
+    captions = []
+    for _, caption in Conexao.papel.items():
+        captions.append({"sigla": caption[1],
+                         "pt": caption[0],
+                         "en": caption[0], })
+
     context = {
         "titulo": {"pt": "Seleção de Conexões", "en": "Connection Selection"},
         "projeto": projeto,
         "parceiros": parceiros,
         "todos_parceiros": Parceiro.objects.all(),
         "colaboradores": colaboradores,
-        "Conexao": Conexao,
+        "cabecalhos": cabecalhos,
+        "captions": captions,
         }
 
     return render(request, "organizacoes/seleciona_conexoes.html", context)

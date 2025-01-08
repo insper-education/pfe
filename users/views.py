@@ -303,12 +303,22 @@ def estudantes_notas(request, professor=None):
                             {"pt": "Média", "en": "Average"},
                         ]
 
+            captions = [
+                {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
+                {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
+                {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
+                {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
+                {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
+                {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
+            ]
+
             context = {
                 "alunos_list": alunos_list,
                 "ano": ano,
                 "semestre": semestre,
                 "ano_semestre": str(ano)+"."+str(semestre),
                 "cabecalhos": cabecalhos,
+                "captions": captions,
             }
 
         else:
@@ -442,7 +452,6 @@ def estudantes_objetivos(request):
 
             # Filtra os Objetivos de Aprendizagem do semestre
             objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
-            #objetivos = ObjetivosDeAprendizagem.objects.all() # Todos os objetivos
             objetivos = objetivos.filter(data_inicial__lt=data_projeto)
             objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
 
@@ -459,6 +468,14 @@ def estudantes_objetivos(request):
                     "en": objetivo.titulo_en + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(group)"),
                 })
 
+            captions = []
+            for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
+                captions.append({
+                    "sigla": curso.sigla_curta,
+                    "pt": curso.nome,
+                    "en": curso.nome_en,
+                })
+
             context = {
                 "alunos_list": alunos_list,
                 "configuracao": configuracao,
@@ -467,8 +484,8 @@ def estudantes_objetivos(request):
                 "ano_semestre": str(ano)+'.'+str(semestre),
                 "loop_anos": range(2018, configuracao.ano+1),
                 "objetivos": objetivos,
-                "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
                 "cabecalhos": cabecalhos,
+                "captions": captions,
             }
 
         else:

@@ -26,140 +26,127 @@
   {% include "informacoes_ml.html" %}
 
   <div class="atualizar">
-      {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+    {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos captions=captions %}
 
-          {% for aluno in alunos_list %} 
-          <tr class="item">
-            <th scope="row" data-order="{{aluno.user.get_full_name}}">
-              <a href="{% url 'estudante_detail' aluno.id %}" >
-                {{aluno.user.get_full_name}}
-                {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
-              </a>
-            </th>
+      {% for aluno in alunos_list %} 
+      <tr class="item">
+        <th scope="row" data-order="{{aluno.user.get_full_name}}">
+          <a href="{% url 'estudante_detail' aluno.id %}" >
+            {{aluno.user.get_full_name}}
+            {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+          </a>
+        </th>
 
-            <td>
-              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
-            </td>
+        <td>
+          <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+        </td>
 
-            {% if aluno.curso2 %}
-              <td style="color:#{{ aluno.curso2.cor }};">
-                {{ aluno.curso2 }}
-              </td>
-            {% else %}
-              <td>
-                <span lang="pt">Indefinido</span>
-                <span lang="en" style="display:none;">Undefined</span>
-              </td>
-            {% endif %}
+        {% if aluno.curso2 %}
+          <td style="color:#{{ aluno.curso2.cor }};">
+            {{ aluno.curso2 }}
+          </td>
+        {% else %}
+          <td>
+            <span lang="pt">Indefinido</span>
+            <span lang="en" style="display:none;">Undefined</span>
+          </td>
+        {% endif %}
 
-            <td>
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                      [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
-                    {% else %}
-                      <span lang="pt">[SEM ORGANIZAÇÃO]</span>
-                      <span lang="en" style="display:none;">[NO ORGANIZATION]</span>
-                    {% endif %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
-                    {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+        <td>
+          {% if aluno.alocacao_set.all %}
+            {% for alocacao in aluno.alocacao_set.all %}
+              {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                  [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
+                {% else %}
+                  <span lang="pt">[SEM ORGANIZAÇÃO]</span>
+                  <span lang="en" style="display:none;">[NO ORGANIZATION]</span>
+                {% endif %}
+                <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
+                {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </td>
+
+        {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
+          <td>
+            <script>
+              var nota_linha = 0;
+              var peso_linha = 0;
+              var nota_indiv = 0;
+              var peso_indiv = 0;
+            </script>
+            {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
+                <span data-toggle="tooltip" data-html="true" animation="true" 
+                title="{{descr}}">
+                  {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
+                  >={% if peso > 0 %}<span
+                      lang="pt">{% language "pt-br" %}{{nota|floatformat:1}}{% endlanguage %}</span><span
+                      lang="en" style="display:none">{% language "en" %}{{ nota|floatformat:1}}{% endlanguage %}</span>
+                  {% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+                  {% if nota == None %}
+                    <span style="color:red">??,??</span>
                   {% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-
-            {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-              <td>
-                <script>
-                  var nota_linha = 0;
-                  var peso_linha = 0;
-                  var nota_indiv = 0;
-                  var peso_indiv = 0;
-                </script>
-                {% for aval, nota, peso, descr in aluno.get_notas|dict_key:ano_semestre %} <!-- Notas -->
-                    <span data-toggle="tooltip" data-html="true" animation="true" 
-                    title="{{descr}}">
-                      {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
-                      >={% if peso > 0 %}<span
-                         lang="pt">{% language "pt-br" %}{{nota|floatformat:1}}{% endlanguage %}</span><span
-                         lang="en" style="display:none">{% language "en" %}{{ nota|floatformat:1}}{% endlanguage %}</span>
-                      {% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
-                      {% if nota == None %}
-                        <span style="color:red">??,??</span>
-                      {% endif %}
-                    </span>
-                    {% if nota != None and peso != None %}
-                      <script>
-                        nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
-                        peso_linha += {{peso|unlocalize}};
-                        {% if aval == "RII" or aval == "RFI" %}
-                          nota_indiv += {{nota|unlocalize}}*{{peso|unlocalize}};
-                          peso_indiv += {{peso|unlocalize}};
-                        {% endif %}
-                      </script>
+                </span>
+                {% if nota != None and peso != None %}
+                  <script>
+                    nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
+                    peso_linha += {{peso|unlocalize}};
+                    {% if aval == "RII" or aval == "RFI" %}
+                      nota_indiv += {{nota|unlocalize}}*{{peso|unlocalize}};
+                      peso_indiv += {{peso|unlocalize}};
                     {% endif %}
-                {% endfor %}
+                  </script>
+                {% endif %}
+            {% endfor %}
+          </td>
+
+          {% if alocacao %}
+            {% with media=alocacao.get_media %}
+              <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
+                <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
+                  {% if media.media < 5 %}style="color:red;"{% endif %}
+                  >
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </a>
               </td>
 
-              {% if alocacao %}
-                {% with media=alocacao.get_media %}
-                  <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
-                    <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
-                      {% if media.media < 5 %}style="color:red;"{% endif %}
+              <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
+
+                <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
+                data-toggle="tooltip" data-html="true" animation="true" 
+                  
+                  {% if media.probation %}
+                    style="color:#e6a10f;" title="Estudante em Probatório">P
+                  {% elif alocacao.projeto_alocado_reprovacao.all %}
+                    style="color:red;"
+                    title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente"
+                    >
+                  {% else %}
+                    {% if media.pesos != 1 %}
+                      style="color:orange;"
+                      title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
+                    {% elif media.media < 5 %}
+                      style="color:red;">
+                    {% else %}
                       >
-                      <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
-                      <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
-                    </a>
-                  </td>
-
-                  <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
-
-                    <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
-                    data-toggle="tooltip" data-html="true" animation="true" 
-                      
-                      {% if media.probation %}
-                        style="color:#e6a10f;" title="Estudante em Probatório">P
-                      {% elif alocacao.projeto_alocado_reprovacao.all %}
-                        style="color:red;"
-                        title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente"
-                        >
-                      {% else %}
-                        {% if media.pesos != 1 %}
-                          style="color:orange;"
-                          title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
-                        {% elif media.media < 5 %}
-                          style="color:red;">
-                        {% else %}
-                          >
-                        {% endif %}
-                      {% endif %}
-                      <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
-                      <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
-                    </a>
-                  </td>
-                {% endwith %}
-              {% else %}
-                <td></td><td></td>
-              {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </a>
+              </td>
             {% endwith %}
-          </tr>
-          {% endfor %}
-        </tbody>
-        <caption style="text-align:right">
-          <small>
-            <span style="white-space: nowrap;">BI: Banca Intermediária</span> |
-            <span style="white-space: nowrap;">BF: Banca Final</span> |
-            <span style="white-space: nowrap;">RIG: Relatório Intermediário de Grupo</span> |
-            <span style="white-space: nowrap;">RFG: Relatório Final de Grupo</span> |
-            <span style="white-space: nowrap;">RII: Relatório Intermediário Individual</span> |
-            <span style="white-space: nowrap;">RFI: Relatório Final Individual</span>
-            <br>
-            Projetos <u>sublinhados</u> são de Capstone Avançado
-          </small>
-        </caption>
-      </table>
-    </div>
+          {% else %}
+            <td></td><td></td>
+          {% endif %}
+        {% endwith %}
+      </tr>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+    
    
     {% if alunos_list %}
       <div id="medias" style="padding: 4px;">

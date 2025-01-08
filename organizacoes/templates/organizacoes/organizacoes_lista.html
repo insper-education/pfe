@@ -12,46 +12,41 @@
 
 {% block content %}
 
-  {% include "tabelas_top_ml.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
-        {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
-          <tr class="item">
+  {% include "tabelas_top_ml.html" with tabela="Organizacoes" captions=captions cabecalhos=cabecalhos %}
+    {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
+      <tr class="item">
 
-          <th scope="row" data-sort="{{organizacao.nome}}">
-            <a href="{% url 'organizacao_completo' organizacao.id %}">
-              {{organizacao.nome}}
-            </a>
-          </th>
+      <th scope="row" data-sort="{{organizacao.nome}}">
+        <a href="{% url 'organizacao_completo' organizacao.id %}">{{organizacao.nome}}</a>
+      </th>
 
-          <td>
-            {% if contato == '---------' %}
-              ---------
-            {% else %}
-              {{contato.momento|date:"m/Y"}}
-            {% endif %}
-            </td>
+      <td>
+        {% if contato == '---------' %}
+          ---------
+        {% else %}
+          {{contato.momento|date:"m/Y"}}
+        {% endif %}
+        </td>
 
-            <td>{{desde}}</td>
+        <td>{{desde}}</td>
 
-            <td class="text-center">{{organizacao.proposta_set.count|stringformat:"03d"}}</td>
+        <td class="text-center">{{organizacao.proposta_set.count|stringformat:"03d"}}</td>
 
-            <td class="text-center">{{fechados|stringformat:"03d"}}</td>
+        <td class="text-center">{{fechados|stringformat:"03d"}}</td>
 
-            <td class="text-center">{{grupos}}</td>
+        <td class="text-center">{{grupos}}</td>
 
-          </tr>
-        {% endfor %}
-        {% comment %} Não mudar o caption para varias linhas pois o PDF será gerado errado {% endcomment %}
-        <caption style="text-align:right;"><small>{% for curso in cursos %}<span style="white-space: nowrap;">{{curso.sigla_curta}}: {{curso.nome}}</span>{% if not forloop.last %} / {% endif %}{% endfor %}</small></caption>
-      </table>
-    </div>
+      </tr>
+    {% endfor %}
+  {% include "tabelas_bottom.html" %}
 
-    <strong lang="pt">Total de Propostas Submetidas</strong><strong lang="en">Total of Submitted Proposals</strong>: {{ total_submetidos }}<br>
-    <strong lang="pt">Total de Projetos Fechados</strong><strong lang="en">Total of Closed Projects</strong>: {{ total_fechados }}<br>
+  <strong lang="pt">Total de Propostas Submetidas</strong><strong lang="en">Total of Submitted Proposals</strong>: {{ total_submetidos }}<br>
+  <strong lang="pt">Total de Projetos Fechados</strong><strong lang="en">Total of Closed Projects</strong>: {{ total_fechados }}<br>
 
-    <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_organizacao" %}'" type="button" style="float: right;">
-      <span lang="pt">Cadastrar Nova Organização</span>
-      <span lang="en" style="display: none;">Register New Organization</span>
-    </button></small><br>
+  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_organizacao" %}'" type="button" style="float: right;">
+    <span lang="pt">Cadastrar Nova Organização</span>
+    <span lang="en" style="display: none;">Register New Organization</span>
+  </button></small><br>
 
   <script>
     function carrega_pagina(){

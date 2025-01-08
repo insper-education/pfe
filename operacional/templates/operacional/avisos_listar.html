@@ -36,126 +36,116 @@
 
   <form method="post">{% csrf_token %}
 
-    {% include "tabelas_top_ml.html" with tabela="Avisos" cabecalhos=cabecalhos tabela_simples=True %}
-        {% for a in avisos %}
-          {% if a.class == "Evento" %}
-            <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
-             class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
-              <th scope="row"></th>
-              <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
-              </td>
-              <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
-                  {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
-                  {% if a.evento.tipo_evento.sigla == "A" %}Or{% endif %}
-                </span>
-              </td>
-              <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
-                <span lang="pt">{{a.evento.tipo_evento.nome}}</span>
-                <span lang="en" style="display:none;">{{a.evento.tipo_evento.nome_en}}</span>
-              </td>
-            </tr>
-
-          {% comment %} Caso um aviso {% endcomment %}
-          {% else %}
-            <tr 
-            class="linha
-              {% if a.data %}
-                {% if a.data < hoje %}text-success{% else %}text-info{% endif %}
-              {% else %}
-                text-muted
-              {% endif %}
-              {% if hoje < a.data %}atual{% endif %}
-            "
-            data-type="
-              {% if a.aviso.coordenacao %}Co{% endif %}
-              {% if a.aviso.operacional %}Op{% endif %}
-              {% if a.aviso.comite_pfe %}Cm{% endif %}
-              {% if a.aviso.todos_alunos %}Es{% endif %}
-              {% if a.aviso.todos_orientadores %}Or{% endif %}
-              {% if a.aviso.contatos_nas_organizacoes %}Og{% endif %}
-            " 
-            {% if a.data == hoje %}style="background-color: #F0FFFF;"{% endif %} >
-
-            <th style="vertical-align: middle; text-align:center;" scope="row">
-              {% if a.data %}
-                {% with instante=a.data|date:"md"%}
-                  <input class="aviso" type="checkbox" id="{{forloop.counter}}" name="aviso{{a.id}}" value="{{instante}}" 
-                    {% if instante in a.aviso.datas_realizado %}checked{% endif %}
-                    {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-                {% endwith %}
-              {% endif %}
-            </th>
-            
-            <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
-              <label style="line-height: 0px;" for="{{forloop.counter}}">
-                {% if a.data%}
-                  <span class="texto-longo">{{a.data}}</span>
-                  <span class="texto-curto">{{a.data|date:"d/m/y"}}</span>
-                {% else %}
-                  <span lang="pt">Sem evento no semestre</span>
-                  <span lang="en" style="display:none;">No event this semester</span>
-                {% endif %}
-              </label>
+    {% include "tabelas_top_ml.html" with tabela="Avisos" cabecalhos=cabecalhos captions=captions tabela_simples=True %}
+      {% for a in avisos %}
+        {% if a.class == "Evento" %}
+          <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
+            class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
+            <th scope="row"></th>
+            <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
+              <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
             </td>
-
-            <td style="vertical-align: middle;">
-              {% if a.aviso.coordenacao %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
-              {% endif %}
-              {% if a.aviso.operacional %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Equipe Operacional">Op</span>
-              {% endif %}
-              {% if a.aviso.comite_pfe %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Comite Capstone">Cm</span>
-              {% endif %}
-              {% if a.aviso.todos_alunos %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Estudantes">Es</span>
-              {% endif %}
-              {% if a.aviso.todos_orientadores %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Orientadores">Or</span>
-              {% endif %}
-              {% if a.aviso.contatos_nas_organizacoes %}
-                <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
-              {% endif %}
+            <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
+                {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
+                {% if a.evento.tipo_evento.sigla == "A" %}Or{% endif %}
+              </span>
             </td>
-
-            <td style="vertical-align: middle;">
-              {% if a.id %}<a {% if not a.data %}class="text-muted"{% endif %} href="{% url 'edita_aviso' a.id %}">{% endif %}
-                {{a.aviso.titulo}}
-              {% if a.id %}</a>{% endif %}
+            <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
+              <span lang="pt">{{a.evento.tipo_evento.nome}}</span>
+              <span lang="en" style="display:none;">{{a.evento.tipo_evento.nome_en}}</span>
             </td>
           </tr>
-          {% endif %}
 
-        {% empty %}
-          <p lang="pt">Não existem avisos.</p>
-          <p lang="en" style="display:none;">There are no notices.</p>
-        {% endfor %}
-        </tbody>
-        <caption>
-          <small>
-            <b>Co</b>: <span lang="pt">Coordenação</span><span lang="en" style="display:none;">Coordination</span>;
-            <b>Op</b>: <span lang="pt">Equipe Operacional</span><span lang="en" style="display:none;">Operational Team</span>;
-            <b>Cm</b>: <span lang="pt">Comitê Capstone</span><span lang="en" style="display:none;">Capstone Committee</span>;
-            <b>Es</b>: <span lang="pt">Estudantes</span><span lang="en" style="display:none;">Students</span>;
-            <b>Or</b>: <span lang="pt">Orientadores</span><span lang="en" style="display:none;">Advisors</span>;
-            <b>Og</b>: <span lang="pt">Contatos nas Organizações</span><span lang="en" style="display:none;">Contacts in Organizations</span>;
-          </small>
-        </caption>
-      </table>
+        {% comment %} Caso um aviso {% endcomment %}
+        {% else %}
+          <tr 
+          class="linha
+            {% if a.data %}
+              {% if a.data < hoje %}text-success{% else %}text-info{% endif %}
+            {% else %}
+              text-muted
+            {% endif %}
+            {% if hoje < a.data %}atual{% endif %}
+          "
+          data-type="
+            {% if a.aviso.coordenacao %}Co{% endif %}
+            {% if a.aviso.operacional %}Op{% endif %}
+            {% if a.aviso.comite_pfe %}Cm{% endif %}
+            {% if a.aviso.todos_alunos %}Es{% endif %}
+            {% if a.aviso.todos_orientadores %}Or{% endif %}
+            {% if a.aviso.contatos_nas_organizacoes %}Og{% endif %}
+          " 
+          {% if a.data == hoje %}style="background-color: #F0FFFF;"{% endif %} >
+
+          <th style="vertical-align: middle; text-align:center;" scope="row">
+            {% if a.data %}
+              {% with instante=a.data|date:"md"%}
+                <input class="aviso" type="checkbox" id="{{forloop.counter}}" name="aviso{{a.id}}" value="{{instante}}" 
+                  {% if instante in a.aviso.datas_realizado %}checked{% endif %}
+                  {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+              {% endwith %}
+            {% endif %}
+          </th>
+          
+          <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
+            <label style="line-height: 0px;" for="{{forloop.counter}}">
+              {% if a.data%}
+                <span class="texto-longo">{{a.data}}</span>
+                <span class="texto-curto">{{a.data|date:"d/m/y"}}</span>
+              {% else %}
+                <span lang="pt">Sem evento no semestre</span>
+                <span lang="en" style="display:none;">No event this semester</span>
+              {% endif %}
+            </label>
+          </td>
+
+          <td style="vertical-align: middle;">
+            {% if a.aviso.coordenacao %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
+            {% endif %}
+            {% if a.aviso.operacional %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Equipe Operacional">Op</span>
+            {% endif %}
+            {% if a.aviso.comite_pfe %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Comite Capstone">Cm</span>
+            {% endif %}
+            {% if a.aviso.todos_alunos %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Estudantes">Es</span>
+            {% endif %}
+            {% if a.aviso.todos_orientadores %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Orientadores">Or</span>
+            {% endif %}
+            {% if a.aviso.contatos_nas_organizacoes %}
+              <span data-toggle="tooltip" data-html="true" animation="true" title="Contatos nas Organizacoes">Og</span>
+            {% endif %}
+          </td>
+
+          <td style="vertical-align: middle;">
+            {% if a.id %}<a {% if not a.data %}class="text-muted"{% endif %} href="{% url 'edita_aviso' a.id %}">{% endif %}
+              {{a.aviso.titulo}}
+            {% if a.id %}</a>{% endif %}
+          </td>
+        </tr>
+        {% endif %}
+
+      {% empty %}
+        <p lang="pt">Não existem avisos.</p>
+        <p lang="en" style="display:none;">There are no notices.</p>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+
+    <div class="mt-4">
+      <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
+        <span lang="pt">Cria Aviso</span>
+        <span lang="en" style="display:none;">Create Notice</span>
+      </a>
+      <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
+        onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
+        <span lang="pt">Reenviar Avisos do Dia</span>
+        <span lang="en" style="display:none;">Resend Daily Notices</span>
+      </a>
     </div>
-
-    <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
-      <span lang="pt">Cria Aviso</span>
-      <span lang="en" style="display:none;">Create Notice</span>
-    </a>
-    <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
-       onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
-      <span lang="pt">Reenviar Avisos do Dia</span>
-      <span lang="en" style="display:none;">Resend Daily Notices</span>
-    </a>
 
   </form>
 

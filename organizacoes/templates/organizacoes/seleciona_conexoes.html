@@ -48,42 +48,17 @@
 
 {% block content %}
 
-  <span>
+  <div>
     <span lang="pt">Projeto:</span>
     <span lang="en" style="display: none;">Project:</span>
     {{projeto}}
-  </span>
-  <br><br>
+  </div>
+  <br>
 
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
 
-
-    {% comment %} {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %} {% endcomment %}
-
-      <div class="table-responsive">
-      <table id="ParceirosTable" class="tabela-padrao table-bordered table-hover table-sm">
-        <thead class="table">
-          <tr>
-            <th scope="col" class="text-center">GR</th>
-            <th scope="col" class="text-center">MT</th>
-            <th scope="col" class="text-center">AA</th>
-            <th scope="col" class="text-center">
-              <span lang="pt">Nome</span>
-              <span lang="en" style="display: none;">Name</span>
-            </th>
-            <th scope="col" class="text-center">
-              <span lang="pt">Cargo</span>
-              <span lang="en" style="display: none;">Position</span>
-            </th>
-            <th scope="col" class="text-center">e-mail</th>
-            <th scope="col" class="text-center">
-              <span lang="pt">Telefone</span>
-              <span lang="en" style="display: none;">Phone</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for parceiro in parceiros %}
+    {% include "tabelas_top_ml.html" with tabela="Parceiros" cabecalhos=cabecalhos captions=captions tabela_simples=True %}
+      {% for parceiro in parceiros %}
         {% with conexoes=parceiro.conexao_set.all %}
           <tr class="item {% if not parceiro.user.is_active %}links-claros{% endif %}">
             <th scope="row" style="text-align: center;">
@@ -144,43 +119,38 @@
             </td>
           </tr>
         {% endwith %}
-        
 
-        {% endfor %}
-        
-        </tbody>
-        <caption style="text-align: right">
-          {% for _,captions  in Conexao.papel.items %}
-            <span style="white-space: nowrap;">{{captions.1}}: {{captions.0}}</span>
-            {% if not forloop.last %}/{% endif %}
+      {% empty %}
+        <tr>
+          <td colspan="{{ cabecalhos|length }}">
+            <span lang="pt">Não existem parceiros cadastrados para esse projeto.</span>
+            <span lang="en" style="display: none;">There are no partners registered for this project.</span>
+          </td>
+        </tr>
+      {% endfor %}
+    
+    {% include "tabelas_bottom.html" %}
+
+    <div class="mt-2">
+      <label for="colaboracao">
+        <span lang="pt">Colaboração Externa (CE)</span>
+        <span lang="en" style="display: none;">External Collaboration (EC)</span>
+      </label></b>:
+      <div style="display: inline-block; width: 480px;">
+      <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
+      data-live-search="true" data-width="100%" data-size="10">
+          <option selected value> -- selecione um colaborador(a) -- </option>
+          <optgroup label="Organização">
+          {% for colaborador in todos_parceiros %}  
+            <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores.id %}selected{% endif %}>
+              {{colaborador.user.get_full_name}} [{{colaborador.organizacao}}]
+            </option>
           {% endfor %}
-        </caption>
-
-      </table>
+          </optgroup>
+      </select>
       </div>
-    
-      {% comment %} <p>Não existem parceiros cadastradas para essa organização.</p> {% endcomment %}
-    
-
-    
-    <label for="colaboracao">
-      <span lang="pt">Colaboração Externa (CE)</span>
-      <span lang="en" style="display: none;">External Collaboration (EC)</span>
-    </label></b>:
-    <div style="display: inline-block; width: 480px;">
-    <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
-    data-live-search="true" data-width="100%" data-size="10">
-        <option selected value> -- selecione um colaborador(a) -- </option>
-        <optgroup label="Organização">
-        {% for colaborador in todos_parceiros %}  
-          <option value="{{colaborador.id}}" {% if colaborador.id == colaboradores.id %}selected{% endif %}>
-            {{colaborador.user.get_full_name}} [{{colaborador.organizacao}}]
-          </option>
-        {% endfor %}
-        </optgroup>
-    </select>
     </div>
-    <br><br><br>
+    <br>
 
     <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
       <span lang="pt">Cadastrar Novo Parceiro</span>
@@ -216,8 +186,8 @@
     });
 
     function showMessage(message, alertClass) {
-      var messageDiv = $('#message');
-      messageDiv.removeClass('alert-success alert-warning alert-danger');
+      var messageDiv = $("#message");
+      messageDiv.removeClass("alert-success alert-warning alert-danger");
       messageDiv.addClass(alertClass);
       messageDiv.html(message);
       messageDiv.fadeIn();
@@ -228,10 +198,5 @@
     }
 
   </script>
-
-  {% comment %} <script>
-    function carrega_pagina(){}
-    window.onload = carrega_pagina
-  </script> {% endcomment %}
 
 {% endblock %}

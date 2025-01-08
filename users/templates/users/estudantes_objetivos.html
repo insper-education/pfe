@@ -19,93 +19,78 @@
   
   <div class="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
-        {% for aluno in alunos_list %} 
-          <tr class="item">
-            <th scope="row" data-order="{{aluno.user.get_full_name}}">
-              <a href="{% url 'estudante_detail' aluno.id %}">
-                {{aluno.user.get_full_name}}
-                {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
-              </a>
-            </th>
- 
-            <td>
-              <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+      {% for aluno in alunos_list %} 
+        <tr class="item">
+          <th scope="row" data-order="{{aluno.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' aluno.id %}">
+              {{aluno.user.get_full_name}}
+              {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+            </a>
+          </th>
+
+          <td>
+            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+          </td>
+
+          {% if aluno.curso2 %}
+            <td style="color:#{{ aluno.curso2.cor }};">
+              {{ aluno.curso2.sigla_curta }}
             </td>
+          {% else %}
+            <td>Indefinido</td>
+          {% endif %}
 
-            {% if aluno.curso2 %}
-              <td style="color:#{{ aluno.curso2.cor }};">
-                {{ aluno.curso2.sigla_curta }}
-              </td>
-            {% else %}
-              <td>Indefinido</td>
-            {% endif %}
-
-            <td>
-              {% if aluno.alocacao_set.all %}
-                {% for alocacao in aluno.alocacao_set.all %}
-                  {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                    <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                      {{alocacao.projeto.get_titulo}}
+          <td>
+            {% if aluno.alocacao_set.all %}
+              {% for alocacao in aluno.alocacao_set.all %}
+                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
+                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                    {{alocacao.projeto.get_titulo}}
+                  </a>
+                  {% if alocacao.projeto and alocacao.projeto.organizacao %}
+                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                      ({{alocacao.projeto.organizacao}})<br>
                     </a>
-                    {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                      <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                        ({{alocacao.projeto.organizacao}})<br>
-                      </a>
-                    {% else %}
-                      SEM ORGANIZAÇÃO
-                    {% endif %}
-                    {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+                  {% else %}
+                    SEM ORGANIZAÇÃO
                   {% endif %}
-                {% endfor %}
-              {% endif %}
-            </td>
-            {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-              {% with oa=alocacao.get_oas_i %}
-                {% for objetivo in objetivos %}
-                  <td style="text-align:right;">
-                    {% if oa|get_value:objetivo %}
-                      <span data-toggle="tooltip" data-html="true" animation="true" title="
-                        {% for c in oa|get_value:objetivo|get_value:'conceito' %}
-                          <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
-                            {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
-                          </span><br>
-                        {% endfor %}
-                      "
-                      > 
-                        {% with media=oa|get_value:objetivo|get_value:"media" %}
-                          <span style="color: {{ media.2 }};">
-                            {{ media.0 }} ({{ media.1|stringformat:".2f" }})
-                          </span>
-                        {% endwith %}
-                      </span>
-                    {% endif %}
-                  </td>
-                {% endfor %}
-              {% endwith %}  
-            {% endwith %}
-          </tr>
-        {% endfor %}
-        </tbody>
-        <caption style="text-align:right">
-          <small>
-            {% for curso in cursos %}
-              <span style="white-space: nowrap;"><span style="color:#{{ curso.cor }};">{{ curso.sigla_curta }}</span>: {{curso.nome}}</span>
-              {% if not forloop.last %} |{% endif %}
-            {% endfor %}
-            <br>
-            <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
-            <span lang="en">Projects <u>underlined</u> are Advanced Capstone</span>
-          </small>
-        </caption>
-      </table>
-    </div>
-    <br>
+                  {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </td>
+          {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
+            {% with oa=alocacao.get_oas_i %}
+              {% for objetivo in objetivos %}
+                <td style="text-align:right;">
+                  {% if oa|get_value:objetivo %}
+                    <span data-toggle="tooltip" data-html="true" animation="true" title="
+                      {% for c in oa|get_value:objetivo|get_value:'conceito' %}
+                        <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
+                          {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
+                        </span><br>
+                      {% endfor %}
+                    "
+                    > 
+                      {% with media=oa|get_value:objetivo|get_value:"media" %}
+                        <span style="color: {{ media.2 }};">
+                          {{ media.0 }} ({{ media.1|stringformat:".2f" }})
+                        </span>
+                      {% endwith %}
+                    </span>
+                  {% endif %}
+                </td>
+              {% endfor %}
+            {% endwith %}  
+          {% endwith %}
+        </tr>
+      {% endfor %}
 
+    {% include "tabelas_bottom.html" %}
+    
     <script>
-      {% comment %} function carrega_pagina() {}; {% endcomment %}
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
-        {% comment %} carrega_pagina(); {% endcomment %}
       }
       window.onload = carrega_site
     </script>

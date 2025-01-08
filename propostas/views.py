@@ -353,7 +353,34 @@ def propostas_apresentadas(request):
 
                     total_vagas["prop"] += prop
                     total_vagas["prop_disp"] += prop_disp
-        
+
+#             <th scope="col" class="estados text-center"
+#             ><span id="autorizado-icon"></span></th>
+#             ><span id="disponivel-icon"></span></th>
+#             ><span id="fechado-icon"></span></th>
+#             <th scope="col" class="periodo 
+#             <th scope="col" class="organizacao" 
+#             <th scope="col" class="estudantes 
+#              ><span class="estudante-icon"></span>1</th>
+#              ><span class="estudante-icon"></span>2</th>
+#              ><span class="estudante-icon"></span>3</th>
+#              ><span class="estudante-icon"></span>4</th>
+
+            cabecalhos = [
+                {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes"},
+                {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"},
+                {"pt": "Fechada", "en": "Confirmed", "font": "12px", "tooltip": "Foi formado um grupo de estudantes para essa proposta de projeto"},
+                {"pt": "Proposta", "en": "Proposal"},
+                {"pt": "Período", "en": "Semester"},
+                {"pt": "Organização", "en": "Organization"},
+                {"pt": "Tipo", "en": "Type", "font-size": "12px"},
+                {"pt": "Estudante1", "en": "Student1", "font": "12px", "classes": "estudante-icon"},
+                {"pt": "Estudante2", "en": "Student2", "font": "12px", "classes": "estudante-icon"},
+                {"pt": "Estudante3", "en": "Student3", "font": "12px", "classes": "estudante-icon"},
+                {"pt": "Estudante4", "en": "Student4", "font": "12px", "classes": "estudante-icon"},
+                {"pt": "Disciplinas Recomendadas", "en": "Recommended Courses", "font": "12px"},
+            ]
+
             context = {
                 "propostas": propostas_filtradas,
                 "num_organizacoes": num_organizacoes,
@@ -365,16 +392,16 @@ def propostas_apresentadas(request):
                 "total_vagas": total_vagas,
                 "limite_propostas": get_limite_propostas(configuracao),
                 "liberadas_propostas": propostas_liberadas(configuracao),
+                "cabecalhos": cabecalhos,
             }
 
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
     else:
-        edicoes, _, _ = get_edicoes(Proposta)
         context = {
             "titulo": {"pt": "Propostas de Projetos Apresentadas", "en": "Proposed Projects"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Proposta)[0],
             }
 
     return render(request, "propostas/propostas_apresentadas.html", context)

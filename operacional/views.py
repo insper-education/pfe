@@ -92,12 +92,22 @@ def avisos_listar(request):
         {"pt": "Título", "en": "Title"},
     ]
 
+    captions = [
+          {"sigla": "Co", "pt": "Coordenação", "en": "Coordination"},
+          {"sigla": "Op", "pt": "Equipe Operacional", "en": "Operational Team"},
+          {"sigla": "Cm", "pt": "Comitê Capstone", "en": "Capstone Committee"},
+          {"sigla": "Es", "pt": "Estudantes", "en": "Students"},
+          {"sigla": "Or", "pt": "Orientadores", "en": "Advisors"},
+          {"sigla": "Og", "pt": "Contatos nas Organizações", "en": "Contacts in Organizations"},
+    ]
+
     context = {
         "titulo": { "pt": "Avisos", "en": "Notices" },
         "avisos": avisos,
         "hoje" : datetime.date.today(),
         "filtro" : "todos",
         "cabecalhos": cabecalhos,
+        "captions": captions,
     }
 
     return render(request, "operacional/avisos_listar.html", context)

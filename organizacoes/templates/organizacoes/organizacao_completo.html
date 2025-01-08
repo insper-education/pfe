@@ -147,8 +147,8 @@
     </small>
   </h3>
   <div class="caixa_rolante">
-    {% for entrada in organizacao.projeto_set.all %}
-      {% include "certificados.html" with certificados=entrada.certificado_set.all %}
+    {% for projeto in projetos %}
+      {% include "certificados.html" with certificados=projeto.certificado_set.all %}
     {% endfor %}
   </div>
 
@@ -174,7 +174,6 @@
   {% endif %}
   {% endwith %}
 
-  {% with projetos=organizacao.projeto_set.all %}
   {% if projetos %}
     <hr>
     <h3>Projetos</h3>
@@ -197,7 +196,6 @@
     </ol>
     </div>
   {% endif %}
-  {% endwith %}
   
   <hr>
   <h3>Anotações <small class="esconder">

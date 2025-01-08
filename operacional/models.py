@@ -14,21 +14,21 @@ class Curso(models.Model):
     """Classe para os cursos da escola."""
 
     nome = models.CharField("Nome", max_length=50, null=True,
-                                    blank=True,
-                                    help_text='Nome do curso')
+                                    blank=True, help_text="Nome do curso")
+    
+    nome_en = models.CharField("Nome (Inglês)", max_length=50, null=True,
+                                    blank=True, help_text="Nome do curso em Inglês")
 
     sigla = models.CharField("Sigla", max_length=10, null=True,
-                                      blank=True,
-                                      help_text="Sigla do curso, ex: GRENGCOMP, GRENGMECAT, GRENGMECA, GRCIECOMP")
+                                      blank=True, help_text="Sigla do curso, ex: GRENGCOMP, GRENGMECAT, GRENGMECA, GRCIECOMP")
 
     sigla_curta = models.CharField("Sigla Curta", max_length=3, null=True,
-                                      blank=True,
-                                      help_text='Sigla curta do curso: ex: C, X, M')
+                                      blank=True, help_text="Sigla curta do curso: ex: C, X, M")
 
-    cor = models.CharField(max_length=6, default="000000", help_text='Cor para curso')
+    cor = models.CharField(max_length=6, default="000000", help_text="Cor para curso")
 
     curso_do_insper = models.BooleanField("Curso do Insper", default=True,
-                             help_text='Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)')
+                             help_text="Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)")
 
     class Meta:
         ordering = [ "nome",]
