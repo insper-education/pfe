@@ -188,11 +188,10 @@ class Projeto(models.Model):
         certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
         return certificado
 
-
-    # @property
-    # def organizacao(self):
-    #     """Retorna a organização que foi definida na proposta."""
-    #     return self.proposta.organizacao
+    @property
+    def organizacao(self):
+        """Retorna a organização que foi definida na proposta."""
+        return self.proposta.organizacao
 
     def __str__(self):
         """Retorno padrão textual."""
