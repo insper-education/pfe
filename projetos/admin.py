@@ -178,11 +178,10 @@ class EventoFilter(SimpleListFilter):
 class ProjetoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Projeto."""
 
-    list_display = ("ano", "semestre", "orientador", "get_titulo",)
-    #list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
+    list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
     list_filter = (FechadoFilter, "ano", "semestre",)
     actions = [dup_projeto]
-    #search_fields = ["titulo_final", "organizacao__sigla", ]
+    search_fields = ["titulo_final", "proposta__organizacao__sigla", ]
 
 
 @admin.register(Proposta)
@@ -236,7 +235,7 @@ class DocumentoAdmin(admin.ModelAdmin):
     list_display = ("tipo_documento", "data", "confidencial", "organizacao", "usuario", "projeto")
     list_filter = ("data", "tipo_documento", "confidencial", "lingua_do_documento", )
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
-                     "usuario__username", "projeto__organizacao__sigla",]
+                     "usuario__username", "projeto__proposta__organizacao__sigla",]
 
 @admin.register(Banco)
 class BancoAdmin(admin.ModelAdmin):
@@ -259,7 +258,7 @@ class BancaAdmin(admin.ModelAdmin):
 
     list_display = ("composicao", "projeto", "get_orientador", "get_organizacao", "startDate", "slug",)
     list_filter = ("composicao__exame", "projeto__ano", "projeto__semestre",)
-    search_fields = ["projeto__titulo_final", "projeto__organizacao__sigla", 
+    search_fields = ["projeto__titulo_final", "projeto__proposta__organizacao__sigla", 
                      "projeto__orientador__user__first_name", "projeto__orientador__user__last_name",
                      "membro1__first_name", "membro1__last_name",
                      "membro2__first_name", "membro2__last_name",
@@ -363,7 +362,7 @@ class Avaliacao2Admin(admin.ModelAdmin):
     ordering = ("-momento",)
     list_filter = ("exame", "projeto__ano", "projeto__semestre")
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
-                     "alocacao__aluno__user__username", "projeto__organizacao__sigla"]
+                     "alocacao__aluno__user__username", "projeto__proposta__organizacao__sigla"]
 
 
 @admin.register(Avaliacao_Velha)
@@ -375,7 +374,7 @@ class Avaliacao_VelhaAdmin(admin.ModelAdmin):
     ordering = ("momento",)
     list_filter = ("exame", "projeto__ano", "projeto__semestre")
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
-                     "alocacao__aluno__user__username", "projeto__organizacao__sigla"]
+                     "alocacao__aluno__user__username", "projeto__proposta__organizacao__sigla"]
 
 
 @admin.register(Reprovacao)
@@ -422,7 +421,7 @@ class CertificadoAdmin(admin.ModelAdmin):
     list_display = ("data", "usuario", "projeto", "tipo_certificado", )
     ordering = ("data",)
     list_filter = ("tipo_certificado", "data", "projeto__ano", "projeto__semestre",)
-    search_fields = ["usuario__username", "projeto__organizacao__sigla",
+    search_fields = ["usuario__username", "projeto__proposta__organizacao__sigla",
                      "projeto__titulo_final", "projeto__proposta__titulo",]
 
 

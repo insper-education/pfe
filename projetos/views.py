@@ -292,7 +292,7 @@ def projetos_fechados(request):
 
             curso = request.POST["curso"]    
             
-            projetos_filtrados = projetos_filtrados.order_by("-avancado", Lower("organizacao__nome"))
+            projetos_filtrados = projetos_filtrados.order_by("-avancado", Lower("proposta__organizacao__nome"))
 
             projetos_filtrados = projetos_filtrados.prefetch_related(
                 "alocacao_set__aluno__user",

@@ -869,7 +869,6 @@ def seleciona_conexoes(request):
 
     if projeto.organizacao:
         parceiros = Parceiro.objects.filter(organizacao=projeto.organizacao)
-        print(projeto.organizacao)
     else:
         return HttpResponseNotFound("<h1>Projeto não tem organização definida!</h1>")
 
