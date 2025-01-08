@@ -8,6 +8,7 @@
 {% block head %}
 
   {% load static %}
+  {% load documentos %}
 
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
@@ -156,7 +157,7 @@
                 {% endif %}
               {% endif %}
 
-              {% for publico in relatorio.projeto.get_documentos_publicos %}
+              {% for publico in relatorio.projeto|get_documentos_publicos %}
                 {% if publico.documento %}
                   <a class="btn btn-light btn-outline-info btn-sm mt-1"
                     href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">

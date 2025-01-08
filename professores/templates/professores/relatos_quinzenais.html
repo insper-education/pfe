@@ -19,7 +19,7 @@
   <div class="atualizar">
 
     {% if not edicoes %}
-      {% for projeto in projetos %}
+      {% for projeto, alocacoes in proj_aloc %}
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
           
@@ -27,7 +27,7 @@
 
             <div style="margin-top:8px;"><strong><span lang="pt">Relatos</span><span lang="en">Reports</span>:</strong></div>
 
-            {% include "relatos.html" with alocacoes=projeto.get_alocacoes %}
+            {% include "relatos.html" %}
 
             <small lang="pt">Obs: prazos para a entrega dos estudantes.</small>
             <small lang="en">Note: deadlines for students' submissions.</small>

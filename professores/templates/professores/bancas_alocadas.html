@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
+  {% load documentos %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
   {% include "reload.html" %}
@@ -81,7 +82,7 @@
         {% endif %}
 
         <div>
-          {% with relatorio=banca.get_relatorio %}
+          {% with relatorio=banca|get_relatorio %}
             {% if relatorio %}
               <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
                 target="_blank" rel="noopener noreferrer"><b>[RELATÓRIO]</b>

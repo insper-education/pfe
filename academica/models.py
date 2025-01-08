@@ -9,7 +9,7 @@ Data: 4 de Novembro de 2023
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from administracao.models import TipoEvento
+#from administracao.models import TipoEvento
 
 from projetos.tipos import TIPO_EVENTO
 

@@ -7,7 +7,7 @@ Data: 16 de Junho de 2023
 """
 
 from django.db import models
-from django.db.models.functions import Lower
+#from django.db.models.functions import Lower
 
 class Carta(models.Model):
     """Textos para serem usados em comunicações."""

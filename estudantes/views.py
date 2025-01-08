@@ -60,9 +60,7 @@ def index_estudantes(request):
     # Caso estudante
     if request.user.tipo_de_usuario == 1:
 
-        projeto = Projeto.objects\
-            .filter(alocacao__aluno=request.user.aluno).order_by("ano", "semestre").last()
-
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
         context["projeto"] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
@@ -95,8 +93,7 @@ def index_estudantes(request):
     elif request.user.tipo_de_usuario in (2, 4):
         context["fase_final"] = True
 
-    # Caso parceiro
-    else:
+    else:  # Caso parceiro
         return HttpResponse("Usuário sem acesso.", status=401)
 
     context["ano"], context["semestre"] = adianta_semestre(ano, semestre)
@@ -104,7 +101,6 @@ def index_estudantes(request):
     #get_limite_propostas2 return None caso não haja limite
     context["limite_propostas"] = get_limite_propostas2(configuracao)
 
-    #(113, "Apresentação das propostas disponíveis para estudantes", "#2E8B57"),
     tenevento = TipoEvento.objects.get(nome="Apresentação das propostas disponíveis para estudantes")
     context["liberacao_visualizacao"] = Evento.objects.filter(tipo_evento=tenevento).last().startDate
     context["titulo"] = {"pt": "Área dos Estudantes", "en": "Students Area"}
@@ -386,7 +382,7 @@ def estudante_feedback_geral(request, usuario):
 
     elif usuario.tipo_de_usuario == 1: # Estudante
         hoje = datetime.date.today()
-        projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).order_by("ano", "semestre").last()
+        projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).last()
         evento_banca_final = Evento.get_evento(nome="Bancas Finais", ano=projeto.ano, semestre=projeto.semestre)
         if not evento_banca_final or (evento_banca_final and hoje <= evento_banca_final.endDate):
             mensagem = "Fora do período de feedback do Capstone!"
@@ -803,7 +799,7 @@ def submissao_documento(request):
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
-            projeto = Projeto.objects.filter(orientador=request.user.professor).order_by("ano", "semestre").last()
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
             context["mensagem"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
     else:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()

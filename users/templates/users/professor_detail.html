@@ -46,9 +46,11 @@
         {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
         {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
         </a>
-        {% if projeto.certificado_orientador %}
-          <a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
-        {% endif %}
+        {% with certificado_orientador=projeto|certificado_orientador %}
+          {% if certificado_orientador %}
+            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+          {% endif %}
+        {% endwith %}
         {% if projeto.proposta.intercambio %}
           <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
         {% endif %}
@@ -69,12 +71,14 @@
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
         <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
-        {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
-        {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-        </a>
-        {% if coorientacao.certificado_coorientador %}
-          <a href="{{ coorientacao.certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
-        {% endif %}
+          {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
+          {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
+          </a>
+          {% with certificado_coorientador=coorientacao|certificado_coorientador %}
+            {% if certificado_coorientador %}
+              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+            {% endif %}
+          {% endwith %}
         </li>
       {% endif %}
     {% empty %}

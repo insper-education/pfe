@@ -1,4 +1,5 @@
 {% load escape_emails %}
+{% load documentos %}
 mailto:{% for membro in banca.membros %}{% if com_nome %}{{membro.get_full_name}}%20&lt;{% endif %}{{membro.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% for coorientador in banca.projeto.coorientador_set.all %}{% if com_nome %}{{coorientador.usuario.get_full_name|parse_quote}}%20&lt;{% endif %}{{coorientador.usuario.email|parse_quote}}{% if com_nome %}&gt;{% endif %},{% endfor %}
 {% if com_nome %}{{banca.projeto.orientador.user.get_full_name|parse_quote}}%20&lt;{% endif %}{{banca.projeto.orientador.user.email|parse_quote}}{% if com_nome %}&gt;{% endif %}
@@ -12,8 +13,8 @@ mailto:{% for membro in banca.membros %}{% if com_nome %}{{membro.get_full_name}
 %0D%0A%0D%0A%0D%0A%0D%0A
 ★ Formulário de avaliação: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}
 %0D%0A%0D%0A
-{% with relatorio=banca.get_relatorio%}{% if relatorio %}
-Relatório: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}/{{banca.get_relatorio.id}}%0D%0A
+{% with relatorio=banca|get_relatorio%}{% if relatorio %}
+Relatório: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}/{{banca|get_relatorio.id}}%0D%0A
 {% endif %}{% endwith %}
 {% with site=banca.projeto.get_site %}{% if site %}
 Site: {{request.scheme}}://{{request.get_host}}{{site}}%0D%0A

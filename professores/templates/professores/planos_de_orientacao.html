@@ -9,12 +9,9 @@
   {% load static %}
   {% load certificados %}
   {% load tipo_documento %}
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% load documentos %}
   {% include "reload.html" %}
-  
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-
 {% endblock %}
 
 {% block content %}
@@ -39,7 +36,7 @@
         <tbody>
       {% endifchanged %}
       <tr class="{{projeto.periodo}} {% if projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
-        {% for documento in projeto.get_planos_de_orientacao %}
+        {% for documento in projeto|get_planos_de_orientacao %}
           <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
             data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
             {% if projeto.periodo == "Anteriores" %}

@@ -19,7 +19,7 @@ from .models import Area, AreaDeInteresse
 
 from operacional.models import Curso
 
-from .support import converte_conceito
+from .support3 import converte_conceito
 
 from academica.models import Exame
 

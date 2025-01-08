@@ -10,6 +10,8 @@ from xhtml2pdf import pisa # Para gerar o PDF
 from django.template import Template, Context
 from django.template.loader import get_template
 
+from documentos.models import TipoDocumento
+from projetos.models import Documento
 
 def render_to_pdf(template_src, context_dict=None):
     """Renderiza um documento em PDF."""
@@ -43,3 +45,4 @@ def render_from_text_to_pdf_file(template_txt, context_dict, path):
         result.close()
         return pdf
     return None
+

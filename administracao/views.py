@@ -33,7 +33,7 @@ from django.utils import timezone
 
 from axes.models import AccessAttempt, AccessLog
 
-from .support import get_upload_path, registra_organizacao, registro_usuario
+from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso
 
 from documentos.support import render_to_pdf
@@ -60,7 +60,8 @@ from projetos.resources import FeedbacksResource
 from projetos.resources import UsuariosResource
 from projetos.resources import ParesResource
 from projetos.resources import AlocacoesResource
-from projetos.support import simple_upload
+from projetos.support import simple_upload, get_upload_path
+from projetos.support2 import get_pares_colegas
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
@@ -1330,9 +1331,15 @@ def relatorio(request, modelo, formato):
 
     elif modelo == "pares":
         if edicao:
-            context["projetos"] = Projeto.objects.filter(ano=ano, semestre=semestre)
+            projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
         else:
-            context["projetos"] = Projeto.objects.all()
+            projetos = Projeto.objects.all()
+
+        colegas = []
+        for projeto in projetos:
+            colegas.append(get_pares_colegas(projeto))
+
+        context["proj_pares"] = zip(projetos, colegas)
         
         context["entregas"] = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
         context["iniciativas"] = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]

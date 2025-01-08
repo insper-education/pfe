@@ -28,8 +28,9 @@ from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
 from .models import Area, AreaDeInteresse, Banca
 
-from .support import simple_upload, calcula_objetivos, cap_name, media
-from .support import divide57
+from .support import simple_upload
+from .support3 import calcula_objetivos, cap_name, media
+from .support3 import divide57
 from .support2 import get_areas_propostas, get_areas_estudantes
 
 from .tasks import avisos_do_dia, eventos_do_dia
@@ -277,7 +278,7 @@ def distribuicao_areas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
-    edicoes = []
+
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
@@ -425,24 +426,21 @@ def projetos_lista(request):
             if not avancados:
                 projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
 
-            projetos = projetos_filtrados.order_by("ano", "semestre", "organizacao")
-
             cabecalhos = [{ "pt": "Projeto", "en": "Project" },
                           { "pt": "Estudantes", "en": "Students" },
                           { "pt": "Período", "en": "Semester" },
                           { "pt": "Orientador", "en": "Advisor" },
                           { "pt": "Organização", "en": "Sponsor" },]
             context = {
-                "projetos": projetos,
+                "projetos": projetos_filtrados,
                 "cabecalhos": cabecalhos,
             }
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Projeto)
         context = {
             "titulo": { "pt": "Projetos", "en": "Projects"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Projeto)[0],
         }
 
     return render(request, "projetos/projetos_lista.html", context)
@@ -1435,7 +1433,7 @@ def filtro_projetos(request):
                           ]
 
             context = {
-                "projetos": projetos_filtrados.order_by("ano", "semestre", "organizacao"),
+                "projetos": projetos_filtrados,
                 "cabecalhos": cabecalhos,
             }
         else:
@@ -1447,7 +1445,7 @@ def filtro_projetos(request):
             "areast": Area.objects.filter(ativa=True),
         }
 
-    return render(request, "projetos/filtra_projetos.html", context)
+    return render(request, "projetos/filtro_projetos.html", context)
 
 
 @login_required

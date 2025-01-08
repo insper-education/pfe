@@ -296,8 +296,7 @@ def parceiro_projetos(request):
         return render(request, "generic.html", context=context)
 
     if hasattr(user, "parceiro"):
-        projetos = Projeto.objects\
-            .filter(proposta__organizacao=user.parceiro.organizacao).order_by("ano", "semestre")
+        projetos = Projeto.objects.filter(proposta__organizacao=user.parceiro.organizacao)
         organizacao = user.parceiro.organizacao
     else:
         projetos = None
@@ -632,7 +631,7 @@ def organizacoes_lista(request):
         else:
             contato.append("---------")
 
-        projetos = Projeto.objects.filter(proposta__organizacao=organizacao).order_by("ano", "semestre")
+        projetos = Projeto.objects.filter(proposta__organizacao=organizacao)
         fechados.append(projetos.count())
 
         tipo_estudantes = ""
@@ -689,7 +688,7 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
     context = {
         "titulo": {"pt": "Organização Parceira", "en": "Partnership Organization"},
         "organizacao": organizacao,
-        "projetos": Projeto.objects.filter(proposta__organizacao=organizacao).order_by("ano", "semestre"),
+        "projetos": Projeto.objects.filter(proposta__organizacao=organizacao),
         "cursos": Curso.objects.all().order_by("id"),
     }
     return render(request, "organizacoes/organizacao_completo.html", context=context)

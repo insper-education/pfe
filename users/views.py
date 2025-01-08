@@ -41,7 +41,7 @@ from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontr
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.models import ObjetivosDeAprendizagem, Evento
 from projetos.messages import email
-from projetos.support import calcula_objetivos
+from projetos.support3 import calcula_objetivos
 
 
 # Get an instance of a logger
@@ -794,8 +794,7 @@ def professor_detail(request, primarykey):
         "professor": get_object_or_404(Professor, pk=primarykey)
         }
 
-    context["projetos"] = Projeto.objects.filter(orientador=context["professor"]).order_by("ano", "semestre")
-
+    context["projetos"] = Projeto.objects.filter(orientador=context["professor"])
     context["coorientacoes"] = Coorientador.objects.filter(usuario=context["professor"].user).order_by("projeto__ano", "projeto__semestre")
 
     bancas = (Banca.objects.filter(membro1=context["professor"].user) |

@@ -28,14 +28,14 @@ from django.core.exceptions import PermissionDenied  # Para lançar 403
 from .support import coleta_membros_banca, editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
-from .support import converte_conceitos, arredonda_conceitos
-from .support import calcula_interseccao_bancas, move_avaliacoes
-from .support import ver_pendencias_professor, mensagem_edicao_banca
+from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
+#from .support import calcula_interseccao_bancas, 
+from .support2 import converte_conceitos, arredonda_conceitos
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
 
-from administracao.models import Carta
+#from administracao.models import Carta
 from administracao.support import usuario_sem_acesso
 
 from documentos.models import TipoDocumento
@@ -45,8 +45,9 @@ from estudantes.models import Relato, Pares
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, Certificado
 from projetos.models import Projeto, Configuracao, Organizacao
-from projetos.support import converte_letra, converte_conceito
-from projetos.support import get_objetivos_atuais
+from projetos.support3 import converte_letra, converte_conceito
+from projetos.support3 import get_objetivos_atuais
+from projetos.support2 import get_alocacoes, get_pares_colegas
 from projetos.messages import email, render_message, htmlizar
 from projetos.arquivos import le_arquivo
 
@@ -135,7 +136,7 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
             if edicao != "todas":
                 ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-            context["projetos"] = projetos.order_by("ano", "semestre")
+            context["projetos"] = projetos
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
@@ -2364,7 +2365,7 @@ def avaliar_entregas(request, prof_id=None, selecao=None):
 
     if request.is_ajax():
 
-        projetos = Projeto.objects.all().order_by("ano", "semestre")
+        projetos = Projeto.objects.all()
         if prof_id is not None:
             if prof_id == "todos":
                 if request.user.tipo_de_usuario != 4:
@@ -2433,7 +2434,7 @@ def relatos_quinzenais(request, todos=None):
 
         if "edicao" in request.POST:
 
-            projetos = Projeto.objects.all().order_by("ano", "semestre")
+            projetos = Projeto.objects.all()
             if todos == "todos":
                 pass
             elif todos is not None:
@@ -2446,10 +2447,16 @@ def relatos_quinzenais(request, todos=None):
             if edicao != "todas":
                 ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
-                
+            
+            alocacoes = []
+            for projeto in projetos:
+                alocacoes.append(get_alocacoes(projeto))
+            
+            proj_aloc = zip(projetos, alocacoes)
+
             context = {
                 "administracao": True,
-                "projetos": projetos,
+                "proj_aloc": proj_aloc,
                 "edicao": edicao,
             }
 
@@ -2950,8 +2957,8 @@ def ver_pares_projeto(request, projeto_id, momento):
             alocacao.save()
 
     tipo = 0 if momento=="intermediaria" else 1
-    colegas = projeto.get_pares_colegas(tipo)
-
+    colegas = get_pares_colegas(projeto, tipo)
+    
     entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
     iniciativas = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
     comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]

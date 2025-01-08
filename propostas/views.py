@@ -28,9 +28,12 @@ from users.models import Opcao, Aluno, Alocacao, PFEUser
 from users.models import Professor, Parceiro, Administrador
 
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
-from projetos.models import Configuracao, Area, AreaDeInteresse, Recomendada
+from projetos.models import Configuracao, Area, Recomendada
 from projetos.models import Evento
+#from projetos.models import AreaDeInteresse 
+
 from projetos.support import get_upload_path, simple_upload
+from projetos.support2 import get_nativamente
 from projetos.messages import email
 
 from operacional.models import Curso
@@ -213,7 +216,7 @@ def procura_propostas(request):
                 
         disponivel_multidisciplinar = [0, 0]
         for proposta in propostas:
-            p = proposta.get_nativamente()
+            p = get_nativamente(proposta)
             if isinstance(p, Curso):
                 if proposta.disponivel:
                     disponivel_propostas[p][0] += 1
@@ -225,7 +228,7 @@ def procura_propostas(request):
 
         aplicando_multidisciplinar = 0
         for opcao in opcoes:
-            p = opcao.proposta.get_nativamente()
+            p = get_nativamente(opcao.proposta)
             if isinstance(p, Curso):
                 aplicando_opcoes[p] += 1
             else:                
@@ -319,9 +322,10 @@ def propostas_apresentadas(request):
 
             disponivel_multidisciplinar = [0, 0]
 
-            
+            nativamente = []
             for proposta in propostas_filtradas:
-                p = proposta.get_nativamente()
+                p = get_nativamente(proposta)
+                nativamente.append(p)
                 if isinstance(p, Curso):
                     if proposta.disponivel:
                         disponivel_propostas[p][0] += 1
@@ -354,18 +358,6 @@ def propostas_apresentadas(request):
                     total_vagas["prop"] += prop
                     total_vagas["prop_disp"] += prop_disp
 
-#             <th scope="col" class="estados text-center"
-#             ><span id="autorizado-icon"></span></th>
-#             ><span id="disponivel-icon"></span></th>
-#             ><span id="fechado-icon"></span></th>
-#             <th scope="col" class="periodo 
-#             <th scope="col" class="organizacao" 
-#             <th scope="col" class="estudantes 
-#              ><span class="estudante-icon"></span>1</th>
-#              ><span class="estudante-icon"></span>2</th>
-#              ><span class="estudante-icon"></span>3</th>
-#              ><span class="estudante-icon"></span>4</th>
-
             cabecalhos = [
                 {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes"},
                 {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"},
@@ -382,7 +374,7 @@ def propostas_apresentadas(request):
             ]
 
             context = {
-                "propostas": propostas_filtradas,
+                "prop_nativ": zip(propostas_filtradas, nativamente),
                 "num_organizacoes": num_organizacoes,
                 "edicao": edicao,
                 "cursos": cursos,

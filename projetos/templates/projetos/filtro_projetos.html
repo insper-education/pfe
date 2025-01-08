@@ -6,6 +6,7 @@
 {% endcomment %}
 
 {% block head %}
+  {% load medias %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
@@ -68,7 +69,7 @@
                 {% endif %}
               </td>
 
-              {% with medias=projeto.medias %}
+              {% with medias=projeto|medias %}
                 <td>{{medias.0|floatformat:1|safe}}</td>
                 <td>{{medias.1|floatformat:1|safe}}</td>
                 <td>{{medias.2|floatformat:1|safe}}</td>

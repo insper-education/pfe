@@ -13,7 +13,7 @@ import random
 import re
 
 from django.db import models
-from django.db.models import F
+#from django.db.models import F
 from django.conf import settings
 
 from django.urls import reverse  # To generate URLS by reversing URL patterns
@@ -24,34 +24,18 @@ from django.utils.encoding import force_text
 from django.shortcuts import get_object_or_404
 
 from .support import get_upload_path
+
 from .tipos import TIPO_EVENTO
 
-from academica.models import Exame
+from professores.support2 import converte_conceitos
 
-from administracao.models import TipoCertificado
-
-from documentos.models import TipoDocumento
-
-from estudantes.models import Relato, Pares
-
-from operacional.models import Curso
-
-import users.models
-
-
-#from professores.support import converte_conceitos
-def converte_conceitos(nota):
-    if( nota >= 9.5 ): return ("A+")
-    if( nota >= 9.0 ): return ("A")
-    if( nota >= 8.0 ): return ("B+")
-    if( nota >= 7.0 ): return ("B")
-    if( nota >= 6.0 ): return ("C+")
-    if( nota >= 5.0 ): return ("C")
-    if( nota >= 4.0 ): return ("D+")
-    if( nota >= 3.0 ): return ("D")
-    if( nota >= 2.0 ): return ("D-")
-    if( nota >= 0.0 ): return ("I")
-    return "inválida"
+#from academica.models import Exame
+#from documentos.models import TipoDocumento
+#from administracao.models import TipoCertificado
+#from estudantes.models import Relato
+#from estudantes.models import Pares
+#from operacional.models import Curso
+#import users.models
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos."""
@@ -154,7 +138,7 @@ class Projeto(models.Model):
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
                            help_text="Data da última atualização dos dados do projeto pelos estudantes")
     class Meta:
-        ordering = [ "proposta__organizacao", "ano", "semestre"]
+        ordering = [ "ano", "semestre", "proposta__organizacao" ]  # Não mudar a ordem
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
@@ -172,7 +156,7 @@ class Projeto(models.Model):
 
     def get_absolute_url(self):
         """Returns the url to access a particular instance of MyModelName."""
-        return reverse('projeto-detail', args=[str(self.id)])
+        return reverse("projeto-detail", args=[str(self.id)])
 
     def get_titulo(self):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
@@ -182,11 +166,11 @@ class Projeto(models.Model):
             return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DO PROJETO"
         return self.proposta.titulo
 
-    def certificado_orientador(self):
-        """Retorna link do certificado."""
-        tipo_certificado = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
-        certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
-        return certificado
+    # def certificado_orientador(self):
+    #     """Retorna link do certificado."""
+    #     tipo_certificado = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
+    #     certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
+    #     return certificado
 
     @property
     def organizacao(self):
@@ -220,119 +204,120 @@ class Projeto(models.Model):
         else:
             return Evento.get_eventos(sigla="RQ", ano=self.ano, semestre=self.semestre)
 
-    def get_alocacoes(self):
-        """Retorna todas as alocações do projeto."""
-        if self.time_misto:
-            # Em caso de time misto, estudantes de fora da instituição não são listados
-            cursos_do_insper = Curso.objects.filter(curso_do_insper=True)
-            return users.models.Alocacao.objects.filter(projeto=self, aluno__curso2__in=cursos_do_insper)
-        return users.models.Alocacao.objects.filter(projeto=self)
+    #def get_alocacoes(self):
 
-    def get_relatos(self):
-        """Retorna todos os possiveis relatos quinzenais para o projeto."""
-        
-        proximo = datetime.date.today() + datetime.timedelta(days=14)
+    #     """Retorna todas as alocações do projeto."""
+    #     if self.time_misto:
+    #         # Em caso de time misto, estudantes de fora da instituição não são listados
+    #         cursos_do_insper = Curso.objects.filter(curso_do_insper=True)
+    #         return users.models.Alocacao.objects.filter(projeto=self, aluno__curso2__in=cursos_do_insper)
+    #     return users.models.Alocacao.objects.filter(projeto=self)
 
-        eventos = self.tem_relatos().filter(startDate__lt=proximo).order_by("endDate")
-
-        relatos = []
-        avaliados = []  # se o orientador fez alguma avaliação dos relatos
-        observacoes = []  # observações do orientador
-
-        exame = Exame.objects.get(titulo="Relato Quinzenal")
-
-        for index in range(len(eventos)):
-        
-            if not index: # index == 0:
-                relato = Relato.objects.filter(alocacao__projeto=self,
-                                               momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
-
-                obs = Observacao.objects.filter(projeto=self, exame=exame,
-                                                momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).last()
-            else:
-                relato = Relato.objects.filter(alocacao__projeto=self,
-                                               momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
-                                               momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
-
-                obs = Observacao.objects.filter(projeto=self, exame=exame,
-                                                momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
-                                                momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).last()
-
-            avaliado = []
-            for r in relato:
-                if r.avaliacao > 0:
-                    avaliado.append([True, r.alocacao.aluno])
-                if r.avaliacao == 0:
-                    avaliado.append([False, r.alocacao.aluno])
-
-            relatos.append([u[0] for u in relato.order_by().values("alocacao").distinct().values_list("alocacao_id")])
-
-            avaliados.append(avaliado)
-
-            observacoes.append(obs)
+    # def get_relatos(self):
     
-        return zip(eventos, relatos, avaliados, observacoes)
+    #     """Retorna todos os possiveis relatos quinzenais para o projeto."""
+        
+    #     proximo = datetime.date.today() + datetime.timedelta(days=14)
 
-    @property
-    def get_planos_de_orientacao(self):
-        """Retorna todos os planos de orientação do projeto."""
-        # (28, 'Plano de Orientação'),
-        tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
-        documentos = Documento.objects.filter(tipo_documento=tipo_documento, projeto=self)
-        return documentos
+    #     eventos = self.tem_relatos().filter(startDate__lt=proximo).order_by("endDate")
 
-    @property
-    def has_relatos(self):
-        """Retorna se houver algum relato quinzenal para o projeto."""            
-        return Relato.objects.filter(alocacao__projeto=self).exists()
+    #     relatos = []
+    #     avaliados = []  # se o orientador fez alguma avaliação dos relatos
+    #     observacoes = []  # observações do orientador
 
-    @property
-    def media_falconi(self):
-        exame = Exame.objects.get(titulo="Falconi")
-        aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, exame=exame)  # Falc.
-        nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
-        return nota_banca_falconi
+    #     exame = Exame.objects.get(titulo="Relato Quinzenal")
 
-    @property
-    def media_bancas(self):
-        exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
-        aval_bancas = Avaliacao2.objects.filter(projeto=self, exame__in=exames)  # Bancas.
-        nota_bancas, _, _ = users.models.Aluno.get_banca(None, aval_bancas)
-        return nota_bancas
+    #     for index in range(len(eventos)):
+        
+    #         if not index: # index == 0:
+    #             relato = Relato.objects.filter(alocacao__projeto=self,
+    #                                            momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
 
-    @property
-    def media_orientador(self):
-        alocacoes = users.models.Alocacao.objects.filter(projeto=self)
-        if alocacoes:
-            primeira = alocacoes.first()
-            medias = primeira.get_media
+    #             obs = Observacao.objects.filter(projeto=self, exame=exame,
+    #                                             momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).last()
+    #         else:
+    #             relato = Relato.objects.filter(alocacao__projeto=self,
+    #                                            momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
+    #                                            momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
 
-            nota = 0
-            peso = 0
-            if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
-                nota += medias["nota_grupo_inter"]
-                peso += medias["peso_grupo_inter"]
+    #             obs = Observacao.objects.filter(projeto=self, exame=exame,
+    #                                             momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
+    #                                             momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).last()
+
+    #         avaliado = []
+    #         for r in relato:
+    #             if r.avaliacao > 0:
+    #                 avaliado.append([True, r.alocacao.aluno])
+    #             if r.avaliacao == 0:
+    #                 avaliado.append([False, r.alocacao.aluno])
+
+    #         relatos.append([u[0] for u in relato.order_by().values("alocacao").distinct().values_list("alocacao_id")])
+
+    #         avaliados.append(avaliado)
+
+    #         observacoes.append(obs)
+    
+    #     return zip(eventos, relatos, avaliados, observacoes)
+
+    # @property
+    # def get_planos_de_orientacao(self):
+    #     """Retorna todos os planos de orientação do projeto."""
+    #     tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
+    #     documentos = Documento.objects.filter(tipo_documento=tipo_documento, projeto=self)
+    #     return documentos
+
+    # @property
+    # def has_relatos(self):
+    #     """Retorna se houver algum relato quinzenal para o projeto."""            
+    #     return Relato.objects.filter(alocacao__projeto=self).exists()
+
+    # @property
+    # def media_falconi(self):
+    #     exame = Exame.objects.get(titulo="Falconi")
+    #     aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, exame=exame)  # Falc.
+    #     nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
+    #     return nota_banca_falconi
+
+    # @property
+    # def media_bancas(self):
+    #     exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
+    #     aval_bancas = Avaliacao2.objects.filter(projeto=self, exame__in=exames)  # Bancas.
+    #     nota_bancas, _, _ = users.models.Aluno.get_banca(None, aval_bancas)
+    #     return nota_bancas
+
+    # @property
+    # def media_orientador(self):
+    #     alocacoes = users.models.Alocacao.objects.filter(projeto=self)
+    #     if alocacoes:
+    #         primeira = alocacoes.first()
+    #         medias = primeira.get_media
+
+    #         nota = 0
+    #         peso = 0
+    #         if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
+    #             nota += medias["nota_grupo_inter"]
+    #             peso += medias["peso_grupo_inter"]
                 
-            if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
-                nota += medias["nota_grupo_final"]
-                peso += medias["peso_grupo_final"]
+    #         if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
+    #             nota += medias["nota_grupo_final"]
+    #             peso += medias["peso_grupo_final"]
                 
-            if peso:
-                return nota/peso
-            return 0.0
+    #         if peso:
+    #             return nota/peso
+    #         return 0.0
 
-        else:
-            return 0.0
+    #     else:
+    #         return 0.0
 
 
-    @property
-    def medias(self):
-        notas = [0,0,0,0]
-        notas[0] = self.media_orientador
-        notas[1] = self.media_bancas
-        notas[2] = self.media_falconi
-        notas[3] = (notas[0] + notas[1] + notas[2])/3
-        return notas
+    # @property
+    # def medias(self):
+    #     notas = [0,0,0,0]
+    #     notas[0] = self.media_orientador
+    #     notas[1] = self.media_bancas
+    #     notas[2] = self.media_falconi
+    #     notas[3] = (notas[0] + notas[1] + notas[2])/3
+    #     return notas
 
     
     def periodo(self):
@@ -356,45 +341,45 @@ class Projeto(models.Model):
     def get_coorientadores_ids(self):
         return Coorientador.objects.filter(projeto=self).values_list("usuario", flat=True)
     
-    def get_pares_colegas(self, tipo=0):
-        alocacoes = users.models.Alocacao.objects.filter(projeto=self)
-        pares = []
-        for alocacao in alocacoes:
-            pares.append(Pares.objects.filter(alocacao_de__projeto=self, alocacao_para=alocacao, tipo=tipo))
-        colegas = zip(alocacoes, pares)
-        return colegas
+    # def get_pares_colegas(self, tipo=0):
+    #     alocacoes = users.models.Alocacao.objects.filter(projeto=self)
+    #     pares = []
+    #     for alocacao in alocacoes:
+    #         pares.append(Pares.objects.filter(alocacao_de__projeto=self, alocacao_para=alocacao, tipo=tipo))
+    #     colegas = zip(alocacoes, pares)
+    #     return colegas
     
-    @property
-    def get_documentos_publicos(self):
-        """Retorna certos documentos publicos do projeto."""
+    # @property
+    # def get_documentos_publicos(self):
+    #     """Retorna certos documentos publicos do projeto."""
                 
-        tipos_documento = TipoDocumento.objects.filter(
-            nome__in=["Vídeo do Projeto", "Banner", "Apresentação da Banca Final"]
-        )
+    #     tipos_documento = TipoDocumento.objects.filter(
+    #         nome__in=["Vídeo do Projeto", "Banner", "Apresentação da Banca Final"]
+    #     )
         
-        documentos = []
-        for tipo in tipos_documento:
-            documento = Documento.objects.filter(confidencial=False, tipo_documento=tipo, projeto=self).last()
-            if documento:
-                documentos.append(documento)
+    #     documentos = []
+    #     for tipo in tipos_documento:
+    #         documento = Documento.objects.filter(confidencial=False, tipo_documento=tipo, projeto=self).last()
+    #         if documento:
+    #             documentos.append(documento)
 
-        return documentos
+    #     return documentos
     
-    def get_relatorio_final(self):
-        tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
+    # def get_relatorio_final(self):
+    #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
 
-        if documento.exists():
-            return documento.order_by("data").last()
-        return None
+    #     if documento.exists():
+    #         return documento.order_by("data").last()
+    #     return None
 
-    def get_relatorio_intermediario(self):
-        tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-        documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
+    # def get_relatorio_intermediario(self):
+    #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
         
-        if documento.exists():
-            return documento.order_by("data").last()
-        return None
+    #     if documento.exists():
+    #         return documento.order_by("data").last()
+    #     return None
     
     def get_banca_final(self):
         banca = Banca.objects.filter(projeto=self, composicao__exame__titulo="Banca Final").last()
@@ -538,9 +523,8 @@ class Proposta(models.Model):
     mensuravel = models.BooleanField(default=False, help_text="A proposta do projeto tem objetivos concretos e mensuráveis?")
     #Does the project proposal have concrete and measurable goals?
 
-
     class Meta:
-        ordering = [ "organizacao", "ano", "semestre",]
+        ordering = [ "ano", "semestre", "organizacao" ]
         verbose_name = "Proposta"
         verbose_name_plural = "Propostas"
 
@@ -594,27 +578,27 @@ class Proposta(models.Model):
         if self.mentorar: interesses += [["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar]]
         return interesses
 
-    def get_nativamente(self):
-        """Retorna em string com curso mais nativo da proposta."""
+    # def get_nativamente(self):
+    #     """Retorna em string com curso mais nativo da proposta."""
 
-        # Initialize count dictionary for all cursos
-        count = {curso: 0 for curso in Curso.objects.all()}
-        total = 0
+    #     # Initialize count dictionary for all cursos
+    #     count = {curso: 0 for curso in Curso.objects.all()}
+    #     total = 0
 
-        # Count occurrences of each curso in perfis
-        for perfil in self.perfis():
-            for curso in perfil.all():
-                count[curso] += 1
-                total += 1
+    #     # Count occurrences of each curso in perfis
+    #     for perfil in self.perfis():
+    #         for curso in perfil.all():
+    #             count[curso] += 1
+    #             total += 1
 
-        if total == 0:
-            return " "
+    #     if total == 0:
+    #         return " "
 
-        # Find the curso with the maximum count
-        keymax = max(count, key=count.get)
-        if count[keymax] > total // 2:
-            return keymax
-        return "?"
+    #     # Find the curso with the maximum count
+    #     keymax = max(count, key=count.get)
+    #     if count[keymax] > total // 2:
+    #         return keymax
+    #     return "?"
 
     def get_anexo(self):
         """Nome do arquivo do anexo."""
@@ -638,7 +622,7 @@ class Configuracao(models.Model):
                                            help_text="Separar lista por ponto e virgula")
 
     min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
-        help_text='Quantidade mínima de propostas a serem selecionas pelos estudantes')
+        help_text="Quantidade mínima de propostas a serem selecionas pelos estudantes")
     
     maxMB_filesize = models.PositiveIntegerField("Tamanho máximo de arquivo", default=2000,
         help_text="Tamanho máximo de arquivo em MB")
@@ -722,7 +706,7 @@ class ConfiguracaoAdmin(admin.ModelAdmin):
 class Disciplina(models.Model):
     """Disciplinas que os alunos podem cursar."""
 
-    nome = models.CharField(max_length=100, help_text='nome')
+    nome = models.CharField(max_length=100, help_text="nome")
 
     def __str__(self):
         """Retorno padrão textual."""
@@ -733,11 +717,11 @@ class Cursada(models.Model):
     """Relacionamento entre um aluno e uma disciplina cursada por ele."""
 
     disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
-                                   help_text='disciplina cursada pelo aluno')
-    aluno = models.ForeignKey('users.Aluno', null=True, blank=True, on_delete=models.SET_NULL,
-                              help_text='aluno que cursou a disciplina')
+                                   help_text="disciplina cursada pelo aluno")
+    aluno = models.ForeignKey("users.Aluno", null=True, blank=True, on_delete=models.SET_NULL,
+                              help_text="aluno que cursou a disciplina")
     nota = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10)],
-                                            help_text='nota obtida pelo aluno na disciplina')
+                                            help_text="nota obtida pelo aluno na disciplina")
 
     class Meta:
         """Classe Meta."""
@@ -752,9 +736,9 @@ class Recomendada(models.Model):
     """Disciplinas recomendadas que um aluno ja tenha cursado para fazer o projeto."""
 
     disciplina = models.ForeignKey(Disciplina, null=True, on_delete=models.SET_NULL,
-                                   help_text='disciplina recomendada para o projeto')
+                                   help_text="disciplina recomendada para o projeto")
     proposta = models.ForeignKey(Proposta, null=True, on_delete=models.SET_NULL,
-                                 help_text='proposta que recomenda a disciplina')
+                                 help_text="proposta que recomenda a disciplina")
 
     def __str__(self):
         """Retorno padrão textual."""
@@ -1144,27 +1128,28 @@ class Banca(models.Model):
         return avaliadores
 
 
-    def get_relatorio(self):
-        if self.composicao.exame == "BF": # Final
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-        elif self.composicao.exame == "BI": # Intermediária
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-        elif self.composicao.exame == "F":  # Falconi
-            # Reaproveita o tipo de documento da banca final
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-        elif self.composicao.exame == "P":  # Probation
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.alocacao.projeto)
-        else:
-            return None
+    # def get_relatorio(self):
+    #     """Retorna o relatório da banca."""
+    #     if self.composicao.exame.sigla == "BF": # Final
+    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
+    #     elif self.composicao.exame.sigla == "BI": # Intermediária
+    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
+    #     elif self.composicao.exame.sigla == "F":  # Falconi
+    #         # Reaproveita o tipo de documento da banca final
+    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
+    #     elif self.composicao.exame.sigla == "P":  # Probation
+    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
+    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.alocacao.projeto)
+    #     else:
+    #         return None
         
-        if documento.exists():
-            return documento.order_by("data").last()
+    #     if documento.exists():
+    #         return documento.order_by("data").last()
         
-        return None
+    #     return None
 
     def get_projeto(self):
         """Retorna o projeto da banca."""
@@ -1333,9 +1318,9 @@ class Banco(models.Model):
     """Lista dos Bancos Existentes no Brasil."""
 
     nome = models.CharField(max_length=50,
-                            help_text='nome do banco')
+                            help_text="nome do banco")
     codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
-                                              help_text='código do banco')
+                                              help_text="código do banco")
 
     @classmethod
     def create(cls, nome, codigo):
@@ -1350,22 +1335,22 @@ class Banco(models.Model):
 class Reembolso(models.Model):
     """Armazena os reembolsos pedidos."""
 
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='usuário pedindo reembolso')
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="usuário pedindo reembolso")
     banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL,
-                              help_text='banco a se fazer o reembolso')
+                              help_text="banco a se fazer o reembolso")
     agencia = models.CharField(max_length=6, null=True, blank=True,
-                               help_text='agência no banco')
+                               help_text="agência no banco")
     conta = models.CharField(max_length=16, null=True, blank=True,
-                             help_text='conta no banco')
+                             help_text="conta no banco")
     descricao = models.TextField(max_length=2000,
-                                 help_text='desrição do pedido de reembolso')
+                                 help_text="desrição do pedido de reembolso")
     valor = models.DecimalField(max_digits=5, decimal_places=2,
-                                help_text='valor a ser reembolsado')
+                                help_text="valor a ser reembolsado")
     data = models.DateTimeField(default=datetime.datetime.now,
-                                help_text='data e hora da criação do pedido de reembolso')
+                                help_text="data e hora da criação do pedido de reembolso")
     nota = models.FileField(upload_to=get_upload_path, null=True, blank=True,
-                            help_text='Nota(s) Fiscal(is)')
+                            help_text="Nota(s) Fiscal(is)")
 
     @classmethod
     def create(cls, usuario):
@@ -1397,9 +1382,9 @@ class Aviso(models.Model):
                                 help_text="mensagem a ser enviar no texto")
     
     ### NÃO DEVE SER MAIS USADO ##############################################
-    realizado = models.BooleanField(default=False, help_text='Se já realizado no período')  # NAO MAIS USADO
+    realizado = models.BooleanField(default=False, help_text="Se já realizado no período")  # NAO MAIS USADO
     data_realizado = models.DateField(default=datetime.date.today, blank=True,
-                                      help_text='Data de quando o evento foi realizado pela última vez')
+                                      help_text="Data de quando o evento foi realizado pela última vez")
     ##########################################################################
     
     datas_realizado = models.TextField(max_length=4096, default="[]",
@@ -1631,11 +1616,11 @@ class Coorientador(models.Model):
             mensagem += "PROJETO NÃO DEFINIDO"
         return mensagem
 
-    def certificado_coorientador(self):
-        """Se o coorientador pode emitir certificado."""
-        tipo_certificado = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
-        certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_certificado=tipo_certificado)
-        return certificado
+    # def certificado_coorientador(self):
+    #     """Se o coorientador pode emitir certificado."""
+    #     tipo_certificado = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
+    #     certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_certificado=tipo_certificado)
+    #     return certificado
 
     class Meta:
         verbose_name = "Coorientador"
@@ -1690,25 +1675,25 @@ class ObjetivosDeAprendizagem(models.Model):
 
     # Rubricas de Individuais Intermediárias e Finais
     rubrica_intermediaria_individual_I = models.TextField(max_length=1024, null=True, blank=True,
-                                                         help_text='Rubrica intermediária do conceito I')
+                                                         help_text="Rubrica intermediária do conceito I")
     rubrica_final_individual_I = models.TextField(max_length=1024, null=True, blank=True,
-                                                 help_text='Rubrica final do conceito I')
+                                                 help_text="Rubrica final do conceito I")
     rubrica_intermediaria_individual_D = models.TextField(max_length=1024, null=True, blank=True,
-                                                         help_text='Rubrica intermediária do conceito D')
+                                                         help_text="Rubrica intermediária do conceito D")
     rubrica_final_individual_D = models.TextField(max_length=1024, null=True, blank=True,
-                                                 help_text='Rubrica final do conceito D')
+                                                 help_text="Rubrica final do conceito D")
     rubrica_intermediaria_individual_C = models.TextField(max_length=1024, null=True, blank=True,
-                                                         help_text='Rubrica intermediária do conceito C')
+                                                         help_text="Rubrica intermediária do conceito C")
     rubrica_final_individual_C = models.TextField(max_length=1024, null=True, blank=True,
-                                                 help_text='Rubrica final do conceito C')
+                                                 help_text="Rubrica final do conceito C")
     rubrica_intermediaria_individual_B = models.TextField(max_length=1024, null=True, blank=True,
-                                                         help_text='Rubrica intermediária do conceito B')
+                                                         help_text="Rubrica intermediária do conceito B")
     rubrica_final_individual_B = models.TextField(max_length=1024, null=True, blank=True,
-                                                 help_text='Rubrica final do conceito B')
+                                                 help_text="Rubrica final do conceito B")
     rubrica_intermediaria_individual_A = models.TextField(max_length=1024, null=True, blank=True,
-                                                         help_text='Rubrica intermediária do conceito A')
+                                                         help_text="Rubrica intermediária do conceito A")
     rubrica_final_individual_A = models.TextField(max_length=1024, null=True, blank=True,
-                                                 help_text='Rubrica final do conceito A')
+                                                 help_text="Rubrica final do conceito A")
 
 
 
@@ -1783,25 +1768,25 @@ class ObjetivosDeAprendizagem(models.Model):
 
     ### ESSES PESOS PODEM SER REMOVIDOS, NÃO DEVEM SER MAIS USADOS
     peso_intermediario_individual = models.FloatField(default=0,
-                                                      help_text='peso intermediário individual')
+                                                      help_text="peso intermediário individual")
 
     peso_intermediario_grupo = models.FloatField(default=0,
-                                                 help_text='peso intermediário grupo')
+                                                 help_text="peso intermediário grupo")
 
     peso_final_individual = models.FloatField(default=0,
-                                              help_text='peso final individual')
+                                              help_text="peso final individual")
 
     peso_final_grupo = models.FloatField(default=0,
-                                         help_text='peso final grupo')
+                                         help_text="peso final grupo")
 
     peso_banca_intermediaria = models.FloatField(default=0,
-                                                 help_text='peso para banca intermediária')
+                                                 help_text="peso para banca intermediária")
 
     peso_banca_final = models.FloatField(default=0,
-                                         help_text='peso para banca final')
+                                         help_text="peso para banca final")
 
     peso_banca_falconi = models.FloatField(default=0,
-                                           help_text='peso para banca falconi')
+                                           help_text="peso para banca falconi")
     ##############################################################
 
 
@@ -1914,11 +1899,11 @@ class Avaliacao_Velha(models.Model):
                                  help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora da comunicação') # hora ordena para dia
+                                   help_text="Data e hora da comunicação") # hora ordena para dia
 
     peso = models.FloatField("Peso", validators=[MinValueValidator(0), MaxValueValidator(100)],
                              null=True, blank=True,
-                             help_text='Pesa da avaliação na média (bancas compartilham peso)',
+                             help_text="Pesa da avaliação na média (bancas compartilham peso)",
                              default=10) # 10% para as bancas
 
     # A nota será convertida para rubricas se necessário
@@ -2026,20 +2011,12 @@ class Observacao(models.Model):
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
-    ### CREIO SER DESNECESSÁRIO
-    # @classmethod
-    # def create(cls, projeto):
-    #     """Cria um objeto (entrada) em Observacao."""
-    #     observacao = cls(projeto=projeto)
-    #     return observacao
-
     def __str__(self):
         return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes_orientador)[:6] + "..."
 
     class Meta:
-        verbose_name = 'Observação'
-        verbose_name_plural = 'Observações'
-        #ordering = [,]
+        verbose_name = "Observação"
+        verbose_name_plural = "Observações"
 
 
 class Observacao_Velha(models.Model):
@@ -2152,13 +2129,13 @@ class Area(models.Model):
     """Projeto em que o aluno está alocado."""
 
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
-                              help_text='Titulo da área de interesse')
+                              help_text="Titulo da área de interesse")
 
     descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
-                                 help_text='Descrição da área de interesse')
+                                 help_text="Descrição da área de interesse")
 
     ativa = models.BooleanField("Ativa", default=True,
-                                help_text='Se a área de interesse está sendo usada atualmente')
+                                help_text="Se a área de interesse está sendo usada atualmente")
 
     def __str__(self):
         return self.titulo
@@ -2177,21 +2154,21 @@ class AreaDeInteresse(models.Model):
     """Usado para fazer o mapeando da proposta ou da pessoa para área de interesse."""
 
     # As áreas são de interesse ou do usuário ou da proposta (que passa para o projeto)
-    usuario = models.ForeignKey('users.PFEUser', null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text='área dde interessada da pessoa')
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="área dde interessada da pessoa")
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
-                                 help_text='área de interesse da proposta')
+                                 help_text="área de interesse da proposta")
 
     # Campo para especificar uma outra área que não a da lista de áreas controladas
     outras = models.CharField("Outras", max_length=128, null=True, blank=True,
-                              help_text='Outras áreas de interesse')
+                              help_text="Outras áreas de interesse")
 
     area = models.ForeignKey(Area, null=True, blank=True, on_delete=models.SET_NULL,
-                             help_text='área de interesse')
+                             help_text="área de interesse")
 
     class Meta:
-        verbose_name = 'Área de Interesse'
-        verbose_name_plural = 'Áreas de Interesse'
+        verbose_name = "Área de Interesse"
+        verbose_name_plural = "Áreas de Interesse"
 
     def __str__(self):
         if self.usuario:

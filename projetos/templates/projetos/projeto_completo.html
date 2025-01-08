@@ -10,6 +10,8 @@
   {% load bleach %}
   {% load l10n %}
   {% load alocacoes %}
+  {% load relatos %}
+  
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <link rel="stylesheet" href="{% static 'css/mostra_horarios.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -407,7 +409,7 @@
   {% endif %}
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-  {% if projeto.has_relatos %}  
+  {% if projeto|has_relatos %}  
     <hr>
     <h4>
       <span lang="pt">Relatos Quinzenais:</span>

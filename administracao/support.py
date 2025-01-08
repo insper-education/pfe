@@ -21,7 +21,7 @@ from administracao.models import TipoEvento
 from users.models import PFEUser, Aluno, Professor, Parceiro
 
 from projetos.models import Organizacao, Evento
-from projetos.models import Configuracao
+#from projetos.models import Configuracao
 from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso

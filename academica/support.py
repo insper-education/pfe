@@ -8,8 +8,14 @@ Data: 15 de Janeiro de 2024
 
 from datetime import date
 
+from .models import Exame
+
 from projetos.models import Documento, Evento, Avaliacao2, Observacao
-from users.models import Alocacao
+
+from users.models import Alocacao, Aluno
+
+
+
 
 def filtra_composicoes(composicoes, ano, semestre):
     """Filtra composições."""
@@ -126,3 +132,40 @@ def filtra_entregas(composicoes, projeto, user=None):
     entregas = sorted(entregas, key=lambda t: (date.today() if t["evento"] is None else t["evento"].endDate))
 
     return entregas
+
+
+
+def media_falconi(projeto):
+    exame = Exame.objects.get(titulo="Falconi")
+    aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
+    nota_banca_falconi, _, _ = Aluno.get_banca(None, aval_banc_falconi)
+    return nota_banca_falconi
+
+def media_bancas(projeto):
+    exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
+    aval_bancas = Avaliacao2.objects.filter(projeto=projeto, exame__in=exames)  # Bancas.
+    nota_bancas, _, _ = Aluno.get_banca(None, aval_bancas)
+    return nota_bancas
+
+def media_orientador(projeto):
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    if alocacoes:
+        primeira = alocacoes.first()
+        medias = primeira.get_media
+
+        nota = 0
+        peso = 0
+        if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
+            nota += medias["nota_grupo_inter"]
+            peso += medias["peso_grupo_inter"]
+            
+        if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
+            nota += medias["nota_grupo_final"]
+            peso += medias["peso_grupo_final"]
+            
+        if peso:
+            return nota/peso
+        return 0.0
+
+    else:
+        return 0.0

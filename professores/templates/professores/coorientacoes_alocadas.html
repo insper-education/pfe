@@ -32,9 +32,13 @@
             [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
             { {{ n_alocacoes }} estudante{% if n_alocacoes > 1%}s{% endif %} }
           </a>
-          {% if projeto.certificado_orientador %}
-            <div><a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a></div>
-          {% endif %}
+
+          {% with certificado_orientador=coorientacao|certificado_coorientador %}
+            {% if certificado_orientador %}
+              <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+            {% endif %}
+          {% endwith %}
+
         {% endwith %}
       </td></tr>
     {% empty %}

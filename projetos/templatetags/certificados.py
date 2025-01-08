@@ -53,3 +53,24 @@ def certificado_mentoria(mentoria, usuario):
             return documento.documento.url
 
     return None
+
+
+@register.filter
+def certificado_orientador(projeto):
+    """Retorna link do certificado."""
+    tipo_certificado = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
+    certificado = Certificado.objects.filter(usuario=projeto.orientador.user, projeto=projeto, tipo_certificado=tipo_certificado)
+    return certificado
+
+@register.filter
+def certificado_coorientador(coorientacao):
+    """Se o coorientador pode emitir certificado."""
+    tipo_certificado = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
+    certificado = Certificado.objects.filter(projeto=coorientacao.projeto, usuario=coorientacao.usuario, tipo_certificado=tipo_certificado)
+    return certificado
+
+@register.filter
+def get_certificados_est(alocacao):
+    """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
+    certificados = Certificado.objects.filter(usuario=alocacao.aluno.user, projeto=alocacao.projeto)
+    return certificados

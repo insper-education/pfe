@@ -7,14 +7,8 @@
 
 {% block head %}
   {% load static %}
-  
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% load documentos %}
   {% include "reload.html" %}
-
-  <style>
-    table, td, th {padding: 0.4rem;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -29,12 +23,12 @@
       var ausentes = {};
     </script>
 
-    <table>
-
+    <table class="table table-striped table-hover">
+      <tbody>
       {% for projeto in projetos %}
         <tr>
           <th style="text-align: center">
-            {% for documento in projeto.get_planos_de_orientacao %}
+            {% for documento in projeto|get_planos_de_orientacao %}
               
               <script>
                 submetidos[{{projeto.id}}] = true;
@@ -104,6 +98,7 @@
 
         </tr>
       {% endfor %}
+      </tbody>
     </table>
 
     <p>&nbsp;</p>

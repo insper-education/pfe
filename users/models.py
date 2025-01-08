@@ -9,24 +9,24 @@ Data: 15 de Maio de 2019
 
 import datetime
 import re
+import logging
 from hashids import Hashids
 from urllib.parse import quote
-import logging
 
-from decimal import Decimal, ROUND_HALF_UP
+#from decimal import Decimal, ROUND_HALF_UP
 
 from functools import partial
 
 from django.conf import settings
 
-from django.http import HttpResponse
+#from django.http import HttpResponse
 
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models.functions import Lower
-from django.db.models import F
+#from django.db.models.functions import Lower
+#from django.db.models import F
 
 from academica.models import Exame
 
@@ -34,9 +34,13 @@ from estudantes.models import Relato, EstiloComunicacao
 
 from operacional.models import Curso
 
-from projetos.models import Projeto, Proposta, Organizacao, Avaliacao2, Banca
-from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento, Certificado
-from projetos.support import get_upload_path, calcula_objetivos, converte_letra
+from projetos.models import Avaliacao2, Banca
+from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
+
+#from projetos.models import Certificado
+
+from projetos.support3 import calcula_objetivos, converte_letra
+from projetos.support import get_upload_path
 
 
 # Get an instance of a logger
@@ -224,7 +228,7 @@ class Aluno(models.Model):
     curso2 = models.ForeignKey(Curso, null=True, blank=True, on_delete=models.SET_NULL,
                              help_text="Curso Matriculado")
 
-    opcoes = models.ManyToManyField(Proposta, through="Opcao",
+    opcoes = models.ManyToManyField("projetos.Proposta", through="Opcao",
                                     help_text="Opções de projeto escolhidos")
 
     email_pessoal = models.EmailField(null=True, blank=True,
@@ -246,7 +250,7 @@ class Aluno(models.Model):
     cr = models.FloatField(default=0,
                            help_text="Coeficiente de Rendimento")
 
-    pre_alocacao = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
+    pre_alocacao = models.ForeignKey("projetos.Proposta", null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name="aluno_pre_alocado",
                                      help_text="proposta pre alocada")
 
@@ -590,7 +594,7 @@ class Aluno(models.Model):
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
 
-    proposta = models.ForeignKey(Proposta, null=True, blank=True,
+    proposta = models.ForeignKey("projetos.Proposta", null=True, blank=True,
                                  on_delete=models.SET_NULL)
 
     aluno = models.ForeignKey(Aluno, null=True, blank=True,
@@ -619,7 +623,7 @@ class Opcao(models.Model):
 class OpcaoTemporaria(models.Model):
     """Opções Temporárias de Projetos pelos Alunos com suas prioridades."""
 
-    proposta = models.ForeignKey(Proposta, null=True, blank=True,
+    proposta = models.ForeignKey("projetos.Proposta", null=True, blank=True,
                                  on_delete=models.SET_NULL)
 
     aluno = models.ForeignKey(Aluno, null=True, blank=True,
@@ -649,7 +653,7 @@ class OpcaoTemporaria(models.Model):
 class Alocacao(models.Model):
     """Projeto em que o aluno está alocado."""
 
-    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE)
+    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
 
     avaliacao_intermediaria = models.DateTimeField("Avaliação Intermediária", default=None, blank=True, null=True,
@@ -912,11 +916,11 @@ class Alocacao(models.Model):
 
         return zip(eventos, relatos, range(len(eventos)))
 
-    @property
-    def get_certificados(self):
-        """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
-        certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
-        return certificados
+    # @property
+    # def get_certificados(self):
+    #     """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
+    #     certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
+    #     return certificados
     
     def get_bancas(self):
         """Retorna as bancas que estudante participou."""
@@ -1055,7 +1059,7 @@ class Parceiro(models.Model):  # da empresa
     user = models.OneToOneField(PFEUser, related_name='parceiro',
                                 on_delete=models.CASCADE,
                                 help_text='Identificaçãdo do usuário')
-    organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE,
+    organizacao = models.ForeignKey("projetos.Organizacao", on_delete=models.CASCADE,
                                     blank=True, null=True,
                                     help_text='Organização Parceira')
     cargo = models.CharField("Cargo", max_length=90, blank=True,

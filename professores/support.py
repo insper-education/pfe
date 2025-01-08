@@ -16,6 +16,8 @@ from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
+from .support2 import converte_conceitos
+
 from academica.models import Exame, Composicao
 from academica.support import filtra_composicoes, filtra_entregas
 
@@ -27,9 +29,12 @@ from projetos.messages import email, render_message
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao, Documento, Evento, Avaliacao2
+from projetos.support2 import get_relatos
 
-from users.models import PFEUser, Professor, Aluno, Parceiro, Alocacao
+from users.models import PFEUser, Professor, Aluno, Alocacao
+#from users.models import Parceiro
 from users.support import adianta_semestre, ordena_nomes
+
 
 logger = logging.getLogger("django")  # Para marcar mensagens de log
 
@@ -331,32 +336,6 @@ def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
         copia_observacao.save()
         observacao_velha.delete()
 
-def converte_conceitos(nota):
-    if( nota >= 9.5 ): return ("A+")
-    if( nota >= 9.0 ): return ("A")
-    if( nota >= 8.0 ): return ("B+")
-    if( nota >= 7.0 ): return ("B")
-    if( nota >= 6.0 ): return ("C+")
-    if( nota >= 5.0 ): return ("C")
-    if( nota >= 4.0 ): return ("D+")
-    if( nota >= 3.0 ): return ("D")
-    if( nota >= 2.0 ): return ("D-")
-    if( nota >= 0.0 ): return ("I")
-    return "inválida"
-
-def arredonda_conceitos(nota):
-    if( nota >= 9.5 ): return 10
-    if( nota >= 8.5 ): return 9
-    if( nota >= 7.5 ): return 8
-    if( nota >= 6.5 ): return 7
-    if( nota >= 5.5 ): return 6
-    if( nota >= 4.5 ): return 5
-    if( nota >= 3.5 ): return 4
-    if( nota >= 2.5 ): return 3
-    if( nota >= 1.5 ): return 2
-    return 0
-
-
 def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm o plano de orientação
     context = {}
@@ -385,7 +364,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     context = {}
     relatos_quinzenais = 'b'
     for projeto in projetos:
-        for evento, relatos, avaliados, _ in projeto.get_relatos():
+        for evento, relatos, avaliados, _ in get_relatos(projeto):
             if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                 if relatos:
                     if avaliados and relatos_quinzenais not in ['r', 'y']:

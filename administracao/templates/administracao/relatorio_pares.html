@@ -35,8 +35,8 @@
   <h3>Avaliações de Pares</h3>
 
   {% with com_projeto=True %}
-  {% for projeto in projetos %}
-    {% include "ver_pares.html" with colegas=projeto.get_pares_colegas %}
+  {% for projeto, colegas in proj_pares %}
+    {% include "ver_pares.html" %}
     <hr class="striped-border">
   {% empty %}
     <p>Não existem avaliações de pares disponíveis.</p>

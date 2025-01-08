@@ -40,9 +40,11 @@
         {% if projeto.proposta.intercambio %}
           <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
         {% endif %}
-        {% if projeto.certificado_orientador %}
-          <div><a href="{{ projeto.certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a></div>
-        {% endif %}
+        {% with certificado_orientador=projeto|certificado_orientador %}
+          {% if certificado_orientador %}
+            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+          {% endif %}
+        {% endwith %}
       {% endwith %}
     </td></tr>
     {% empty %}

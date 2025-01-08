@@ -114,7 +114,7 @@
         </thead>
         <tbody>
 
-          {% for proposta in propostas %} 
+          {% for proposta, nativamente in prop_nativ %} 
           {% with disponivel=proposta.disponivel %}
           
             <tr class="item"> 
@@ -188,17 +188,15 @@
 
               {% spaceless %}
 
-              {% with nativamente=proposta.get_nativamente %}
-                {% for perfil in proposta.perfis %}
-                  <td class="text-center estudantes">
-                    {% for curso in perfil.all %}
-                      <span {% if nativamente == curso %}style="font-weight: bold;"{% endif %}>{{curso.sigla_curta}} </span>
-                    {% empty %}
-                      {% if disponivel %}<span style="color:red">?</span>{% endif %}
-                    {% endfor %}
-                  </td>
-                {% endfor %}
-              {% endwith %}
+              {% for perfil in proposta.perfis %}
+                <td class="text-center estudantes">
+                  {% for curso in perfil.all %}
+                    <span {% if nativamente == curso %}style="font-weight: bold;"{% endif %}>{{curso.sigla_curta}} </span>
+                  {% empty %}
+                    {% if disponivel %}<span style="color:red">?</span>{% endif %}
+                  {% endfor %}
+                </td>
+              {% endfor %}
 
               <td style="font-size: 12px;">
                 <ul style="margin-bottom: 2px; padding-left: 16px;">
