@@ -124,7 +124,7 @@ class Projeto(models.Model):
     pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
                                 help_text="Links para repositórios com dados/códigos dos projeto (para orientador acessar)")
 
-    organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+    organizacao_velho = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização parceira que propôs projeto")
 
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
@@ -187,6 +187,12 @@ class Projeto(models.Model):
         tipo_certificado = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
         certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
         return certificado
+
+
+    # @property
+    # def organizacao(self):
+    #     """Retorna a organização que foi definida na proposta."""
+    #     return self.proposta.organizacao
 
     def __str__(self):
         """Retorno padrão textual."""
