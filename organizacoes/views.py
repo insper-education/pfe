@@ -120,7 +120,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
 
     organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
     projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
-    projetos = Projeto.objects.filter(organizacao=organizacao) if organizacao else Projeto.objects.all()
+    projetos = Projeto.objects.filter(proposta__organizacao=organizacao) if organizacao else Projeto.objects.all()
 
     tipo = None
     if tipo_nome and tipo_nome != "ANY":
@@ -547,10 +547,8 @@ def organizacoes_prospect(request):
         periodo = int(request.POST["periodo"])*30  # periodo vem em meses
 
     for organizacao in todas_organizacoes:
-        propostas = Proposta.objects.filter(organizacao=organizacao)\
-            .order_by("ano", "semestre")
-        ant = Anotacao.objects.filter(organizacao=organizacao)\
-            .order_by("momento").last()
+        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
+        ant = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
 
         if (periodo > 366) or \
            (ant and (datetime.date.today() - ant.momento.date() <
@@ -713,9 +711,7 @@ def organizacoes_tabela(request):
         grupos = []
         for organizacao in Organizacao.objects.all():
             count_projetos = []
-            grupos_pfe = Projeto.objects.filter(organizacao=organizacao).\
-                filter(ano=ano).\
-                filter(semestre=semestre)
+            grupos_pfe = Projeto.objects.filter(proposta__organizacao=organizacao, ano=ano, semestre=semestre)
             if grupos_pfe:
                 for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
