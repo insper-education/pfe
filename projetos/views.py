@@ -30,7 +30,7 @@ from .models import Area, AreaDeInteresse, Banca
 
 from .support import simple_upload
 from .support3 import calcula_objetivos, cap_name, media
-from .support3 import divide57
+from .support3 import divide57, get_notas_alocacao
 from .support2 import get_areas_propostas, get_areas_estudantes
 
 from .tasks import avisos_do_dia, eventos_do_dia
@@ -957,7 +957,7 @@ def analise_notas(request):
         notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rp", "ppf", "api", "apg", "afg", "afi", "p"]
         notas = {key: {"ideal": 0, "regular": 0, "inferior": 0} for key in notas_keys}
 
-        notas_lista = [x.get_notas() for x in medias_semestre]
+        notas_lista = [get_notas_alocacao(x) for x in medias_semestre]
         for nota2 in notas_lista:
             for nota in nota2:
                 if nota[1] is not None:
@@ -969,7 +969,7 @@ def analise_notas(request):
                             notas[key]["regular"] += 1
                         else:
                             notas[key]["inferior"] += 1
-        medias_lista = [x.get_media for x in medias_semestre]
+        medias_lista = [x.get_media_alocacao for x in medias_semestre]
 
         # Somente apresenta as médias que esteja completas (pesso = 100%)
         medias_validas = list(filter(lambda d: d["pesos"] == 1.0, medias_lista))
@@ -1233,7 +1233,7 @@ def evolucao_notas(request):
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                 projeto__semestre=periodo[1],
                                                 aluno__curso2=t_curso)
-                notas_lista = [alocacao.get_media["media"] for alocacao in alocacoes_tmp if alocacao.get_media["pesos"] == 1]
+                notas_lista = [alocacao.get_media_alocacao["media"] for alocacao in alocacoes_tmp if alocacao.get_media_alocacao["pesos"] == 1]
 
                 notas_total[edicao].extend(notas_lista)
                 notas.append(media(notas_lista))

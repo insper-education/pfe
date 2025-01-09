@@ -10,6 +10,9 @@
   {% load aderencia_aluno %}
   {% load dictionary %}
   {% load zip_data %}
+  {% load relatos %}
+  {% load bancas %}
+  {% load get_notas %}
   {% load l10n %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
 
@@ -97,20 +100,20 @@
         <span lang="pt">Propostas Selecionadas</span>
         <span lang="en" style="display: none;">Selected Proposals</span>
       </h4>
-      <p id="regular"> 
+      <div id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
           {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
             <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-            <p><b>{{opcao.prioridade}}</b> - 
+            <div><b>{{opcao.prioridade}}</b> - 
                 {{opcao.proposta.titulo}}
                 ({{opcao.proposta.organizacao.nome}})
                 {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                 |{% mede_aderencia aluno opcao.proposta %}%|
-            </p>
+            </div>
             </a>
           {% endif %}
         {% endfor %}
-      </p>
+      </div>
       <script>
         if($.trim($("#regular").html())=='') {
           $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
@@ -182,16 +185,18 @@
         </a>
         <br>
         
-        {% include "display_notas_individuais.html" with notas=alocado.get_notas %}
+        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao2 %}
         <br><br>
 
-        {% if not alocado.get_relatos|empty_zip and alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
+        {% with relatos=alocado|get_relatos %}
+
+        {% if alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
           &nbsp;&nbsp;<span class="tit_rel">
             <span lang="pt">Relatos Quinzenais:</span>
             <span lang="en" style="display: none;">Biweekly Reports</span>
           </span><br>
-          {% for evento, relato, ordem in alocado.get_relatos %}
-            <p style="padding-left: 0.8em;">
+          {% for evento, relato, ordem in relatos %}
+            <div style="padding-left: 0.8em;">
               {% if relato %}
                 <a href="{% url 'relato_visualizar' relato.id %}">
                   {{ordem|add:1}}&ordm; - 
@@ -217,20 +222,26 @@
                 <span lang="pt">Não preenchido por estudante</span>
                 <span lang="en" style="display: none;">Not filled by student</span>
               {% endif %}
+              </div>
+          {% empty%}
+            <p style="padding-left: 0.8em;">
+              <span lang="pt">Nenhum relato quinzenal preenchido</span>
+              <span lang="en" style="display: none;">No biweekly report filled</span>
             </p>
           {% endfor %}
           <br>
         {% endif %}
+        {% endwith %}
 
         {% comment %} BANCAS {% endcomment %}
-        {% with bancas=alocado.get_bancas %}
+        {% with bancas=alocado|get_bancas %}
           {% if bancas %}
             &nbsp;&nbsp;<span class="tit_rel">
               <span lang="pt">Participação em Bancas</span>
               <span lang="en" style="display: none;">Examination Boards</span>
             </span><br>
             <ul>
-            {% for banca in alocado.get_bancas %}
+            {% for banca in alocado|get_bancas %}
               <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.composicao.exame}}</a></li>
             {% endfor %}
             </ul>

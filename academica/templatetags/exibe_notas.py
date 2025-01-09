@@ -7,6 +7,8 @@ Data: 23 de Junho de 2024
 
 from academica.models import ExibeNota
 
+from academica.support3 import em_probation
+
 from django import template
 register = template.Library()
 
@@ -52,3 +54,8 @@ def exibe_notas_semestre(edicao, exame):
     except Exception as e:
         return True
     return exibe.exibe
+
+@register.filter
+def probation(alocacao):
+    """Retorna se em probation."""
+    return em_probation(alocacao)

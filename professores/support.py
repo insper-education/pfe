@@ -29,7 +29,7 @@ from projetos.messages import email, render_message
 from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao, Documento, Evento, Avaliacao2
-from projetos.support2 import get_relatos
+from projetos.support2 import busca_relatos
 
 from users.models import PFEUser, Professor, Aluno, Alocacao
 #from users.models import Parceiro
@@ -364,7 +364,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     context = {}
     relatos_quinzenais = 'b'
     for projeto in projetos:
-        for evento, relatos, avaliados, _ in get_relatos(projeto):
+        for evento, relatos, avaliados, _ in busca_relatos(projeto):
             if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                 if relatos:
                     if avaliados and relatos_quinzenais not in ['r', 'y']:

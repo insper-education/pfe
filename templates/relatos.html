@@ -22,7 +22,7 @@
 
 {% if projeto %}
   <table class="tabela_redu_estu table-striped"><tbody>
-  {% for evento, relatos, avaliados, observacoes in projeto|relatos %}
+  {% for evento, relatos, avaliados, observacoes in projeto|traz_relatos %}
     <tr style="padding-left: 18px;">
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>{{ forloop.counter }}&ordm;</a></td>
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>

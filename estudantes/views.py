@@ -23,7 +23,7 @@ from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante
 
 from academica.models import Composicao
-from academica.support import filtra_composicoes, filtra_entregas
+from academica.support import filtra_composicoes, filtra_entregas, get_respostas_estilos
 
 from administracao.models import Carta, TipoEvento
 from administracao.support import propostas_liberadas
@@ -339,7 +339,7 @@ def estilo_comunicacao(request):
                     }
                 )
 
-        respostas = UsuarioEstiloComunicacao.get_respostas(request.user)
+        respostas = get_respostas_estilos(request.user)
         if respostas:
 
             mensagem = "Opções submetidas com sucesso!<br>"

@@ -12,34 +12,30 @@ import re
 import logging
 from hashids import Hashids
 from urllib.parse import quote
-
-#from decimal import Decimal, ROUND_HALF_UP
-
 from functools import partial
 
 from django.conf import settings
-
-#from django.http import HttpResponse
-
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-#from django.db.models.functions import Lower
-#from django.db.models import F
 
 from academica.models import Exame
+from projetos.models import Avaliacao2
+from projetos.models import Banca
+from projetos.models import Evento
 
-from estudantes.models import Relato, EstiloComunicacao
-
-from operacional.models import Curso
-
-from projetos.models import Avaliacao2, Banca
-from projetos.models import ObjetivosDeAprendizagem, Reprovacao, Evento
-
+#from projetos.models import ObjetivosDeAprendizagem
+#from operacional.models import Curso
+#from estudantes.models import Relato
+#from estudantes.models import EstiloComunicacao
 #from projetos.models import Certificado
+#from projetos.models import Reprovacao
 
-from projetos.support3 import calcula_objetivos, converte_letra
+from academica.support2 import get_objetivos
+from academica.support3 import get_media_alocacao_i
+from projetos.support3 import calcula_objetivos
+
 from projetos.support import get_upload_path
 
 
@@ -141,19 +137,19 @@ class PFEUser(AbstractUser):
     def __str__(self):
         """Retorno padrão textual do objeto."""
         texto = self.get_full_name()
-        if self.tipo_de_usuario == 1 and hasattr(self, 'aluno'):  # (1, 'aluno'),
+        if self.tipo_de_usuario == 1 and hasattr(self, "aluno"):  # (1, "aluno"),
             texto += " (estudante"
             if self.aluno.anoPFE and self.aluno.semestrePFE:
                 texto += " : " + str(self.aluno.anoPFE) + "." + str(self.aluno.semestrePFE)
-        elif self.tipo_de_usuario == 2 and hasattr(self, 'professor'):  # (2, 'professor'),
+        elif self.tipo_de_usuario == 2 and hasattr(self, "professor"):  # (2, "professor"),
             texto += " (professor"
             if self.professor.dedicacao:
                 texto += " : " + self.professor.dedicacao
-        elif self.tipo_de_usuario == 3 and hasattr(self, 'parceiro'):  # (3, 'parceiro'),
+        elif self.tipo_de_usuario == 3 and hasattr(self, "parceiro"):  # (3, "parceiro"),
             texto += " (parceiro"
             if self.parceiro.organizacao and self.parceiro.organizacao.sigla:
                 texto += " : " + self.parceiro.organizacao.sigla
-        elif self.tipo_de_usuario == 4:  # (4, 'administrador'),
+        elif self.tipo_de_usuario == 4:  # (4, "administrador"),
             texto += " (professor : TI"
 
         texto += ")"
@@ -225,7 +221,7 @@ class Aluno(models.Model):
                                  blank=True,
                                  help_text="Número de matrícula")
 
-    curso2 = models.ForeignKey(Curso, null=True, blank=True, on_delete=models.SET_NULL,
+    curso2 = models.ForeignKey("operacional.Curso", null=True, blank=True, on_delete=models.SET_NULL,
                              help_text="Curso Matriculado")
 
     opcoes = models.ManyToManyField("projetos.Proposta", through="Opcao",
@@ -309,54 +305,9 @@ class Aluno(models.Model):
             return str(self.curso2)
         return "Sem curso"
 
-    def get_objetivos(self, avaliacoes):
-        """Retorna objetivos."""
-        lista_objetivos = {}
-        avaliadores = set()
-
-        for objetivo in ObjetivosDeAprendizagem.objects.all():
-            avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")
-            if avaliacoes_p_obj:
-                for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
-                    if objtmp.sigla == objetivo.sigla:
-                        logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! {self} {objetivo.sigla}")
-                lista_objetivos[objetivo] = {}
-                for aval in avaliacoes_p_obj:
-                    if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
-                        avaliadores.add(aval.avaliador)
-                        if aval.na or (aval.nota is None) or (aval.peso is None):
-                            lista_objetivos[objetivo][aval.avaliador] = None
-                        else:
-                            lista_objetivos[objetivo][aval.avaliador] = (float(aval.nota), float(aval.peso))
-                    # Senão é só uma avaliação de objetivo mais antiga (E IGNORAR)
-
-        if not lista_objetivos:
-            return 0, None, None
-
-        # média por objetivo
-        val_objetivos = {}
-        pes_total = 0
-        for obj in lista_objetivos:  # Verificando cada objetivo de aprendizado identificado
-            val = 0.0
-            pes = 0.0
-            count = 0
-            if lista_objetivos[obj]:
-                for avali in lista_objetivos[obj]:
-                    if lista_objetivos[obj][avali]:
-                        count += 1
-                        val += lista_objetivos[obj][avali][0]
-                        pes += lista_objetivos[obj][avali][1]
-                        pes_total += lista_objetivos[obj][avali][1]
-                if count:
-                    valor = val/float(count)
-                    peso = pes/float(count)
-                    val_objetivos[obj] = (valor, peso)
-
-        return val_objetivos, pes_total, avaliadores
-
     def get_banca(self, avaliacoes_banca):
         """Retorna média final das bancas informadas."""
-        val_objetivos, pes_total, avaliadores = Aluno.get_objetivos(self, avaliacoes_banca)
+        val_objetivos, pes_total, avaliadores = get_objetivos(self, avaliacoes_banca)
 
         if not val_objetivos:
             return 0, None, None
@@ -382,8 +333,8 @@ class Aluno(models.Model):
 
         return val, pes, avaliadores
 
-    @property
-    def get_edicoes(self):
+    #@property
+    def get_edicoes_aluno(self):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
 
@@ -427,7 +378,7 @@ class Aluno(models.Model):
 
                 if avaliacoes:
                     if tipo in ["O", "I", "NI"]:
-                        nota, peso, _ = Aluno.get_objetivos(self, avaliacoes)
+                        nota, peso, _ = get_objetivos(self, avaliacoes)
                         notas.append((sigla, nota, peso / 100 if peso else 0))
 
             edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas
@@ -435,9 +386,7 @@ class Aluno(models.Model):
         return edicao
     
 
-
-    #@property
-    def get_notas(self, request=None, ano=None, semestre=None, checa_banca=True):
+    def get_notas_estudante(self, request=None, ano=None, semestre=None, checa_banca=True):
         """Recuper as notas do Estudante."""
         edicao = {}  # dicionário para cada alocação do estudante
 
@@ -604,9 +553,9 @@ class Opcao(models.Model):
 
     class Meta:
         """Meta para Opcao."""
-        verbose_name = 'Opção'
-        verbose_name_plural = 'Opções'
-        ordering = ['prioridade']
+        verbose_name = "Opção"
+        verbose_name_plural = "Opções"
+        ordering = ["prioridade"]
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):
@@ -634,9 +583,9 @@ class OpcaoTemporaria(models.Model):
     class Meta:
         """Meta para OpcaoTemporaria."""
 
-        verbose_name = 'Opção Temporária'
-        verbose_name_plural = 'Opções Temporárias'
-        ordering = ['prioridade']
+        verbose_name = "Opção Temporária"
+        verbose_name_plural = "Opções Temporárias"
+        ordering = ["prioridade"]
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
@@ -682,162 +631,162 @@ class Alocacao(models.Model):
         alocacao = cls(projeto=projeto, aluno=estudante)
         return alocacao
 
-    @property
-    def get_edicoes(self):
-        """Retorna objetivos."""
-        edicoes = self.aluno.get_edicoes
-        semestre = str(self.projeto.ano)+"."+str(self.projeto.semestre)
-        if semestre in edicoes:
-            return edicoes[semestre]
-        return None
-
     # @property
-    def get_notas(self, checa_banca=True):
-        """Retorna notas do estudante no projeto."""
-        edicoes = self.aluno.get_notas(ano=self.projeto.ano, semestre=self.projeto.semestre, checa_banca=checa_banca)
-        return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
+    # def get_edicoes_alocacao(self):
+    #     """Retorna objetivos."""
+    #     edicoes = self.aluno.get_edicoes
+    #     semestre = str(self.projeto.ano)+"."+str(self.projeto.semestre)
+    #     if semestre in edicoes:
+    #         return edicoes[semestre]
+    #     return None
+
+    # def get_notas_alocacao(self, checa_banca=True):
+    #     """Retorna notas do estudante no projeto."""
+    #     edicoes = self.aluno.get_notas_estudante(ano=self.projeto.ano, semestre=self.projeto.semestre, checa_banca=checa_banca)
+    #     return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
   
-    def em_probation(self):
-        """Retorna se em probation."""
-        reprovacao = Reprovacao.objects.filter(alocacao=self).exists()
-        if reprovacao:
-            return False
+    # def em_probation(self):
+    #     """Retorna se em probation."""
+    #     reprovacao = Reprovacao.objects.filter(alocacao=self).exists()
+    #     if reprovacao:
+    #         return False
         
-        now = datetime.datetime.now()
+    #     now = datetime.datetime.now()
 
-        # Sigla, Nome, Grupo, Nota/Check, Banca
-        pavaliacoes = [
-            ("P", "Probation", False, True, "P"),
-            ### CHECK SE JA FECHOU BANCA DE PROBATION PRIMEIRO ####
-            ("RFG", "Relatório Final de Grupo", True, True, None),
-            ("RFI", "Relatório Final Individual", False, True, None),
-            ("BF", "Banca Final", True, True, "BF"),
-            ("AFI", "Avaliação Final Individual", False, True, None),
-            ("AFG", "Avaliação Final de Grupo", True, True, None),
-        ]
+    #     # Sigla, Nome, Grupo, Nota/Check, Banca
+    #     pavaliacoes = [
+    #         ("P", "Probation", False, True, "P"),
+    #         ### CHECK SE JA FECHOU BANCA DE PROBATION PRIMEIRO ####
+    #         ("RFG", "Relatório Final de Grupo", True, True, None),
+    #         ("RFI", "Relatório Final Individual", False, True, None),
+    #         ("BF", "Banca Final", True, True, "BF"),
+    #         ("AFI", "Avaliação Final Individual", False, True, None),
+    #         ("AFG", "Avaliação Final de Grupo", True, True, None),
+    #     ]
 
-        for pa in pavaliacoes:
-            checa_b = True
-            banca = None
-            if pa[4]:  # Banca
-                if pa[2]:  # Grupo - Intermediária/Final
-                    banca = Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla=pa[4]).last()
-                else:  # Individual - Probation
-                    banca = Banca.objects.filter(alocacao=self, composicao__exame__sigla=pa[4]).last()
-            try:
-                exame=Exame.objects.get(sigla=pa[0])
-                if pa[2]:  # GRUPO
-                    paval = Avaliacao2.objects.filter(projeto=self.projeto, exame=exame)
-                else:  # INDIVIDUAL
-                    paval = Avaliacao2.objects.filter(alocacao=self, exame=exame)
+    #     for pa in pavaliacoes:
+    #         checa_b = True
+    #         banca = None
+    #         if pa[4]:  # Banca
+    #             if pa[2]:  # Grupo - Intermediária/Final
+    #                 banca = Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla=pa[4]).last()
+    #             else:  # Individual - Probation
+    #                 banca = Banca.objects.filter(alocacao=self, composicao__exame__sigla=pa[4]).last()
+    #         try:
+    #             exame=Exame.objects.get(sigla=pa[0])
+    #             if pa[2]:  # GRUPO
+    #                 paval = Avaliacao2.objects.filter(projeto=self.projeto, exame=exame)
+    #             else:  # INDIVIDUAL
+    #                 paval = Avaliacao2.objects.filter(alocacao=self, exame=exame)
 
-                if paval:
-                    val_objetivos = None
-                    if pa[4] and banca:  # Banca
-                        valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+    #             if paval:
+    #                 val_objetivos = None
+    #                 if pa[4] and banca:  # Banca
+    #                     valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
-                        # Verifica se já passou o evento de encerramento e assim liberar notas
-                        evento = Evento.get_evento(sigla="EE", ano=self.projeto.ano, semestre=self.projeto.semestre)
-                        if evento:
-                            # Após o evento de encerramento liberar todas as notas
-                            if now.date() > evento.endDate:
-                                checa_b = False
+    #                     # Verifica se já passou o evento de encerramento e assim liberar notas
+    #                     evento = Evento.get_evento(sigla="EE", ano=self.projeto.ano, semestre=self.projeto.semestre)
+    #                     if evento:
+    #                         # Após o evento de encerramento liberar todas as notas
+    #                         if now.date() > evento.endDate:
+    #                             checa_b = False
 
-                        if checa_b:
-                            for membro in banca.membros():
-                                avaliacao = paval.filter(avaliador=membro).last()
-                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                    valido = False
-                            if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                avaliacao = paval.filter(avaliador=self.projeto.orientador.user).last()
-                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                    valido = False
+    #                     if checa_b:
+    #                         for membro in banca.membros():
+    #                             avaliacao = paval.filter(avaliador=membro).last()
+    #                             if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+    #                                 valido = False
+    #                         if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+    #                             avaliacao = paval.filter(avaliador=self.projeto.orientador.user).last()
+    #                             if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+    #                                 valido = False
 
-                        if valido:
-                            val_objetivos, _, _ = Aluno.get_objetivos(self, paval)
+    #                     if valido:
+    #                         val_objetivos, _, _ = get_objetivos(self, paval)
 
-                    else:
-                        val_objetivos, _, _ = Aluno.get_objetivos(self, paval)
+    #                 else:
+    #                     val_objetivos, _, _ = get_objetivos(self, paval)
 
-                    if pa[0] == "P":
-                        if val_objetivos:
-                            for obj in val_objetivos:
-                                if val_objetivos[obj][0] < 5:
-                                    return True # Se tiver algum objetivo com nota menor que 5 mantem em probation
-                            return False  # Se não tiver nenhum objetivo com nota menor que 5 tudo OK com probation
+    #                 if pa[0] == "P":
+    #                     if val_objetivos:
+    #                         for obj in val_objetivos:
+    #                             if val_objetivos[obj][0] < 5:
+    #                                 return True # Se tiver algum objetivo com nota menor que 5 mantem em probation
+    #                         return False  # Se não tiver nenhum objetivo com nota menor que 5 tudo OK com probation
 
-                    if val_objetivos:
-                        for obj in val_objetivos:
-                            if val_objetivos[obj][0] < 5:
-                                return True
+    #                 if val_objetivos:
+    #                     for obj in val_objetivos:
+    #                         if val_objetivos[obj][0] < 5:
+    #                             return True
 
-            except Exame.DoesNotExist:
-                raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
+    #         except Exame.DoesNotExist:
+    #             raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
-        return False
+    #     return False
 
     @property
-    def get_media(self):
-        """Retorna média e peso final."""
-        reprovacao = Reprovacao.objects.filter(alocacao=self)
-        if reprovacao:
-            return {"media": reprovacao.last().nota, "pesos": 1}
+    def get_media_alocacao(self):
+        return get_media_alocacao_i(self)
+    #     """Retorna média e peso final."""
+    #     reprovacao = Reprovacao.objects.filter(alocacao=self)
+    #     if reprovacao:
+    #         return {"media": reprovacao.last().nota, "pesos": 1}
 
-        edicao = self.get_notas()
+    #     edicao = self.get_notas_alocacao()
 
-        nota_final = 0
-        nota_individual = 0
-        nota_grupo_inter = 0
-        nota_grupo_final = 0
-        peso_final = 0
-        peso_individual = 0
-        peso_grupo_inter = 0
-        peso_grupo_final = 0
-        for aval, nota, peso, _ in edicao:
-            if aval is not None and nota is not None and peso is not None:
-                peso_final += peso
-                nota_final += nota * peso
-                if aval in ("RII", "RFI", "API", "AFI"):
-                    peso_individual += peso
-                    nota_individual += nota * peso
-                if aval in ("RIG", "APG", "RPL", "PPF"):
-                    peso_grupo_inter += peso
-                    nota_grupo_inter += nota * peso
-                if aval in ("RFG", "AFG"):
-                    peso_grupo_final += peso
-                    nota_grupo_final += nota * peso
-        peso_final = round(peso_final, 2)
+    #     nota_final = 0
+    #     nota_individual = 0
+    #     nota_grupo_inter = 0
+    #     nota_grupo_final = 0
+    #     peso_final = 0
+    #     peso_individual = 0
+    #     peso_grupo_inter = 0
+    #     peso_grupo_final = 0
+    #     for aval, nota, peso, _ in edicao:
+    #         if aval is not None and nota is not None and peso is not None:
+    #             peso_final += peso
+    #             nota_final += nota * peso
+    #             if aval in ("RII", "RFI", "API", "AFI"):
+    #                 peso_individual += peso
+    #                 nota_individual += nota * peso
+    #             if aval in ("RIG", "APG", "RPL", "PPF"):
+    #                 peso_grupo_inter += peso
+    #                 nota_grupo_inter += nota * peso
+    #             if aval in ("RFG", "AFG"):
+    #                 peso_grupo_final += peso
+    #                 nota_grupo_final += nota * peso
+    #     peso_final = round(peso_final, 2)
 
-        individual = None
-        if peso_individual > 0:
-            individual = nota_individual/peso_individual
+    #     individual = None
+    #     if peso_individual > 0:
+    #         individual = nota_individual/peso_individual
 
-        # Arredonda os valores finais para auxiliar do check de peso 100% e média 5.
-        nota_final = round(nota_final, 6)
-        peso_final = round(peso_final, 9)
+    #     # Arredonda os valores finais para auxiliar do check de peso 100% e média 5.
+    #     nota_final = round(nota_final, 6)
+    #     peso_final = round(peso_final, 9)
 
-        # Caso a nota individual seja menor que 5, a nota final é a menor das notas        
-        if individual is not None and individual < 5:
-            if individual < nota_final:
-                nota_final = individual
+    #     # Caso a nota individual seja menor que 5, a nota final é a menor das notas        
+    #     if individual is not None and individual < 5:
+    #         if individual < nota_final:
+    #             nota_final = individual
 
-        # Se a nota final permite passar, mas o estudante estiver em probation, a nota final é None
-        if nota_final > 5.0 and self.em_probation():
-            probation = True
-            nota_final = None
-        else:
-            probation = False
+    #     # Se a nota final permite passar, mas o estudante estiver em probation, a nota final é None
+    #     if nota_final > 5.0 and em_probation(self):
+    #         probation = True
+    #         nota_final = None
+    #     else:
+    #         probation = False
 
-        return {
-            "media": nota_final,
-            "pesos": peso_final,
-            "peso_grupo_inter": peso_grupo_inter,
-            "nota_grupo_inter": nota_grupo_inter,
-            "peso_grupo_final": peso_grupo_final,
-            "nota_grupo_final": nota_grupo_final,
-            "individual": individual,
-            "probation": probation,
-        }
+    #     return {
+    #         "media": nota_final,
+    #         "pesos": peso_final,
+    #         "peso_grupo_inter": peso_grupo_inter,
+    #         "nota_grupo_inter": nota_grupo_inter,
+    #         "peso_grupo_final": peso_grupo_final,
+    #         "nota_grupo_final": nota_grupo_final,
+    #         "individual": individual,
+    #         "probation": probation,
+    #     }
 
     @property
     def get_medias_oo(self):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
@@ -846,75 +795,75 @@ class Alocacao(models.Model):
         context = calcula_objetivos(alocacoes)
         return context
 
-    def get_oas(self, avaliacoes):
-        """Retorna Objetivos de Aprendizagem da alocação no semestre."""
-        oas = {}
-        for avaliacao in avaliacoes:
-            if avaliacao.objetivo not in oas:
-                oas[avaliacao.objetivo] = {"conceito": []}
-            exame = avaliacao.exame
-            nota = avaliacao.nota
-            peso = avaliacao.peso
-            if nota is not None and peso is not None:
-                oas[avaliacao.objetivo]["conceito"].append( (exame, converte_letra(nota), float(nota), float(peso)) )
-        for oa in oas:
-            notas = oas[oa]["conceito"]
-            val = 0
-            pes = 0
-            cor = "black"
-            for exame, _, nota, peso in notas:
-                if exame.periodo_para_rubricas == 2:  # (2, "Final"),
-                    if nota < 5:
-                        cor = "darkorange"
-                val += nota * peso
-                pes += peso
-            if pes:
-                val = val/pes
-            if val < 5:
-                cor = "red"
-            oas[oa]["media"] = (converte_letra(val), val, cor)
-            oas[oa]["peso"] = pes
+    # def get_oas(self, avaliacoes):
+    #     """Retorna Objetivos de Aprendizagem da alocação no semestre."""
+    #     oas = {}
+    #     for avaliacao in avaliacoes:
+    #         if avaliacao.objetivo not in oas:
+    #             oas[avaliacao.objetivo] = {"conceito": []}
+    #         exame = avaliacao.exame
+    #         nota = avaliacao.nota
+    #         peso = avaliacao.peso
+    #         if nota is not None and peso is not None:
+    #             oas[avaliacao.objetivo]["conceito"].append( (exame, converte_letra(nota), float(nota), float(peso)) )
+    #     for oa in oas:
+    #         notas = oas[oa]["conceito"]
+    #         val = 0
+    #         pes = 0
+    #         cor = "black"
+    #         for exame, _, nota, peso in notas:
+    #             if exame.periodo_para_rubricas == 2:  # (2, "Final"),
+    #                 if nota < 5:
+    #                     cor = "darkorange"
+    #             val += nota * peso
+    #             pes += peso
+    #         if pes:
+    #             val = val/pes
+    #         if val < 5:
+    #             cor = "red"
+    #         oas[oa]["media"] = (converte_letra(val), val, cor)
+    #         oas[oa]["peso"] = pes
 
-        return oas
+    #     return oas
 
-    def get_oas_i(self):
-        avaliacoes = Avaliacao2.objects.filter(alocacao=self, exame__grupo=False)
-        return self.get_oas(avaliacoes)
+    # def get_oas_i(self):
+    #     avaliacoes = Avaliacao2.objects.filter(alocacao=self, exame__grupo=False)
+    #     return self.get_oas(avaliacoes)
     
-    # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
-    def get_oas_g(self):
-        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
-        return self.get_oas(avaliacoes)
+    # # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
+    # def get_oas_g(self):
+    #     avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
+    #     return self.get_oas(avaliacoes)
     
-    # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
-    def get_oas_t(self):
-        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=False) | Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
-        return self.get_oas(avaliacoes)
+    # # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
+    # def get_oas_t(self):
+    #     avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=False) | Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
+    #     return self.get_oas(avaliacoes)
 
     @property
     def media(self):
         """Retorna média final."""
-        return self.get_media["media"]
+        return self.get_media_alocacao["media"]
 
     @property
     def peso(self):
         """Retorna peso final."""
-        return self.get_media["pesos"]
+        return self.get_media_alocacao["pesos"]
 
-    @property
-    def get_relatos(self):
-        """Retorna todos os possiveis relatos quinzenais da alocacao."""
+    # @property
+    # def get_relatos(self):
+    #     """Retorna todos os possiveis relatos quinzenais da alocacao."""
         
-        eventos = Evento.get_eventos(sigla="RQ", ano=self.projeto.ano, semestre=self.projeto.semestre)
-        relatos = []
-        for index in range(len(eventos)):
-            if not index: # index == 0:
-                relato = Relato.objects.filter(alocacao=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()
-            else:
-                relato = Relato.objects.filter(alocacao=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by('momento').last()
-            relatos.append(relato)
+    #     eventos = Evento.get_eventos(sigla="RQ", ano=self.projeto.ano, semestre=self.projeto.semestre)
+    #     relatos = []
+    #     for index in range(len(eventos)):
+    #         if not index: # index == 0:
+    #             relato = Relato.objects.filter(alocacao=self, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()
+    #         else:
+    #             relato = Relato.objects.filter(alocacao=self, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by('momento').last()
+    #         relatos.append(relato)
 
-        return zip(eventos, relatos, range(len(eventos)))
+    #     return zip(eventos, relatos, range(len(eventos)))
 
     # @property
     # def get_certificados(self):
@@ -922,16 +871,16 @@ class Alocacao(models.Model):
     #     certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
     #     return certificados
     
-    def get_bancas(self):
-        """Retorna as bancas que estudante participou."""
-        bancas_proj = Banca.objects.filter(projeto=self.projeto)
-        bancas_prob = Banca.objects.filter(alocacao=self)
-        return bancas_proj | bancas_prob
+    # def get_bancas(self):
+    #     """Retorna as bancas que estudante participou."""
+    #     bancas_proj = Banca.objects.filter(projeto=self.projeto)
+    #     bancas_prob = Banca.objects.filter(alocacao=self)
+    #     return bancas_proj | bancas_prob
 
 
 class UsuarioEstiloComunicacao(models.Model):
     usuario = models.ForeignKey(PFEUser, on_delete=models.CASCADE)
-    estilo_comunicacao = models.ForeignKey(EstiloComunicacao, on_delete=models.CASCADE)
+    estilo_comunicacao = models.ForeignKey("estudantes.EstiloComunicacao", on_delete=models.CASCADE)
     prioridade_resposta1 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
     prioridade_resposta2 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
     prioridade_resposta3 = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4')])
@@ -952,99 +901,20 @@ class UsuarioEstiloComunicacao(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-    def get_respostas_in_order(self):
-        estilos = [
-            self.estilo_comunicacao.resposta1,
-            self.estilo_comunicacao.resposta2,
-            self.estilo_comunicacao.resposta3,
-            self.estilo_comunicacao.resposta4,
-        ]
-        respostas = [
-            (self.prioridade_resposta1, estilos[self.prioridade_resposta1-1]),
-            (self.prioridade_resposta2, estilos[self.prioridade_resposta2-1]),
-            (self.prioridade_resposta3, estilos[self.prioridade_resposta3-1]),
-            (self.prioridade_resposta4, estilos[self.prioridade_resposta4-1]),
-        ]
-        return respostas
-    
-    def get_score(self):
+    def get_score_estilo(estilo):
 
         # List of priorities
         priorities = [
-            (self.prioridade_resposta1, 6),
-            (self.prioridade_resposta2, 4),
-            (self.prioridade_resposta3, 3),
-            (self.prioridade_resposta4, 1),
+            (estilo.prioridade_resposta1, 6),
+            (estilo.prioridade_resposta2, 4),
+            (estilo.prioridade_resposta3, 3),
+            (estilo.prioridade_resposta4, 1),
         ]
 
-        # Sort the priorities list by the second element of each tuple
         sorted_priorities = sorted(priorities, key=lambda x: x[0])
-
-        # Extract the first element of each sorted tuple into a new list
         sorted_first_columns = [item[1] for item in sorted_priorities]
 
         return sorted_first_columns
-
-    
-    def get_respostas(usuario):
-     
-        valores = {
-                "PR_Fav": 0,  # Pragmático - Escorre em Condições Favoráveis
-                "PR_Str": 0,  # Pragmático - Escorre em Condições de Stress
-                "S_Fav": 0,   # Afetivo - Escorre em Condições Favoráveis
-                "S_Str": 0,   # Afetivo - Escorre em Condições de Stress
-                "PN_Fav": 0,  # PN - Escorre em Condições Favoráveis
-                "PN_Str": 0,  # PN - Escorre em Condições de Stress
-                "I_Fav": 0,   # I - Escorre em Condições Favoráveis
-                "I_Str": 0,   # I - Escorre em Condições de Stress
-            }
-
-        estilos = estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
-        if not estilos:
-            return None
-        
-        # PR_Fav = A1 + G1 + M1 + B3 + H3 + N3 + C4 + I4 + O4  # D5+D35+D65+D12+D42+D72+D18+D48+D78
-        # PR_Str = D3 + J3 + P3 + E3 + K3 + Q3 + F2 + L2 + R2  # D22+D52+D82+D27+D57+D87+D31+D61+D91
-        # S_Fav = A2 + G2 + M2 + B1 + H1 + N1 + O3 + I3 + C3  # D6+D36+D66+D10+D40+D70+D77+D47+D17
-        # S_Str = D4 + J4 + P4 + E1 + K1 + Q1 + F4 + L4 + R4  # D23+D53+D83+D25+D55+D85+D33+D63+D93
-        # PN_Fav = A3 + M3 + G3 + B2 + H3 + N2 + C2 + I2 + O2  # D7+D67+D37+D11+D41+D71+D16+D46+D76
-        # PN_Str = D1 + J1 + P1 + E2 + K2 + Q2 + F1 + L1 + R1  # D20+D50+D80+D26+D56+D86+D30+D60+D90
-        # I_Fav = A4 + G4 + M4 + B4 + H4 + N4 + C1 + I1 + O1  # D8+D38+D68+D13+D43+D73+D15+D45+D75
-        # I_Str = D2 + J2 + P2 + E4 + K4 + Q4 + R3 + L3 + F3  # D21+D51+D81+D28+D58+D88+D92+D62+D32
-
-        tabela = {
-            "PR_Fav": ["A0", "G0", "M0", "B2", "H2", "N2", "C3", "I3", "O3"],
-            "PR_Str": ["D2", "J2", "P2", "E2", "K2", "Q2", "F1", "L1", "R1"],
-            "S_Fav": ["A1", "G1", "M1", "B0", "H0", "N0", "O2", "I2", "C2"],
-            "S_Str": ["D3", "J3", "P3", "E0", "K0", "Q0", "F3", "L3", "R3"],
-            "PN_Fav": ["A2", "M2", "G2", "B1", "H1", "N1", "C1", "I1", "O1"],
-            "PN_Str": ["D0", "J0", "P0", "E1", "K1", "Q1", "F0", "L0", "R0"],
-            "I_Fav": ["A3", "G3", "M3", "B3", "H3", "N3", "C0", "I0", "O0"],
-            "I_Str": ["D1", "J1", "P1", "E3", "K3", "Q3", "R2", "L2", "F2"],
-        }
-
-        for estilo in EstiloComunicacao.objects.all():
-            usuario_estilo = UsuarioEstiloComunicacao.objects.filter(usuario=usuario, estilo_comunicacao=estilo).last()
-            if usuario_estilo and estilo.bloco:
-                respostas = usuario_estilo.get_score()
-                for k, v in tabela.items():
-                    for i in v:
-                        if i[0] == estilo.bloco:
-                            valores[k] += respostas[int(i[1])]
-
-        return {
-            "Pragmático Favorável": valores["PR_Fav"],
-            "Pragmático Stress": valores["PR_Str"],
-            "Afetivo Favorável": valores["S_Fav"],
-            "Afetivo Stress": valores["S_Str"],
-            "Racional Favorável": valores["PN_Fav"],
-            "Racional Stress": valores["PN_Str"],
-            "Reflexivo Favorável": valores["I_Fav"],
-            "Reflexivo Stress": valores["I_Str"],
-            "TOTAL Favorável": valores["PR_Fav"] + valores["S_Fav"] + valores["PN_Fav"] + valores["I_Fav"],
-            "TOTAL Stress": valores["PR_Str"] + valores["S_Str"] + valores["PN_Str"] + valores["I_Str"],
-        }
-        
 
     def __str__(self):
         return f"{self.usuario.get_full_name} - {self.estilo_comunicacao.questao}"
@@ -1056,20 +926,20 @@ class UsuarioEstiloComunicacao(models.Model):
 class Parceiro(models.Model):  # da empresa
     """Classe de usuários com estatus de Parceiro (das organizações)."""
 
-    user = models.OneToOneField(PFEUser, related_name='parceiro',
+    user = models.OneToOneField(PFEUser, related_name="parceiro",
                                 on_delete=models.CASCADE,
-                                help_text='Identificaçãdo do usuário')
+                                help_text="Identificaçãdo do usuário")
     organizacao = models.ForeignKey("projetos.Organizacao", on_delete=models.CASCADE,
                                     blank=True, null=True,
-                                    help_text='Organização Parceira')
+                                    help_text="Organização Parceira")
     cargo = models.CharField("Cargo", max_length=90, blank=True,
-                             help_text='Cargo Funcional')
+                             help_text="Cargo Funcional")
     principal_contato = models.BooleanField("Principal Contato", default=False)
 
     class Meta:
         """Meta para Parceiro."""
 
-        ordering = ['user']
+        ordering = ["user"]
         permissions = (("altera_parceiro", "Parceiro altera valores"),)
 
     def __str__(self):

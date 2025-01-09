@@ -28,7 +28,7 @@ from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
 from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Composicao, CodigoColuna, Exame
-from academica.support import filtra_composicoes
+from academica.support import filtra_composicoes, get_respostas_estilos
 
 from administracao.models import Carta
 from administracao.support import get_limite_propostas, usuario_sem_acesso
@@ -380,7 +380,7 @@ def blackboard_notas(request, anosemestre):
         tipo = request.POST["tipo"]
         
         for alocacao in alocacoes:
-            notas = alocacao.get_notas(checa_banca=False)
+            notas = alocacao._alocacao(checa_banca=False)
             linha = [alocacao.aluno.user.first_name]
             linha += [alocacao.aluno.user.last_name]
             linha += [alocacao.aluno.user.username]
@@ -395,7 +395,7 @@ def blackboard_notas(request, anosemestre):
                     linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
                 else:
                     if coluna == "M":
-                        media = alocacao.get_media['media']
+                        media = alocacao.get_media_alocacao["media"]
                         if media:
                             linha += [f"{media:.4f}".replace('.',',')]
                         else:
@@ -711,7 +711,7 @@ def edita_notas(request, primarykey):
         mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
         mensagem += "</b> atualizadas:<br>\n"
 
-        media = alocacao.get_media["media"]
+        media = alocacao.get_media_alocacao["media"]
         if media is not None:
             if media["pesos"] is not None:
                 mensagem += "&nbsp;&nbsp;Peso Final = "
@@ -780,7 +780,7 @@ def estudante_detail(request, primarykey=None):
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
     context["areast"] = Area.objects.filter(ativa=True)
     context["estilos"] = EstiloComunicacao.objects.all()
-    context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(estudante.user)
+    context["estilos_respostas"] = get_respostas_estilos(estudante.user)
 
     return render(request, "users/estudante_detail.html", context=context)
 
@@ -808,7 +808,7 @@ def professor_detail(request, primarykey):
     context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
     context["aulas"] = Evento.objects.filter(tipo_evento__sigla="A", responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
     context["estilos"] = EstiloComunicacao.objects.all()
-    context["estilos_respostas"] = UsuarioEstiloComunicacao.get_respostas(context["professor"].user)
+    context["estilos_respostas"] = get_respostas_estilos(context["professor"].user)
 
     return render(request, "users/professor_detail.html", context=context)
 

@@ -51,11 +51,11 @@
       = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span></b>    
     <script>
       if(peso > 0.0) {
-        {% with media=alocado.get_media %}
+        {% with media=alocado.get_media_alocacao %}
           {% if media %}
             {% if media.media < 5 %}
               document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
-            {% elif alocado.em_probation %}
+            {% elif alocado|probation %}
               document.getElementById("media{{alocado.id}}").innerHTML = "probation";
             {% else %}
               document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";

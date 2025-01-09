@@ -409,14 +409,14 @@
   {% endif %}
 
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-  {% if projeto|has_relatos %}  
-    <hr>
-    <h4>
-      <span lang="pt">Relatos Quinzenais:</span>
-      <span lang="en" style="display: none;">Biweekly Reports:</span>
-    </h4>
-    {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
-  {% endif %}
+    {% if projeto|has_relatos %}  
+      <hr>
+      <h4>
+        <span lang="pt">Relatos Quinzenais:</span>
+        <span lang="en" style="display: none;">Biweekly Reports:</span>
+      </h4>
+      {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
+    {% endif %}
   {% endif %}
 
   <hr>

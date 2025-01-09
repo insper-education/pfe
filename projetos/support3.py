@@ -80,6 +80,19 @@ def get_objetivos_atuais(objetivos):
     return objetivos
 
 
+def get_notas_alocacao(alocacao, checa_banca=True):
+    """Retorna notas do estudante no projeto."""
+    edicoes = alocacao.aluno.get_notas_estudante(ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca)
+    return edicoes[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)]
+
+def get_edicoes_alocacao(self):
+    """Retorna objetivos."""
+    edicoes = self.aluno.get_edicoes_aluno()
+    semestre = str(self.projeto.ano)+"."+str(self.projeto.semestre)
+    if semestre in edicoes:
+        return edicoes[semestre]
+    return None
+
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
 
@@ -88,7 +101,7 @@ def calcula_objetivos(alocacoes):
     notas = {key: {} for key in avaliacoes}
     pesos = {key: {} for key in avaliacoes}
     
-    notas_lista = [x.get_edicoes for x in alocacoes]
+    notas_lista = [get_edicoes_alocacao(x) for x in alocacoes]
     
     objetivos_avaliados = set()
 

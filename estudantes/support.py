@@ -176,3 +176,4 @@ def ver_pendencias_estudante(user, ano, semestre):
             context.update(check_avaliacao_pares_intermediaria(alocacao))
             context.update(check_avaliacao_pares_final(alocacao))
     return context
+

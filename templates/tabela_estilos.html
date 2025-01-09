@@ -7,6 +7,7 @@
 
 {% load static %}
 {% load get_item %}
+{% load estilos %}
 
 <style>
   @media (max-width: 600px) {
@@ -73,7 +74,7 @@
           {% with estilo|get_selecao:usuario as selected %}
             <ul class="sortable-list" id="sortable_{{ estilo.id }}">
               {% if selected %}
-                  {% for priority, resposta in selected.get_respostas_in_order %}
+                  {% for priority, resposta in selected|get_respostas_estilos_in_order %}
                       <li class="sortable-item" data-priority="{{ priority }}" data-resposta-number="{{ priority }}">{{ resposta }}</li>
                   {% endfor %}
               {% else %}

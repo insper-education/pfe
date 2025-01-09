@@ -2690,7 +2690,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 if alocacoes:
 
                     primeira = alocacoes.first()
-                    medias = primeira.get_media
+                    medias = primeira.get_media_alocacao
 
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]

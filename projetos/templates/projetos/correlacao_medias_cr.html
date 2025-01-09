@@ -62,7 +62,7 @@
                 {% if alocacoes %}
                     semestres = ""
                     {% for key, alocacoes_tmp in alocacoes.items %}
-                        var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                        var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao.get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                     {  x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
                                        y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
                                        i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
@@ -88,7 +88,7 @@
                 {% endif %}
 
                 {% for curs, estud in estudantes.items %}
-                    var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao.get_media %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                    var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao.get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
                                 {   x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
                                     y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
                                     i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},

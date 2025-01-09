@@ -79,7 +79,7 @@ def get_nativamente(self):
         return keymax
     return "?"
 
-def get_relatos(self):
+def busca_relatos(self):
     """Retorna todos os possiveis relatos quinzenais para o projeto."""
     
     proximo = datetime.date.today() + datetime.timedelta(days=14)

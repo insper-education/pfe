@@ -7,8 +7,9 @@
 
 {% block head %}
   {% load static %}
-  {% load dictionary %}
   {% load l10n %}
+  {% load dictionary %}
+  {% load oas %}
   {% include "tabelas_includes.html" %}
   {% include "reload.html" %}
 {% endblock %}
@@ -60,7 +61,7 @@
             {% endif %}
           </td>
           {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-            {% with oa=alocacao.get_oas_i %}
+            {% with oa=alocacao|get_oas_i %}
               {% for objetivo in objetivos %}
                 <td style="text-align:right;">
                   {% if oa|get_value:objetivo %}

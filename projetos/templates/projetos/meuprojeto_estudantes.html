@@ -8,6 +8,8 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
+  {% load get_notas %}
+
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <style>
@@ -44,7 +46,7 @@
 
         {% include "projeto.html" %}
 
-        {% with notas=alocado.get_notas %}
+        {% with notas=alocado|get_notas_alocacao2 %}
           {% if notas %}
             <div>
               <h5>
