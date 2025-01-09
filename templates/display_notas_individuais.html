@@ -51,7 +51,7 @@
       = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span></b>    
     <script>
       if(peso > 0.0) {
-        {% with media=alocado.get_media_alocacao %}
+        {% with media=alocado|get_media_alocacao %}
           {% if media %}
             {% if media.media < 5 %}
               document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
@@ -80,7 +80,7 @@
   </a>
 {% endif %}
 
-{% if alocado.peso > 0 %}
+{% if alocado|peso > 0 %}
   <div class="table-responsive">
     <div class="row mt-1" style="width: 99%; justify-content: center;">
       <div style="position: relative; height:203px; width:406px;"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
@@ -93,7 +93,7 @@
     <span lang="en" style="display:none">Note: Radar display assumes same weight for all evaluations</span>
   </small>
 
-  {% with medias_oo=alocado.get_medias_oo %}
+  {% with medias_oo=alocado|get_medias_oo %}
     <script>
       var config_radial_individual{{alocado.id}} = {
         type: "radar",

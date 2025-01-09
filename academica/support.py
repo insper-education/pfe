@@ -13,6 +13,8 @@ from .models import Exame
 
 from projetos.models import Documento, Evento, Avaliacao2, Observacao
 
+from academica.support4 import get_banca_estudante
+
 from estudantes.models import EstiloComunicacao
 
 from users.models import Alocacao
@@ -143,13 +145,13 @@ def filtra_entregas(composicoes, projeto, user=None):
 def media_falconi(projeto):
     exame = Exame.objects.get(titulo="Falconi")
     aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-    nota_banca_falconi, _, _ = Aluno.get_banca(None, aval_banc_falconi)
+    nota_banca_falconi, _, _ = get_banca_estudante(None, aval_banc_falconi)
     return nota_banca_falconi
 
 def media_bancas(projeto):
     exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
     aval_bancas = Avaliacao2.objects.filter(projeto=projeto, exame__in=exames)  # Bancas.
-    nota_bancas, _, _ = Aluno.get_banca(None, aval_bancas)
+    nota_bancas, _, _ = get_banca_estudante(None, aval_bancas)
     return nota_bancas
 
 def media_orientador(projeto):

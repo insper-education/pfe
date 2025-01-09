@@ -1,0 +1,150 @@
+#!/usr/bin/env python
+"""
+Desenvolvido para o Projeto Final de Engenharia.
+
+Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+Data: 9 de Janeiro de 2025
+"""
+
+import logging
+import datetime
+
+from django.core.exceptions import ValidationError
+
+from academica.models import Exame
+
+from academica.support2 import get_objetivos
+
+
+from projetos.models import Avaliacao2
+from projetos.models import Banca
+from projetos.models import Evento
+
+
+from users.models import Alocacao
+
+# Get an instance of a logger
+logger = logging.getLogger("django")
+
+
+def get_banca_estudante(estudante, avaliacoes_banca):
+    """Retorna média final das bancas informadas."""
+    val_objetivos, pes_total, avaliadores = get_objetivos(estudante, avaliacoes_banca)
+
+    if not val_objetivos:
+        return 0, None, None
+
+    # média dos objetivos
+    val = 0.0
+    pes = 0.0
+    for obj in val_objetivos:
+        if pes_total == 0:  # Deve ser Banca Falconi
+            val += val_objetivos[obj][0]
+        else:
+            val += val_objetivos[obj][0]*val_objetivos[obj][1]
+        pes += val_objetivos[obj][1]
+
+    if val_objetivos:
+        pes = float(pes)
+        if pes != 0:
+            val = float(val)/pes
+        else:
+            val = float(val)/float(len(val_objetivos))
+    else:
+        pes = None
+
+    return val, pes, avaliadores
+
+
+def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_banca=True):
+    """Recuper as notas do Estudante."""
+    edicao = {}  # dicionário para cada alocação do estudante
+
+    if ano and semestre:
+        alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre)
+    else:
+        alocacoes = Alocacao.objects.filter(aluno=estudante.pk)
+
+    now = datetime.datetime.now()
+
+    # Sigla, Nome, Grupo, Nota/Check, Banca
+    pavaliacoes = [
+        ("RP", "Relatório Preliminar", True, False, None),
+        ("RII", "Relatório Intermediário Individual", False, True, None),
+        ("RIG", "Relatório Intermediário de Grupo", True, True, None),
+        ("BI", "Banca Intermediária", True, True, "BI"),
+        ("RFG", "Relatório Final de Grupo", True, True, None),
+        ("RFI", "Relatório Final Individual", False, True, None),
+        ("BF", "Banca Final", True, True, "BF"),
+        ("P", "Probation", False, True, "P"),
+        # ABAIXO NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+        ("PPF", "Planejamento Primeira Fase", True, False, None),
+        ("API", "Avaliação Parcial Individual", False, True, None),
+        ("AFI", "Avaliação Final Individual", False, True, None),
+        ("APG", "Avaliação Parcial de Grupo", True, True, None),
+        ("AFG", "Avaliação Final de Grupo", True, True, None),
+        # A principio não mostra aqui as notas da certificação Falconi
+    ]
+
+    for alocacao in alocacoes:
+        
+        notas = []  # iniciando uma lista de notas vazia
+
+        for pa in pavaliacoes:
+            checa_b = checa_banca
+            banca = None
+            if pa[4]:  # Banca
+                if pa[2]:  # Grupo - Intermediária/Final
+                    banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
+                else:  # Individual - Probation
+                    banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
+            try:
+                exame=Exame.objects.get(sigla=pa[0])
+                if pa[2]:  # GRUPO
+                    paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
+                else:  # INDIVIDUAL
+                    paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
+
+                if paval:
+                    if pa[4] and banca:  # Banca
+                        valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+
+                        # Verifica se já passou o evento de encerramento e assim liberar notas
+                        evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                        if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
+                            # Após o evento de encerramento liberar todas as notas
+                            if now.date() > evento.endDate:
+                                checa_b = False
+
+                        if checa_b:
+
+                            if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+                                for membro in banca.membros():
+                                    avaliacao = paval.filter(avaliador=membro).last()
+                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                        valido = False
+                                if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+                                    avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
+                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                        valido = False
+
+                        if valido:
+                            pnota, ppeso, _ = get_banca_estudante(estudante, paval)
+                            notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                    else:
+                        if pa[3]:  # Nota
+                            pnota, ppeso, _ = get_banca_estudante(estudante, paval)
+                            notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                        else:  # Check
+                            pnp = paval.order_by("momento").last()
+                            notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
+
+            except Exame.DoesNotExist:
+                raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
+
+        key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
+        if key in edicao:
+            logger.error("Erro, duas alocações no mesmo semestre! " + estudante.get_full_name() + " " + key)
+        edicao[key] = notas
+
+    return edicao

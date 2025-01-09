@@ -275,14 +275,14 @@ class Projeto(models.Model):
     # def media_falconi(self):
     #     exame = Exame.objects.get(titulo="Falconi")
     #     aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, exame=exame)  # Falc.
-    #     nota_banca_falconi, _, _ = users.models.Aluno.get_banca(None, aval_banc_falconi)
+    #     nota_banca_falconi, _, _ = users.models.Aluno.get_banca_estudante(None, aval_banc_falconi)
     #     return nota_banca_falconi
 
     # @property
     # def media_bancas(self):
     #     exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
     #     aval_bancas = Avaliacao2.objects.filter(projeto=self, exame__in=exames)  # Bancas.
-    #     nota_bancas, _, _ = users.models.Aluno.get_banca(None, aval_bancas)
+    #     nota_bancas, _, _ = users.models.Aluno.get_banca_estudante(None, aval_bancas)
     #     return nota_bancas
 
     # @property

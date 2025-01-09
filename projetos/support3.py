@@ -9,6 +9,18 @@ Data: 8 de Janeiro de 2025
 import datetime
 import re
 
+
+from academica.models import Exame
+from projetos.models import Avaliacao2
+# from projetos.models import Banca
+# from projetos.models import Evento
+
+from users.models import Alocacao
+
+from academica.support2 import get_objetivos
+from academica.support4 import get_notas_estudante
+
+
 def converte_conceito(conceito):
     """Converte de Letra para Número."""
     if conceito == "A+":
@@ -80,19 +92,72 @@ def get_objetivos_atuais(objetivos):
     return objetivos
 
 
+def get_edicoes_aluno(estudante):
+    """Recuper as notas do Estudante."""
+    edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
+
+    siglas = [
+        ("BI", "O"),
+        ("BF", "O"), 
+        ("RP", "N"), 
+        ("RIG", "O"), 
+        ("RFG", "O"), 
+        ("RII", "I"), 
+        ("RFI", "I"), 
+        # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+        ("PPF", "N"), 
+        ("API", "NI"), 
+        ("AFI", "NI"), 
+        ("APG", "O"), 
+        ("AFG", "O"),
+        ]
+    exame = {}
+
+    exame = {sigla: Exame.objects.get(sigla=sigla) for sigla, _ in siglas}
+
+    alocacoes = Alocacao.objects.filter(aluno=estudante.pk)
+    for alocacao in alocacoes:
+
+        notas = []  # iniciando uma lista de notas vazia
+
+        for sigla, tipo in siglas:
+            if tipo == "O":  # Avaliações de Objetivos
+                avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+            elif tipo == "I":  # Individual
+                avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
+            elif tipo == "N":  # Notas
+                avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+                avaliacao = avaliacoes.order_by("momento").last()
+                if avaliacao and avaliacao.nota is not None:
+                    notas.append((sigla, float(avaliacao.nota), avaliacao.peso / 100 if avaliacao.peso else 0))
+                continue
+            elif tipo == "NI":  # Notas Individuais
+                avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
+
+            if avaliacoes:
+                if tipo in ["O", "I", "NI"]:
+                    nota, peso, _ = get_objetivos(estudante, avaliacoes)
+                    notas.append((sigla, nota, peso / 100 if peso else 0))
+
+        edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas
+
+    return edicao
+
+
 def get_notas_alocacao(alocacao, checa_banca=True):
     """Retorna notas do estudante no projeto."""
-    edicoes = alocacao.aluno.get_notas_estudante(ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca)
+    edicoes = get_notas_estudante(alocacao.aluno, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca)
     return edicoes[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)]
 
 def get_edicoes_alocacao(self):
     """Retorna objetivos."""
-    edicoes = self.aluno.get_edicoes_aluno()
+    edicoes = get_edicoes_aluno(self.aluno)
     semestre = str(self.projeto.ano)+"."+str(self.projeto.semestre)
     if semestre in edicoes:
         return edicoes[semestre]
     return None
 
+# EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
 def calcula_objetivos(alocacoes):
     """Calcula notas/conceitos por Objetivo de Aprendizagem."""
 

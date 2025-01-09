@@ -34,6 +34,8 @@ from .support2 import converte_conceitos, arredonda_conceitos
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
+from academica.support3 import get_media_alocacao_i
+from academica.support4 import get_banca_estudante
 
 #from administracao.models import Carta
 from administracao.support import usuario_sem_acesso
@@ -2690,7 +2692,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 if alocacoes:
 
                     primeira = alocacoes.first()
-                    medias = primeira.get_media_alocacao
+                    medias = get_media_alocacao_i(primeira)
 
                     if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
                         nota = medias["nota_grupo_inter"]/medias["peso_grupo_inter"]
@@ -2763,7 +2765,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 for titulo_aval in nomes_bancas:
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
-                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)
+                    nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
                     nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
@@ -2783,7 +2785,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 for titulo_aval in nomes_f:
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-                    nota_b, peso, avaliadores = Aluno.get_banca(None, aval_b)                    
+                    nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)                    
                     nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:

@@ -36,6 +36,8 @@ from .support2 import get_areas_propostas, get_areas_estudantes
 from .tasks import avisos_do_dia, eventos_do_dia
 
 from academica.models import Exame
+from academica.support3 import get_media_alocacao_i
+from academica.support4 import get_banca_estudante
 
 from administracao.support import usuario_sem_acesso
 
@@ -116,8 +118,15 @@ def projeto_completo(request, primarykey):
     medias_oo = None
     if alocacoes:
         alocacao = alocacoes.first()
-        medias_oo = alocacao.get_medias_oo
-        if not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"]):
+
+        # PUXEI A FUNÇÃO PARA CÁ
+        #medias_oo = alocacao.get_medias_oo()
+        alocacoes = Alocacao.objects.filter(id=alocacao.id)
+        medias_oo = calcula_objetivos(alocacoes)
+
+        if (medias_oo is None) or \
+           ("medias_apg" not in medias_oo or "medias_afg" not in medias_oo or "medias_rig" not in medias_oo or "medias_bi" not in medias_oo or "medias_rfg" not in medias_oo or "medias_bf" not in medias_oo) or \
+           (not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"])):
             medias_oo = None
 
     titulo = ""
@@ -969,7 +978,7 @@ def analise_notas(request):
                             notas[key]["regular"] += 1
                         else:
                             notas[key]["inferior"] += 1
-        medias_lista = [x.get_media_alocacao for x in medias_semestre]
+        medias_lista = [get_media_alocacao_i(x) for x in medias_semestre]
 
         # Somente apresenta as médias que esteja completas (pesso = 100%)
         medias_validas = list(filter(lambda d: d["pesos"] == 1.0, medias_lista))
@@ -1035,7 +1044,7 @@ def certificacao_falconi(request):
             if aval_banc_falconi:
                 projetos_selecionados.append(projeto)
 
-            nota_banca_falconi, peso, avaliadores = Aluno.get_banca(None, aval_banc_falconi)
+            nota_banca_falconi, peso, avaliadores = get_banca_estudante(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
                 if nota_banca_falconi >= 9.5:  # conceito A+
@@ -1233,7 +1242,7 @@ def evolucao_notas(request):
                 alocacoes_tmp = alocacoes.filter(projeto__ano=periodo[0],
                                                 projeto__semestre=periodo[1],
                                                 aluno__curso2=t_curso)
-                notas_lista = [alocacao.get_media_alocacao["media"] for alocacao in alocacoes_tmp if alocacao.get_media_alocacao["pesos"] == 1]
+                notas_lista = [get_media_alocacao_i(alocacao)["media"] for alocacao in alocacoes_tmp if get_media_alocacao_i(alocacao)["pesos"] == 1]
 
                 notas_total[edicao].extend(notas_lista)
                 notas.append(media(notas_lista))

@@ -7,7 +7,9 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-import datetime
+import inspect   # TEMPORARIAMENTE PARA DEBUG
+
+# import datetime
 import re
 import logging
 from hashids import Hashids
@@ -20,24 +22,21 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from academica.models import Exame
-from projetos.models import Avaliacao2
-from projetos.models import Banca
-from projetos.models import Evento
-
+# from academica.models import Exame
+# from projetos.models import Avaliacao2
+# from projetos.models import Banca
+# from projetos.models import Evento
 #from projetos.models import ObjetivosDeAprendizagem
 #from operacional.models import Curso
 #from estudantes.models import Relato
 #from estudantes.models import EstiloComunicacao
 #from projetos.models import Certificado
 #from projetos.models import Reprovacao
-
-from academica.support2 import get_objetivos
-from academica.support3 import get_media_alocacao_i
-from projetos.support3 import calcula_objetivos
+#from projetos.support3 import calcula_objetivos
+#from academica.support3 import get_media_alocacao_i
+#from academica.support2 import get_objetivos
 
 from projetos.support import get_upload_path
-
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -305,183 +304,200 @@ class Aluno(models.Model):
             return str(self.curso2)
         return "Sem curso"
 
-    def get_banca(self, avaliacoes_banca):
-        """Retorna média final das bancas informadas."""
-        val_objetivos, pes_total, avaliadores = get_objetivos(self, avaliacoes_banca)
+    def get_banca_estudante(self, avaliacoes_banca):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    #     """Retorna média final das bancas informadas."""
+    #     val_objetivos, pes_total, avaliadores = get_objetivos(self, avaliacoes_banca)
 
-        if not val_objetivos:
-            return 0, None, None
+    #     if not val_objetivos:
+    #         return 0, None, None
 
-        # média dos objetivos
-        val = 0.0
-        pes = 0.0
-        for obj in val_objetivos:
-            if pes_total == 0:  # Deve ser Banca Falconi
-                val += val_objetivos[obj][0]
-            else:
-                val += val_objetivos[obj][0]*val_objetivos[obj][1]
-            pes += val_objetivos[obj][1]
+    #     # média dos objetivos
+    #     val = 0.0
+    #     pes = 0.0
+    #     for obj in val_objetivos:
+    #         if pes_total == 0:  # Deve ser Banca Falconi
+    #             val += val_objetivos[obj][0]
+    #         else:
+    #             val += val_objetivos[obj][0]*val_objetivos[obj][1]
+    #         pes += val_objetivos[obj][1]
 
-        if val_objetivos:
-            pes = float(pes)
-            if pes != 0:
-                val = float(val)/pes
-            else:
-                val = float(val)/float(len(val_objetivos))
-        else:
-            pes = None
+    #     if val_objetivos:
+    #         pes = float(pes)
+    #         if pes != 0:
+    #             val = float(val)/pes
+    #         else:
+    #             val = float(val)/float(len(val_objetivos))
+    #     else:
+    #         pes = None
 
-        return val, pes, avaliadores
+    #     return val, pes, avaliadores
 
     #@property
     def get_edicoes_aluno(self):
-        """Recuper as notas do Estudante."""
-        edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    #     """Recuper as notas do Estudante."""
+    #     edicao = {}  # dicionário para cada alocação do estudante (por exemplo DP, ou Capstone Avançado)
 
-        siglas = [
-            ("BI", "O"),
-            ("BF", "O"), 
-            ("RP", "N"), 
-            ("RIG", "O"), 
-            ("RFG", "O"), 
-            ("RII", "I"), 
-            ("RFI", "I"), 
-            # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            ("PPF", "N"), 
-            ("API", "NI"), 
-            ("AFI", "NI"), 
-            ("APG", "O"), 
-            ("AFG", "O"),
-            ]
-        exame = {}
+    #     siglas = [
+    #         ("BI", "O"),
+    #         ("BF", "O"), 
+    #         ("RP", "N"), 
+    #         ("RIG", "O"), 
+    #         ("RFG", "O"), 
+    #         ("RII", "I"), 
+    #         ("RFI", "I"), 
+    #         # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+    #         ("PPF", "N"), 
+    #         ("API", "NI"), 
+    #         ("AFI", "NI"), 
+    #         ("APG", "O"), 
+    #         ("AFG", "O"),
+    #         ]
+    #     exame = {}
 
-        exame = {sigla: Exame.objects.get(sigla=sigla) for sigla, _ in siglas}
+    #     exame = {sigla: Exame.objects.get(sigla=sigla) for sigla, _ in siglas}
 
-        alocacoes = Alocacao.objects.filter(aluno=self.pk)
-        for alocacao in alocacoes:
+    #     alocacoes = Alocacao.objects.filter(aluno=self.pk)
+    #     for alocacao in alocacoes:
 
-            notas = []  # iniciando uma lista de notas vazia
+    #         notas = []  # iniciando uma lista de notas vazia
 
-            for sigla, tipo in siglas:
-                if tipo == "O":  # Avaliações de Objetivos
-                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
-                elif tipo == "I":  # Individual
-                    avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
-                elif tipo == "N":  # Notas
-                    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
-                    avaliacao = avaliacoes.order_by("momento").last()
-                    if avaliacao and avaliacao.nota is not None:
-                        notas.append((sigla, float(avaliacao.nota), avaliacao.peso / 100 if avaliacao.peso else 0))
-                    continue
-                elif tipo == "NI":  # Notas Individuais
-                    avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
+    #         for sigla, tipo in siglas:
+    #             if tipo == "O":  # Avaliações de Objetivos
+    #                 avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+    #             elif tipo == "I":  # Individual
+    #                 avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
+    #             elif tipo == "N":  # Notas
+    #                 avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame[sigla])
+    #                 avaliacao = avaliacoes.order_by("momento").last()
+    #                 if avaliacao and avaliacao.nota is not None:
+    #                     notas.append((sigla, float(avaliacao.nota), avaliacao.peso / 100 if avaliacao.peso else 0))
+    #                 continue
+    #             elif tipo == "NI":  # Notas Individuais
+    #                 avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame[sigla])
 
-                if avaliacoes:
-                    if tipo in ["O", "I", "NI"]:
-                        nota, peso, _ = get_objetivos(self, avaliacoes)
-                        notas.append((sigla, nota, peso / 100 if peso else 0))
+    #             if avaliacoes:
+    #                 if tipo in ["O", "I", "NI"]:
+    #                     nota, peso, _ = get_objetivos(self, avaliacoes)
+    #                     notas.append((sigla, nota, peso / 100 if peso else 0))
 
-            edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas
+    #         edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas
 
-        return edicao
+    #     return edicao
     
 
     def get_notas_estudante(self, request=None, ano=None, semestre=None, checa_banca=True):
-        """Recuper as notas do Estudante."""
-        edicao = {}  # dicionário para cada alocação do estudante
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    #     """Recuper as notas do Estudante."""
+    #     edicao = {}  # dicionário para cada alocação do estudante
 
-        if ano and semestre:
-            alocacoes = Alocacao.objects.filter(aluno=self.pk, projeto__ano=ano,projeto__semestre=semestre)
-        else:
-            alocacoes = Alocacao.objects.filter(aluno=self.pk)
+    #     if ano and semestre:
+    #         alocacoes = Alocacao.objects.filter(aluno=self.pk, projeto__ano=ano,projeto__semestre=semestre)
+    #     else:
+    #         alocacoes = Alocacao.objects.filter(aluno=self.pk)
 
-        now = datetime.datetime.now()
+    #     now = datetime.datetime.now()
 
-        # Sigla, Nome, Grupo, Nota/Check, Banca
-        pavaliacoes = [
-            ("RP", "Relatório Preliminar", True, False, None),
-            ("RII", "Relatório Intermediário Individual", False, True, None),
-            ("RIG", "Relatório Intermediário de Grupo", True, True, None),
-            ("BI", "Banca Intermediária", True, True, "BI"),
-            ("RFG", "Relatório Final de Grupo", True, True, None),
-            ("RFI", "Relatório Final Individual", False, True, None),
-            ("BF", "Banca Final", True, True, "BF"),
-            ("P", "Probation", False, True, "P"),
-            # ABAIXO NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-            ("PPF", "Planejamento Primeira Fase", True, False, None),
-            ("API", "Avaliação Parcial Individual", False, True, None),
-            ("AFI", "Avaliação Final Individual", False, True, None),
-            ("APG", "Avaliação Parcial de Grupo", True, True, None),
-            ("AFG", "Avaliação Final de Grupo", True, True, None),
-            # A principio não mostra aqui as notas da certificação Falconi
-        ]
+    #     # Sigla, Nome, Grupo, Nota/Check, Banca
+    #     pavaliacoes = [
+    #         ("RP", "Relatório Preliminar", True, False, None),
+    #         ("RII", "Relatório Intermediário Individual", False, True, None),
+    #         ("RIG", "Relatório Intermediário de Grupo", True, True, None),
+    #         ("BI", "Banca Intermediária", True, True, "BI"),
+    #         ("RFG", "Relatório Final de Grupo", True, True, None),
+    #         ("RFI", "Relatório Final Individual", False, True, None),
+    #         ("BF", "Banca Final", True, True, "BF"),
+    #         ("P", "Probation", False, True, "P"),
+    #         # ABAIXO NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
+    #         ("PPF", "Planejamento Primeira Fase", True, False, None),
+    #         ("API", "Avaliação Parcial Individual", False, True, None),
+    #         ("AFI", "Avaliação Final Individual", False, True, None),
+    #         ("APG", "Avaliação Parcial de Grupo", True, True, None),
+    #         ("AFG", "Avaliação Final de Grupo", True, True, None),
+    #         # A principio não mostra aqui as notas da certificação Falconi
+    #     ]
 
-        for alocacao in alocacoes:
+    #     for alocacao in alocacoes:
             
-            notas = []  # iniciando uma lista de notas vazia
+    #         notas = []  # iniciando uma lista de notas vazia
 
-            for pa in pavaliacoes:
-                checa_b = checa_banca
-                banca = None
-                if pa[4]:  # Banca
-                    if pa[2]:  # Grupo - Intermediária/Final
-                        banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
-                    else:  # Individual - Probation
-                        banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
-                try:
-                    exame=Exame.objects.get(sigla=pa[0])
-                    if pa[2]:  # GRUPO
-                        paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
-                    else:  # INDIVIDUAL
-                        paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
+    #         for pa in pavaliacoes:
+    #             checa_b = checa_banca
+    #             banca = None
+    #             if pa[4]:  # Banca
+    #                 if pa[2]:  # Grupo - Intermediária/Final
+    #                     banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
+    #                 else:  # Individual - Probation
+    #                     banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
+    #             try:
+    #                 exame=Exame.objects.get(sigla=pa[0])
+    #                 if pa[2]:  # GRUPO
+    #                     paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
+    #                 else:  # INDIVIDUAL
+    #                     paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
 
-                    if paval:
-                        if pa[4] and banca:  # Banca
-                            valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+    #                 if paval:
+    #                     if pa[4] and banca:  # Banca
+    #                         valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
-                            # Verifica se já passou o evento de encerramento e assim liberar notas
-                            evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
-                            if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
-                                # Após o evento de encerramento liberar todas as notas
-                                if now.date() > evento.endDate:
-                                    checa_b = False
+    #                         # Verifica se já passou o evento de encerramento e assim liberar notas
+    #                         evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+    #                         if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
+    #                             # Após o evento de encerramento liberar todas as notas
+    #                             if now.date() > evento.endDate:
+    #                                 checa_b = False
 
-                            if checa_b:
+    #                         if checa_b:
 
-                                if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
-                                    for membro in banca.membros():
-                                        avaliacao = paval.filter(avaliador=membro).last()
-                                        if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                            valido = False
-                                    if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                        avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
-                                        if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                            valido = False
+    #                             if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
+    #                                 for membro in banca.membros():
+    #                                     avaliacao = paval.filter(avaliador=membro).last()
+    #                                     if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+    #                                         valido = False
+    #                                 if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+    #                                     avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
+    #                                     if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+    #                                         valido = False
 
-                            if valido:
-                                pnota, ppeso, _ = Aluno.get_banca(self, paval)
-                                notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
-                        else:
-                            if pa[3]:  # Nota
-                                pnota, ppeso, _ = Aluno.get_banca(self, paval)
-                                notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
-                            else:  # Check
-                                pnp = paval.order_by("momento").last()
-                                notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
+    #                         if valido:
+    #                             pnota, ppeso, _ = Aluno.get_banca_estudante(self, paval)
+    #                             notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+    #                     else:
+    #                         if pa[3]:  # Nota
+    #                             pnota, ppeso, _ = Aluno.get_banca_estudante(self, paval)
+    #                             notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+    #                         else:  # Check
+    #                             pnp = paval.order_by("momento").last()
+    #                             notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
     
-                except Exame.DoesNotExist:
-                    raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
+    #             except Exame.DoesNotExist:
+    #                 raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
-            key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
-            if key in edicao:
-                logger.error("Erro, duas alocações no mesmo semestre! " + self.get_full_name() + " " + key)
-            edicao[key] = notas
+    #         key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
+    #         if key in edicao:
+    #             logger.error("Erro, duas alocações no mesmo semestre! " + self.get_full_name() + " " + key)
+    #         edicao[key] = notas
 
-        return edicao
+    #     return edicao
 
     # CREIO QUE NÃO ESTÁ SENDO USADO
-    # @property
-    # def get_medias(self):
+    @property
+    def get_medias(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+
     #     """Retorna médias."""
     #     medias = {}  # dicionário para cada alocação do estudante
 
@@ -631,8 +647,12 @@ class Alocacao(models.Model):
         alocacao = cls(projeto=projeto, aluno=estudante)
         return alocacao
 
-    # @property
-    # def get_edicoes_alocacao(self):
+    @property
+    def get_edicoes_alocacao(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna objetivos."""
     #     edicoes = self.aluno.get_edicoes
     #     semestre = str(self.projeto.ano)+"."+str(self.projeto.semestre)
@@ -640,12 +660,20 @@ class Alocacao(models.Model):
     #         return edicoes[semestre]
     #     return None
 
-    # def get_notas_alocacao(self, checa_banca=True):
+    def get_notas_alocacao(self, checa_banca=True):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna notas do estudante no projeto."""
     #     edicoes = self.aluno.get_notas_estudante(ano=self.projeto.ano, semestre=self.projeto.semestre, checa_banca=checa_banca)
     #     return edicoes[str(self.projeto.ano)+"."+str(self.projeto.semestre)]
   
-    # def em_probation(self):
+    def em_probation(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna se em probation."""
     #     reprovacao = Reprovacao.objects.filter(alocacao=self).exists()
     #     if reprovacao:
@@ -726,7 +754,11 @@ class Alocacao(models.Model):
 
     @property
     def get_media_alocacao(self):
-        return get_media_alocacao_i(self)
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    #     return get_media_alocacao_i(self)
     #     """Retorna média e peso final."""
     #     reprovacao = Reprovacao.objects.filter(alocacao=self)
     #     if reprovacao:
@@ -788,14 +820,22 @@ class Alocacao(models.Model):
     #         "probation": probation,
     #     }
 
-    @property
+    #@property
     def get_medias_oo(self):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
-        """Retorna OOs."""
-        alocacoes = Alocacao.objects.filter(id=self.id)
-        context = calcula_objetivos(alocacoes)
-        return context
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    #     """Retorna OOs."""
+    #     alocacoes = Alocacao.objects.filter(id=self.id)
+    #     context = calcula_objetivos(alocacoes)
+    #     return context
 
-    # def get_oas(self, avaliacoes):
+    def get_oas(self, avaliacoes):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna Objetivos de Aprendizagem da alocação no semestre."""
     #     oas = {}
     #     for avaliacao in avaliacoes:
@@ -826,32 +866,56 @@ class Alocacao(models.Model):
 
     #     return oas
 
-    # def get_oas_i(self):
-    #     avaliacoes = Avaliacao2.objects.filter(alocacao=self, exame__grupo=False)
-    #     return self.get_oas(avaliacoes)
+    def get_oas_i(self):
+        # avaliacoes = Avaliacao2.objects.filter(alocacao=self, exame__grupo=False)
+        # return self.get_oas(avaliacoes)
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
     # # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
-    # def get_oas_g(self):
+    def get_oas_g(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
     #     return self.get_oas(avaliacoes)
     
     # # ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
-    # def get_oas_t(self):
+    def get_oas_t(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=False) | Avaliacao2.objects.filter(projeto=self.projeto, exame__grupo=True)
     #     return self.get_oas(avaliacoes)
 
-    @property
+    #@property
     def media(self):
-        """Retorna média final."""
-        return self.get_media_alocacao["media"]
+        # """Retorna média final."""
+        # return self.get_media_alocacao["media"]
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    
+    # @property
+    def peso(self):
+        # """Retorna peso final."""
+        # return self.get_media_alocacao["pesos"]
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
     @property
-    def peso(self):
-        """Retorna peso final."""
-        return self.get_media_alocacao["pesos"]
-
-    # @property
-    # def get_relatos(self):
+    def get_relatos(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna todos os possiveis relatos quinzenais da alocacao."""
         
     #     eventos = Evento.get_eventos(sigla="RQ", ano=self.projeto.ano, semestre=self.projeto.semestre)
@@ -865,13 +929,21 @@ class Alocacao(models.Model):
 
     #     return zip(eventos, relatos, range(len(eventos)))
 
-    # @property
-    # def get_certificados(self):
+    @property
+    def get_certificados(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna todos os certificados recebidos pelo estudante nessa alocação."""
     #     certificados = Certificado.objects.filter(usuario=self.aluno.user, projeto=self.projeto)
     #     return certificados
     
-    # def get_bancas(self):
+    def get_bancas(self):
+        function_name = inspect.currentframe().f_code.co_name
+        for i in range(16):
+            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     #     """Retorna as bancas que estudante participou."""
     #     bancas_proj = Banca.objects.filter(projeto=self.projeto)
     #     bancas_prob = Banca.objects.filter(alocacao=self)

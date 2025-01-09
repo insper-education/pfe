@@ -5,11 +5,16 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 23 de Junho de 2024
 """
 
-from academica.models import ExibeNota
-
-from academica.support3 import em_probation
-
 from django import template
+
+from academica.models import ExibeNota
+from academica.support3 import get_media_alocacao_i, em_probation
+from academica.support4 import get_notas_estudante
+
+from projetos.support3 import calcula_objetivos
+
+from users.models import Alocacao
+
 register = template.Library()
 
 @register.filter
@@ -55,7 +60,35 @@ def exibe_notas_semestre(edicao, exame):
         return True
     return exibe.exibe
 
+
 @register.filter
 def probation(alocacao):
     """Retorna se em probation."""
     return em_probation(alocacao)
+
+
+@register.filter
+def get_medias_oo(alocacao):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
+    """Retorna OOs."""
+    alocacoes = Alocacao.objects.filter(id=alocacao.id)
+    context = calcula_objetivos(alocacoes)
+    return context
+
+@register.filter
+def get_media_alocacao(alocacao):
+    return get_media_alocacao_i(alocacao)
+
+@register.filter
+def media(alocacao):
+    """Retorna média final."""
+    return get_media_alocacao_i(alocacao)["media"]
+
+@register.filter
+def peso(alocacao):
+    """Retorna peso final."""
+    return get_media_alocacao_i(alocacao)["pesos"]
+
+@register.filter
+def recuper_notas_estudante(estudante):
+    """Retorna notas do estudante no projeto."""
+    return get_notas_estudante(estudante)

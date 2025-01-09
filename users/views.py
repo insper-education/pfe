@@ -29,6 +29,7 @@ from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Composicao, CodigoColuna, Exame
 from academica.support import filtra_composicoes, get_respostas_estilos
+from academica.support3 import get_media_alocacao_i
 
 from administracao.models import Carta
 from administracao.support import get_limite_propostas, usuario_sem_acesso
@@ -395,7 +396,7 @@ def blackboard_notas(request, anosemestre):
                     linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
                 else:
                     if coluna == "M":
-                        media = alocacao.get_media_alocacao["media"]
+                        media = get_media_alocacao_i(alocacao)["media"]
                         if media:
                             linha += [f"{media:.4f}".replace('.',',')]
                         else:
@@ -711,7 +712,7 @@ def edita_notas(request, primarykey):
         mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
         mensagem += "</b> atualizadas:<br>\n"
 
-        media = alocacao.get_media_alocacao["media"]
+        media = get_media_alocacao_i(alocacao)["media"]
         if media is not None:
             if media["pesos"] is not None:
                 mensagem += "&nbsp;&nbsp;Peso Final = "

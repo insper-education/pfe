@@ -10,6 +10,7 @@
   {% load dictionary %}
   {% load l10n %}
   {% load i18n %}
+  {% load exibe_notas %}
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -77,7 +78,7 @@
               var nota_indiv = 0;
               var peso_indiv = 0;
             </script>
-            {% for aval, nota, peso, descr in aluno.get_notas_estudante|dict_key:ano_semestre %} <!-- Notas -->
+            {% for aval, nota, peso, descr in aluno|get_notas_estudante|dict_key:ano_semestre %} <!-- Notas -->
                 <span data-toggle="tooltip" data-html="true" animation="true" 
                 title="{{descr}}">
                   {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
@@ -103,7 +104,7 @@
           </td>
 
           {% if alocacao %}
-            {% with media=alocacao.get_media_alocacao %}
+            {% with media=alocacao|get_media_alocacao %}
               <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
                 <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
                   {% if media.media < 5 %}style="color:red;"{% endif %}
