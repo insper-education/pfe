@@ -11,35 +11,8 @@
       <td>
         <div class="agendamento">
           <div>
-            <b lang="pt">Projeto:</b>
-            <b lang="en">Project:</b>
-            {% if projeto.organizacao %}
-              [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
-            {% endif %}
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-              {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                {{projeto.titulo_final}}</a><br>
-                <small>&nbsp;&nbsp;
-                  <span lang="pt">Título original da proposta:</span>
-                  <span lang="en">Original title of the proposal:</span>
-                  <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}</a>
-                </small>
-              {% else %}
-                {{projeto.get_titulo}}</a>
-              {% endif %}
-            {% include "tipo_projeto.html" %}
+            {% include "cabecalho_projeto.html" with com_tit_original=True %}
             <br>
-          
-            <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-            <b lang="en">Advisor:</b>
-
-            {% if projeto.orientador %}
-              <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">
-                {{projeto.orientador.user.get_full_name}}:
-              </a>
-            {% endif %}
-            <br>
-        
             <b lang="pt">Mensagem:</b>
             <b lang="en">Message:</b>
             <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
@@ -52,8 +25,7 @@
             <a class="open-modal"
               data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}">
               <button class="btn btn-primary mb-1"
-              {% if user.tipo_de_usuario != 4 and user != projeto.orientador.user %}disabled{% endif %}
-              >
+              {% if user.tipo_de_usuario != 4 and user != projeto.orientador.user %}disabled{% endif %}>
                 <span lang="pt">Criar</span>
                 <span lang="en">Create</span>
               </button>

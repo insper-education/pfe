@@ -7,10 +7,11 @@
 
 {% block head %}
   {% load static %}
-  
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  {% include "converte_notas.html" %}
+  {% include "avalia_objetivos.html" %}
 
-  <style>
+  {% comment %} <style>
     table {
       border-collapse: collapse;
       width: 100%;
@@ -18,79 +19,20 @@
 
     th, td {
       text-align: left;
-      padding: 8px;
+      padding: 80px;
     }
 
     table, th, td {border: 1px solid lightgrey;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
 
-  </style>
-
-  {% include "converte_notas.html" %}
-  {% include "avalia_objetivos.html" %}
+  </style> {% endcomment %}
 
 {% endblock %}
 
 {% block content %}
 
-  <strong>
-    <span lang="pt">Projeto:</span>
-    <span lang="en" style="display: none;">Project:</span>
-  </strong>
-  [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao}}</a>]
-  <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
-
-  <strong>
-    <span lang="pt">Semestre:</span>
-    <span lang="en" style="display: none;">Semester:</span>
-  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
-
-  {% if projeto.orientador %}
-    <strong>
-      <span lang="pt">Orientador{% if projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
-      <span lang="en" style="display: none;">Advisor:</span>
-    </strong>
-    <a href="{% url 'professor_detail' projeto.orientador.id %}">
-      {{projeto.orientador.user.get_full_name}}
-    </a>
-    <br>
-  {% endif %}
-
-  {% with coorientadores=projeto.coorientador_set.all %}
-    {% if coorientadores %}
-      <strong>
-        <span lang="pt">Coorientador:</span>
-        <span lang="en" style="display: none;">Co-advisor:</span>
-      </strong>
-      {% for coorientador in coorientadores %}
-          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-            {{coorientador.usuario.get_full_name}} 
-          </a>
-          {% if not forloop.last %}; {% endif %}
-      {% endfor %}
-      </span>
-      <br>
-    {% endif %}
-  {% endwith %}
-
-  {% include "tipo_projeto.html" with com_tipo=True %}
-  
-  <strong style="display: inline-block; margin-top: 6px;">
-    <span lang="pt">Grupo:</span>
-    <span lang="en" style="display: none;">Group:</span>
-  </strong>
-  <ul>
-  {% for alocacao in projeto.alocacao_set.all %}
-    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-      <li>
-        {{alocacao.aluno.user.get_full_name}} 
-        [{{ alocacao.aluno.curso2 }}]
-        &lt;{{alocacao.aluno.user.email}}&gt; 
-      </li>
-    </a>
-  {% endfor %}
-  </ul>
+  {% include "cabecalho_projeto.html" with com_tit_original=True com_semestre=True com_grupo=True %}
 
   {% for banca in projeto.banca_set.all %}
     {% include "dado_banca.html" %}<br>

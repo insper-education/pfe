@@ -43,23 +43,8 @@
     <span lang="en" style="display: none;">Name:</span>
   </b> <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a><br>
 
-  <b>
-    <span lang="pt">Projeto:</span>
-    <span lang="en" style="display: none;">Project:</span>
-  </b> <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                ({{alocacao.projeto.organizacao.nome}})
-                {{alocacao.projeto.get_titulo}}      
-                { {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}} }
-                {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
-            </a><br>
-
-  <b>
-    <span lang="pt">Orientador{% if alocacao.projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
-    <span lang="en" style="display: none;">Advisor:</span>
-  </b>
-  <a href="{% url 'professor_detail' alocacao.projeto.orientador.id %}">{{alocacao.projeto.orientador.user.get_full_name}}</a><br>
+  {% include "cabecalho_projeto.html" with projeto=alocacao.projeto com_tit_original=True com_semestre=True %}
   <br>
-
   <form method="post"> {% csrf_token %}
 
     {% for composicao in composicoes %}
@@ -68,83 +53,84 @@
 
         {% with avaliadores=avaliacoes|pega_avaliadores:composicao.exame|add_orientador:alocacao.projeto %}
         {% for aval_id, aval_first_name, aval_last_name in avaliadores %}
-          <b>{{composicao.exame.titulo}} [{{aval_first_name}} {{aval_last_name}}] : <span id="a{{composicao.exame.id}}_media_p{{aval_id}}"></span></b>
-          <ul>
-            {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
-            {% for peso in composicao.peso_set.all %}
-              <li>
-                <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
-                {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
-                  <div class="bloco_avali">
-                    <span lang="pt">peso:</span>
-                    <span lang="en" style="display: none;">weight:</span>
-                    <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
-                          name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
-                          min="0" max="100" step="any" style="width: 5em;"
-                          value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
-                          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                          {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
-                  </div>
-                  <div class="bloco_avali">
-                    <span lang="pt">nota:</span>
-                    <span lang="en" style="display: none;">numeric grade:</span>
-                    <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}"
-                          name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
-                          min="0" max="10" step="any" style="width: 4em;"
-                          {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
-                          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                          {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
-                  </div>
-                        
-                  <div class="bloco_avali">
-                    <span lang="pt">conceito:</span>
-                    <span lang="en" style="display: none;">letter grade:</span>
-                    <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
-                            name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+          <div style="border: 1px solid black;" class="mb-4">
+            <b>{{composicao.exame.titulo}} [{{aval_first_name}} {{aval_last_name}}] : <span id="a{{composicao.exame.id}}_media_p{{aval_id}}"></span></b>
+            <ul>
+              {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
+              {% for peso in composicao.peso_set.all %}
+                <li>
+                  <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
+                  {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
+                    <div class="bloco_avali">
+                      <span lang="pt">peso:</span>
+                      <span lang="en" style="display: none;">weight:</span>
+                      <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
+                            name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
+                            min="0" max="100" step="any" style="width: 5em;"
+                            value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
                             {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
-                          {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
-                            <option value="{{x}}">{{x}}</option>
-                          {% endfor %}{% endwith %}
-                    </select>
-                  </div>
+                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                    </div>
+                    <div class="bloco_avali">
+                      <span lang="pt">nota:</span>
+                      <span lang="en" style="display: none;">numeric grade:</span>
+                      <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}"
+                            name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
+                            min="0" max="10" step="any" style="width: 4em;"
+                            {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
+                            {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                    </div>
+                          
+                    <div class="bloco_avali">
+                      <span lang="pt">conceito:</span>
+                      <span lang="en" style="display: none;">letter grade:</span>
+                      <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+                              name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+                              {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                              {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
+                            {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
+                              <option value="{{x}}">{{x}}</option>
+                            {% endfor %}{% endwith %}
+                      </select>
+                    </div>
 
-                  <script>
-                    $(function() {
-                        $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
-                          $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val(converteC($(this).val()));
-                        });
-                        $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
-                          $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($(this).val()));
-                        });
-                    })
-                    $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val()));
-                  </script>
+                    <script>
+                      $(function() {
+                          $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
+                            $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val(converteC($(this).val()));
+                          });
+                          $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
+                            $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($(this).val()));
+                          });
+                      })
+                      $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val()));
+                    </script>
 
-                {% endwith %}
+                  {% endwith %}
+                <br>
+                </li>
+              {% endfor %}
+              {% endwith %}
+            </ul>
+            {% with observacoes=observacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
+              <div style="margin-top: 6px; margin-left: 10px;">
+                <span lang="pt">Observações para Estudantes:</span>
+                <span lang="en" style="display: none;">Observations for Students:</span>
+              </div>
+              <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
+                        rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
+              <div style="margin-top: 6px; margin-left: 10px;">
+                <span lang="pt">Observações para Orientador:</span>
+                <span lang="en" style="display: none;">Observations for Advisor:</span>
+              </div>
+              <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
+                        rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
+                >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
               <br>
-              </li>
-            {% endfor %}
             {% endwith %}
-          </ul>
-          {% with observacoes=observacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
-            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">
-              <span lang="pt">Observações para Estudantes:</span>
-              <span lang="en" style="display: none;">Observations for Students:</span>
-            </span><br>
-            <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
-                      rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-              >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
-            <span style="display: inline-block; margin-top: 6px; margin-left: 10px;">
-              <span lang="pt">Observações para Orientador:</span>
-              <span lang="en" style="display: none;">Observations for Advisor:</span>
-            </span><br>
-            <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
-                      rows="4" cols="80" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}
-              >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
-            <br>
-          {% endwith %}
-
+          </div>
         {% endfor %}
         {% endwith %} 
 

@@ -9,34 +9,10 @@
   {% if com_projeto %}
     {% if not forloop.first%}<br><br>{% endif %}
     <p style="page-break-before: always"></p>
-    <b>
-      <span lang="pt">Projeto:</span>
-      <span lang="en" style="display: none;">Project:</span>
-    </b> {{projeto.get_titulo}} {% include "tipo_projeto.html" %}<br>
-    {% if projeto.orientador %}
-      {% if projeto.proposta.intercambio %}
-        <b>
-          <span lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
-          <span lang="en" style="display: none;">Responsible Professor:</span>
-        </b>
-      {% else %}
-        <b>
-          <span lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
-          <span lang="en" style="display: none;">Advisor:</span>
-        </b>
-      {% endif %}
-      {{projeto.orientador.user.get_full_name}}
-      <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
-    {% else %}
-      <h3>
-        <span lang="pt">Orientador: Não definido</span>
-        <span lang="en" style="display: none;">Advisor: Not defined</span>
-      </h3>
-    {% endif %}
-    <br><br>
+    {% include "cabecalho_projeto.html" with com_tit_original=True %}
   {% endif %}
 
-  <div class="div_arredondado">
+  <div class="div_arredondado mt-2">
     <div class="topico">
       <span lang="pt">Avaliação para:</span>
       <span lang="en" style="display: none;">Evaluation for:</span>

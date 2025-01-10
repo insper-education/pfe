@@ -56,36 +56,8 @@
   <span lang="en" style="display: none;">{{banca.composicao.exame.titulo_en}}</span>
   <br>
 
-  {% if banca.get_projeto %}
-    <b>
-      <span lang="pt">Título do Projeto:</span>
-      <span lang="en" style="display: none;">Project Title:</span>
-    </b> 
-    <a href="{% url 'projeto_completo' banca.get_projeto.id %}">
-      {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
-        {{banca.get_projeto.titulo_final}}</a><br>
-        <small>
-          <span lang="pt">Título original da proposta:</span>
-          <span lang="en" style="display: none;">Original title of the proposal:</span>
-          <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
-        </small>
-      {% else %}
-        {{banca.get_projeto.get_titulo}}</a>
-      {% endif %}
-      {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
-  {% endif %}
-  <br>
-  {% if banca.get_projeto.organizacao %}
-    <b>
-      <span lang="pt">Organização:</span>
-      <span lang="en" style="display: none;">Organization:</span>
-    </b>
-    <a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
-      {{ banca.get_projeto.organizacao.nome }}
-    </a>
-  {% endif %}
-  <br>
-  
+  {% include "cabecalho_projeto.html" with projeto=banca.get_projeto com_email=True %}
+
   {% if banca.location %}
     <b>Local:</b> {{banca.location}}
     <br>
@@ -97,13 +69,11 @@
       <span lang="en" style="display: none;">Video-conference link:</span>
     </b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
   {% endif %}
-
   
   <br><b>&#9733;
     <span lang="pt">Formulário de avaliação</span>
     <span lang="en" style="display: none;">Evaluation form</span>
   </b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
-
 
   {% include "ver_documentos.html" %}
 
@@ -115,25 +85,6 @@
     </div><br>
   {% endif %}
   {% endwith %}
-
-  {% if banca.get_projeto.orientador %}
-      {% if banca.get_projeto.proposta.intercambio %}
-        <b>
-          <span lang="pt">Professor{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
-          <span lang="en" style="display: none;">Responsible Professor:</span>
-        </b>
-      {% else %}
-        <b>
-          <span lang="pt">Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
-          <span lang="en" style="display: none;">Advisor:</span>
-        </b>
-      {% endif %}
-      {{banca.get_projeto.orientador.user.get_full_name}}
-      <span class="texto-longo emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
-      <span class="texto-curto emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-    <br>
-  {% endif %}
-  <br>
 
   <b>
     <span lang="pt">Membros da Banca</span>
