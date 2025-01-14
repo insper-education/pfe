@@ -24,7 +24,10 @@
             {% if projeto and projeto.organizacao %}
               <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.sigla }}</a>
             {% else %}
-              ORGANIZAÇÃO NÃO DEFINIDA
+              <div class="text-danger">
+                <span lang="pt">ORGANIZAÇÃO NÃO DEFINIDA</span>
+                <span lang="en" style="display:none">ORGANIZATION NOT DEFINED</span>
+              </div>
             {% endif %}
           </td>
           
@@ -78,7 +81,10 @@
               {% if projeto.orientador %}
                 <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
               {% else %}
-                ORIENTADOR NÃO DEFINIDO
+                <div class="text-danger">
+                  <span lang="pt">ORIENTADOR NÃO DEFINIDO</span>
+                  <span lang="en" style="display:none">ADVISOR NOT DEFINED</span>
+                </div>
               {% endif %}
 
               {% with coorientadores=projeto.coorientador_set.all %}
@@ -104,29 +110,57 @@
           <!-- Contrato(s) -->
           <td style="text-align:center; vertical-align: middle; position:relative;">
             <small class="esconder" style="position:absolute; top:0; left:0; cursor:pointer;">
-              <a
-                class="open-documento"
-                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'COP' %}"
-                >&#10133;</a>
+              {% if projeto and projeto.organizacao %}
+                <a
+                  class="open-documento"
+                  data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'COP' %}"
+                  >&#10133;</a>
+              {% else %}
+                <div class="text-danger">
+                  <span lang="pt">ERRO</span>
+                  <span lang="en" style="display:none">ERROR</span>
+                </div>
+              {% endif %}
             </small>
 
             {% for documento in projeto.documento_set.all|tipo_documentos:1 %}
 
               {% if documento.documento and documento.link %}
                 <div class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;">
-                  Contrato
-                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                  <span lang="pt">Contrato</span>
+                  <span lang="en" style="display:none">Contract</span>
+                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                    <span lang="pt">(documento)</span>
+                    <span lang="en" style="display:none">(document)</span>
+                  </a>
                   <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                   {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                    <sup>(Inglês)</sup>
+                    <sup>
+                      <span lang="pt">(Inglês)</span>
+                      <span lang="en" style="display:none">(English)</span>
+                    </sup>
+                  {% elif documento.lingua_do_documento == 0 %} {% comment %} Português {% endcomment %}
+                    <sup>
+                      <span lang="en" style="display:none">(Portuguese)</span>
+                    </sup>
                   {% endif %}
                 </div>
               {% else %}
                 {% if documento.documento %}
                   <a class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;" 
-                    href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">Contrato</a>
+                    href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                    <span lang="pt">Contrato</span>
+                    <span lang="en" style="display:none">Contract</span>
+                  </a>
                   {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                    <sup>(Inglês)</sup>
+                    <sup>
+                      <span lang="pt">(Inglês)</span>
+                      <span lang="en" style="display:none">(English)</span>
+                    </sup>
+                  {% elif documento.lingua_do_documento == 0 %} {% comment %} Português {% endcomment %}
+                    <sup>
+                      <span lang="en" style="display:none">(Portuguese)</span>
+                    </sup>
                   {% endif %}
                 {% endif %}
                 {% if documento.link %}
@@ -139,7 +173,10 @@
               {% endif %}
 
             {% empty %}
-              <span class="btn btn-danger btn-sm">Contrato<br>Pendente</span>
+              <span class="btn btn-danger btn-sm">
+                <span lang="pt">Contrato<br>Pendente</span>
+                <span lang="en" style="display:none">Contract<br>Pending</span>
+              </span>
             {% endfor %}
           </td>
         </tr>

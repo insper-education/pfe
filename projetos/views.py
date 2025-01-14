@@ -121,8 +121,8 @@ def projeto_completo(request, primarykey):
 
         # PUXEI A FUNÇÃO PARA CÁ
         #medias_oo = alocacao.get_medias_oo()
-        alocacoes = Alocacao.objects.filter(id=alocacao.id)
-        medias_oo = calcula_objetivos(alocacoes)
+        alocacoes_oo = Alocacao.objects.filter(id=alocacao.id)
+        medias_oo = calcula_objetivos(alocacoes_oo)
 
         if (medias_oo is None) or \
            ("medias_apg" not in medias_oo or "medias_afg" not in medias_oo or "medias_rig" not in medias_oo or "medias_bi" not in medias_oo or "medias_rfg" not in medias_oo or "medias_bf" not in medias_oo) or \

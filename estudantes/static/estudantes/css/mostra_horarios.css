@@ -1,0 +1,90 @@
+.tabela_horarios {
+  border-collapse: collapse;
+  user-select: none; /* Prevent text selection */
+}
+
+.tabela_horarios thead tr:first-child th {
+  width: 10em;
+}
+
+.tabela_horarios td,
+.tabela_horarios th {
+  border: 1px solid black;
+  padding: 4px;
+  text-align: center;
+  border-width: 1px; 
+}
+
+.tabela_horarios th {
+  background-color: #BEE5EB;
+  border-right: 2px solid black;
+}
+
+.highlight {
+  background-color: yellow;
+}
+
+.meu {
+  border-color: red !important;
+  border-width: 3px !important;
+}
+
+.overlay {
+  position: relative;
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay td {
+  position: relative;
+  z-index: 2;
+}
+
+.borderhighlight {
+  box-shadow: inset 0 0 33px rgba(0, 255, 0, 1.0);
+}
+
+.hifen {
+  display: inline;
+}
+
+.hifen::after {
+  display: inline;
+  content: "-";
+  white-space: pre;
+}
+
+.aula_regular {
+  background-color: lightgrey;
+}
+
+@media (max-width: 600px) {
+  .hifen::after {
+    content: "\A";
+  }
+  .horario {
+    font-size: 10px;
+    padding: 1px;
+  }
+  .estud {
+    font-size: 12px;
+    padding: 1px;
+  }
+  
+  .tabela_horarios  th:first-child,
+  .tabela_horarios  td:first-child {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+}

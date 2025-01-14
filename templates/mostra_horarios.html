@@ -5,6 +5,9 @@
   Data: 2 de Agosto de 2024
 {% endcomment %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
+
 {% with alocacoes=projeto.alocacao_set.all %}
 {% for alocacao in alocacoes %}
   <b>
@@ -22,39 +25,39 @@
 <br>
 
 <div class="table-responsive">
-  <table class="tabela-horarios">
+  <table class="tabela_horarios"> 
     <thead>
       <tr>
-        <th style="border-right: 2px solid black;"></th>
-        <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">
+        <th></th>
+        <th colspan="{{alocacoes|length}}">
           <span lang="pt">Segunda</span>
           <span lang="en" style="display:none">Monday</span>
         </th>
-        <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">
+        <th colspan="{{alocacoes|length}}">
           <span lang="pt">Terça</span>
           <span lang="en" style="display:none">Tuesday</span>
         </th>
-        <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">
+        <th colspan="{{alocacoes|length}}">
           <span lang="pt">Quarta</span>
           <span lang="en" style="display:none">Wednesday</span>
         </th>
-        <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">
+        <th colspan="{{alocacoes|length}}">
           <span lang="pt">Quinta</span>
           <span lang="en" style="display:none">Thursday</span>
         </th>
-        <th colspan="{{alocacoes|length}}" style="border-right: 2px solid black;">
+        <th colspan="{{alocacoes|length}}">
           <span lang="pt">Sexta</span>
           <span lang="en" style="display:none">Friday</span>
         </th>
       </tr>
       <tr>
-        <th style="border-right: 2px solid black;" class="horario">
+        <th class="horario">
           <span lang="pt">Horário</span>
           <span lang="en" style="display:none">Time</span>
         </th>
         {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
           {% for alocacao in alocacoes %}
-            <th {% if forloop.last %}style="border-right: 2px solid black;"{% endif %} class="estud">E{{ forloop.counter }}</th>
+            <th {% if forloop.last %}{% endif %} class="estud">E{{ forloop.counter }}</th>
           {% endfor %}
         {% endfor %}
       </tr>
@@ -65,10 +68,10 @@
       {% for inicio, fim, dark in horarios %}
         <tr>
           {% with hora=forloop.counter0 %}
-          <td {% if dark %}class="overlay"{% endif %} style="border-right: 2px solid black;">{{inicio}} <span class="hifen"></span> {{fim}}</td>
+          <td {% if dark %}class="overlay"{% endif %} >{{inicio}} <span class="hifen"></span> {{fim}}</td>
           {% for i in "01234" %}
             {% if i == "4" and hora == 1 %}
-              <td colspan="{{alocacoes|length}}" style="background-color:lightgrey;">
+              <td colspan="{{alocacoes|length}}" class="aula_regular">
                 <span lang="pt">Aula Regular</span>
                 <span lang="en" style="display:none">Regular Class</span>
               </td>
@@ -76,10 +79,10 @@
               {% for alocacao in alocacoes %}
                 {% if request.user == alocacao.aluno.user %}
                   <td id="h_{{i}}_{{hora}}" class="h_{{i}}_{{hora}} meu{% if dark %} overlay{% endif %}"
-                  {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}></td>
+                  {% if forloop.last %}{% endif %}></td>
                 {% else %}
                   <td id="h_{{i}}_{{hora}}_{{alocacao.id}}" class="h_{{i}}_{{hora}}{% if dark %} overlay{% endif %}"
-                  {% if forloop.last %}style="border-right: 2px solid black;"{% endif %}
+                  {% if forloop.last %}{% endif %}
                   ></td>
                 {% endif %}
               {% endfor %}
@@ -139,7 +142,7 @@
   function allElementsHaveHighlight(className) {
     const elements = document.querySelectorAll(`.${className}`);
     for (let element of elements) {
-      if (!element.classList.contains('highlight')) {
+      if (!element.classList.contains("highlight")) {
         return false;
       }
     }

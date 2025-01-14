@@ -19,8 +19,18 @@
 
 {% block content %}
 
+  {% if not projeto.organizacao %}
+    <h1 class="text-danger">
+      <span lang="pt">Erro grave - Projeto sem organização</span>
+      <span lang="en" style="display: none;">Serious error - Project without organization</span>
+    </h1>
+  {% endif %}
+
   <h4>
-    [{{ projeto.organizacao.sigla }}] {{ projeto.get_titulo }}
+    {% if projeto.organizacao %}
+      [{{ projeto.organizacao.sigla }}]
+    {% endif %}
+    {{ projeto.get_titulo }}
     {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
       <span style="font-size: small; padding-left: 0.7em; display: block;"><b>
         <span lang="pt">Título original da proposta:</span>
@@ -447,9 +457,11 @@
     <span lang="pt">Documentos:</span>
     <span lang="en" style="display: none;">Documents:</span>
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      <small class="esconder">
-        <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
-      </small>
+      {% if projeto and projeto.organizacao %}
+        <small class="esconder">
+          <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+        </small>
+      {% endif %}
     {% endif %}
   </h4>
   <div class="caixa_rolante">
