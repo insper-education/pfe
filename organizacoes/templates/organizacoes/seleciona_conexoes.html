@@ -162,7 +162,6 @@
 
   <script>
     $(".conexao").change(function(evt){
-      
       $.ajax({
         url: "{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}",
         data: {
@@ -182,7 +181,26 @@
         },
         {% include "ajax_error_function.js" %}
       });
-    
+    });
+
+    $("#colaboracao").change(function(evt){
+      $.ajax({
+        url: "{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}",
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "colaboracao": evt.target.value,
+        },
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          if (data.atualizado) {
+            showMessage("Conexão atualizada", "alert-success");
+          } else {
+            showMessage("Erro na atualização", "alert-warning");
+          }
+        },
+        {% include "ajax_error_function.js" %}
+      });
     });
 
     function showMessage(message, alertClass) {

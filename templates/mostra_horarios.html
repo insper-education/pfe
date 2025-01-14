@@ -6,13 +6,13 @@
 {% endcomment %}
 
 {% load static %}
+{% load linguas %}
 <link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
 
 {% with alocacoes=projeto.alocacao_set.all %}
 {% for alocacao in alocacoes %}
   <b>
-    <span lang="pt">Estudante</span>
-    <span lang="en" style="display:none">Student</span>
+    {% lng "Estudante" "Student" %}
     {{ forloop.counter }} (E{{ forloop.counter }}):
   </b> 
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>

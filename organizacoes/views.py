@@ -852,27 +852,46 @@ def seleciona_conexoes(request):
 
     if request.is_ajax():
 
-        parceiro_id = request.POST["parceiro_id"]
-        parceiro = get_object_or_404(Parceiro, id=parceiro_id)
+        # Identifica Parceiro
+        if "parceiro_id" in request.POST:
+            parceiro_id = request.POST.get("parceiro_id", None)
+            parceiro = get_object_or_404(Parceiro, id=parceiro_id)
 
-        (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
-                                                            projeto=projeto)
+            conexao, _ = Conexao.objects.get_or_create(parceiro=parceiro,
+                                                                projeto=projeto)
 
-        if "gestor_responsavel" == request.POST["tipo"]:
-            conexao.gestor_responsavel = (request.POST["checked"] == "true")
-        elif "mentor_tecnico" == request.POST["tipo"]:
-            conexao.mentor_tecnico = (request.POST["checked"] == "true")
-        elif "recursos_humanos" == request.POST["tipo"]:
-            conexao.recursos_humanos = (request.POST["checked"] == "true")
-        else:
-            return HttpResponseNotFound("<h1>Tipo de conexão não encontrado!</h1>")
+            if "gestor_responsavel" == request.POST["tipo"]:
+                conexao.gestor_responsavel = (request.POST["checked"] == "true")
+            elif "mentor_tecnico" == request.POST["tipo"]:
+                conexao.mentor_tecnico = (request.POST["checked"] == "true")
+            elif "recursos_humanos" == request.POST["tipo"]:
+                conexao.recursos_humanos = (request.POST["checked"] == "true")
+            else:
+                return HttpResponseNotFound("<h1>Tipo de conexão não encontrado!</h1>")
 
-        if (not conexao.gestor_responsavel) and \
-           (not conexao.mentor_tecnico) and \
-           (not conexao.recursos_humanos):
-            conexao.delete()
-        else:
-            conexao.save()
+            if (not conexao.gestor_responsavel) and \
+            (not conexao.mentor_tecnico) and \
+            (not conexao.recursos_humanos):
+                conexao.delete()
+            else:
+                conexao.save()
+
+        # COLABORAÇÃO
+        if "colaboracao" in request.POST:
+            colaboracao = request.POST.get("colaboracao", None)
+            if colaboracao and colaboracao != "":
+                parceiro = Parceiro.objects.get(id=colaboracao)
+                (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
+                                                                    projeto=projeto)
+                conexao.colaboracao = True
+                conexao.save()
+            else:
+                conexoes_colab = Conexao.objects.filter(colaboracao=True,
+                                                        projeto=projeto)
+
+                if conexoes_colab.exists():  # Caso já exista uma conexão
+                    for conexao in conexoes_colab:
+                        conexao.delete()  # apagar
 
         return JsonResponse({"atualizado": True,})
 
@@ -881,49 +900,8 @@ def seleciona_conexoes(request):
     else:
         return HttpResponseNotFound("<h1>Projeto não tem organização definida!</h1>")
 
-    if request.method == "POST":
-
-        gestor_responsavel = request.POST.getlist("gestor_responsavel")
-        mentor_tecnico = request.POST.getlist("mentor_tecnico")
-        recursos_humanos = request.POST.getlist("recursos_humanos")
-
-        for parceiro in parceiros:
-
-            if str(parceiro.id) in gestor_responsavel or\
-               str(parceiro.id) in mentor_tecnico or\
-               str(parceiro.id) in recursos_humanos:
-                (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
-                                                                    projeto=projeto)
-
-                conexao.gestor_responsavel = str(parceiro.id) in gestor_responsavel
-                conexao.mentor_tecnico = str(parceiro.id) in mentor_tecnico
-                conexao.recursos_humanos = str(parceiro.id) in recursos_humanos
-                conexao.save()
-
-            else:
-                if Conexao.objects.filter(parceiro=parceiro, projeto=projeto):
-                    Conexao.objects.get(parceiro=parceiro, projeto=projeto).delete()
-
-        colaboracao = request.POST.get("colaboracao", None)
-        if colaboracao and colaboracao != "":
-            parceiro = Parceiro.objects.get(id=colaboracao)
-            (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
-                                                                projeto=projeto)
-            conexao.colaboracao = True
-            conexao.save()
-        else:
-            conexoes_colab = Conexao.objects.filter(colaboracao=True,
-                                                    projeto=projeto)
-
-            if conexoes_colab.exists():  # Caso já exista uma conexão
-                for conexao in conexoes_colab:
-                    conexao.delete()  # apagar
-
-        return redirect("projeto_completo", projeto_id)
-
     cooperacoes = Conexao.objects.filter(projeto=projeto, colaboracao=True)
     colaboradores = cooperacoes.last().parceiro if cooperacoes else None
-
     
     cabecalhos = [
         {"pt": "GR", "en": "GR", },

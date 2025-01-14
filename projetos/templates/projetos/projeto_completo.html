@@ -11,6 +11,7 @@
   {% load l10n %}
   {% load alocacoes %}
   {% load relatos %}
+  {% load linguas %}
   
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <link rel="stylesheet" href="{% static 'css/mostra_horarios.css' %}">
@@ -20,58 +21,42 @@
 {% block content %}
 
   {% if not projeto.organizacao %}
-    <h1 class="text-danger">
-      <span lang="pt">Erro grave - Projeto sem organização</span>
-      <span lang="en" style="display: none;">Serious error - Project without organization</span>
-    </h1>
+    <h1 class="text-danger">{% lng "Erro grave - Projeto sem organização" "Serious error - Project without organization" %}</h1>
   {% endif %}
 
   <h4>
-    {% if projeto.organizacao %}
-      [{{ projeto.organizacao.sigla }}]
-    {% endif %}
+    {% if projeto.organizacao %}[{{ projeto.organizacao.sigla }}]{% endif %}
     {{ projeto.get_titulo }}
     {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      <span style="font-size: small; padding-left: 0.7em; display: block;"><b>
-        <span lang="pt">Título original da proposta:</span>
-        <span lang="en" style="display: none;">Original title of the proposal:</span>
-      </b> {{projeto.proposta.titulo}}</span>
+      <span style="font-size: small; padding-left: 0.7em; display: block;">
+        <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}
+      </span>
     {% endif %}
   </h4>
 
   <strong>
-    <span lang="pt">Semestre:</span>
-    <span lang="en" style="display: none;">Semester:</span>
+    {% lng "Semestre" "Semester" %}
   </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
     <br><div class="resumo" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Resumo do Projeto (escrito por estudantes):</span>
-        <span lang="en" style="display: none;">Project Summary (written by students):</span>
-      </strong>
+      <strong>{% lng "Resumo do Projeto (escrito por estudantes)" "Project Summary (written by students)" %}:</strong>
       {{ projeto.resumo|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.abstract %}
     <br><div class="abstract" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Resumo em Inglês do Projeto (escrito por estudantes):</span>
-        <span lang="en" style="display: none;">Project Summary in English (written by students):</span>
-      </strong>
+      <strong>{% lng "Resumo em Inglês do Projeto (escrito por estudantes)" "Project Summary in English (written by students)" %}:</strong>
       {{ projeto.abstract|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
     <br><div class="palavras_chave" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Palavras-chave (escrito por estudantes):</span>
-        <span lang="en" style="display: none;">Keywords (written by students):</span>
-      </strong>
+      <strong>{% lng "Palavras-chave (escrito por estudantes)" "Keywords (written by students)" %}:</strong>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
   {% endif %}
@@ -91,8 +76,7 @@
   {% endif %}
 
   <h5>
-    <span lang="pt">Organização:</span>
-    <span lang="en" style="display: none;">Organization:</span>
+    {% lng "Organização" "Organization" %}:
     {% if projeto.organizacao %}
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
@@ -100,8 +84,7 @@
         {{ projeto.organizacao.nome }}
       {% endif %}
     {% else %}
-      <span lang="pt">ORGANIZAÇÃO</span>
-      <span lang="en" style="display: none;">ORGANIZATION</span>
+      {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
     {% endif %}
   </h5>
 
@@ -109,8 +92,7 @@
     {% if conexao.parceiro and conexao.parceiro.organizacao %}
       <span>
       &nbsp;&nbsp;&nbsp;
-      <span lang="pt">Colaboração:</span>
-      <span lang="en" style="display: none;">Collaboration:</span>
+      {% lng "Colaboração" "Collaboration" %}:
       <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
         {{conexao.parceiro.organizacao}}
       </a>
