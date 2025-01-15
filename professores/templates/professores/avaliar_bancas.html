@@ -7,9 +7,10 @@
 
 {% block head %}
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  {% load linguas %}
   {% include "converte_notas.html" %}
   {% include "avalia_objetivos.html" %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 {% endblock %}
 
 {% block content %}

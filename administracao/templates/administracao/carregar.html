@@ -5,8 +5,9 @@
   Data: 4 de Agosto de 2019
 {% endcomment %}
 
-{% block content %}
+{% load linguas %}
 
+{% block content %}
   <a href="{% url 'carrega_arquivo' 'disciplinas' %}"><h5>
     <span lang="pt">disciplinas</span>
     <span lang="en">courses</span>
@@ -20,5 +21,4 @@
     <span lang="en">evaluations</span>
   </h5></a>
   <br><br>
-
 {% endblock %}

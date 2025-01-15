@@ -4,6 +4,8 @@
   Data: 5 de Outubro de 2024
 {% endcomment %}
 
+{% load linguas %}
+
 {% comment %} Somente para a parte de cima das tabelas comuns {% endcomment %}
 <div class="table-responsive">
   <table id="{{tabela}}Table"
@@ -22,7 +24,7 @@
             {% if cabecalho.tooltip %}data-toggle="tooltip" data-html="true" animation="true" title="{{cabecalho.tooltip|safe}}"{% endif %}
             {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
             data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
-            ><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
+            ><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="display: none; margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
         {% endfor %}
       </tr>
     </thead>

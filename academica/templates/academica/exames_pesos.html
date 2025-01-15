@@ -9,6 +9,7 @@
   {% load static %}
   {% load i18n %}
   {% load l10n %}
+  {% load linguas %}
   <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
@@ -31,8 +32,7 @@
                   <span lang="pt">{% language "pt-br" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
                   <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
                 {% else %}
-                  <span lang="pt">atualmente</span>
-                  <span lang="en" style="display:none">currently</span>
+                  {% lng "atualmente" "currently" %}
                 {% endif %}):</span>
                 
                 <span style="display: inline-block; width: 34em;">
@@ -67,7 +67,8 @@
     {% include "tabelas_bottom.html" %}
   </div>
 
-  <small lang="pt">Terminar o semestre até junho e iniciar a partir de agosto.</small>
-  <small lang="en" style="display:none">End the semester by June and start from August.</small>
+  <small>
+    {% lng "Terminar o semestre até junho e iniciar a partir de agosto." "End the semester by June and start from August." %}
+  </small>
 
 {% endblock %}

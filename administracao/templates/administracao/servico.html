@@ -5,6 +5,10 @@
   Data: 6 de Abril de 2019
 {% endcomment %}
 
+{% block head %}
+  {% load linguas %}
+{% endblock %}
+
 {% block content %}
 
   <form method="post">{% csrf_token %}

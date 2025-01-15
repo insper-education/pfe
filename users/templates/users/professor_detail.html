@@ -9,6 +9,7 @@
   {% load static %}
   {% load certificados %}
   {% load addhttp %}
+  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}
@@ -17,8 +18,7 @@
 
   {% include "usuario.html" with user=professor.user %}
   
-  <strong lang="pt">Tipo:</strong>
-  <strong lang="en">Type:</strong>
+  <b>{% lng "Tipo" "Type" %}:</b>
   {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
   <br>
   {% if professor.lattes %}
@@ -28,8 +28,7 @@
     <strong>website:</strong> <a href="{{ professor.website|add_http }}"> {{ professor.website }} </a><br>
   {% endif %}
   {% if professor.areas %}
-    <strong lang="pt">Áreas de Interesse:</strong>
-    <strong lang="en">Areas of Interest:</strong>
+    <b>{% lng "Áreas de Interesse" "Areas of Interest" %}:</b>
     {{ professor.areas }}<br>
   {% endif %}
 
@@ -174,8 +173,7 @@
   {% if user.tipo_de_usuario == 4 %}
     <a href="{% url 'edita_usuario' professor.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">
-        <span lang="pt">Editar</span>
-        <span lang="en">Edit</span>
+        {% lng "Editar" "Edit" %}
       </button>
     </a>
   {% endif %}

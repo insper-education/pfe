@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   {% load get_field %}
 {% endblock %}
 
@@ -15,14 +16,13 @@
   <form method="post" id="disciplinaform" enctype="multipart/form-data">{% csrf_token %}
     
     <label for="nome">
-      <span lang="pt">Nome da Disciplina:</span>
-      <span lang="en" style="display: none;">Course Name:</span>
+      {% lng "Nome da Disciplina" "Course Name" %}:
+
     </label> <input type="text" size="48" style="display: block;"
            maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
 
     <button class="btn btn-primary mb-1 mt-2" type="submit">
-      <span lang="pt">Cadastrar Disciplina</span>
-      <span lang="en" style="display: none;">Register Course</span>
+      {% lng "Cadastrar Disciplina" "Register Course" %}
     </button>
     
     <br>

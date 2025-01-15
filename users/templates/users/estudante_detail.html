@@ -7,13 +7,15 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
   {% load aderencia_aluno %}
   {% load dictionary %}
   {% load zip_data %}
   {% load relatos %}
   {% load bancas %}
   {% load get_notas %}
-  {% load l10n %}
+  {% load linguas %}
+  
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>

@@ -7,18 +7,15 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 
-  <br>
-
-  <h4 lang="pt">Usuários e IPs bloqueados</h4>
-  <h4 lang="en">Blocked Users and IPs</h4>
-
-  <div class="table-responsive">
+  <h4 class="mt-4">{% lng "Usuários e IPs bloqueados" "Blocked Users and IPs" %}</h4>
+  <div class="table-responsive mb-1">
     <table id="BloqueadosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
@@ -52,21 +49,14 @@
       </tbody>
     </table>
   </div>
-  <br>
-
-  <span lang="pt">Desbloquear todos os usuários</span>
-  <span lang="en">Unblock all users</span>
+  
+  {% lng "Desbloquear todos os usuários" "Unblock all users" %}
   <a href="{% url 'desbloquear_usuarios' %}"><button type="button" class="btn btn-warning btn-lg">
-    <span lang="pt">DESBLOQUEAR</span>
-    <span lang="en">UNBLOCK</span>
+    {% lng "DESBLOQUEAR" "UNBLOCK" %}
   </button> </a>
 
-  <br><br><br>
-
-  <h4 lang="pt">Usuários e IPs Conectados</h4>
-  <h4 lang="en">Connected Users and IPs</h4>
-
-  <div class="table-responsive">
+  <h4 class="mt-4">{% lng "Usuários e IPs Conectados" "Connected Users and IPs" %}</h4>
+  <div class="table-responsive mb-1">
     <table id="ConectadosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
@@ -98,8 +88,7 @@
   </div>
   <br>
 
-  <span lang="pt">Últimos 30 dias de conexões.</span>
-  <span lang="en">Last 30 days of connections.</span>
+  {% lng "Últimos 30 dias de conexões." "Last 30 days of connections." %}
   
   {% comment %} <strong>Total de Conexões Válidas:</strong> {{ usuarios|length }}<br> {% endcomment %}
 

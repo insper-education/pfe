@@ -13,10 +13,7 @@ from django.shortcuts import render
 @permission_required("users.altera_professor", raise_exception=True)
 def index_academica(request):
     """Mostra página principal da área acadêmica do sistema."""
-    context = {
-        "titulo": {"pt": "Área Acadêmica", "en": "Academic Area"},
-        }
-
+    context = {"titulo": {"pt": "Área Acadêmica", "en": "Academic Area"},}
     if "/academica/academica" in request.path:
         return render(request, "academica/academica.html", context=context)
     else:

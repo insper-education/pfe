@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   <script src="{% static 'js/sort.js' %}"></script>
   <style>
     .certificacao_excelencia {background-color:lightgreen !important;}
@@ -91,19 +92,19 @@
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
               <th style="border-right:0px; border-left:0px;"></th>
-              <th colspan="2" class="text-center"><b><span lang="pt">Relatórios</span><span lang="en">Reports</span></b></th>
+              <th colspan="2" class="text-center"><b>{% lng "Relatórios" "Reports" %}</b></th>
               <th colspan="3" class="text-center">
                 <b>
-                  <span lang="pt">Bancas</span><span lang="en">Exam. Board</span>
+                  {% lng "Bancas" "Exam. Board" %}
                   <span style="cursor:pointer;" class="fas fa-filter esconder"
                   onclick="togglePanel()"></span>
                 </b>
               </th>
             </tr>
             <tr>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')"><span lang="pt">Projeto</span><span lang="en">Project</span></th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')"><span lang="pt">Período</span><span lang="en">Semester</span></th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')"><span lang="pt">Orientador</span><span lang="en">Advisor</span></th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">{% lng "Projeto" "Project" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Período" "Semester" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediário">Inter.</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
@@ -159,13 +160,14 @@
                       {{ projeto.orientador }}
                     </a>
                     {% else %}
-                      Orientador não definido
+                      {% lng "Orientador não definido" "Advisor not defined" %}
                     {% endif %}
 
                     {% with coorientadores=projeto.coorientador_set.all %}
                       {% if coorientadores %}
                       <span class="coorientadores">
-                      <br>coorientação:
+                      <br>
+                      {% lng "Coorientação" "Co-advising" %}:
                         {% for coorientador in coorientadores %}
                             <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
                               {{coorientador.usuario.get_full_name}} 
@@ -306,7 +308,7 @@
 
             {% empty %}
               <tr><td colspan="9">
-                Não existem projetos disponíveis.
+                {% lng "Não existem projetos disponíveis." "There are no projects available." %}
               </td></tr>
             {% endfor %}
           </tbody>
@@ -317,29 +319,29 @@
       
       <br>
       <span id="todos_projetos" style="cursor:pointer;">
-        &nbsp;<b><span lang="pt">Total de Projetos</span><span lang="en">Total of Projects</span>:
-        <span id="total_projetos"></span></b>
+        &nbsp;<b>{% lng "Total de Projetos" "Total of Projects" %}:</b>
+        <span id="total_projetos"></span>
         <span id="filtrados" style="display:none;">
-          &nbsp;|&nbsp;Filtrados (visíveis): <span id="visibleRowsCount">0</span>
+          &nbsp;|&nbsp;
+          {% lng "Filtrados (visíveis)" "Filtered (visible)" %}:
+          <span id="visibleRowsCount">0</span>
         </span>
       </span>
       <br>
 
       <span id="certificacoes" style="cursor:pointer;">
-        &nbsp;<b><span lang="pt">Certificações</span><span lang="en">Certifications</span>:</b>
+        &nbsp;<b>{% lng "Certificações" "Certifications" %}:</b>
       </span><br>
       <span id="certificacao_excelencia_label" style="cursor:pointer;">
         &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span lang="pt">Certificação Excelência FALCONI-INSPER</span>
-        <span lang="en">FALCONI-INSPER Excellence Certification</span>
+        {% lng "Certificação Excelência FALCONI-INSPER" "FALCONI-INSPER Excellence Certification" %}
         (<span id="certificacao_excelencia"></span>)
       </span>
       <br>
 
       <span id="certificacao_destaque_label" style="cursor:pointer;">
         &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <span lang="pt">Certificação Destaque FALCONI-INSPER</span>
-        <span lang="en">FALCONI-INSPER Highlight Certification</span>
+        {% lng "Certificação Destaque FALCONI-INSPER" "FALCONI-INSPER Highlight Certification" %}
         (<span id="certificacao_destaque"></span>)
       </span>
       <br>

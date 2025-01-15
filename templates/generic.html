@@ -5,7 +5,9 @@
   Data: 21 de Abril de 2020
 {% endcomment %}
 
-{% block head %}{% endblock %}
+{% block head %}
+  {% load linguas %}
+{% endblock %}
 
 {% block content %}
   {{mensagem|safe}}
