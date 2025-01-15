@@ -90,6 +90,10 @@ urlpatterns = [
         views.organizacoes_prospect,
         name="organizacoes_prospect"),
 
+    path("organizacoes_projetos/",
+        views.organizacoes_projetos,
+        name="organizacoes_projetos"),
+
     path("organizacoes_tabela/",
         views.organizacoes_tabela,
         name="organizacoes_tabela"),

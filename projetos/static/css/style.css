@@ -1,5 +1,7 @@
 /* Evita que objetos sejam maiors que a tela. */
-textarea, input, select, label, table, div {max-width:100%;}
+textarea, input, select, label, table {max-width:100%;}
+
+/* não usar div {max-width:100%;} por que gera problema no selectpicker
 
 /* Em geral está confinado e pode preencher tudo */
 textarea {width: 100%;}

@@ -605,6 +605,51 @@ def organizacoes_prospect(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def organizacoes_projetos(request):
+    """Exibe as organizações prospectadas e a última comunicação."""
+    
+    if request.is_ajax() and "edicao" in request.POST:
+        edicao = request.POST["edicao"]
+        
+        projetos_periodo = Projeto.objects.all()
+        if edicao not in ("todas",):
+            ano, semestre = map(int, edicao.split('.'))
+            projetos_periodo = projetos_periodo.filter(ano=ano, semestre=semestre)
+
+        organizacoes = []
+        for projeto in projetos_periodo:
+            if projeto.proposta.organizacao not in organizacoes:
+                organizacoes.append(projeto.proposta.organizacao)
+        
+        projetos = []
+        contato = []
+        for organizacao in organizacoes:
+            projetos.append(projetos_periodo.filter(proposta__organizacao=organizacao))
+            contato.append(Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last())
+
+        organizacoes_list = zip(organizacoes, projetos, contato)
+
+        context = {
+            "organizacoes_list": organizacoes_list,
+            "projetos_periodo": projetos_periodo,
+            "organizacoes": organizacoes,
+            }
+
+    else:
+
+        TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
+        context = {
+            "titulo": {"pt": "Prospecção de Organizações com Projetos", "en": "Prospecting Organizations with Projects"},
+            "filtro": "todas",
+            "edicoes": get_edicoes(Projeto)[0],
+            "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
+            }
+    
+    return render(request, "organizacoes/organizacoes_projetos.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_lista(request):
     """Exibe todas as organizações que já submeteram propostas de projetos."""
     organizacoes = Organizacao.objects.all()

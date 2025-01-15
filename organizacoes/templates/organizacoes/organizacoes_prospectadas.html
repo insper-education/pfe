@@ -68,47 +68,7 @@
 
 {% block content %}
 
-  <div class="container" style="margin: 0px; padding: 0px;">
-    <div class="row align-items-start justify-content-start mb-1">
-      <div class="ml-3 form-inline mb-1">
-        <div class="input-group input-group-sm mt-1">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
-          </div>
-          <select id="periodo" class="periodo to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
-            <option value="1" class="troca_lingua" data-pt="1 mês" data-en="1 month">1 mês</option>
-            <option value="2" class="troca_lingua" data-pt="2 mêses" data-en="2 months">2 mêses</option>
-            <option value="3" selected class="troca_lingua" data-pt="3 mêses" data-en="3 months">3 mêses</option>
-            <option value="6" class="troca_lingua" data-pt="6 mêses" data-en="6 months">6 mêses</option>
-            <option value="12" class="troca_lingua" data-pt="12 mêses" data-en="12 months">12 mêses</option>
-            <option value="9999" class="troca_lingua" data-pt="tudo" data-en="all">tudo</option>
-          </select>
-          &nbsp;&nbsp;&nbsp;
-          <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
-            <span class="sr-only">
-              <span lang="pt">Carregando...</span>
-              <span lang="en" style="display: none;">Loading...</span>
-            </span>
-          </div>
-          &nbsp;&nbsp;&nbsp;
-        </div>
-        <div class="input-group input-group-sm mt-1 mr-4">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filter">
-              <span lang="pt">Filtrar</span><span lang="en" style="display: none;">Filter</span>
-            </label>
-          </div>
-          <select id="filter" class="selectpicker filter custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
-            <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
-            {% for retorno in TIPO_DE_RETORNO %}
-              {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
-              <option value="{{retorno.0}}">{{retorno.1}}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include "edicoes.html" with com_periodo=True com_acompanhamento=True %}
 
   <span class="esconder">
     <a 
@@ -195,6 +155,8 @@
                 "background-color:aquamarine" {% comment %} (6, 'Contrato fechado para projeto'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 7 %}
                 "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 12 %}
+                "background-color:#FFD580" {% comment %} (12, "Contrato em análise", "Contratação"), {% endcomment %}
               {% else %}
                 "background-color:white"
               {% endif %}
@@ -369,16 +331,8 @@
               <span lang="pt">Organizações contactadas recentemente</span>
               <span lang="en" style="display: none;">Recently contacted organizations</span>
                ({{total_organizacoes}}):</b><br>
-        
-            <div class="indicadores"><span data-type="0" data-color="lightblue" data-hide="false" class="show-hide" style="background-color:lightblue;">&nbsp;&nbsp;&nbsp;</span> Sondada <span id="so_contactados" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="1" data-color="lemonchiffon" data-hide="false" class="show-hide" style="background-color:lemonchiffon;">&nbsp;&nbsp;&nbsp;</span> Interessada <span id="interessados" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="2" data-color="lightgreen" data-hide="false" class="show-hide" style="background-color:lightgreen;">&nbsp;&nbsp;&nbsp;</span> Confirmada <span id="confirmados" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="3" data-color="pink" data-hide="false" class="show-hide" style="background-color:pink;">&nbsp;&nbsp;&nbsp;</span> Declinou <span id="recusados" class="calc_indicadores"></span></div>
 
-            <div class="indicadores"><span data-type="4" data-color="yellow" data-hide="false" class="show-hide" style="background-color:yellow;">&nbsp;&nbsp;&nbsp;</span> Notificada de Grupo Fechado <span id="notificada" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="6" data-color="green" data-hide="false" class="show-hide" style="background-color:aquamarine;">&nbsp;&nbsp;&nbsp;</span> Contrato Fechado para Projeto <span id="documentada" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="5" data-color="#e289df" data-hide="false" class="show-hide" style="background-color:#e289df;">&nbsp;&nbsp;&nbsp;</span> Avisada que não fechou grupo <span id="sem_grupo" class="calc_indicadores"></span></div>
-            <div class="indicadores"><span data-type="254" data-color="#FFFFFF" data-hide="false" class="show-hide" style="background-color:#FFFFFF;">&nbsp;&nbsp;&nbsp;</span> Outros <span id="outros" class="calc_indicadores"></span></div>
+               {% include "tabela_indicadores.html" %}
           </div>
           <script>
 
@@ -639,7 +593,7 @@
     }
 
     function filtra_data() {
-      var filterValue = $("#filter").val();
+      var filterValue = $("#filterAcompanhamento").val();
       var row = $(".item"); 
       row.hide();
 
@@ -670,7 +624,7 @@
       });
     }
 
-    $(".filter").change(function(){
+    $("#filterAcompanhamento").change(function(){
       filtra_data();
     });  
 

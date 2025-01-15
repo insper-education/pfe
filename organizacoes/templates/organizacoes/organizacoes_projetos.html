@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Janeiro de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load l10n %}
+  {% load addstr %}
+  {% load dictionary %}
+  {% load linguas %}
+
+  <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
+  <script src="{% static 'js/sort.js' %}"></script>
+  <script src="{% static 'js/Chart.min.js' %}"></script>
+  
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  <style>
+    .cursor_pointer{cursor: pointer;}
+    .tit_peq {
+      display: block;
+      font-weight: bold;
+      line-height: 1.2 !important;
+    }
+    .show-hide {
+      cursor: pointer;
+      border: 1px solid black;
+    }
+    .special_filter {
+      font-style: italic;
+      font-weight: bold !important;
+    }
+    .flex-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 1640px;
+      max-width: 100%;
+    }
+    .flex-item {
+      flex: 1;
+      max-width: 100%;
+    }
+    .indicadores {
+      margin-left: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .calc_indicadores {
+      font-size: 0.8em;
+    }
+    @media (max-width: 1280px) {
+      .flex-container {flex-direction: column;}
+      .flex-item {width: 100%;}
+    }  
+    .btn-light {
+      background-color: #FFFFFF;
+      border-color: #ced4da;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  {% include "edicoes.html" with com_acompanhamento=True %}
+
+  <div class="atualizar">
+
+    <div class="table-responsive">
+      <table id="OrganizacoesTable" class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th>#</th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(2)')">
+              <span lang="pt">Organização</span><span lang="en" style="display: none;">Organization</span>
+            </th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(3)', 'd')" width="78em"><small class="tit_peq">
+              <span lang="pt">Último<br>Contato</span><span lang="en">Last<br>Contact</span>
+            </small></th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(4)')">
+              <span lang="pt">Anotação</span><span lang="en">Notes</span>
+            </th>
+            <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(5)', 'n')" width="81em">
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
+                <span lang="pt">Projetos<br>Fechados</span><span lang="en">Confirmed<br>Projects</span>
+            </small></th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% for organizacao,projetos,contato in organizacoes_list %} 
+          <tr id="tr{{organizacao.id}}" class="item" 
+          {% if contato %}
+              style=
+              {% if contato.tipo_de_retorno < 2 and submetidas > 0 %}
+                "background-color:lightgreen" {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 0 %}
+                "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 1 %}
+                "background-color:lemonchiffon" {% comment %} (1, 'Interessada em enviar proposta'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 2 %}
+                "background-color:lightgreen" {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 3 %}
+                "background-color:pink" {% comment %} (3, 'Não vai enviar proposta de projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 4 %}
+                "background-color:yellow" {% comment %} (4, 'Confirmamos um grupo de estudantes para o projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 5 %}
+                "background-color:#e289df" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 6 %}
+                "background-color:aquamarine" {% comment %} (6, 'Contrato fechado para projeto'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 7 %}
+                "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 12 %}
+                "background-color:#FFD580" {% comment %} (12, "Contrato em análise", "Contratação"), {% endcomment %}
+              {% else %}
+                "background-color:white"
+              {% endif %}
+              data-type="{% if contato.tipo_de_retorno < 2 %}2{% else %}{{contato.tipo_de_retorno}}{% endif %}"
+          {% endif %}
+          >
+          <td style="text-align: center; font-size: 12px;"></td>
+            <td>
+              <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">{{organizacao.nome}}</a>
+            </td>
+
+            <td id="data{{organizacao.id}}">
+              {% if not contato %}
+                --------
+              {% else %}
+                {{contato.momento|date:"d/m/y"}}
+              {% endif %}
+            </td>
+
+            {% comment %} Anotação {% endcomment %}
+            <td>
+              {% if not contato %}
+                <div style="float:left;width: 92%;">
+                  <span id="contato_autor{{organizacao.id}}">
+                    ---:
+                  </span>
+                  <a
+                    id='organizacao{{organizacao.id}}'
+                    data-organizacao='{{organizacao.id}}'
+                    class="edit-annotation imprimir"
+                    >---------</a
+                  >
+                </div>
+                <div class="esconder" style="float:right;">
+                  <a
+                    style="font-size: 0.5em; vertical-align: super;"
+                    data-organizacao='{{organizacao.id}}'
+                    class="create-annotation"
+                    href="{% url 'anotacao' organizacao.id %}"
+                    data-url="{% url 'anotacao' organizacao.id %}"
+                    >&#10133;</a
+                  >
+                </div>
+              {% else %}
+                {% comment %} {{contato.texto}} {% endcomment %}
+                  <div style="float:left;width: 92%;">
+                    <span id="contato_autor{{organizacao.id}}">
+                      {{contato.autor.first_name}}:
+                    </span>
+                    <a
+                      id='organizacao{{organizacao.id}}'
+                      data-organizacao='{{organizacao.id}}'
+                      class="edit-annotation imprimir"
+                      href="{% url 'anotacao' organizacao.id %}"
+                      data-url="{% url 'anotacao' organizacao.id %}"
+                      data-anotacao="{{contato.id}}"
+                      >{{contato.texto}}</a
+                    >
+                  </div>
+                  <div class="esconder" style="float:right;">
+                    <a
+                      style="font-size: 0.5em; vertical-align: super;"
+                      data-organizacao='{{organizacao.id}}'
+                      class="create-annotation"
+                      href="{% url 'anotacao' organizacao.id %}"
+                      data-url="{% url 'anotacao' organizacao.id %}"
+                      >&#10133;</a
+                    >
+                  </div>
+              {% endif %}
+            </td>
+
+            {% comment %} Projetos {% endcomment %}
+            <td class="text-center">
+              {{projetos|length}}
+            </td>
+
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="text-center">Nenhuma organização cadastrada.</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <b>{% lng "Total de Organizações" "Total of Organizations" %}:</b> {{ organizacoes|length }}<br>
+        <b>{% lng "Total de Projetos" "Total of Projects" %}:</b> {{ projetos_periodo|length }}
+      <div>
+
+      <div class="flex-container">
+        <div class="flex-item">
+          <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
+            {% comment %}
+              <b>
+                <span lang="pt">Organizações contactadas recentemente</span>
+                <span lang="en" style="display: none;">Recently contacted organizations</span>
+                ({{total_organizacoes}}):
+              </b><br>
+            {% endcomment %}
+            {% include "tabela_indicadores.html" %}
+          </div>
+          <script>
+
+            $(".show-hide").click(function() {
+              
+              click = $(this);
+              var filterValue = click.attr("data-type");
+
+              var row = $(".item");
+              
+              row.each(function(i, el) {
+                if( (filterValue > 6) & ($(el).attr("data-type") > 6) ) {
+                  if(click.attr("data-hide") === "false") {
+                    $(el).hide();
+                  } else {
+                    $(el).show();
+                  }
+                } else {
+                  if( filterValue == $(el).attr("data-type") ) {
+                    if(click.attr("data-hide") === "false") {
+                      $(el).hide();
+                    } else {
+                      $(el).show();
+                    }
+                  }
+                }
+              });
+
+              if(click.attr("data-hide") === "false") {
+                click.attr("data-hide", "true");
+                click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
+              } else {
+                click.attr("data-hide", "false");
+                click.css({background: click.attr("data-color") });
+              }
+
+            });
+
+          </script>
+        </div>
+
+      </div>
+
+    <script>
+      // Call numberRows after sorting the table
+      $("th").click(function() {numberRows();});
+    </script>
+
+  </div>
+
+  {% include "annotation-modal.html" %} {% comment %} Esse é para organização prospectada só {% endcomment %}
+
+  {% include "edicoes_ajax.html" %}
+  {% comment %} {% include "edicoes_ajax.html" with tabela="Contratos" %} {% endcomment %}
+  <script>
+
+    function numberRows() {
+      $("#OrganizacoesTable tbody tr").each(function(index) {
+        $(this).find('td:first').text(index + 1);
+      });
+    }    
+    numberRows();
+
+    function filtra_data() {
+      var filterValue = $("#filterAcompanhamento").val();
+      var row = $(".item"); 
+      row.hide();
+
+      row.each(function(i, el) {
+        if( filterValue == "todas" || filterValue == $(el).attr("data-type") ) {
+            $(el).show();
+        }
+        else if( filterValue == "Contratação") {
+          if(["6", "12", "13"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+        else if( filterValue == "Prospecção") {
+          if(["0", "1", "2", "3"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+        else if( filterValue == "Retorno") {
+          if(["4", "5"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+        else if( filterValue == "Relatório") {
+          if(["7", "10", "11"].includes($(el).attr("data-type"))) {
+            $(el).show();
+          }
+        }
+      });
+    }
+
+    $("#filterAcompanhamento").change(function(){
+      filtra_data();
+    });  
+
+    $(document).ready(function(){
+      filtra_data();
+    });
+
+  </script>
+
+{% endblock %}

@@ -7,7 +7,7 @@
 {% load linguas %}
 
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
-{% if edicoes %}
+
   <style>
     .separador {
       margin-right: 16px;
@@ -60,33 +60,35 @@
   <div class="row align-items-start justify-content-start mb-1">
     <div class="ml-3 form-inline">
       {% comment %} <div class="input-group input-group-sm"> {% endcomment %}
-        {% if not sem_edicao %}
-        <div  id="blocoFilterEdicao" class="input-group input-group-sm mt-1 flex-nowrap">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Edição</span><span lang="en" style="display: none;">Edition</span></span></label>
+        {% if edicoes %}
+          {% if not sem_edicao %}
+          <div  id="blocoFilterEdicao" class="input-group input-group-sm mt-1 flex-nowrap">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Edição</span><span lang="en" style="display: none;">Edition</span></span></label>
+            </div>
+            <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
+              <optgroup class="opt_edi">
+              {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
+              {% if not n_todas %}
+                <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">Todas</option>
+              {% endif %}
+              {% for edicao in edicoes %}
+                  <option class="opt_edi" value="{{edicao}}" 
+                      {% if selecionada %}
+                        {% if selecionada == edicao %}selected{% endif %}
+                      {% else %}
+                        {% if forloop.last %}selected{% endif %}
+                      {% endif %}
+                  >{{edicao}}</option>
+              {% endfor %}
+              {% if com_trancou %}
+                <option class="opt_edi troca_lingua" value="trancou" data-pt="trancou" data-en="on hold">trancou</option>
+              {% endif %}
+              </optgroup>
+            </select>
+            <div class="separador input-group-addon"></div>
           </div>
-          <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
-            <optgroup class="opt_edi">
-            {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
-            {% if not n_todas %}
-              <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">Todas</option>
-            {% endif %}
-            {% for edicao in edicoes %}
-                <option class="opt_edi" value="{{edicao}}" 
-                    {% if selecionada %}
-                      {% if selecionada == edicao %}selected{% endif %}
-                    {% else %}
-                      {% if forloop.last %}selected{% endif %}
-                    {% endif %}
-                >{{edicao}}</option>
-            {% endfor %}
-            {% if com_trancou %}
-              <option class="opt_edi troca_lingua" value="trancou" data-pt="trancou" data-en="on hold">trancou</option>
-            {% endif %}
-            </optgroup>
-          </select>
-          <div class="separador input-group-addon"></div>
-        </div>
+          {% endif %}
         {% endif %}
 
         {% if com_cursos %}
@@ -204,6 +206,47 @@
           </div>
         {% endif %}
 
+        {% if com_periodo %}
+          <div class="input-group input-group-sm mt-1">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
+            </div>
+            <select id="periodo" class="periodo filter to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
+              <option value="1" class="troca_lingua" data-pt="1 mês" data-en="1 month">1 mês</option>
+              <option value="2" class="troca_lingua" data-pt="2 mêses" data-en="2 months">2 mêses</option>
+              <option value="3" selected class="troca_lingua" data-pt="3 mêses" data-en="3 months">3 mêses</option>
+              <option value="6" class="troca_lingua" data-pt="6 mêses" data-en="6 months">6 mêses</option>
+              <option value="12" class="troca_lingua" data-pt="12 mêses" data-en="12 months">12 mêses</option>
+              <option value="9999" class="troca_lingua" data-pt="tudo" data-en="all">tudo</option>
+            </select>
+            &nbsp;&nbsp;&nbsp;
+            <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
+              <span class="sr-only">
+                <span lang="pt">Carregando...</span>
+                <span lang="en" style="display: none;">Loading...</span>
+              </span>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+          </div>
+        {% endif %}
+
+        {% if com_acompanhamento %}
+          <div class="input-group input-group-sm mt-1 mr-4">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="filterAcompanhamento">
+                <span lang="pt">Filtrar</span><span lang="en" style="display: none;">Filter</span>
+              </label>
+            </div>
+            <select id="filterAcompanhamento" class="selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
+              <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
+              {% for retorno in TIPO_DE_RETORNO %}
+                {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+                <option value="{{retorno.0}}">{{retorno.1}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+
         {% comment %} <div class="input-group input-group-sm mt-1">
           <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
             <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
@@ -245,5 +288,3 @@
     });
 
   </script>
-
-{% endif %}
