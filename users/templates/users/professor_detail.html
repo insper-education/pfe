@@ -19,25 +19,16 @@
   {% include "usuario.html" with user=professor.user %}
   
   <b>{% lng "Tipo" "Type" %}:</b>
-  {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}
-  <br>
-  {% if professor.lattes %}
-    <strong>Lattes:</strong> <a href="{{ professor.lattes }}"> {{ professor.lattes }} </a><br>
-  {% endif %}
-  {% if professor.website %}
-    <strong>website:</strong> <a href="{{ professor.website|add_http }}"> {{ professor.website }} </a><br>
-  {% endif %}
-  {% if professor.areas %}
-    <b>{% lng "Áreas de Interesse" "Areas of Interest" %}:</b>
-    {{ professor.areas }}<br>
-  {% endif %}
+  {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}<br>
+  {% if professor.lattes %}<b>Lattes:</b> <a href="{{ professor.lattes }}">{{ professor.lattes }}</a><br>{% endif %}
+  {% if professor.website %}<b>website:</b> <a href="{{ professor.website|add_http }}">{{ professor.website }}</a><br>{% endif %}
+  {% if professor.areas %}<b>{% lng "Áreas de Interesse" "Areas of Interest" %}:</b> {{ professor.areas }}<br>{% endif %}
 
   {% include "dados_usuario.html" with user=professor.user %}
 
   {% if projetos %}
     <hr>
-    <span lang="pt"><h4>Projeto{% if projetos|length > 1 %}s{% endif %} Orientado{% if projetos|length > 1 %}s{% endif %}</h4></span>
-    <span lang="en"><h4>Supervised Project{% if projetos|length > 1 %}s{% endif %}</h4></span>
+    <h4>{% lng_n projetos|length "Projeto Orientado" "Projetos Orientados" "Supervised Project" "Supervised Projects" %}</h4>
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
@@ -47,7 +38,7 @@
         </a>
         {% with certificado_orientador=projeto|certificado_orientador %}
           {% if certificado_orientador %}
-            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
           {% endif %}
         {% endwith %}
         {% if projeto.proposta.intercambio %}
@@ -56,16 +47,14 @@
         </li>
       {% endif %}
     {% empty %}
-      <span lang="pt">Projetos não encontrados</span>
-      <span lang="en">Projects not found</span>
+      {% lng "Projetos não encontrados" "Projects not found" %}
     {% endfor %}
     </ol>
   {% endif %}
 
   {% if coorientacoes %}
     <hr>
-    <span lang="pt"><h4>Projeto{% if coorientacoes|length > 1 %}s{% endif %} Coorientado{% if coorientacoes|length > 1 %}s{% endif %}</h4></span>
-    <span lang="en"><h4>Co-supervised Project{% if coorientacoes|length > 1 %}s{% endif %}</h4></span>
+    <h4>{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</h4>
     <ol>
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
@@ -75,22 +64,20 @@
           </a>
           {% with certificado_coorientador=coorientacao|certificado_coorientador %}
             {% if certificado_coorientador %}
-              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
             {% endif %}
           {% endwith %}
         </li>
       {% endif %}
     {% empty %}
-      <span lang="pt">Projetos não encontrados</span>
-      <span lang="en">Projects not found</span>
+      {% lng "Projetos não encontrados" "Projects not found" %}
     {% endfor %}
     </ol>
   {% endif %}
 
   {% if bancas %}
     <hr>
-    <span lang="pt"><h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4></span>
-    <span lang="en"><h4>Participation in Examination Board{% if bancas|length > 1 %}s{% endif %}</h4></span>
+    <h4>{% lng_n bancas|length "Participação em Banca" "Participação em Bancas" "Participation in Examination Board" "Participation in Examination Boards" %}</h4>
     <div class="caixa_rolante">
       <ol>
       {% for banca in bancas %}
@@ -108,7 +95,7 @@
           {% endif %}
           {% with certificado=banca|certificado_banca:professor.user %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
             {% endif %}
           {% endwith %}
         </li>
@@ -119,13 +106,13 @@
 
   {% if mentorias %}
     <hr>
-    <span lang="pt"><h4>Mentoria{% if mentorias|length > 1 %}s{% endif %}</h4></span>
-    <span lang="en"><h4>Mentorship{% if mentorias|length > 1 %}s{% endif %}</h4></span>
+    <h4>{% lng_n mentorias|length "Mentoria" "Mentorias" "Mentorship" "Mentorships" %}</h4>
     <div class="caixa_rolante">
       <ol>
       {% for mentoria in mentorias %}
         <li>
-          Mentoria {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
+          {% lng "Mentoria" "Mentorship" %}
+          {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
           {% if mentoria.projeto %}
             {% if mentoria.projeto.organizacao %}
               [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
@@ -134,7 +121,7 @@
           {% endif %}
           {% with certificado=mentoria|certificado_mentoria:professor.user %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
             {% endif %}
           {% endwith %}
         </li>
@@ -143,11 +130,9 @@
     </div>
   {% endif %}
 
-
   {% if aulas %}
     <hr>
-    <span lang="pt"><h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4></span>
-    <span lang="en"><h4>Class{% if aulas|length > 1 %}es{% endif %} Taught</h4></span>
+    <h4>{% lng_n aulas|length "Aula Ministrada" "Aulas Ministradas" "Class Taught" "Classes Taught" %}</h4>
     <div class="caixa_rolante">
       <ol>{% for aula in aulas %}
           <li>
@@ -162,10 +147,10 @@
 
   {% if estilos_respostas %}
     <br><hr>
-    <h4>Estilos de Comunicação</h4>
+    <h4>{% lng "Estilos de Comunicação" "Communication Styles" %}</h4>
     {% include "tabela_estilos.html" with usuario=professor.user %}<br>
     {% for metrica, valor in estilos_respostas.items %}
-      <strong>{{ metrica }}:</strong> {{ valor }}<br>
+      <b>{{ metrica }}:</b> {{ valor }}<br>
     {% endfor %}
     <br>
   {% endif %}
