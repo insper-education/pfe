@@ -144,7 +144,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
         key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
         if key in edicao:
-            logger.error("Erro, duas alocações no mesmo semestre! " + estudante.get_full_name() + " " + key)
+            logger.error("Erro, duas alocações no mesmo semestre! " + estudante.user.get_full_name() + " " + key)
         edicao[key] = notas
 
     return edicao

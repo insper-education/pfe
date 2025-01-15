@@ -6,10 +6,10 @@
 
 {% load linguas %}
 
-<strong>
+<b>
   <span lang="pt">Nome completo:</span>
   <span lang="en">Full name:</span>
-</strong> {{user.get_full_name}}<br>
+</b> {{user.get_full_name}}<br>
 
 {% if not user.is_active %}
   <p style="color: red;">

@@ -15,11 +15,8 @@
   {% load bancas %}
   {% load get_notas %}
   {% load linguas %}
-  
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
-
   <script src="{% static 'js/Chart.min.js' %}"></script>
-
   {% include "reload.html" %}
 
   <style>
@@ -59,34 +56,33 @@
   {% endif %}
   <br>
   
-  <strong>Situação Acadêmica:</strong> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
+  <b>Situação Acadêmica:</b> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
 
   {% if user.tipo_de_usuario != 1 %}
     {% if aluno.cr %}
-      <strong>CR:</strong> {{aluno.cr}}<br>
+      <b>CR:</b> {{aluno.cr}}<br>
     {% endif %}
     {% include "dados_usuario.html" with user=aluno.user %}
   {% endif %}
   
-  {% comment %} Prenchido pelo estudante {% endcomment %}
   {% if aluno.trabalhou %}
-    <br><strong>{{aluno.get_trabalhou_help_text }}</strong> {{ aluno.trabalhou|linebreaks }}
+    <br><b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}
   {% endif %}
 
   {% if aluno.social %}
-    <br><strong>{{aluno.get_social_help_text }}</strong> {{ aluno.social|linebreaks }}
+    <br><b>{{aluno.get_social_help_text }}</b> {{ aluno.social|linebreaks }}
   {% endif %}  
 
   {% if aluno.entidade %}
-    <br><strong>{{aluno.get_entidade_help_text }}</strong> {{ aluno.entidade|linebreaks }}
+    <br><b>{{aluno.get_entidade_help_text }}</b> {{ aluno.entidade|linebreaks }}
   {% endif %}  
 
   {% if aluno.familia %}
-    <br><strong>{{aluno.get_familia_help_text }}</strong> {{ aluno.familia|linebreaks }}
-  {% endif %}  
+    <br><b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}
+  {% endif %}
 
   <br>
-  <strong>Áreas de interesse selecionadas:</strong>
+  <b>Áreas de interesse selecionadas:</b>
   {% with aa=aluno.user.areadeinteresse_set.all %}
     {% with vencido=True %}
       {% include "areas.html" %}
@@ -98,20 +94,17 @@
 
     {% if aluno.opcao_set.all %}
       <hr>
-      <h4>
-        <span lang="pt">Propostas Selecionadas</span>
-        <span lang="en" style="display: none;">Selected Proposals</span>
-      </h4>
+      <h4>{% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
       <div id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
           {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
             <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-            <div><b>{{opcao.prioridade}}</b> - 
+              <div><b>{{opcao.prioridade}}</b> - 
                 {{opcao.proposta.titulo}}
                 ({{opcao.proposta.organizacao.nome}})
                 {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
                 |{% mede_aderencia aluno opcao.proposta %}%|
-            </div>
+              </div>
             </a>
           {% endif %}
         {% endfor %}
@@ -130,12 +123,12 @@
             $("#quebra").show();
           </script>
           <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-            <p><b>{{opcao.prioridade}}</b> - 
-                {{opcao.proposta.titulo}}
-                ({{opcao.proposta.organizacao.nome}})
-                {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                |{% mede_aderencia aluno opcao.proposta %}%|
-            </p>
+            <div><b>{{opcao.prioridade}}</b> - 
+              {{opcao.proposta.titulo}}
+              ({{opcao.proposta.organizacao.nome}})
+              {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
+              |{% mede_aderencia aluno opcao.proposta %}%|
+            </div>
           </a>
         {% endif %}
       {% endfor %}
@@ -192,7 +185,7 @@
 
         {% with relatos=alocado|get_relatos %}
 
-        {% if alocado.projeto.ano > 2021 %}  {% comment %} projetos até 2021 tinham o relato pelo Blackboad {% endcomment %}
+        {% if alocado.projeto.ano > 2021 %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
           &nbsp;&nbsp;<span class="tit_rel">
             <span lang="pt">Relatos Quinzenais:</span>
             <span lang="en" style="display: none;">Biweekly Reports</span>
@@ -235,7 +228,7 @@
         {% endif %}
         {% endwith %}
 
-        {% comment %} BANCAS {% endcomment %}
+        <!-- BANCAS -->
         {% with bancas=alocado|get_bancas %}
           {% if bancas %}
             &nbsp;&nbsp;<span class="tit_rel">
@@ -256,9 +249,9 @@
         {% endif %}
       
       {% endfor %}
-    {% endif %}
+    {% endif %} 
 
-  {% endif %}
+  {% endif %} 
 
 
   {% if estilos_respostas %}
@@ -303,10 +296,5 @@
       </button>
     </a>
   {% endif %}
-
-  {% comment %} <script>
-      function carrega_pagina() {  }
-      window.onload = carrega_pagina
-  </script>  {% endcomment %}
 
 {% endblock %}

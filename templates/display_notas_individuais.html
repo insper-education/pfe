@@ -31,7 +31,7 @@
       <span lang="en" style="display:none">Evaluations</span>
     </b></td>
     {% for aval, nota, peso, descr in notas %}
-      {% if user.tipo_de_usuario != 1 or alocado|exibe_notas:aval %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
+      {% if user.tipo_de_usuario != 1 or alocado|exibe_notas:aval %} <!-- Filtra certas avaliações para estudantes não verem -->
         <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
         title="{{descr}} | peso={% widthratio peso 1 100 %}%">
           <span class="short">{{aval}}</span><span class="long">{{descr}}</span> = {% if peso > 0 or aval == "P" %}{{nota|floatformat:1}}{% else %}{% if nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
@@ -109,9 +109,7 @@
                 label: "Objetivos de Aprendizagem",
                 pointBackgroundColor: [
                     {% for key, value in medias_oo.media_individual.items %}
-                        {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                            "{{value.cor}}",
-                        {% comment %} {% endif %} {% endcomment %}
+                      "{{value.cor}}",
                     {% endfor %}
                     ],
                 data: [
@@ -165,9 +163,7 @@
                   label: "Objetivos de Aprendizagem",
                   pointBackgroundColor: [
                       {% for key, value in medias_oo.media_grupo.items %}
-                          {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                              "{{value.cor}}",
-                          {% comment %} {% endif %} {% endcomment %}
+                        "{{value.cor}}",
                       {% endfor %}
                       ],
                   data: [
@@ -221,9 +217,7 @@
                   label: "Objetivos de Aprendizagem",
                   pointBackgroundColor: [
                       {% for key, value in medias_oo.medias_geral.items %}
-                          {% comment %} {% if value.media >= 0 %} {% endcomment %}
-                              "{{value.cor}}",
-                          {% comment %} {% endif %} {% endcomment %}
+                        "{{value.cor}}",
                       {% endfor %}
                       ],
                   data: [
