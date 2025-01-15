@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load documentos %}
+  {% load linguas %}
   {% include "reload.html" %}
 {% endblock %}
 
@@ -83,14 +84,14 @@
           </th>
 
           <th>
-            <strong lang="pt">Projeto:</strong><strong lang="en">Project:</strong>
+            <strong>{% lng "Projeto" "Project" %}:</strong>
             <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% if projeto.organizacao %}<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">[{{ projeto.organizacao.nome }}]</a>{% else %}[ORGANIZAÇAO NÃO DEFINIDA]{% endif %}
             <br><strong lang="pt">Orientador:</strong><strong lang="en">Advisor:</strong>
               {% if projeto.orientador %}
                 <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
               {% else %}
-                ORIENTADOR NÃO DEFINIDO
+                {% lng "Orientador não definido" "Advisor not defined" %}
               {% endif %}
             <br>
             {% include "tipo_projeto.html" with com_tipo=True %}

@@ -8,8 +8,7 @@
 {% block head %}
   {% load static %}
   {% load date_extras %}
-  
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% load linguas %}
   {% include "reload.html" %}
 
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
@@ -41,45 +40,30 @@
         {% if projeto.tem_relatos %}
           <div class="div_arredondado">
             <div>
-              <strong>
-                <span lang="pt">Projeto:</span>
-                <span lang="en">Project:</span>
-              </strong> <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+              <strong>{% lng "Projeto" "Project" %}:</strong>
+              <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
               {% include "tipo_projeto.html" with com_tipo=False %}
             </div>
-            <strong>
-              <span lang="pt">Organização:</span>
-              <span lang="en">Organization:</span>
-            </strong>
+            <strong>{% lng "Organização" "Organization" %}:</strong>
             {% if projeto.organizacao %}
               <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
             {% else %}
-              <span lang="pt">ORGANIZAÇÃO NÃO DEFINIDA</span>
-              <span lang="en">ORGANIZATION NOT DEFINED</span>
+              {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
             {% endif %}
             <br>
             {% if edicao == "todas" or edicao == "nenhuma" %}
-              <strong>
-                <span lang="pt">Semestre:</span>
-                <span lang="en">Semester:</span>
-              </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+              <strong>{% lng "Semestre" "Semester" %}:</strong>
+              {{projeto.ano}}.{{projeto.semestre}}<br>
             {% endif %}
-            <strong>
-              <span lang="pt">Orientador:</span>
-              <span lang="en">Advisor:</span>
-            </strong>
+            <strong>{% lng "Orientador" "Advisor" %}:</strong>
             {% if projeto.orientador %}
               <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
             {% else %}
-              <span lang="pt">ORIENTADOR NÃO DEFINIDO</span>
-              <span lang="en">ADVISOR NOT DEFINED</span>
+              {% lng "Orientador não definido" "Advisor not defined" %}
             {% endif %}
             <br>
             
-            <strong>
-              <span lang="pt">Grupo:</span>
-              <span lang="en">Group:</span>
-            </strong>
+            <strong>{% lng "Grupo" "Group" %}:</strong>
             {% with alocacoes=projeto.alocacao_set.all %}
               <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
                 <i class="fas fa-mail-bulk"></i>
@@ -101,10 +85,7 @@
             {% endwith %}
 
             <div style="margin:8px 0px 3px 0px; ">
-              <strong>
-                <span lang="pt">Entregas:</span>
-                <span lang="en">Deliveries:</span>
-              </strong>
+              <strong>{% lng "Entregas" "Deliveries" %}:</strong>
             </div>
             {% for item in entregas %}
             {% with dias_inic=item.evento.data_inicio_aval|dif_dias_hoje dias_ate=item.evento.data_aval|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
@@ -116,14 +97,11 @@
                     <b>{{item.composicao.exame.titulo}}</b>
                   {% endif %}      
                   {% if item.evento.endDate %}            
+                    {% lng "[prazo " "[deadline " %}
                     <span class="texto-longo">
-                      <span lang="pt">[prazo </span>
-                      <span lang="en">[deadline </span>
                       {{ item.evento.endDate|date:"DATE_FORMAT" }}]
                     </span>
                     <span class="texto-curto">
-                      <span lang="pt">[prazo </span>
-                      <span lang="en">[deadline </span>
                       {{ item.evento.endDate|date:"d/m/y" }}]
                     </span>
                   {% endif %}
@@ -149,30 +127,26 @@
                            href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
                            target="_blank" rel="noopener noreferrer">
                             <span class="fas fa-archive"></span>
-                            <span lang="pt">Entregue</span>
-                            <span lang="en">Delivered</span>
+                            {% lng "Entregue" "Delivered" %}
                             <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                             <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                           </a>
                         {% endif %}
                         {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
-                          <span lang="pt">[FORA DO PRAZO]</span>
-                          <span lang="en">[OVERDUE]</span>
+                          {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
                         </span>{% endif %}
                         {% if forloop.first%}</b>{% endif %}  
                       </li>
                       {% if item.avaliacoes and item.avaliacoes.first%}
                         {% if documento.data > item.avaliacoes.first.momento %}
                           <span style="color: red;">
-                            <span lang="pt">Avaliação desatualizada, refazer para a nova entrega!</span>
-                            <span lang="en">Evaluation outdated, redo for the new delivery!</span>
+                            {% lng "Avaliação desatualizada, refazer para a nova entrega!" "Evaluation outdated, redo for the new delivery!" %}
                           </span>
                         {% endif %}
                       {% else %}
                         {% if dias_ate < prazo_avaliar %}
                           <span style="color: red;">
-                            <span lang="pt">Avaliação pendente!</span>
-                            <span lang="en">Evaluation pending!</span>
+                            {% lng "Avaliação pendente!" "Evaluation pending!" %}
                           </span>
                         {% endif %}
                       {% endif %}
@@ -182,8 +156,7 @@
                           {% if dias_inic > dias %}class="lightgrey"{% endif %}
                           href="{% url 'entrega_avaliar' item.composicao.id projeto.id %}"
                           target="_blank" rel="noopener noreferrer">
-                          <span lang="pt">sem arquivos</span>
-                          <span lang="en">no files</span>
+                          {% lng "sem arquivos" "no files" %}
                         </a><br>
                       {% endif %}
                     {% endfor %}
@@ -213,29 +186,26 @@
                              href="{% url 'entrega_avaliar' item.composicao.id projeto.id documento.usuario.id %}"
                              target="_blank" rel="noopener noreferrer">
                               <span class="fa fa-file"></span>
-                              Entregue
+                              {% lng "Entregue" "Delivered" %}
                               <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                               <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                             </a>
                           {% endif %}
                           {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
-                            <span lang="pt">[FORA DO PRAZO]</span>
-                            <span lang="en">[OVERDUE]</span>
+                            {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
                           </span>{% endif %}
                           {% if forloop.first%}</b>{% endif %}  
                         </li>
                         {% if values.avaliacoes and values.avaliacoes.first%}
                           {% if documento.data > values.avaliacoes.first.momento %}
                             <span style="color: red;">
-                              <span lang="pt">Avaliação desatualizada, refazer para a nova entrega!</span>
-                              <span lang="en">Evaluation outdated, redo for the new delivery!</span>
+                              {% lng "Avaliação desatualizada, refazer para a nova entrega!" "Evaluation outdated, redo for the new delivery!" %}
                             </span>
                           {% endif %}
                         {% else %}
                           {% if dias_ate < prazo_avaliar %}
                             <span style="color: red;">
-                              <span lang="pt">Avaliação pendente!</span>
-                              <span lang="en">Evaluation pending!</span>
+                              {% lng "Avaliação pendente!" "Evaluation pending!" %}
                             </span>
                           {% endif %}
                         {% endif %}
@@ -245,8 +215,7 @@
                             {% if dias_inic > dias %}class="lightgrey"{% endif %}
                             href="{% url 'entrega_avaliar' item.composicao.id projeto.id alocacao.aluno.user.id %}"
                             target="_blank" rel="noopener noreferrer">
-                            <span lang="pt">sem arquivos</span>
-                            <span lang="en">no files</span>
+                            {% lng "sem arquivos" "no files" %}
                           </a>
                         {% endif %}
                       {% endfor %}
@@ -263,8 +232,7 @@
           </div>
         {% endif %}
       {% empty %}
-        <span lang="pt">Sem alocações de projetos esse semestre.</span>
-        <span lang="en">No project allocations this semester.</span>
+        {% lng "Sem alocações de projetos esse semestre" "No project allocations this semester" %}
       {% endfor %}
     {% endif %}
 

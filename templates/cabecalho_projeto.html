@@ -4,23 +4,24 @@
   Data: 15 de Janeiro de 2024
 {% endcomment %}
 
+{% load linguas %}
+
 {% if projeto %}
   {% if user.is_authenticated and user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
 
     {% if projeto.organizacao %}
-      <b lang="pt">Organização:</b><b lang="en" style="display:none">Organization:</b>
+      <b>{% lng "Organização" "Organization" %}:</b>
       <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{projeto.organizacao.nome}}</a>
     {% else %}
-      <span lang="pt">Organização: Não definida</span><span lang="en">Organization: Not defined</span>
+      {% lng "Organização: Não definida" "Organization: Not defined" %}
     {% endif %}<br>
     
-    <b lang="pt">Projeto:</b><b lang="en" style="display:none">Project:</b>
+    <b>{% lng "Projeto" "Project" %}:</b>
     <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
       {% if com_tit_original and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
         {{projeto.titulo_final}}</a><br>
         <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">
-          <span lang="pt">Título original da proposta:</span>
-          <span lang="en" style="display: none;">Original title of the proposal:</span>
+          {% lng "Título original da proposta" "Original title of the proposal" %}:
           <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}
         </div>
       {% else %}
@@ -30,32 +31,28 @@
 
     {% comment %} Mostrar só se todas edições {% if edicao == "todas" %} {% endcomment %}
     {% if com_semestre %}
-      <b lang="pt">Semestre:</b><b lang="en" style="display:none">Semester:</b>
+      <b>{% lng "Semestre" "Semester" %}:
       {{projeto.ano}}.{{projeto.semestre}}<br>
     {% endif %}
     
     {% if request.user != projeto.orientador.user or administracao %}
       {% if projeto.orientador %}
         {% if banca.projeto.proposta.intercambio %}
-          <b lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-          <b lang="en" style="display:none">Professor in charge:</b>
+          <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
         {% else %}
-          <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-          <b lang="en" style="display:none">Advisor:</b>
+          <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
         {% endif %}
         <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
         <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
         <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       {% else %}
-        <span lang="pt">Orientador: Não definido</span>
-        <span lang="en" style="display:none">Advisor: Not defined</span>
+        {% lng "Orientador: Não definido" "Advisor: Not defined" %}
       {% endif %}
       <br>
 
       {% with coorientadores=banca.get_projeto.coorientador_set.all %}
         {% if coorientadores %}
-          <b lang="pt">Coorientação:</b>
-          <b lang="en" style="display:none">Co-advisoring:</b>
+          <b>{% lng "Coorientação" "Co-advisoring" %}:</b>
           {% for coorientador in coorientadores %}
             <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
               {{coorientador.usuario.get_full_name}} 
@@ -70,8 +67,7 @@
 
     {% if com_grupo %}
       <span style="display: inline-block; margin-top: 6px;">
-        <b lang="pt">Grupo:</b>
-        <b lang="en" style="display: none;">Group:</b>
+        <b>{% lng "Grupo" "Group" %}:</b>
       </span>
       <ul>
         {% for alocacao in projeto.alocacao_set.all %}
@@ -95,14 +91,13 @@
 
   {% else %}
 
-    <b lang="pt">Projeto:</b><b lang="en" style="display:none">Project:</b>
+    <b>{% lng "Projeto" "Project" %}:</b>
     {% if user.is_authenticated and user.tipo_de_usuario == 1 %}
       <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
         {% if com_tit_original and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
           {{projeto.titulo_final}}</a><br>
           <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">
-            <span lang="pt">Título original da proposta:</span>
-            <span lang="en" style="display: none;">Original title of the proposal:</span>
+            {% lng "Título original da proposta" "Original title of the proposal" %}:
             <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}
           </div>
         {% else %}
@@ -114,37 +109,34 @@
     {% endif %}
 
     {% if com_semestre %}
-      <b class="imprimir" lang="pt">Semestre:</b><b lang="en" style="display:none">Semester:</b>
+      <b>{% lng "Semestre" "Semester" %}:
       {{projeto.ano}}.{{projeto.semestre}}<br>
     {% endif %}
 
     {% if projeto.organizacao %}
-      <b lang="pt">Organização:</b><b lang="en" style="display:none">Organization:</b>
+      <b>{% lng "Organização" "Organization" %}:</b>
       {{projeto.organizacao.nome}}
     {% else %}
-      <span lang="pt">Organização: Não definida</span><span lang="en" style="display:none">Organization: Not defined</span>
+      {% lng "Organização: Não definida" "Organization: Not defined" %}
     {% endif %}<br>
 
     {% if projeto.orientador %}
       {% if banca.projeto.proposta.intercambio %}
-        <b lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b>
-        <b lang="en" style="display:none">Professor in charge:</b>
+        <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
       {% else %}
-        <b lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b>
-        <b lang="en" style="display:none">Advisor:</b>
+        <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
       {% endif %}
-        {{ projeto.orientador.user.get_full_name }}
-        {% if com_email %}
-          <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-          <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-        {% endif %}<br>
+      {{ projeto.orientador.user.get_full_name }}
+      {% if com_email %}
+        <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+      {% endif %}<br>
     {% else %}
-      <span lang="pt">Orientador: Não definido</span>
-      <span lang="en" style="display:none">Advisor: Not defined</span>
+      {% lng "Orientador: Não definido" "Advisor: Not defined" %}
     {% endif %}
 
   {% endif %}
 
 {% else %}
- <b>PROJETO NÃO DEFINIDO</b><br>
+ <b>{% lng "PROJETO NÃO DEFINIDO" "PROJECT NOT DEFINED" %}</b><br>
 {% endif %}

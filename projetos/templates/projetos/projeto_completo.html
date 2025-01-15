@@ -16,6 +16,11 @@
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <link rel="stylesheet" href="{% static 'css/mostra_horarios.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
+
+  <style>
+    .wbtn {width: 13em;}
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -41,21 +46,21 @@
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
-    <br><div class="resumo" style="margin-top: 8px;">
+    <br><div class="resumo mt-3">
       <strong>{% lng "Resumo do Projeto (escrito por estudantes)" "Project Summary (written by students)" %}:</strong>
       {{ projeto.resumo|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.abstract %}
-    <br><div class="abstract" style="margin-top: 8px;">
+    <br><div class="abstract mt-3">
       <strong>{% lng "Resumo em Inglês do Projeto (escrito por estudantes)" "Project Summary in English (written by students)" %}:</strong>
       {{ projeto.abstract|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
-    <br><div class="palavras_chave" style="margin-top: 8px;">
+    <br><div class="palavras_chave mt-3">
       <strong>{% lng "Palavras-chave (escrito por estudantes)" "Keywords (written by students)" %}:</strong>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
@@ -90,96 +95,75 @@
 
   {% for conexao in cooperacoes %}
     {% if conexao.parceiro and conexao.parceiro.organizacao %}
-      <span>
-      &nbsp;&nbsp;&nbsp;
-      {% lng "Colaboração" "Collaboration" %}:
-      <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-        {{conexao.parceiro.organizacao}}
-      </a>
+      <span class="ml-4">
+        {% lng "Colaboração" "Collaboration" %}:
+        <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+          {{conexao.parceiro.organizacao}}
+        </a>
       </span>
     {% endif %}
   {% endfor %}
 
-  <div class="endereco" style="margin-top: 8px;">
-    <p><strong>
-      <span lang="pt">Endereço:</span>
-      <span lang="en" style="display: none;">Address:</span>
-    </strong> <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+  <div class="endereco mt-3">
+    <strong>{% lng "Endereço" "Address" %}:</strong><br>
+    <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
   </div>
   
   {% if projeto.organizacao.website %}
-    <div class="website" style="margin-top: 8px;">
-      <p><strong>
-        website:
-      </strong>  <a href="{{ projeto.organizacao.website }}"> {{ projeto.organizacao.website }} </a></p>
-    </div><br>
+    <div class="website mt-3">
+      <strong>website:</strong>
+      <a href="{{ projeto.organizacao.website }}">{{ projeto.organizacao.website }}</a>
+    </div>
   {% endif %}
 
+  <br>
+
   {% if projeto.proposta.descricao %}
-    <div class="descricao" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Descrição da Proposta do Projeto (escrito por parceiro):</span>
-        <span lang="en" style="display: none;">Description of the Project Proposal (written by partner):</span>
-      </strong>
+    <div class="descricao mt-3">
+      <strong>{% lng "Descrição da Proposta do Projeto (escrito por parceiro)" "Description of the Project Proposal (written by partner)" %}:</strong>
       {{ projeto.proposta.descricao|linebreaks|bleach_urlize|safe }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.proposta.expectativas %}
-    <div class="expectativas" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Expectativas de resultados/entregas (escrito por parceiro):</span>
-        <span lang="en" style="display: none;">Expectations of results/deliverables (written by partner):</span>
-      </strong>
+    <div class="expectativas mt-3">
+      <strong>{% lng "Expectativas de resultados/entregas (escrito por parceiro)" "Expectations of results/deliverables (written by partner)" %}</strong>
       {{ projeto.proposta.expectativas|linebreaks|bleach_urlize|safe }}
-    </div><br>
+    </div>
   {% endif %}
 
   {% if projeto.proposta.recursos %}
-    <div class="recusos" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Recursos a serem disponibilizados aos estudantes (escrito por parceiro):</span>
-        <span lang="en" style="display: none;">Resources to be made available to students (written by partner):</span>
-      </strong>{{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
+    <div class="recusos mt-3">
+      <strong>{% lng "Recursos a serem disponibilizados aos estudantes (escrito por parceiro)" "Resources to be made available to students (written by partner)" %}</strong>
+      {{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.organizacao.informacoes %}
-    <div class="informacoes" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Informações sobre a organização:</span>
-        <span lang="en" style="display: none;">Information about the organization:</span>
-      </strong> {{ projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe }}
+    <div class="informacoes mt-3">
+      <strong>{% lng "Informações sobre a organização" "Information about the organization" %}</strong>
+      {{ projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
   {% if projeto.proposta.departamento %}
-    <div class="departamento" style="margin-top: 8px;">
-      <strong>
-        <span lang="pt">Informações sobre o departamento na organização:</span>
-        <span lang="en" style="display: none;">Information about the department in the organization:</span>
-      </strong> {{ projeto.proposta.departamento|linebreaks|bleach_urlize|safe }}
-    </div><br>
+    <div class="departamento mt-3">
+      <strong>{% lng "Informações sobre o departamento na organização" "Information about the department in the organization" %}</strong> {{ projeto.proposta.departamento|linebreaks|bleach_urlize|safe }}
+    </div>
   {% endif %}
 
   {% if projeto.proposta.anexo %}
-    <br><strong>
-      <span lang="pt">Anexo (fornecido por parceiro):</span>
-      <span lang="en" style="display: none;">Attachment (provided by partner):</span>
-    </strong>
+    <br>
+    <strong>{% lng "Anexo (fornecido por parceiro)" "Attachment (provided by partner)" %}:</strong>
     <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
     <br><br>
   {% endif %}
   
   <div class="conexoes" style="margin-top: 8px;">
-    <strong>
-      <span lang="pt">Conexões:</span>
-      <span lang="en" style="display: none;">Connections:</span>
-    </strong>
+    <strong>{% lng "Conexões" "Connections" %}:</strong>
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
-    {% endif %}
-    <br>
+    {% endif %}<br>
     {% if conexoes %}
       <ul>
       {% for conexao in conexoes %}
@@ -198,8 +182,7 @@
               </a>
 
             {% else %}
-              <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
-              <span lang="en" style="display: none;">ORGANIZATION NOT REGISTERED</span>
+              {% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}
             {% endif %}
             {% for papel in conexao.get_papeis %}
               <span class="texto-longo">[{{papel.0}}]</span>
@@ -218,10 +201,7 @@
                 <span class="texto-curto"><i class="far fa-envelope"></i></span>
               </a>
             {% else %}
-              <span style="color: lightgrey;">
-                <span lang="pt">PARCEIRO NÃO CADASTRADO</span>
-                <span lang="en" style="display: none;">ORGANIZATION NOT REGISTERED</span>
-              </span>
+              <span style="color: lightgrey;">{% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}</span>
             {% endif %}
             <span style="color: lightgrey; border: 0px; ">
               {% for papel in conexao.get_papeis %}
@@ -235,8 +215,7 @@
       {% endfor %}
       </ul>
     {% else %}
-      <span lang="pt">Nenhuma conexão específica para esse projeto declarada.</span>
-      <span lang="en" style="display: none;">No specific connection declared for this project.</span>
+      {% lng "Nenhuma conexão específica para esse projeto declarada." "No specific connection declared for this project." %}
     {% endif %}
     
   </div>
@@ -244,17 +223,11 @@
   <hr>
   {% if projeto.orientador %}
     {% if projeto.proposta.intercambio %}
-      <h5>
-        <span lang="pt">Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</span>
-        <span lang="en" style="display: none;">Responsible Professor:</span>
-      </h5>
+      <h5>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</h5>
     {% else %}
-      <h5>
-        <span lang="pt">Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</span>
-        <span lang="en" style="display: none;">Advisor:</span>
-      </h5>
+      <h5>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</h5>
     {% endif %}
-    <div style="margin-left: 0.3em;">
+    <div class="ml-1">
       &#8614;
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
@@ -267,20 +240,12 @@
       </a>
     </div>
   {% else %}
-    <h4>
-      <span lang="pt">Orientador: Não definido</span>
-      <span lang="en" style="display: none;">Advisor: Not defined</span>
-    </h4>
+    <h4>{% lng "Orientador não definido" "Advisor not defined" %}</h4>
   {% endif %}
 
   {% if coorientadores %}
-    <br>
-    <div style="margin-top: 3px;">
-      <strong>
-        &nbsp;&nbsp;
-        <span lang="pt">coorientação:</span>
-        <span lang="en" style="display: none;">co-advisorship:</span>
-      </strong>
+    <div class="mt-2 ml-2">
+      <strong>{% lng "coorientação" "co-advisoring" %}:</strong>
     </div>
     <ul>
     {% for coorientador in coorientadores %}
@@ -293,7 +258,7 @@
         <span class="texto-curto"><i class="far fa-envelope"></i></span>
       </a>
       {% if coorientador.observacao %}
-        &nbsp;&nbsp;obs: {{coorientador.observacao}}
+        <div class="ml-2">obs: {{coorientador.observacao}}</div>
       {% endif %}
       </li>
     {% endfor %}
@@ -302,8 +267,7 @@
 
   <hr>
   <h5 style="display: inline;">
-    <span lang="pt">Estudante{% if alocacoes.count > 2 %}s{% endif %}:</span>
-    <span lang="en" style="display: none;">Student{% if alocacoes.count > 2 %}s{% endif %}:</span>
+    {% lng_n alocacoes.count "Estudante" "Estudantes" "Student" "Students" %}:
   </h5>
   {% if alocacoes %}
     <span class="emails esconder">
@@ -335,13 +299,9 @@
 
   {% if medias_oo %}
     <hr>
-    <h4>
-      <span lang="pt">Médias de Grupo:</span>
-      <span lang="en" style="display: none;">Group Averages:</span>
-    </h4>
+    <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>
 
-    <span lang="pt">Médias:</span>
-    <span lang="en" style="display: none;">Averages:</span>
+    {% lng "Médias" "Averages" %}:
     {% for key, value in medias_oo.media_grupo.items %}
       {% if value.media >= 0 %}
         <span style="white-space: nowrap;">{{key.titulo}}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
@@ -403,10 +363,7 @@
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     {% if projeto|has_relatos %}  
       <hr>
-      <h4>
-        <span lang="pt">Relatos Quinzenais:</span>
-        <span lang="en" style="display: none;">Biweekly Reports:</span>
-      </h4>
+      <h4>{% lng "Relatos Quinzenais" "Biweekly Reports" %}:</h4>
       {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
     {% endif %}
   {% endif %}
@@ -422,22 +379,16 @@
   {% endwith %}
   
   {% if projeto.pastas_do_projeto %}
-    <h4>
-      <span lang="pt">Pastas do projeto:</span>
-      <span lang="en" style="display: none;">Project Folders:</span>
-    </h4>
+    <h4>{% lng "Pastas do projeto" "Project Folders" %}:</h4>
     <div style="display: flex; align-items: flex-start;">
       <div>&#128193;&nbsp;</div>
-      <div>
-        {{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}
-      </div>
+      <div>{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>
     </div>
     <br>
   {% endif %}
 
   <h4>
-    <span lang="pt">Documentos:</span>
-    <span lang="en" style="display: none;">Documents:</span>
+    {% lng "Documentos" "Documents" %}:
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       {% if projeto and projeto.organizacao %}
         <small class="esconder">
@@ -453,8 +404,7 @@
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
     <hr>
     <h4>
-      <span lang="pt">Certificados:</span>
-      <span lang="en" style="display: none;">Certificates:</span>
+      {% lng "Certificados" "Certificates" %}:
       {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
         <small class="esconder">
           <a href="{% url 'carregar_certificado' %}">&#10133;</a>
@@ -469,10 +419,7 @@
   {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
   {% if projeto.encontro_set.all %}
       <hr>
-      <h4>
-        <span lang="pt">Mentorias:</span>
-        <span lang="en" style="display: none;">Mentorships:</span>
-      </h4>
+      <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
       <ul>
           {% for dinamica in projeto.encontro_set.all %} 
               <li>
@@ -480,12 +427,10 @@
                   <ul>
                     {% if dinamica.location %}
                       <li>
-                        <span lang="pt">Local:</span>
-                        <span lang="en" style="display: none;">Location:</span>
+                        {% lng "Local" "Location" %}:
                       {% if dinamica.url_location %}
                         <a href="{{dinamica.location}}">
-                          <span lang="pt">link vídeo-conferência</span>
-                          <span lang="en" style="display: none;">video-conference link</span>
+                          {% lng "link vídeo-conferência" "video-conference link" %}
                         </a>
                       {% else %}
                         <span style="word-break: break-all;">
@@ -496,8 +441,7 @@
                     {% endif %}
                     {% if dinamica.facilitador %}
                       <li>
-                        <span lang="pt">Facilitador:</span>
-                        <span lang="en" style="display: none;">Facilitator:</span>
+                        {% lng "Facilitador" "Facilitator" %}:
                         <a href="{% url 'user_detail' dinamica.facilitador.id %}">
                           {{dinamica.facilitador}}
                         </a>
@@ -513,10 +457,7 @@
   {% if projeto.ano >= 2024 %} {% comment %} Só começamos a fazer a partir de 2024 {% endcomment %}
     {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
       <hr>
-      <h4>
-        <span lang="pt">Alocação Semanal dos Estudantes:</span>
-        <span lang="en" style="display: none;">Weekly Allocation of Students:</span>
-      </h4>
+      <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
       {% include "mostra_horarios.html" %}
     {% endif %}
   {% endif %}
@@ -526,62 +467,54 @@
     <hr>
     <div style="max-width: 95em; text-align: center;">
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
        href="{% url 'proposta_completa' projeto.proposta.id %}">
-        <span lang="pt">Proposta</span>
-        <span lang="en" style="display: none;">Proposal</span>
+        {% lng "Proposta" "Proposal" %}
       </a>
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
        href="{% url 'resultado_bancas' projeto.id %}">
-        <span lang="pt">Resultado Bancas</span>
-        <span lang="en" style="display: none;">Exam. Boards Results</span>
+        {% lng "Resultado Bancas" "Exam. Boards Results" %}
       </a>
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
        href="{% url 'bancas_lista' projeto.id %}">
-        <span lang="pt">Agendamento Bancas</span>
-        <span lang="en" style="display: none;">Exam. Boards Schedule</span>
+        {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
       </a>
 
       {% if projetos_avancados %}
-        <a class="btn btn-primary mb-1 mt-2" 
+        <a class="btn btn-primary mb-1 mt-2 wbtn" 
          data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
-         href="{% url 'projeto_avancado' projeto.id %}" style="width: 13em;">
-          <span lang="pt">Versão Avançada</span>
-          <span lang="en" style="display: none;">Advanced Version</span>
+         href="{% url 'projeto_avancado' projeto.id %}">
+          {% lng "Versão Avançada" "Advanced Version" %}
         </a>
       {% else %}
-        <a class="btn btn-primary mb-1 mt-2" 
+        <a class="btn btn-primary mb-1 mt-2 wbtn" 
          data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
-         onclick="cria_avancado()" style="color:white; width: 13em;">
-          <span lang="pt">Cria Avançado</span>
-          <span lang="en" style="display: none;">Create Advanced</span>
+         onclick="cria_avancado()" style="color:white;">
+          {% lng "Cria Avançado" "Create Advanced" %}
         </a>
       {% endif %}
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
        href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}">
-        <span lang="pt">Avaliar Entregas</span>
-        <span lang="en" style="display: none;">Evaluate Deliveries</span>
+        {% lng "Avaliar Entregas" "Evaluate Deliveries" %}
       </a>
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
        href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}">
-        <span lang="pt">Avaliação de Pares</span>
-        <span lang="en" style="display: none;">Peer Evaluation</span>
+        {% lng "Avaliação de Pares" "Peer Evaluation" %}
       </a>
 
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;"
+      <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
        href="{% url 'editar_projeto' projeto.id %}">
-        <span lang="pt">Editar</span>
-        <span lang="en" style="display: none;">Edit</span>
+        {% lng "Editar" "Edit" %}
       </a>
 
     </div>

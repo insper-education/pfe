@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
@@ -25,12 +26,12 @@
           
             {% include "cabecalho_projeto.html" with com_tit_original=True %}
 
-            <div style="margin-top:8px;"><strong><span lang="pt">Relatos</span><span lang="en">Reports</span>:</strong></div>
+            <div class="mt-2">
+              <strong>{% lng "Relatos" "Reports" %}:</strong>
+            </div>
 
             {% include "relatos.html" %}
-
-            <small lang="pt">Obs: prazos para a entrega dos estudantes.</small>
-            <small lang="en">Note: deadlines for students' submissions.</small>
+            <small>{% lng "Obs: prazos para a entrega dos estudantes." "Note: deadlines for students' submissions." %}</small>
 
           </div>
         {% endif %}

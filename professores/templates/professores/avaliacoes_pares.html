@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/outros.css' %}">
@@ -27,19 +28,19 @@
           {% include "cabecalho_projeto.html" %}
 
           <div style="margin-top: 18px;">
-            <strong>Avaliações de Pares Intermediárias:</strong><br>
+            <strong>{% lng "Avaliações de Pares Intermediárias" "Intermediate Peer Evaluations" %}:</strong><br>
             {% include "pares.html" with tipo_avaliacao="intermediaria" %}
           </div>
 
           <div style="margin-top: 18px;">
-            <strong>Avaliações de Pares Finais:</strong><br>
+            <strong>{% lng "Avaliações de Pares Finais" "Final Peer Evaluations" %}:</strong><br>
             {% include "pares.html" with tipo_avaliacao="final" %}
           </div>
 
         </div>
 
       {% empty %}
-        Sem alocações de projetos esse semestre.
+        {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
       {% endfor %}
     {% endif %}
 
@@ -48,7 +49,7 @@
   <script>
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-    };
+    }
     window.onload = carrega_site
   </script>
 

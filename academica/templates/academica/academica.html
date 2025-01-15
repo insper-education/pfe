@@ -4,142 +4,110 @@
   Data: 10 de Abril de 2023
 {% endcomment %}
 
+{% load linguas %}
 
-<h5>
-  <span lang="pt">Informes</span>
-  <span lang="en" style="display: none;">Reports</span>
-</h5>
+<h5>{% lng "Informes" "Reports" %}</h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'plano_aulas' %}">
-  <span lang="pt">Plano de Aulas</span>
-  <span lang="en" style="display: none;">Syllabus</span>
+  {% lng "Plano de Aulas" "Syllabus" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'planos_de_orientacao_todos' %}">
-  <span lang="pt">Planos de Orientação</span>
-  <span lang="en" style="display: none;">Advisoring Plans</span>
+  {% lng "Planos de Orientação" "Advisoring Plans" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatos_quinzenais' 'todos' %}">
-  <span lang="pt">Relatos Quinzenais</span>
-  <span lang="en" style="display: none;">Biweekly Reports</span>
+  {% lng "Relatos Quinzenais" "Biweekly Reports" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliar_entregas' 'todos' %}">
-  <span lang="pt">Avaliações de Entregas</span>
-  <span lang="en" style="display: none;">Deliveries Evaluation</span>
+  {% lng "Avaliações de Entregas" "Deliveries Evaluation" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' "BI" %}">
-  <span lang="pt">Bancas Intermediárias</span>
-  <span lang="en" style="display: none;">Intermediate Examination Boards</span>
+  {% lng "Bancas Intermediárias" "Intermediate Examination Boards" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' "BF" %}">
-  <span lang="pt">Bancas Finais</span>
-  <span lang="en" style="display: none;">Final Examination Boards</span>
+  {% lng "Bancas Finais" "Final Examination Boards" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliacoes_pares' 'todos' %}">
-  <span lang="pt">Avaliações de Pares</span>
-  <span lang="en" style="display: none;">Peer Evaluations</span>
+  {% lng "Avaliações de Pares" "Peer Evaluations" %}
 </a></div>
 <br>
 
-<h5>
-  <span lang="pt">Avaliações</span>
-  <span lang="en" style="display: none;">Assessments</span>
-</h5>
+<h5>{% lng "Avaliações" "Assessments" %}</h5>
 <ul>
   <li>
-    <span lang="pt">Composição das Avaliações</span>
-    <span lang="en" style="display: none;">Assessment Composition</span>
+    {% lng "Composição das Avaliações" "Assessment Composition" %}
   </li>
   <li class="inside_ul">
     <ul>
       <a href="{% url 'objetivos_rubricas' %}"><li>
-        <span lang="pt">Objetivos de Aprendizado e Rubricas</span>
-        <span lang="en" style="display: none;">Learning Goals and Rubrics</span>
+        {% lng "Objetivos de Aprendizado e Rubricas" "Learning Goals and Rubrics" %}
       </li></a>
       <a href="{% url 'exames_pesos' %}"><li>
-        <span lang="pt">Exames e Pesos</span>
-        <span lang="en" style="display: none;">Exams and Weights</span>
+        {% lng "Exames e Pesos" "Exams and Weights" %}
       </li></a>
       <a href="{% url 'exibir_ocultar_notas' %}"><li>
-        <span lang="pt">Exibir ou Ocultar Notas</span>
-        <span lang="en" style="display: none;">Show or Hide Grades</span>
+        {% lng "Exibir ou Ocultar Notas" "Show or Hide Grades" %}
       </li></a>
     </ul>
   </li>
   
   <li>
-    <span lang="pt">Tabelas de Notas/Conceitos</span>
-    <span lang="en" style="display: none;">Grades/Concepts Tables</span>
+    {% lng "Tabelas de Notas/Conceitos" "Grades/Concepts Tables" %}
   </li>
   <li class="inside_ul">
     <ul>
       <a href="{% url 'estudantes_notas' %}"><li>
-        <span lang="pt">Resultados das Avaliações dos Estudantes (Individual)</span>
-        <span lang="en" style="display: none;">Results of Student Assessments (Individual)</span>
+        {% lng "Resultados das Avaliações dos Estudantes (Individual)" "Results of Student Assessments (Individual)" %}
       </li></a>
       <a href="{% url 'resultado_projetos' %}"><li>
-        <span lang="pt">Resultados dos Projetos (Grupos)</span>
-        <span lang="en" style="display: none;">Results of Projects (Groups)</span>
+        {% lng "Resultados dos Projetos (Grupos)" "Results of Projects (Groups)" %}
       </li></a>
       <a href="{% url 'estudantes_objetivos' %}"><li>
-        <span lang="pt">Resultados dos Objetivos de Aprendizagem dos Estudantes</span>
-        <span lang="en" style="display: none;">Results of Student Learning Goals</span>
+        {% lng "Resultados dos Objetivos de Aprendizagem dos Estudantes" "Results of Student Learning Goals" %}
       </li></a>
     </ul>
   </li>
 
 </ul>
 
-<h5>
-  <span lang="pt">Análises e Evoluções</span>
-  <span lang="en" style="display: none;">Analysis and Evolution</span>
-</h5>
+<h5>{% lng "Análises e Evoluções" "Analysis and Evolution" %}</h5>
 <ul>
   <li>
-    <span lang="pt">Notas e Conceitos</span>
-    <span lang="en" style="display: none;">Grades and Concepts</span>
+    {% lng "Notas e Conceitos" "Grades and Concepts" %}
   </li>
   <li class="inside_ul">
     <ul>
       <a href="{% url 'analise_notas' %}"><li>
-        <span lang="pt">Análise por Notas/Conceitos</span>
-        <span lang="en" style="display: none;">Analysis by Grades/Concepts</span>
+        {% lng "Análise por Notas/Conceitos" "Analysis by Grades/Concepts" %}
       </li></a>
       <a href="{% url 'evolucao_notas' %}"><li>
-        <span lang="pt">Evolução por Notas/Conceitos</span>
-        <span lang="en" style="display: none;">Evolution by Grades/Concepts</span>
+        {% lng "Evolução por Notas/Conceitos" "Evolution by Grades/Concepts" %}
       </li></a>
     </ul>
   </li>
   
   <li>
-    <span lang="pt">Objetivos de Aprendizado</span>
-    <span lang="en" style="display: none;">Learning Goals</span>
+    {% lng "Objetivos de Aprendizado" "Learning Goals" %}
   </li>
   <li class="inside_ul">
     <ul>
       <a href="{% url 'analise_objetivos' %}"><li>
-        <span lang="pt">Análise por Objetivos de Aprendizado</span>
-        <span lang="en" style="display: none;">Analysis by Learning Goals</span>
+        {% lng "Análise por Objetivos de Aprendizado" "Analysis by Learning Goals" %}
       </li></a>
       <a href="{% url 'evolucao_objetivos' %}"><li>
-        <span lang="pt">Evolução nos Objetivos de Aprendizado</span>
-        <span lang="en" style="display: none;">Evolution in Learning Goals</span>
+        {% lng "Evolução nos Objetivos de Aprendizado" "Evolution in Learning Goals" %}
       </li></a>
       <a href="{% url 'evolucao_por_objetivo' %}"><li>
-        <span lang="pt">Evolução por Objetivo de Aprendizado</span>
-        <span lang="en" style="display: none;">Evolution by Learning Goal</span>
+        {% lng "Evolução por Objetivo de Aprendizado" "Evolution by Learning Goal" %}
       </li></a>
     </ul>
   </li>
 
   <li>
-    <span lang="pt">Correlações</span>
-    <span lang="en" style="display: none;">Correlations</span>
+    {% lng "Correlações" "Correlations" %}
   </li>
   <li class="inside_ul">
     <ul>
       <a href="{% url 'correlacao_medias_cr' %}"><li>
-        <span lang="pt">Correlação entre Médias e CR</span>
-        <span lang="en" style="display: none;">Correlation between Averages and GPA</span>
+        {% lng "Correlação entre Médias e CR" "Correlation between Averages and GPA" %}
       </li></a>
     </ul>
   </li>
