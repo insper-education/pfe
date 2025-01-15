@@ -8,60 +8,31 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 
-  <b lang="pt">Organização:</b>
-  <b lang="en">Organization:</b>
+  <b>{% lng "Organização" "Organization" %}</b>:
   {{ organizacao }}<br><br>
 
-  <div class="table-responsive">
-    <table id="PropostasTable" class="table-bordered table-sm">
-      <thead class="table-info">
-        <tr>
-          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">
-            <span lang="pt">{{cabecalhos.0.pt}}</span>
-            <span lang="en">{{cabecalhos.0.en}}</span>
-          </th>
-          <th onclick="sort('#PropostasTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">
-            <span lang="pt">{{cabecalhos.1.pt}}</span>
-            <span lang="en">{{cabecalhos.1.en}}</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for proposta in propostas %} 
-        
-          <tr class="item">
+  {% include "tabelas_top_ml.html" with tabela="ropostas" cabecalhos=cabecalhos tabela_simples=True %}
+    {% for proposta in propostas %} 
+      <tr class="item">
+          <td><a href="{% url 'proposta_editar' proposta.slug %}">{{proposta.titulo}}</a></td>
+          <td class="text-center">{{proposta.ano}}.{{proposta.semestre}}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="{{cabecalhos|length}}">
+          {% lng "Não existem propostas disponíveis pela sua organização." "There are no proposals available from your organization." %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% include "tabelas_bottom.html" %}
 
-              <td>
-                <a href="{% url 'proposta_editar' proposta.slug %}">
-                  {{proposta.titulo}}<br>
-                </a>
-
-              </td>
-
-              <td class="text-center">
-                  {{proposta.ano}}.{{proposta.semestre}}
-              </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="3">
-              <span lang="pt">Não existem propostas disponíveis pela sua organização.</span>
-              <span lang="en">There are no proposals available from your organization.</span>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="mt-4">
+    <b>{% lng "Número Total de Propostas Registradas" "Total Number of Registered Proposals" %}:</b>
+    {{ projetos|length }}
   </div>
-  <p>&nbsp;</p>
-  <strong>
-    <span lang="pt">Número Total de Propostas Registradas:</span>
-    <span lang="en">Total Number of Registered Proposals:</span>
-  </strong> {{ propostas.count }}<br>
 
 {% endblock %}

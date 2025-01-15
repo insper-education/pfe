@@ -8,53 +8,36 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-  <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 
-  <b>
-    <span lang="pt">Organização</span>
-    <span lang="en">Organization</span>
-  </b>:
-  {% if organiza %}
+  <b>{% lng "Organização" "Organization" %}</b>:
+  {% if organizacao %}
      {{ organizacao }}
   {% else %}
-    <span lang="pt">NÃO DEFINIDA (Essa área é para ser usada apenas por usuários de organizações cadastradas no sistema)</span>
-    <span lang="en">NOT DEFINED (This area is to be used only by users from organizations registered in the system)</span>
+    {% lng "NÃO DEFINIDA (Essa área é para ser usada apenas por usuários de organizações cadastradas no sistema)" "NOT DEFINED (This area is to be used only by users from organizations registered in the system)" %}
   {% endif %}
   <br><br>
 
-  <div class="table-responsive">
-    <table id="ProjetosTable" class="table-bordered table-sm">
-      <thead class="table-info">
-        <tr>
-          <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')" style="cursor:pointer" class="text-center">Projeto</th>
-          <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')" style="cursor:pointer" class="text-center">Período</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for projeto in projetos %} 
-          <tr class="item">
-              <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.get_titulo}}</a><br></td>
-              <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="3">
-              <span lang="pt">Não existem projetos disponíveis pela sua organização.</span>
-              <span lang="en">There are no projects available from your organization.</span>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos tabela_simples=True %}
+    {% for projeto in projetos %} 
+      <tr class="item">
+          <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.get_titulo}}</a><br></td>
+          <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="{{cabecalhos|length}}">
+          {% lng "Não existem projetos disponíveis pela sua organização." "There are no projects available from your organization." %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% include "tabelas_bottom.html" %}
+
+  <div class="mt-4">
+    <b>{% lng "Número Total de Projetos" "Total Number of Projects" %}:</b>
+    {{ projetos|length }}
   </div>
-  <p>&nbsp;</p>
-  <strong>
-    <span lang="pt">Número Total de Projetos:</span>
-    <span lang="en">Total Number of Projects:</span>
-  </strong>
-  {{ projetos.count }}<br>
 
 {% endblock %}

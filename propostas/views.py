@@ -883,9 +883,9 @@ def link_organizacao(request, proposta_id):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
-    if request.is_ajax() and 'organizacao_id' in request.POST:
+    if request.is_ajax() and "organizacao_id" in request.POST:
 
-        organizacao_id = int(request.POST['organizacao_id'])
+        organizacao_id = int(request.POST["organizacao_id"])
         organizacao = get_object_or_404(Organizacao, id=organizacao_id)
 
         proposta.organizacao = organizacao

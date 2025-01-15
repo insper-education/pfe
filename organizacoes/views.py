@@ -253,8 +253,7 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
 @permission_required("projetos.add_proposta", raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
-    user = request.user
-    if user.tipo_de_usuario != 3 and user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
+    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
         context = {
             "area_principal": True,
@@ -262,21 +261,20 @@ def parceiro_propostas(request):
         }
         return render(request, "generic.html", context=context)
 
-    if hasattr(user, "parceiro"):
-        propostas = Proposta.objects\
-            .filter(organizacao=user.parceiro.organizacao)\
-            .order_by("ano", "semestre", "titulo", )
-    else:
+    if hasattr(request.user, "parceiro"):
+        organizacao = request.user.parceiro.organizacao
+        propostas = Proposta.objects.filter(organizacao=organizacao)
+    else:  # Supostamente professor
+        organizacao = get_object_or_404(Organizacao, sigla="INSPER")
         propostas = None
-
 
     cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
                   {"pt": "Período", "en": "Semester"},]
     
     context = {
         "titulo": {"pt": "Propostas de Projetos Submetidas", "en": "Submitted Project Proposals"},
+        "organizacao": organizacao,
         "propostas": propostas,
-        "organizacao": user.parceiro.organizacao,
         "cabecalhos": cabecalhos,
     }
     return render(request, "organizacoes/parceiro_propostas.html", context)
@@ -286,8 +284,7 @@ def parceiro_propostas(request):
 @permission_required("projetos.add_proposta", raise_exception=True)
 def parceiro_projetos(request):
     """Lista todas as propostas de projetos."""
-    user = request.user
-    if user.tipo_de_usuario != 3 and user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
+    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
         mensagem = "Você não está cadastrado como parceiro de uma organização!"
         context = {
             "area_principal": True,
@@ -295,17 +292,23 @@ def parceiro_projetos(request):
         }
         return render(request, "generic.html", context=context)
 
-    if hasattr(user, "parceiro"):
-        projetos = Projeto.objects.filter(proposta__organizacao=user.parceiro.organizacao)
-        organizacao = user.parceiro.organizacao
-    else:
+    if hasattr(request.user, "parceiro"):
+        organizacao = request.user.parceiro.organizacao
+        projetos = Projeto.objects.filter(proposta__organizacao=organizacao)
+    else:  # Supostamente professor
+        organizacao = get_object_or_404(Organizacao, sigla="INSPER")
         projetos = None
-        organizacao = None
+
+    cabecalhos = [
+        {"pt": "Projeto", "en": "Project"},
+        {"pt": "Período", "en": "Semester"},
+    ]
 
     context = {
         "titulo": {"pt": "Lista de Projetos", "en": "Projects List"},
-        "projetos": projetos,
         "organizacao": organizacao,
+        "projetos": projetos,
+        "cabecalhos": cabecalhos,
     }
     return render(request, "organizacoes/parceiro_projetos.html", context)
 
