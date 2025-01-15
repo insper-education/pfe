@@ -118,6 +118,8 @@
                 "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
               {% elif contato.tipo_de_retorno == 12 %}
                 "background-color:#FFD580" {% comment %} (12, "Contrato em análise", "Contratação"), {% endcomment %}
+              {% elif contato.tipo_de_retorno == 13 %}
+                "background-color:#FFDAB9" {% comment %} (13, "Acionada para assinatura de contrato", "Contratação"), {% endcomment %}
               {% else %}
                 "background-color:white"
               {% endif %}
