@@ -167,7 +167,11 @@
           >
           <td style="text-align: center; font-size: 12px;"></td>
             <td>
-              <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">{{organizacao.nome}}</a>
+              {% if organizacao %}
+                <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">{{organizacao.nome}}</a>
+              {% else %}
+                <span style="color:gray;">Erro ao identificar organização</span>
+              {% endif %}
             </td>
 
             <td style="text-align:center">
@@ -208,14 +212,18 @@
                   >
                 </div>
                 <div class="esconder" style="float:right;">
-                  <a
-                    style="font-size: 0.5em; vertical-align: super;"
-                    data-organizacao='{{organizacao.id}}'
-                    class="create-annotation"
-                    href="{% url 'anotacao' organizacao.id %}"
-                    data-url="{% url 'anotacao' organizacao.id %}"
-                    >&#10133;</a
-                  >
+                  {% if organizacao %}
+                    <a
+                      style="font-size: 0.5em; vertical-align: super;"
+                      data-organizacao='{{organizacao.id}}'
+                      class="create-annotation"
+                      href="{% url 'anotacao' organizacao.id %}"
+                      data-url="{% url 'anotacao' organizacao.id %}"
+                      >&#10133;</a
+                    >
+                  {% else %}
+                    <small>ERRO</small>
+                  {% endif %}
                 </div>
               {% else %}
                 {% comment %} {{contato.texto}} {% endcomment %}
