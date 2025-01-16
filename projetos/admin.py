@@ -23,7 +23,7 @@ from .models import Disciplina, Cursada, Recomendada
 from .models import Encontro, Evento
 
 # Da coordenação
-from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco
+from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco, TipoRetorno
 
 # Do Insper
 from .models import Entidade
@@ -222,8 +222,8 @@ class DisciplinaAdmin(admin.ModelAdmin):
 class AnotacaoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ("momento", "organizacao", "tipo_de_retorno", "autor",)
-    list_filter = ("tipo_de_retorno",)
+    list_display = ("momento", "organizacao", "tipo_retorno", "autor",)
+    list_filter = ("tipo_retorno",)
     ordering = ("-momento",)
     search_fields = ["organizacao__nome",]
 
@@ -453,9 +453,9 @@ class AreaDeInteresseAdmin(admin.ModelAdmin):
 
     list_display = ("area", "usuario", "proposta",)
     list_filter = ("area",)
-    search_fields = ["usuario__username", "proposta__organizacao__sigla",
-                     "proposta__titulo",]
+    search_fields = ["usuario__username", "proposta__organizacao__sigla", "proposta__titulo",]
 
 
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(Area)
+admin.site.register(TipoRetorno)

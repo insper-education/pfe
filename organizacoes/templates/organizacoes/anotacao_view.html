@@ -46,16 +46,16 @@
     <textarea id="texto" name="texto" class="form-control" rows="5" required>{% if anotacao %}{{anotacao.texto}}{% endif %}</textarea>
     <br>
 
-    <label for="tipo_de_retorno">Tipo de contato:</label>
-    <select id="tipo_de_retorno" name="tipo_de_retorno" class="form-control" required>
+    <label for="tipo_retorno">Tipo de contato:</label>
+    <select id="tipo_retorno" name="tipo_retorno" class="form-control" required>
       {% if not anotacao %}
         <option disabled selected value> -- selecione tipo de contato -- </option>
       {% endif %}
-      {% for retorno in TIPO_DE_RETORNO %}
-        {% ifchanged retorno.2 %}{% if not forloop.first %}</optgroup>{% endif %}<optgroup label="{% if retorno.2 %}{{retorno.2}}{% else %}-----------{% endif %}">{% endifchanged %}
-        <option value="{{retorno.0}}" {% if anotacao and anotacao.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{retorno.1}}</option>
+      {% for retorno in tipo_retorno %}
+        {% ifchanged retorno.grupo_de_retorno %}{% if not forloop.first %}</optgroup>{% endif %}<optgroup label="{% if retorno.grupo_de_retorno %}{{retorno.get_grupo_de_retorno_display}}{% else %}-----------{% endif %}">{% endifchanged %}
+        <option value="{{retorno.id}}" {% if anotacao and anotacao.tipo_retorno == retorno %}selected{% endif %} >{{retorno.nome}}</option>
       {% endfor %}
-      {% if TIPO_DE_RETORNO %}
+      {% if tipo_retorno %}
         </optgroup>
       {% endif %}
     </select> 

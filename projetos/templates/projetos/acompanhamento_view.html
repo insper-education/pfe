@@ -43,7 +43,7 @@
           <option disabled selected value> -- selecione o contato -- </option>
         {% endif %}
         {% for parceiro in parceiros %}
-          <option value="{{parceiro.id}}" {% if acompanhamento and acompanhamento.tipo_de_retorno == retorno.0 %}selected{% endif %} >{{parceiro.user}}</option>
+          <option value="{{parceiro.id}}">{{parceiro.user}}</option>
         {% endfor %}
       </select>
     </div>

@@ -98,8 +98,8 @@
           {% for organizacao,projetos,contato in organizacoes_list %} 
             <tr id="tr{{organizacao.id}}" class="item" 
             {% if contato %}
-                style="{% include 'cores_indicadores.html' %}"
-                data-type="{% if contato.tipo_de_retorno < 2 %}2{% else %}{{contato.tipo_de_retorno}}{% endif %}"
+                style="background-color:#{{contato.tipo_retorno.cor}};"
+                data-type="{{contato.tipo_retorno.id}}"
             {% endif %}>
             <td style="text-align: center; font-size: 12px;"></td>
               <td>
@@ -199,21 +199,20 @@
     </div>
 
     <div style="margin-top: 10px;">
-      <b>{% lng "Total de Organizações" "Total of Organizations" %}:</b> {{ organizacoes|length }}<br>
       <b>{% lng "Total de Projetos" "Total of Projects" %}:</b> {{ projetos_periodo|length }}
     </div>
 
     <div class="flex-container">
       <div class="flex-item">
         <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
-          {% comment %}
-            <b>
-              <span lang="pt">Organizações contactadas recentemente</span>
-              <span lang="en" style="display: none;">Recently contacted organizations</span>
-              ({{total_organizacoes}}):
-            </b><br>
-          {% endcomment %}
-          {% include "tabela_cores_indicadores.html" %}
+          <b>{% lng "Organizações em tratativas" "Organizations in negotiations" %}:</b> {{organizacoes|length}}<br>
+          {% for tipo in tipo_retorno %}
+            <div class="indicadores">
+              <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" style="background-color:#{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
+              {{tipo.nome}}
+              <span id="retorno{{tipo.id}}" class="calc_indicadores"></span>
+            </div>
+          {% endfor %}
         </div>
         <script>
 
@@ -251,6 +250,16 @@
             }
 
           });
+
+          function atualiza_situacoes() {
+            {% for tipo in tipo_retorno %}
+              var count = $(".item[data-type='{{tipo.id}}']").length;
+              if (count > 0) {
+                document.getElementById("retorno{{tipo.id}}").innerHTML = "(" + count + ")";
+              }
+            {% endfor %}
+          }
+          atualiza_situacoes();
 
         </script>
       </div>
@@ -292,7 +301,10 @@
       });
     }
 
-    $("#filterAcompanhamento").change(filtra_data);  
+    $("#filterAcompanhamento").change(function() {
+      filtra_data();
+      atualiza_situacoes();
+    });  
     
     function numberRows() {
       $("#OrganizacoesTable tbody tr").each(function(index) {
@@ -306,6 +318,7 @@
     $(document).ready(function(){
       numberRows();
       filtra_data();
+      atualiza_situacoes();
     });
 
   </script>

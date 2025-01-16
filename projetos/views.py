@@ -1819,7 +1819,6 @@ def acompanhamento_view(request):
             return HttpResponse("Erro: Parceiro não foi informado corretamente.", status=401)
         
         acompanhamento.autor = parceiro.user
-
         acompanhamento.texto = request.POST["texto"]
 
         if "data_hora" in request.POST:

@@ -239,21 +239,13 @@
             </div>
             <select id="filterAcompanhamento" class="selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
               <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
-              {% for retorno in TIPO_DE_RETORNO %}
-                {% ifchanged retorno.2 %}{% if retorno.2 %}<option class="special_filter" value="{{retorno.2}}">&#x21a6; {{retorno.2}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
-                <option value="{{retorno.0}}">{{retorno.1}}</option>
+              {% for retorno in tipo_retorno %}
+                {% ifchanged retorno.grupo_de_retorno %}{% if retorno.grupo_de_retorno %}<option class="special_filter" value="{{retorno.grupo_de_retorno}}">&#x21a6; {{retorno.get_grupo_de_retorno_display}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+                <option value="{{retorno.id}}">{{retorno.nome}}</option>
               {% endfor %}
             </select>
           </div>
         {% endif %}
-
-        {% comment %} <div class="input-group input-group-sm mt-1">
-          <div id="spinner" class="ml-2 input-group-prepend" style="visibility: hidden">
-            <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
-              <span class="sr-only input-group-text">Carregando...</span>
-            </div>
-          </div>
-        </div> {% endcomment %}
 
     </div>
 

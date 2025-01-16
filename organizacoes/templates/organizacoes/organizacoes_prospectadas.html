@@ -136,8 +136,8 @@
         {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
           <tr id="tr{{organizacao.id}}" class="item" 
            {% if contato %}
-            style="{% include 'cores_indicadores.html' %}"          
-            data-type="{% if contato.tipo_de_retorno < 2 and submetidas > 0 %}2{% else %}{{contato.tipo_de_retorno}}{% endif %}"
+            style="background-color:#{{contato.tipo_retorno.cor}};"       
+            data-type="{{contato.tipo_retorno.id}}"
            {% endif %}>
           <td style="text-align: center; font-size: 12px;"></td>
             <td>
@@ -245,14 +245,14 @@
                 {% with area_cursos=organizacao.area_curso.all%}
                 
                   tipo = "{% for curso in area_cursos %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
-                  {% if contato.tipo_de_retorno < 2 and submetidas > 0 %} {% comment %} Coloca como se enviou proposta de projeto {% endcomment %}
+                  {% if submetidas > 0 %} {% comment %} Coloca como se enviou proposta de projeto {% endcomment %}
                     if (!("2" in cursos_organizacoes)) {cursos_organizacoes["2"] = {};}
                     cursos_organizacoes["2"][tipo] = 
                       (cursos_organizacoes["2"][tipo] || 0) + 1;
                   {% else %}
-                    if (!("{{contato.tipo_de_retorno}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_de_retorno}}"] = {};}
-                    cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] = 
-                      (cursos_organizacoes["{{contato.tipo_de_retorno}}"][tipo] || 0) + 1;
+                    if (!("{{contato.tipo_retorno.id}}" in cursos_organizacoes)) {cursos_organizacoes["{{contato.tipo_retorno.id}}"] = {};}
+                    cursos_organizacoes["{{contato.tipo_retorno.id}}"][tipo] = 
+                      (cursos_organizacoes["{{contato.tipo_retorno.id}}"][tipo] || 0) + 1;
                   {% endif %}
                   
                   var curso_count = {{area_cursos|length}};
@@ -263,19 +263,19 @@
                   {% endfor %}
 
                   {% for curso in area_cursos %}
-                    {% if contato.tipo_de_retorno == 2 or submetidas > 0 %} {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
+                    {% if submetidas > 0 %} {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
                       {% if submetidas > 0 %}
                         cursos_projetos["{{curso.sigla_curta}}"] += {{submetidas}}.0*({{necessarios|get_value:curso|unlocalize}}/curso_pesos);
                       {% else %}
                         cursos_projetos["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
                       {% endif %}
                       orgs_confirmadas["{{curso.sigla_curta}}"].push("- {{organizacao.nome}} X {{submetidas}}");
-                    {% elif contato.tipo_de_retorno == 0 %} {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
+                    {% elif contato.tipo_retorno.nome == 'Contactada para enviar proposta' %} 
                       if(curso_pesos > 0) {
                         sondados["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
                       }
                       org_sondados["{{curso.sigla_curta}}"].push("- {{organizacao.nome}}");
-                    {% elif contato.tipo_de_retorno == 1 %} {% comment %} (2, 'Interessada em enviar proposta'), {% endcomment %}
+                    {% elif contato.tipo_retorno.nome == 'Interessada em enviar proposta' %}
                       if(curso_pesos > 0) {
                         interessados["{{curso.sigla_curta}}"] += {{necessarios|get_value:curso|unlocalize}}/curso_pesos;
                       }
@@ -311,12 +311,14 @@
       <div class="flex-container">
         <div class="flex-item">
           <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
-            <b>
-              <span lang="pt">Organizações contactadas recentemente</span>
-              <span lang="en" style="display: none;">Recently contacted organizations</span>
-               ({{total_organizacoes}}):</b><br>
-
-               {% include "tabela_cores_indicadores.html" %}
+            <b>{% lng "Organizações contactadas recentemente" "Recently contacted organizations" %} ({{total_organizacoes}}):</b><br>
+            {% for tipo in tipo_retorno %}
+              <div class="indicadores">
+                <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" style="background-color:#{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
+                {{tipo.nome}}
+                <span id="retorno{{tipo.id}}" class="calc_indicadores"></span>
+              </div>
+            {% endfor %}
           </div>
           <script>
 
@@ -355,44 +357,32 @@
 
             });
 
-            function preenche_cursos(tipo_de_retorno) {
-
+            function preenche_cursos(tipo_retorno) {
               mensagem = "";
               mensagem2 = "";
-              
-              primeiro = true;
-              if (cursos_organizacoes[tipo_de_retorno]) {
+              if (cursos_organizacoes[tipo_retorno]) {
                 total=0;
-                for (var key in cursos_organizacoes[tipo_de_retorno]){
+                primeiro = true;
+                for (var key in cursos_organizacoes[tipo_retorno]){
                   if(primeiro) primeiro = false; else mensagem2 += ",";
                   sigla_curso = key;
                   if(sigla_curso=="") sigla_curso="?";
-                  mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_de_retorno][key];
-                  total += cursos_organizacoes[tipo_de_retorno][key];
+                  mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
+                  total += cursos_organizacoes[tipo_retorno][key];
                 }
                 mensagem += " = ";
                 mensagem += total;
                 mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
                 mensagem += " (" + mensagem2 + " )";
               }
-              else {
-                return("");
-              }
-
               return(mensagem);
             }
 
             function atualiza_situacoes() {
-              document.getElementById("so_contactados").innerHTML = preenche_cursos(0);
-              document.getElementById("recusados").innerHTML = preenche_cursos(3);
-              document.getElementById("interessados").innerHTML = preenche_cursos(1);
-              document.getElementById("confirmados").innerHTML = preenche_cursos(2);
-              document.getElementById("notificada").innerHTML = preenche_cursos(4);
-              document.getElementById("documentada").innerHTML = preenche_cursos(6);
-              document.getElementById("sem_grupo").innerHTML = preenche_cursos(5);
+              {% for tipo in tipo_retorno %}
+                document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
+              {% endfor %}
             }
-
-            atualiza_situacoes();
 
           </script>
         </div>
@@ -610,10 +600,12 @@
 
     $("#filterAcompanhamento").change(function(){
       filtra_data();
+      atualiza_situacoes();
     });  
 
     $(document).ready(function(){
       filtra_data();
+      atualiza_situacoes();
     });
 
     $(".periodo").change(function(){
@@ -637,6 +629,8 @@
             },
             {% include "ajax_error_function.js" %}
         });
+        filtra_data();
+        atualiza_situacoes();
     });
   </script>
 

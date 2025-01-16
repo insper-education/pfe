@@ -49,7 +49,7 @@
 
     var texto = $("#texto").val();
     var data_hora = $("#data_hora").val();
-    var tipo_de_retorno = $("#tipo_de_retorno").val();
+    var tipo_retorno = $("#tipo_retorno").val();
 
     var address = url
     if(anotacao) {
@@ -60,9 +60,9 @@
         type: "POST",
         url: address,
         data: {
-            "texto":texto,
-            "data_hora":data_hora,
-            "tipo_de_retorno":tipo_de_retorno,
+            "texto": texto,
+            "data_hora": data_hora,
+            "tipo_retorno": tipo_retorno,
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){

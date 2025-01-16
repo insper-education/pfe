@@ -92,8 +92,6 @@
 </div>
 
 
-
-
 <!-- Modal -->
 <div class="modal fade" id="popup" role="dialog">
   <div class="modal-dialog modal-lg" role="document">
@@ -114,7 +112,7 @@
 
     var texto = $("#texto").val();
     var data_hora = $("#data_hora").val();
-    var tipo_de_retorno = $("#tipo_de_retorno").val();
+    var tipo_retorno = $("#tipo_retorno").val();
 
     var organizacao_id = $("#organizacao_id").val();
 
@@ -129,7 +127,7 @@
         data: {
             "texto": texto,
             "data_hora": data_hora,
-            "tipo_de_retorno": tipo_de_retorno,
+            "tipo_retorno": tipo_retorno,
             "organizacao_id": organizacao_id,
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
@@ -142,23 +140,9 @@
               $("#contato_autor"+organizacao).text(response.autor_nome+": ");
               $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
               $("#organizacao"+organizacao).text(texto);
-              if(tipo_de_retorno == 0)
-                $("#tr"+organizacao).css("background-color", "lightblue");
-              else if(tipo_de_retorno == 1)
-                $("#tr"+organizacao).css("background-color", "lemonchiffon");
-              else if(tipo_de_retorno == 2)
-                $("#tr"+organizacao).css("background-color", "lightgreen");
-              else if(tipo_de_retorno == 3)
-                $("#tr"+organizacao).css("background-color", "pink");
-              else if(tipo_de_retorno == 4)
-                $("#tr"+organizacao).css("background-color", "yellow");
-              else if(tipo_de_retorno == 5)
-                $("#tr"+organizacao).css("background-color", "#e289df");
-              else if(tipo_de_retorno == 6)
-                $("#tr"+organizacao).css("background-color", "green");
-              else if(tipo_de_retorno == 7)
-                $("#tr"+organizacao).css("background-color", "lightyellow");
-
+              {% for t in tipo_retorno %}
+                if(tipo_retorno == {{t.id}}) $("#tr"+organizacao).css("background-color", "#{{t.cor}}");
+              {% endfor %}
             } else {
               console.log("Erro: Valor não atualizado.");
             }

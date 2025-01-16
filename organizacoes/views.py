@@ -27,7 +27,7 @@ from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno, Alo
 
 from projetos.models import Area, Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
-from projetos.models import Anotacao, Conexao, Documento
+from projetos.models import Anotacao, Conexao, Documento, TipoRetorno
 from projetos.support import get_upload_path, simple_upload
 
 from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
@@ -69,7 +69,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
         anotacao_obj.autor = request.user
 
         anotacao_obj.texto = request.POST["texto"]
-        anotacao_obj.tipo_de_retorno = int(request.POST["tipo_de_retorno"])
+        anotacao_obj.tipo_retorno = TipoRetorno.objects.get(id=request.POST["tipo_retorno"])
         
         if "data_hora" in request.POST:
             try:
@@ -93,7 +93,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
     context = {
         "organizacao": organizacao,
-        "TIPO_DE_RETORNO": sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1])),
+        "tipo_retorno": TipoRetorno.objects.all(),
         "anotacao": anotacao_obj,
         "data_hora": anotacao_obj.momento if anotacao_obj else datetime.datetime.now(),
         "organizacoes": Organizacao.objects.all(),
@@ -573,13 +573,11 @@ def organizacoes_prospect(request):
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 
     # No final jogo para 2 (com proposta submetida) se houver proposta submetida, mesmo que a anotação diga diferente
-    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if (x[3].tipo_de_retorno < 2 and x[2] > 0) else x[3].tipo_de_retorno ) ))
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if(x[2] > 0) else x[3].tipo_retorno.id ) ))
 
     total_organizacoes = len(organizacoes)
     total_disponiveis = sum(disponiveis)
     total_submetidas = sum(submetidas)
-
-    TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
 
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
     necessarios = {}
@@ -598,7 +596,7 @@ def organizacoes_prospect(request):
         "filtro": "todas",
         "cursos": cursos,
         "necessarios": necessarios,
-        "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
+        "tipo_retorno": TipoRetorno.objects.all(),
         }
     return render(request, "organizacoes/organizacoes_prospectadas.html", context)
 
@@ -633,16 +631,15 @@ def organizacoes_projetos(request):
             "organizacoes_list": organizacoes_list,
             "projetos_periodo": projetos_periodo,
             "organizacoes": organizacoes,
+            "tipo_retorno": TipoRetorno.objects.all(),
             }
 
     else:
 
-        TIPO_DE_RETORNO = sorted(Anotacao.TIPO_DE_RETORNO, key=lambda x: (x[2] == "", x[2], x[1]))
         context = {
             "titulo": {"pt": "Prospecção de Organizações com Projetos", "en": "Prospecting Organizations with Projects"},
-            "filtro": "todas",
             "edicoes": get_edicoes(Projeto)[0],
-            "TIPO_DE_RETORNO": TIPO_DE_RETORNO,
+            "tipo_retorno": TipoRetorno.objects.all(),
             }
     
     return render(request, "organizacoes/organizacoes_projetos.html", context)
@@ -655,9 +652,9 @@ def organizacoes_lista(request):
     organizacoes = Organizacao.objects.all()
 
     # Prefetch dos objetos relacionados
-    propostas_prefetch = Prefetch('proposta_set', queryset=Proposta.objects.order_by('ano', 'semestre'))
-    anotacoes_prefetch = Prefetch('anotacao_set', queryset=Anotacao.objects.order_by('momento'))
-    projetos_prefetch = Prefetch('projeto_set', queryset=Projeto.objects.filter(alocacao__isnull=False).distinct())
+    propostas_prefetch = Prefetch("proposta_set", queryset=Proposta.objects.order_by("ano", "semestre"))
+    anotacoes_prefetch = Prefetch("anotacao_set", queryset=Anotacao.objects.order_by("momento"))
+    projetos_prefetch = Prefetch("projeto_set", queryset=Projeto.objects.filter(alocacao__isnull=False).distinct())
 
     organizacoes = organizacoes.prefetch_related(propostas_prefetch, anotacoes_prefetch, projetos_prefetch)
 

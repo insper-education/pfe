@@ -1209,6 +1209,34 @@ class Encontro(models.Model):
         return str(self.startDate)
 
 
+class TipoRetorno(models.Model):
+    """Tipos de retorno de comunicações com as organizações parceiras."""
+
+    nome = models.CharField(max_length=64, help_text="nome do tipo de retorno")
+    descricao = models.CharField(max_length=512, blank=True, help_text="descrição do tipo de retorno")
+    cor = models.CharField(max_length=6, default="FFFFFF", help_text="cor do tipo de retorno")
+    
+    # REMOVER TMP_ID
+    tmp_id = models.PositiveIntegerField(null=True, blank=True, help_text="id temporário")
+
+    GRUPO_DE_RETORNO = ( # não mudar a ordem dos números
+        (1, "Prospecção"),
+        (2, "Retorno"),
+        (3, "Contratação"),
+        (4, "Relatório"),
+        (5, "outros"),
+    )
+
+    grupo_de_retorno = models.PositiveSmallIntegerField(choices=GRUPO_DE_RETORNO, default=0)
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name = "Tipo de Retorno"
+        verbose_name_plural = "Tipos de Retorno"
+        ordering = ["-grupo_de_retorno", "nome"]
+
 class Anotacao(models.Model):
     """Anotacoes de comunicações com as organizações pareceiras."""
 
@@ -1220,6 +1248,7 @@ class Anotacao(models.Model):
                               related_name="professor_orientador", help_text="quem fez a anotação")
     texto = models.TextField(max_length=2000, help_text="Anotação")
 
+    # Obsoleto - não usar
     TIPO_DE_RETORNO = ( # não mudar a ordem dos números
         (0, "Contactada para enviar proposta", "Prospecção"),
         (1, "Interessada em enviar proposta", "Prospecção"),
@@ -1236,7 +1265,12 @@ class Anotacao(models.Model):
         (254, "outros", ""),
     )
 
+    # Obsoleto - não usar
     tipo_de_retorno = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_RETORNO], default=0)
+    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
+
+    tipo_retorno = models.ForeignKey(TipoRetorno, null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text="Tipo de retorno")
 
     def __str__(self):
         return str(self.momento)
