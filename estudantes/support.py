@@ -57,7 +57,7 @@ def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     alocacao_semanal = 'b'
     alocacao_semanal__prazo = None
     hoje = datetime.date.today()
-    if len(alocacao.horarios) >= 11*8:
+    if alocacao and alocacao.horarios and len(alocacao.horarios) >= 11*8:
         alocacao_semanal = 'g'
     else:
         evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
@@ -107,17 +107,18 @@ def check_submissao_documento(alocacao, ano, semestre):
         composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
         entregas = filtra_entregas(composicoes, projeto, alocacao.aluno.user)
         for entrega in entregas:
-            diff = (entrega["evento"].endDate - hoje).days
-            if diff < 7:  # 7 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
-                if entrega["documentos"] and submissao_documento not in ['y', 'r']:
-                    submissao_documento = 'g'
-                else:
-                    if not submissao_documento__prazo:
-                        submissao_documento__prazo = entrega["evento"].endDate
-                    if diff < 0:
-                        submissao_documento = 'r'
-                    elif submissao_documento != 'r':
-                        submissao_documento = 'y'
+            if entrega["evento"] and entrega["evento"].endDate:
+                diff = (entrega["evento"].endDate - hoje).days
+                if diff < 7:  # 7 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
+                    if entrega["documentos"] and submissao_documento not in ['y', 'r']:
+                        submissao_documento = 'g'
+                    else:
+                        if not submissao_documento__prazo:
+                            submissao_documento__prazo = entrega["evento"].endDate
+                        if diff < 0:
+                            submissao_documento = 'r'
+                        elif submissao_documento != 'r':
+                            submissao_documento = 'y'
     context["submissao_documento"] = (submissao_documento, submissao_documento__prazo)
     return context
 
