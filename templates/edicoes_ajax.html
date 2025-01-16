@@ -70,7 +70,7 @@
           },
           success: function(response){
 
-            if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
+            if (seqNumber === xhrCount) { // Processando resposta
               $(".atualizar").replaceWith($(".atualizar",response));
               $(".tooltip-inner").remove();
               $(".tooltip-arrow").remove();
@@ -87,7 +87,7 @@
               }
               $(".to_label").removeClass("label_animado");
               $(".filter").attr("disabled",false);
-              $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});  {% comment %} <script src="{% static 'js/tooltip.js' %}"></script> {% endcomment %}
+              $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"}); // js/tooltip.js
               {% include "linguas_ajax.html" %}
               
               // Enviando evento que mudou edição
@@ -97,9 +97,9 @@
                   curso: typeof curso !== 'undefined' ? curso : null,
                 },
               });
-              document.dispatchEvent(event);
+              document.dispatchEvent(event); 
 
-            } 
+            }
             
           },
           {% include "ajax_error_function.js" %}
@@ -110,14 +110,12 @@
 
     // pequeno tempo para select voltar a funcionar
     function recarregar() {
-        setTimeout(function () {
-                recarregar_pagina();
-        }, 20);
+      setTimeout(recarregar_pagina, 20);
     }
 
     $(document).ready(function() {
       recarregar();
-    });
+    }); 
 
   </script>
 

@@ -135,36 +135,10 @@
         <tbody>
         {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
           <tr id="tr{{organizacao.id}}" class="item" 
-          {% if contato %}
-              style=
-              {% if contato.tipo_de_retorno < 2 and submetidas > 0 %}
-                "background-color:lightgreen" {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 0 %}
-                "background-color:lightblue" {% comment %} (0, 'Contactada para enviar proposta'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 1 %}
-                "background-color:lemonchiffon" {% comment %} (1, 'Interessada em enviar proposta'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 2 %}
-                "background-color:lightgreen" {% comment %} (2, 'Enviou proposta de projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 3 %}
-                "background-color:pink" {% comment %} (3, 'Não vai enviar proposta de projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 4 %}
-                "background-color:yellow" {% comment %} (4, 'Confirmamos um grupo de estudantes para o projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 5 %}
-                "background-color:#e289df" {% comment %} (5, 'Notificamos que não conseguimos montar projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 6 %}
-                "background-color:aquamarine" {% comment %} (6, 'Contrato fechado para projeto'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 7 %}
-                "background-color:lightyellow" {% comment %} (7, 'Envio de Relatório Final'), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 12 %}
-                "background-color:#FFD580" {% comment %} (12, "Contrato em análise", "Contratação"), {% endcomment %}
-              {% elif contato.tipo_de_retorno == 13 %}
-                "background-color:#FFDAB9" {% comment %} (13, "Acionada para assinatura de contrato", "Contratação"), {% endcomment %}
-              {% else %}
-                "background-color:white"
-              {% endif %}
-              data-type="{% if contato.tipo_de_retorno < 2 and submetidas > 0 %}2{% else %}{{contato.tipo_de_retorno}}{% endif %}"
-          {% endif %}
-          >
+           {% if contato %}
+            style="{% include 'cores_indicadores.html' %}"          
+            data-type="{% if contato.tipo_de_retorno < 2 and submetidas > 0 %}2{% else %}{{contato.tipo_de_retorno}}{% endif %}"
+           {% endif %}>
           <td style="text-align: center; font-size: 12px;"></td>
             <td>
               {% if organizacao %}
@@ -342,7 +316,7 @@
               <span lang="en" style="display: none;">Recently contacted organizations</span>
                ({{total_organizacoes}}):</b><br>
 
-               {% include "tabela_indicadores.html" %}
+               {% include "tabela_cores_indicadores.html" %}
           </div>
           <script>
 
