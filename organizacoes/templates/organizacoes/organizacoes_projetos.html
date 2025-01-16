@@ -51,8 +51,9 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    .calc_indicadores {
-      font-size: 0.8em;
+    .calc_totais {
+      font-weight: bold !important;
+      color: darkred;
     }
     @media (max-width: 1280px) {
       .flex-container {flex-direction: column;}
@@ -210,7 +211,7 @@
             <div class="indicadores">
               <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" style="background-color:#{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
               {{tipo.nome}}
-              <span id="retorno{{tipo.id}}" class="calc_indicadores"></span>
+              <span id="retorno{{tipo.id}}" class="calc_totais"></span>
             </div>
           {% endfor %}
         </div>
