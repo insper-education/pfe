@@ -1,0 +1,103 @@
+
+#MapeamentoTable th.bottom {
+  vertical-align:bottom;
+}
+
+#MapeamentoTable th.rotate {
+  height: 140px;
+  white-space: nowrap;
+}
+
+#MapeamentoTable th.rotate > div {
+  transform: 
+    /* Magic Numbers */
+    translate(11px, 53.25px)
+    /* 45 is really 360 - 45 */
+    rotate(300deg);
+  width: 26px;
+  max-width: 26px;
+  min-width: 26px;
+}
+
+#MapeamentoTable th.rotate > div > span {
+  border-bottom: 1px solid black;
+  padding: 0px 2px;
+  min-width: 2em;
+  display: inline-block;
+  text-align: left;
+}
+
+#MapeamentoTable {
+  border-collapse: collapse;
+  border: 0px solid black;
+  padding-left: 2px;
+  padding-right: 2px;
+  text-align: center;
+  font-size: 16px;
+}
+
+#MapeamentoTable th {
+  cursor:pointer;
+}
+
+#MapeamentoTable td {
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 1px solid black;
+  text-align:center;
+}
+
+#MapeamentoTable td:first-child {
+  text-align: right;
+  white-space: nowrap;
+  max-width: 20em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.estudante {
+  min-width: 8em;
+}
+
+.pequeno {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.divisao {
+  text-align:right;
+  border-right: 2px solid black;
+}
+
+a.prioridade {
+  color: inherit;
+}
+
+.legenda_info {
+  display: inline-block;
+  border: 1px solid black;
+  height: 1.5em;
+  width: 1.5em;
+  text-align: center;
+  color: red;
+  padding: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.captions {
+  font-size: 12px;
+}
+.cap_cursos {
+  margin-right: 1em;
+  float: right;
+}
+.cap_legendas {
+  float: left;
+  margin-left: 1em;
+}
+.captions > div > span {
+  white-space: nowrap;
+}

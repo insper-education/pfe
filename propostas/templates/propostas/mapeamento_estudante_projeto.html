@@ -6,77 +6,12 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load dictionary %}
   {% load aderencia_aluno %}
   {% load linguas %}
-
+  <link rel="stylesheet" href="{% static 'propostas/css/map_est_proj.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
-  
-  <style>
-
-    th.bottom {
-      vertical-align:bottom;
-    }
-
-    th.rotate {
-      height: 140px;
-      white-space: nowrap;
-    }
-
-    th.rotate > div {
-      transform: 
-        /* Magic Numbers */
-        translate(11px, 53.25px)
-        /* 45 is really 360 - 45 */
-        rotate(300deg);
-      width: 26px;
-      max-width: 26px;
-      min-width: 26px;
-    }
-
-    th.rotate > div > span {
-      border-bottom: 1px solid black;
-      padding: 0px 2px;
-      min-width: 2em;
-      display: inline-block;
-      text-align: left;
-    }
-
-    table, th {
-      border-collapse: collapse;
-      border: 0px solid black;
-      padding-left: 2px;
-      padding-right: 2px;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    td {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-
-    a.prioridade {
-      color: inherit;
-    }
-
-    .legenda_info {
-      display: inline-block;
-      border: 1px solid black;
-      height: 1.5em;
-      width: 1.5em;
-      text-align: center;
-      color: red;
-      padding: 0px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-  </style>
 
 {% endblock %}
 
@@ -88,40 +23,31 @@
   <div class="atualizar">
     
     <div class="table-responsive">
-    
       <table id="MapeamentoTable">
         <thead>
           <tr>
-            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(1)')" style="cursor:pointer; min-width: 8em;" class="bottom">
-              <span lang="pt">Estudante ({{ qtd_estudantes }})</span>
-              <span lang="en">Student</span>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(1)')" class="bottom estudante">
+              {% lng "Estudante" "Student" %} ({{ qtd_estudantes }})
             </th>
-            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(2)')" style="cursor:pointer;" class="bottom">
-              <small style="font-size: 10px; font-weight: bold;">
-                <span lang="pt">Curso</span>
-                <span lang="en">Program</span>
-              </small>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(2)')" class="bottom pequeno">
+              {% lng "Curso" "Program" %}
             </th>
-            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(3)')" style="cursor:pointer;" class="bottom"><small style="font-size: 10px; font-weight: bold;">CR</span></th>
+            <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child(3)')" class="bottom pequeno">
+              {% lng "CR" "GPA" %}
+            </th>
             {% for proposta in propostas %}   
-              <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')" style="cursor:pointer;
-              {% if not proposta.disponivel %}color:lightgray;{% endif %}"
-              class="rotate">
-                <div>
-                  <span>
+              <th onclick="sort('#MapeamentoTable', '.item', 'td:nth-child({{ forloop.counter|add:"3" }})')"
+              style="{% if not proposta.disponivel %}color:lightgray;{% endif %}" class="rotate">
+                <div><span>
                     {% if proposta.organizacao %}
                       {{proposta.organizacao.sigla}}
-                      {% if proposta.id in proposta_indice %}
-                        <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
-                      {% endif %}
                     {% else %}
                       {{proposta.nome_organizacao}}
-                      {% if proposta.id in proposta_indice %}
-                        <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
-                      {% endif %}
                     {% endif %}
-                  </span>
-                </div>
+                    {% if proposta.id in proposta_indice %}
+                      <sup>{{ proposta_indice|get_value:proposta.id }}</sup>
+                    {% endif %}
+                </span></div>
               </th>
             {% endfor %}
           </tr>
@@ -129,20 +55,18 @@
         <tbody>
         {% for estudante,opcoes,aloc_proj in estudantes %} 
           <tr class="item">
-            <td style="text-align:right; white-space: nowrap;">
+            <td>
               <a href="{% url 'estudante_detail' estudante.id %}">
                 {{estudante.user.get_full_name}}
-                {% if estudante.externo %}
-                  <span style="color:darkred;">({{estudante.externo}})</span>
-                {% endif %}
+                {% if estudante.externo %}<span style="color:darkred;">({{estudante.externo}})</span>{% endif %}
               </a>
             </td>
-            <td style="text-align:center;">
+            <td>
               <a href="{% url 'estudante_detail' estudante.id %}">
                 {{estudante.curso2.sigla_curta}}
               </a>
             </td>
-            <td style="text-align:right; border-right: 2px solid black;">
+            <td class="divisao">
               <a href="{% url 'estudante_detail' estudante.id %}">
                 {{estudante.cr|floatformat:2}}
               </a>
@@ -150,10 +74,8 @@
 
             {% for opcao in opcoes %}
               {% if opcao %}
-                <td style="text-align:center;
-                      {% if opcao.proposta == aloc_proj %}
-                        border: 2px solid #ff0000;
-                      {% endif %}
+                <td 
+                 style="{% if opcao.proposta == aloc_proj %}border: 2px solid #ff0000;{% endif %}
                       {% if opcao.proposta == estudante.pre_alocacao %}
                         background-color:yellow;
                       {% elif opcao.prioridade == 1 and not estudante.pre_alocacao %}
@@ -161,15 +83,9 @@
                       {% endif %}"
                     class="{% if opcao.prioridade == 0 %}red-bold{% elif opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}">
                   <a class="prioridade" href="{% url 'proposta_completa' opcao.proposta.id %}"
-                    data-toggle="tooltip" data-html="true" animation="true" title="
-                    {{ opcao.proposta.titulo }} ({{ opcao.proposta.organizacao.sigla }})
-                    "
-                  >
-                    {% if opcao.prioridade == 0 %}
-                      X
-                    {% else %}
-                      {{opcao.prioridade}}
-                    {% endif %}
+                   data-toggle="tooltip" data-html="true" animation="true"
+                   title="{{ opcao.proposta.titulo }} ({{ opcao.proposta.organizacao.sigla }})">
+                    {% if opcao.prioridade == 0 %}X{% else %}{{opcao.prioridade}}{% endif %}
                   </a>
                 </td>
               {% else %}
@@ -182,49 +98,39 @@
         {% if media_cr %}
           <tr>
             <td style="text-align:right">
-              <b lang="pt">Quantidad de estudantes</b>
-              <b lang="en">Number of students</b>
+              <b>{% lng "Quantidad de estudantes" "Number of students" %}</b>
             </td>
-            <td style="text-align:center"><b>&#8704;</b></td>
+            <td><b>&#8704;</b></td>
             <td>{{media_cr|floatformat:4}}</td>
             {% for s in qtd %}
-              <td style="text-align:center"><b>{{s}}</b></td>
+              <td><b>{{s}}</b></td>
             {% endfor %}
           </tr>
         {% endif %}
         </tbody>
-        <caption>
-          <div style="float: left;">
-            <small style="font-size:12px;">
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span>
-                <span lang="pt">Sem pré-alocação (padrão 1&ordf; opção)</span>
-                <span lang="en">No pre-allocation (default 1<sup>st</sup> option)</span>
-              </span>&nbsp;|
-              <span style="white-space: nowrap;"><span class="legenda_info" style="background-color:yellow;">&nbsp;</span>
-                <span lang="pt">Pré-alocado em Proposta</span>
-                <span lang="en">Pre-allocated in Proposal</span>
-              </span>&nbsp;|
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span>
-                <span lang="pt">Alocado em Proposta</span>
-                <span lang="en">Allocated in Proposal</span>
-              </span>&nbsp;|
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: 2px solid red;">X</span>
-                <span lang="pt">Alocado fora de opções</span>
-                <span lang="en">Allocated outside of options</span>
-              </span>&nbsp;|
-              <span style="white-space: nowrap;"><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span>
-                <span lang="pt">Proposta não disponibilizada</span>
-                <span lang="en">Proposal not available</span>
-              </span>
-            </small>
+        <caption class="captions">
+          <div class="cap_legendas">
+            <span><span class="legenda_info" style="background-color:lightgreen;">&nbsp;</span>
+              {% lng "Sem pré-alocação (padrão 1&ordf; opção)" "No pre-allocation (default 1<sup>st</sup> option)" %}
+            </span>&nbsp;|
+            <span><span class="legenda_info" style="background-color:yellow;">&nbsp;</span>
+              {% lng "Pré-alocado em Proposta" "Pre-allocated in Proposal" %}
+            </span>&nbsp;|
+            <span><span class="legenda_info" style="border: 2px solid red;">&nbsp;</span>
+              {% lng "Alocado em Proposta" "Allocated in Proposal" %}
+            </span>&nbsp;|
+            <span><span class="legenda_info" style="border: 2px solid red;">X</span>
+              {% lng "Alocado fora de opções" "Allocated outside of options" %}
+            </span>&nbsp;|
+            <span><span class="legenda_info" style="border: dotted 2px gray;">&nbsp;</span>
+              {% lng "Proposta não disponibilizada" "Proposal not available" %}
+            </span>
           </div>
-          <div style="float: right;">
-            <small style="font-size:12px; margin-right: 2em;">
-              {% for curso in cursos %}
-                <span style="white-space: nowrap;"><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
-                {% if not forloop.last %}|{% endif %}
-              {% endfor %}
-            </small>
+          <div class="cap_cursos">
+            {% for curso in cursos %}
+              <span><b>{{curso.sigla_curta}}</b>: {{curso.nome}}</span>
+              {% if not forloop.last %}|{% endif %}
+            {% endfor %}
           </div>
         </caption>
       </table>
@@ -243,13 +149,9 @@
   </div>
 
   <script>
-    function carrega_pagina(){};
-
     function carrega_site() {
-      {% include "edicao_puxar_local_ou_versao.js" %}2
-      carrega_pagina();
+      {% include "edicao_puxar_local_ou_versao.js" %}
     };
-
     window.onload = carrega_site
   </script>
 
