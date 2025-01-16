@@ -16,7 +16,7 @@ from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
-from .support2 import converte_conceitos
+#from .support2 import converte_conceitos
 
 from academica.models import Exame, Composicao
 from academica.support import filtra_composicoes, filtra_entregas
@@ -26,13 +26,13 @@ from documentos.models import TipoDocumento
 from estudantes.models import Pares
 
 from projetos.messages import email, render_message
-from projetos.models import Organizacao, Projeto, Banca, Encontro, Conexao
+from projetos.models import Organizacao, Projeto, Banca, Encontro
+#from projetos.models import Conexao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
 from projetos.models import Configuracao, Documento, Evento, Avaliacao2
 from projetos.support2 import busca_relatos
 
 from users.models import PFEUser, Professor, Aluno, Alocacao
-#from users.models import Parceiro
 from users.support import adianta_semestre, ordena_nomes
 
 
@@ -161,41 +161,6 @@ def coleta_membros_banca(banca=None):
         return academicos, falconis
 
 
-## PARAR DE USAR ESSE PARA USAR O ACIMA
-# def professores_membros_bancas(banca=None):
-#     """Retorna potenciais usuários que podem ser membros de uma banca."""
-#     professores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[1][0])
-#     administradores = PFEUser.objects.filter(tipo_de_usuario=PFEUser.TIPO_DE_USUARIO_CHOICES[3][0])
-#     pessoas = professores | administradores
-#     id_membros = []
-#     if banca:
-#         if banca.get_projeto() and banca.get_projeto().orientador:
-#             id_membros.append(banca.get_projeto().orientador.user.id) # orientador
-#         for membro in banca.membros():
-#             id_membros.append(membro.id)
-#     membros = pessoas.filter(pk__in=id_membros)
-#     pessoas = ordena_nomes(pessoas)
-#     membros = ordena_nomes(membros)
-#     return pessoas, membros
-
-# ## PARAR DE USAR ESSE PARA USAR O ACIMA
-# def falconi_membros_banca(banca=None):
-#     """Coleta registros de possiveis membros de banca para Falconi."""
-#     try:
-#         organizacao = Organizacao.objects.get(sigla="Falconi")
-#     except Organizacao.DoesNotExist:
-#         return None
-#     falconis = PFEUser.objects.filter(parceiro__organizacao=organizacao)
-#     id_membros = []
-#     if banca:
-#         for membro in banca.membros():
-#             id_membros.append(membro.id)
-#     membros = falconis.filter(pk__in=id_membros)
-#     falconis = ordena_nomes(falconis)
-#     membros = ordena_nomes(membros)
-#     return falconis, membros
-
-
 def recupera_orientadores_por_semestre(configuracao):
     """Recupera listas de orientadores de projetos ordenadas por semestre."""
     professores_pfe = []
@@ -209,9 +174,7 @@ def recupera_orientadores_por_semestre(configuracao):
         for professor in Professor.objects.all().order_by(Lower("user__first_name"),
                                                           Lower("user__last_name")):
             count_grupos = []
-            grupos_pfe = Projeto.objects.filter(orientador=professor).\
-                                        filter(ano=ano).\
-                                        filter(semestre=semestre)
+            grupos_pfe = Projeto.objects.filter(orientador=professor, ano=ano, semestre=semestre)
             if grupos_pfe:
                 for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
@@ -250,9 +213,7 @@ def recupera_coorientadores_por_semestre(configuracao):
         for professor in Professor.objects.all().order_by(Lower("user__first_name"),
                                                           Lower("user__last_name")):
             count_grupos = []
-            grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor).\
-                                        filter(ano=ano).\
-                                        filter(semestre=semestre)
+            grupos_pfe = Projeto.objects.filter(coorientador__usuario__professor=professor, ano=ano, semestre=semestre)
             if grupos_pfe:
                 for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
@@ -338,7 +299,6 @@ def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
 
 def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm o plano de orientação
-    context = {}
     tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
     feito = all(Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists() for projeto in projetos)
     planos_de_orientacao__prazo = None
@@ -355,13 +315,11 @@ def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
                 planos_de_orientacao = 'r'
             else:
                 planos_de_orientacao = 'y'
-    context["planos_de_orientacao"] = (planos_de_orientacao, planos_de_orientacao__prazo)
-    return context
+    return {"planos_de_orientacao": (planos_de_orientacao, planos_de_orientacao__prazo)}
 
 
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
-    context = {}
     relatos_quinzenais = 'b'
     for projeto in projetos:
         for evento, relatos, avaliados, _ in busca_relatos(projeto):
@@ -375,13 +333,11 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                         relatos_quinzenais = 'y'
                 elif relatos_quinzenais not in ['r', 'y']:
                     relatos_quinzenais = 'g'
-    context["relatos_quinzenais"] = (relatos_quinzenais, None)
-    return context
+    return {"relatos_quinzenais": (relatos_quinzenais, None)}
 
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações das entregas
-    context = {}
     avaliar_entregas = 'b'
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
     for projeto in projetos:
@@ -429,13 +385,11 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
                                             else:
                                                 if avaliar_entregas != 'r':
                                                     avaliar_entregas = 'y'  # Avaliação pendente!
-    context["avaliar_entregas"] = (avaliar_entregas, None)
-    return context
+    return {"avaliar_entregas": (avaliar_entregas, None)}
 
 
 def check_bancas_index(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
-    context = {}
     bancas_index = 'b'
     tipos_de_banca = [("BI", "BI"), ("BF", "BF")]  # (sigla banca, sigla evento)
 
@@ -453,14 +407,11 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
                             bancas_index = 'r'
                         elif bancas_index != 'r':
                             bancas_index = 'y'
-
-    context["bancas_index"] = (bancas_index, None)
-    return context
+    return {"bancas_index": (bancas_index, None)}
 
 
 def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
-    context = {}
     avaliacoes_pares = 'b'
     evento = Evento.get_evento(sigla="API", ano=ano, semestre=semestre)  # "Avaliação de Pares Intermediária"
     if evento and (datetime.date.today() - evento.startDate).days > 0:
@@ -490,13 +441,11 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
                 avaliacoes_pares = 'r'
             elif avaliacoes_pares != 'r':
                 avaliacoes_pares = 'y'
-    context["avaliacoes_pares"] = (avaliacoes_pares, None)
-    return context
+    return {"avaliacoes_pares": (avaliacoes_pares, None)}
 
 
 def check_avaliar_bancas(user, ano, semestre, PRAZO):
     # Verifica se todas as bancas do semestre foram avaliadas
-    context = {}
     avaliar_bancas = 'b'
     
     bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
@@ -536,9 +485,7 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
                 avaliar_bancas = 'r'
             else:
                 avaliar_bancas = 'y'         
-
-    context["avaliar_bancas"] = (avaliar_bancas, None)
-    return context
+    return {"avaliar_bancas": (avaliar_bancas, None)}
 
 
 def ver_pendencias_professor(user, ano, semestre):

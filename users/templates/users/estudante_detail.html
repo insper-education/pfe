@@ -26,7 +26,7 @@
     }
     @media (max-width: 740px) {
       .tit_rel {font-size: 17px;}
-    }
+    } 
   </style>
 {% endblock %}
 
@@ -35,54 +35,49 @@
   {% include "usuario.html" with user=aluno.user %}
 
   {% if aluno.matricula %}
-    <strong>
-      <span lang="pt">Matrícula:</span>
-      <span lang="en">Student ID:</span>
-    </strong> {{aluno.matricula}}<br>
+    <b>{% lng "Matrícula" "Student ID" %}:</b> {{aluno.matricula}}<br>
   {% endif %}
-  <strong>
-    <span lang="pt">Curso:</span>
-    <span lang="en">Program:</span>
-  </strong> {{aluno.curso2}}<br>
-  <strong>
-    <span lang="pt">Periodo do Capstone:</span>
-    <span lang="en">Capstone Semester:</span>
-  </strong> 
+
+  <b>{% lng "Curso" "Program" %}:</b> {{aluno.curso2}}<br>
+
+  <b>{% lng "Periodo do Capstone" "Capstone Semester" %}:</b> 
   {% if aluno.anoPFE and aluno.semestrePFE %}
     {{aluno.anoPFE}}.{{aluno.semestrePFE}}
   {% else %}
-    <span lang="pt">Período não definido</span>
-    <span lang="en">Not defined</span>
-  {% endif %}
-  <br>
+    {% lng "Período não definido" "Not defined" %}
+  {% endif %}<br>
   
-  <b>Situação Acadêmica:</b> {% if aluno.trancado %}Trancamento{% else %}Regular{% endif %}<br>
+  <b>{% lng "Situação Acadêmica" "Academic Status" %}:</b>
+  {% if aluno.trancado %}
+    {% lng "Trancado" "On leave" %}
+  {% else %}
+    {% lng "Regular" "Regular" %}
+  {% endif %}<br>
 
   {% if user.tipo_de_usuario != 1 %}
     {% if aluno.cr %}
-      <b>CR:</b> {{aluno.cr}}<br>
+      <b>{% lng "CR" "GPA" %}:</b> {{aluno.cr}}<br>
     {% endif %}
     {% include "dados_usuario.html" with user=aluno.user %}
-  {% endif %}
+  {% endif %}<br>
   
   {% if aluno.trabalhou %}
-    <br><b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}
+    <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
   {% endif %}
 
   {% if aluno.social %}
-    <br><b>{{aluno.get_social_help_text }}</b> {{ aluno.social|linebreaks }}
+    <b>{{aluno.get_social_help_text }}</b> {{ aluno.social|linebreaks }}<br>
   {% endif %}  
 
   {% if aluno.entidade %}
-    <br><b>{{aluno.get_entidade_help_text }}</b> {{ aluno.entidade|linebreaks }}
+    <b>{{aluno.get_entidade_help_text }}</b> {{ aluno.entidade|linebreaks }}<br>
   {% endif %}  
 
   {% if aluno.familia %}
-    <br><b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}
+    <b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}<br>
   {% endif %}
 
-  <br>
-  <b>Áreas de interesse selecionadas:</b>
+  <b>{% lng "Áreas de interesse" "Areas of Interest" %}:</b>
   {% with aa=aluno.user.areadeinteresse_set.all %}
     {% with vencido=True %}
       {% include "areas.html" %}
@@ -136,10 +131,7 @@
 
     {% if certificados %}
       <hr>
-      <h4>
-        <span lang="pt">Certificados</span>
-        <span lang="en" style="display: none;">Certificates</span>
-      </h4>
+      <h4>{% lng "Certificados" "Certificates" %}</h4>
       <ul>
         {% for certificado in certificados %}
           <li>
@@ -157,22 +149,9 @@
 
     {% if alocacoes.count > 0 %}
       <hr>
-      <h4>
-        {% if alocacoes.count == 1 %}
-          <span lang="pt">Alocação</span>
-          <span lang="en" style="display: none;">Allocation</span>
-        {% else %}
-          <span lang="pt">Alocações</span>
-          <span lang="en" style="display: none;">Allocations</span>
-        {% endif %}
-      </h4>
+      <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
       {% for alocado in alocacoes %}
-        <span style="color:black">
-          <strong>
-            <span lang="pt">Projeto:</span>
-            <span lang="en" style="display: none;">Project:</span>
-          </strong>
-        </span>
+        <b>{% lng "Projeto" "Project" %}:</b>
         <a href="{% url 'projeto_completo' alocado.projeto.id %}">
           [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
           ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
@@ -185,56 +164,48 @@
 
         {% with relatos=alocado|get_relatos %}
 
-        {% if alocado.projeto.ano > 2021 %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
-          &nbsp;&nbsp;<span class="tit_rel">
-            <span lang="pt">Relatos Quinzenais:</span>
-            <span lang="en" style="display: none;">Biweekly Reports</span>
-          </span><br>
-          {% for evento, relato, ordem in relatos %}
-            <div style="padding-left: 0.8em;">
-              {% if relato %}
-                <a href="{% url 'relato_visualizar' relato.id %}">
+          {% if alocado.projeto.ano > 2021 and relatos %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
+            <span class="tit_rel ml-2">{% lng "Relatos Quinzenais" "Biweekly Reports" %}</span><br>
+            {% for evento, relato, ordem in relatos %}
+              <div style="padding-left: 0.8em;">
+                {% if relato %}
+                  <a href="{% url 'relato_visualizar' relato.id %}">
+                    {{ordem|add:1}}&ordm; - 
+                    <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
+                    <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
+                    Preenchido <span class="texto-longo">pelo estudante em</span>
+                    <span class="texto-longo">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
+                    <span class="texto-curto">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
+                  </a>
+                  {% if relato.avaliacao >= 0 %}
+                    {% if relato.avaliacao > 0 %}
+                      <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
+                    {% else %}
+                      <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
+                    {% endif %}
+                  {% else %}
+                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
+                  {% endif %}
+                {% else %}
                   {{ordem|add:1}}&ordm; - 
                   <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
                   <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                  Preenchido <span class="texto-longo">pelo estudante em</span>
-                  <span class="texto-longo">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
-                  <span class="texto-curto">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
-                </a>
-                {% if relato.avaliacao >= 0 %}
-                  {% if relato.avaliacao > 0 %}
-                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
-                  {% else %}
-                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
-                  {% endif %}
-                {% else %}
-                  <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
+                  {% lng "Não preenchido por estudante" "Not filled by student" %}
                 {% endif %}
-              {% else %}
-                {{ordem|add:1}}&ordm; - 
-                <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                <span lang="pt">Não preenchido por estudante</span>
-                <span lang="en" style="display: none;">Not filled by student</span>
-              {% endif %}
+                </div>
+            {% empty%}
+              <div style="padding-left: 0.8em;">
+                {% lng "Nenhum relato quinzenal preenchido" "No biweekly report filled" %}
               </div>
-          {% empty%}
-            <p style="padding-left: 0.8em;">
-              <span lang="pt">Nenhum relato quinzenal preenchido</span>
-              <span lang="en" style="display: none;">No biweekly report filled</span>
-            </p>
-          {% endfor %}
-          <br>
-        {% endif %}
+            {% endfor %}
+            <br>
+          {% endif %}
         {% endwith %}
 
         <!-- BANCAS -->
         {% with bancas=alocado|get_bancas %}
           {% if bancas %}
-            &nbsp;&nbsp;<span class="tit_rel">
-              <span lang="pt">Participação em Bancas</span>
-              <span lang="en" style="display: none;">Examination Boards</span>
-            </span><br>
+            <span class="tit_rel ml-2">{% lng "Participação em Bancas" "Examination Boards" %}</span><br>
             <ul>
             {% for banca in alocado|get_bancas %}
               <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.composicao.exame}}</a></li>
@@ -245,7 +216,7 @@
         {% endwith %}
 
         {% if not forloop.last %}
-            <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
+          <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
         {% endif %}
       
       {% endfor %}
@@ -257,22 +228,17 @@
   {% if estilos_respostas %}
     <br><hr>
     <h4>
-      <span lang="pt">Estilos de Comunicação</span>
-      <span lang="en" style="display: none;">Communication Styles</span>
+      {% lng "Estilos de Comunicação" "Communication Styles" %}
       <span id="estilo_com" class="seta-baixo"></span>
     </h4>
-    <div id="bloco_estilo" style="display: none;"
-    >
+    <div id="bloco_estilo" style="display: none;">
       {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
-      <b>
-        <span lang="pt">Resultados:</span>
-        <span lang="en" style="display: none;">Results:</span>
-      </b><br>
+      <b>{% lng "Resultados" "Results" %}:</b><br>
       <table>
         <tbody>
           <tr><td>
           {% for metrica, valor in estilos_respostas.items %}
-            <strong>{{ metrica }}:</strong> {{ valor }}<br>
+            <b>{{ metrica }}:</b> {{ valor }}<br>
             {% if forloop.counter|divisibleby:2 %}</td></tr>
               {% if not forloop.last %}<tr><td>{% endif %}
             {% endif %}
@@ -291,8 +257,7 @@
   {% if user.tipo_de_usuario == 4 %}
     <a href="{% url 'edita_usuario' aluno.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">
-        <span lang="pt">Editar</span>
-        <span lang="en" style="display: none;">Edit</span>
+        {% lng "Editar" "Edit" %}
       </button>
     </a>
   {% endif %}

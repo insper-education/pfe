@@ -42,7 +42,7 @@ def cria_area_estudante(request, estudante):
 
     outras = request.POST.get("outras", "").strip()
     if outras != "":
-        (outra, _) = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
+        outra, _ = AreaDeInteresse.objects.get_or_create(area=None, usuario=estudante.user)
         outra.ativa = True
         outra.outras = request.POST.get("outras", "")
         outra.save()
@@ -53,7 +53,6 @@ def cria_area_estudante(request, estudante):
 
 def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     # Verifica se todas as bancas do semestre foram avaliadas
-    context = {}
     alocacao_semanal = 'b'
     alocacao_semanal__prazo = None
     hoje = datetime.date.today()
@@ -69,14 +68,12 @@ def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
                 alocacao_semanal = 'r'
             else:
                 alocacao_semanal = 'y'
-    context["alocacao_semanal"] = (alocacao_semanal, alocacao_semanal__prazo)
-    return context
+    return {"alocacao_semanal": (alocacao_semanal, alocacao_semanal__prazo)}
 
 
 def check_relato_quinzenal(alocacao):
     # Verifica se o relato quinzenal foi submetido
     configuracao = get_object_or_404(Configuracao)
-    context = {}
     relato_quinzenal = 'b'
     relato_quinzenal__prazo = None
     hoje = datetime.date.today()
@@ -92,13 +89,10 @@ def check_relato_quinzenal(alocacao):
         else:
             relato_quinzenal__prazo = prazo.endDate
             relato_quinzenal = 'r' if prazo.endDate == hoje else 'y'
-
-    context["relato_quinzenal"] = (relato_quinzenal, relato_quinzenal__prazo)
-    return context
+    return {"relato_quinzenal": (relato_quinzenal, relato_quinzenal__prazo)}
 
 def check_submissao_documento(alocacao, ano, semestre):
     # Verifica se documentos foram submetido no prazo
-    context = {}
     submissao_documento = 'b'
     submissao_documento__prazo = None
     hoje = datetime.date.today()
@@ -107,7 +101,7 @@ def check_submissao_documento(alocacao, ano, semestre):
         composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
         entregas = filtra_entregas(composicoes, projeto, alocacao.aluno.user)
         for entrega in entregas:
-            if entrega["evento"] and entrega["evento"].endDate:
+            if "evento" in entrega and entrega["evento"] and entrega["evento"].endDate:
                 diff = (entrega["evento"].endDate - hoje).days
                 if diff < 7:  # 7 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
                     if entrega["documentos"] and submissao_documento not in ['y', 'r']:
@@ -119,12 +113,10 @@ def check_submissao_documento(alocacao, ano, semestre):
                             submissao_documento = 'r'
                         elif submissao_documento != 'r':
                             submissao_documento = 'y'
-    context["submissao_documento"] = (submissao_documento, submissao_documento__prazo)
-    return context
+    return {"submissao_documento": (submissao_documento, submissao_documento__prazo)}
 
 def check_encontros_marcar(alocacao):
     # Verifica se encontros foram marcados
-    context = {}
     encontros_marcar = 'b'
     encontros_marcar__prazo = None
     hoje = datetime.date.today()
@@ -135,13 +127,11 @@ def check_encontros_marcar(alocacao):
             encontros_marcar = 'g'
         else:
             encontros_marcar = 'y'
-    context["encontros_marcar"] = (encontros_marcar, encontros_marcar__prazo)
-    return context
+    return {"encontros_marcar": (encontros_marcar, encontros_marcar__prazo)}
 
 
 def check_avaliacao_pares(alocacao, sigla, chave):
     # Verifica se avaliação de pares intermediária foi submetida no prazo
-    context = {}
     avaliacao_pares = 'b'
     avaliacao_pares_prazo = None
     hoje = datetime.date.today()
@@ -153,12 +143,12 @@ def check_avaliacao_pares(alocacao, sigla, chave):
         else:
             avaliacao_pares_prazo = prazo.endDate
             avaliacao_pares = 'r' if prazo.endDate == hoje else 'y'
+    return {chave: (avaliacao_pares, avaliacao_pares_prazo)}
 
-    context[chave] = (avaliacao_pares, avaliacao_pares_prazo)
-    return context
 
 def check_avaliacao_pares_intermediaria(alocacao,):
     return check_avaliacao_pares(alocacao, "API", "avaliacao_pares_intermediaria")
+
 
 def check_avaliacao_pares_final(alocacao):
     return check_avaliacao_pares(alocacao, "APF", "avaliacao_pares_final")

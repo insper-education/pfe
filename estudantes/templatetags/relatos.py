@@ -28,7 +28,7 @@ def get_relatos(alocacao):
             relato = Relato.objects.filter(alocacao=alocacao, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by("momento").last()
         relatos.append(relato)
 
-    return zip(eventos, relatos, range(len(eventos)))
+    return list(zip(eventos, relatos, range(len(eventos))))
 
 
 @register.filter
