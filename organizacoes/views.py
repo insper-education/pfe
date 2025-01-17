@@ -66,16 +66,20 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
                 organizacao = get_object_or_404(Organizacao, id=organizacao_id)
             anotacao_obj = Anotacao.create(organizacao)
 
-        anotacao_obj.autor = request.user
-
-        anotacao_obj.texto = request.POST["texto"]
-        anotacao_obj.tipo_retorno = TipoRetorno.objects.get(id=request.POST["tipo_retorno"])
-        
         if "data_hora" in request.POST:
             try:
                 anotacao_obj.momento = dateutil.parser.parse(request.POST["data_hora"])
             except (ValueError, OverflowError):
                 anotacao_obj.momento = datetime.datetime.now()
+
+        if "texto" not in request.POST and "tipo_retorno" not in request.POST:
+            anotacao_obj.autor = request.user
+
+            anotacao_obj.texto = request.POST["texto"]
+            anotacao_obj.tipo_retorno = TipoRetorno.objects.get(id=request.POST["tipo_retorno"])
+        else:
+            return JsonResponse({"atualizado": False})
+
         anotacao_obj.save()
 
         data = {
