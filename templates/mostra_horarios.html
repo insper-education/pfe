@@ -12,8 +12,8 @@
 {% with alocacoes=projeto.alocacao_set.all %}
 {% for alocacao in alocacoes %}
   <b>
-    {% lng "Estudante" "Student" %}
-    {{ forloop.counter }} (E{{ forloop.counter }}):
+    <span class="texto-longo">{% lng "Estudante" "Student" %} {{ forloop.counter }}</span>
+    <span class="texto-longo">(</span>E{{ forloop.counter }}<span class="texto-longo">)</span>:
   </b> 
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
   {% if request.user.tipo_de_usuario != 1 %}
