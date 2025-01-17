@@ -11,7 +11,6 @@
   {% load documentos %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/outros.css' %}">
   {% include "reload.html" %}
 {% endblock %}
 
@@ -21,8 +20,9 @@
     {% for banca in bancas %}
       {% ifchanged banca.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ banca.periodo }}
-           {% if banca.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+          {% lng banca.periodo.pt banca.periodo.en %}
+           {% if banca.periodo.pt == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
@@ -37,24 +37,24 @@
             {% endif %} &#x2726;
 
             {% if user.professor and banca.projeto.orientador == user.professor %}
-              <i>(ORIENTADOR{% if user.genero == 'F' %}A{% endif %})</i>
+              <i>({% lng_g user.genero "ORIENTADOR" "ORIENTADORA" "ADVISOR" %})</i>
             {% endif %}
             {% with coorientadores=banca.projeto.coorientador_set.all %}
               {% for coorientador in coorientadores %}
                 {% if coorientador.usuario == user %}
-                  <i>(COORIENTADOR{% if user.genero == 'F' %}A{% endif %})</i>
+                  <i>({% lng_g user.genero "COORIENTADOR" "COORIENTADORA" "CO-ADVISOR" %})</i>
                 {% endif %}
               {% endfor %}
             {% endwith %}
             
             {% if not user.professor or user.professor and banca.projeto.orientador != user.professor %}
-              <i><span class="texto-curto">Ori.</span><span class="texto-longo">Orientador{% if user.genero == 'F' %}a{% endif %}</span>:
+              <i><span class="texto-curto">{% lng "Ori." "Adv." %}</span><span class="texto-longo">{% lng_g user.genero "Orientador" "Orientadora" "Advisor" %}</span>:
                 {% if banca.projeto.orientador %}
                   {{banca.projeto.orientador}}
                 {% elif banca.alocacao.projeto.orientador %}
                   {{banca.alocacao.projeto.orientador}}
                 {% else %}
-                  SEM ORIENTADOR
+                  {% lng "SEM ORIENTADOR" "NO ADVISOR" %}
                 {% endif %}
               </i>
             {% endif %}
@@ -62,15 +62,16 @@
         </div>
           
         {% if banca.projeto %}
-          <div class="tresp" style="display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
-          {% if banca.projeto.organizacao %}
-            [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
-          {% endif %}
-          <a href="{% url 'projeto_completo' banca.projeto.id %}">
-            {{banca.projeto.get_titulo}}</a>
-            </div>
+          <div style="overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+            {% if banca.projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
+            {% endif %}
+            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+              {{banca.projeto.get_titulo}}
+            </a>
+          </div>
         {% elif banca.alocacao.projeto %}
-          <div class="tresp" style="display: inline-block; overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
+          <div style="overflow-x: clip; text-overflow: ellipsis; text-wrap: nowrap;">
           {% if banca.alocacao.aluno %}
             (<a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno }}</a>)
           {% endif %}
@@ -86,7 +87,7 @@
           {% with relatorio=banca|get_relatorio %}
             {% if relatorio %}
               <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
-                target="_blank" rel="noopener noreferrer"><b>[RELATÓRIO]</b>
+                target="_blank" rel="noopener noreferrer"><b>[{% lng "RELATÓRIO" "REPORT" %}]</b>
               </a>
             {% endif %}
           {% endwith %}
@@ -99,25 +100,20 @@
 
           {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[CERTIFICADO]</b></a>
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[{% lng "CERTIFICADO" "CERTIFICATE" %}]</b></a>
             {% endif %}
           {% endwith %}
         </div>
 
       </td></tr>
     {% empty %}
-      Nenhuma banca encontrada.
+      {% lng "Nenhuma banca encontrada." "No examination board found." %}
     {% endfor %}
   </tbody></table>
 
   {% include "toggle_anteriores.html" %}
 
-  <div lang="pt">
-    Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua
-    <a href="{% url 'index_professor' %}">página do Professor</a>.
-  </div>
-  <div lang="en">
-    Note: Professor, to schedule/update an examination board, access "Agendar Bancas" in your
-    <a href="{% url 'index_professor' %}">Professor's page</a>.
+  {% lng 'Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua' 'Note: Professor, to schedule/update an examination board, access "Agendar Bancas" in your' %}
+  <a href="{% url 'index_professor' %}">{% lng "página do Professor" "Professor's page" %}</a>.
 
 {% endblock %}

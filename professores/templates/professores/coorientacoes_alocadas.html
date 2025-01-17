@@ -7,7 +7,8 @@
 
 {% block head %}
   {% load static %}
-  {% load certificados %}  
+  {% load certificados %}
+  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   {% include "reload.html" %}
 {% endblock %}
@@ -18,31 +19,34 @@
     {% for coorientacao in coorientacoes %}
       {% ifchanged coorientacao.projeto.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ coorientacao.projeto.periodo }}
+        <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+          {% lng coorientacao.projeto.periodo.pt coorientacao.projeto.periodo.en %}
           {% if coorientacao.projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
       <tr class="{{coorientacao.projeto.periodo}} {% if coorientacao.projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
         {% with n_alocacoes=coorientacao.projeto.alocacao_set.all.count %}
-          {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
+          {% if n_alocacoes == 0 %}
+            {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
+          {% endif %}
           <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
           <a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
             {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}
             [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
-            { {{ n_alocacoes }} estudante{% if n_alocacoes > 1%}s{% endif %} }
+            { {{ n_alocacoes }} {% lng_n n_alocacoes "estudante" "estudantes" "student" "students" %} }
           </a>
 
           {% with certificado_orientador=coorientacao|certificado_coorientador %}
             {% if certificado_orientador %}
-              <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+              <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[{% lng "CERTIFICADO" "CERTIFICATE" %}]</a>
             {% endif %}
           {% endwith %}
 
         {% endwith %}
       </td></tr>
     {% empty %}
-      Nenhuma coorientação encontrada.
+      {% lng "Nenhuma coorientação encontrada." "No co-supervision found." %}
     {% endfor %}
   </tbody></table>
 

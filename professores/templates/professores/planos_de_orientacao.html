@@ -32,7 +32,8 @@
     {% for projeto in projetos %}
       {% ifchanged projeto.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }} 
+        <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+          {% lng projeto.periodo.pt projeto.periodo.en %}
           {% if projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}

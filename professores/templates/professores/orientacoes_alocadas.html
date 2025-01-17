@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
-
+  {% load linguas %}
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   
@@ -22,7 +22,8 @@
     {% for projeto in projetos %}
       {% ifchanged projeto.periodo %}
       {% if not forloop.first %}</tbody>{% endif %}
-      <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ projeto.periodo }}
+      <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+        {% lng projeto.periodo.pt projeto.periodo.en %}
         {% if projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
       <tbody>
     {% endifchanged %}
@@ -30,25 +31,27 @@
     <tr class="{{projeto.periodo}} {% if projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
       <div></div>
       {% with n_alocacoes=projeto.alocacao_set.all.count %}
-        {% if n_alocacoes == 0 %}ERRO: PROJETO SEM ESTUDANTES{% endif %}
+        {% if n_alocacoes == 0 %}
+          {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
+        {% endif %}
         <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
         <a href="{% url 'projeto_completo' projeto.id %}">
           {{projeto.ano}}.{{projeto.semestre}}
           [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-          { {{ n_alocacoes }} estudante{% if n_alocacoes > 1%}s{% endif %} }
+          { {{ n_alocacoes }} {% lng_n n_alocacoes "estudante" "estudantes" "student" "students" %} }
         </a>
         {% if projeto.proposta.intercambio %}
           <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
         {% endif %}
         {% with certificado_orientador=projeto|certificado_orientador %}
           {% if certificado_orientador %}
-            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a>
+            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[{% lng "CERTIFICADO" "CERTIFICATE" %}]</a>
           {% endif %}
         {% endwith %}
       {% endwith %}
     </td></tr>
     {% empty %}
-      Nenhuma orientação encontrada.
+      {% lng "Nenhuma orientação encontrada." "No supervision found." %}
     {% endfor %}
   </tbody></table>
 

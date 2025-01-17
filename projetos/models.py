@@ -323,10 +323,10 @@ class Projeto(models.Model):
     def periodo(self):
         configuracao = get_object_or_404(Configuracao)
         if self.ano >= configuracao.ano:
-            return "Atuais"
+            return {"pt": "Atuais", "en": "Current"}
         if self.ano == configuracao.ano and self.semestre >= configuracao.semestre:
-            return "Atuais"
-        return "Anteriores"
+            return {"pt": "Atuais", "en": "Current"}
+        return {"pt": "Anteriores", "en": "Previous"}
     
     
     @property
@@ -878,10 +878,10 @@ class Evento(models.Model):
         configuracao = get_object_or_404(Configuracao)
         if self.startDate.year >= configuracao.ano:
             if configuracao.semestre == 1 and self.startDate.month < 7:
-                return "Atuais"
+                return {"pt": "Atuais", "en": "Current"}
             if configuracao.semestre == 2 and self.startDate.month > 7:
-                return "Atuais"
-        return "Anteriores"
+                return {"pt": "Atuais", "en": "Current"}
+        return {"pt": "Anteriores", "en": "Previous"}
     
     def documentos(self):
         """Retorna os documentos do evento."""
@@ -1021,9 +1021,9 @@ class Banca(models.Model):
     @property
     def periodo(self):
         if datetime.datetime.now() < self.startDate + datetime.timedelta(days=30):
-            return "Atuais"
-        return "Anteriores"
-    
+            return {"pt": "Atuais", "en": "Current"}
+        return {"pt": "Anteriores", "en": "Previous"}
+
     def get_observacoes_estudantes(self):
         """Retorna as observações dos estudantes."""
         if self.alocacao:  # Não estão sendo preenchidas as observações para estudantes de bancas de probation
@@ -1190,10 +1190,10 @@ class Encontro(models.Model):
         configuracao = get_object_or_404(Configuracao)
         if self.startDate.year >= configuracao.ano:
             if configuracao.semestre == 1 and self.startDate.month < 7:
-                return "Atuais"
+                return {"pt": "Atuais", "en": "Current"}
             if configuracao.semestre == 2 and self.startDate.month > 7:
-                return "Atuais"
-        return "Anteriores"
+                return {"pt": "Atuais", "en": "Current"}
+        return {"pt": "Anteriores", "en": "Previous"}
     
     def get_projeto(self):
         """Retorna o projeto do encontro."""

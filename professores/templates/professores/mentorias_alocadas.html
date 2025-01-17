@@ -8,16 +8,9 @@
 {% block head %}
   {% load static %}
   {% load certificados %}
-  
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
+  {% load linguas %}
   {% include "reload.html" %}
-  
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-  
-  <style>
-    ol {margin-bottom: 3px;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -28,7 +21,8 @@
 
       {% ifchanged e.periodo %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{e.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">{{ e.periodo }} 
+        <thead><tr><th id="{{e.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+          {% lng e.periodo.pt e.periodo.en %}
           {% if e.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
@@ -39,7 +33,7 @@
             <big><b>{{e.startDate}} - {{e.endDate|date:'H:i'}}</b></big><br>
           </a>
           {% if e.projeto  %}
-            {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto %}
+            {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto com_grupo=True %}
             
             {% comment %} Meio obvio, parece desnecessário {% endcomment %}
             {% comment %} {% if e.facilitador %}
@@ -54,41 +48,21 @@
               <div class="local" style="margin-top: 8px;">
                 <b>Local:</b> 
                 {% if e.url_location %}
-                  <a href="{{e.location}}">
-                {% endif %}
-                {{e.location}}
-                {% if e.url_location %}
-                  </a>
+                  <a href="{{e.location}}">{{e.location}}</a>
+                {% else %}
+                  {{e.location}}
                 {% endif %}
                 <br>
               </div>
             {% endif %}
-            <div class="grupo" style="margin-top: 8px;">
-              <b>Grupo:</b>
-              <ol style="padding-left: 18px;">
-                {% for alocacao in e.projeto.alocacao_set.all %} 
-                  <li>
-                    <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
-                      <span class="curso">
-                        <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-                        <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-                      </span>
-                    </a>
-                    <span class="email">
-                      <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                      <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ol>
-            </div>
+
           {% else %}
-            Horário Livre<br><br>
+            {% lng "Horário Livre" "Free Time" %}<br><br>
           {% endif %}
         </td>
       </tr>
     {% empty %}
-      Nenhuma mentoria encontrada.
+      {% lng "Nenhuma mentoria encontrada." "No mentorship found." %}
     {% endfor %}
   </tbody></table>
   <p>&nbsp;</p>

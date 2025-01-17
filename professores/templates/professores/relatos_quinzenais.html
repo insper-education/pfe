@@ -10,7 +10,6 @@
   {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-  <link rel="stylesheet" href="{% static 'css/outros.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -36,18 +35,15 @@
           </div>
         {% endif %}
       {% empty %}
-        <span lang="pt">Sem alocações de projetos esse semestre.</span>
-        <span lang="en">No project allocations this semester.</span>
+        {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
       {% endfor %}
     {% endif %}
 
   </div> 
 
   <script>
-    function carrega_pagina() {};
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     };
     window.onload = carrega_site
   </script>
