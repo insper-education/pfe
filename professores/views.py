@@ -1853,26 +1853,25 @@ def informe_bancas(request, sigla):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def resultado_banca(request, pk):
-    """Visualiza o resultado de uma banca banca."""
-    banca = get_object_or_404(Banca, pk=pk)
-    context = {
-        "titulo": {"pt": "Resultado Banca", "en": "Examination Board Result"},
-        "objetivos": ObjetivosDeAprendizagem.objects.all(),
-        "banca": banca,
-        "projeto": banca.get_projeto(),
-    }
-    return render(request, "professores/resultado_banca.html", context=context)
+def resultado_bancas(request):
+    """Visualiza os resultados das bancas."""
 
+    projeto_id = request.GET.get("projeto", None)
+    banca_id = request.GET.get("banca", None)
+    if projeto_id:
+        projeto = Projeto.objects.get(pk=projeto_id)
+        bancas = Banca.objects.filter(projeto=projeto_id)
+    elif banca_id:
+        bancas = Banca.objects.filter(pk=banca_id)
+        projeto = bancas.last().get_projeto()
+    else:
+        return HttpResponseNotFound("<h1>Bancas não encontradas!</h1>")
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def resultado_bancas(request, pk):
-    """Visualiza os resultados das bancas de um projeto."""
     context = {
         "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Result"},
         "objetivos": ObjetivosDeAprendizagem.objects.all(),
-        "projeto": get_object_or_404(Projeto, pk=pk),
+        "bancas": bancas,
+        "projeto": projeto,
     }
     return render(request, "professores/resultado_bancas.html", context=context)
 
@@ -1917,7 +1916,7 @@ def avaliar_bancas(request, prof_id=None):
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
         }
-    return render(request, "professores/avaliar_bancas.html", context=context)
+    return render(request, "professores/resultado_bancas.html", context=context)
 
 
 @login_required

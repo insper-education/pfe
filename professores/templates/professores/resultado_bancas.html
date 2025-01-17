@@ -5,45 +5,32 @@
   Data: 22 de Abril de 2020
 {% endcomment %}
 
+{% comment %}
+  Compartilhado por: resultado_bancas, avaliar_bancas
+{% endcomment %}
+
 {% block head %}
   {% load static %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   {% include "converte_notas.html" %}
   {% include "avalia_objetivos.html" %}
-
-  {% comment %} <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 80px;
-    }
-
-    table, th, td {border: 1px solid lightgrey;}
-    tbody tr:nth-child(even) {background-color: #f2f2f2;}
-    tbody tr:nth-child(odd) {background-color: #f9f9f9;}
-
-  </style> {% endcomment %}
-
 {% endblock %}
 
 {% block content %}
-
-  {% include "cabecalho_projeto.html" with com_tit_original=True com_semestre=True com_grupo=True %}
-
-  {% for banca in projeto.banca_set.all %}
-    {% include "dado_banca.html" %}<br>
-  {% endfor %}
-
-  <b>
-    <span lang="pt">Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)
-     e depois de 24 horas que a última avaliação foi feita.</span>
-    <span lang="en" style="display: none;">Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)
-      and after 24 hours that the last evaluation was made.</span>
-  </b>
-
+  {% include "edicoes.html" %}
+  <div class="atualizar">
+    {% for banca in bancas %}
+      {% with projeto=banca.get_projeto %}
+        {% ifchanged projeto %}
+          {% include "cabecalho_projeto.html" with com_tit_original=True com_semestre=True com_grupo=True %}
+        {% endifchanged %}
+        {% include "dado_banca.html" %}<br>
+      {% endwith %}
+    {% endfor %}
+    <div>
+      {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais) e depois de 24 horas que a última avaliação foi feita." "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards) and after 24 hours that the last evaluation was made." %}
+    </div>
+  </div>
+  {% include "edicoes_ajax.html" %}
 {% endblock %}

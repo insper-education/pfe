@@ -14,10 +14,7 @@
 {% block content %}
 
   {% if banca.startDate %}
-    <b>
-      <span lang="pt">Horário:</span>
-      <span lang="en" style="display: none;">Time:</span>
-    </b>
+    <b>{% lng "Horário" "Time" %}:</b>
     <span class="texto-longo">
       {{banca.startDate.date}}
       <span lang="pt">{% language "pt-br" %}
@@ -44,37 +41,27 @@
     </span>
   {% endif %}
   {% if banca.endDate %}
-    <span lang="pt">às</span>
-    <span lang="en" style="display: none;">to</span>
+    {% lng "às" "to" %}
     {{banca.endDate.time}}
   {% endif %}
   <br>
-  <b>
-    <span lang="pt">Tipo:</span>
-    <span lang="en" style="display: none;">Type:</span>
-  </b>
-  <span lang="pt">{{banca.composicao.exame.titulo}}</span>
-  <span lang="en" style="display: none;">{{banca.composicao.exame.titulo_en}}</span>
-  <br>
+  <b>{% lng "Tipo" "Type" %}:</b>
+  {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}<br>
 
   {% include "cabecalho_projeto.html" with projeto=banca.get_projeto com_email=True %}
 
   {% if banca.location %}
-    <b>Local:</b> {{banca.location}}
-    <br>
+    <b>Local:</b> {{banca.location}}<br>
   {% endif %}
 
   {% if banca.link %}
-    <b>
-      <span lang="pt">Link vídeo-conferência:</span>
-      <span lang="en" style="display: none;">Video-conference link:</span>
-    </b> <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
+    <b>{% lng "Link vídeo-conferência" "Video-conference link" %}:</b>
+    <div style="overflow: auto;"><a href="{{banca.link}}">{{banca.link}}</a></div><br>
   {% endif %}
   
-  <br><b>&#9733;
-    <span lang="pt">Formulário de avaliação</span>
-    <span lang="en" style="display: none;">Evaluation form</span>
-  </b>: <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
+  <br>
+  <b>&#9733; {% lng "Formulário de avaliação" "Evaluation form" %}</b>:
+  <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
 
   {% include "ver_documentos.html" %}
 
@@ -87,15 +74,11 @@
   {% endif %}
   {% endwith %}
 
-  <b>
-    <span lang="pt">Membros da Banca</span>
-    <span lang="en" style="display: none;">Examination Board Members</span>
-  </b>
+  <b>{% lng "Membros da Banca" "Examination Board Members" %}</b>
   <ol>
     {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %} {% comment %} Intermediária ou Final {% endcomment %}
       <li>{{banca.get_projeto.orientador.user.get_full_name}} 
-        <span lang="pt">[Orientador{% if banca.get_projeto.orientador.user.genero == 'F' %}a{% endif %}]</span>
-        <span lang="en" style="display: none;">[Advisor]</span>
+        [{% lng_g banca.get_projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}]
         <span class="texto-longo emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
         <span class="texto-curto emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       </li>
@@ -106,10 +89,7 @@
         <span class="texto-curto emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
       </li>
     {% empty %}
-      <b style="color: red;">
-        <span lang="pt">Nenhum membro da banca foi definido</span>
-        <span lang="en" style="display: none;">No examination board members have been defined</span>
-      </b>
+      <b style="color: red;">{% lng "Nenhum membro da banca foi definido" "No examination board members have been defined" %}</b>
     {% endfor %}
   </ol>
 
@@ -118,10 +98,7 @@
 
   {% comment %} PROBATION {% endcomment %}
   {% if banca.alocacao %}
-    <b>
-      <span lang="pt">Estudante:</span>
-      <span lang="en" style="display: none;">Student:</span>
-    </b><br>
+    <b>{% lng "Estudante" "Student" %}</b><br>
     &nbsp;&nbsp;&nbsp;&nbsp;
     <u>
     {% if banca.alocacao %}
@@ -131,7 +108,7 @@
       <span class="texto-longo emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
       <span class="texto-curto emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
     {% else %}
-      <span class="texto-longo">Estudante não alocado</span>
+      <span class="texto-longo">{% lng "Estudante não alocado" "Student not allocated" %}</span>
     {% endif %}
     </u>
     <br><br>
@@ -139,34 +116,27 @@
   {% endif %}
 
   {% if not bloqueado %}
-    <a href="{% url 'resultado_banca' banca.id %}" class="btn btn-primary mb-1">
-      <span lang="pt">Resultados da Banca</span>
-      <span lang="en" style="display: none;">Examination Board Results</span>
+    <a href="{% url 'resultado_bancas' %}?banca={{banca.id}}" class="btn btn-primary mb-1">
+      {% lng "Resultados da Banca" "Examination Board Results" %}
     </a>
   
     {% if banca.alocacao %}
       <a href="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}" class="btn btn-primary mb-1 open-documento" data-url="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}">
-        <span lang="pt">Adicionar Relatório para Probation</span>
-        <span lang="en" style="display: none;">Add Probation para Report</span>
+        {% lng "Adicionar Relatório para Probation" "Add Probation Report" %}
       </a>
       {% include "documento-modal.html" %}
     {% endif %}
 
     <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">
-      <span lang="pt">Editar Banca</span>
-      <span lang="en" style="display: none;">Edit Examination Board</span>
+      {% lng "Editar Banca" "Edit Examination Board" %}
     </a>
   
   {% endif %}
 
-  
-  
   {% include "janelas-modal.html" %}
 
   <script>
-    $("#popup").on("hidden.bs.modal", function (e) {
-      location.reload();
-    })
+    $("#popup").on("hidden.bs.modal", function (e) {location.reload();})
   </script>
   
 {% endblock %}

@@ -4,8 +4,6 @@
   Data: 30 de Novembro de 2024
 {% endcomment %}
 
-
-{% comment %} {% load static %} {% endcomment %}
 {% load rubricas %}
 {% load linguas %}
 
@@ -14,40 +12,49 @@
 </script>
 
 <div class="div_arredondado">
-  <h5 style="line-height: 1;"><a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-    <span lang="pt">Banca</span>
-    <span lang="en" style="display: none;">Examining Board</span>
-    {{banca.composicao.exame}} ({{banca.startDate|date:"d/m/y"}})
-    </a>
-    <br><small style="font-size: 11px;">★ 
-      <span lang="pt">Formulário:</span>
-      <span lang="en" style="display: none;">Form:</span>
-      <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a></small>
+  <h5 style="line-height: 1;">
+    <div>
+      <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
+        {% lng "Banca" "Examining Board" %}
+        {{banca.composicao.exame}} ({{banca.startDate|date:"d/m/y"}})
+      </a>
+    </div>
+
+    {% if banca.alocacao %}
+      <div style="margin: 0.4em;">
+      <span style="font-size: 13px; margin-top: 3.4em; border: 2px solid #f00; padding: 0.3em;">
+        <b>{% lng "Estudante" "Student" %}:</b>
+        <u>
+          <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
+        </u>
+        <span class="texto-longo curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
+        <span class="texto-curto curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
+        <span class="texto-longo emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
+        <span class="texto-curto emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+      </span>
+    </div>
+    {% endif %}
+    
+    <small style="font-size: 11px;">★ 
+      {% lng "Formulário" "Form" %}:
+      <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
+    </small>
   </h5>
   {% include "membros_da_banca.html" %}
 
   <table class="table table-bordered table-striped">
     {% for avaliador, objs in banca.get_avaliadores.items %}
       <tr><td>
-        <strong>
-          <span lang="pt">Avaliador{% if avaliador.genero == "F" %}a{% endif %}:</span>
-          <span lang="en" style="display: none;">Evaluator:</span>
-        </strong>
+        <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
         <a href="{% url 'user_detail' avaliador.id %}">
           {{avaliador.get_full_name}}
         </a><br>
         {% if objs.momento %}
-          <strong>
-            <span lang="pt">Avaliado em:</span>
-            <span lang="en" style="display: none;">Evaluated on:</span>
-          </strong>
+          <b>{% lng "Avaliado em" "Evaluated on" %}:</b>
           {{objs.momento}}<br>
         {% endif %}
         {% if objs.items %}
-          <strong>
-            <span lang="pt">Conceitos:</span>
-            <span lang="en" style="display: none;">Grades:</span>
-          </strong><br>
+          <b>{% lng "Conceitos" "Grades" %}:</b><br>
           <ul style="list-style-type: '&#x21A3; ';">
             {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
               <li>
@@ -76,24 +83,23 @@
         {% endif %}
         {% if objs.observacoes_estudantes %}  
           &nbsp;<u><span style="font-weight: 500;">
-            <span lang="pt">Observações para Estudantes</span>
-            <span lang="en" style="display: none;">Observations for Students</span>
-          </span>:</u> {{objs.observacoes_estudantes}}<br>
+            {% lng "Observações para Estudantes" "Observations for Students" %}:
+          </span></u> {{objs.observacoes_estudantes}}<br>
           {% if objs.observacoes_orientador %}<br>{% endif %}
         {% endif %}
-        {% if objs.observacoes_orientador %}  
-          &nbsp;<u><span style="font-weight: 500;">
-            <span lang="pt">Observações para Orientador</span>
-            <span lang="en" style="display: none;">Observations for Advisor</span>
-          </span>:</u> {{objs.observacoes_orientador}}<br>
+        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          {% if objs.observacoes_orientador %}
+            &nbsp;<u><span style="font-weight: 500;">
+              {% lng "Observações para Orientador" "Observations for Advisor" %}:
+            </span></u> {{objs.observacoes_orientador}}<br>
+          {% endif %}
         {% endif %}
       </td></tr>
     {% endfor %}
 
     <tr style="background-color: {{banca.get_cor}}; color: darkslategrey"><td>
       <b>
-        <span lang="pt">Média das Avaliações da Banca</span>
-        <span lang="en" style="display: none;">Average of the Examining Board</span>
+        {% lng "Média das Avaliações da Banca" "Average of the Examining Board" %}
         {{banca.composicao.exame}}:
         <ul id="banca{{banca.id}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
       </b>

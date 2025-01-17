@@ -475,7 +475,7 @@
 
       <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
-       href="{% url 'resultado_bancas' projeto.id %}">
+       href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
         {% lng "Resultado Bancas" "Exam. Boards Results" %}
       </a>
 

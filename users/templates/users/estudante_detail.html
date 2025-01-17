@@ -208,7 +208,7 @@
             <span class="tit_rel ml-2">{% lng "Participação em Bancas" "Examination Boards" %}</span><br>
             <ul>
             {% for banca in alocado|get_bancas %}
-              <li><a href="{% url 'resultado_banca' banca.id %}">{{banca.composicao.exame}}</a></li>
+              <li><a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">{{banca.composicao.exame}}</a></li>
             {% endfor %}
             </ul>
             <br>

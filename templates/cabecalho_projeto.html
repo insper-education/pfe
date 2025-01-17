@@ -7,6 +7,7 @@
 {% load linguas %}
 
 {% if projeto %}
+
   {% if user.is_authenticated and user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
 
     {% if projeto.organizacao %}
@@ -31,11 +32,11 @@
 
     {% comment %} Mostrar só se todas edições {% if edicao == "todas" %} {% endcomment %}
     {% if com_semestre %}
-      <b>{% lng "Semestre" "Semester" %}:
+      <b>{% lng "Semestre" "Semester" %}:</b>
       {{projeto.ano}}.{{projeto.semestre}}<br>
     {% endif %}
     
-    {% if request.user != projeto.orientador.user or administracao %}
+    {% comment %} {% if request.user != projeto.orientador.user or administracao %} {% endcomment %}
       {% if projeto.orientador %}
         {% if banca.projeto.proposta.intercambio %}
           <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
@@ -63,7 +64,7 @@
           <br>
         {% endif %}
       {% endwith %}
-    {% endif %}
+    {% comment %} {% endif %} {% endcomment %}
 
     {% if com_grupo %}
       <span style="display: inline-block; margin-top: 6px;">
@@ -71,25 +72,26 @@
       </span>
       <ul>
         {% for alocacao in projeto.alocacao_set.all %}
-          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
-            <li>
-              {{alocacao.aluno.user.get_full_name}} 
-              <span class="curso">
-                <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-                <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-              </span>
-              {% if alocacao.aluno.externo %}<span class="red-normal">[{{alocacao.aluno.externo}}]</span>{% endif %}
-              <span class="emails">
-                <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
-                <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
-              </span>
-            </li>
-          </a>
+          <li>
+            <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
+              {{alocacao.aluno.user.get_full_name}}
+            </a> 
+            <span class="curso">
+              <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+              <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+            </span>
+            {% if alocacao.aluno.externo %}<span class="red-normal">[{{alocacao.aluno.externo}}]</span>{% endif %}
+            <span class="emails">
+              <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+              <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+            </span>
+            
+          </li>
         {% endfor %}
       </ul>
     {% endif %}
 
-  {% else %}
+  {% else %} 
 
     <b>{% lng "Projeto" "Project" %}:</b>
     {% if user.is_authenticated and user.tipo_de_usuario == 1 %}
@@ -133,6 +135,24 @@
       {% endif %}<br>
     {% else %}
       {% lng "Orientador: Não definido" "Advisor: Not defined" %}
+    {% endif %}
+
+    {% if com_grupo %}
+      <span style="display: inline-block; margin-top: 6px;">
+        <b>{% lng "Grupo" "Group" %}:</b>
+      </span>
+      <ul>
+        {% for alocacao in projeto.alocacao_set.all %}
+          <li>
+            {{alocacao.aluno.user.get_full_name}}
+            <span class="curso">
+              <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+              <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+            </span>
+            {% if alocacao.aluno.externo %}<span class="red-normal">[{{alocacao.aluno.externo}}]</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
     {% endif %}
 
   {% endif %}

@@ -40,20 +40,7 @@
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}
 
-      {% include "cabecalho_projeto.html" with projeto=projeto %}
-
-      <b lang="pt">Grupo:</b>
-      <b lang="en">Group:</b>
-
-      <ul style="padding-left: 34px;">
-        {% for alocacao in projeto.alocacao_set.all %}
-          <li>
-            {{alocacao.aluno.user.get_full_name}}
-            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-            <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>                  
-          </li>
-        {% endfor %}
-      </ul>
+      {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
       {% if banca.composicao.exame is not None %}
         <b lang="pt">Tipo de Banca:</b>

@@ -238,7 +238,7 @@
 
                 {% comment %} Banca Intermediária {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_intermediaria.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="color: darkgrey; font-weight: bold;"
                       {% elif banca_intermediaria.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
@@ -260,7 +260,7 @@
 
                   {% comment %} Banca Final {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="color: darkgrey; font-weight: bold;"
                       {% elif banca_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
@@ -282,7 +282,7 @@
 
                   {% comment %} Banca Falconi {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' projeto.id %}"
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_falconi.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="color: darkgrey; font-weight: bold;"
                       {% elif banca_falconi.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}

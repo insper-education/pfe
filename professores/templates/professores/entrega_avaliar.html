@@ -24,27 +24,9 @@
   <span lang="pt"></span><span lang="en"></span>
 
   {% if projeto %}
-    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="post" id="avaliacaoform" enctype="multipart/form-data">{% csrf_token %}
 
-      {% include "cabecalho_projeto.html" %}
-
-      <b lang="pt">Grupo:</b>
-      <b lang="en">Group:</b>
-
-      <ul style="">
-        {% for alocacao in projeto.alocacao_set.all %}
-          <li>
-            {% if not composicao.exame.grupo and alocacao.aluno == estudante.aluno %}<b>{% endif %}
-            <a href="{% url 'estudante_detail' alocacao.aluno.id %}"> 
-              {{alocacao.aluno.user.get_full_name}}
-            </a>
-            <a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a>
-            [{{ alocacao.aluno.curso2 }}]
-            {% if not composicao.exame.grupo and alocacao.aluno == estudante.aluno %}</b>{% endif %}
-          </li>
-        {% endfor %}
-      </ul>
+      {% include "cabecalho_projeto.html" with com_grupo=True %}
 
       <br>
       <b lang="pt">Avaliação:</b><b lang="en">Assessment:</b><br>
