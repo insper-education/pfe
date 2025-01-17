@@ -587,7 +587,7 @@ def organizacoes_prospect(request):
 
     context = {
         "titulo": {"pt": "Prospecção de Organizações", "en": "Prospecting Organizations"},	
-        "organizacoes_list": organizacoes_list,
+        "organizacoes_list": list(organizacoes_list),
         "total_organizacoes": total_organizacoes,
         "total_disponiveis": total_disponiveis,
         "total_submetidas": total_submetidas,
@@ -597,6 +597,7 @@ def organizacoes_prospect(request):
         "cursos": cursos,
         "necessarios": necessarios,
         "tipo_retorno": TipoRetorno.objects.all(),
+        "GRUPO_DE_RETORNO": TipoRetorno.GRUPO_DE_RETORNO,
         }
     return render(request, "organizacoes/organizacoes_prospectadas.html", context)
 
@@ -625,7 +626,7 @@ def organizacoes_projetos(request):
             projetos.append(projetos_periodo.filter(proposta__organizacao=organizacao))
             contato.append(Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last())
 
-        organizacoes_list = zip(organizacoes, projetos, contato)
+        organizacoes_list = list(zip(organizacoes, projetos, contato))
 
         context = {
             "organizacoes_list": organizacoes_list,
@@ -640,6 +641,7 @@ def organizacoes_projetos(request):
             "titulo": {"pt": "Prospecção de Organizações com Projetos", "en": "Prospecting Organizations with Projects"},
             "edicoes": get_edicoes(Projeto)[0],
             "tipo_retorno": TipoRetorno.objects.all(),
+            "GRUPO_DE_RETORNO": TipoRetorno.GRUPO_DE_RETORNO,
             }
     
     return render(request, "organizacoes/organizacoes_projetos.html", context)
