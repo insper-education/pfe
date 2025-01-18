@@ -4,19 +4,22 @@
   Data: 21 de Fevereiro de 2024
 {% endcomment %}
 
+{% comment %} Essa rotina é responsável por puxar a última edição selecionada e passa o valor para o seletor. {% endcomment %}
+
 $(document).ready(function() {
   const itemStr = localStorage.getItem("filterEdicao");
+  if(!itemStr) return;
   const item = JSON.parse(itemStr);
-  const filterEdicao = item ? item.value : null;
-  if (filterEdicao !== null && $("#filterEdicao option[value='"+filterEdicao+"']").length > 0 ) {
-    const prazo = 3600000; // 1 hora
-    const now = new Date().getTime();
-    // Verifica se não venceu
-    if (now > item.expiry + prazo) {
+  const filterEdicao = item?.value;
+  const filterEdicaoOption = document.querySelector(`#filterEdicao option[value='${filterEdicao}']`);
+  if(filterEdicao && filterEdicaoOption) {
+    const prazo = 3600000; // 1 hour
+    const now = Date.now();
+    if (now > item.expiry + prazo) {  // Verifica se não venceu
       localStorage.removeItem("filterEdicao");
     } else {
       if(filterEdicao != "todas") { // Evita todas pois é muito lento
-        $("#filterEdicao").val(filterEdicao)
+        document.getElementById("filterEdicao").value = filterEdicao;
       }
     }
   }

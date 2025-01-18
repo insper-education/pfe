@@ -125,8 +125,7 @@
             <td>
 
               {% if banca.get_projeto %}
-                <b lang="pt">Projeto:</b>
-                <b lang="en">Project:</b>
+                {% lng "Projeto" "Project" %}:
                 {% if banca.get_projeto.organizacao %}
                   [<a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
                 {% endif %}

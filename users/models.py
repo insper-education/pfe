@@ -132,6 +132,26 @@ class PFEUser(AbstractUser):
         """Cria um objeto (entrada) em PFEUser."""
         user = cls()
         return user
+    
+    def estud(self):
+        """Retorna se é estudante."""
+        return self.tipo_de_usuario == 1
+
+    def prof(self):
+        """Retorna se é professor (ou Administrador)."""
+        return self.tipo_de_usuario == 2
+
+    def prof_a(self):
+        """Retorna se é professor (ou Administrador)."""
+        return self.tipo_de_usuario == 2 or self.tipo_de_usuario == 4
+        
+    def parc(self):
+        """Retorna se é parceiro."""
+        return self.tipo_de_usuario == 3
+    
+    def admin(self):
+        """Retorna se é administrador."""
+        return self.tipo_de_usuario == 4
 
     def __str__(self):
         """Retorno padrão textual do objeto."""

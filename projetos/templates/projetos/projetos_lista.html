@@ -10,76 +10,37 @@
 {% endblock %}
 
 {% block content %}
-
   {% include "edicoes.html" with avancados=True %}
-
   <div class="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %}
         {% with estudantes=projeto.alocacao_set.all %}
           <tr class="item">
-              <th scope="row" data-order="{{projeto.get_titulo}}"
-              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
-              >
-                <a href="{% url 'projeto_completo' projeto.id %}">
-                  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                    {{projeto.titulo_final}}<br>
-                    <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-                  {% else %}
-                    {{projeto.get_titulo}}
-                  {% endif %}
-                  {% include "tipo_projeto.html" %}
-                </a>
-              </th>
-              <td>
-                {% comment %} {% with alocacao=estudantes|first %} {% endcomment %}
-                {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.curso2}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
-                  Nenhum aluno alocado nesse projeto
-                {% endfor %}
-              </td>
-              <td class="text-center"
-              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
-              >
-                  {{projeto.ano}}&middot;{{projeto.semestre}}
-              </td>
-              <td
-              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
-              >
-                {% if projeto.orientador %}
-                  <a href="{% url 'professor_detail' projeto.orientador.id %}">
-                    {{ projeto.orientador }}
-                  </a>
+            <th scope="row" data-order="{{projeto.get_titulo}}">
+              <a href="{% url 'projeto_completo' projeto.id %}">
+                {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+                  {{projeto.titulo_final}}<br>
+                  <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
                 {% else %}
-                  <i>Orientador não definido</i>
+                  {{projeto.get_titulo}}
                 {% endif %}
-              </td>
-              <td
-              {% comment %} rowspan="{{estudantes.count}}" {% endcomment %}
-              >
-                {% if projeto.organizacao %}
-                  <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                    {{ projeto.organizacao.nome }}
-                  </a>
-                {% else %}
-                  <i>Organização não definida</i>
-                {% endif %}
-              </td>
-            </tr>
-          
-            {% endwith %}
-          {% endfor %}
-          
-        </table>
-      </div>
-    
-    <script>
-      function carrega_pagina() {
-      };
-      window.onload = carrega_pagina
-    </script>
-
+                {% include "tipo_projeto.html" %}
+              </a>
+            </th>
+            <td>
+              {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.curso2}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
+                Nenhum aluno alocado nesse projeto
+              {% endfor %}
+            </td>
+            <td class="text-center">
+                {{projeto.ano}}&middot;{{projeto.semestre}}
+            </td>
+            {% include "academica/includes/td_orientador.html" with orientador=projeto.orientador %}
+            {% include "organizacoes/includes/td_organizacao.html" with organizacao=projeto.organizacao %}
+          </tr>
+        {% endwith %}
+      {% endfor %}     
+    {% include "tabelas_bottom.html" %}
   </div>
-  
   {% include "edicoes_ajax.html" with tabela='Projetos' avancados=True %}
-
 {% endblock %}

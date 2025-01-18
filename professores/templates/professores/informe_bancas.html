@@ -13,70 +13,47 @@
 
 {% block content %}
 
-  <span lang="pt">Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas.</span>
-  <span lang="en" style="display: none;">Send message to advisors with their boards and evaluations already held.</span>
+  {% lng "Enviar mensagem para orientadores com suas bancas e as avaliações já realizadas." "Send message to advisors with their boards and evaluations already held." %}"
   <br>
   
-    <form method="post" id="informe_bancas" enctype="multipart/form-data">{% csrf_token %}
-      <table class="tabela-padrao table-striped">
-        <thead><tr>
-            <th scope="col"><b>
-              <span lang="pt">Orientador</span>
-              <span lang="en" style="display: none;">Advisor</span>
-            </b></th>
-            <th scope="col"><b>
-              <span lang="pt">Projeto</span>
-              <span lang="en" style="display: none;">Project</span>
-            </b></th>
-            <th scope="col"><b>
-              <span lang="pt">Organização</span>
-              <span lang="en" style="display: none;">Organization</span>
-            </b></th>
-        </tr></thead>
-        <tbody>
-          {% for banca in bancas %}
-            <tr>
-              <td>
-                {% if banca.projeto.orientador %}
-                  <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">
-                    {{banca.projeto.orientador.user.get_full_name}} 
-                  </a>
-                {% endif %}
-              </td>
+  <form method="post" id="informe_bancas" enctype="multipart/form-data">{% csrf_token %}
+    <table class="tabela-padrao table-striped">
+      <thead><tr>
+          <th scope="col"><b>
+            <span lang="pt">Orientador</span>
+            <span lang="en" style="display: none;">Advisor</span>
+          </b></th>
+          <th scope="col"><b>
+            <span lang="pt">Projeto</span>
+            <span lang="en" style="display: none;">Project</span>
+          </b></th>
+          <th scope="col"><b>
+            <span lang="pt">Organização</span>
+            <span lang="en" style="display: none;">Organization</span>
+          </b></th>
+      </tr></thead>
+      <tbody>
+        {% for banca in bancas %}
+          <tr>
+            {% include "academica/includes/td_orientador.html" with orientador=banca.projeto.orientador %}
+            {% include "projetos/includes/td_projeto.html" with projeto=banca.projeto %}
+            {% include "organizacoes/includes/td_organizacao.html" with organizacao=banca.projeto.organizacao %}
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">
+              {% lng "Nenhuma banca identificada." "No examination board identified." %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+        
+    <br>
+    <button class="btn btn-primary mb-1" id="submit" type="submit">
+      {% lng "Enviar mensagens" "Send messages" %}
+    </button>
 
-              <td>
-                {% if banca.projeto %}
-                <a href="{% url 'projeto_detalhes' banca.projeto.id %}">
-                  {{banca.projeto.get_titulo}}</a>
-                {% endif %}
-              </td>
+  </form>
 
-              <td>
-                {% if banca.projeto.organizacao %}
-                  <a class="imprimir" href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">
-                    {{ banca.projeto.organizacao.nome }}
-                  </a>
-                {% endif %}
-              </td>
-
-            </tr>
-          {% else %}
-            <tr>
-              <td colspan="3">
-                <span lang="pt">Nenhuma banca identificada.</span>
-                <span lang="en" style="display: none;">No examination board identified.</span>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-          
-      <br>
-      <button class="btn btn-primary mb-1" id="submit" type="submit">
-        <span lang="pt">Enviar mensagens</span>
-        <span lang="en" style="display: none;">Send messages</span>
-      </button>
-
-    </form>
-  
 {% endblock %}

@@ -16,7 +16,6 @@ from urllib.parse import quote, unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-# from django.db.models import Q
 from django.db.models import Case, When, Value, F, Func, FloatField
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
@@ -24,20 +23,17 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import html, timezone
 from django.core.exceptions import PermissionDenied  # Para lançar 403
 
-# from .support import professores_membros_bancas, falconi_membros_banca
 from .support import coleta_membros_banca, editar_banca
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
-#from .support import calcula_interseccao_bancas, 
-from .support2 import converte_conceitos, arredonda_conceitos
+from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
-#from administracao.models import Carta
 from administracao.support import usuario_sem_acesso
 
 from documentos.models import TipoDocumento
@@ -53,12 +49,13 @@ from projetos.support2 import get_alocacoes, get_pares_colegas
 from projetos.messages import email, render_message, htmlizar
 from projetos.arquivos import le_arquivo
 
-from users.models import PFEUser, Professor, Aluno, Alocacao
+from users.models import PFEUser, Professor, Alocacao
 from users.support import get_edicoes
 
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -71,42 +68,6 @@ def index_professor(request):
         return render(request, "professores/professores.html", context=context)
     else:
         return render(request, "professores/index_professor.html", context=context)
-
-
-@login_required
-@permission_required("users.view_administrador", raise_exception=True)
-def pendencias_professores(request):
-    """Mostra pendencias dos professores."""
-    configuracao = get_object_or_404(Configuracao)
-    orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
-    orientadores = Professor.objects.filter(id__in=orientadores_ids)
-    
-    membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
-    membros_banca = set()
-    for membros in membro_banca:
-        membros_banca.update(membros)
-    membros_banca = Professor.objects.filter(user__id__in=membros_banca)  
-
-    professores = {}
-    for professor in orientadores | membros_banca:
-        professores[professor] = ver_pendencias_professor(professor.user, configuracao.ano, configuracao.semestre)
-
-    tipos = [
-        ("Planos de Orientação", "planos_de_orientacao"),
-        ("Relatos Quinzenais", "relatos_quinzenais"),
-        ("Avaliar Entregas", "avaliar_entregas"),
-        ("Agendar Bancas", "bancas_index"),
-        ("Avaliar Bancas", "avaliar_bancas"),
-        ("Avaliações de Pares", "avaliacoes_pares"),
-    ]
-
-    context = {
-        "titulo": {"pt": "Pendências dos Professores", "en": "Professors Pending Tasks"},
-        "professores": professores,
-        "tipos": tipos,
-        }
-    
-    return render(request, "professores/pendencias_professores.html", context=context)
 
 
 @login_required
@@ -147,105 +108,6 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
         context["selecionada"] = f"{configuracao.ano}.{configuracao.semestre}"
 
     return render(request, "professores/avaliacoes_pares.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_alocadas(request):
-    """Mostra detalhes sobre o professor."""
-    bancas = (Banca.objects.filter(membro1=request.user) |
-              Banca.objects.filter(membro2=request.user) |
-              Banca.objects.filter(membro3=request.user))
-    
-    if request.user.professor:
-        # Orientador é automaticamente membro de banca final e intermediária
-        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, composicao__exame__sigla__in=("BI", "BF"))
-
-    # Usado para inverter as datas das bancas atuais
-    periodo = timezone.now().date() - datetime.timedelta(days=30)
-    bancas = bancas.annotate(
-        custom_order=Case(
-            When(startDate__lt=periodo, then=Value(100000000000)),
-            When(startDate__gte=periodo, then=Func(F("startDate"), function='EXTRACT', template="%(function)s(EPOCH FROM %(expressions)s)", output_field=FloatField())),
-            output_field=FloatField(),
-        )
-    ).order_by("custom_order", "-startDate")
-
-    context = {
-        "titulo": {"pt": "Participação em Bancas", "en": "Member in Examination Boards"},
-        "bancas": bancas,
-        }
-    return render(request, "professores/bancas_alocadas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def orientacoes_alocadas(request):
-    """Mostra detalhes sobre o professor."""
-    context = {
-        "titulo": {"pt": "Projetos Orientados", "en": "Projects Oriented"},
-        "projetos": Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre"),
-        }
-    return render(request, "professores/orientacoes_alocadas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def coorientacoes_alocadas(request):
-    """Mostra detalhes sobre o professor."""
-    context = {
-        "titulo": {"pt": "Projetos Coorientados", "en": "Cooriented Projects"},
-        "coorientacoes": Coorientador.objects.filter(usuario=request.user).order_by("-projeto__ano", "-projeto__semestre"),
-        }
-    return render(request, "professores/coorientacoes_alocadas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def mentorias_alocadas(request):
-    """Mostra detalhes sobre o professor."""
-    mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
-    mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
-    context = {
-        "titulo": {"pt": "Mentorias Facilitadas", "en": "Facilitated Mentoring"},
-        "mentorias": mentorias,
-        }
-    return render(request, "professores/mentorias_alocadas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_index(request, prof_id=None):
-    """Menus de bancas e calendario de bancas."""
-    dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-    if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
-        professor = get_object_or_404(Professor, pk=prof_id)
-    else:
-        professor = request.user.professor
-
-    # checando se projetos atuais tem banca marcada
-    configuracao = get_object_or_404(Configuracao)
-    hoje = datetime.date.today()
-    bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-    sem_banca = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, orientador=professor)
-    for banca in bancas:
-        if banca.projeto:
-            sem_banca = sem_banca.exclude(id=banca.projeto.id)
-
-    # Usando para #atualizar a página raiz no edit da banca
-    request.session["root_page_url"] = request.build_absolute_uri()
-
-    context = {
-        "titulo": {"pt": "Agendar Bancas", "en": "Schedule Examination Boards"},
-        "dias_bancas": dias_bancas,
-        "view": request.GET.get("view", None),
-        "date": request.GET.get("date", None),
-        "usuario": request.user,
-        "sem_banca": sem_banca,
-        "root_page_url": request.session["root_page_url"],  # Usando para #atualizar a página raiz no edit da banca
-    }
-
-    return render(request, "professores/bancas_index.html", context)
 
 
 @login_required
@@ -329,119 +191,500 @@ def ajax_atualiza_dinamica(request):
     return HttpResponse("Erro.", status=400)
 
 
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def avaliar_entregas(request, prof_id=None, selecao=None):
+    """Página para fzer e ver avaliação de entregas dos estudantes."""
+
+    if selecao == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
+
+    if request.is_ajax():
+
+        projetos = Projeto.objects.all()
+        if prof_id is not None:
+            if prof_id == "todos":
+                if request.user.tipo_de_usuario != 4:
+                    raise PermissionDenied("Sem acesso a estes projetos.")
+            else:
+                professor = get_object_or_404(Professor, pk=prof_id)
+                if (professor != request.user.professor) and (request.user.tipo_de_usuario != 4):
+                    raise PermissionDenied("Sem acesso a estes projetos.")
+                projetos = projetos.filter(orientador=professor)
+                if selecao:
+                    projetos = projetos.filter(id=selecao)
+        else:
+            projetos = projetos.filter(orientador=request.user.professor)
+
+        edicao = None
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = map(int, edicao.split('.'))
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+        else:
+            projetos = projetos.filter(orientador=request.user.professor)
+            
+
+        entregas = []
+        for projeto in projetos:
+            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
+            entregas.append(filtra_entregas(composicoes, projeto))
+
+        avaliacoes = zip(projetos, entregas)
+
+        context = {
+            "avaliacoes": avaliacoes,
+            "edicao": edicao,
+            "prazo_avaliar": -int(get_object_or_404(Configuracao).prazo_avaliar),
+            "hoje": datetime.date.today(),
+        }
+
+    else:
+        
+        exames = set()
+        for composicao in Composicao.objects.filter(entregavel=True):
+            exames.add(composicao.exame)
+
+        configuracao = get_object_or_404(Configuracao)
+
+        context = {
+                "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
+                "edicoes": get_edicoes(Relato)[0],
+                "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
+                "tipos_entregas": exames if selecao else None,
+            }
+
+    return render(request, "professores/avaliar_entregas.html", context=context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def mensagem_email(request, tipo=None, primarykey=None):
-    """Envia mensagens."""
+def aulas_tabela(request):
+    """Lista todas as aulas agendadas, conforme periodo pedido."""
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
 
-    if primarykey is None:
-        return HttpResponseNotFound("<h1>Erro!</h1>")
+            if edicao == "todas":
+                aulas = Evento.objects.filter(tipo_evento__sigla="A")
+            else:
+                ano, semestre = edicao.split('.')
+                if semestre == "1/2":
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano)
+                elif semestre == '1':
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__lt=7)
+                else:  # semestre == '2':
+                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__gt=6)
 
-    # Envia mensagem diretamente
-    if request.is_ajax() and request.method == "POST":
-
-        mensagem = ""
-        if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
-            assunto = request.POST["assunto"]
-            para = request.POST["para"]
-            mensagem = request.POST["mensagem"]
-        else:
-            return HttpResponse("Envio não realizado.", status=401)
-
-        recipient_list = para.split(';')
-        recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
-
-        email(assunto, recipient_list, mensagem)
-
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                      {"pt": "e-mail", "en": "e-mail"},
+                      {"pt": "Aula/Data", "en": "Class/Date"}]
         context = {
-                "atualizado": True,
-                "mensagem": mensagem,
+            "aulas": aulas,
+            "cabecalhos": cabecalhos,
             }
-        return JsonResponse(context)
-    
-    if tipo == "banca":
-    
-        banca = get_object_or_404(Banca, pk=primarykey)
-        projeto = banca.get_projeto()
 
-        para = ""
-        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
-            if projeto and projeto.orientador:
-                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-                for coorientador in projeto.coorientador_set.all():
-                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
-        if banca:
-            for membro in banca.membros():
-                para += membro.get_full_name() + " <" + membro.email + ">; "
-                
-        if banca and banca.alocacao:
-            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+    else:
+        context = {
+            "titulo": { "pt": "Alocação em Aulas", "en": "Class Allocation" },
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
+            }
+
+    return render(request, "professores/aulas_tabela.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def avaliar_bancas(request, prof_id=None):
+    """Visualiza os resultados das bancas de um projeto."""
+
+    if request.is_ajax():
+
+        if "edicao" in request.POST:
+
+            if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+                professor = get_object_or_404(Professor, pk=prof_id)
+            else:
+                professor = request.user.professor
+            
+            bancas = (Banca.objects.filter(membro1=professor.user) |
+                      Banca.objects.filter(membro2=professor.user) |
+                      Banca.objects.filter(membro3=professor.user))
+
+            # Orientador é automaticamente membro de banca final e intermediária
+            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, composicao__exame__sigla__in=["BI", "BF"])
+        
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = request.POST["edicao"].split('.')
+                bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+
         else:
-            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+            return HttpResponse("Erro ao carregar dados.", status=401)
         
-        context_carta = {
-            "request": request,
-            "projeto": projeto,
-            "banca": banca,
+        context = {
+            "objetivos": ObjetivosDeAprendizagem.objects.all(),
+            "bancas": bancas,
         }
-        message = render_message("Mensagem Banca", context_carta)
-
-    if tipo == "banca_projeto":
-    
-        projeto = get_object_or_404(Projeto, pk=primarykey)
-        banca = None
-
-        para = ""
-        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
-            if projeto and projeto.orientador:
-                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-                for coorientador in projeto.coorientador_set.all():
-                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
-        if banca:
-            for membro in banca.membros():
-                para += membro.get_full_name() + " <" + membro.email + ">; "
-        
-        if banca and banca.alocacao:
-            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
-        else:
-            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
-        
-        context_carta = {
-            "request": request,
-            "projeto": projeto,
-        }
-        message = render_message("Mensagem Banca", context_carta)
-
-    elif tipo == "certificado":
-    
-        certificado = get_object_or_404(Certificado, pk=primarykey)
+    else:
         configuracao = get_object_or_404(Configuracao)
-
-        para = ""
-        if certificado.usuario:
-            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
-
-        subject = "Capstone | Certificado: " + certificado.tipo_certificado.titulo
-        
-        context_carta = {
-            "request": request,
-            "configuracao": configuracao,
-            "certificado": certificado,
+        context = {
+            "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
+            "edicoes": get_edicoes(Projeto)[0],
+            "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
         }
-        message = render_message("Mensagem Certificado", context_carta)
+    return render(request, "professores/resultado_bancas.html", context=context)
 
-    para = para.strip()
-    if para[-1] == ";":
-        para = para[:-1]  # tirando o ultimo ";"
+
+@transaction.atomic
+def banca(request, slug):
+    """Somente ve a banca, sem edição."""
+    banca = get_object_or_404(Banca, slug=slug)
+
+    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
+        # Reaproveita o tipo de documento da banca final
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
+        # Reaproveita o tipo de documento da banca final
+        tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    else:
+        tipo_documento = None
+    
+    if tipo_documento:
+        documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+        if banca.alocacao and banca.alocacao.projeto:
+            documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+        documentos = documentos.order_by("tipo_documento", "-data")
+    else:
+        documentos = None
 
     context = {
-        "assunto": subject,
-        "para": para,
-        "mensagem": message,
-        "url": request.get_full_path(),
+        "titulo": {"pt": "Banca", "en": "Examination Board"},
+        "banca": banca,
+        "documentos": documentos,
+        "bloqueado": True,
     }
-    return render(request, "professores/mensagem_email.html", context)
+
+    return render(request, "professores/banca_ver.html", context)
+
+
+@transaction.atomic
+def banca_avaliar(request, slug, documento_id=None):
+    """Cria uma tela para preencher avaliações de bancas."""
+    configuracao = get_object_or_404(Configuracao)
+    mensagem = ""
+
+    try:
+        banca = Banca.objects.get(slug=slug)
+        if banca.projeto is None and banca.alocacao is None:
+            return HttpResponseNotFound("<h1>Banca não registrada corretamente!</h1>")
+        
+        adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
+        vencida = banca.endDate.date() + datetime.timedelta(days=configuracao.prazo_preencher_banca) < datetime.date.today()
+
+        if vencida:  # prazo vencido
+            mensagem += render_message("Banca Vencida", {"banca": banca, "configuracao": configuracao})
+            if not adm:  # se administrador passa direto
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, "generic.html", context=context)
+
+    except Banca.DoesNotExist:
+        return HttpResponseNotFound("<h1>Banca não encontrada!</h1>")
+
+    projeto = banca.get_projeto()
+
+    # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
+    if documento_id:
+        documento = Documento.objects.get(id=documento_id, projeto=projeto)
+        path = str(documento.documento).split('/')[-1]
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+        diferenca = (datetime.date.today() - banca.endDate.date()).days
+        if diferenca > configuracao.prazo_preencher_banca:
+            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(configuracao.prazo_preencher_banca) + " dias após a data da banca!</h1>")
+        return le_arquivo(request, local_path, path, bypass_confidencial=True)
+
+    ####################################################################################
+    # ISSO ESTÁ OBSOLETO
+    # Subistituir por:     objetivos = composicao.pesos.all()
+    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
+    # Banca(Intermediária, Final, Probation) ou Falconi
+    sigla = banca.composicao.exame.sigla
+    if sigla in ["BI", "BF"]:
+        objetivos = objetivos.filter(avaliacao_banca=True)
+    elif sigla == "F":  # Falconi
+        objetivos = objetivos.filter(avaliacao_falconi=True)
+    elif sigla == "P":  # Probation
+        objetivos = objetivos.filter(avaliacao_aluno=True)
+    else:
+        return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
+    ####################################################################################
+    
+    if request.method == "POST":
+        if "avaliador" in request.POST:
+
+            avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
+            exame = banca.composicao.exame
+
+            # Identifica que uma avaliação/observação já foi realizada anteriormente
+            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+            observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
+            if banca.alocacao:
+                avaliacoes_anteriores = avaliacoes_anteriores.filter(alocacao=banca.alocacao)
+                observacoes_anteriores = observacoes_anteriores.filter(alocacao=banca.alocacao)
+            
+            realizada = avaliacoes_anteriores.exists()
+
+            # Mover avaliação anterior para base de dados de Avaliações Velhas
+            move_avaliacoes(avaliacoes_anteriores, observacoes_anteriores)
+
+            objetivos_possiveis = len(objetivos)
+            julgamento = [None]*objetivos_possiveis
+            
+            avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
+
+            for i, aval in enumerate(avaliacoes):
+
+                pk_objetivo, conceito = request.POST[aval].split('.')
+                julgamento[i] = Avaliacao2.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
+                julgamento[i].alocacao = banca.alocacao  # Caso Probation
+                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
+
+                if conceito == "NA":
+                    julgamento[i].na = True
+                else:
+                    julgamento[i].na = False
+                    julgamento[i].nota = converte_conceito(conceito)
+                    if exame.titulo == "Banca Intermediária":    
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
+                    elif exame.titulo == "Banca Final":
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
+                    elif exame.titulo == "Falconi":
+                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
+                    elif exame.titulo == "Probation":
+                        julgamento[i].peso = 0.0
+                    else:
+                        julgamento[i].peso = 0.0 
+
+                julgamento[i].save()
+
+            julgamento_observacoes = None
+            if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
+               ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
+                julgamento_observacoes = Observacao.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
+                julgamento_observacoes.alocacao = banca.alocacao  # Caso Probation
+                julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
+                julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
+                julgamento_observacoes.save()
+
+            subject = "Capstone | Avaliação de Banca - "
+            subject += banca.composicao.exame.titulo + " "
+            if banca.composicao.exame.sigla == "P":
+                subject += banca.alocacao.aluno.user.get_full_name()
+            subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+
+            # Envio de mensagem para Avaliador
+            message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
+            recipient_list = [avaliador.email, ]
+            email(subject, recipient_list, message)
+
+            # Envio de mensagem para Orientador / Coordenação
+            message = mensagem_orientador(banca)
+            
+            if banca.composicao.exame.sigla in ["BI", "BF"]:  # Intermediária e Final
+                recipient_list = [projeto.orientador.user.email, ]
+            else:  # Falconi ou Probation
+                recipient_list = [configuracao.coordenacao.user.email, ]
+            email(subject, recipient_list, message)
+            
+            resposta = "Avaliação submetida e enviada para:<br>"
+            for recipient in recipient_list:
+                resposta += "&bull; {0}<br>".format(recipient)
+            if realizada:
+                resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+            resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+            context = {
+                "area_principal": True,
+                "mensagem": resposta,
+            }
+            return render(request, "generic.html", context=context)
+
+        return HttpResponse("Avaliação não submetida.")
+    else:
+
+        pessoas, membros = coleta_membros_banca(banca)
+        composicao = banca.composicao
+
+        # Identificando quem seria o avaliador
+        avaliador_id = request.GET.get("avaliador")
+        if avaliador_id:
+            try:
+                avaliador_id = int(avaliador_id)
+            except ValueError:
+                return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
+        else:
+            avaliador_id = request.user.pk if request.user.is_authenticated else None
+        
+        conceitos = [None]*len(objetivos)
+        for i in range(len(objetivos)):
+            try:
+                tmp_objetivo = int(request.GET.get("objetivo"+str(i), '0'))
+            except ValueError:
+                return HttpResponseNotFound("<h1>Erro em objetivo!</h1>")
+            tmp_conceito = request.GET.get("conceito"+str(i), '')
+            conceitos[i] = (tmp_objetivo, tmp_conceito)
+
+        map_tipo_documento = {
+            "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
+            "F": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
+            "P": TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
+        }
+
+        tipo_documento = map_tipo_documento.get(banca.composicao.exame.sigla)
+
+        documentos = None
+        if tipo_documento:
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
+
+        context = {
+            "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
+            "projeto": projeto,
+            "estudante": banca.alocacao.aluno if banca.alocacao else None,
+            "individual": True if banca.alocacao else False,
+            "pessoas": pessoas,
+            "membros": membros,
+            "objetivos": objetivos,
+            "banca": banca,
+            "composicao": composicao,
+            "avaliador": avaliador_id,
+            "conceitos": conceitos,
+            "documentos": documentos,
+            "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
+            "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
+            "today": datetime.datetime.now(),
+            "mensagem": mensagem,
+            "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
+        }
+        return render(request, "professores/banca_avaliar.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def banca_ver(request, primarykey):
+    """Retorna banca pedida."""
+    banca = get_object_or_404(Banca, id=primarykey)
+    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
+    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
+        # Repetindo banca final para falconi
+        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
+        # Repetindo banca final para probation
+        tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
+    else:
+        tipo_documento = TipoDocumento.objects.none()
+
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+    if banca.alocacao and banca.alocacao.projeto:
+        documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+    documentos = documentos.order_by("tipo_documento", "-data")
+
+    context = {
+        "titulo": {"pt": "Banca", "en": "Examination Board"},
+        "banca": banca,
+        "documentos": documentos,
+    }
+
+    return render(request, "professores/banca_ver.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    bancas = (Banca.objects.filter(membro1=request.user) |
+              Banca.objects.filter(membro2=request.user) |
+              Banca.objects.filter(membro3=request.user))
+    
+    if request.user.professor:
+        # Orientador é automaticamente membro de banca final e intermediária
+        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, composicao__exame__sigla__in=("BI", "BF"))
+
+    # Usado para inverter as datas das bancas atuais
+    periodo = timezone.now().date() - datetime.timedelta(days=30)
+    bancas = bancas.annotate(
+        custom_order=Case(
+            When(startDate__lt=periodo, then=Value(100000000000)),
+            When(startDate__gte=periodo, then=Func(F("startDate"), function='EXTRACT', template="%(function)s(EPOCH FROM %(expressions)s)", output_field=FloatField())),
+            output_field=FloatField(),
+        )
+    ).order_by("custom_order", "-startDate")
+
+    context = {
+        "titulo": {"pt": "Participação em Bancas", "en": "Member in Examination Boards"},
+        "bancas": bancas,
+        }
+    return render(request, "professores/bancas_alocadas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_tabela_alocacao_completa(request):
+    """Lista todas as bancas agendadas, conforme periodo pedido."""
+    configuracao = get_object_or_404(Configuracao)
+
+    membros_pfe = []
+    periodo = []
+
+    ano = 2018
+    semestre = 2
+    while True:
+        membros = dict()
+        bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+        for banca in bancas:
+            if banca.projeto.orientador:
+                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
+            for membro in banca.membros():
+                membros.setdefault(membro, []).append(banca)
+
+        membros_pfe.append(membros)
+        periodo.append(str(ano)+"."+str(semestre))
+
+        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
+            break
+
+        if semestre == 2:
+            semestre = 1
+            ano += 1
+        else:
+            semestre = 2
+
+    # inverti lista deixando os mais novos primeiro
+    anos = zip(membros_pfe[::-1], periodo[::-1])
+
+    informacoes = [
+        ("#MembrosTable tr > *:nth-child(2)", "e-mail", "e-mail"),
+        ("#MembrosTable tr > *:nth-child(3)", "Quantidade", "Quantity"),
+        ("#MembrosTable tr > *:nth-child(4)", "Projetos", "Projects"),
+    ]
+
+    context = {
+        "anos": anos,
+        "informacoes": informacoes,
+        "titulo": { "pt": "Alocação em Bancas", "en": "Examination Board Assignment" },
+    }
+
+    return render(request, "professores/bancas_tabela_alocacao_completa.html", context)
 
 
 @login_required
@@ -692,6 +935,244 @@ def bancas_tabela_alocacao(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def coorientacoes_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    context = {
+        "titulo": {"pt": "Projetos Coorientados", "en": "Cooriented Projects"},
+        "coorientacoes": Coorientador.objects.filter(usuario=request.user).order_by("-projeto__ano", "-projeto__semestre"),
+        }
+    return render(request, "professores/coorientacoes_alocadas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_index(request, prof_id=None):
+    """Menus de bancas e calendario de bancas."""
+    dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
+    if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+        professor = get_object_or_404(Professor, pk=prof_id)
+    else:
+        professor = request.user.professor
+
+    # checando se projetos atuais tem banca marcada
+    configuracao = get_object_or_404(Configuracao)
+    hoje = datetime.date.today()
+    bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    sem_banca = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, orientador=professor)
+    for banca in bancas:
+        if banca.projeto:
+            sem_banca = sem_banca.exclude(id=banca.projeto.id)
+
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+
+    context = {
+        "titulo": {"pt": "Agendar Bancas", "en": "Schedule Examination Boards"},
+        "dias_bancas": dias_bancas,
+        "view": request.GET.get("view", None),
+        "date": request.GET.get("date", None),
+        "usuario": request.user,
+        "sem_banca": sem_banca,
+        "root_page_url": request.session["root_page_url"],  # Usando para #atualizar a página raiz no edit da banca
+    }
+
+    return render(request, "professores/bancas_index.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def dinamicas_lista(request):
+    """Mostra os horários de dinâmicas."""
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+
+            encontros = Encontro.objects.all().order_by("startDate")
+
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                pass  # segue com encontros
+            elif edicao == "proximas":
+                hoje = datetime.date.today()
+                encontros = encontros.filter(startDate__gt=hoje)
+            else:
+                ano, semestre = map(int, edicao.split('.'))
+
+                encontros = encontros.filter(startDate__year=ano)
+                if semestre == 1:
+                    encontros = encontros.filter(startDate__month__lt=8)
+                else:
+                    encontros = encontros.filter(startDate__month__gt=7)
+
+            # checando se projetos atuais tem banca marcada
+            configuracao = get_object_or_404(Configuracao)
+            sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
+                                            semestre=configuracao.semestre)
+            for encontro in encontros:
+                if encontro.projeto:
+                    sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
+
+            context = {
+                "sem_dinamicas": sem_dinamicas,
+                "encontros": encontros,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+
+        informacoes = [
+            (".orientador", "orientador", "advisor"),
+            (".local", "local", "location"),
+            (".grupo", "grupo", "group"),
+            (".curso", "curso", "program"),
+            (".facilitador", "facilitador", "facilitator"),
+            (".sem_agendamento", "sem agendamento", "no schedule"),
+        ]
+
+        context = {
+                "titulo": {"pt": "Mentorias", "en": "Mentoring"},
+                "edicoes": get_edicoes(Projeto)[0],
+                "informacoes": informacoes,
+            }
+        
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+    context["root_page_url"] = request.session["root_page_url"]
+
+    return render(request, "professores/dinamicas_lista.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def mensagem_email(request, tipo=None, primarykey=None):
+    """Envia mensagens."""
+
+    if primarykey is None:
+        return HttpResponseNotFound("<h1>Erro!</h1>")
+
+    # Envia mensagem diretamente
+    if request.is_ajax() and request.method == "POST":
+
+        mensagem = ""
+        if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
+            assunto = request.POST["assunto"]
+            para = request.POST["para"]
+            mensagem = request.POST["mensagem"]
+        else:
+            return HttpResponse("Envio não realizado.", status=401)
+
+        recipient_list = para.split(';')
+        recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
+
+        email(assunto, recipient_list, mensagem)
+
+        context = {
+                "atualizado": True,
+                "mensagem": mensagem,
+            }
+        return JsonResponse(context)
+    
+    if tipo == "banca":
+    
+        banca = get_object_or_404(Banca, pk=primarykey)
+        projeto = banca.get_projeto()
+
+        para = ""
+        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
+            if projeto and projeto.orientador:
+                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+                for coorientador in projeto.coorientador_set.all():
+                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
+        if banca:
+            for membro in banca.membros():
+                para += membro.get_full_name() + " <" + membro.email + ">; "
+                
+        if banca and banca.alocacao:
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+        else:
+            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+        
+        context_carta = {
+            "request": request,
+            "projeto": projeto,
+            "banca": banca,
+        }
+        message = render_message("Mensagem Banca", context_carta)
+
+    if tipo == "banca_projeto":
+    
+        projeto = get_object_or_404(Projeto, pk=primarykey)
+        banca = None
+
+        para = ""
+        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
+            if projeto and projeto.orientador:
+                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+                for coorientador in projeto.coorientador_set.all():
+                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
+        if banca:
+            for membro in banca.membros():
+                para += membro.get_full_name() + " <" + membro.email + ">; "
+        
+        if banca and banca.alocacao:
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+        else:
+            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+        
+        context_carta = {
+            "request": request,
+            "projeto": projeto,
+        }
+        message = render_message("Mensagem Banca", context_carta)
+
+    elif tipo == "certificado":
+    
+        certificado = get_object_or_404(Certificado, pk=primarykey)
+        configuracao = get_object_or_404(Configuracao)
+
+        para = ""
+        if certificado.usuario:
+            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
+
+        subject = "Capstone | Certificado: " + certificado.tipo_certificado.titulo
+        
+        context_carta = {
+            "request": request,
+            "configuracao": configuracao,
+            "certificado": certificado,
+        }
+        message = render_message("Mensagem Certificado", context_carta)
+
+    para = para.strip()
+    if para[-1] == ";":
+        para = para[:-1]  # tirando o ultimo ";"
+
+    context = {
+        "assunto": subject,
+        "para": para,
+        "mensagem": message,
+        "url": request.get_full_path(),
+    }
+    return render(request, "professores/mensagem_email.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def mentorias_alocadas(request):
+    """Mostra detalhes sobre o professor."""
+    mentorias = Encontro.objects.exclude(endDate__lt=datetime.date.today(), projeto__isnull=True)
+    mentorias = mentorias.filter(facilitador=request.user).order_by("-projeto__ano", "-projeto__semestre", "startDate")
+    context = {
+        "titulo": {"pt": "Mentorias Facilitadas", "en": "Facilitated Mentoring"},
+        "mentorias": mentorias,
+        }
+    return render(request, "professores/mentorias_alocadas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def mentorias_tabela(request):
     """Lista todas as mentorias agendadas, conforme periodo pedido."""
     if request.is_ajax():
@@ -709,7 +1190,6 @@ def mentorias_tabela(request):
             mentores = dict()
             for mentoria in mentorias.filter(projeto__isnull=False):
                 mentores.setdefault(mentoria.facilitador, []).append(mentoria)
-
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
                       {"pt": "e-mail", "en": "e-mail"},
@@ -733,868 +1213,15 @@ def mentorias_tabela(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def aulas_tabela(request):
-    """Lista todas as aulas agendadas, conforme periodo pedido."""
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-
-            if edicao == "todas":
-                aulas = Evento.objects.filter(tipo_evento__sigla="A")
-            else:
-                ano, semestre = edicao.split('.')
-                if semestre == "1/2":
-                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano)
-                elif semestre == '1':
-                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__lt=7)
-                else:  # semestre == '2':
-                    aulas = Evento.objects.filter(tipo_evento__sigla="A", endDate__year=ano, endDate__month__gt=6)
-
-        cabecalhos = [{"pt": "Nome", "en": "Name"},
-                      {"pt": "e-mail", "en": "e-mail"},
-                      {"pt": "Aula/Data", "en": "Class/Date"}]
-        context = {
-            "aulas": aulas,
-            "cabecalhos": cabecalhos,
-            }
-
-    else:
-        context = {
-            "titulo": { "pt": "Alocação em Aulas", "en": "Class Allocation" },
-            "edicoes": get_edicoes(Projeto, anual=True)[0],
-            }
-
-    return render(request, "professores/aulas_tabela.html", context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_tabela_alocacao_completa(request):
-    """Lista todas as bancas agendadas, conforme periodo pedido."""
-    configuracao = get_object_or_404(Configuracao)
-
-    membros_pfe = []
-    periodo = []
-
-    ano = 2018
-    semestre = 2
-    while True:
-        membros = dict()
-        bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
-        for banca in bancas:
-            if banca.projeto.orientador:
-                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
-            for membro in banca.membros():
-                membros.setdefault(membro, []).append(banca)
-
-        membros_pfe.append(membros)
-        periodo.append(str(ano)+"."+str(semestre))
-
-        if ((ano == configuracao.ano) and (semestre == configuracao.semestre)):
-            break
-
-        if semestre == 2:
-            semestre = 1
-            ano += 1
-        else:
-            semestre = 2
-
-    # inverti lista deixando os mais novos primeiro
-    anos = zip(membros_pfe[::-1], periodo[::-1])
-
-    informacoes = [
-        ("#MembrosTable tr > *:nth-child(2)", "e-mail", "e-mail"),
-        ("#MembrosTable tr > *:nth-child(3)", "Quantidade", "Quantity"),
-        ("#MembrosTable tr > *:nth-child(4)", "Projetos", "Projects"),
-    ]
-
+def orientacoes_alocadas(request):
+    """Mostra detalhes sobre o professor."""
     context = {
-        "anos": anos,
-        "informacoes": informacoes,
-        "titulo": { "pt": "Alocação em Bancas", "en": "Examination Board Assignment" },
-    }
-
-    return render(request, "professores/bancas_tabela_alocacao_completa.html", context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def banca_ver(request, primarykey):
-    """Retorna banca pedida."""
-    banca = get_object_or_404(Banca, id=primarykey)
-    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
-        # Repetindo banca final para falconi
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
-        # Repetindo banca final para probation
-        tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    else:
-        tipo_documento = TipoDocumento.objects.none()
-
-    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
-    if banca.alocacao and banca.alocacao.projeto:
-        documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
-    documentos = documentos.order_by("tipo_documento", "-data")
-
-    context = {
-        "titulo": {"pt": "Banca", "en": "Examination Board"},
-        "banca": banca,
-        "documentos": documentos,
-    }
-
-    return render(request, "professores/banca_ver.html", context)
-
-
-# Mensagem preparada para o avaliador
-def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada):
-    
-    message = "{0},<br><br>\n".format(avaliador.get_full_name())
-    message += "Obrigado por sua avaliação de banca no Capstone<br><br>\n"
-    message += "Estamos também informando o orientador do projeto sobre sua avaliação<br><br>\n"
-
-    if realizada:
-        message += "<h3 style='color:red;text-align:center;'>"
-        message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
-        message += "</h3><br><br>"
-    
-    projeto = banca.get_projeto()
-
-    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
-    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
-    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
-    message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
-    message += "<b>Data da Banca:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
-
-    message += "<b>Tipo de Banca:</b> "
-    message += banca.composicao.exame.titulo + "<br>\n"
-    
-    if banca.alocacao:
-        message += "<br><b>Estudante em Probation:</b> {0}<br>\n".format(banca.alocacao.aluno.user.get_full_name())
-
-    message += "<br>\n<br>\n"
-    message += "<b>Conceitos:</b><br>\n"
-    message += "<table style='border: 1px solid black; "
-    message += "border-collapse:collapse; padding: 0.3em;'>"
-
-    for i in range(objetivos_possiveis):
-        if julgamento[i]:
-            message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                format(julgamento[i].objetivo.titulo)
-            message += "<td style='border: 1px solid black; text-align:center'>"
-            if julgamento[i].na:
-                message += "&nbsp;N/A&nbsp;</td>\n"
-            else:
-                message += "&nbsp;{0}&nbsp;</td>\n".\
-                    format(converte_letra(julgamento[i].nota))
-                
-    message += "</table>"
-
-    message += "<br>\n<br>\n"
-
-    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
-        message += "<b>Observações Estudantes (enviada para todo o grupo):</b>\n"
-        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-        message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
-        message += "</p>"
-        message += "<br>\n<br>\n"
-
-    if julgamento_observacoes and julgamento_observacoes.observacoes_orientador:
-        message += "<b>Observações Orientador (somente enviada para orientador):</b>\n"
-        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-        message += html.escape(julgamento_observacoes.observacoes_orientador).replace('\n', '<br>\n')
-        message += "</p>"
-        message += "<br>\n<br>\n"
-
-    # Criar link para reeditar
-    message += "<a href='" + settings.SERVER
-    message += "/professores/banca_avaliar/" + str(banca.slug)
-
-    message += "?avaliador=" + str(avaliador.id)
-    for count, julg in enumerate(julgamento):
-        if julg and not julg.na:
-            message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
-            message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
-    if julgamento_observacoes and julgamento_observacoes.observacoes_orientador:
-        message += "&observacoes_orientador=" + quote(julgamento_observacoes.observacoes_orientador)
-    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
-        message += "&observacoes_estudantes=" + quote(julgamento_observacoes.observacoes_estudantes)    
-    message += "'>"
-    message += "Caso deseje reenviar sua avaliação, clique aqui."
-    message += "</a><br>\n"
-    message += "<br>\n"
-
-    # Relistar os Objetivos de Aprendizagem
-    message += "<br><b>Objetivos de Aprendizagem</b>"
-
-    destaque = " background-color: #E0E0F4;'>"
-
-    for julg in julgamento:
-
-        if julg:
-
-            message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
-            message += "<table "
-            message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
-            message += "<tr>"
-
-            if (not julg.na) and converte_letra(julg.nota) == "I":
-                message += "<td style='border: 2px solid black; width:18%;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black; width:18%;'>"
-            message += "Insatisfatório (I)</th>"
-
-            if (not julg.na) and converte_letra(julg.nota) == "D":
-                message += "<td style='border: 2px solid black; width:18%;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black; width:18%;'>"
-            message += "Em Desenvolvimento (D)</th>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                message += "<td style='border: 2px solid black; width:18%;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black; width:18%;'>"
-            message += "Essencial (C/C+)</th>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                message += "<td style='border: 2px solid black; width:18%;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black; width:18%;'>"
-            message += "Proficiente (B/B+)</th>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                message += "<td style='border: 2px solid black; width:18%;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black; width:18%;'>"
-            message += "Avançado (A/A+)</th>"
-
-            message += "</tr>"
-
-
-            message += "<tr " 
-            if julg.na:
-                message += " style='background-color: #151515;'"
-            message += ">"
-
-            if (not julg.na) and converte_letra(julg.nota) == "I":
-                message += "<td style='border: 2px solid black;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black;'>"
-            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
-                message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
-            else:
-                message += "{0}".format(julg.objetivo.rubrica_final_I)
-
-            message += "</td>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
-                message += "<td style='border: 2px solid black;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black;'>"
-            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
-                message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
-            else:
-                message += "{0}".format(julg.objetivo.rubrica_final_D)
-            message += "</td>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                message += "<td style='border: 2px solid black;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black;'>"
-            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
-                message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
-            else:
-                message += "{0}".format(julg.objetivo.rubrica_final_C)
-            message += "</td>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                message += "<td style='border: 2px solid black;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black;'>"
-            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
-                message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
-            else:
-                message += "{0}".format(julg.objetivo.rubrica_final_B)
-            message += "</td>"
-
-            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                message += "<td style='border: 2px solid black;"
-                message += destaque
-            else:
-                message += "<td style='border: 1px solid black;'>"
-            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
-                message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
-            else:
-                message += "{0}".format(julg.objetivo.rubrica_final_A)
-            message += "</td>"
-
-            message += "</tr>"
-            message += "</table>"
-
-    return message
-
-
-
-# Mensagem preparada para os estudantes
-def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observacoes, objetivos_possiveis):
-    
-    message = ""
-    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
-    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
-    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
-    
-    message += "<b>Avaliação:</b> "
-    message += composicao.exame.titulo
-
-    message += "<br>\n<br>\n"
-    if objetivos_possiveis == 0:
-        message += "<b>Decisão = </b>"
-        if julgamento[0].nota > 5:
-            message += "Adequado"
-        else:
-            message += "Inadequado"
-        message += "<br>\n"
-    else:
-        
-        message += "<b>Conceitos:</b><br>\n"
-        message += "<table style='border: 1px solid black; "
-        message += "border-collapse:collapse; padding: 0.3em;'>"
-
-        for i in range(objetivos_possiveis):
-            if julgamento[i]:
-                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
-                    format(julgamento[i].objetivo.titulo)
-                message += "<td style='border: 1px solid black; text-align:center'>"
-                if julgamento[i].na:
-                    message += "&nbsp;N/A&nbsp;</td>\n"
-                else:
-                    message += "&nbsp;{0}&nbsp;</td>\n".\
-                        format(converte_letra(julgamento[i].nota))
-                    
-        message += "</table>"
-
-    message += "<br>\n<br>\n"
-
-    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
-        message += "<b>Observações:</b>\n"
-        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
-        message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
-        message += "</p>"
-        message += "<br>\n<br>\n"
-
-    message += "<br>\n"
-
-    if objetivos_possiveis > 0:
-        # Relistar os Objetivos de Aprendizagem
-        message += "<br><b>Objetivos de Aprendizagem</b>"
-
-        destaque = " background-color: #E0E0F4;'>"
-
-        for julg in julgamento:
-
-            if julg:
-
-                message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
-                message += "<table "
-                message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
-                message += "<tr>"
-
-                if (not julg.na) and converte_letra(julg.nota) == "I":
-                    message += "<td style='border: 2px solid black; width:18%;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black; width:18%;'>"
-                message += "Insatisfatório (I)</th>"
-
-                if (not julg.na) and converte_letra(julg.nota) == "D":
-                    message += "<td style='border: 2px solid black; width:18%;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black; width:18%;'>"
-                message += "Em Desenvolvimento (D)</th>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                    message += "<td style='border: 2px solid black; width:18%;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black; width:18%;'>"
-                message += "Essencial (C/C+)</th>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                    message += "<td style='border: 2px solid black; width:18%;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black; width:18%;'>"
-                message += "Proficiente (B/B+)</th>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                    message += "<td style='border: 2px solid black; width:18%;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black; width:18%;'>"
-                message += "Avançado (A/A+)</th>"
-
-                message += "</tr>"
-
-
-                message += "<tr " 
-                if julg.na:
-                    message += " style='background-color: #151515;'"
-                message += ">"
-
-                if (not julg.na) and converte_letra(julg.nota) == "I":
-                    message += "<td style='border: 2px solid black;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black;'>"
-                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
-                else:
-                    message += "{0}".format(julg.objetivo.rubrica_final_I)
-
-                message += "</td>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
-                    message += "<td style='border: 2px solid black;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black;'>"
-                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
-                else:
-                    message += "{0}".format(julg.objetivo.rubrica_final_D)
-                message += "</td>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
-                    message += "<td style='border: 2px solid black;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black;'>"
-                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
-                else:
-                    message += "{0}".format(julg.objetivo.rubrica_final_C)
-                message += "</td>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
-                    message += "<td style='border: 2px solid black;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black;'>"
-                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
-                else:
-                    message += "{0}".format(julg.objetivo.rubrica_final_B)
-                message += "</td>"
-
-                if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
-                    message += "<td style='border: 2px solid black;"
-                    message += destaque
-                else:
-                    message += "<td style='border: 1px solid black;'>"
-                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
-                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
-                else:
-                    message += "{0}".format(julg.objetivo.rubrica_final_A)
-                message += "</td>"
-
-                message += "</tr>"
-                message += "</table>"
-
-    return message
-
-
-def calcula_notas_bancas(avaliadores):
-    obj_avaliados = {}
-    
-    message2 = "<table>"
-    for avaliador, objs in avaliadores.items():
-        
-        message2 += "<tr><td>"
-        message2 += "<strong>Avaliador"
-        if avaliador.genero == "F":
-            message2 += "a"
-        message2 += ": </strong>"
-        message2 += avaliador.get_full_name() + "<br>"
-
-        if "momento" in objs:
-            message2 += "<strong>Avaliado em: </strong>"
-            message2 += objs["momento"].strftime('%d/%m/%Y às %H:%M') + "<br>"
-
-        message2 += "<strong>Conceitos:</strong><br>"
-
-        message2 += "<ul style='margin-top: 0px;'>"
-
-        for objetivo, conceito in objs.items():
-            if objetivo != "momento" and objetivo != "observacoes_estudantes" and objetivo != "observacoes_orientador":
-                message2 += "<li>"
-                message2 += objetivo.titulo
-                message2 += " : "
-                if conceito.nota is not None:
-                    message2 += converte_conceitos(conceito.nota)                
-                    message2 += "</li>"
-                    if objetivo.titulo in obj_avaliados:
-                        obj_avaliados[objetivo.titulo]["nota"] += conceito.nota
-                        obj_avaliados[objetivo.titulo]["qtd"] += 1
-                    else:
-                        obj_avaliados[objetivo.titulo] = {}
-                        obj_avaliados[objetivo.titulo]["nota"] = conceito.nota
-                        obj_avaliados[objetivo.titulo]["qtd"] = 1
-                else:
-                    message2 += "N/A</li>"
-
-        if "observacoes_estudantes" in objs and objs["observacoes_estudantes"]:
-            message2 += "<li>Observações Estudantes: " + objs["observacoes_estudantes"] + "</li>"
-        if "observacoes_orientador" in objs and objs["observacoes_orientador"]:
-            message2 += "<li>Observações Orientador: " + objs["observacoes_orientador"] + "</li>"
-        
-        message2 += "</ul>"
-        message2 += "</td></tr>"
-
-
-    message2 += "</td></tr>"
-    message2 += "</table>"
-
-    return message2, obj_avaliados
-
-def calcula_media_notas_bancas(obj_avaliados):
-    message = ""
-    message += "<div style='color: red; border-width:3px; border-style:solid; border-color:#ff0000; display: inline-block; padding: 10px;'>"
-    message += "<b> Média das avaliações: "
-    message += "<ul>"
-    medias = 0
-    for txt, obj in obj_avaliados.items():
-        if obj["qtd"] > 0.0:
-            message += "<li>"
-            message += txt
-            message += ": "
-            media = obj["nota"]/obj["qtd"]
-            medias += arredonda_conceitos(media)
-            message += converte_conceitos(media)
-            message += "</li>"
-        else:
-            message += "<li>N/A</li>"
-
-    message += "</ul>"
-    
-    message += "&#10149; Nota Final Calculada = "
-    if len(obj_avaliados):
-        message += "<span>"
-        message += "<b style='font-size: 1.16em;'>"
-        message += "%.2f" % (medias/len(obj_avaliados))
-        message += "</b><br>"
-        message += "</span>"
-    else:
-        message += "<span>N/A</span>"
-
-    message += "</b></div><br><br>"
-
-    return message
-
-
-# Mensagem preparada para o orientador/coordenador
-def mensagem_orientador(banca, geral=False):
-    objetivos = ObjetivosDeAprendizagem.objects.all()  
-    exame = banca.composicao.exame
-    projeto = banca.get_projeto()
-
-    # Buscando Avaliadores e Avaliações
-    avaliadores = {}
-    for objetivo in objetivos:
-        avaliacoes = Avaliacao2.objects.filter(projeto=projeto,
-                                                objetivo=objetivo,
-                                                exame=exame)\
-                .order_by("avaliador", "-momento")
-        if banca.alocacao:
-            avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
-
-        for avaliacao in avaliacoes:
-            if avaliacao.avaliador not in avaliadores:
-                avaliadores[avaliacao.avaliador] = {}
-            if objetivo not in avaliadores[avaliacao.avaliador]:
-                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
-                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
-
-    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
-        order_by("avaliador", "-momento")
-    if banca.alocacao:
-        observacoes = observacoes.filter(alocacao=banca.alocacao)
-
-    for observacao in observacoes:
-        if observacao.avaliador not in avaliadores:
-            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
-        if "observacoes_orientador" not in avaliadores[observacao.avaliador]:
-            avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-        if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
-            avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-
-    message3, obj_avaliados = calcula_notas_bancas(avaliadores)
-    message2 = calcula_media_notas_bancas(obj_avaliados)
-
-    context_carta = {
-        "banca": banca,
-        "objetivos": objetivos,
-        "projeto": projeto,
-    }
-    if geral:
-        message = render_message("Informe Geral de Avaliação de Banca", context_carta)
-    else:
-        message = render_message("Informe de Avaliação de Banca", context_carta)
-    
-    return message+message2+message3
-
-
-@transaction.atomic
-def banca_avaliar(request, slug, documento_id=None):
-    """Cria uma tela para preencher avaliações de bancas."""
-    configuracao = get_object_or_404(Configuracao)
-    mensagem = ""
-
-    try:
-        banca = Banca.objects.get(slug=slug)
-        if banca.projeto is None and banca.alocacao is None:
-            return HttpResponseNotFound("<h1>Banca não registrada corretamente!</h1>")
-        
-        adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
-        vencida = banca.endDate.date() + datetime.timedelta(days=configuracao.prazo_preencher_banca) < datetime.date.today()
-
-        if vencida:  # prazo vencido
-            mensagem += render_message("Banca Vencida", {"banca": banca, "configuracao": configuracao})
-            if not adm:  # se administrador passa direto
-                context = {
-                    "area_principal": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, "generic.html", context=context)
-
-    except Banca.DoesNotExist:
-        return HttpResponseNotFound("<h1>Banca não encontrada!</h1>")
-
-    projeto = banca.get_projeto()
-
-    # Usado para pegar o relatório de avaliação de banca para usuários não cadastrados
-    if documento_id:
-        documento = Documento.objects.get(id=documento_id, projeto=projeto)
-        path = str(documento.documento).split('/')[-1]
-        local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
-        diferenca = (datetime.date.today() - banca.endDate.date()).days
-        if diferenca > configuracao.prazo_preencher_banca:
-            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(configuracao.prazo_preencher_banca) + " dias após a data da banca!</h1>")
-        return le_arquivo(request, local_path, path, bypass_confidencial=True)
-
-    ####################################################################################
-    # ISSO ESTÁ OBSOLETO
-    # Subistituir por:     objetivos = composicao.pesos.all()
-    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
-    # Banca(Intermediária, Final, Probation) ou Falconi
-    sigla = banca.composicao.exame.sigla
-    if sigla in ["BI", "BF"]:
-        objetivos = objetivos.filter(avaliacao_banca=True)
-    elif sigla == "F":  # Falconi
-        objetivos = objetivos.filter(avaliacao_falconi=True)
-    elif sigla == "P":  # Probation
-        objetivos = objetivos.filter(avaliacao_aluno=True)
-    else:
-        return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
-    ####################################################################################
-    
-    if request.method == "POST":
-        if "avaliador" in request.POST:
-
-            avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
-            exame = banca.composicao.exame
-
-            # Identifica que uma avaliação/observação já foi realizada anteriormente
-            avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
-            observacoes_anteriores = Observacao.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
-            if banca.alocacao:
-                avaliacoes_anteriores = avaliacoes_anteriores.filter(alocacao=banca.alocacao)
-                observacoes_anteriores = observacoes_anteriores.filter(alocacao=banca.alocacao)
-            
-            realizada = avaliacoes_anteriores.exists()
-
-            # Mover avaliação anterior para base de dados de Avaliações Velhas
-            move_avaliacoes(avaliacoes_anteriores, observacoes_anteriores)
-
-            objetivos_possiveis = len(objetivos)
-            julgamento = [None]*objetivos_possiveis
-            
-            avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
-            for i, aval in enumerate(avaliacoes):
-
-                pk_objetivo, conceito = request.POST[aval].split('.')
-                julgamento[i] = Avaliacao2.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
-                julgamento[i].alocacao = banca.alocacao  # Caso Probation
-                julgamento[i].objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=pk_objetivo)
-
-                if conceito == "NA":
-                    julgamento[i].na = True
-                else:
-                    julgamento[i].na = False
-                    julgamento[i].nota = converte_conceito(conceito)
-                    if exame.titulo == "Banca Intermediária":    
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
-                    elif exame.titulo == "Banca Final":
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
-                    elif exame.titulo == "Falconi":
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
-                    elif exame.titulo == "Probation":
-                        julgamento[i].peso = 0.0
-                    else:
-                        julgamento[i].peso = 0.0 
-
-                julgamento[i].save()
-
-            julgamento_observacoes = None
-            if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
-               ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
-                julgamento_observacoes = Observacao.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
-                julgamento_observacoes.alocacao = banca.alocacao  # Caso Probation
-                julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
-                julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
-                julgamento_observacoes.save()
-
-            subject = "Capstone | Avaliação de Banca - "
-            subject += banca.composicao.exame.titulo + " "
-            if banca.composicao.exame.sigla == "P":
-                subject += banca.alocacao.aluno.user.get_full_name()
-            subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
-
-            # Envio de mensagem para Avaliador
-            message = mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada)
-            recipient_list = [avaliador.email, ]
-            email(subject, recipient_list, message)
-
-            # Envio de mensagem para Orientador / Coordenação
-            message = mensagem_orientador(banca)
-            
-            if banca.composicao.exame.sigla in ["BI", "BF"]:  # Intermediária e Final
-                recipient_list = [projeto.orientador.user.email, ]
-            else:  # Falconi ou Probation
-                recipient_list = [configuracao.coordenacao.user.email, ]
-            email(subject, recipient_list, message)
-            
-            resposta = "Avaliação submetida e enviada para:<br>"
-            for recipient in recipient_list:
-                resposta += "&bull; {0}<br>".format(recipient)
-            if realizada:
-                resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
-            resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
-            context = {
-                "area_principal": True,
-                "mensagem": resposta,
-            }
-            return render(request, "generic.html", context=context)
-
-        return HttpResponse("Avaliação não submetida.")
-    else:
-
-        pessoas, membros = coleta_membros_banca(banca)
-        composicao = banca.composicao
-
-        # Identificando quem seria o avaliador
-        avaliador_id = request.GET.get("avaliador")
-        if avaliador_id:
-            try:
-                avaliador_id = int(avaliador_id)
-            except ValueError:
-                return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
-        else:
-            avaliador_id = request.user.pk if request.user.is_authenticated else None
-        
-        conceitos = [None]*len(objetivos)
-        for i in range(len(objetivos)):
-            try:
-                tmp_objetivo = int(request.GET.get("objetivo"+str(i), '0'))
-            except ValueError:
-                return HttpResponseNotFound("<h1>Erro em objetivo!</h1>")
-            tmp_conceito = request.GET.get("conceito"+str(i), '')
-            conceitos[i] = (tmp_objetivo, tmp_conceito)
-
-        map_tipo_documento = {
-            "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
-            "F": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            "P": TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
+        "titulo": {"pt": "Projetos Orientados", "en": "Projects Oriented"},
+        "projetos": Projeto.objects.filter(orientador=request.user.professor).order_by("-ano", "-semestre"),
         }
-
-        tipo_documento = map_tipo_documento.get(banca.composicao.exame.sigla)
-
-        documentos = None
-        if tipo_documento:
-            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
-
-        context = {
-            "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
-            "projeto": projeto,
-            "estudante": banca.alocacao.aluno if banca.alocacao else None,
-            "individual": True if banca.alocacao else False,
-            "pessoas": pessoas,
-            "membros": membros,
-            "objetivos": objetivos,
-            "banca": banca,
-            "composicao": composicao,
-            "avaliador": avaliador_id,
-            "conceitos": conceitos,
-            "documentos": documentos,
-            "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
-            "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
-            "today": datetime.datetime.now(),
-            "mensagem": mensagem,
-            "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
-        }
-        return render(request, "professores/banca_avaliar.html", context=context)
+    return render(request, "professores/orientacoes_alocadas.html", context=context)
 
 
-@transaction.atomic
-def banca(request, slug):
-    """Somente ve a banca, sem edição."""
-    banca = get_object_or_404(Banca, slug=slug)
-
-    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
-        # Reaproveita o tipo de documento da banca final
-        tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
-        # Reaproveita o tipo de documento da banca final
-        tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    else:
-        tipo_documento = None
-    
-    if tipo_documento:
-        documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
-        if banca.alocacao and banca.alocacao.projeto:
-            documentos = documentos | Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
-        documentos = documentos.order_by("tipo_documento", "-data")
-    else:
-        documentos = None
-
-    context = {
-        "titulo": {"pt": "Banca", "en": "Examination Board"},
-        "banca": banca,
-        "documentos": documentos,
-        "bloqueado": True,
-    }
-
-    return render(request, "professores/banca_ver.html", context)
-
-     
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 @transaction.atomic
@@ -1616,11 +1243,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
     objetivos = composicao.pesos.all()
 
-    if request.user == projeto.orientador.user:
-        editor = True
-    else:
-        editor = False
-
+    editor = request.user == projeto.orientador.user
+    
     if request.method == "POST":
 
         objetivos_possiveis = 0
@@ -1878,49 +1502,6 @@ def resultado_bancas(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliar_bancas(request, prof_id=None):
-    """Visualiza os resultados das bancas de um projeto."""
-
-    if request.is_ajax():
-
-        if "edicao" in request.POST:
-
-            if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
-                professor = get_object_or_404(Professor, pk=prof_id)
-            else:
-                professor = request.user.professor
-            
-            bancas = (Banca.objects.filter(membro1=professor.user) |
-                      Banca.objects.filter(membro2=professor.user) |
-                      Banca.objects.filter(membro3=professor.user))
-
-            # Orientador é automaticamente membro de banca final e intermediária
-            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, composicao__exame__sigla__in=["BI", "BF"])
-        
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = request.POST["edicao"].split('.')
-                bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
-
-        else:
-            return HttpResponse("Erro ao carregar dados.", status=401)
-        
-        context = {
-            "objetivos": ObjetivosDeAprendizagem.objects.all(),
-            "bancas": bancas,
-        }
-    else:
-        configuracao = get_object_or_404(Configuracao)
-        context = {
-            "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
-            "edicoes": get_edicoes(Projeto)[0],
-            "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
-        }
-    return render(request, "professores/resultado_bancas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_index(request):
     """Menus de encontros."""
     encontros = Encontro.objects.all().order_by("startDate")
@@ -2112,72 +1693,6 @@ def dinamicas_editar(request, primarykey=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def dinamicas_lista(request):
-    """Mostra os horários de dinâmicas."""
-
-    if request.is_ajax():
-        if "edicao" in request.POST:
-
-            encontros = Encontro.objects.all().order_by("startDate")
-
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                pass  # segue com encontros
-            elif edicao == "proximas":
-                hoje = datetime.date.today()
-                encontros = encontros.filter(startDate__gt=hoje)
-            else:
-                ano, semestre = map(int, edicao.split('.'))
-
-                encontros = encontros.filter(startDate__year=ano)
-                if semestre == 1:
-                    encontros = encontros.filter(startDate__month__lt=8)
-                else:
-                    encontros = encontros.filter(startDate__month__gt=7)
-
-            # checando se projetos atuais tem banca marcada
-            configuracao = get_object_or_404(Configuracao)
-            sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
-                                            semestre=configuracao.semestre)
-            for encontro in encontros:
-                if encontro.projeto:
-                    sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
-
-            context = {
-                "sem_dinamicas": sem_dinamicas,
-                "encontros": encontros,
-            }
-
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-
-    else:
-
-        informacoes = [
-            (".orientador", "orientador", "advisor"),
-            (".local", "local", "location"),
-            (".grupo", "grupo", "group"),
-            (".curso", "curso", "program"),
-            (".facilitador", "facilitador", "facilitator"),
-            (".sem_agendamento", "sem agendamento", "no schedule"),
-        ]
-
-        edicoes, _, _ = get_edicoes(Projeto)
-        context = {
-                "titulo": {"pt": "Mentorias", "en": "Mentoring"},
-                "edicoes": edicoes,
-                "informacoes": informacoes,
-            }
-        
-    # Usando para #atualizar a página raiz no edit da banca
-    request.session["root_page_url"] = request.build_absolute_uri()
-    context["root_page_url"] = request.session["root_page_url"]
-
-    return render(request, "professores/dinamicas_lista.html", context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def orientadores_tabela_completa(request):
     """Alocação dos Orientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
@@ -2356,71 +1871,42 @@ def coorientadores_tabela(request):
     return render(request, "professores/coorientadores_tabela.html", context)
 
 
+
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def avaliar_entregas(request, prof_id=None, selecao=None):
-    """Página para fzer e ver avaliação de entregas dos estudantes."""
+@permission_required("users.view_administrador", raise_exception=True)
+def pendencias_professores(request):
+    """Mostra pendencias dos professores."""
+    configuracao = get_object_or_404(Configuracao)
+    orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
+    orientadores = Professor.objects.filter(id__in=orientadores_ids)
+    
+    membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
+    membros_banca = set()
+    for membros in membro_banca:
+        membros_banca.update(membros)
+    membros_banca = Professor.objects.filter(user__id__in=membros_banca)  
 
-    if selecao == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Acesso negado.", status=401)
+    professores = {}
+    for professor in orientadores | membros_banca:
+        professores[professor] = ver_pendencias_professor(professor.user, configuracao.ano, configuracao.semestre)
 
-    if request.is_ajax():
+    tipos = [
+        ("Planos de Orientação", "planos_de_orientacao"),
+        ("Relatos Quinzenais", "relatos_quinzenais"),
+        ("Avaliar Entregas", "avaliar_entregas"),
+        ("Agendar Bancas", "bancas_index"),
+        ("Avaliar Bancas", "avaliar_bancas"),
+        ("Avaliações de Pares", "avaliacoes_pares"),
+    ]
 
-        projetos = Projeto.objects.all()
-        if prof_id is not None:
-            if prof_id == "todos":
-                if request.user.tipo_de_usuario != 4:
-                    raise PermissionDenied("Sem acesso a estes projetos.")
-            else:
-                professor = get_object_or_404(Professor, pk=prof_id)
-                if (professor != request.user.professor) and (request.user.tipo_de_usuario != 4):
-                    raise PermissionDenied("Sem acesso a estes projetos.")
-                projetos = projetos.filter(orientador=professor)
-                if selecao:
-                    projetos = projetos.filter(id=selecao)
-        else:
-            projetos = projetos.filter(orientador=request.user.professor)
-
-        edicao = None
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-        else:
-            projetos = projetos.filter(orientador=request.user.professor)
-            
-
-        entregas = []
-        for projeto in projetos:
-            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-            entregas.append(filtra_entregas(composicoes, projeto))
-
-        avaliacoes = zip(projetos, entregas)
-
-        context = {
-            "avaliacoes": avaliacoes,
-            "edicao": edicao,
-            "prazo_avaliar": -int(get_object_or_404(Configuracao).prazo_avaliar),
-            "hoje": datetime.date.today(),
+    context = {
+        "titulo": {"pt": "Pendências dos Professores", "en": "Professors Pending Tasks"},
+        "professores": professores,
+        "tipos": tipos,
         }
+    
+    return render(request, "professores/pendencias_professores.html", context=context)
 
-    else:
-        
-        exames = set()
-        for composicao in Composicao.objects.filter(entregavel=True):
-            exames.add(composicao.exame)
-
-        configuracao = get_object_or_404(Configuracao)
-
-        context = {
-                "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
-                "edicoes": get_edicoes(Relato)[0],
-                "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
-                "tipos_entregas": exames if selecao else None,
-            }
-
-    return render(request, "professores/avaliar_entregas.html", context=context)
 
 
 @login_required
@@ -2861,48 +2347,6 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def resultado_projetos_edicao(request, edicao):
-    """Mostra os resultados das avaliações (Bancas) para uma edição."""
-    try:
-        ano, semestre = map(int, edicao.split('.'))
-    except ValueError:
-        return HttpResponseNotFound("<h1>Erro em identificar ano e semestre!</h1>")
-    return resultado_projetos_intern(request, ano, semestre)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def resultado_projetos(request):
-    """Mostra os resultados das avaliações (Bancas)."""
-    return resultado_projetos_intern(request)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def resultado_meus_projetos(request):
-    """Mostra os resultados das avaliações somente do professor (Bancas)."""
-    return resultado_projetos_intern(request, professor=request.user.professor)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def todos_professores(request):
-    """Exibe todas os professores que estão cadastrados."""
-    context = {
-            "professores": Professor.objects.all(),
-            "cabecalhos": [{ "pt": "Nome", "en": "Name", },
-                           { "pt": "e-mail", "en": "e-mail", },
-                           { "pt": "Bancas", "en": "Examination Boards", },
-                           { "pt": "Orientações", "en": "Advising", },
-                           { "pt": "Lattes", "en": "Lattes", },],
-            "titulo": { "pt": "Professores", "en": "Professors", },
-        }
-
-    return render(request, "professores/todos_professores.html", context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def objetivo_editar(request, primarykey):
     """Edita um objetivo de aprendizado."""
     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
@@ -2934,52 +2378,6 @@ def objetivos_rubricas(request):
         "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
     }
     return render(request, "professores/objetivos_rubricas.html", context)
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def ver_pares_projeto(request, projeto_id, momento):
-    """Permite visualizar a avaliação de pares."""
-
-    projeto = get_object_or_404(Projeto, pk=projeto_id)
-    alocacoes = Alocacao.objects.filter(projeto=projeto)
-
-    if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
-        return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
-
-    # Marcando que orientador viu avaliação
-    if request.user == projeto.orientador.user:
-        for alocacao in alocacoes:
-            if momento=="intermediaria" and not alocacao.avaliacao_intermediaria:
-                alocacao.avaliacao_intermediaria = datetime.datetime.now()
-            elif momento=="final" and not alocacao.avaliacao_final:
-                alocacao.avaliacao_final = datetime.datetime.now()
-            alocacao.save()
-
-    tipo = 0 if momento=="intermediaria" else 1
-    colegas = get_pares_colegas(projeto, tipo)
-    
-    entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
-    iniciativas = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
-    comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
-
-    context = {
-        "titulo": {
-            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
-            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
-            },
-        "alocacoes": alocacoes,
-        "colegas": colegas,
-        "momento": momento,
-        "projeto": projeto,
-        "msg_aval_pares": get_object_or_404(Configuracao).msg_aval_pares,
-        "entregas": entregas,
-        "iniciativas": iniciativas,
-        "comunicacoes": comunicacoes,
-    }
-
-    return render(request, "professores/ver_pares_projeto.html", context)
 
 
 @login_required
@@ -3033,3 +2431,518 @@ def planos_de_orientacao_todos(request):
             }
 
     return render(request, "professores/planos_de_orientacao_todos.html", context=context)
+
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def resultado_projetos_edicao(request, edicao):
+    """Mostra os resultados das avaliações (Bancas) para uma edição."""
+    try:
+        ano, semestre = map(int, edicao.split('.'))
+    except ValueError:
+        return HttpResponseNotFound("<h1>Erro em identificar ano e semestre!</h1>")
+    return resultado_projetos_intern(request, ano, semestre)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def resultado_projetos(request):
+    """Mostra os resultados das avaliações (Bancas)."""
+    return resultado_projetos_intern(request)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def resultado_meus_projetos(request):
+    """Mostra os resultados das avaliações somente do professor (Bancas)."""
+    return resultado_projetos_intern(request, professor=request.user.professor)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def todos_professores(request):
+    """Exibe todas os professores que estão cadastrados."""
+    context = {
+            "professores": Professor.objects.all(),
+            "cabecalhos": [{ "pt": "Nome", "en": "Name", },
+                           { "pt": "e-mail", "en": "e-mail", },
+                           { "pt": "Bancas", "en": "Examination Boards", },
+                           { "pt": "Orientações", "en": "Advising", },
+                           { "pt": "Lattes", "en": "Lattes", },],
+            "titulo": { "pt": "Professores", "en": "Professors", },
+        }
+
+    return render(request, "professores/todos_professores.html", context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def ver_pares_projeto(request, projeto_id, momento):
+    """Permite visualizar a avaliação de pares."""
+
+    projeto = get_object_or_404(Projeto, pk=projeto_id)
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+
+    if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
+        return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
+
+    # Marcando que orientador viu avaliação
+    if request.user == projeto.orientador.user:
+        for alocacao in alocacoes:
+            if momento=="intermediaria" and not alocacao.avaliacao_intermediaria:
+                alocacao.avaliacao_intermediaria = datetime.datetime.now()
+            elif momento=="final" and not alocacao.avaliacao_final:
+                alocacao.avaliacao_final = datetime.datetime.now()
+            alocacao.save()
+
+    tipo = 0 if momento=="intermediaria" else 1
+    colegas = get_pares_colegas(projeto, tipo)
+    
+    entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
+    iniciativas = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
+    comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
+
+    context = {
+        "titulo": {
+            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
+            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
+            },
+        "alocacoes": alocacoes,
+        "colegas": colegas,
+        "momento": momento,
+        "projeto": projeto,
+        "msg_aval_pares": get_object_or_404(Configuracao).msg_aval_pares,
+        "entregas": entregas,
+        "iniciativas": iniciativas,
+        "comunicacoes": comunicacoes,
+    }
+
+    return render(request, "professores/ver_pares_projeto.html", context)
+
+
+
+
+
+
+
+
+
+# Mensagem preparada para o avaliador
+def mensagem_avaliador(banca, avaliador, julgamento, julgamento_observacoes, objetivos_possiveis, realizada):
+    
+    message = "{0},<br><br>\n".format(avaliador.get_full_name())
+    message += "Obrigado por sua avaliação de banca no Capstone<br><br>\n"
+    message += "Estamos também informando o orientador do projeto sobre sua avaliação<br><br>\n"
+
+    if realizada:
+        message += "<h3 style='color:red;text-align:center;'>"
+        message += "Essa é uma atualização de uma avaliação já enviada anteriormente!"
+        message += "</h3><br><br>"
+    
+    projeto = banca.get_projeto()
+
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
+    message += "<b>Avaliador:</b> {0}<br>\n".format(avaliador.get_full_name())
+    message += "<b>Data da Banca:</b> {0}<br>\n".format(banca.startDate.strftime("%d/%m/%Y %H:%M"))
+
+    message += "<b>Tipo de Banca:</b> "
+    message += banca.composicao.exame.titulo + "<br>\n"
+    
+    if banca.alocacao:
+        message += "<br><b>Estudante em Probation:</b> {0}<br>\n".format(banca.alocacao.aluno.user.get_full_name())
+
+    message += "<br>\n<br>\n"
+    message += "<b>Conceitos:</b><br>\n"
+    message += "<table style='border: 1px solid black; "
+    message += "border-collapse:collapse; padding: 0.3em;'>"
+
+    for i in range(objetivos_possiveis):
+        if julgamento[i]:
+            message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                format(julgamento[i].objetivo.titulo)
+            message += "<td style='border: 1px solid black; text-align:center'>"
+            if julgamento[i].na:
+                message += "&nbsp;N/A&nbsp;</td>\n"
+            else:
+                message += "&nbsp;{0}&nbsp;</td>\n".\
+                    format(converte_letra(julgamento[i].nota))
+                
+    message += "</table>"
+
+    message += "<br>\n<br>\n"
+
+    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
+        message += "<b>Observações Estudantes (enviada para todo o grupo):</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    if julgamento_observacoes and julgamento_observacoes.observacoes_orientador:
+        message += "<b>Observações Orientador (somente enviada para orientador):</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes_orientador).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    # Criar link para reeditar
+    message += "<a href='" + settings.SERVER
+    message += "/professores/banca_avaliar/" + str(banca.slug)
+
+    message += "?avaliador=" + str(avaliador.id)
+    for count, julg in enumerate(julgamento):
+        if julg and not julg.na:
+            message += "&objetivo" + str(count) + "=" + str(julg.objetivo.id)
+            message += "&conceito" + str(count) + "=" + converte_letra(julg.nota, mais="X")
+    if julgamento_observacoes and julgamento_observacoes.observacoes_orientador:
+        message += "&observacoes_orientador=" + quote(julgamento_observacoes.observacoes_orientador)
+    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
+        message += "&observacoes_estudantes=" + quote(julgamento_observacoes.observacoes_estudantes)    
+    message += "'>"
+    message += "Caso deseje reenviar sua avaliação, clique aqui."
+    message += "</a><br>\n"
+    message += "<br>\n"
+
+    # Relistar os Objetivos de Aprendizagem
+    message += "<br><b>Objetivos de Aprendizagem</b>"
+
+    destaque = " background-color: #E0E0F4;'>"
+
+    for julg in julgamento:
+
+        if julg:
+
+            message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+            message += "<table "
+            message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+            message += "<tr>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Insatisfatório (I)</th>"
+
+            if (not julg.na) and converte_letra(julg.nota) == "D":
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Em Desenvolvimento (D)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Essencial (C/C+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Proficiente (B/B+)</th>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black; width:18%;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black; width:18%;'>"
+            message += "Avançado (A/A+)</th>"
+
+            message += "</tr>"
+
+
+            message += "<tr " 
+            if julg.na:
+                message += " style='background-color: #151515;'"
+            message += ">"
+
+            if (not julg.na) and converte_letra(julg.nota) == "I":
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_I)
+
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_D)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_C)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_B)
+            message += "</td>"
+
+            if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                message += "<td style='border: 2px solid black;"
+                message += destaque
+            else:
+                message += "<td style='border: 1px solid black;'>"
+            if banca.composicao.exame.periodo_para_rubricas == 1:  # (1, "Intermediário"),
+                message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+            else:
+                message += "{0}".format(julg.objetivo.rubrica_final_A)
+            message += "</td>"
+
+            message += "</tr>"
+            message += "</table>"
+
+    return message
+
+
+# Mensagem preparada para os estudantes
+def mensagem_aval_estudantes(projeto, composicao, julgamento, julgamento_observacoes, objetivos_possiveis):
+    
+    message = ""
+    message += "<b>Título do Projeto:</b> {0}<br>\n".format(projeto.get_titulo())
+    message += "<b>Organização:</b> {0}<br>\n".format(projeto.organizacao)
+    message += "<b>Orientador:</b> {0}<br>\n".format(projeto.orientador)
+    
+    message += "<b>Avaliação:</b> "
+    message += composicao.exame.titulo
+
+    message += "<br>\n<br>\n"
+    if objetivos_possiveis == 0:
+        message += "<b>Decisão = </b>"
+        if julgamento[0].nota > 5:
+            message += "Adequado"
+        else:
+            message += "Inadequado"
+        message += "<br>\n"
+    else:
+        
+        message += "<b>Conceitos:</b><br>\n"
+        message += "<table style='border: 1px solid black; "
+        message += "border-collapse:collapse; padding: 0.3em;'>"
+
+        for i in range(objetivos_possiveis):
+            if julgamento[i]:
+                message += "<tr><td style='border: 1px solid black;'>{0}</td>".\
+                    format(julgamento[i].objetivo.titulo)
+                message += "<td style='border: 1px solid black; text-align:center'>"
+                if julgamento[i].na:
+                    message += "&nbsp;N/A&nbsp;</td>\n"
+                else:
+                    message += "&nbsp;{0}&nbsp;</td>\n".\
+                        format(converte_letra(julgamento[i].nota))
+                    
+        message += "</table>"
+
+    message += "<br>\n<br>\n"
+
+    if julgamento_observacoes and julgamento_observacoes.observacoes_estudantes:
+        message += "<b>Observações:</b>\n"
+        message += "<p style='border:1px; border-style:solid; padding: 0.3em; margin: 0;'>"
+        message += html.escape(julgamento_observacoes.observacoes_estudantes).replace('\n', '<br>\n')
+        message += "</p>"
+        message += "<br>\n<br>\n"
+
+    message += "<br>\n"
+
+    if objetivos_possiveis > 0:
+        # Relistar os Objetivos de Aprendizagem
+        message += "<br><b>Objetivos de Aprendizagem</b>"
+
+        destaque = " background-color: #E0E0F4;'>"
+
+        for julg in julgamento:
+
+            if julg:
+
+                message += "<br><b>{0}</b>: {1}".format(julg.objetivo.titulo, julg.objetivo.objetivo)
+                message += "<table "
+                message += "style='border:1px solid black; border-collapse:collapse; width:100%;'>"
+                message += "<tr>"
+
+                if (not julg.na) and converte_letra(julg.nota) == "I":
+                    message += "<td style='border: 2px solid black; width:18%;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black; width:18%;'>"
+                message += "Insatisfatório (I)</th>"
+
+                if (not julg.na) and converte_letra(julg.nota) == "D":
+                    message += "<td style='border: 2px solid black; width:18%;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black; width:18%;'>"
+                message += "Em Desenvolvimento (D)</th>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                    message += "<td style='border: 2px solid black; width:18%;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black; width:18%;'>"
+                message += "Essencial (C/C+)</th>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                    message += "<td style='border: 2px solid black; width:18%;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black; width:18%;'>"
+                message += "Proficiente (B/B+)</th>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                    message += "<td style='border: 2px solid black; width:18%;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black; width:18%;'>"
+                message += "Avançado (A/A+)</th>"
+
+                message += "</tr>"
+
+
+                message += "<tr " 
+                if julg.na:
+                    message += " style='background-color: #151515;'"
+                message += ">"
+
+                if (not julg.na) and converte_letra(julg.nota) == "I":
+                    message += "<td style='border: 2px solid black;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black;'>"
+                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_I)
+                else:
+                    message += "{0}".format(julg.objetivo.rubrica_final_I)
+
+                message += "</td>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "D-" or converte_letra(julg.nota) == "D" or converte_letra(julg.nota) == "D+"):
+                    message += "<td style='border: 2px solid black;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black;'>"
+                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_D)
+                else:
+                    message += "{0}".format(julg.objetivo.rubrica_final_D)
+                message += "</td>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "C" or converte_letra(julg.nota) == "C+"):
+                    message += "<td style='border: 2px solid black;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black;'>"
+                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_C)
+                else:
+                    message += "{0}".format(julg.objetivo.rubrica_final_C)
+                message += "</td>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "B" or converte_letra(julg.nota) == "B+"):
+                    message += "<td style='border: 2px solid black;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black;'>"
+                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_B)
+                else:
+                    message += "{0}".format(julg.objetivo.rubrica_final_B)
+                message += "</td>"
+
+                if (not julg.na) and (converte_letra(julg.nota) == "A" or converte_letra(julg.nota) == "A+"):
+                    message += "<td style='border: 2px solid black;"
+                    message += destaque
+                else:
+                    message += "<td style='border: 1px solid black;'>"
+                if composicao.exame.periodo_para_rubricas == 1: # PERIODOS_RUBRICAS = ((1, "Intermediário"),(2, "Final"),)
+                    message += "{0}".format(julg.objetivo.rubrica_intermediaria_A)
+                else:
+                    message += "{0}".format(julg.objetivo.rubrica_final_A)
+                message += "</td>"
+
+                message += "</tr>"
+                message += "</table>"
+
+    return message
+
+# Mensagem preparada para o orientador/coordenador
+def mensagem_orientador(banca, geral=False):
+    objetivos = ObjetivosDeAprendizagem.objects.all()  
+    exame = banca.composicao.exame
+    projeto = banca.get_projeto()
+
+    # Buscando Avaliadores e Avaliações
+    avaliadores = {}
+    for objetivo in objetivos:
+        avaliacoes = Avaliacao2.objects.filter(projeto=projeto,
+                                                objetivo=objetivo,
+                                                exame=exame)\
+                .order_by("avaliador", "-momento")
+        if banca.alocacao:
+            avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
+
+        for avaliacao in avaliacoes:
+            if avaliacao.avaliador not in avaliadores:
+                avaliadores[avaliacao.avaliador] = {}
+            if objetivo not in avaliadores[avaliacao.avaliador]:
+                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
+                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
+
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
+        order_by("avaliador", "-momento")
+    if banca.alocacao:
+        observacoes = observacoes.filter(alocacao=banca.alocacao)
+
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores:
+            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
+        if "observacoes_orientador" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
+        if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
+
+    message3, obj_avaliados = calcula_notas_bancas(avaliadores)
+    message2 = calcula_media_notas_bancas(obj_avaliados)
+
+    context_carta = {
+        "banca": banca,
+        "objetivos": objetivos,
+        "projeto": projeto,
+    }
+    if geral:
+        message = render_message("Informe Geral de Avaliação de Banca", context_carta)
+    else:
+        message = render_message("Informe de Avaliação de Banca", context_carta)
+    
+    return message+message2+message3
+

@@ -8,71 +8,72 @@
 
 {% comment %} Seletor da edição da pesquisa {% endcomment %}
 
-  <style>
+<style>
+  .separador {
+    margin-right: 16px;
+    max-width: 100%;
+  }
+
+  @media only screen and (max-width: 575.98px) {
+    .to_hide {
+      font-size: 0.7rem;
+      min-width: 22%;
+      max-width: fit-content;
+      width: 2.2rem;
+    }
+    .to_hide2 {
+      font-size: 0.7rem;
+      min-width: 60%;
+      max-width: 70%;
+    }
+    .to_label {
+      padding: 0px 14px 0px 4px !important;
+    }
     .separador {
-      margin-right: 16px;
+      margin-right: 6px;
+      {% comment %} width: 92vw; {% endcomment %}
       max-width: 100%;
     }
+  }
 
-    @media only screen and (max-width: 575.98px) {
-      .to_hide {
-        font-size: 0.7rem;
-        min-width: 22%;
-        max-width: fit-content;
-        width: 2.2rem;
-      }
-      .to_hide2 {
-        font-size: 0.7rem;
-        min-width: 60%;
-        max-width: 70%;
-      }
-      .to_label {
-        padding: 0px 14px 0px 4px !important;
-      }
-      .separador {
-        margin-right: 6px;
-        {% comment %} width: 92vw; {% endcomment %}
-        max-width: 100%;
-      }
-    }
+  @keyframes animatedBackground {
+    0% {background-position: right;}
+    50% {background-position: left;}
+    100% {background-position: right;}
+  }
+  .label_animado {
+    background-image: linear-gradient(90deg, #A0A0A0, #F9F9F9, #A0A0A0);
+    background-repeat: repeat-y;
+    animation: animatedBackground 4s linear infinite;
+    background-size: 400% 100%;
+  }
 
-    @keyframes animatedBackground {
-      0% {background-position: right;}
-      50% {background-position: left;}
-      100% {background-position: right;}
-    }
-    .label_animado {
-      background-image: linear-gradient(90deg, #A0A0A0, #F9F9F9, #A0A0A0);
-      background-repeat: repeat-y;
-      animation: animatedBackground 4s linear infinite;
-      background-size: 400% 100%;
-    }
+  #container_edicao {
+    margin-left: 0px;
+    padding-left: 0px;
+    margin-bottom: 0.75rem;
+  }
 
-    #container_edicao {
-      margin-left: 0px;
-      padding-left: 0px;
-      margin-bottom: 0.75rem;
-    }
+  .bootstrap-select {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .bootstrap-select .dropdown-menu {
+      max-width: 97vw;  /* Evita que estoure a tela */
+  }
+</style>
 
-    .bootstrap-select {
-      max-width: 100%;
-      width: 100%;
-    }
-    
-    .bootstrap-select .dropdown-menu {
-        max-width: 97vw;  /* Evita que estoure a tela */
-    }
-  </style>
-
-  <div id="container_edicao" class="container">
+<div id="container_edicao" class="container">
   <div class="row align-items-start justify-content-start mb-1">
     <div class="ml-3 form-inline">
-      {% comment %} <div class="input-group input-group-sm"> {% endcomment %}
-        {% if edicoes %}
-          {% if not sem_edicao %}
+      {% if edicoes %}
+        {% if not sem_edicao %}
           <div  id="blocoFilterEdicao" class="input-group input-group-sm mt-1 flex-nowrap">
             <div class="input-group-prepend">
-              <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Edição</span><span lang="en" style="display: none;">Edition</span></span></label>
+              <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">
+                {% lng "Edição" "Edition" %}
+              </span></label>
             </div>
             <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
               <optgroup class="opt_edi">
@@ -96,13 +97,15 @@
             </select>
             <div class="separador input-group-addon"></div>
           </div>
-          {% endif %}
         {% endif %}
+      {% endif %}
 
-        {% if com_cursos %}
+      {% if com_cursos %}
         <div id="blocoFilterCurso" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Curso</span><span lang="en" style="display: none;">Program</span></span></label>
+            <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">
+              {% lng "Curso" "Program" %}
+            </span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto" id="filterCurso" name="curso">
               <option class="opt_edi troca_lingua" value="T" data-pt="Todos Insper" data-en="All Insper">Todos Insper</option>
@@ -126,12 +129,14 @@
           </select>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if com_objetivos %}
+      {% if com_objetivos %}
         <div id="blocoFilterObjetivo" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Objetivo de Aprendizagem</span><span lang="en" style="display: none;">Learning Goals</span></span></label>
+            <label class="input-group-text" for="filterObjetivo" onClick="recarregar_pagina()"><span class="to_hide">
+              {% lng "Objetivo de Aprendizagem" "Learning Goals" %}
+            </span></label>
           </div>
           <select class="filter custom-select w-auto" id="filterObjetivo" name="objetivo">
             {% for objetivo in objetivos %}
@@ -141,46 +146,56 @@
           </select>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if ind_grup %}
+      {% if ind_grup %}
         <div id="blocoFilterIndividuais"  class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="individuais" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide"><span lang="pt">Individuais</span><span lang="en" style="display: none;">Individual</span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="individuais"><span class="to_hide">
+              {% lng "Individuais" "Individual" %}
+            </label>
           </div>
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="grupo" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide"><span lang="pt">Grupo</span><span lang="en" style="display: none;">Group</span></span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="grupo"><span class="to_hide">
+              {% lng "Grupo" "Group" %}
+            </span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if so_finais %}
+      {% if so_finais %}
         <div  id="blocoFilterSoFinais" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="so_finais" checked >
-            <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide"><span lang="pt">Só avaliações finais</span><span lang="en" style="display: none;">Only final grades</span></span></label>
+            <label class="to_label form-check-label" style="line-height: 1.0;" for="so_finais"><span class="to_hide">
+              {% lng "Só avaliações finais" "Only final grades" %}
+            </span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if avancados %}
+      {% if avancados %}
         <div  id="blocoFilterAvancado" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend form-check mb-2 mr-sm-2">
             <input class="filter form-check-input" type="checkbox" id="avancados" checked >
-            <label class="to_label form-check-label" for="avancados"><span class="to_hide"><span lang="pt">Avancados</span><span lang="en" style="display: none;">Advanced</span></span></label>
+            <label class="to_label form-check-label" for="avancados"><span class="to_hide">
+              {% lng "Avancados" "Advanced" %}
+            </span></label>
           </div>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if com_tipos %}
+      {% if com_tipos %}
         <div id="blocoFilterTipo" class="input-group input-group-sm mt-1 flex-nowrap">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Tipo</span><span lang="en" style="display: none;">Type</span></span></label>
+            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">
+              {% lng "Tipo" "Type" %}
+            </span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto form-control" id="filterTipo" name="tipo">
             <option class="opt_edi troca_lingua" value="estudantes" data-pt="Estudantes" data-en="Students">
@@ -195,96 +210,101 @@
           </select>
           <div class="separador input-group-addon"></div>
         </div>
-        {% endif %}
+      {% endif %}
 
-        {% if com_entregas %}
-          <div id="blocoFilterEntregas" class="input-group input-group-sm mt-1 flex-nowrap">
-            <div class="input-group-prepend">
-              <label class="input-group-text" for="filterEntregas"><span class="to_hide">Tipo</span></label>
-            </div>
-            <select class="custom-select w-auto" id="filterEntregas" name="entregas">
-              <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">
-                Todas
-              </option>
-              {% for entrega in com_entregas %}
-                <option class="opt_edi" value="{{entrega.id}}">{{entrega}}</option>
-              {% endfor %}
-            </select>
-            <div class="separador input-group-addon"></div>
+      {% if com_entregas %}
+        <div id="blocoFilterEntregas" class="input-group input-group-sm mt-1 flex-nowrap">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="filterEntregas"><span class="to_hide">
+              {% lng "Tipo" "Type" %}
+            </span></label>
           </div>
-        {% endif %}
+          <select class="custom-select w-auto" id="filterEntregas" name="entregas">
+            <option class="opt_edi troca_lingua" value="todas" data-pt="Todas" data-en="All">
+              {% lng "Todas" "All" %}
+            </option>
+            {% for entrega in com_entregas %}
+              <option class="opt_edi" value="{{entrega.id}}">{{entrega}}</option>
+            {% endfor %}
+          </select>
+          <div class="separador input-group-addon"></div>
+        </div>
+      {% endif %}
 
-        {% if com_periodo %}
-          <div class="input-group input-group-sm mt-1">
-            <div class="input-group-prepend">
-              <label class="to_label input-group-text" for="periodo"><span class="to_hide"><span lang="pt">Período</span><span lang="en" style="display: none;">Interval</span></span></label>
-            </div>
-            <select id="periodo" class="periodo filter to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
-              <option value="1" class="troca_lingua" data-pt="1 mês" data-en="1 month">1 mês</option>
-              <option value="2" class="troca_lingua" data-pt="2 mêses" data-en="2 months">2 mêses</option>
-              <option value="3" selected class="troca_lingua" data-pt="3 mêses" data-en="3 months">3 mêses</option>
-              <option value="6" class="troca_lingua" data-pt="6 mêses" data-en="6 months">6 mêses</option>
-              <option value="12" class="troca_lingua" data-pt="12 mêses" data-en="12 months">12 mêses</option>
-              <option value="9999" class="troca_lingua" data-pt="tudo" data-en="all">tudo</option>
-            </select>
-            &nbsp;&nbsp;&nbsp;
-            <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
-              <span class="sr-only">
-                <span lang="pt">Carregando...</span>
-                <span lang="en" style="display: none;">Loading...</span>
-              </span>
-            </div>
-            &nbsp;&nbsp;&nbsp;
+      {% if com_periodo %}
+        <div class="input-group input-group-sm mt-1">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="periodo"><span class="to_hide">
+              {% lng "Período" "Interval" %}
+            </span></label>
           </div>
-        {% endif %}
-
-        {% if com_acompanhamento %}
-          <div class="input-group input-group-sm mt-1 mr-4">
-            <div class="input-group-prepend">
-              <label class="to_label input-group-text" for="filterAcompanhamento">
-                <span lang="pt">Filtrar</span><span lang="en" style="display: none;">Filter</span>
-              </label>
-            </div>
-            <select id="filterAcompanhamento" class="selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
-              <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
-              {% for retorno in tipo_retorno %}
-                {% ifchanged retorno.grupo_de_retorno %}{% if retorno.grupo_de_retorno %}<option class="special_filter" value="{{retorno.get_grupo_de_retorno_display}}">&#x21a6; {{retorno.get_grupo_de_retorno_display}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
-                <option value="{{retorno.id}}">{{retorno.nome}}</option>
-              {% endfor %}
-            </select>
+          <select id="periodo" class="periodo filter to_hide custom-select w-auto" data-tableId="OrganizacoesTable">
+            <option value="1" class="troca_lingua" data-pt="1 mês" data-en="1 month">1 mês</option>
+            <option value="2" class="troca_lingua" data-pt="2 mêses" data-en="2 months">2 mêses</option>
+            <option value="3" selected class="troca_lingua" data-pt="3 mêses" data-en="3 months">3 mêses</option>
+            <option value="6" class="troca_lingua" data-pt="6 mêses" data-en="6 months">6 mêses</option>
+            <option value="12" class="troca_lingua" data-pt="12 mêses" data-en="12 months">12 mêses</option>
+            <option value="9999" class="troca_lingua" data-pt="tudo" data-en="all">tudo</option>
+          </select>
+          &nbsp;&nbsp;&nbsp;
+          <div class="spinner-border spinner-border-sm text-secondary" id="spinner" style="visibility: hidden" role="status" aria-hidden="true">
+            <span class="sr-only">
+              {% lng "Carregando..." "Loading..." %}
+            </span>
           </div>
-        {% endif %}
+          &nbsp;&nbsp;&nbsp;
+        </div>
+      {% endif %}
 
+      {% if com_acompanhamento %}
+        <div class="input-group input-group-sm mt-1 mr-4">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterAcompanhamento">
+              {% lng "Filtrar" "Filter" %}
+            </label>
+          </div>
+          <select id="filterAcompanhamento" class="selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
+            <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
+            {% for retorno in tipo_retorno %}
+              {% ifchanged retorno.grupo_de_retorno %}{% if retorno.grupo_de_retorno %}<option class="special_filter" value="{{retorno.get_grupo_de_retorno_display}}">&#x21a6; {{retorno.get_grupo_de_retorno_display}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+              <option value="{{retorno.id}}">{{retorno.nome}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      {% if com_pessoas %}
+        <div class="input-group input-group-sm mt-1 mr-4">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">
+                {% lng "Pessoa" "Person" %}
+              </span></label>
+            </div>
+            <select id="usuario" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
+                    title="Nada selecionado" multiple>
+              <option selected="selected" class="troca_lingua" title="Insper" data-pt="Insper" data-en="Insper">Insper</option>
+              <option selected="selected" class="troca_lingua" title="Externo" data-pt="Externo" data-en="External">Externo</option>
+            </select>
+        </div>
+      {% endif %}
     </div>
-
-    {% comment %} <div id="lateral"></div> {% endcomment %}
   </div>
+</div>
 
-  </div>
-
-  {% comment %} Salva a última edição selecionada {% endcomment %}
-  <script>
-    {% comment %} window.onbeforeunload = function() {
-      const now = new Date().getTime();
-      const item = {
-          value: $("#filterEdicao").val(),
-          expiry: now,
-      }
-      localStorage.setItem("filterEdicao", JSON.stringify(item));
-      console.log("Salvando edição: ", item);
-    } {% endcomment %}
-
-    function atualiza_edicao_salva() {
-      const now = new Date().getTime();
-      const item = {
-          value: $("#filterEdicao").val(),
-          expiry: now,
-      }
-      localStorage.setItem("filterEdicao", JSON.stringify(item));
-    }
-
-    $(document).ready(function() {
-        $("#filterEdicao").change(atualiza_edicao_salva);
-    });
-
-  </script>
+{% comment %} Salva a última edição selecionada {% endcomment %}
+{% if edicoes %}
+  {% if not sem_edicao %}
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const filterEdicao = document.getElementById("filterEdicao");
+        filterEdicao.addEventListener("change", () => {
+            const item = {
+                value: filterEdicao.value,
+                expiry: Date.now(),
+            };
+            localStorage.setItem("filterEdicao", JSON.stringify(item));
+        });
+      });
+    </script>
+  {% endif %}
+{% endif %}

@@ -277,18 +277,18 @@
   <form action="" method="post" class="esconder"> {% csrf_token %}
     <input type="submit" class="btn btn-primary mb-1" name="limpar"
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Resetar Pré Alocações" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
+           value="Resetar Pré Alocações" {% if not user.admin %}disabled{% endif %}>
 
     <input type="button" class="btn btn-primary mb-1" id="propor" name="propor"
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Montar Grupos Automaticamente" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+           title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
+           value="Montar Grupos Automaticamente" {% if not user.admin %}disabled{% endif %}>
 
     <input type="submit" class="btn btn-primary mb-1" name="fechar"
            data-toggle="tooltip" data-html="true" animation="true"
-           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if user.tipo_de_usuario != 4 %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Fechar Projetos" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
+           value="Fechar Projetos" {% if not user.admin %}disabled{% endif %}>
     <br><br>
   </form>
 

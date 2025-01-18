@@ -29,6 +29,6 @@
   {% endif %}
 {% endfor %}
 
-{% if user.tipo_de_usuario == 4 %}
+{% if user.admin %}
   {% include "documento-modal.html" %}
 {% endif %}

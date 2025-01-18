@@ -67,11 +67,10 @@
     <span lang="en">Minimum number of proposals for students to select:</span>
   </label>
   <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;"
-         {% if user.tipo_de_usuario != 4 %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
+         {% if not user.admin %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
          value="{{min_props}}"/>
   <span id="mess_atual" style="display: None;">
-    <span lang="pt">atualizado!</span>
-    <span lang="en">updated!</span>
+    {% lng "atualizado!" "updated!" %}
   </span>
   <br><br>
 

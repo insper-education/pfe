@@ -15,7 +15,7 @@
 
 {% block content %}
 
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     <span class="esconder">
       <a
         href="#"
@@ -81,7 +81,7 @@
     </table>
   </div>
 
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     {% include "documento-modal.html" %}
   {% endif %}
 

@@ -42,6 +42,7 @@
               {{estudante.user.get_full_name}} {% if estudante.externo %}<span style="color:red">[{{estudante.externo}}]</span>{% endif %}
             </a>
           </td>
+          
           <td style="font-size:80%">
             {% if projeto %}
               <a href="{% url 'projeto_completo' projeto.id %}">
@@ -49,6 +50,7 @@
               </a>
             {% endif %}
           </td>
+
           <td style="font-size:80%">
             {% if feedback %}
               <a href="{% url 'mostra_feedback_estudante' feedback.id %}">

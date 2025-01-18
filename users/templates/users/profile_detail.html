@@ -16,17 +16,17 @@
     <b>{% lng "Nome" "Name" %}:</b> {{ user.get_full_name }}<br>
     <b>{% lng "Usuário" "Username" %}:</b> {{ user.username }}<br>
     <b>{% lng "Perfil" "Profile" %}:</b>
-    {% if user.tipo_de_usuario == 1 %} {% comment %} estudante {% endcomment %}
+    {% if user.estud %} {% comment %} estudante {% endcomment %}
       {% lng "Estudante" "Student" %}<br>
       <b>{% lng "Curso" "Program" %}:</b> {{ user.aluno.curso2 }}<br>
       <b>{% lng "Ano e Semestre do Capstone" "Capstone Year and Semester" %}:</b> {{ user.aluno.anoPFE }}.{{ user.aluno.semestrePFE }}
       <small>{% lng "(ou posterior)" "(or later)" %}</small><br>
-    {% elif user.tipo_de_usuario == 2 %} {% comment %} professor {% endcomment %}
-      {% lng "Professor" "Professor" %}<br>
-    {% elif user.tipo_de_usuario == 3 %} {% comment %} parceiro {% endcomment %}
-      {% lng "Parceiro" "Partner" %}<b>
-    {% elif user.tipo_de_usuario == 4 %} {% comment %} administrador {% endcomment %}
+    {% elif user.admin %} {% comment %} administrador {% endcomment %}
       {% lng "Administrador" "Administrator" %}<br>
+    {% elif user.prof %} {% comment %} professor {% endcomment %}
+      {% lng "Professor" "Professor" %}<br>
+    {% elif user.parc %} {% comment %} parceiro {% endcomment %}
+      {% lng "Parceiro" "Partner" %}<b>
     {% else %}
       {% lng "Seu perfil não foi encontrado!" "Your profile was not found!" %}<br>
     {% endif %}
@@ -39,7 +39,7 @@
     {% endif %}
 
     <br><br>
-    {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %} 
+    {% if not user.parc %} 
       <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">
         {% lng "Meus Detalhes" "My Details" %}
       </a>

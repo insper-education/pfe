@@ -93,13 +93,8 @@
                 data-type="{{contato.tipo_retorno.id}}"
               {% endif %}>
               <td style="text-align: center; font-size: 12px;"></td>
-              <td>
-                {% if organizacao %}
-                  <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">{{organizacao.nome}}</a>
-                {% else %}
-                  <span style="color:gray;">Erro ao identificar organização</span>
-                {% endif %}
-              </td>
+
+              {% include "organizacoes/includes/td_organizacao.html" with organizacao=organizacao %}
 
               <td id="data{{organizacao.id}}">
                 {% if not contato %}

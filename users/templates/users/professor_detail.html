@@ -155,7 +155,7 @@
     <br>
   {% endif %}
 
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     <a href="{% url 'edita_usuario' professor.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">
         {% lng "Editar" "Edit" %}

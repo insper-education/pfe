@@ -87,7 +87,7 @@
           </span></u> {{objs.observacoes_estudantes}}<br>
           {% if objs.observacoes_orientador %}<br>{% endif %}
         {% endif %}
-        {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+        {% if user.prof_a %}
           {% if objs.observacoes_orientador %}
             &nbsp;<u><span style="font-weight: 500;">
               {% lng "Observações para Orientador" "Observations for Advisor" %}:

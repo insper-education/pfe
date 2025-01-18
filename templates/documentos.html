@@ -4,15 +4,17 @@
   Data: 13 de Junho de 2023
 {% endcomment %}
 
+{% load linguas %}
+
 {% if documentos %}
   {% for documento in documentos %}
     <div style="display: flex; align-items: flex-start;">
 
       <div style="white-space: nowrap;">
         {% if documento.confidencial %}
-          <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-lock" title="confidencial" ></i>
         {% else %}
-          <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-unlock" title="público" ></i>
         {% endif %}
         {% if documento.documento and documento.link %}
             {{documento.tipo_documento}}
@@ -52,12 +54,12 @@
         {% endif %}
       </div>
       
-      {% if user and user.tipo_de_usuario == 4 %}
+      {% if user and user.admin %}
         <a class="open-documento" data-url="{% url 'edita_documento' documento.id %}"><small style="font-size: 0.7em;">&nbsp;<i class="fas fa-pencil-alt"></i></small></a>
       {% endif %}
 
     </div>
   {% empty %}
-    Ainda não existem documentos associados.
+    {% lng "Ainda não existem documentos associados." "There are no documents associated yet." %}
   {% endfor %}
 {% endif %}

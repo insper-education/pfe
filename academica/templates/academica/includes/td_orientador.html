@@ -1,0 +1,43 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<td>
+  {% if orientador %}
+    {% if user.prof_a %}
+      <a class="imprimir" href="{% url 'professor_detail' orientador.id %}">  {% comment %} target="_blank" {% endcomment %}
+    {% endif %}
+    {{ orientador }}
+    {% if user.prof_a %}
+      </a>
+    {% endif %}
+    {% if coorientadores %}
+    <small>
+      <span class="coorientadores">
+        <br>
+        {% lng "coorientação" "co-advisoring" %}:
+        {% for coorientador in coorientadores %}
+          {% if user.prof_a %}
+            <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+          {% endif %}
+            {{coorientador.usuario.get_full_name}}
+          {% if user.prof_a %}
+            </a>
+          {% endif %}
+          {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
+          {% if not forloop.last %}; {% endif %}
+        {% endfor %}
+        </span>
+      </small>
+    {% endif %}
+  {% else %}
+    <div class="text-danger">
+      {% lng "ORIENTADOR NÃO DEFINIDO" "ADVISOR NOT DEFINED" %}
+    </div>
+  {% endif %}
+</td>

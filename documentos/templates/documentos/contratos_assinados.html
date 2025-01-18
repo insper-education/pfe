@@ -21,30 +21,10 @@
       {% for projeto in projetos %} 
         <tr class="item">
 
-          <td> <!-- Organização -->
-            {% if projeto and projeto.organizacao %}
-              <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.sigla }}</a>
-            {% else %}
-              <div class="text-danger">
-                <span lang="pt">ORGANIZAÇÃO NÃO DEFINIDA</span>
-                <span lang="en" style="display:none">ORGANIZATION NOT DEFINED</span>
-              </div>
-            {% endif %}
-          </td>
-          
-          <td> <!-- Projeto -->
-            <a style="font-size: 0.9em;" class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-              {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                {{projeto.titulo_final}}
-                <span class="tit_ori">
-                  <br><small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-                </span>
-              {% else %}
-                {{projeto.get_titulo}}
-              {% endif %}
-              {% include "tipo_projeto.html" %}
-            </a>
-          </td>
+          {% include "organizacoes/includes/td_organizacao.html" with organizacao=projeto.organizacao %}
+
+          <!-- Projeto "font-size: 0.9em;" -->
+          {% include "projetos/includes/td_projeto.html" with projeto=projeto tit_proposta=True %}
           
           <!-- Conexões -->
           <td style="min-width:18em;">
@@ -77,36 +57,10 @@
           </td>
 
           <!-- Orientador -->
-          <td>
-            <small>
-              {% if projeto.orientador %}
-                <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
-              {% else %}
-                <div class="text-danger">
-                  <span lang="pt">ORIENTADOR NÃO DEFINIDO</span>
-                  <span lang="en" style="display:none">ADVISOR NOT DEFINED</span>
-                </div>
-              {% endif %}
-
-              {% with coorientadores=projeto.coorientador_set.all %}
-                {% if coorientadores %}
-                <span class="coorientadores">
-                <br>coorientação:
-                  {% for coorientador in coorientadores %}
-                      <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">{{coorientador.usuario.get_full_name}}</a>
-                      {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
-                      {% if not forloop.last %}; {% endif %}
-                  {% endfor %}
-                  </span>
-                {% endif %}
-              {% endwith %}
-            </small>
-          </td>
+          {% include "academica/includes/td_orientador.html" with orientador=projeto.orientador coorientadores=projeto.coorientador_set.all %}
 
           <!-- Período -->
-          <td style="text-align:center">
-              {{projeto.ano}}.{{projeto.semestre}}
-          </td>
+          <td style="text-align:center">{{projeto.ano}}.{{projeto.semestre}}</td>
 
           <!-- Contrato(s) -->
           <td style="text-align:center; vertical-align: middle; position:relative;">

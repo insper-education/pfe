@@ -54,7 +54,7 @@
     {% lng "Regular" "Regular" %}
   {% endif %}<br>
 
-  {% if user.tipo_de_usuario != 1 %}
+  {% if not user.estud %}
     {% if aluno.cr %}
       <b>{% lng "CR" "GPA" %}:</b> {{aluno.cr}}<br>
     {% endif %}
@@ -85,7 +85,7 @@
   {% endwith %}
   <br>
 
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+  {% if user.prof_a %}
 
     {% if aluno.opcao_set.all %}
       <hr>
@@ -254,7 +254,7 @@
     </script>
   {% endif %}
 
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     <a href="{% url 'edita_usuario' aluno.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">
         {% lng "Editar" "Edit" %}

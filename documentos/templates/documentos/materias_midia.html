@@ -6,30 +6,20 @@
 {% endcomment %}
 
 {% block head %}
-
   {% load static %}
   {% load linguas %}
   {% include "tabelas_includes.html" %}
-  <style>
-    td {padding: 8px;}
-    th {text-align: center;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
 
-  {% comment %} {% include "informacoes_ml.html" %} {% endcomment %}
-
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     <span class="esconder">
-      <a 
-      href="#"
+      <a href="#"
       class="open-documento" style="cursor:pointer;"
       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}">
         <i class="fas fa-plus"></i> 
-        <span lang="pt">Cadastrar Nova Matéria</span>
-        <span lang="en" style="display: none;">Register New Document</span>
+        {% lng "Cadastrar Nova Matéria" "Register New Document" %}
       </a>
     </span>
     {% include "documento-modal.html" %}
@@ -39,7 +29,7 @@
     {% include "tabelas_top_ml.html" with tabela="Materias" cabecalhos=cabecalhos %}
       {% for relatorio in documentos %}
         {% if relatorio.link or relatorio.documento %}
-          {% if user.tipo_de_usuario == 4 or not relatorio.confidencial %}
+          {% if user.admin or not relatorio.confidencial %}
             <tr class="item">
               <td data-order="{{relatorio.data|date:"Ymd"}}">
                 {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
@@ -52,20 +42,20 @@
               </td>
               <td>
                 {% if relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  {% if user.prof_a %}
                     <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
                   {% endif %}
                   {{relatorio.projeto.organizacao}}, {{relatorio.projeto.get_titulo}}
                   {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  {% if user.prof_a %}
                     </a>
                   {% endif %}
                 {% elif relatorio.organizacao %}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  {% if user.prof_a %}
                     <a href="{% url 'organizacao_completo' relatorio.organizacao.id %}">
                   {% endif %}
                   {{relatorio.organizacao}}
-                  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+                  {% if user.prof_a %}
                     </a>
                   {% endif %}
                 {% endif %}
@@ -122,7 +112,5 @@
   </script>
 
   {% include "edicoes_ajax.html" with tabela="Materias" %}
-
-  <br>
   
 {% endblock %}

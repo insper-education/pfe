@@ -14,40 +14,22 @@
 {% endblock %}
 
 {% block content %}
-
-  {% include "edicoes.html" %}
-
-  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">Pessoa</span></label>
-          </div>
-          <select id="usuario" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
-                  title="Nada selecionado"
-                  multiple>
-            <option selected="selected" title="Insper">Insper</option>
-            <option selected="selected" title="Externo">Externo</option>
-          </select>
-      </div>
-    </div>
-  </div>
-
+  {% include "edicoes.html" with com_pessoas=True %}
   <div class="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Aulas" cabecalhos=cabecalhos %}
       {% for aula in aulas %}
         {% if aula.responsavel %}
-          {% if aula.responsavel.tipo_de_usuario == 2 or aula.responsavel.tipo_de_usuario == 4 %}
-            <tr class="item" data-user="Insper">
+          <tr class="item" 
+           {% if aula.responsavel.prof_a %}
+            data-user="Insper">
               <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' aula.responsavel.professor.id %}">{{aula.responsavel.get_full_name}}</a>
-          {% elif aula.responsavel.tipo_de_usuario == 3 %}
-            <tr class="item" data-user="Externo">
+           {% elif aula.responsavel.parc %}
+            data-user="Externo">
               <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
-          {% else %}
-            <tr class="item"><td>
-              <span lang="pt">Erro ao identificar usuário</span>
-              <span lang="en">Error identifying user</span>
-          {% endif %}</td>
+           {% else %}
+            ><td>
+              {% lng "Erro ao identificar usuário" "Error identifying user" %}
+           {% endif %}</td>
             <td><a href="mailto:{{aula.responsavel.email}}">{{aula.responsavel.email}}</a></td>
             <td style="text-align: left;">{{aula.atividade}} ({{aula.startDate}}) {% if aula.descricao %} - {{aula.descricao}}{% endif %}</td>
           </tr>
@@ -56,16 +38,13 @@
     {% include "tabelas_bottom.html" %}
   </div>
 
-  {% include "edicoes_ajax.html" with tabela="Aulas" %}
-
   <script>
     $("#usuario").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      
       $.fn.dataTable.ext.search.push(
         function(settings, data, dataIndex) {
           Table = $("#AulasTable").DataTable();
           if(Table && typeof Table.row === "function") {
-            {% comment %} Somente mostra elemento selecionado {% endcomment %}
+            // Somente mostra elemento selecionado
             var val = $("#usuario").selectpicker("val");
             return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
           }
@@ -74,6 +53,15 @@
       );
       $("#AulasTable").DataTable().draw();
     });
+  </script>
+
+  {% include "edicoes_ajax.html" with tabela="Aulas" %}
+
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
   </script>
 
 {% endblock %}

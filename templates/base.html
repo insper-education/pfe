@@ -75,7 +75,7 @@
             <span lang="pt">Calendário</span>
             <span lang="en" style="display: none;">Calendar</span>
           </a>
-          {% if user.tipo_de_usuario == 1 or user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
+          {% if not user.parc %}
               <a href="{% url 'index_estudantes' %}">
                 <span lang="pt">Área dos Estudantes</span>
                 <span lang="en" style="display: none;">Students' Area</span>

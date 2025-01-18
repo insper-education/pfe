@@ -16,7 +16,7 @@
     <span class="texto-longo">(</span>E{{ forloop.counter }}<span class="texto-longo">)</span>:
   </b> 
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
-  {% if request.user.tipo_de_usuario != 1 %}
+  {% if not request.user.estud %}
     (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
     <span lang="pt">horas</span><span lang="en" style="display:none">hours</span>)
   {% endif %}
@@ -98,20 +98,16 @@
   
 
 </div>
-{% if request.user.tipo_de_usuario == 1 %}
+{% if request.user.estud %}
   <br>
-  <span lang="pt">Instruções:</span>
-  <span lang="en" style="display:none">Instructions:</span>
-  <br>
+  {% lng "Instruções" "Instructions" %}:<br>
 
   <span lang="pt">- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta).</span>
   <span lang="en" style="display:none">- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class).</span>
   <br>
   
-  <b>
-    <span lang="pt">Suas horas alocadas:</span>
-    <span lang="en" style="display:none">Your allocated hours:</span>
-  </b> <span id="horas_alocadas">0</span><br>
+  <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
+  <span id="horas_alocadas">0</span><br>
   <br>
 
   <span lang="pt">- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos.</span>
@@ -119,17 +115,15 @@
   <br>
 {% endif %}
 
-<b>
-  <span lang="pt">Horas todos juntos:</span>
-  <span lang="en" style="display:none">Hours all together:</span>
-</b> <span id="horas_juntos">0</span><br>
+<b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
+<span id="horas_juntos">0</span><br>
 
 <br>							
 
 <script>
 
   function set_horas(horas_comerciais, horas_outras) {
-    {% if request.user.tipo_de_usuario == 1 %}
+    {% if request.user.estud %}
       document.getElementById("horas_alocadas").innerText = horas_comerciais*2 + " horas (total = " + (horas_comerciais+horas_outras)*2 + " horas)";
       if(horas_comerciais < 22/2) {
         document.getElementById("horas_alocadas").style.color = "red";
@@ -178,7 +172,7 @@
     }
   }
 
-  {% if request.user.tipo_de_usuario == 1 %}
+  {% if request.user.estud %}
     document.addEventListener("DOMContentLoaded", (event) => {
       let isMouseDown = false;
 
@@ -341,12 +335,7 @@
   }
 
   // Verifica atualizações continuamente
-  {% if request.user.tipo_de_usuario == 1 %}
-    setInterval(refresh_horas, 8000);
-  {% else %}
-    setInterval(refresh_horas, 60000);
-  {% endif %}
-
+  setInterval(refresh_horas, {% if request.user.estud %}8000{% else %}60000{% endif %} );
   refresh_horas();
 
 </script>

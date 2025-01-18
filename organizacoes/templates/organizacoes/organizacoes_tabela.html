@@ -32,11 +32,9 @@
         </thead>
         {% for organizacao,projetos in organizacoes %} 
           <tr class="item">
-            <td>
-              <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}">
-                {{organizacao.nome}}
-              </a>
-            </td>
+            
+            {% include "organizacoes/includes/td_organizacao.html" with organizacao=organizacao %}
+
             <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for projeto in projetos %}
                 &bull;

@@ -47,13 +47,12 @@
 {% block content %}
 
   <form method="post"> {% csrf_token %}
-    {% if user.tipo_de_usuario == 1 %}
+    {% if user.estud %}
       <h4>Projeto: 
         {% if projeto %}
           [{{projeto.organizacao}}] {{projeto.get_titulo}}
         {% else %}
-          <span lang="pt">&lt; PROJETO NÃO ENCONTRADO &gt;</span>
-          <span lang="en" style="display:none">&lt; PROJECT NOT FOUND &gt;</span>
+          {% lng "&lt; PROJETO NÃO ENCONTRADO &gt;" "&lt; PROJECT NOT FOUND &gt;" %}
         {% endif %}
       </h4>
     {% else %}
@@ -70,13 +69,9 @@
     {% endif %}
 
     {% if encontros %}
-      <b>
-        <span lang="pt">Horários disponíveis para agendamento:</span>
-        <span lang="en" style="display:none">Available times for scheduling:</span>
-      </b>
+      <b>{% lng "Horários disponíveis para agendamento" "Available times for scheduling" %}:</b>
     {% else %}
-      <span lang="pt">Sem encontros para marcar.</span>
-      <span lang="en" style="display:none">No slots to schedule.</span>
+      {% lng "Sem encontros para marcar." "No slots to schedule." %}
     {% endif %}
 
     <div id="horarios">
