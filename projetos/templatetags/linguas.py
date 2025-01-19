@@ -19,7 +19,6 @@ def thtml(pt_text, en_text):
 @register.simple_tag
 def lng(pt_text, en_text):
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
 
 # Para mostrar datas
 @register.simple_tag
@@ -27,7 +26,6 @@ def lng_d(date, pt_text="", en_text=""):
     pt_text = date.strftime("%d/%m/%y") + ( " " + pt_text if pt_text else "")
     en_text = date.strftime("%b %d, %y") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_data} {pt_text}</span><span lang="en" style="display:none">{en_data} {en_text}</span>''')
 
 # Para mostrar datas
 @register.simple_tag
@@ -37,7 +35,6 @@ def lng_dl(date, pt_text="", en_text=""):
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     en_text = date.strftime("%B %d, %Y") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_data} {pt_text}</span><span lang="en" style="display:none">{en_data} {en_text}</span>''')
 
 # Para números com duas casas decimais
 @register.simple_tag
@@ -47,8 +44,6 @@ def lng_2(numero):
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     en_text = locale.format_string("%.2f", numero, grouping=True)
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_num}</span><span lang="en" style="display:none">{en_num}</span>''')
-
 
 # Teste se verdade usa primeiro, senão segundo
 @register.simple_tag
@@ -63,7 +58,6 @@ def lng_b(pt_bool, pt_text_t, pt_text_f, en_text_t, en_text_f=None):
         else:
             en_text = en_text_f
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
 
 # Quando a palavra muda por causa do gênero
 @register.simple_tag
@@ -78,7 +72,6 @@ def lng_g(pt_genero, pt_text_m, pt_text_f, en_text_m, en_text_f=None):
         else:
             en_text = en_text_f
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
 
 # Quando a palavra muda por causa do número
 @register.simple_tag
@@ -93,4 +86,3 @@ def lng_n(pt_numero, pt_text_s, pt_text_p, en_text_s, en_text_p=None):
         else:
             en_text = en_text_p
     return thtml(pt_text, en_text)
-    #return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')

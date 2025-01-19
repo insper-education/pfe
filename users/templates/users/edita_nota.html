@@ -11,6 +11,7 @@
   {% load dictionary %}
   {% load pega_avaliacao %}
   {% load linguas %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
   <style>
     textarea {
@@ -51,7 +52,8 @@
 
         {% with avaliadores=avaliacoes|pega_avaliadores:composicao.exame|add_orientador:alocacao.projeto %}
         {% for aval_id, aval_first_name, aval_last_name in avaliadores %}
-          <div style="border: 1px solid black;" class="mb-4">
+          <div class="div_arredondado">
+            
             <b>{{composicao.exame.titulo}} [{{aval_first_name}} {{aval_last_name}}] : <span id="a{{composicao.exame.id}}_media_p{{aval_id}}"></span></b>
             <ul>
               {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
@@ -112,14 +114,16 @@
               <div style="margin-top: 6px; margin-left: 10px;">
                 {% lng "Observações para Estudantes" "Observations for Students" %}:
               </div>
-              <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
-                        rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+              <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" 
+                        name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
+                        style="width: 98%;" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
               <div style="margin-top: 6px; margin-left: 10px;">
                 {% lng "Observações para Orientador" "Observations for Advisor" %}:
               </div>
-              <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
-                        rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+              <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" 
+                        name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
+                        style="width: 98%;" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
               <br>
             {% endwith %}
