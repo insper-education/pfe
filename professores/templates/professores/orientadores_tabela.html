@@ -16,30 +16,25 @@
   {% include "informacoes_ml.html" %}
 
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Orientacoes" cabecalhos=cabecalhos %}
-
-          {% for professor, grupos in orientacoes %} 
-
-            <tr class="item">
-              <td data-sort="{{professor.user.get_full_name}}">
-                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
-              </td>
-              <td style="text-align: center;" data-sort="{{professor.dedicacao}}">
-                <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.dedicacao}}</a>
-              </td>
-              <td data-sort="{{professor.user.email}}">
-                <a class="email" href="mailto:{{professor.user.email}}">{{professor.user.email}}</a>
-              </td>
-              <td style="text-align: center;"> 
-                {{grupos|length}}
-              </td>
-              <td style="text-align: left;">{% for grupo in grupos %}<p>&bull; <span class="semestre">[{{grupo.ano}}.{{grupo.semestre}}] </span><span class="organizacao">({{grupo.organizacao}}) </span><span class="titulo_projeto">{{grupo.get_titulo}} </span><span class="tamanho_grupo">{ {{ grupo.alocacao_set.all.count }} estudante(s) }</span><br></p>{% endfor %}</td>
-            </tr>
-          {% endfor %}
-        </table>
-    </div>
-
+      {% for professor, grupos in orientacoes %} 
+        <tr class="item">
+          <td data-sort="{{professor.user.get_full_name}}">
+            <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
+          </td>
+          <td style="text-align: center;" data-sort="{{professor.dedicacao}}">
+            <a class="imprimir" href="{% url 'professor_detail' professor.id %}">{{professor.dedicacao}}</a>
+          </td>
+          <td data-sort="{{professor.user.email}}">
+            <a class="email" href="mailto:{{professor.user.email}}">{{professor.user.email}}</a>
+          </td>
+          <td style="text-align: center;"> 
+            {{grupos|length}}
+          </td>
+          <td style="text-align: left;">{% for grupo in grupos %}<p>&bull; <span class="semestre">[{{grupo.ano}}.{{grupo.semestre}}] </span><span class="organizacao">({{grupo.organizacao}}) </span><span class="titulo_projeto">{{grupo.get_titulo}} </span><span class="tamanho_grupo">{ {{ grupo.alocacao_set.all.count }} estudante(s) }</span><br></p>{% endfor %}</td>
+        </tr>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
   </div>
 
   <script> 

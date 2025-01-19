@@ -94,7 +94,7 @@
               {% endif %}>
               <td style="text-align: center; font-size: 12px;"></td>
 
-              {% include "organizacoes/includes/td_organizacao.html" with organizacao=organizacao %}
+              <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}</td>
 
               <td id="data{{organizacao.id}}">
                 {% if not contato %}

@@ -138,7 +138,7 @@
             {% endif %}>
             <td style="text-align: center; font-size: 12px;"></td>
             
-            {% include "organizacoes/includes/td_organizacao.html" with organizacao=organizacao %}
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}<td>
 
             <td style="text-align:center">
               <small style="white-space: nowrap;">{% for curso in cursos %}<span class="cursor_pointer" id="{{organizacao.id}}{{curso.sigla_curta}}"

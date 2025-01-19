@@ -29,7 +29,6 @@
   <br>
 
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
       {% for usuario in usuarios %}
         <tr class="item" {% if not usuario.is_active %} style="color: lightgrey;" {% endif %}>
@@ -43,9 +42,7 @@
           <td>{{usuario.get_tipo_de_usuario_display}}</td>
         </tr>
       {% endfor %}
-    </table> 
-    </div> {% comment %} do "tabelas_top_ml.html" {% endcomment %}
-
+    {% include "tabelas_bottom.html" %}
   </div>
 
   <br>

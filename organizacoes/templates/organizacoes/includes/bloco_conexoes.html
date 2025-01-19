@@ -1,0 +1,38 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if conexoes %}
+  <ul class="grup_estud" style="padding-left: 18px;">
+    {% for conexao in conexoes %}
+      {% if conexao.parceiro %}
+
+        <li style="line-height: 1.0; margin-bottom: 0.5em;">
+          {% if pequeno %}
+            <small>
+          {% endif %}
+          {% if user.prof_a %}
+            <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">  {% comment %} target="_blank" {% endcomment %}
+          {% endif %}
+          {{ conexao.parceiro.user.get_full_name }}
+          {% if user.prof_a %}
+            </a>
+          {% endif %}
+          {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+          {% if pequeno %}
+            </small>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="text-danger">
+    {% lng "CONEXÕES NÃO DEFINIDAS" "CONNECTIONS NOT DEFINED" %}
+  </div>
+{% endif %}

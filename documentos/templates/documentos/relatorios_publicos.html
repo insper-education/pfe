@@ -11,12 +11,7 @@
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
   {% include "tabelas_includes.html" %}
-  <style>
-    td {padding: 8px;}
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -44,64 +39,23 @@
       {% for relatorio in relatorios %}
         {% if relatorio.link or relatorio.documento and relatorio.projeto %}
           <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
-            
-
-            {% comment %} FAZER ISSO MELHOR {% endcomment %}
-            {% comment %} FAZER ISSO MELHOR {% endcomment %}
-            {% comment %} FAZER ISSO MELHOR {% endcomment %}
-            {% comment %} {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %} {% endcomment %}
-            
-            {% include "projetos/includes/td_projeto.html" with projeto=relatorio.projeto %}
-
-            <td> {% comment %} Estudante {% endcomment %}
-              {% if relatorio.projeto %}
-                {% for alocacao in relatorio.projeto.alocacao_set.all %}
-                  {% if user.prof_a %}
-                    <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
-                  {% endif %}
-                      &bull; {{alocacao.aluno.user.get_full_name}}
-                  {% if user.prof_a %}
-                    </a>
-                  {% endif %}
-                  {% if not forloop.last %}<br>{% endif %}
-                {% endfor %}
-              {% endif %}
+            <td>
+              {% include "projetos/includes/bloco_projeto.html" with projeto=relatorio.projeto %}
+              {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %}
             </td>
-
-            {% include "academica/includes/td_orientador.html" with orientador=relatorio.projeto.orientador %}
-            {% include "organizacoes/includes/td_organizacao.html" with organizacao=relatorio.projeto.organizacao %}
-
-            <td> {% comment %} Banca Final {% endcomment %}
-              <small>
-                <ul class="grupo" style="padding-left: 20px;margin-bottom: 0px;">
-                  {% for membro in relatorio.projeto.get_banca_final.membros %}
-                    <li>
-                      {% if user.prof_a %}
-                        <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                      {% endif %}
-                      {{membro.get_full_name}}
-                      {% if user.prof_a %}
-                        </a>
-                      {% endif %}
-                    </li>
-                  {% endfor %}
-                </ul>
-              </small>
-            </td>
-
-            <td style="text-align:center"> {% comment %} Período {% endcomment %}
-              {% if relatorio.projeto %}
-                {{relatorio.projeto.ano}}.{{relatorio.projeto.semestre}}
-              {% endif %}
-            </td>
+            <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=relatorio.projeto.alocacao_set.all pequeno=True %}</td>
+            <td>{% include "academica/includes/bloco_orientador.html" with orientador=relatorio.projeto.orientador %}</td>
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=relatorio.projeto.organizacao %}</td>
+            <td>{% include "academica/includes/bloco_banca.html" with membros=relatorio.projeto.get_banca_final.membros pequeno=True %}</td>
+            <td style="text-align:center">{{relatorio.projeto.get_edicao}}</td>
 
             <td style="text-align:center"> {% comment %} Documento {% endcomment %}
               <span id="p{{relatorio.pk}}">
                 {% if relatorio.link %}
                   <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
                     href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">Relatório<sup>B</sup></span>
-                    <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(DSpace)</span>
+                    <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>B</sup></span>
+                    <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(DSpace)</span>
                     {% if user.admin %}
                       <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
                         <i class="fas fa-pencil-alt"></i>
@@ -113,8 +67,8 @@
               {% if relatorio.documento %}
                 <a class="btn btn-light btn-outline-info btn-sm mt-1"
                   href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  <span class="texto-curto" style="width: 6em;">Relatório<sup>S</sup></span>
-                  <span class="texto-longo" style="width: 13em;">Relatório&nbsp;(Servidor)</span>
+                  <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>S</sup></span>
+                  <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(Servidor)</span>
                 </a><br>
                 {% if user.tipo_de_usuario == 4 and not relatorio.link %}
                   <a id="c{{relatorio.pk}}"

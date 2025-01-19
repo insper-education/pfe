@@ -203,122 +203,6 @@ class Projeto(models.Model):
             return Evento.objects.none()
         else:
             return Evento.get_eventos(sigla="RQ", ano=self.ano, semestre=self.semestre)
-
-    #def get_alocacoes(self):
-
-    #     """Retorna todas as alocações do projeto."""
-    #     if self.time_misto:
-    #         # Em caso de time misto, estudantes de fora da instituição não são listados
-    #         cursos_do_insper = Curso.objects.filter(curso_do_insper=True)
-    #         return users.models.Alocacao.objects.filter(projeto=self, aluno__curso2__in=cursos_do_insper)
-    #     return users.models.Alocacao.objects.filter(projeto=self)
-
-    # def get_relatos(self):
-    
-    #     """Retorna todos os possiveis relatos quinzenais para o projeto."""
-        
-    #     proximo = datetime.date.today() + datetime.timedelta(days=14)
-
-    #     eventos = self.tem_relatos().filter(startDate__lt=proximo).order_by("endDate")
-
-    #     relatos = []
-    #     avaliados = []  # se o orientador fez alguma avaliação dos relatos
-    #     observacoes = []  # observações do orientador
-
-    #     exame = Exame.objects.get(titulo="Relato Quinzenal")
-
-    #     for index in range(len(eventos)):
-        
-    #         if not index: # index == 0:
-    #             relato = Relato.objects.filter(alocacao__projeto=self,
-    #                                            momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
-
-    #             obs = Observacao.objects.filter(projeto=self, exame=exame,
-    #                                             momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).last()
-    #         else:
-    #             relato = Relato.objects.filter(alocacao__projeto=self,
-    #                                            momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
-    #                                            momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
-
-    #             obs = Observacao.objects.filter(projeto=self, exame=exame,
-    #                                             momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
-    #                                             momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).last()
-
-    #         avaliado = []
-    #         for r in relato:
-    #             if r.avaliacao > 0:
-    #                 avaliado.append([True, r.alocacao.aluno])
-    #             if r.avaliacao == 0:
-    #                 avaliado.append([False, r.alocacao.aluno])
-
-    #         relatos.append([u[0] for u in relato.order_by().values("alocacao").distinct().values_list("alocacao_id")])
-
-    #         avaliados.append(avaliado)
-
-    #         observacoes.append(obs)
-    
-    #     return zip(eventos, relatos, avaliados, observacoes)
-
-    # @property
-    # def get_planos_de_orientacao(self):
-    #     """Retorna todos os planos de orientação do projeto."""
-    #     tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
-    #     documentos = Documento.objects.filter(tipo_documento=tipo_documento, projeto=self)
-    #     return documentos
-
-    # @property
-    # def has_relatos(self):
-    #     """Retorna se houver algum relato quinzenal para o projeto."""            
-    #     return Relato.objects.filter(alocacao__projeto=self).exists()
-
-    # @property
-    # def media_falconi(self):
-    #     exame = Exame.objects.get(titulo="Falconi")
-    #     aval_banc_falconi = Avaliacao2.objects.filter(projeto=self, exame=exame)  # Falc.
-    #     nota_banca_falconi, _, _ = users.models.Aluno.get_banca_estudante(None, aval_banc_falconi)
-    #     return nota_banca_falconi
-
-    # @property
-    # def media_bancas(self):
-    #     exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
-    #     aval_bancas = Avaliacao2.objects.filter(projeto=self, exame__in=exames)  # Bancas.
-    #     nota_bancas, _, _ = users.models.Aluno.get_banca_estudante(None, aval_bancas)
-    #     return nota_bancas
-
-    # @property
-    # def media_orientador(self):
-    #     alocacoes = users.models.Alocacao.objects.filter(projeto=self)
-    #     if alocacoes:
-    #         primeira = alocacoes.first()
-    #         medias = primeira.get_media
-
-    #         nota = 0
-    #         peso = 0
-    #         if ("peso_grupo_inter" in medias) and (medias["peso_grupo_inter"] is not None) and (medias["peso_grupo_inter"] > 0):
-    #             nota += medias["nota_grupo_inter"]
-    #             peso += medias["peso_grupo_inter"]
-                
-    #         if ("peso_grupo_final" in medias) and (medias["peso_grupo_final"] is not None) and (medias["peso_grupo_final"] > 0):
-    #             nota += medias["nota_grupo_final"]
-    #             peso += medias["peso_grupo_final"]
-                
-    #         if peso:
-    #             return nota/peso
-    #         return 0.0
-
-    #     else:
-    #         return 0.0
-
-
-    # @property
-    # def medias(self):
-    #     notas = [0,0,0,0]
-    #     notas[0] = self.media_orientador
-    #     notas[1] = self.media_bancas
-    #     notas[2] = self.media_falconi
-    #     notas[3] = (notas[0] + notas[1] + notas[2])/3
-    #     return notas
-
     
     def periodo(self):
         configuracao = get_object_or_404(Configuracao)
@@ -327,8 +211,7 @@ class Projeto(models.Model):
         if self.ano == configuracao.ano and self.semestre >= configuracao.semestre:
             return {"pt": "Atuais", "en": "Current"}
         return {"pt": "Anteriores", "en": "Previous"}
-    
-    
+        
     @property
     def get_edicao(self):
         return str(self.ano)+"."+str(self.semestre)
@@ -340,46 +223,6 @@ class Projeto(models.Model):
     @property
     def get_coorientadores_ids(self):
         return Coorientador.objects.filter(projeto=self).values_list("usuario", flat=True)
-    
-    # def get_pares_colegas(self, tipo=0):
-    #     alocacoes = users.models.Alocacao.objects.filter(projeto=self)
-    #     pares = []
-    #     for alocacao in alocacoes:
-    #         pares.append(Pares.objects.filter(alocacao_de__projeto=self, alocacao_para=alocacao, tipo=tipo))
-    #     colegas = zip(alocacoes, pares)
-    #     return colegas
-    
-    # @property
-    # def get_documentos_publicos(self):
-    #     """Retorna certos documentos publicos do projeto."""
-                
-    #     tipos_documento = TipoDocumento.objects.filter(
-    #         nome__in=["Vídeo do Projeto", "Banner", "Apresentação da Banca Final"]
-    #     )
-        
-    #     documentos = []
-    #     for tipo in tipos_documento:
-    #         documento = Documento.objects.filter(confidencial=False, tipo_documento=tipo, projeto=self).last()
-    #         if documento:
-    #             documentos.append(documento)
-
-    #     return documentos
-    
-    # def get_relatorio_final(self):
-    #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
-
-    #     if documento.exists():
-    #         return documento.order_by("data").last()
-    #     return None
-
-    # def get_relatorio_intermediario(self):
-    #     tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    #     documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self)
-        
-    #     if documento.exists():
-    #         return documento.order_by("data").last()
-    #     return None
     
     def get_banca_final(self):
         banca = Banca.objects.filter(projeto=self, composicao__exame__titulo="Banca Final").last()
@@ -578,27 +421,9 @@ class Proposta(models.Model):
         if self.mentorar: interesses += [["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar]]
         return interesses
 
-    # def get_nativamente(self):
-    #     """Retorna em string com curso mais nativo da proposta."""
-
-    #     # Initialize count dictionary for all cursos
-    #     count = {curso: 0 for curso in Curso.objects.all()}
-    #     total = 0
-
-    #     # Count occurrences of each curso in perfis
-    #     for perfil in self.perfis():
-    #         for curso in perfil.all():
-    #             count[curso] += 1
-    #             total += 1
-
-    #     if total == 0:
-    #         return " "
-
-    #     # Find the curso with the maximum count
-    #     keymax = max(count, key=count.get)
-    #     if count[keymax] > total // 2:
-    #         return keymax
-    #     return "?"
+    @property
+    def get_edicao(self):
+        return str(self.ano)+"."+str(self.semestre)
 
     def get_anexo(self):
         """Nome do arquivo do anexo."""

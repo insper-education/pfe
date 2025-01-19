@@ -34,9 +34,8 @@
   </span>
   
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
-        {% for aluno in alunos_list %} 
+      {% for aluno in alunos_list %} 
         <tr class="item">
           <th scope="row" data-order="{{aluno.user.get_full_name}}">
             <a href="{% url 'estudante_detail' aluno.id %}">

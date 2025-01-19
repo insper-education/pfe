@@ -13,12 +13,14 @@ from .models import Exame
 
 from projetos.models import Documento, Evento, Avaliacao2, Observacao
 
+from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
 from estudantes.models import EstiloComunicacao
 
 from users.models import Alocacao
-from users.models import Aluno, UsuarioEstiloComunicacao
+from users.models import Aluno
+from users.models import UsuarioEstiloComunicacao
 
 
 # Get an instance of a logger
@@ -158,7 +160,7 @@ def media_orientador(projeto):
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     if alocacoes:
         primeira = alocacoes.first()
-        medias = primeira.get_media
+        medias = get_media_alocacao_i(primeira)
 
         nota = 0
         peso = 0

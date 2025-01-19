@@ -13,9 +13,16 @@ register = template.Library()
 
 @register.filter()
 def medias(projeto):
-    notas = [0,0,0,0]
-    notas[0] = media_orientador(projeto)
-    notas[1] = media_bancas(projeto)
-    notas[2] = media_falconi(projeto)
-    notas[3] = (notas[0] + notas[1] + notas[2])/3
+    # notas = [0,0,0,0]
+    # notas[0] = media_orientador(projeto)
+    # notas[1] = media_bancas(projeto)
+    # notas[2] = media_falconi(projeto)
+    # notas[3] = (notas[0] + notas[1] + notas[2])/3
+
+    notas = {
+        "orientador": media_orientador(projeto),
+        "bancas": media_bancas(projeto),
+        "falconi": media_falconi(projeto),
+    }
+    notas["media"] = (notas["orientador"] + notas["bancas"] + notas["falconi"])/3
     return notas

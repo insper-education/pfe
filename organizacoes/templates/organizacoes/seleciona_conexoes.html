@@ -124,8 +124,7 @@
       {% empty %}
         <tr>
           <td colspan="{{ cabecalhos|length }}">
-            <span lang="pt">Não existem parceiros cadastrados para esse projeto.</span>
-            <span lang="en" style="display: none;">There are no partners registered for this project.</span>
+            {% lng "Não existem parceiros cadastrados para esse projeto." "There are no partners registered for this project." %}
           </td>
         </tr>
       {% endfor %}
@@ -134,8 +133,7 @@
 
     <div class="mt-2">
       <label for="colaboracao">
-        <span lang="pt">Colaboração Externa (CE)</span>
-        <span lang="en" style="display: none;">External Collaboration (EC)</span>
+        {% lng "Colaboração Externa (CE)" "External Collaboration (CE)" %}
       </label></b>:
       <div style="display: inline-block; width: 480px;">
       <select class="selectpicker" name="colaboracao" id="colaboracao" title="Selecione quem está colaborando com o projeto"
@@ -154,8 +152,7 @@
     <br>
 
     <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
-      <span lang="pt">Cadastrar Novo Parceiro</span>
-      <span lang="en" style="display: none;">Register New Partner</span>
+      {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}
     </button></small><br>
   </form>
 

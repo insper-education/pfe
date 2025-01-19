@@ -155,24 +155,18 @@
               {% endwith %}
 
               <th scope="row">
+
                 <a href="{% url 'proposta_completa' proposta.id %}" target="_blank" rel="noopener noreferrer">
                   {% if proposta.titulo %}{{proposta.titulo}}{% else %}Título não definido.{% endif %}
                 </a>
+
               </th>
 
-              <td class="text-center periodo">{{proposta.ano}}.{{proposta.semestre}}</td>
+              <td class="text-center periodo">{{proposta.get_edicao}}</td>
               
               <td class="organizacao">
-                <div id="proposta{{proposta.id}}" style="float:left;width: 85%;">
-                  {% if proposta.organizacao %}
-                    <a href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-                      {{ proposta.organizacao.nome }}
-                    </a>
-                  {% elif proposta.nome_organizacao %}
-                    {{ proposta.nome_organizacao }}
-                  {% else %}
-                    Organização não definida.
-                  {% endif %}  
+                <div id="proposta{{proposta.id}}" style="float:left; width: 85%;">
+                  {% include "organizacoes/includes/bloco_organizacao.html" with organizacao=proposta.organizacao %}
                 </div>
                 <div class="esconder" style="float:right;">
                   <a data-proposta="{{proposta.id}}" class="link-organizacao"
@@ -240,32 +234,27 @@
       {% endif %}<br>
       
       <p>&nbsp;</p>
-      <strong lang="pt">Número Total de Propostas Publicadas:</strong>
-      <strong lang="en">Total Number of Published Proposals:</strong>
+      <b lang="pt">Número Total de Propostas Publicadas:</b>
+      <b lang="en">Total Number of Published Proposals:</b>
         <span id="propostas_publicadas"></span>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
           {% if propostas %}({{ propostas.count }}){% else %}(---){% endif %}
         </a><br>
       
-      <strong lang="pt">Número Total de Propostas Fechadas:</strong>
-      <strong lang="en">Total Number of Closed Proposals:</strong>
+      <b>{% lng "Número Total de Propostas Fechadas" "Total Number of Confirmed Proposals" %}:</b>
       <span id="propostas_fechadas"></span><br>
 
-      <strong lang="pt">Número Total de Organizações Participando:</strong>
-      <strong lang="en">Total Number of Participating Organizations:</strong>
+      <b>{% lng "Número Total de Organizações Participando" "Total Number of Participating Organizations" %}:</b>
       {{num_organizacoes}}<br>
 
       <p>&nbsp;</p>
-      <b lang="pt">Disponibilidade de Propostas:</b>
-      <b lang="en">Proposals Availability:</b>
-      <br>
+      <b>{% lng "Propostas disponíveis para estudantes" "Proposals available for students" %}:</b><br>
       {% with nao_disponivel=True %}
         {% include "propostas_nativamente.html" %}
       {% endwith %}
 
       <p>&nbsp;</p>
-      <strong lang="pt">Vagas por curso</strong>
-      <strong lang="en">Positions per program</strong>
+      <b>{% lng "Vagas por curso" "Positions per program" %}</b>
       <br>
       <table class="table-bordered table-sm">
         <thead class="table-info">

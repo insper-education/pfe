@@ -1,0 +1,35 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if grupo %}
+  <ul class="grup_estud" style="padding-left: 18px;">
+    {% for alocacao in grupo %}
+      <li style="line-height: 1.0; margin-bottom: 0.5em;">
+        {% if pequeno %}
+          <small>
+        {% endif %}
+        {% if user.prof_a %}
+          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">  {% comment %} target="_blank" {% endcomment %}
+        {% endif %}
+        {{alocacao.aluno.user.get_full_name}}
+        {% if user.prof_a %}
+          </a>
+        {% endif %}
+        <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
+        {% if pequeno %}
+          </small>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="text-danger">
+    {% lng "GRUPO NÃO DEFINIDO" "GROUP NOT DEFINED" %}
+  </div>
+{% endif %}

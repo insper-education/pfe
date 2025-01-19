@@ -1,0 +1,22 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if organizacao %}
+  {% if user.prof_a %}
+    <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">
+  {% endif %}
+  {{ organizacao.nome }}
+  {% if user.prof_a %}
+    </a>
+  {% endif %}
+{% else %}
+  <div class="text-danger">
+    {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
+  </div>
+{% endif %}

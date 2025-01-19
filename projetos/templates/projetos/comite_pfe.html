@@ -12,26 +12,22 @@
 {% block content %}
 
   {% include "tabelas_top_ml.html" with tabela="Membros" cabecalhos=cabecalhos %}
-
     {% for professor in professores %} 
-        <tr class="item">
-            <th scope="row" data-sort="{{professor.user.get_full_name}}">
-              <a href="{% url 'professor_detail' professor.id %}">
-                {{professor.user.get_full_name}}
-              </a>
-            </th>
-            <td class="text-center">
-              <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
-            </td>
-            <td >
-              {% if professor.lattes %}
-                <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
+      <tr class="item">
+        <th scope="row" data-sort="{{professor.user.get_full_name}}">
+          <a href="{% url 'professor_detail' professor.id %}">{{professor.user.get_full_name}}</a>
+        </th>
+        <td class="text-center">
+          <a href="mailto:{{professor.user.email}}"> &lt;{{professor.user.email}}&gt;</a><br>
+        </td>
+        <td >
+          {% if professor.lattes %}
+            <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"> {{professor.lattes}} </a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% include "tabelas_bottom.html" %}
 
   <script>
     function carrega_pagina(){

@@ -35,9 +35,9 @@
       <tbody>
         {% for banca in bancas %}
           <tr>
-            {% include "academica/includes/td_orientador.html" with orientador=banca.projeto.orientador %}
-            {% include "projetos/includes/td_projeto.html" with projeto=banca.projeto %}
-            {% include "organizacoes/includes/td_organizacao.html" with organizacao=banca.projeto.organizacao %}
+            <td>{% include "academica/includes/block_orientador.html" with orientador=banca.projeto.orientador %}</td>
+            <td>{% include "projetos/includes/td_projeto.html" with projeto=banca.projeto %}</td>
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=banca.projeto.organizacao %}</td>
           </tr>
         {% empty %}
           <tr>

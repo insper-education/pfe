@@ -32,11 +32,9 @@
                 Nenhum aluno alocado nesse projeto
               {% endfor %}
             </td>
-            <td class="text-center">
-                {{projeto.ano}}&middot;{{projeto.semestre}}
-            </td>
-            {% include "academica/includes/td_orientador.html" with orientador=projeto.orientador %}
-            {% include "organizacoes/includes/td_organizacao.html" with organizacao=projeto.organizacao %}
+            <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
+            <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
           </tr>
         {% endwith %}
       {% endfor %}     

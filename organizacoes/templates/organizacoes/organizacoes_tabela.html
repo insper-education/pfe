@@ -33,7 +33,7 @@
         {% for organizacao,projetos in organizacoes %} 
           <tr class="item">
             
-            {% include "organizacoes/includes/td_organizacao.html" with organizacao=organizacao %}
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}</td>
 
             <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
               {% for projeto in projetos %}

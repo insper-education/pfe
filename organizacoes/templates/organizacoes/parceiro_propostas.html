@@ -19,7 +19,7 @@
     {% for proposta in propostas %} 
       <tr class="item">
           <td><a href="{% url 'proposta_editar' proposta.slug %}">{{proposta.titulo}}</a></td>
-          <td class="text-center">{{proposta.ano}}.{{proposta.semestre}}</td>
+          <td class="text-center">{{proposta.get_edicao}}</td>
       </tr>
     {% empty %}
       <tr>

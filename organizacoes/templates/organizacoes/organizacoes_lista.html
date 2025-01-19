@@ -41,12 +41,11 @@
     {% endfor %}
   {% include "tabelas_bottom.html" %}
 
-  <strong lang="pt">Total de Propostas Submetidas</strong><strong lang="en">Total of Submitted Proposals</strong>: {{ total_submetidos }}<br>
-  <strong lang="pt">Total de Projetos Fechados</strong><strong lang="en">Total of Closed Projects</strong>: {{ total_fechados }}<br>
+  <b>{% lng "Total de Propostas Submetidas" "Total of Submitted Proposals" %}:</b>{{ total_submetidos }}<br>
+  <b>{% lng "Total de Projetos Fechados" "Total of Confirmed Projects" %}:</b>: {{ total_fechados }}<br>
 
   <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_organizacao" %}'" type="button" style="float: right;">
-    <span lang="pt">Cadastrar Nova Organização</span>
-    <span lang="en" style="display: none;">Register New Organization</span>
+    {% lng "Cadastrar Nova Organização" "Register New Organization" %}
   </button></small><br>
 
   <script>

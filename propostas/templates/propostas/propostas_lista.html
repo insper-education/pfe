@@ -17,8 +17,7 @@
   <span class="esconder">
     <a href="{% url 'proposta_submissao'%}" style="cursor:pointer;">
       <i class="fas fa-plus"></i>
-      <span lang="pt">Adicionar Proposta</span>
-      <span lang="en" style="display: none;">Add Proposal</span>
+      {% lng "Adicionar Proposta" "Add Proposal" %}
     </a>
   </span>
 
@@ -26,24 +25,11 @@
 
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos %}
-
       {% for proposta in propostas %} 
-      
         <tr class="item"> 
-
-          <th scope="row">
-            <a href="{% url 'proposta_completa' proposta.id %}">
-              {{proposta.titulo}}
-            </a>  
-          </th>
-
-          {% comment %} {% if edicao == "todas" %} {% endcomment %}
-            <td class="text-center periodo">
-              {{proposta.ano}}.{{proposta.semestre}}
-            </td>
-          {% comment %} {% endif %} {% endcomment %}
+          <th scope="row"><a href="{% url 'proposta_completa' proposta.id %}">{{proposta.titulo}}</a></th>
+          <td class="text-center periodo">{{proposta.get_edicao}}</td>
 
           <td>
             {% if proposta.organizacao %}
@@ -57,23 +43,13 @@
             {% endif %}  
           </td>
 
-          <td class="text-center">
-            {% include "tipo_proposta.html" %}
-          </td>
+          <td class="text-center">{% include "tipo_proposta.html" %}</td>
 
         </tr>
 
       {% endfor %}
-
-    </table>
-    </div>
-
-    {% comment %} <p>&nbsp;</p>
-    <strong>Número Total de Propostas:</strong> 
-    <span id="propostas_publicadas">{{propostas|length}}</span>
-      {% endcomment %}
-
-
+    {% include "tabelas_bottom.html" %}
+    
     <script>
       function carrega_pagina(){
         if($("#PropostasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro

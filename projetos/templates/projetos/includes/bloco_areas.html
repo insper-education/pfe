@@ -1,0 +1,19 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if areas %}
+  {% for area in areas %}
+    {% if area.outras %}
+      {{area.outras}};
+    {% else %}
+      {{area.area}};
+    {% endif %}
+  {% endfor %}
+{% endif %}
+    

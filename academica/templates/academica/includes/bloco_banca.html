@@ -1,0 +1,34 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if membros %}
+  <ul class="membros_banca" style="padding-left: 18px;">
+    {% for membro in membros %}
+      <li style="line-height: 1.0; margin-bottom: 0.5em;">
+        {% if pequeno %}
+          <small>
+        {% endif %}
+        {% if user.prof_a %}
+          <a class="imprimir" href="{% url 'user_detail' membro.id %}">  {% comment %} target="_blank" {% endcomment %}
+        {% endif %}
+        {{membro.get_full_name}}
+        {% if user.prof_a %}
+          </a>
+        {% endif %}
+        {% if pequeno %}
+          </small>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="text-danger">
+    {% lng "BANCA NÃO DEFINIDO" "EXAMINATION BOARD NOT DEFINED" %}
+  </div>
+{% endif %}

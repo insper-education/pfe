@@ -40,36 +40,13 @@
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %} 
         <tr class="item">
-
-          {% include "projetos/includes/td_projeto.html" with projeto=projeto tit_proposta=True %}
-
-          <!-- Estudantes -->
-          <td style="min-width:18em;">
-            <ul class="grupo">
-              {% for alocacao in projeto.alocacao_set.all %}
-                <li><small>
-                  <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
-                  <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
-                </small></li>
-              {% endfor %}
-            </ul>
-          </td>
-
-          {% include "academica/includes/td_orientador.html" with orientador=projeto.orientador coorientadores=projeto.coorientador_set.all %}
+          <td>{% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}</td>
+          <td style="min-width:18em;">{% include "estudantes/includes/bloco_estudantes.html" with grupo=projeto.alocacao_set.all pequeno=True %}</td>
+          <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador coorientadores=projeto.coorientador_set.all %}</td>
           <td style="text-align:center">{{projeto.ano}}.{{projeto.semestre}}</td>
-          {% include "organizacoes/includes/td_organizacao.html" with organizacao=projeto.organizacao %}
+          <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
+          <td>{% include "academica/includes/bloco_banca.html" with membros=projeto.get_banca_final.membros pequeno=True %}</td>  <!-- Banca Final -->
           
-          <!-- Somente Banca Final, as outras não são listadas -->
-          <td>
-            <small>
-              <ul class="grupo">
-                {% for membro in projeto.get_banca_final.membros %}
-                  <li><a class="imprimir" href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
-                {% endfor %}
-              </ul>
-            </small>
-          </td>
-        
           <!-- Documentos -->
           <td style="text-align:left;min-width:18em;">
             <small>

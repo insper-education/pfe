@@ -35,11 +35,7 @@
                 {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
                 {% if relatorio.confidencial %}CONFIDENCIAL{% endif %}
               </td>
-              <td>
-                {% if relatorio.anotacao %}
-                  {{relatorio.anotacao}}
-                {% endif %}
-              </td>
+              <td>{% if relatorio.anotacao %}{{relatorio.anotacao}}{% endif %}</td>
               <td>
                 {% if relatorio.projeto %}
                   {% if user.prof_a %}

@@ -16,73 +16,30 @@
   {% include "areas.html" with tudo_ligado=True titulo_areas=True not_outras=True com_borda=True %}
   
   <div class="atualizar">
-
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
-        {% for projeto in projetos %}
-          {% with estudantes=projeto.alocacao_set.all areas=projeto.proposta.areadeinteresse_set.all %}
+      {% for projeto in projetos %}
+        {% with estudantes=projeto.alocacao_set.all areas=projeto.proposta.areadeinteresse_set.all %}
 
-          <tr class="item {% for area in areas %}{{area.area.id}} {% endfor %}">
-              <th scope="row" data-order="{{projeto.get_titulo}}">
-                <a href="{% url 'projeto_completo' projeto.id %}">
-                  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                    {{projeto.titulo_final}}<br>
-                    <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-                  {% else %}
-                    {{projeto.get_titulo}}
-                  {% endif %}
-                  {% include "tipo_projeto.html" %}
-                </a>
-              </th>
-              <td>
-                {% for area in areas %}
-                  {% if area.outras %}
-                    {{area.outras}};
-                  {% else %}
-                    {{area.area}};
-                  {% endif %}
-                {% endfor %}
-              </td>
-              <td>
-                {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.curso2}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
-                  Nenhum aluno alocado nesse projeto
-                {% endfor %}
-              </td>
-              <td class="text-center">
-                  {{projeto.ano}}&middot;{{projeto.semestre}}
-              </td>
-              <td>
-                {% if projeto.orientador %}
-                  <a href="{% url 'professor_detail' projeto.orientador.id %}">
-                    {{ projeto.orientador }}
-                  </a>
-                {% else %}
-                  <i>Orientador não definido</i>
-                {% endif %}
-              </td>
-              <td>
-                {% if projeto.organizacao %}
-                  <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                    {{ projeto.organizacao.nome }}
-                  </a>
-                {% else %}
-                  <i>Organização não definida</i>
-                {% endif %}
-              </td>
+        <tr class="item {% for area in areas %}{{area.area.id}} {% endfor %}">
+            <th scope="row" data-order="{{projeto.get_titulo}}">{% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}</th>
+            <td>{% include "projetos/includes/bloco_areas.html" with areas=areas %}</td>
+            <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes pequeno=True %}</td>
+            <td class="text-center">{{projeto.get_edicao}}</td>
+            <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador coorientadores=projeto.coorientador_set.all %}</td>
+            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
 
-              {% with medias=projeto|medias %}
-                <td>{{medias.0|floatformat:1|safe}}</td>
-                <td>{{medias.1|floatformat:1|safe}}</td>
-                <td>{{medias.2|floatformat:1|safe}}</td>
-                <td>{{medias.3|floatformat:1|safe}}</td>
-              {% endwith %}
+            {% with medias=projeto|medias %}
+              <td>{{medias.orientador|floatformat:1|safe}}</td>
+              <td>{{medias.bancas|floatformat:1|safe}}</td>
+              <td>{{medias.falconi|floatformat:1|safe}}</td>
+              <td>{{medias.media|floatformat:1|safe}}</td>
+            {% endwith %}
 
-            </tr>
+          </tr>
 
-          {% endwith %}
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        {% endwith %}
+      {% endfor %}
+    {% include "tabelas_bottom.html" %} 
   </div>
 
   <script>
