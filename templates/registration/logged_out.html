@@ -27,31 +27,14 @@
       <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm">
           <div class="card-header text-center bg-warning text-dark">
-            <h4>
-              <span lang="pt">
-                Desconectado
-              </span>
-              <span lang="en" style="display: none;">
-                Disconnected
-              </span>
-            </h4>
+            <h4>{% lng "Desconectado" "Disconnected" %}</h4>
           </div>
           <div class="card-body text-center">
             <p class="card-text">
-              <span lang="pt">
-                Você foi desconectado do sistema.
-              </span>
-              <span lang="en" style="display: none;">
-                You have been disconnected from the system.
-              </span>
+              {% lng "Você foi desconectado do sistema." "You have been disconnected from the system." %}
             </p>
             <a href="{% url 'login' %}" class="btn btn-primary mt-3">
-              <span lang="pt">
-                Clique aqui para fazer o login novamente
-              </span>
-              <span lang="en" style="display: none;">
-                Click here to login again
-              </span>
+              {% lng "Clique aqui para fazer o login novamente" "Click here to login again" %}
             </a>
           </div>
         </div>

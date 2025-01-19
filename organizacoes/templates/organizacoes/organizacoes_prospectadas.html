@@ -73,8 +73,7 @@
     class="create-annotation" style="cursor:pointer;"
     data-url={% url 'anotacao' %}
     ><i class="fas fa-plus"></i>
-      <span lang="pt">Cadastrar Nova Anotação</span>
-      <span lang="en" style="display: none;">Register New Note</span>
+      {% lng "Cadastrar Nova Anotação" "Register New Note" %}
     </a>
   </span>
 
@@ -104,27 +103,27 @@
           <tr>
             <th>#</th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(2)')">
-              <span lang="pt">Organização</span><span lang="en" style="display: none;">Organization</span>
+              {% lng "Organização" "Organization" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(3)')" width="48em">
-              <span lang="pt">Área</span><span lang="en" style="display: none;">Area</span>
+              {% lng "Área" "Area" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(4)')" width="85em">
-              <span lang="pt">Estrelas</span><span lang="en" style="display: none;">Stars</span>
+              {% lng "Estrelas" "Stars" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(5)', 'd')" width="78em"><small class="tit_peq">
-              <span lang="pt">Último<br>Contato</span><span lang="en">Last<br>Contact</span>
+              {% lng "Último<br>Contato" "Last<br>Contact" %}
             </small></th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(6)')">
-              <span lang="pt">Anotação</span><span lang="en">Notes</span>
+              {% lng "Anotação" "Notes" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(7)', 'n')" width="81em">
               <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
-                <span lang="pt">Propostas<br>Disponíveis</span><span lang="en">Available<br>Proposals</span>
+                {% lng "Propostas<br>Disponíveis" "Available<br>Proposals" %}
             </small></th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(8)', 'n')" width="81em">
               <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas submetidas pela organização, mesmo aquelas que não estão disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
-                <span lang="pt">Propostas<br>Enviadas</span><span lang="en">Submited<br>Proposals</span>
+                {% lng "Propostas<br>Enviadas" "Submited<br>Proposals" %}
             </small></th>
           </tr>
         </thead>
@@ -291,8 +290,7 @@
 
       <div style="margin-top: 10px;">
       <strong>
-        <span lang="pt">Total de Propostas Disponíveis</span>
-        <span lang="en" style="display: none;">Total of Proposals Available</span>
+        {% lng "Total de Propostas Disponíveis" "Total of Proposals Available" %}
         (>={{ano}}.{{semestre}}):</strong> {{ total_disponiveis }}
       <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
         ({{ total_submetidas }})

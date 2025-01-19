@@ -30,32 +30,27 @@
 {% block content %}
   
   <div>
-    <span lang="pt">Data planejada para liberar propostas de projetos para estudantes:</span>
-    <span lang="en">Planned date to release project proposals for students:</span>
+    {% lng "Data planejada para liberar propostas de projetos para estudantes:" "Planned date to release project proposals for students:" %}
 
     {% if data_planejada %}
       <span style="font-weight:bold;" id="data_planejada">{{data_planejada}}.</span>
       <small class="obs">
-        <span lang="pt">Estudantes conseguirão ver as propostas disponíveis para aplicar nessa data</span>
-        <span lang="en">Students will be able to see the available proposals to apply on this date</span>
+        {% lng "Estudantes conseguirão ver as propostas disponíveis para aplicar nessa data" "Students will be able to see the available proposals to apply on this date" %}
       </small>
     {% else %}
       <span style="font-weight:bold;" id="data_planejada">
-        <span lang="pt">Data para liberar propostas de projetos ainda não foi definida na agenda.</span>
-        <span lang="en">Date to release project proposals has not been defined in the calendar yet.</span>
+        {% lng "Data para liberar propostas de projetos ainda não foi definida na agenda." "Date to release project proposals has not been defined in the calendar yet." %}
       </span>
     {% endif %}
   </div>
   
   <div style="margin-top: 6px;">
-    <span lang="pt">Prazo limite para seleção de propostas por estudantes:</span>
-    <span lang="en">Deadline for students to select proposals:</span> 
+    {% lng "Prazo limite para seleção de propostas por estudantes:" "Deadline for students to select proposals:" %} 
     {% if limite_propostas %}
       <span style="font-weight:bold;" id="limite_propostas">{{limite_propostas}}</span>
     {% else %}
       <span style="font-weight:bold;" id="limite_propostas">
-        <span lang="pt">Prazo limite para seleção de propostas por estudantes ainda não foi definido na agenda.</span>
-        <span lang="en">Deadline for students to select proposals has not been defined in the calendar yet.</span>
+        {% lng "Prazo limite para seleção de propostas por estudantes ainda não foi definido na agenda." "Deadline for students to select proposals has not been defined in the calendar yet." %}
       </span>
     {% endif %}
   </div>
@@ -63,8 +58,7 @@
   <br>
 
   <label for="min_props">
-    <span lang="pt">Número mínimo de propostas para estudantes selecionarem:</span>
-    <span lang="en">Minimum number of proposals for students to select:</span>
+    {% lng "Número mínimo de propostas para estudantes selecionarem:" "Minimum number of proposals for students to select:" %}
   </label>
   <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;"
          {% if not user.admin %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}

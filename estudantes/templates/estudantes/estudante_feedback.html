@@ -44,18 +44,15 @@
   <form action="" method="post"> {% csrf_token %}  
 
       <label for="nome" class="col-form-label">
-        <span lang="pt">Nome:</span>
-        <span lang="en" style="display:none">Name:</span>
+        {% lng "Nome:" "Name:" %}
       </label> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
 
       <label for="projeto" class="col-form-label">
-        <span lang="pt">Projeto:</span>
-        <span lang="en" style="display:none">Project:</span>
+        {% lng "Projeto:" "Project:" %}
       </label> {% if projeto %}{{projeto}}{% endif %}<br>
       
       <p class="text-danger">
-        <span lang="pt">Os dados serão tratados como confidênciais.</span>
-        <span lang="en" style="display:none">The data will be treated as confidential.</span>
+        {% lng "Os dados serão tratados como confidênciais." "The data will be treated as confidential." %}
       </p>
 
       <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos mais projetos nos próximos semestres com a {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}?</label>
@@ -159,8 +156,7 @@
       <br><br><br>
       {% if not feedback %}
         <button type="submit" class="btn btn-primary mb-1">
-          <span lang="pt">Enviar Feedback</span>
-          <span lang="en" style="display:none">Send Feedback</span>
+          {% lng "Enviar Feedback" "Send Feedback" %}
         </button>
       {% endif %}
 

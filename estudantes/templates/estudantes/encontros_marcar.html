@@ -57,8 +57,7 @@
       </h4>
     {% else %}
         <h4>
-          <span lang="pt">Somente visualização das opções de encontros (você não está registrado como estudante)</span>
-          <span lang="en" style="display:none">Only viewing the meeting options (you are not registered as a student)</span>
+          {% lng "Somente visualização das opções de encontros (você não está registrado como estudante)" "Only viewing the meeting options (you are not registered as a student)" %}
         </h4>
     {% endif %}
     <br>
@@ -98,15 +97,13 @@
                   <span class="texto-curto">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 </span>
                 {% if e.facilitador %}<div class="bot_tag">
-                  <span lang="pt">Facilitador:</span>
-                  <span lang="en" style="display:none">Facilitator:</span>
+                  {% lng "Facilitador:" "Facilitator:" %}
                   {{e.facilitador.get_full_name}}</div>{% endif %}
                 {% if e.location %}
                   <div class="bot_tag">
                     Local:
                     {% if e.url_location %}
-                      <span lang="pt">Vídeo-conferência</span>
-                      <span lang="en" style="display:none">Video-conference</span>
+                      {% lng "Vídeo-conferência" "Video-conference" %}
                     {% else %}
                       {{e.location}}
                     {% endif %}
@@ -129,19 +126,16 @@
         <button class="btn btn-primary mb-1 ml-2" type="submit" 
         {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
           {% if agendado %}
-            <span lang="pt">Reagendar</span>
-            <span lang="en" style="display:none">Reschedule</span>
+            {% lng "Reagendar" "Reschedule" %}
           {% else %}
-            <span lang="pt">Agendar</span>
-            <span lang="en" style="display:none">Schedule</span>
+            {% lng "Agendar" "Schedule" %}
           {% endif %}
         </button>
 
         {% if agendado %}
             <button class="btn btn-danger mb-1 ml-2" id="cancelar" 
               {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
-              <span lang="pt">Cancelar Agendamento</span>
-              <span lang="en" style="display:none">Cancel Schedule</span>
+              {% lng "Cancelar Agendamento" "Cancel Schedule" %}
             </button>
             <script>
                 $("#cancelar").click(function() {

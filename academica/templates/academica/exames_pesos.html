@@ -25,26 +25,18 @@
             <ul>
             {% for composicao in composicoes %}
               <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
-                (
-                <span lang="pt">{% language "pt-br" %}{{composicao.data_inicial|date:"d/m/y"}}{% endlanguage %} a</span>
-                <span lang="en" style="display:none">{% language "en" %}{{composicao.data_inicial|date:"M d, Y" }}{% endlanguage %} to</span>
+                ({% lng_d composicao.data_inicial " a" " to" %}
                 {% if composicao.data_final%}
-                  <span lang="pt">{% language "pt-br" %}{{composicao.data_final|date:"d/m/y"}}{% endlanguage %}</span>
-                  <span lang="en" style="display:none">{% language "en" %}{{composicao.data_final|date:"M d, Y" }}{% endlanguage %}</span>
-                {% else %}
-                  {% lng "atualmente" "currently" %}
-                {% endif %}):</span>
+                  {% lng_d composicao.data_final %}{% else %}{% lng "atualmente" "currently" %}{% endif %}):</span>
                 
                 <span style="display: inline-block; width: 34em;">
                   <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
                   <script> peso_tmp = 0; </script>
-                  {% for peso in composicao.peso_set.all %}
-                    [<span 
+                  {% for peso in composicao.peso_set.all %}                    
                     {% if peso.objetivo %}
-                      data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>Única{% endif %}=<span lang="pt">{% language "pt-br" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{peso.peso|floatformat:2}}{% endlanguage %}</span>]
-                    </span>
+                      [<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo}}">{{peso.objetivo.sigla}}{% else %}>Única{% endif %}={% lng_2 peso.peso %}</span>]
                     {% if peso.peso %}
-                    <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
+                      <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
                     {% endif %}
                   {% endfor %}
                 </span>

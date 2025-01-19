@@ -65,8 +65,7 @@
  
   <div id="informacoes_gerais" class="esconder">
     <span id="informacoes_tag"><b>
-      <span lang="pt">Informações</span>
-      <span lang="en" style="display: none;">Information</span>
+      {% lng "Informações" "Information" %}
       <i class="arrow right"></i>&nbsp;</b></span>
     <div id="toggle">
       {% for inf in informacoes %}
@@ -75,8 +74,7 @@
           <input id="info_{{inf.1}}"
                  onchange="($(this).prop('checked') ? $(`{{inf.0|safe}}`).show() : $(`{{inf.0|safe}}`).hide())"
                  type="checkbox" {% if inf.3 is None or inf.3 != False %}checked{% endif %} />
-          <span lang="pt">{{inf.1}}</span>
-          <span lang="en" style="display: none;">{{inf.2}}</span>
+          {% lng inf.1 inf.2 %}
         </label>
       {% endfor %}
       &nbsp;&nbsp;

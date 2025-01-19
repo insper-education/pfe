@@ -49,18 +49,14 @@
       <h5 id="documentacao" class="modal-title">
         {% if banca %}
           {% if banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}
-            <span lang="pt">Visualizar Agendamento de</span>
-            <span lang="en" style="display: none;">View Schedule of</span>
+            {% lng "Visualizar Agendamento de" "View Schedule of" %}
           {% else %}
-            <span lang="pt">Editar Agendamento de</span>
-            <span lang="en" style="display: none;">Edit Schedule of</span>
+            {% lng "Editar Agendamento de" "Edit Schedule of" %}
           {% endif %}
         {% else %}
-          <span lang="pt">Agendar</span>
-          <span lang="en" style="display: none;">Schedule</span>
+          {% lng "Agendar" "Schedule" %}
         {% endif %}
-        <span lang="pt">Banca</span>
-        <span lang="en" style="display: none;">Examination Board</span>
+        {% lng "Banca" "Examination Board" %}
       </h5>    
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -72,8 +68,7 @@
     {% if not banca.projeto %}
       <div id="div_projetos" class="form-group">
       <span style="margin-top: 12px;" for="projeto">
-        <span lang="pt">Projeto:</span>
-        <span lang="en" style="display: none;">Project:</span>
+        {% lng "Projeto:" "Project:" %}
       </span>
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
       data-width="75%" data-size="5"
@@ -114,8 +109,7 @@
     {% if not banca.alocacao %}
       <div id="div_alocacoes" class="form-group">
       <span style="margin-top: 12px;" for="alocacao">
-        <span lang="pt">Alocação:</span>
-        <span lang="en" style="display: none;">Allocation:</span>
+        {% lng "Alocação:" "Allocation:" %}
       </span>
       <select class="selectpicker" name="alocacao" id="alocacao" title="Selecione a alocação"
       data-width="75%" data-size="5" 
@@ -156,44 +150,38 @@
       <input type="hidden" name="alocacao" value="{{banca.alocacao.id}}">
     {% endif %}
 
-    <span lang="pt">Título:</span>
-    <span lang="en" style="display: none;">Title:</span>
+    {% lng "Título:" "Title:" %}
     <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_completo' banca.get_projeto.id %}"{% endif %}>
       <span id="titulo" name="titulo">
         {% if banca and banca.get_projeto %}
           {{banca.get_projeto.get_titulo}}
           {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
         {% else %}
-          <span lang="pt">Título de Projeto não definido</span>
-          <span lang="en" style="display: none;">Project Title not defined</span>
+          {% lng "Título de Projeto não definido" "Project Title not defined" %}
         {% endif %}
       </span>
     </a>
     <br>
 
-    <span lang="pt">Organização:</span>
-    <span lang="en" style="display: none;">Organization:</span>
+    {% lng "Organização:" "Organization:" %}
     <a id="organizacao_link" name="organizacao_link" {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}"{% endif %}>
       <span id="organizacao" name="organizacao">
         {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}
           {{banca.get_projeto.organizacao}}
         {% else %}
-          <span lang="pt">Organização Parceira não definida</span>
-          <span lang="en" style="display: none;">Partner Organization not defined</span>
+          {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
         {% endif %}
       </span>
     </a>
     <br>
     
-    <span lang="pt">Orientador{% if banca and banca.get_projeto and banca.get_projeto.orientador.user.genero == "F" %}a{% endif %}:</span>
-    <span lang="en" style="display: none;">Advisor:</span>
+    {% lng_g banca.get_projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
     <a id="orientador_link" name="orientador_link" {% if banca and banca.get_projeto and banca.get_projeto.orientador %}href="{% url 'professor_detail' banca.get_projeto.orientador.id %}"{% endif %}>
       <span id="orientador" name="orientador">
         {% if banca and banca.get_projeto and banca.get_projeto.orientador %}
           {{banca.get_projeto.orientador}}
         {% else %}
-          <span lang="pt">Sem identificação de Orientador(a)</span>
-          <span lang="en" style="display: none;">No Advisor identified</span>
+          {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
         {% endif %}
       </span>
     </a>
@@ -203,8 +191,7 @@
     {% with coorientadores=banca.get_projeto.coorientador_set.all %}
       {% if coorientadores %}
         <div class="coorientacao">
-          <span lang="pt">Coorientação:</span>
-          <span lang="en" style="display: none;">Co-advisoring:</span>
+          {% lng "Coorientação:" "Co-advisoring:" %}
             {% for coorientador in coorientadores %}
               <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
                 {{coorientador.usuario.get_full_name}} 
@@ -214,22 +201,19 @@
             {% endfor %}
         </div>
         <div style="font-size: small; color: darkgoldenrod; line-height:1;">
-          <span lang="pt">Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca.</span>
-          <span lang="en" style="display: none;">Co-advisors are not automatically scheduled for the examination board, select below to invite co-advisor to the examination board.</span>
+          {% lng "Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca." "Co-advisors are not automatically scheduled for the examination board, select below to invite co-advisor to the examination board." %}
         </div>
       {% endif %}
     {% endwith %}
     
     <div id="div_estudante">
-      <span lang="pt">Estudante:</span>
-      <span lang="en" style="display: none;">Student:</span>
+      {% lng "Estudante:" "Student:" %}
       <a id="estudante_link" name="estudante_link" {% if banca and banca.alocacao and banca.alocacao.aluno %}href="{% url 'estudante_detail' banca.alocacao.aluno.id %}"{% endif %}>
         <span id="estudante" name="estudante">
           {% if banca and banca.alocacao and banca.alocacao.aluno %}
             {{banca.alocacao.aluno}}
           {% else %}
-            <span lang="pt">Sem estudante</span>
-            <span lang="en" style="display: none;">No student</span>
+            {% lng "Sem estudante" "No student" %}
           {% endif %}
         </span>
       </a>
@@ -240,16 +224,15 @@
 
     <div style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">
-        <b lang="pt">Tipo de Banca:</b>
-        <b lang="en" style="display: none;">Presentation:</b>
+        <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
       </span>
       {% for tipo in tipos_banca %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
           <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo.exame.sigla}}" type="radio" name="tipo" value="{{tipo.exame.sigla}}"
            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
            {% if banca.composicao.exame.sigla == tipo.exame.sigla or tipo.exame.sigla == tipob %}checked{% endif %} required>
-            <span lang="pt">{{tipo.exame.titulo}} (duração padrão:</span>
-            <span lang="en" style="display: none;">{{tipo.exame.titulo_en}} (standard duration:</span>
+            {% lng tipo.exame.titulo tipo.exame.titulo_en %}
+            {% lng "(duração padrão" "(standard duration" %}:
             {{tipo.duracao_banca}} min)</label>
         </div>
       {% endfor %}
@@ -301,8 +284,7 @@
     <div>
         <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right;">
-          <span lang="pt">Início:</span>
-          <span lang="en" style="display: none;">Start:</span>
+          {% lng "Início:" "Start:" %}
         </span>
         <input id="inicio" type="datetime-local" name="inicio" class="horario_banca"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -317,8 +299,7 @@
       
         <label for="fim" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right">
-          <span lang="pt">Fim:</span>
-          <span lang="en" style="display: none;">End:</span>
+          {% lng "Fim:" "End:" %}
         </span>
         <input id="fim" type="datetime-local" name="fim" class="horario_banca"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -360,8 +341,7 @@
     </script>
 
     <label for="local">
-      <span lang="pt">Local:</span>
-      <span lang="en" style="display: none;">Local:</span>
+      {% lng "Local:" "Local:" %}
     </label> 
     <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -389,8 +369,7 @@
     {% endif %}
 
     <label for="link">
-      <span lang="pt">Link de Vídeo-conferência:</span>
-      <span lang="en" style="display: none;">Video-conference Link:</span>
+      {% lng "Link de Vídeo-conferência:" "Video-conference Link:" %}
     </label>
     <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
@@ -406,7 +385,7 @@
         <td>
           <label for="membro1">
             <span lang="pt">Membro&nbsp;1<span class="texto-longo"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="texto-longo">Board </span>Member&nbsp;1:</span>
+            <span lang="en"><span class="texto-longo">Board </span>Member&nbsp;1:</span>
           </label>
         </td>
         <td>
@@ -458,8 +437,7 @@
       <br>
       <div style="overflow-wrap: break-word;">
         &#9733;
-        <span lang="pt">Formulário de Avaliação:</span>
-        <span lang="en" style="display: none;">Evaluation Form:</span>
+        {% lng "Formulário de Avaliação:" "Evaluation Form:" %}
         <a class="url_reativo" target="_blank" rel="noopener noreferrer" 
           href="{% url 'banca_avaliar' banca.slug %}">
           https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
@@ -479,34 +457,29 @@
       <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
       {% if user.tipo_de_usuario != 4 %}checked{% endif %}>
       <label for="enviar_mensagem">
-        <span lang="pt">Enviar mensagem para envolvidos</span>
-        <span lang="en" style="display: none;">Send message to involved people</span>
+        {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
       </label>
     </div>
     
     <div id="botoes" style="margin-left: auto;">
       <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
-        <span lang="pt">Fechar</span>
-        <span lang="en" style="display: none;">Close</span>
+        {% lng "Fechar" "Close" %}
       </button>
 
       {% if not banca %} 
         <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar">
-          <span lang="pt">Agendar</span>
-          <span lang="en" style="display: none;">Schedule</span>
+          {% lng "Agendar" "Schedule" %}
         </button>
       {% else %}
         {% if banca.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %} 
           <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
            onclick="operacao = 'atualizar';">
-            <span lang="pt">Atualizar</span>
-            <span lang="en" style="display: none;">Update</span>
+            {% lng "Atualizar" "Update" %}
           </button>
           
           <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" formnovalidate
            onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir agendamento de banca?');">
-            <span lang="pt">Excluir</span>
-            <span lang="en" style="display: none;">Delete</span>
+            {% lng "Excluir" "Delete" %}
           </button>
         {% endif %}
       {% endif %}

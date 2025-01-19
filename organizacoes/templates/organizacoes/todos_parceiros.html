@@ -81,8 +81,7 @@
 
   <br>
   <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}?tipo=parceiro'" type="button" style="float: right;">
-    <span lang="pt">Cadastrar Novo Parceiro</span>
-    <span lang="en" style="display: none;">Register New Partner</span>
+    {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}
   </button></small><br>
 
   {% include "edicoes_ajax.html" with tabela='Parceiros' %}

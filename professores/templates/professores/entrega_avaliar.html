@@ -21,15 +21,13 @@
     <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
   {% endif %}
 
-  <span lang="pt"></span><span lang="en"></span>
-
   {% if projeto %}
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">{% csrf_token %}
 
       {% include "cabecalho_projeto.html" with com_grupo=True %}
 
       <br>
-      <b lang="pt">Avaliação:</b><b lang="en">Assessment:</b><br>
+      <b>{% lng "Avaliação:" "Assessment:" %}</b><br>
       <p style="font-size: 1.3em;">
         &nbsp;&nbsp;
         {{composicao.exame}}
@@ -37,17 +35,17 @@
       </p>
 
       <br>
-      <b lang="pt">Prazo:</b><b lang="en">Deadline:</b><br>
+      <b>{% lng "Prazo:" "Deadline:" %}</b><br>
       &nbsp;{{evento.endDate}} (ao final do dia)<br>
 
       <br>
-      <b lang="pt">Documento:</b><b lang="en">Document:</b><br>
+      <b>{% lng "Documento:" "Document:" %}</b><br>
       <ul style="padding-left: 22px; width: fit-content;">
         {% for documento in documentos %}
           <li style="list-style-type:'';">
             {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
             {% if documento.documento and documento.link %} 
-              <span lang="pt">Entregue</span><span lang="en">Submitted</span>
+              {% lng "Entregue" "Submitted" %}
               <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
               <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
               <a 
@@ -60,7 +58,7 @@
               {% if documento.documento %}
                 <a 
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                  href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}
                   <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                   <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
@@ -68,7 +66,7 @@
               {% if documento.link %}
                 <a
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
-                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer"><span lang="pt">Entregue</span><span lang="en">Submitted</span>
+                  href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{% lng "Entregue" "Submitted" %}
                   <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                   <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
@@ -83,9 +81,8 @@
         </ul><br>
       
       {% if orientacoes %}
-        <h5 lang="pt">Orientações Gerais</h5><h5 lang="en">Guidelines</h5>
-        <span lang="pt">{{orientacoes|safe}}</span>
-        <span lang="en">{{orientacoes_en|safe}}</span>
+        <h5>{% lng "Orientações Gerais" "Guidelines" %}</h5>
+        {% lng orientacoes|safe orientacoes_en|safe %}
         <br>
       {% endif %}
 
@@ -93,7 +90,7 @@
         {% include "tabela_avaliacao_objetivos.html" with sem_NA=True individual=composicao.exame.grupo|negate %}
         {% include "atualiza_objetivos.html" %}
       {% else %}
-        <b lang="pt">Decisão:</b><b lang="en">Decision:</b><br>
+        <b>{% lng "Decisão:" "Decision:" %}</b><br>
         <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0" name="decisao" class="custom-control-input" required
@@ -113,46 +110,46 @@
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
       <label for="observacoes_estudantes"><span data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        <span lang="pt"><b>Observações Estudantes</b>
-          {% if composicao.exame.grupo %}(enviada para todo o grupo){% else %}(enviada para estudante){% endif %}
-          </span>
-        <span lang="en"><b>Evaluation Observations for Students</b> 
-          {% if composicao.exame.grupo %}(will be sent to all students){% else %}(will be sent to student){% endif %}
-          </span>:
-      </span></label><br>
+        <b>{% lng "Observações Estudantes" "Evaluation Observations for Students" %}</b>
+        {% if composicao.exame.grupo %}
+          {% lng "(enviada para todo o grupo)" "(will be sent to all students)" %}:
+        {% else %}
+          {% lng "(enviada para estudante)" "(will be sent to student)" %}:
+        {% endif %}
+      </label><br>
       <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
       <br><br>
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <label for="observacoes_orientador"><span data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt"><b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenação)</span ><span lang="en"><b>Evaluation Observations</b> (to document/note or send coordinator)</span>:
-      </span></label><br>
+        {% lng "<b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenação)" "<b>Evaluation Observations</b> (to document/note or send coordinator)" %}:
+      </label><br>
       <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
       <br><br>
       
       {% if evento.startDate.date > today.date %}
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
-          <span lang="pt" class="red-bold">Você está acessado o formulário antes do prazo da avaliação.</span>
-          <span lang="en" class="red-bold">You have accessed the form before the scheduled evaluation date.</span>
+          <span class="red-bold">
+            {% lng "Você está acessado o formulário antes do prazo da avaliação." "You have accessed the form before the scheduled evaluation date." %}
+          </span>
           <br>
-          <span lang="pt" class="red-bold">Tem certeza que deseja enviar a avaliação agora!!</span>
-          <span lang="en" class="red-bold">Are you sure you want to submit your evaluation now!!</span>
+          <span class="red-bold">
+            {% lng "Tem certeza que deseja enviar a avaliação agora!!" "Are you sure you want to submit your evaluation now!!" %}
+          </span>
           <br>
         </div><br>
       {% endif %}
 
-      <button class="btn btn-primary mb-1" type="submit" style="margin-right: 1em;"><span lang="pt">Gravar Avaliação</span><span lang="en">Save Evaluation</span></button>
+      <button class="btn btn-primary mb-1" type="submit" style="margin-right: 1em;">{% lng "Gravar Avaliação" "Save Evaluation" %}</button>
       <label for="envia"><input type="checkbox" id="envia" name="envia" style="margin-right: 4px;" {% if user.professor.email_avaliacao %}checked{% endif %}>
-        <span lang="pt">Enviar e-mail nesse instante com resultados para estudante(s)</span>
-        <span lang="en">Send email in this instant with results to student(s)</span>
+        {% lng "Enviar e-mail nesse instante com resultados para estudante(s)" "Send email in this instant with results to student(s)" %}
       </label>
       <p>&nbsp;</p>
 
     </form>
   {% else %}
-    <p lang="pt">Não existe projeto disponível para avaliar.</p>
-    <p lang="en">There is no project available to evaluate.</p>
+    {% lng "Não existe projeto disponível para avaliar." "There is no project available to evaluate." %}
   {% endif %}
 
   <script>

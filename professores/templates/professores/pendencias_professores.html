@@ -19,9 +19,7 @@
     <table id="ProfessoresTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#ProfessoresTable', '.item', 'td:nth-child(1)')">
-            <span lang="pt">Professor</span><span lang="en">Professor</span>
-          </th>
+          <th onclick="sort('#ProfessoresTable', '.item', 'td:nth-child(1)')">{% lng "Professor" "Professor" %}</th>
           {% for tipo in tipos %}
             <th class="text-center" style="width: 80px">{{tipo.0}}</th>
           {% endfor %}
@@ -31,9 +29,7 @@
         {% for professor, pendencias in professores.items %}
           <tr class="item">
             <td>
-              <a href="{% url 'professor_detail' professor.id %}">
-                {{professor}}
-              </a>
+              <a href="{% url 'professor_detail' professor.id %}">{{professor}}</a>
             </td>
             {% for tipo in tipos %}
               <td class="text-center">

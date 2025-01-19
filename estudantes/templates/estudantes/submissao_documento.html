@@ -28,8 +28,7 @@
     <br>
   {% else %}
     <h4>
-      <span lang="pt">Nenhum projeto encontrado!</span>
-      <span lang="en" style="display:none">No project found!</span>
+      {% lng "Nenhum projeto encontrado!" "No project found!" %}
     </h4><br>
   {% endif %}
 
@@ -44,13 +43,11 @@
         {% endif %}
         {% if item.evento.endDate %}
           <span class="texto-longo">
-            <span lang="pt">[prazo</span>
-            <span lang="en" style="display:none">[deadline</span>
+            {% lng "[prazo" "[deadline" %}
             {{ item.evento.endDate|date:"DATE_FORMAT" }}]
           </span>
           <span class="texto-curto">
-            <span lang="pt">[prazo</span>
-            <span lang="en" style="display:none">[deadline</span>
+            {% lng "[prazo" "[deadline" %}
             {{ item.evento.endDate|date:"d/m/y" }}]
           </span>
         {% endif %}
@@ -75,8 +72,7 @@
           <li style="list-style-type:'';">
             {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
             {% if documento.documento and documento.link %}
-              <span lang="pt">Entregue</span>
-              <span lang="en" style="display:none">Delivered</span>
+              {% lng "Entregue" "Delivered" %}
               <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
               <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
               <a 
@@ -93,8 +89,7 @@
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
                   href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  <span lang="pt">Entregue</span>
-                  <span lang="en" style="display:none">Delivered</span>
+                  {% lng "Entregue" "Delivered" %}
                   <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                   <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
@@ -104,32 +99,28 @@
                   {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
-                  <span lang="pt">Entregue</span>
-                  <span lang="en" style="display:none">Delivered</span>
+                  {% lng "Entregue" "Delivered" %}
                   <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
                   <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                 </a>
               {% endif %}
             {% endif %}
             {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
-              <span lang="pt">[FORA DO PRAZO]</span>
-              <span lang="en" style="display:none">[OVERDUE]</span>
+              {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
             </span>{% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
           {% if item.avaliacoes and item.avaliacoes.first%}
             {% if documento.data > item.avaliacoes.first.momento %}
               <span style="color: red;">
-                <span lang="pt">Avaliação desatualizada, orientador irá refazer para a nova entrega!</span>
-                <span lang="en" style="display:none">Evaluation outdated, advisor will redo for the new delivery!</span>
+                {% lng "Avaliação desatualizada, orientador irá refazer para a nova entrega!" "Evaluation outdated, advisor will redo for the new delivery!" %}
               </span>
             {% endif %}
           {% endif %}
         {% empty %}
           {% if item.composicao.tipo_documento %}
             <span {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
-              <span lang="pt">Sem arquivos</span>
-              <span lang="en" style="display:none">No files</span>
+              {% lng "Sem arquivos" "No files" %}
             </span><br>
           {% endif %}
         {% endfor %} 

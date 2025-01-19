@@ -17,18 +17,10 @@
 {% if perguntas %}
 <hr>
 <h4>
-  <span lang="pt">Fórum de Perguntas sobre Propostas</span>
-  <span lang="en" style="display:none">Proposal Questions Forum</span>
+  {% lng "Fórum de Perguntas sobre Propostas" "Proposal Questions Forum" %}
 </h4>
 <small class="lh-1">
-  <span lang="pt">
-    Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes.
-    Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos.
-  </span>
-  <span lang="en" style="display:none">
-    Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students.
-    Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved.
-  </span>
+  {% lng "Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes. Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos." "Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students. Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved." %}
 </small><br>
 
 <form id="resposta_form" method="post">{% csrf_token %}
@@ -37,30 +29,25 @@
       <li class="perg">
         <b>{{ pergunta.quem_perguntou.get_full_name }}</b>
         {{ pergunta.data_pergunta|date:"d/m/Y H:i" }}<br>
-        <span lang="pt">Pergunta:</span>
-        <span lang="en" style="display:none">Question:</span>
+        {% lng "Pergunta:" "Question:" %}
         <i>{{ pergunta.pergunta }}</i><br>
 
         {% if pergunta.resposta %}
           <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
           {% if pergunta.em_nome_de %}
-            <span lang="pt">em nome de</span>
-            <span lang="en" style="display:none">on behalf of</span>
+            {% lng "em nome de" "on behalf of" %}
             <b>{{ pergunta.em_nome_de.get_full_name }}</b>
           {% endif %}
           {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
         {% endif %}
-        <span lang="pt">Resposta:</span>
-        <span lang="en" style="display:none">Answer:</span>
+        {% lng "Resposta:" "Answer:" %}
         <textarea name="resposta_proposta{{pergunta.id}}" class="form-control" required
         rows="3">{% if pergunta.resposta %}{{ pergunta.resposta }}{% endif %}</textarea>
         <button type="button" data-id="{{pergunta.id}}" class="btn btn-primary enviar_resposta">
-          <span lang="pt">Enviar Resposta</span>
-          <span lang="en" style="display:none">Send Answer</span>
+          {% lng "Enviar Resposta" "Send Answer" %}
         </button>
         &nbsp;&nbsp;
-        <span lang="pt">em nome de</span>
-        <span lang="en" style="display:none">on behalf of</span>
+        {% lng "em nome de" "on behalf of" %}
         <select name="em_nome{{pergunta.id}}" id="em_nome{{pergunta.id}}">
           <option selected value class="troca_lingua" data-pt="ninguem" data-en="nobody">ninguem</option>
           {% for p in proposta.organizacao.parceiro_set.all %}

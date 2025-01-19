@@ -7,24 +7,20 @@
 {% load linguas %}
 
 <b>
-  <span lang="pt">Nome completo:</span>
-  <span lang="en">Full name:</span>
+  {% lng "Nome completo:" "Full name:" %}
 </b> {{user.get_full_name}}<br>
 
 {% if not user.is_active %}
   <p style="color: red;">
-    <span lang="pt">- NÃO ATIVO -</span>
-    <span lang="en" style="display: none;">- NOT ACTIVE -</span>
+    {% lng "- NÃO ATIVO -" "- NOT ACTIVE -" %}
   </p><br>
 {% endif %}
 
-<strong lang="pt">Usuário:</strong>
-<strong lang="en" style="display: none;">User:</strong>
+<b>{% lng "Usuário" "User" %}:</b>
 {{ user.username }}
 
 {% if user.membro_comite %}
-  <i lang="pt">(Membro do Comitê)</i>
-  <i lang="en" style="display: none;">(Committee Member)</i>
+  <i>{% lng "(Membro do Comitê)" "(Committee Member)" %}</i>
 {% endif %}
 <br>
 

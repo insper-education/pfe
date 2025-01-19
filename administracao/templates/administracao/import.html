@@ -18,10 +18,7 @@
   </strong><br>
 
   <br>
-  <h6>
-    <span lang="pt">Campos Permitidos:</span>
-    <span lang="en" style="display: none;">Allowed Fields:</span>
-  </h6>
+  <h6>{% lng "Campos Permitidos" "Allowed Fields" %}:</h6>
   <ul>
   {% for campo in campos_permitidos %}
     <li>{{campo}}</li>
@@ -31,8 +28,7 @@
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
     {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept=".csv" %}<br><br>
     <button class="btn btn-primary mb-1" type="submit">
-      <span lang="pt">Carregar Arquivo</span>
-      <span lang="en" style="display: none;">Load File</span>
+      {% lng "Carregar Arquivo" "Load File" %}
     </button>
   </form>
 

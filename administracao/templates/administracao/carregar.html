@@ -9,16 +9,13 @@
 
 {% block content %}
   <a href="{% url 'carrega_arquivo' 'disciplinas' %}"><h5>
-    <span lang="pt">disciplinas</span>
-    <span lang="en">courses</span>
+    {% lng "disciplinas" "courses" %}
   </h5></a>
   <a href="{% url 'carrega_arquivo' 'estudantes' %}"><h5>
-    <span lang="pt">estudantes</span>
-    <span lang="en">students</span>
+    {% lng "estudantes" "students" %}
   </h5></a>
   <a href="{% url 'carrega_arquivo' 'avaliacoes' %}"><h5>
-    <span lang="pt">avaliações</span>
-    <span lang="en">evaluations</span>
+    {% lng "avaliações" "evaluations" %}
   </h5></a>
   <br><br>
 {% endblock %}

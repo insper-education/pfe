@@ -18,7 +18,7 @@
       <div class="ml-3 form-inline">
         <div class="input-group input-group-sm mt-1">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text filter" for="nome" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Buscar</span><span lang="en" style="display: none;">Search</span></span></label>
+            <label class="to_label input-group-text filter" for="nome" onClick="recarregar_pagina()"><span class="to_hide">{% lng "Buscar" "Search" %}</span></label>
           </div>
           <input type="text" class="to_hide filter form-control" name="nome" id="nome" placeholder="nome a buscar">
           <div class="separador input-group-addon"></div>
@@ -47,8 +47,7 @@
 
   <br>
   <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}'" type="button" style="float: right;">
-    <span lang="pt">Cadastrar Novo Usuário</span>
-    <span lang="en" style="display: none;">Register New User</span>
+    {% lng "Cadastrar Novo Usuário" "Register New User" %}
   </button></small><br>
 
   {% include "selecao_ajax.html" with tabela="Usuarios" %}

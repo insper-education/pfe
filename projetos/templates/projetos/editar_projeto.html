@@ -29,15 +29,13 @@
   <form method="post"> {% csrf_token %}  
 
     <label for="titulo">
-      <span lang="pt">Título original da proposta:</span>
-      <span lang="en" style="display: none;">Original title of the proposal:</span>
+      {% lng "Título original da proposta:" "Original title of the proposal:" %}
     </label><br>
     <input type="text" size="86" id="titulo_original" name="titulo_original" value="{{projeto.proposta.titulo}}" disabled>
     <br><br>
 
     <label for="titulo">
-      <span lang="pt">Título do Projeto:</span>
-      <span lang="en" style="display: none;">Project Title:</span>
+      {% lng "Título do Projeto:" "Project Title:" %}
     </label><br>
     <input type="text" size="86" maxlength="{% max_length projeto 'titulo_final' %}" id="titulo" name="titulo"
     placeholder="Na ausência de um título final, o título original da proposta será mantido."
@@ -45,16 +43,14 @@
     <br><br>
 
     <label for="resumo">
-      <span lang="pt">Resumo do Projeto (português)</span>
-      <span lang="en" style="display: none;">Project Summary (english)</span>
+      {% lng "Resumo do Projeto (português)" "Project Summary (english)" %}
     </label><br>
     <textarea id="resumo" name="resumo" rows="10" cols="88" maxlength="{% max_length projeto 'resumo' %}"
     >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
     <label for="abstract">
-      <span lang="pt">Resumo do Projeto (inglês)</span>
-      <span lang="en" style="display: none;">Project Abstract (english)</span>
+      {% lng "Resumo do Projeto (inglês)" "Project Abstract (english)" %}
       
     </label><br>
     <textarea id="abstract" name="abstract" rows="10" cols="88" maxlength="{% max_length projeto 'abstract' %}"
@@ -62,8 +58,7 @@
     <br><br>
 
     <label for="palavras_chave">
-      <span lang="pt">Palavras-chave</span>
-      <span lang="en" style="display: none;">Keywords</span>
+      {% lng "Palavras-chave" "Keywords" %}
     </label><br>
     <textarea id="palavras_chave" name="palavras_chave" rows="1" cols="88" maxlength="{% max_length projeto 'palavras_chave' %}"
     >{% if projeto.palavras_chave %}{{projeto.palavras_chave}}{% endif %}</textarea>
@@ -72,8 +67,7 @@
     <div style="max-width: 560px;">
       <div style="margin-bottom: 6px;">
         <label for="orientador" style="width: 6em;">
-          <span lang="pt">Orientador(a):</span>
-          <span lang="en" style="display: none;">Advisor:</span>
+          {% lng "Orientador(a):" "Advisor:" %}
         </label>
         <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
                 data-width="81%" data-size="10">
@@ -103,8 +97,7 @@
 
       <div style="margin-bottom: 6px;">
         <label for="coorientador" style="width: 6em;"><small>
-          <span lang="pt">Coorientador(a):</span>
-          <span lang="en" style="display: none;">Co-advisor:</span>
+          {% lng "Coorientador(a):" "Co-advisor:" %}
         </small></label>
         <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
         data-width="81%">
@@ -120,18 +113,15 @@
     </div>
     <br>
 
-    <span lang="pt">Grupo:</span>
-    <span lang="en" style="display: none;">Group:</span>
+    {% lng "Grupo:" "Group:" %}
     <br>
     <table id="AlocacaoEstudantes" style="margin-left: 12px; margin-right: 102px; table-layout: fixed; max-width: 95%; width: 740px;">
       <thead>
       <tr><td style="text-align: center; width: 6.5em;"><small>
-        <span lang="pt">Estudante</span>
-        <span lang="en" style="display: none;">Student</span>
+        {% lng "Estudante" "Student" %}
         #</small></td>
         <td style="text-align: center;"><small>
-          <span lang="pt">Nome do Estudante</span>
-          <span lang="en" style="display: none;">Student Name</span>
+          {% lng "Nome do Estudante" "Student Name" %}
         </small></td>
         <td style="width: 1em;"><span class="AddNew" style="cursor:pointer; margin-left: 4px;">&#10753;</span></td></tr>
 
@@ -141,8 +131,7 @@
         <tr>
           <td>
             <label for="estudante{{forloop.counter}}" style="white-space: nowrap; width: 1%;">
-              <span lang="pt">Estudante</span>
-              <span lang="en" style="display: none;">Student</span>
+              {% lng "Estudante" "Student" %}
               <span style="width:1em; text-align:left; display:inline-block;">{{forloop.counter}}:</span></label>
           </td>
           <td>
@@ -193,8 +182,7 @@
     <br>
     <label for="time_misto">
       <input type="checkbox" id="time_misto" name="time_misto" value="True" {% if projeto.time_misto %}checked{% endif %}>
-      <span lang="pt">Time Misto (com estudantes de outra instituição/intercâmbio)</span>
-      <span lang="en" style="display: none;">Mixed Team (with students from another institution/exchange)</span>
+      {% lng "Time Misto (com estudantes de outra instituição/intercâmbio)" "Mixed Team (with students from another institution/exchange)" %}
     </label><br>  
 
     <br><br>
@@ -212,7 +200,7 @@
       $("tr").each(function(){
         var position= $("#AlocacaoEstudantes tr").index($(this))
         if(position!=0) {
-          texto = '<label for="estudante' + position + '"><span lang="pt">Estudante</span><span lang="en" style="display: none;">Student</span> <span style="width:1em;text-align:left;display:inline-block;">' + position + ':</span></label>';
+          texto = '<label for="estudante' + position + '">{% lng "Estudante" "Student" %} <span style="width:1em;text-align:left;display:inline-block;">' + position + ':</span></label>';
           $(this).children("td").first().html(texto);
           {% include "linguas_ajax.html" %}
         }

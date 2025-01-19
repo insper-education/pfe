@@ -19,19 +19,16 @@
     <hr>
     <h4>
     <h5 style="margin-bottom: 0px;">
-      <span lang="pt">Disciplina(s) Recomendada(s)</span>
-      <span lang="en" style="display:none;">Recommended Courses(s)</span>
+      {% lng "Disciplina(s) Recomendada(s)" "Recommended Courses(s)" %}
     </h5>
     <small class="obs">
-      <span lang="pt">Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta</span>
-      <span lang="en" style="display:none;">Recommended courses that students should have or be taking to apply to the proposal</span>
+      {% lng "Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta" "Recommended courses that students should have or be taking to apply to the proposal" %}
     </small>
     
     <table id="disciplinas_recomendadas" style="margin-top: 10px; border: 0px;">
       <tr>
         <th style="border: 0px;">
-          <span lang="pt">Nome da Disciplina</span>
-          <span lang="en" style="display:none;">Course Name</span>
+          {% lng "Nome da Disciplina" "Course Name" %}
           {% if editavel %}
             <small class="esconder">
               <a
@@ -50,8 +47,7 @@
                 {{rec.disciplina.nome}}
               {% else %}
                 <span style="color:red">
-                  <span lang="pt">ERRO: NOME DA DISCINPLINA NÃO DEFINIDO</span>
-                  <span lang="en" style="display:none;">ERROR: COURSE NAME NOT DEFINED</span>
+                  {% lng "ERRO: NOME DA DISCINPLINA NÃO DEFINIDO" "ERROR: COURSE NAME NOT DEFINED" %}
                 </span>
               {% endif %}
               {% if editavel %}

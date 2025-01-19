@@ -365,10 +365,29 @@ def estilo_comunicacao(request):
 
         return render(request, "generic.html", context=context)
 
+    texto_estilo = {
+        "pt": """
+            Para cada um dos blocos, ordene na coluna de respostas as afirmações especificadas na coluna pergunta.<br>
+            Para isso considere a sua autoperpção em relação a cada afirmação. <br>
+            Mova para a parte superior a afirmacao que mais te representa e para a parte inferior a que menos te representa.<br>
+            Lembre-se que este assessment é confidencial e particular, portanto foque em responder de forma sincera e honesta.<br>
+            Ao concluir, você receberá um relatório com os resultados por e-mail.<br>
+            Leve para a aula o seu resultado.<br>""",
+                "en": """
+            For each block, order in the answers column the statements specified in the question column.<br>
+            Consider your self-perception in relation to each statement. <br>
+            Move to the top the statement that best represents you and to the bottom the one that least represents you.<br>
+            Remember that this assessment is confidential and private, so focus on answering sincerely and honestly.<br>
+            Upon completion, you will receive a report with the results by email.<br>
+            Take your result to class.<br>""",
+        }
+    
     context = {
         "titulo": {"pt": "Estilo de Comunicação", "en": "Communication Style"},
         "estilos": EstiloComunicacao.objects.all(),
+        "texto_estilo": texto_estilo,
     }
+
     return render(request, "estudantes/estilo_comunicacao.html", context)
 
 

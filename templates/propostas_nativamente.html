@@ -7,8 +7,7 @@
 {% load linguas %}
 
 <span style="margin-left: 10px;">
-  <span lang="pt">nativamente multidisciplinar: </span>
-  <span lang="en" style="display: none;">multidisciplinary natively: </span>
+  {% lng "nativamente multidisciplinar: " "multidisciplinary natively: " %}
   {{disponivel_multidisciplinar.0}}
   {% if nao_disponivel %}
   <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
@@ -18,8 +17,7 @@
 </span><br>
 {% for key, value in disponivel_propostas.items %} {% if value.1 > 0 %}
   <span style="margin-left: 10px;">
-    <span lang="pt">nativamente de </span>
-    <span lang="en" style="display: none;">natively in </span>
+    {% lng "nativamente de " "natively in " %}
     {{key.nome}}: {{value.0}}
     {% if nao_disponivel %}
     <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">

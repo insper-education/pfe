@@ -19,18 +19,9 @@
   <form method="post" id="informe_bancas" enctype="multipart/form-data">{% csrf_token %}
     <table class="tabela-padrao table-striped">
       <thead><tr>
-          <th scope="col"><b>
-            <span lang="pt">Orientador</span>
-            <span lang="en" style="display: none;">Advisor</span>
-          </b></th>
-          <th scope="col"><b>
-            <span lang="pt">Projeto</span>
-            <span lang="en" style="display: none;">Project</span>
-          </b></th>
-          <th scope="col"><b>
-            <span lang="pt">Organização</span>
-            <span lang="en" style="display: none;">Organization</span>
-          </b></th>
+          <th scope="col"><b>{% lng "Orientador" "Advisor" %}</b></th>
+          <th scope="col"><b>{% lng "Projeto" "Project" %}</b></th>
+          <th scope="col"><b>{% lng "Organização" "Organization" %}</b></th>
       </tr></thead>
       <tbody>
         {% for banca in bancas %}

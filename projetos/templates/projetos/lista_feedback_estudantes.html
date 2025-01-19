@@ -20,7 +20,7 @@
 
 {% block content %}
 
-  <div><span lang="pt">Link para pesquisa</span><span lang="en">Form link</span>: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
+  <div>{% lng "Link para pesquisa" "Form link" %}: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
 
   {% include "edicoes.html" %}
 
@@ -98,8 +98,7 @@
 
   <table id="ComentariosTable"  style="background-color: #eee;" >
     <tr><td>
-      <b lang="pt">Comentários:</b>
-      <b lang="en">Comments:</b>
+      <b>{% lng "Comentários" "Comments" %}:</b>
     </td></tr>
   </table>
 

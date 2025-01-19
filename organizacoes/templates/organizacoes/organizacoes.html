@@ -7,41 +7,33 @@
 {% load linguas %}
 
 <h5>
-  <span lang="pt">Propostas</span>
-  <span lang="en" style="display: none;">Proposals</span>
+  {% lng "Propostas" "Proposals" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'proposta_submissao' %}">
-  <span lang="pt">Submeter Proposta de Projeto</span>
-  <span lang="en" style="display: none;">Submit Project Proposal</span>
+  {% lng "Submeter Proposta de Projeto" "Submit Project Proposal" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carrega_proposta' %}">
-  <span lang="pt">Carregar Proposta de Projeto em PDF</span>
-  <span lang="en" style="display: none;">Load Project Proposal in PDF</span>
+  {% lng "Carregar Proposta de Projeto em PDF" "Load Project Proposal in PDF" %}
 </a></div>
 
 {% if user.is_authenticated %}
   <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_propostas' %}">
-    <span lang="pt">Propostas Submetidas</span>
-    <span lang="en" style="display: none;">Submitted Proposals</span>
+    {% lng "Propostas Submetidas" "Submitted Proposals" %}
   </a></div>
   <br>
 
   <h5>
-    <span lang="pt">Projetos</span>
-    <span lang="en" style="display: none;">Projects</span>
+    {% lng "Projetos" "Projects" %}
   </h5>
   <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'parceiro_projetos' %}">
-    <span lang="pt">Lista de Projetos</span>
-    <span lang="en" style="display: none;">Projects List</span>
+    {% lng "Lista de Projetos" "Projects List" %}
   </a></div>
   <br>
 
   <h5>
-    <span lang="pt">Feedbacks</span>
-    <span lang="en" style="display: none;">Feedbacks</span>
+    {% lng "Feedbacks" "Feedbacks" %}
   </h5>
   <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projeto_feedback' %}">
-    <span lang="pt">Enviar feedback de projeto</span>
-    <span lang="en" style="display: none;">Send project feedback</span>
+    {% lng "Enviar feedback de projeto" "Send project feedback" %}
   </a></div>
 {% endif %}

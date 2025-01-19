@@ -20,8 +20,7 @@
   <form method="post" action="{% url 'gerar_certificados' %}" enctype="multipart/form-data"> {% csrf_token %}
 
     {% include "edicoes.html" %}
-    <span lang="pt">Gera os certificados dos tipos e datas especificadas.</span>
-    <span lang="en">Generates certificates of the specified types and dates.</span>
+    {% lng "Gera os certificados dos tipos e datas especificadas." "Generates certificates of the specified types and dates." %}
     <br><br>
 
     {% for tipo, items in tipos_certificados.items %}
@@ -35,8 +34,7 @@
     <br><br>
 
     <button class="btn btn-primary mb-1 mt-2" type="submit">
-      <span lang="pt">Gerar Certificados</span>
-      <span lang="en">Generate Certificates</span>
+      {% lng "Gerar Certificados" "Generate Certificates" %}
     </button>
 
   </form>

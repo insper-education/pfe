@@ -16,101 +16,86 @@
 
   {% if voltar %}
     <a href='javascript:history.back(1)'>
-      <span lang="pt">Voltar</span>
-      <span lang="en" style="display:none">Back</span>
+      {% lng "Voltar" "Back" %}
     </a><br><br>
   {% endif %} 
 
   {% if agendar_banca %}
     <a href="{% url 'bancas_criar' %}">
-      <span lang="pt">Agendar outra banca</span>
-      <span lang="en" style="display:none">Schedule another examination board</span>
+      {% lng "Agendar outra banca" "Schedule another examination board" %}
     </a><br>
   {% endif %}
 
   {% if agendar_dinamica %}
     <a href="{% url 'dinamicas_criar' %}">
-      <span lang="pt">Agendar outra dinâmica</span>
-      <span lang="en" style="display:none">Schedule another dynamic</span>
+      {% lng "Agendar outra dinâmica" "Schedule another dynamic" %}
     </a><br>
   {% endif %}
 
   {% if organizacao %}
     <a href="{% url 'organizacao_completo' organizacao.id %}">
-      <span lang="pt">Ver organização cadastrada</span>
-      <span lang="en" style="display:none">See registered organization</span>
+      {% lng "Ver organização cadastrada" "See registered organization" %}
     </a><br>
     <a href="{% url 'cadastrar_organizacao' %}">
-      <span lang="pt">Cadastrar outra organização</span>
-      <span lang="en" style="display:none">Register another organization</span>
+      {% lng "Cadastrar outra organização" "Register another organization" %}
     </a><br>
   {% endif %}
 
   {% if usuario %}
     <a href="{% url 'user_detail' usuario.id %}">
-      <span lang="pt">Ver usuário cadastrado</span>
-      <span lang="en" style="display:none">See registered user</span>
+      {% lng "Ver usuário cadastrado" "See registered user" %}
     </a><br>
     <a href="{% url 'cadastrar_usuario' %}">
-      <span lang="pt">Cadastrar outro usuário</span>
-      <span lang="en" style="display:none">Register another user</span>
+      {% lng "Cadastrar outro usuário" "Register another user" %}
     </a><br>
   {% endif %}
 
   {% if area_aluno %}
     <a href="{% url 'index_estudantes' %}">
-      <span lang="pt">Ir para Área dos Estudantes</span>
-      <span lang="en" style="display:none">Go to Students Area</span>
+      {% lng "Ir para Área dos Estudantes" "Go to Students Area" %}
     </a><br>
   {% endif %}
 
   {% if bancas_index %}
     <a href="{% url 'bancas_index' %}">
-      <span lang="pt">Ir para índice das bancas</span>
-      <span lang="en" style="display:none">Go to examination boards index</span>
+      {% lng "Ir para índice das bancas" "Go to examination boards index" %}
     </a><br>
   {% endif %}
 
   {% if organizacao_completo %}
       <a href="{% url 'organizacao_completo' organizacao_completo %}">
-        <span lang="pt">Ver organização cadastrada</span>
-        <span lang="en" style="display:none">See registered organization</span>
+        {% lng "Ver organização cadastrada" "See registered organization" %}
       </a><br>
   {% endif %}
 
   {% if organizacoes_lista %}
     <a href="{% url 'organizacoes_lista' %}">
-      <span lang="pt">Ver lista de organizações</span>
-      <span lang="en" style="display:none">See list of organizations</span>
+      {% lng "Ver lista de organizações" "See list of organizations" %}
     </a><br>
   {% endif %}
 
   {% if organizacoes_prospectadas %}
     <a href="{% url 'organizacoes_prospect' %}">
-      <span lang="pt">Ver lista de organizações prospectadas</span>
-      <span lang="en" style="display:none">See list of prospected organizations</span>
+      {% lng "Ver lista de organizações prospectadas" "See list of prospected organizations" %}
     </a><br>
   {% endif %}
 
   {% if propostas_lista %}
     <a href="{% url 'propostas_apresentadas' %}">
-      <span lang="pt">Ver lista de propostas apresentadas</span>
-      <span lang="en" style="display:none">See list of proposals presented</span>
+      {% lng "Ver lista de propostas apresentadas" "See list of proposals presented" %}
     </a><br>
   {% endif %}
 
   {% if avaliar_entregas %}
     <a href="{% url 'avaliar_entregas' %}">
-      <span lang="pt">Voltar para janela de avaliações do semestre</span>
-      <span lang="en" style="display:none">Back to semester evaluations window</span>
+      {% lng "Voltar para janela de avaliações do semestre" "Back to semester evaluations window" %}
     </a><br>
   {% endif %}
 
   {% if area_principal %}
     <br><br>
     <a href="{% url 'index' %}">
-      <span lang="pt">Voltar para Página Principal</span>
-      <span lang="en" style="display:none">Back to Main Page</span>
+      {% lng "Voltar para Página Principal" "Back to Main Page" %}
     </a><br>
   {% endif %}
 

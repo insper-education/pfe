@@ -412,20 +412,17 @@
 
         <div class="modal-footer">
           <div id="carregando_arquivo" style="float: left; display: none;">
-            <span lang="pt">Salvando evento...</span>
-            <span lang="en" style="display: none;">Saving event...</span>
+            {% lng "Salvando evento..." "Saving event..." %}
             <div class="carregando"></div>
           </div>
           <div id="warning-footer" style="color: red;"></div>
           <button type="button" class="btn btn-default mb-1" data-dismiss="modal">
-            <span lang="pt">Cancelar</span>
-            <span lang="en" style="display: none;">Cancel</span>
+            {% lng "Cancelar" "Cancel" %}
           </button>
           
           <button type="button" class="btn btn-primary mb-1" id="save-event"
           {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-            <span lang="pt">Atualizar</span>
-            <span lang="en" style="display: none;">Save</span>
+            {% lng "Atualizar" "Save" %}
           </button>
           
         </div> {% comment %} modal-footer {% endcomment %}

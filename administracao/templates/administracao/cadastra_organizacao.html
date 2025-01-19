@@ -64,8 +64,7 @@
     <br><br>
 
     <button class="btn btn-primary mb-1" type="submit">
-      <span lang="pt">{% if edicao %}Atualizar{% else %}Cadastrar{% endif %} Organização</span>
-      <span lang="en">{% if edicao %}Update{% else %}Register{% endif %} Organization</span>
+      {% lng_b edicao "Atualiza Organização" "Cadastrar Organização" "Update Organization" "Register Organization" %}
     </button>
     
   </form>

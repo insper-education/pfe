@@ -9,12 +9,10 @@
 
 {% if user.tipo_lingua > 1 %}
 <strong>
-  <span lang="pt">Linguagem de comunicação:</span>
-  <span lang="en" style="display: none;">Communication language:</span>  
+  {% lng "Linguagem de comunicação:" "Communication language:" %}  
   {% if user.tipo_lingua == 2 %}
     <span style="color: red;">
-      <span lang="pt">Inglês</span>
-      <span lang="en" style="display: none;">English</span>
+      {% lng "Inglês" "English" %}
     </span>
   {% endif %}    
   <br>
@@ -30,8 +28,7 @@
 {% if user.telefone or user.celular or user.instant_messaging %}
 
   <strong>
-    <span lang="pt">Telefones:</span>
-    <span lang="en" style="display: none;">Phones:</span>
+    {% lng "Telefones:" "Phones:" %}
   </strong><br>
   {% if user.telefone %}
     <div style="margin-left: 8px;">&#x260F;
@@ -57,8 +54,7 @@
 {% if user.observacoes %}
     <br>
     <strong>
-      <span lang="pt">Observações:</span>
-      <span lang="en" style="display: none;">Observations:</span>
+      {% lng "Observações:" "Observations:" %}
     </strong>
     <div style="padding-left: 18px">{{user.observacoes|linebreaks}}</div>
 {% endif %}

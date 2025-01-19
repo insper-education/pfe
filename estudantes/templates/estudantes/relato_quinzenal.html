@@ -61,39 +61,35 @@
 
     {% if prazo %}
       {% if fora_periodo %}
-        <span lang="pt">Fora do período para a submissão de relatos.</span>
-        <span lang="en" style="display: none;">Out of the period for submitting reports.</span>
+        {% lng "Fora do período para a submissão de relatos." "Out of the period for submitting reports." %}
         <br>
-        <span lang="pt">Próxima entrega será entre</span>
-        <span lang="en" style="display: none;">Next delivery will be between</span>
+        {% lng "Próxima entrega será entre" "Next delivery will be between" %}
         <b style='color:green;'>
           <span class="texto-longo">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{inicio_periodo|date:"d/m/y" }}</span>
         </b>
-        <span lang="pt">e</span>
-        <span lang="en" style="display: none;">and</span>
+        {% lng "e" "and" %}
         <b style='color:green;'>
           <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
       {% else %}
-        <span lang="pt">Prazo para a submissão do relato:</span>
-        <span lang="en" style="display: none;">Deadline for submitting the report:</span>
+        {% lng "Prazo para a submissão do relato:" "Deadline for submitting the report:" %}
         <b style='color:red;'>
           <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
       {% endif %}
     {% else %}
-      <span lang="pt">Não há datas para fazer relatos.</span>
-      <span lang="en" style="display: none;">There are no dates to make reports.</span>
+      {% lng "Não há datas para fazer relatos." "There are no dates to make reports." %}
     {% endif %}
     
     <br><br>
 
     <label for="relato">
-      <span lang="pt">Informe seu relato quinzenal (máximo {% max_length Relato "texto" %} caracteres)</span>
-      <span lang="en" style="display: none;">Report your biweekly report (maximum {% max_length Relato "texto" %} characters)</span>
+      {% lng "Informe seu relato quinzenal (máximo" "Report your biweekly report (maximum" %}
+      {% max_length Relato "texto" %}
+      {% lng "caracteres)" "characters)" %}
     </label><br>
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
               placeholder="{{msg_relato_quinzenal}}"
@@ -102,8 +98,7 @@
     <br><br>
 
     <button {% if fora_periodo or not prazo %}disabled{% endif %} class="btn btn-primary mb-1" type="submit">
-      <span lang="pt">Enviar</span>
-      <span lang="en" style="display: none;">Send</span>
+      {% lng "Enviar" "Send" %}
     </button>
 
   </form>
@@ -112,8 +107,7 @@
 
     <p>&nbsp;</p><hr><p>&nbsp;</p>
 
-    <h4 lang="pt">Relatos Anteriores:</h4>
-    <h4 lang="en">Previous Reports:</h4>
+    <h4>{% lng "Relatos Anteriores" "Previous Reports" %}:</h4>
 
     {% for item in relatos %}
     
@@ -126,30 +120,24 @@
             {% if prazo %}
               {{prazo}} -
               <span style="white-space: nowrap;">
-                <span lang="pt">Situação: </span>
-                <span lang="en" style="display: none;">Situation: </span>
+                {% lng "Situação: " "Situation: " %}
                 {% if item.avaliacao == -1 %}
-                  <span lang="pt">aguardando avaliação de orientador</span>
-                  <span lang="en" style="display: none;">awaiting advisor evaluation</span>
+                  {% lng "aguardando avaliação de orientador" "awaiting advisor evaluation" %}
                 {% endif %}
                 {% if item.avaliacao == 0 %}<span class="red-bold">
-                  <span lang="pt">desempenho abaixo do esperado</span>
-                  <span lang="en" style="display: none;">performance below expected</span>
+                  {% lng "desempenho abaixo do esperado" "performance below expected" %}
                 </span>{% endif %}
                 {% if item.avaliacao == 1 %}<span class="green-bold">
-                  <span lang="pt">desempenho dentro do esperado</span>
-                  <span lang="en" style="display: none;">performance within expected</span>
+                  {% lng "desempenho dentro do esperado" "performance within expected" %}
                 </span>{% endif %}
               </span>
             {% else %}
-              <span lang="pt">Prazo inválido (não visível para orientador)</span>
-              <span lang="en" style="display: none;">Invalid deadline (not visible to advisor)</span>
+              {% lng "Prazo inválido (não visível para orientador)" "Invalid deadline (not visible to advisor)" %}
             {% endif %}
             {% if item.feedback %}
               {% if item.momento_avaliacao %}
                 <i style="display: block;">
-                  <span lang="pt">Feedback do Orientador:</span>
-                  <span lang="en" style="display: none;">Advisor Feedback:</span>
+                  {% lng "Feedback do Orientador:" "Advisor Feedback:" %}
                   {{item.momento_avaliacao}}</i>
               {% endif %}
               <div id="relato{{item.id}}" class="relato">{{item.feedback|linebreaks}}</div>
@@ -157,8 +145,7 @@
           </th></tr></thead>
           <tbody><tr><td>
             <i>
-              <span lang="pt">Entregue:</span>
-              <span lang="en" style="display: none;">Delivered:</span>
+              {% lng "Entregue:" "Delivered:" %}
               {{item.momento}}
             </i><br>
             <div class="relato">{{item.texto|linebreaks}}</div>
@@ -166,8 +153,7 @@
         {% else %}
           <tr><td>
             <i class="anteriores" style="display: block;">
-              <span lang="pt">Entregue:</span>
-              <span lang="en" style="display: none;">Delivered:</span>
+              {% lng "Entregue:" "Delivered:" %}
               {{item.momento}}
               <span class="seta-cima"></span>
             </i>

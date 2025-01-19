@@ -16,21 +16,17 @@
 
   <div class="div_arredondado mt-2">
     <div class="topico">
-      <span lang="pt">Avaliação para:</span>
-      <span lang="en" style="display: none;">Evaluation for:</span>
-      <a href="{% url 'estudante_detail' colega.aluno.id %}"><b>{{colega.aluno}}</b></a>
+      {% lng "Avaliação para:" "Evaluation for:" %}
+       <a href="{% url 'estudante_detail' colega.aluno.id %}"><b>{{colega.aluno}}</b></a>
     </div>
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?</span>
-      <span lang="en" style="display: none;">What do you appreciate about {{colega.aluno}}?</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "O que você aprecia no" "O que você aprecia na"  "What do you appreciate about" %}
+      {{colega.aluno}}?<br>
       {% for par in pares %}
         <i>
-          <span lang="pt">por:</span>
-          <span lang="en" style="display: none;">by:</span>
-          {{par.alocacao_de.aluno}}
+          {% lng "por:" "by:" %}          {{par.alocacao_de.aluno}}
         </i>
         <div class="caixa">{% if par.aprecia %}{{par.aprecia}}{% endif %}</div>    
       {% endfor %}
@@ -38,14 +34,12 @@
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?</span>
-      <span lang="en" style="display: none;">What do you see {{colega.aluno}} doing, or not doing, that is hindering?</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "O que você vê o" "O que você vê a" "What do you see" %}
+      {{colega.aluno}}
+      {% lng "fazendo, ou deixando de fazer, que está atrapalhando?" "doing, or not doing, that is hindering?" %}<br>
       {% for par in pares %}
         <i>
-          <span lang="pt">por:</span>
-          <span lang="en" style="display: none;">by:</span>
-          {{par.alocacao_de.aluno}}
+          {% lng "por:" "by:" %}          {{par.alocacao_de.aluno}}
         </i>
         <div class="caixa">{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</div>   
       {% endfor %}
@@ -53,14 +47,12 @@
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?</span>
-      <span lang="en" style="display: none;">What can {{colega.aluno}} change that would make a difference to you?</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "O que o" "O que a" "What can" %}
+      {{colega.aluno}}
+      {% lng "pode mudar, que faria diferença para você?" "change that would make a difference to you?" %}<br>
       {% for par in pares %}
         <i>
-          <span lang="pt">por:</span>
-          <span lang="en" style="display: none;">by:</span>
-          {{par.alocacao_de.aluno}}
+          {% lng "por:" "by:" %}          {{par.alocacao_de.aluno}}
         </i>
         <div class="caixa">{% if par.mudar %}{{par.mudar}}{% endif %}</div>
       {% endfor %}
@@ -68,9 +60,8 @@
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-      <span lang="en" style="display: none;">Delivery of {{colega.aluno}}</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
+      {{colega.aluno}}<br>
       <table class="table table-borderless table-striped">
         {% for entrega in entregas %}
           <tr>
@@ -87,9 +78,8 @@
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-      <span lang="en" style="display: none;">Initiative of {{colega.aluno}}</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "Iniciativa do" "Iniciativa da" "Initiative of" %}
+      {{colega.aluno}}<br>
       <table class="table table-borderless table-striped">
         {% for iniciativa in iniciativas %}
           <tr>
@@ -106,9 +96,8 @@
 
     <hr>
     <div class="pergunta">
-      <span lang="pt">Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-      <span lang="en" style="display: none;">Communication of {{colega.aluno}}</span>
-      <br>
+      {% lng_g colega.aluno.user.genero "Comunicação do" "Comunicação da" "Communication of" %}
+      {{colega.aluno}}<br>
       <table class="table table-borderless table-striped">
         {% for comunicacao in comunicacoes %}
           <tr>

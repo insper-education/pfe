@@ -60,8 +60,7 @@
                   <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
                   {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
                     <div class="bloco_avali">
-                      <span lang="pt">peso:</span>
-                      <span lang="en" style="display: none;">weight:</span>
+                      {% lng "peso:" "weight:" %}
                       <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
                             name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
                             min="0" max="100" step="any" style="width: 5em;"

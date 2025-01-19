@@ -23,20 +23,15 @@
       <div class="div_arredondado">
           {% if banca.startDate %}
             <b>
-              <span lang="pt">Horário:</span>
-              <span lang="en" style="display: none;">Time:</span>
+              {% lng "Horário:" "Time:" %}
             </b> {{banca.startDate.date}} ({{banca.startDate|date:"l"}}) das {{banca.startDate.time}}
           {% endif %}
           {% if banca.endDate %}
             às {{banca.endDate.time}}
           {% endif %}
           <div>
-            <b>
-              <span lang="pt">Tipo:</span>
-              <span lang="en" style="display: none;">Type:</span>
-            </b> 
-            <span lang="pt">{{banca.composicao.exame.titulo}}</span>
-            <span lang="en" style="display: none;">{{banca.composicao.exame.titulo_en}}</span>
+            <b>{% lng "Tipo:" "Type:" %}</b> 
+            {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
           </div>
           
           {% include "cabecalho_projeto.html" with projeto=banca.get_projeto com_email=True com_semestre=True %}
@@ -47,8 +42,7 @@
 
           <div class="mt-2">
             <b>
-              <span lang="pt">Membros da Banca:</span>
-              <span lang="en" style="display: none;">Examination Board Members:</span>
+              {% lng "Membros da Banca:" "Examination Board Members:" %}
             </b>
             {% include "membros_da_banca.html" %}
 
@@ -57,21 +51,18 @@
                 {% if avaliacao.objetivos %}
                   <hr>
                   <b>
-                    <span lang="pt">Média dos Conceitos da Banca:</span>
-                    <span lang="en" style="display: none;">Board's Average Grades:</span>
+                    {% lng "Média dos Conceitos da Banca:" "Board's Average Grades:" %}
                   </b><br>
                   {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                     &nbsp;&#x21A3; {{objetivo.titulo}}: 
                       {% if banca.alocacao %} {% comment %} PROBATION {% endcomment %}
                         {% if avaliacao.0 >= 5 %}
                           <span style="color: green;">
-                            <span lang="pt">Suficiente</span>
-                            <span lang="en" style="display: none;">Sufficient</span>
+                            {% lng "Suficiente" "Sufficient" %}
                           </span>
                         {% else %}
                           <span style="color: red;">
-                            <span lang="pt">Insuficiente</span>
-                            <span lang="en" style="display: none;">Insufficient</span>
+                            {% lng "Insuficiente" "Insufficient" %}
                           </span>
                         {% endif %}
                       {% else %}
@@ -86,8 +77,7 @@
                   {% if avaliacao.peso > 0 %}
                     &#10149;
                     <b> 
-                      <span lang="pt">Nota final</span>
-                      <span lang="en" style="display: none;">Final Grade</span>
+                      {% lng "Nota final" "Final Grade" %}
                       = {{avaliacao.nota|floatformat:2}}
                     </b><br>
                   {% endif %}
@@ -97,8 +87,7 @@
                 {% with observacoes_estudantes=banca.get_observacoes_estudantes %}
                   {% if observacoes_estudantes %}
                     <b style="display: inline-block; margin-top: 14px;">
-                      <span lang="pt">Observações realizadas pelos membros da banca:</span>
-                      <span lang="en" style="display: none;">Observations made by the examination board members:</span>
+                      {% lng "Observações realizadas pelos membros da banca:" "Observations made by the examination board members:" %}
                     </b>
                     {% for observacao in observacoes_estudantes %}
                       {% if observacao.observacoes_estudantes %}
@@ -121,8 +110,7 @@
   
   {% else %}
     <p>
-      <span lang="pt">Não existem bancas agendadas para você.</span>
-      <span lang="en" style="display: none;">There are no scheduled examination boards for you.</span>
+      {% lng "Não existem bancas agendadas para você." "There are no scheduled examination boards for you." %}
     </p>
   {% endif %}
   

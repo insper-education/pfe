@@ -52,7 +52,7 @@
 
               <div>
                 <p>
-                  <b lang="pt">Projeto:</b><b lang="en" style="display: none;">Project:</b>
+                  <b>{% lng "Projeto:" "Project:" %}</b>
                   <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
                   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
                     {{projeto.titulo_final}}</a>
@@ -69,7 +69,7 @@
               {% if projeto.resumo or projeto.abstract or projeto.palavras_chave %}
 
                 {% if projeto.resumo %}
-                  <div class="resumo linha-concisa mt-1"><b lang="pt">Resumo:</b><b lang="en" style="display: none;">Abstract(pt):</b> <p class="texto-alinhado">{{projeto.resumo}}</p></div>
+                  <div class="resumo linha-concisa mt-1"><b>{% lng "Resumo:" "Abstract(pt):" %}</b> <p class="texto-alinhado">{{projeto.resumo}}</p></div>
                 {% endif %}
 
                 {% if projeto.abstract %}
@@ -77,7 +77,7 @@
                 {% endif %}
 
                 {% if projeto.palavras_chave %}
-                  <div class="palavras_chave linha-concisa mt-1"><b lang="pt">Palavras-chave:</b><b lang="en" style="display: none;">Keywords:</b>{{projeto.palavras_chave}}</div>
+                  <div class="palavras_chave linha-concisa mt-1"><b>{% lng "Palavras-chave:" "Keywords:" %}</b>{{projeto.palavras_chave}}</div>
                 {% endif %}
 
                 <hr>
@@ -86,18 +86,17 @@
 
               {% if projeto.proposta.descricao %}
                 <div class="descricao linha-concisa mt-1">
-                  <b lang="pt">Descrição da proposta de projeto:</b>
-                  <b lang="en" style="display: none;">Project proposal description:</b>
+                  <b>{% lng "Descrição da proposta de projeto:" "Project proposal description:" %}</b>
                   <p class="texto-alinhado">{{projeto.proposta.descricao}}</p>
                 </div>
               {% endif %}
 
               {% if projeto.proposta.descricao_organizacao %}
-                <div class="apresentacao_organizacao apresentacao linha-concisa mt-1"><b lang="pt">Apresentação da Organização Parceira:</b><b lang="en" style="display: none;">Partner Organization Presentation:</b> <p class="texto-alinhado">{{projeto.proposta.descricao_organizacao}}</p></div>  
+                <div class="apresentacao_organizacao apresentacao linha-concisa mt-1"><b>{% lng "Apresentação da Organização Parceira:" "Partner Organization Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.descricao_organizacao}}</p></div>  
               {% endif %}
 
               {% if projeto.proposta.departamento %}
-                <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b lang="pt">Apresentação do Departamento:</b><b lang="en" style="display: none;">Department Presentation:</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
+                <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b>{% lng "Apresentação do Departamento:" "Department Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
               {% endif %}
 
               <div class="ml-1 mb-1">
@@ -105,17 +104,15 @@
               </div>
 
               <p class="semestre ml-1" style="display: none;">
-                <b lang="pt">Semestre:</b><b lang="en" style="display: none;">Semester:</b> {{projeto.ano}}.{{projeto.semestre}}
+                <b>{% lng "Semestre:" "Semester:" %}</b> {{projeto.ano}}.{{projeto.semestre}}
               </p>
 
               <div class="orientador ml-1 mb-1">
                 {% if projeto.orientador %}
-                  {% if projeto.proposta.intercambio %}
-                    <span lang="pt"><b>Professor{% if projeto.orientador.user.genero == 'F' %}a{% endif %} Responsável:</b></span>
-                    <span lang="en" style="display: none;"><b>Professor in charge:</b></span>
+                 {% if projeto.proposta.intercambio %}
+                    {% lng_g projeto.orientador.user.genero "[Professor Responsável]" "[Professora Responsável]" "[Responsible Professor]" %}
                   {% else %}
-                    <span lang="pt"><b>Orientador{% if projeto.orientador.user.genero == 'F' %}a{% endif %}:</b></span>
-                    <span lang="en" style="display: none;"><b>Advisor:</b></span>
+                    {% lng_g projeto.orientador.user.genero "[Orientador]" "[Orientadora]" "[Advisor]" %}
                   {% endif %}
                   <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
                   <span class="emails">
@@ -123,7 +120,7 @@
                     <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
                   </span>
                 {% else %}
-                  Orientador: Não definido
+                  {% lng "Orientador: Não definido" "Advisor: Not defined" %}
                 {% endif %}
               </div>
 
@@ -143,8 +140,7 @@
               {% endwith %}
 
               <div class="estudantes ml-1 mb-1">
-                <b lang="pt">Estudantes:</b>
-                <b lang="en" style="display: none;">Students:</b>
+                <b>{% lng "Estudantes:" "Students:" %}</b>
                 {% with alocacoes=projeto.alocacao_set.all %}
                   {% if alocacoes %}
                     <span class="emails esconder">
@@ -184,8 +180,7 @@
               <div style="height: 1px;">&nbsp;</div>
 
               <div class="organizacao ml-1 mb-1">
-                <b lang="pt">Organização:</b>
-                <b lang="en" style="display: none;">Organization:</b>
+                <b>{% lng "Organização:" "Organization:" %}</b>
                 {% if projeto.organizacao %}
                   <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                     {{ projeto.organizacao.nome }}
@@ -254,11 +249,7 @@
       </table>
 
       <div class="totais">
-        <b>
-          <span lang="pt">Total de projetos</span>
-          <span lang="en" style="display: none;">Total of projects</span>
-          = {{ numero_projetos }}
-        </b>
+        <b>{% lng "Total de projetos" "Total of projects" %} = {{ numero_projetos }}</b>
         {% if numero_projetos_avancado > 0 %}
           <span class="avancado">[ +{{ numero_projetos_avancado }} avançado{% if numero_projetos_avancado > 1 %}s{% endif %} ]</span>
         {% endif %}
@@ -267,11 +258,7 @@
         {% endif %}
         <br>
 
-        <b>
-          <span lang="pt">Total de estudantes</span>
-          <span lang="en" style="display: none;">Total of students</span>
-          = {{ numero_estudantes}}
-        </b>
+        <b>{% lng "Total de estudantes" "Total of students" %} = {{ numero_estudantes}}</b>
         {% if numero_estudantes_avancado > 0 %}
           <span class="avancado"> [ +{{ numero_estudantes_avancado }} avançado{% if numero_estudantes_avancado > 1 %}s{% endif %} ]</span>
         {% endif %}

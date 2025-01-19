@@ -49,16 +49,14 @@
         <td>
         {% if evento.em_prazo %}
           <span style="color:#edc300">
-            <span lang="pt">Aguardando relatos</span>
-            <span lang="en" style="display:none">Awaiting reports</span>
+            {% lng "Aguardando relatos" "Awaiting reports" %}
           </span>
         {% else %}
           {% if relatos %}
             {% if avaliados %}
               <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
                 <span style="color:green">
-                  <span lang="pt">Avaliado pelo orientador</span>
-                  <span lang="en" style="display:none">Evaluated by the advisor</span>
+                  {% lng "Avaliado pelo orientador" "Evaluated by the advisor" %}
                 </span>
                 {% for avaliado in avaliados %}
                   <script>
@@ -76,23 +74,20 @@
             {% else %}
               <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
                 <span style="color:brown">
-                  <span lang="pt">Aguardando avaliação do orientador</span>
-                  <span lang="en" style="display:none">Awaiting advisor evaluation</span>
+                  {% lng "Aguardando avaliação do orientador" "Awaiting advisor evaluation" %}
                 </span>
               </a>
             {% endif %}
           {% else %}
             <span style="color:red">
-              <span lang="pt">Sem relatos dos estudantes</span>
-              <span lang="en" style="display:none">No reports from students</span>
+              {% lng "Sem relatos dos estudantes" "No reports from students" %}
             </span>
           {% endif %}          
         {% endif %}
       </td></tr>
   {% empty %}
     <tr><td colspan="4">
-      <span lang="pt">Nenhum relato para ser analisado no momento</span>
-      <span lang="en" style="display:none">No report to be analyzed at the moment</span>
+      {% lng "Nenhum relato para ser analisado no momento" "No report to be analyzed at the moment" %}
     </td></tr>
   {% endfor %}
     </tbody></table>

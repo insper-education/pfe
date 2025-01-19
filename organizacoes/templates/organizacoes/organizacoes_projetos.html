@@ -70,18 +70,21 @@
           <tr>
             <th>#</th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(2)')">
-              <span lang="pt">Organização</span><span lang="en" style="display: none;">Organization</span>
+              {% lng "Organização" "Organization" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(3)', 'd')" width="78em"><small class="tit_peq">
-              <span lang="pt">Último<br>Contato</span><span lang="en">Last<br>Contact</span>
+              {% lng "Último<br>Contato" "Last<br>Contact" %}
             </small></th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(4)')">
-              <span lang="pt">Anotação</span><span lang="en">Notes</span>
+              {% lng "Anotação" "Notes" %}
             </th>
             <th onclick="sort('#OrganizacoesTable', '.item', 'td:nth-child(5)', 'n')" width="81em">
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem"><small class="tit_peq">
-                <span lang="pt">Projetos<br>Fechados</span><span lang="en">Confirmed<br>Projects</span>
-            </small></th>
+              <a data-toggle="tooltip" data-html="true" animation="true" title="Contando somente as propostas já autorizadas e disponibilizadas para os estudantes aplicarem">
+                <small class="tit_peq">
+                  {% lng "Projetos<br>Fechados" "Confirmed<br>Projects" %}
+                </small>
+              </a>
+            </th>
           </tr>
         </thead>
 

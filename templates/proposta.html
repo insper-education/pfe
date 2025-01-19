@@ -15,10 +15,7 @@
     Título provisório para a proposta de projeto.
     Durante a execução do projeto o título poderá/deverá sofrer atualizações.
     ">
-      <b>
-        <span lang="pt">Proposta:</span>
-        <span lang="en" style="display:none;">Proposal:</span>
-      </b>
+      <b>{% lng "Proposta:" "Proposal:" %}</b>
       {% if proposta.organizacao %}
         [{{proposta.organizacao}}]
       {% elif proposta.nome_organizacao %}
@@ -28,43 +25,37 @@
     </h5>
   {% else %}
     <h5 class="titulo">
-      <span class="text-danger" lang="pt">Problema na identificação do título</span>
-      <span class="text-danger" lang="en" style="display:none;">Problem in identifying the title</span>
+      <span class="text-danger">{% lng "Problema na identificação do título" "Problem in identifying the title" %}</span>
     </h5>
   {% endif %}
 
   {% if proposta.ano and proposta.semestre %}
     <strong>
-      <span lang="pt">Semestre:</span>
-      <span lang="en" style="display:none;">Semester:</span>
+      {% lng "Semestre:" "Semester:" %}
     </strong> {{proposta.ano}}.{{proposta.semestre}}<br>
   {% endif %}
 
   {% if proposta.internacional %}
     <strong style="color:red">
-      <span lang="pt">Proposta Internacional de Projeto, a comunicação do projeto será em inglês.</span>
-      <span lang="en" style="display:none;">International Project Proposal, the project communication will be in English.</span>
+      {% lng "Proposta Internacional de Projeto, a comunicação do projeto será em inglês." "International Project Proposal, the project communication will be in English." %}
     </strong><br>
   {% endif %}
 
   {% if proposta.intercambio %}
     <strong style="color:red">
-      <span lang="pt">Proposta em Programa de Intercâmbio.</span>
-      <span lang="en" style="display:none;">International Exchange Program Proposal.</span>
+      {% lng "Proposta em Programa de Intercâmbio." "International Exchange Program Proposal." %}
     </strong><br>
   {% endif %}
 
   {% if proposta.empreendendo %}
     <strong style="color:red">
-      <span lang="pt">Proposta de grupo de estudantes regulares empreendendo em próprio projeto.</span>
-      <span lang="en" style="display:none;">Regular students group proposal undertaking their own project.</span>
+      {% lng "Proposta de grupo de estudantes regulares empreendendo em próprio projeto." "Regular students group proposal undertaking their own project." %}
     </strong><br>
   {% endif %}
 
   {% if proposta.colaboracao %}
     <strong style="color:red">
-      <span lang="pt">Proposta em colaboração com:</span>
-      <span lang="en" style="display:none;">Proposal in collaboration with:</span>
+      {% lng "Proposta em colaboração com:" "Proposal in collaboration with:" %}
       {{ proposta.colaboracao }}.
     </strong><br>
   {% endif %}
@@ -77,16 +68,14 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
         Uma breve descrição do que se trata o projeto e outras informações relevantes.
       ">
-        <span lang="pt">Descrição:</span>
-        <span lang="en" style="display:none;">Description:</span>
+        {% lng "Descrição:" "Description:" %}
       </strong>
       {{proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% else %}
     <p>
       <u>
-        <span lang="pt">Campo de descrição ausente.</span>
-        <span lang="en" style="display:none;">Description field missing.</span>
+        {% lng "Campo de descrição ausente." "Description field missing." %}
       <u><br>
     </p>
     {% comment %} Campo deveria ser obrigatório {% endcomment %}
@@ -99,16 +88,14 @@
         Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
         Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios.
       ">
-        <span lang="pt">Expectativas de resultados/entregas:</span>
-        <span lang="en" style="display:none;">Expected results/deliverables:</span>
+        {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
       </strong>
       {{proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
   {% else %}
       <p>
         <u>
-          <span lang="pt">Campo de expectativas ausente.</span>
-          <span lang="en" style="display:none;">Expectations field missing.</span>
+          {% lng "Campo de expectativas ausente." "Expectations field missing." %}
         <u><br>
       </p>
       {% comment %} Campo deveria ser obrigatório {% endcomment %}
@@ -121,8 +108,7 @@
         O Insper irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
         Não existe nenhuma garantia que o Insper irá suprir material de consumo para os grupos de estudantes, em geral não há recursos para isso.
       ">
-        <span lang="pt">Recursos a serem disponibilizados:</span>
-        <span lang="en" style="display:none;">Resources to be made available:</span>
+        {% lng "Recursos a serem disponibilizados:" "Resources to be made available:" %}
       </strong>
       {{proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -133,8 +119,7 @@
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
         Outras observações que a organização parceira considerou relevante para informar aos estudantes.
       ">
-        <span lang="pt">Outras observações:</span>
-        <span lang="en" style="display:none;">Other observations:</span>
+        {% lng "Outras observações:" "Other observations:" %}
       </strong>
       {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -143,8 +128,7 @@
   {% if proposta.anexo %}
     <p>
       <strong>
-        <span lang="pt">Anexo:</span>
-        <span lang="en" style="display:none;">Attachment:</span>
+        {% lng "Anexo:" "Attachment:" %}
       </strong>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
     </p>
@@ -152,15 +136,13 @@
 
   {% if completo %}
     <br><strong>
-      <span lang="pt">O principal interesse com o projeto é:</span>
-      <span lang="en" style="display:none;">The main interest with the project is:</span>
+      {% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}
     </strong><br>
     <ul>
     {% for interesse in proposta.get_interesses_selecionados %}
       <li>{{ interesse.1 }}</li>
     {% empty %}
-      <span lang="pt">Nenhuma opção de interesses foi selecionada</span>
-      <span lang="en" style="display:none;">No interest option was selected</span>
+      {% lng "Nenhuma opção de interesses foi selecionada" "No interest option was selected" %}
     {% endfor %}
     </ul>
   {% endif %}
@@ -168,8 +150,7 @@
 {% else %}
 
   <strong>
-    <span lang="pt">Não foi possível carregar a proposta!</span>
-    <span lang="en" style="display:none;">Unable to load the proposal!</span>
+    {% lng "Não foi possível carregar a proposta!" "Unable to load the proposal!" %}
   </strong>
 
 {% endif %}

@@ -26,8 +26,7 @@
     <form method="post" id="editarobjetivoform" enctype="multipart/form-data">{% csrf_token %}
 
       <label for="titulo">
-        <span lang="pt">Título:</span>
-        <span lang="en">Title:</span>
+        {% lng "Título:" "Title:" %}
         <input id="titulo" name="titulo" type="text" size="75" maxlength="128"
         {% if objetivo %}
           value="{{objetivo.titulo}}"
@@ -37,8 +36,7 @@
       <br>
 
       <label for="descricao">
-        <span lang="pt">Descrição:</span>
-        <span lang="en">Description:</span>
+        {% lng "Descrição:" "Description:" %}
         <br>
         <textarea id="descricao" name="descricao" rows="4" cols="80">{% if objetivo %}{{objetivo.objetivo}}{% endif %} </textarea>
       </label>
@@ -48,8 +46,7 @@
         
           <label for="inicio">
           <span style="display:inline-block; width:5.5ex; text-align:right;">
-            <span lang="pt">Início:</span>
-            <span lang="en">Start:</span>
+            {% lng "Início:" "Start:" %}
           </span>
           <input id="inicio" type="date-local" name="inicio" 
           {% if objetivo %}
@@ -61,8 +58,7 @@
         
           <label for="fim">
           <span style="display:inline-block; width:5.5ex; text-align:right">
-            <span lang="pt">Fim:</span>
-            <span lang="en">End:</span>
+            {% lng "Fim:" "End:" %}
           </span>
           <input id="fim" type="date-local" name="fim"
           {% if objetivo %}
@@ -105,20 +101,17 @@
           <tr>
             <th scope="col">
               <b>
-                <span lang="pt">Avaliado por</span>
-                <span lang="en">Evaluated by</span>
+                {% lng "Avaliado por" "Evaluated by" %}
               </b>
             </th>
             <th scope="col" style="text-align:center;">
               <b>
-                <span lang="pt">Peso Intermediário</span>
-                <span lang="en">Intermediate Weight</span>
+                {% lng "Peso Intermediário" "Intermediate Weight" %}
               </b>
             </th>
             <th scope="col" style="text-align:center;">
               <b>
-                <span lang="pt">Peso Final</span>
-                <span lang="en">Final Weight</span>
+                {% lng "Peso Final" "Final Weight" %}
               </b>
             </th>
           </tr>
@@ -276,8 +269,7 @@
     </form>
   {% else %}
     <p>
-      <span lang="pt">Erro ao recuperar objetivo de aprendizagem.</span>
-      <span lang="en">Error retrieving learning goal.</span>
+      {% lng "Erro ao recuperar objetivo de aprendizagem." "Error retrieving learning goal." %}
     </p>
   {% endif %}
 

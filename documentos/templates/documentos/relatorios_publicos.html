@@ -22,7 +22,7 @@
     <div class="ml-3">
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterLingua" onClick="recarregar_pagina()"><span class="to_hide"><span lang="pt">Línguas</span><span lang="en">Languages</span></span></label>
+            <label class="to_label input-group-text" for="filterLingua" onClick="recarregar_pagina()"><span class="to_hide">{% lng "Línguas" "Languages" %}</span></label>
           </div>
           <select id="filterLingua" class="selectpicker form-control form-control-sm" data-style="mr-sm border" data-width="10em"
                   title="Nada selecionado"
@@ -41,7 +41,7 @@
           <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
             <td>
               {% include "projetos/includes/bloco_projeto.html" with projeto=relatorio.projeto %}
-              {% if relatorio.lingua_do_documento == 0 %}<small lang="pt"></small><small lang="en">(portuguese)</small>{% elif relatorio.lingua_do_documento == 1 %}<small lang="pt">(inglês)</small><small lang="en"></small>{% endif %}
+              {% if relatorio.lingua_do_documento == 0 %}<small>{% lng "" "(portuguese)" %}</small>{% elif relatorio.lingua_do_documento == 1 %}<small>{% lng "(inglês)" "" %}</small>{% endif %}
             </td>
             <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=relatorio.projeto.alocacao_set.all pequeno=True %}</td>
             <td>{% include "academica/includes/bloco_orientador.html" with orientador=relatorio.projeto.orientador %}</td>

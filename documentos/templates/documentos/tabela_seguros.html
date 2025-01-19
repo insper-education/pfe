@@ -18,10 +18,8 @@
     <table id="SegurosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#SegurosTable', '.item', 'td:nth-child(1)')">
-            <span lang="pt">Data</span><span lang="en">Date</span>
-          </th>
-          <th><span lang="pt">Documento</span><span lang="en">Document</span></th>
+          <th onclick="sort('#SegurosTable', '.item', 'td:nth-child(1)')">{% lng "Data" "Date" %}</th>
+          <th>{% lng "Documento" "Document" %}</th>
         </tr>
       </thead>
       <tbody>

@@ -32,8 +32,7 @@
 
   {% if not proposta.organizacao %}
   <h2 class="text-warning">
-    <span lang="pt">Proposta ainda sem organização definitiva</span>
-    <span lang="en" style="display: none;">Proposal still without definitive organization</span>
+    {% lng "Proposta ainda sem organização definitiva" "Proposal still without definitive organization" %}
   </h2><br>
   {% endif %}
 
@@ -46,15 +45,13 @@
   {% endwith %}
 
   <strong>
-    <span lang="pt">Submetido por:</span>
-    <span lang="en" style="display: none;">Submitted by:</span>
+    {% lng "Submetido por:" "Submitted by:" %}
   </strong><br>
   {{proposta.nome}}<br><br>
 
   {% if proposta.contatos_tecnicos %}
     <strong>
-      <span lang="pt">Contatos Técnicos</span>
-      <span lang="en" style="display: none;">Technical Contacts</span>
+      {% lng "Contatos Técnicos" "Technical Contacts" %}
     </strong><br>
     {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
     <br><br>
@@ -62,16 +59,14 @@
 
   {% if proposta.contatos_administrativos %}
     <strong>
-      <span lang="pt">Contatos Administrativos</span>
-      <span lang="en" style="display: none;">Administrative Contacts</span>
+      {% lng "Contatos Administrativos" "Administrative Contacts" %}
     </strong><br>
     {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
     <br><br>
   {% endif %}
 
   <h5 style="margin-bottom: 4px;">
-    <span lang="pt">Áreas de Interesse</span>
-    <span lang="en" style="display: none;">Areas of Interest</span>
+    {% lng "Áreas de Interesse" "Areas of Interest" %}
   </h5>
   {% with aa=proposta.areadeinteresse_set.all %}
     {% with vencido=True %}
@@ -96,8 +91,7 @@
     <div style="margin-top: 22px; margin-bottom: 8px;">
       <b><label for="autorizador" data-toggle="tooltip" data-html="true" animation="true" 
         title="Mesmo ao autorizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-        <span lang="pt">Analisada por</span>
-        <span lang="en" style="display: none;">Analyzed by</span>
+        {% lng "Analisada por" "Analyzed by" %}
       </label></b>:
       <select class="fechar_proposta" name="autorizador" id="autorizador" title="Selecione quem autorizou proposta" required>
           <option value='0'> ---- </option>
@@ -110,29 +104,24 @@
     </div>
 
     <b>
-      <span lang="pt">Conformidade de Proposta</span>
-      <span lang="en" style="display: none;">Proposal Conformity</span>
+      {% lng "Conformidade de Proposta" "Proposal Conformity" %}
     </b>
     {% include "conformidade.html" %}
 
     <b data-toggle="tooltip" data-html="true" animation="true" 
            title="Mesmo ao disponibilizar uma proposta, esta só será visivel para os estudantes<br>depois que a liberação de visualização for habilitada.">
-      <span lang="pt">Disponibilizar:</span>
-      <span lang="en" style="display: none;">Make Available: </span>
+      {% lng "Disponibilizar:" "Make Available: " %}
     </b>
     <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="sim"
       {% if proposta.disponivel %}checked{% endif %}>
-      <span lang="pt">Sim</span>
-      <span lang="en" style="display: none;">Yes</span>
+      {% lng "Sim" "Yes" %}
     </label>
     <label style="margin: 2px;"><input class="fechar_proposta disponibilizar" type="radio" name="disponibilizar" value="nao"
       {% if not proposta.disponivel %}checked{% endif %}>
-      <span lang="pt">Não</span>
-      <span lang="en" style="display: none;">No</span>
+      {% lng "Não" "No" %}
     </label>
     &nbsp;&nbsp;<small style="font-size: 12px; display: block;">
-      <span lang="pt">Previsão para liberar visualização de propostas para estudantes em:</span>
-      <span lang="en" style="display: none;">Forecast to release proposal visualization for students on:</span>
+      {% lng "Previsão para liberar visualização de propostas para estudantes em:" "Forecast to release proposal visualization for students on:" %}
       {{liberacao_visualizacao.startDate}}
     </small> 
 
@@ -187,30 +176,25 @@
     <br><br>
     <div style="max-width: 56em; text-align: center;">
       <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">
-        <span lang="pt">Editar Proposta</span>
-        <span lang="en" style="display: none;">Edit Proposal</span>
+        {% lng "Editar Proposta" "Edit Proposal" %}
       </a>
       <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">
-        <span lang="pt">Visão do Estudante</span>
-        <span lang="en" style="display: none;">Student View</span>
+        {% lng "Visão do Estudante" "Student View" %}
       </a>
       
       {% for projeto in projetos %}
         <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">
-          <span lang="pt">Projeto</span>
-          <span lang="en" style="display: none;">Project</span>
+          {% lng "Projeto" "Project" %}
           {{projeto.ano}}.{{projeto.semestre}}
         </a>
         <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')">
-          <span lang="pt">Remover Proposta</span>
-          <span lang="en" style="display: none;">Remove Proposal</span>
+          {% lng "Remover Proposta" "Remove Proposal" %}
         </a>
       {% empty %}
         <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
         onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
         <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')">
-          <span lang="pt">Remover Proposta</span>
-          <span lang="en" style="display: none;">Remove Proposal</span>
+          {% lng "Remover Proposta" "Remove Proposal" %}
         </a>
       {% endfor %}
     </div>
@@ -232,8 +216,7 @@
 
   <br>
   <h5>
-    <span lang="pt">Estudantes Aplicando para a Proposta</span>
-    <span lang="en" style="display: none;">Students Applying for the Proposal</span>
+    {% lng "Estudantes Aplicando para a Proposta" "Students Applying for the Proposal" %}
   </h5>
 
   {% for estudante in sem_opcao %}
@@ -250,8 +233,7 @@
   {% empty %}
     <p>
       &nbsp;&nbsp;
-      <span lang="pt">Ainda nenhum estudante aplicou para esta proposta.</span>
-      <span lang="en" style="display: none;">No student has applied for this proposal yet.</span>
+      {% lng "Ainda nenhum estudante aplicou para esta proposta." "No student has applied for this proposal yet." %}
     </p>
   {% endfor %}
 

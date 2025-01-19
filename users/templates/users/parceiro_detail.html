@@ -23,10 +23,9 @@
     {% endif %}
 
   {% if parceiro.organizacao %}
-    <strong>
-      <span lang="pt">Organização:</span>
-      <span lang="en">Organization:</span>
-    </strong>
+    <b>
+      {% lng "Organização:" "Organization:" %}
+    </b>
     <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">
       {{parceiro.organizacao.nome}}
     </a>
@@ -34,10 +33,9 @@
   {% endif %}
 
   {% if parceiro.cargo %}
-    <strong>
-      <span lang="pt">Cargo:</span>
-      <span lang="en">Position:</span>
-    </strong> {{parceiro.cargo}}<br>
+    <b>
+      {% lng "Cargo:" "Position:" %}
+    </b> {{parceiro.cargo}}<br>
   {% endif %}
 
   {% include "dados_usuario.html" with user=parceiro.user %}
@@ -45,8 +43,7 @@
   {% if conexoes %}
     <hr>
     <h3>
-      <span lang="pt">Conexões com Projetos</span>
-      <span lang="en">Connections with Projects</span>
+      {% lng "Conexões com Projetos" "Connections with Projects" %}
     </h3>
     <ol>
       {% for conexao in conexoes %}
@@ -57,8 +54,7 @@
           {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
           </a></li>
         {% else %}
-          <span lang="pt">PROBLEMA AO RECUPERAR PROJETO!</span>
-          <span lang="en">PROBLEM RETRIEVING PROJECT!</span>
+          {% lng "PROBLEMA AO RECUPERAR PROJETO!" "PROBLEM RETRIEVING PROJECT!" %}
         {% endif %}
       {% endfor %}
     </ol>
@@ -75,8 +71,7 @@
   {% if mentorias %}
     <hr>
     <h4>
-      <span lang="pt">Mentoria{% if mentorias|length > 1 %}s{% endif %} em Projeto{% if mentorias|length > 1 %}s{% endif %}</span>
-      <span lang="en">Mentorship in Project{% if mentorias|length > 1 %}s{% endif %}</span>
+      {% lng_n mentorias|length "Mentoria em Projeto" "Mentorias em Projetos" "Mentorship in Project" "Mentorship in Projects" %}
     </h4>
     <ol>{% for mentoria in mentorias %}
       <li><a href="{% url 'dinamicas_editar' mentoria.id %}">

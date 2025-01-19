@@ -7,67 +7,52 @@
 {% load linguas %}
 
 <h5>
-  <span lang="pt">Alocações</span>
-  <span lang="en" style="display: none;">Assignments</span>
+  {% lng "Alocações" "Assignments" %}
 </h5>
 
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientacoes_alocadas' %}">
-  <span lang="pt">Orientações</span>
-  <span lang="en" style="display: none;">Advisories</span>
+  {% lng "Orientações" "Advisories" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientacoes_alocadas' %}">
-  <span lang="pt">Coorientações</span>
-  <span lang="en" style="display: none;">Co-advisories</span>
+  {% lng "Coorientações" "Co-advisories" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_alocadas' %}">
-  <span lang="pt">Bancas</span>
-  <span lang="en" style="display: none;">Examination Boards</span>
+  {% lng "Bancas" "Examination Boards" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_alocadas' %}">
-  <span lang="pt">Mentorias</span>
-  <span lang="en" style="display: none;">Mentorships</span>
+  {% lng "Mentorias" "Mentorships" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Atividades do Orientador</span>
-  <span lang="en" style="display: none;">Advisor Activities</span>
+  {% lng "Atividades do Orientador" "Advisor Activities" %}
 </h5>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">
-  <span lang="pt">Planos de Orientação</span>
-  <span lang="en" style="display: none;">Advisory Plans</span>
+  {% lng "Planos de Orientação" "Advisory Plans" %}
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">
-  <span lang="pt">Relatos Quinzenais</span>
-  <span lang="en" style="display: none;">Biweekly Reports</span>
+  {% lng "Relatos Quinzenais" "Biweekly Reports" %}
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_entregas %}</span> <a href="{% url 'avaliar_entregas'%}">
-  <span lang="pt">Avaliar Entregas</span>
-  <span lang="en" style="display: none;">Evaluate Deliveries</span>
+  {% lng "Avaliar Entregas" "Evaluate Deliveries" %}
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=bancas_index %}</span> <a href="{% url 'bancas_index'%}">
-  <span lang="pt">Agendar Bancas</span>
-  <span lang="en" style="display: none;">Schedule Examination Boards</span>
+  {% lng "Agendar Bancas" "Schedule Examination Boards" %}
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_bancas %}</span> <a href="{% url 'avaliar_bancas' %}">
-  <span lang="pt">Avaliar Bancas</span>
-  <span lang="en" style="display: none;">Evaluate Examination Boards</span>
+  {% lng "Avaliar Bancas" "Evaluate Examination Boards" %}
 </a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacoes_pares %}</span> <a href="{% url 'avaliacoes_pares' %}">
-  <span lang="pt">Ver Avaliação de Pares</span>
-  <span lang="en" style="display: none;">Check Peer Evaluation</span>
+  {% lng "Ver Avaliação de Pares" "Check Peer Evaluation" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Notas</span>
-  <span lang="en" style="display: none;">Grades</span>
+  {% lng "Notas" "Grades" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_notas' "meus_projetos" %}">
-  <span lang="pt">Individuais</span>
-  <span lang="en" style="display: none;">Individual</span>
+  {% lng "Individuais" "Individual" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'resultado_meus_projetos' %}">
-  <span lang="pt">Grupo</span>
-  <span lang="en" style="display: none;">Group</span>
+  {% lng "Grupo" "Group" %}
 </a></div>

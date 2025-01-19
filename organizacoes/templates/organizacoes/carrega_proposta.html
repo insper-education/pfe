@@ -38,20 +38,18 @@
 
   <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}  
 
-    <label for="nome" style="width: 3.4em;"><span lang="pt">Nome:</span><span lang="en">Name:</span></label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
+    <label for="nome" style="width: 3.4em;">{% lng "Nome:" "Name:" %}</label> <input type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% endif %}" 
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     <label for="email" style="width: 3.4em;">e-mail:</label> <input type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% endif %}" 
       pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required><br><br>
     
     <label for="arquivo" style="margin-left: 2em;">
-      <span lang="pt">Arquivo PDF:</span>
-      <span lang="en">PDF File:</span>
+      {% lng "Arquivo PDF:" "PDF File:" %}
     </label> 
     {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept="application/pdf" required=True %}<br><br>
 
     <button type="submit" class="btn btn-primary mb-1 mr-4">
-      <span lang="pt">Enviar Proposta de Projeto</span>
-      <span lang="en">Send Project Proposal</span>
+      {% lng "Enviar Proposta de Projeto" "Send Project Proposal" %}
     </button>
     
     {% if not liberadas_propostas %}
@@ -60,8 +58,7 @@
         <label data-toggle="tooltip" data-html="true" animation="true" 
               title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
               for="mensagem">
-                <span lang="pt">Enviar mensagem (e-mail) de confirmação</span>
-                <span lang="en">Send confirmation message (e-mail)</span>
+                {% lng "Enviar mensagem (e-mail) de confirmação" "Send confirmation message (e-mail)" %}
               </label>
       </span>
     {% endif %}

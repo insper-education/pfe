@@ -37,8 +37,7 @@
                   >&#10133;</a>
               {% else %}
                 <div class="text-danger">
-                  <span lang="pt">ERRO</span>
-                  <span lang="en" style="display:none">ERROR</span>
+                  {% lng "ERRO" "ERROR" %}
                 </div>
               {% endif %}
             </small>
@@ -47,40 +46,29 @@
 
               {% if documento.documento and documento.link %}
                 <div class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;">
-                  <span lang="pt">Contrato</span>
-                  <span lang="en" style="display:none">Contract</span>
+                  {% lng "Contrato" "Contract" %}
                   <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span lang="pt">(documento)</span>
-                    <span lang="en" style="display:none">(document)</span>
+                    {% lng "(documento)" "(document)" %}
                   </a>
                   <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                   {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-                    <sup>
-                      <span lang="pt">(Inglês)</span>
-                      <span lang="en" style="display:none">(English)</span>
-                    </sup>
+                    <sup>{% lng "(Inglês)" "(English)" %}</sup>
                   {% elif documento.lingua_do_documento == 0 %} {% comment %} Português {% endcomment %}
-                    <sup>
-                      <span lang="en" style="display:none">(Portuguese)</span>
-                    </sup>
+                    <sup>{% lng "" "(Portuguese)" %}</sup>
                   {% endif %}
                 </div>
               {% else %}
                 {% if documento.documento %}
                   <a class="btn btn-light btn-outline-info btn-sm" style="width: 7em; padding:0px 4px 0px 4px;" 
                     href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span lang="pt">Contrato</span>
-                    <span lang="en" style="display:none">Contract</span>
+                    {% lng "Contrato" "Contract" %}
                   </a>
                   {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
                     <sup>
-                      <span lang="pt">(Inglês)</span>
-                      <span lang="en" style="display:none">(English)</span>
+                      {% lng "(Inglês)" "(English)" %}
                     </sup>
                   {% elif documento.lingua_do_documento == 0 %} {% comment %} Português {% endcomment %}
-                    <sup>
-                      <span lang="en" style="display:none">(Portuguese)</span>
-                    </sup>
+                    <sup>{% lng "" "(Portuguese)" %}</sup>
                   {% endif %}
                 {% endif %}
                 {% if documento.link %}

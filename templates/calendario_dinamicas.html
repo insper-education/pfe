@@ -21,8 +21,7 @@
     <br><br>
     <a href="{% url 'dinamicas_lista'%}">
       <h5>
-        <span lang="pt">Listar Mentorias</span>
-        <span lang="en">List Mentoring</span>
+        {% lng "Listar Mentorias" "List Mentoring" %}
       </h5>
     </a>
   </div>
@@ -30,22 +29,19 @@
 </div>
 
 <h4 style="margin: 8px 0 0 0;">
-  <span lang="pt">Legendas</span>
-  <span lang="en">Captions</span>
+  {% lng "Legendas" "Captions" %}
 </h4>
 <div class="wrap table-responsive">  
   <div class="legenda" style="display: flex;">
     <div class="legenda-block">
       <div id="leg_horario" class="legenda-item">
         <div class="legenda-texto"><font id="color_horario_agendado">&#9608;</font>&nbsp;
-          <span lang="pt">Horário Agendado (com projeto alocado)</span>
-          <span lang="en" style="display: none;">Scheduled Time (with allocated project)</span>
+          {% lng "Horário Agendado (com projeto alocado)" "Scheduled Time (with allocated project)" %}
         </div>
       </div>
       <div id="leg_aberto" class="legenda-item">
         <div class="legenda-texto"><font id="color_horario_em_aberto">&#9608;</font>&nbsp;
-          <span lang="pt">Horário em Aberto (sem projeto alocado)</span>
-          <span lang="en" style="display: none;">Open Time (without allocated project)</span>
+          {% lng "Horário em Aberto (sem projeto alocado)" "Open Time (without allocated project)" %}
         </div>
       </div>
     </div>

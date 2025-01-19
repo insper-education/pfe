@@ -4,88 +4,70 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% load linguas %}
 
 <a href="{% url 'servico' %}">
-  <span lang="pt">Habilitar Aviso de Manutenção</span>
-  <span lang="en" style="display:none;">Enable Maintenance Warning</span>
+  {% lng "Habilitar Aviso de Manutenção" "Enable Maintenance Warning" %}
 </a><br>
 <a href="{% url 'configurar' %}">
-  <span lang="pt">Configurar Sistema</span>
-  <span lang="en" style="display:none;">Configure System</span>
+  {% lng "Configurar Sistema" "Configure System" %}
 </a><br>
 <br>
 
 <h5>
-  <span lang="pt">Cadastrar</span>
-  <span lang="en" style="display:none;">Register</span>
+  {% lng "Cadastrar" "Register" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_organizacao' %}">
-  <span lang="pt">Organização</span>
-  <span lang="en" style="display:none;">Organization</span>
+  {% lng "Organização" "Organization" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_usuario' %}">
-  <span lang="pt">Usuário</span>
-  <span lang="en" style="display:none;">User</span>
+  {% lng "Usuário" "User" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'cadastrar_disciplina' %}">
-  <span lang="pt">Disciplina</span>
-  <span lang="en" style="display:none;">Course</span>
+  {% lng "Disciplina" "Course" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Contas e Senhas</span>
-  <span lang="en" style="display:none;">Accounts and Passwords</span>
+  {% lng "Contas e Senhas" "Accounts and Passwords" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'contas_senhas' %}">
-  <span lang="pt">Enviar Contas e Senhas para Estudantes</span>
-  <span lang="en" style="display:none;">Send Accounts and Passwords to Students</span>
+  {% lng "Enviar Contas e Senhas para Estudantes" "Send Accounts and Passwords to Students" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'nomes' %}">
-  <span lang="pt">Ajustar Maiúsculas e Minúsculas de Nomes de Usuários</span>
-  <span lang="en" style="display:none;">Adjust Uppercase and Lowercase of Usernames</span>
+  {% lng "Ajustar Maiúsculas e Minúsculas de Nomes de Usuários" "Adjust Uppercase and Lowercase of Usernames" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Dados</span>
-  <span lang="en" style="display:none;">Data</span>
+  {% lng "Dados" "Data" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'index_carregar' %}">
-  <span lang="pt">Carregar Dados</span>
-  <span lang="en" style="display:none;">Load Data</span>
+  {% lng "Carregar Dados" "Load Data" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatorios' %}">
-  <span lang="pt">Gerar Relatórios</span>
-  <span lang="en" style="display:none;">Generate Reports</span>
+  {% lng "Gerar Relatórios" "Generate Reports" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar' %}">
-  <span lang="pt">Exportar Dados</span>
-  <span lang="en" style="display:none;">Export Data</span>
+  {% lng "Exportar Dados" "Export Data" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'exportar_documentos_projetos' %}">
-  <span lang="pt">Exportar Relatórios dos Projetos</span>
-  <span lang="en" style="display:none;">Export Project Reports</span>
+  {% lng "Exportar Relatórios dos Projetos" "Export Project Reports" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Supervisão de Sistema</span>
-  <span lang="en" style="display:none;">System Supervision</span>  
+  {% lng "Supervisão de Sistema" "System Supervision" %}  
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'conexoes_estabelecidas' %}">
-  <span lang="pt">Usuários Conectados</span>
-  <span lang="en" style="display:none;">Connected Users</span>
+  {% lng "Usuários Conectados" "Connected Users" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs' %}">
-  <span lang="pt">Logs de Sistema</span>
-  <span lang="en" style="display:none;">System Logs</span>
+  {% lng "Logs de Sistema" "System Logs" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bloqueados' %}">
-  <span lang="pt">Usuários/IPs Bloqueados</span>
-  <span lang="en" style="display:none;">Blocked Users/IPs</span>
+  {% lng "Usuários/IPs Bloqueados" "Blocked Users/IPs" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'tarefas_agendadas' %}">
-  <span lang="pt">Tarefas Agendadas</span>
-  <span lang="en" style="display:none;">Scheduled Tasks</span>
+  {% lng "Tarefas Agendadas" "Scheduled Tasks" %}
 </a></div>

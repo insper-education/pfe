@@ -252,8 +252,7 @@
   <div id="calendar" style="overflow-x: visible;"></div>
   
   <div style="margin-left: 3vw;">
-    <span lang="pt">Semestre:</span>
-    <span lang="en" style="display: none;">Semester:</span>
+    {% lng "Semestre:" "Semester:" %}
     <span class="semestre1" id="primeiro_semestre">1</span><span class="semestre2" id="segundo_semestre">2</span>
   </div>   
 
@@ -264,8 +263,7 @@
         {% if user.prof_a %}
           <div class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
           title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
-            <span lang="pt">Operação</span>
-            <span lang="en" style="display: none;">Operation</span>
+            {% lng "Operação" "Operation" %}
           </div>
 
           <div id="lista_operacao" class="lista_operacao quad_pfe">
@@ -344,16 +342,14 @@
           {% if eventos_academicos.laboratorios %}
             <font style="text-decoration: underline solid orange">
               <span id="linha_lab"><br>
-                <span lang="pt">Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos</span>
-                <span lang="en" style="display: none;">Underlined days have availability for project workspace</span>
+                {% lng "Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos" "Underlined days have availability for project workspace" %}
               </span>
             </font>
           {% endif %}
           {% if eventos_academicos.provas %}
             <font style="text-decoration: underline solid red">
               <span id="linha_provas"><br>
-                <span lang="pt">Semana de provas sublinhado em vermelho</span>
-                <span lang="en" style="display: none;">Week of tests underlined in red</span>
+                {% lng "Semana de provas sublinhado em vermelho" "Week of tests underlined in red" %}
               </span>
             </font>
           {% endif %}
@@ -364,8 +360,7 @@
       <div id="bloco_aulas" class="col-xl-auto">
 
         <div class="tit_agenda" id="titulo_aulas">
-          <span lang="pt">Aulas</span>
-          <span lang="en" style="display: none;">Classes</span>
+          {% lng "Aulas" "Classes" %}
         </div>
 
         <span id="lista_aulas" class="lista_aulas">
@@ -375,12 +370,10 @@
             <table class="tab_pfe">
               <thead><tr>
                       <th scope="col" class="cabec">
-                        <span lang="pt">Data</span>
-                        <span lang="en" style="display: none;">Date</span>
+                        {% lng "Data" "Date" %}
                       </th>
                       <th scope="col" class="cabec header_aula">
-                        <span lang="pt">Aula</span>
-                        <span lang="en" style="display: none;">Class</span>
+                        {% lng "Aula" "Class" %}
                       </th>
                       <th scope="col" class="cabec header_local">Local</th>
               </tr></thead>

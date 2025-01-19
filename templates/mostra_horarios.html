@@ -18,7 +18,7 @@
   <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
   {% if not request.user.estud %}
     (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
-    <span lang="pt">horas</span><span lang="en" style="display:none">hours</span>)
+    {% lng "horas" "hours" %})
   {% endif %}
   <br>
 {% endfor %}
@@ -30,30 +30,24 @@
       <tr>
         <th></th>
         <th colspan="{{alocacoes|length}}">
-          <span lang="pt">Segunda</span>
-          <span lang="en" style="display:none">Monday</span>
+          {% lng "Segunda" "Monday" %}
         </th>
         <th colspan="{{alocacoes|length}}">
-          <span lang="pt">Terça</span>
-          <span lang="en" style="display:none">Tuesday</span>
+          {% lng "Terça" "Tuesday" %}
         </th>
         <th colspan="{{alocacoes|length}}">
-          <span lang="pt">Quarta</span>
-          <span lang="en" style="display:none">Wednesday</span>
+          {% lng "Quarta" "Wednesday" %}
         </th>
         <th colspan="{{alocacoes|length}}">
-          <span lang="pt">Quinta</span>
-          <span lang="en" style="display:none">Thursday</span>
+          {% lng "Quinta" "Thursday" %}
         </th>
         <th colspan="{{alocacoes|length}}">
-          <span lang="pt">Sexta</span>
-          <span lang="en" style="display:none">Friday</span>
+          {% lng "Sexta" "Friday" %}
         </th>
       </tr>
       <tr>
         <th class="horario">
-          <span lang="pt">Horário</span>
-          <span lang="en" style="display:none">Time</span>
+          {% lng "Horário" "Time" %}
         </th>
         {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
           {% for alocacao in alocacoes %}
@@ -72,8 +66,7 @@
           {% for i in "01234" %}
             {% if i == "4" and hora == 1 %}
               <td colspan="{{alocacoes|length}}" class="aula_regular">
-                <span lang="pt">Aula Regular</span>
-                <span lang="en" style="display:none">Regular Class</span>
+                {% lng "Aula Regular" "Regular Class" %}
               </td>
             {% else %}
               {% for alocacao in alocacoes %}
@@ -101,17 +94,12 @@
 {% if request.user.estud %}
   <br>
   {% lng "Instruções" "Instructions" %}:<br>
-
-  <span lang="pt">- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta).</span>
-  <span lang="en" style="display:none">- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class).</span>
+  {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class)." %}
   <br>
   
   <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
-  <span id="horas_alocadas">0</span><br>
-  <br>
-
-  <span lang="pt">- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos.</span>
-  <span lang="en" style="display:none">- We suggest a minimum of 8 hours that all group members can work together.</span>
+  <span id="horas_alocadas">0</span><br><br>
+  {% lng "- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos." "- We suggest a minimum of 8 hours that all group members can work together." %}
   <br>
 {% endif %}
 

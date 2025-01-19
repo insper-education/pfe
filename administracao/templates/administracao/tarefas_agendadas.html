@@ -11,11 +11,7 @@
 
 {% block content %}
 
-  <div>
-    <span lang="pt">Agora:</span>
-    <span lang="en">Now:</span>
-    {{ agora }}
-  </div><br>
+  <div>{% lng "Agora" "Now" %}: {{ agora }}</div><br>
 
   <table>
     <thead>
@@ -70,12 +66,10 @@
   </table>
 
   <br>
-  <div lang="pt">A informação do ETA é o horário estimado para a execução da tarefa, porém a informação não parece estar alinhada com os relógios disponíveis.</div>
-  <div lang="en">The ETA information is the estimated time for the task to be executed, however the information does not seem to be aligned with the available clocks.</div>
-
-  <div lang="pt"> Quando uma tarefa é cancelada, ela é removida da fila de tarefas agendadas e não será executada.
-        Porém ela vai continuar sendo visível nessa lista até que o worker a remova. </div>
-  <div lang="en"> When a task is canceled, it is removed from the scheduled tasks queue and will not be executed.
-        However, it will continue to be visible in this list until the worker removes it. </div>
-
+  <div>
+    {% lng "A informação do ETA é o horário estimado para a execução da tarefa, porém a informação não parece estar alinhada com os relógios disponíveis." "The ETA information is the estimated time for the task to be executed, however the information does not seem to be aligned with the available clocks." %}
+  </div>
+  <div>
+    {% lng " Quando uma tarefa é cancelada, ela é removida da fila de tarefas agendadas e não será executada. Porém ela vai continuar sendo visível nessa lista até que o worker a remova. " " When a task is canceled, it is removed from the scheduled tasks queue and will not be executed. However, it will continue to be visible in this list until the worker removes it. " %}
+  </div>
 {% endblock %}

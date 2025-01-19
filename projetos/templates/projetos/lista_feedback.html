@@ -15,8 +15,7 @@
 {% block content %}
 
   <div>
-    <span lang="pt">Link para pesquisa:</span>
-    <span lang="en">Link to survey:</span>
+    {% lng "Link para pesquisa:" "Link to survey:" %}
     <a href="{% url 'projeto_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'projeto_feedback' %}</a>
   </div><br>
 
@@ -25,20 +24,20 @@
       <thead class="table-info">
         <tr>
           <th>ver</th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(2)')"><span lang="pt">Nome</span><span lang="en">Name</span></th>
-          <th><span lang="pt">E-mail</span><span lang="en">E-mail</span></th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(4)')"><span lang="pt">Organização</span><span lang="en">Organization</span></th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(5)')"><span lang="pt">Data</span><span lang="en">Date</span></th>
-          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(6)')"><span lang="pt">NPS</span><span lang="en">NPS</span></th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(2)')">{% lng "Nome" "Name" %}</th>
+          <th>{% lng "E-mail" "E-mail" %}</th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(4)')">{% lng "Organização" "Organization" %}</th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(5)')">{% lng "Data" "Date" %}</th>
+          <th onclick="sort('#FeedbacksTable', '.item', 'td:nth-child(6)')">{% lng "NPS" "NPS" %}</th>
         </tr>
       </thead>
       <tbody>
       {% for feedback in feedbacks %} 
         <tr class="item">
           <td class="text-center"><a href="{% url 'mostra_feedback' feedback.id %}">&#x1f441;</a></td>
-          <td>{% if feedback.nome %}{{feedback.nome}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
-          <td>{% if feedback.email %}{{feedback.email}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
-          <td>{% if feedback.empresa %}{{feedback.empresa}}{% else %}<span lang="pt">Anônimo</span><span lang="en">Anonymous</span>{% endif %}</td>
+          <td>{% if feedback.nome %}{{feedback.nome}}{% else %}{% lng "Anônimo" "Anonymous" %}{% endif %}</td>
+          <td>{% if feedback.email %}{{feedback.email}}{% else %}{% lng "Anônimo" "Anonymous" %}{% endif %}</td>
+          <td>{% if feedback.empresa %}{{feedback.empresa}}{% else %}{% lng "Anônimo" "Anonymous" %}{% endif %}</td>
           <td>{{feedback.data|date:"Y.m.d"}}</td>
           <td style="text-align:right">{% if feedback.nps %}{{feedback.nps}}{% endif %}</td>
         </tr>

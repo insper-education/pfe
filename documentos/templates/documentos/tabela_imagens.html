@@ -22,9 +22,7 @@
       class="open-documento" style="cursor:pointer;"
       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
       ><i class="fas fa-plus"></i>
-        <span lang="pt">Adicionar novo documento</span>
-        <span lang="en" style="display: none;">Add new document</span>
-    </a>
+        {% lng "Adicionar novo documento" "Add new document" %}    </a>
     </span>
     {% include "documento-modal.html" %}
   {% endif %}
@@ -33,9 +31,9 @@
     <table id="AtasTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')"><span lang="pt">Data</span><span lang="en">Date</span></th>
-          <th><span lang="pt">Anotação</span><span lang="en">Annotation</span></th>
-          <th><span lang="pt">Documento</span><span lang="en">Document</span></th>
+          <th onclick="sort('#AtasTable', '.item', 'td:nth-child(1)')">{% lng "Data" "Date" %}</th>
+          <th>{% lng "Anotação" "Annotation" %}</th>
+          <th>{% lng "Documento" "Document" %}</th>
         </tr>
       </thead>
       <tbody>

@@ -23,8 +23,7 @@
 
   <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{template.documento.url}}">
     <i class="far fa-file-alt"></i> {{template.tipo_documento}}
-    <span lang="pt">(opcional)</span>
-    <span lang="en">(optional)</span>
+    {% lng "(opcional)" "(optional)" %}
   </a><br>
   <br>
 
@@ -63,8 +62,7 @@
         </a>
       </td></tr>
     {% empty %}
-      <span lang="pt">Nenhum plano de orientação encontrado.</span>
-      <span lang="en">No orientation plan found.</span>
+      {% lng "Nenhum plano de orientação encontrado." "No orientation plan found." %}
     {% endfor %}
   </tbody></table>
 

@@ -49,8 +49,7 @@
           </td>
         {% else %}
           <td>
-            <span lang="pt">Indefinido</span>
-            <span lang="en" style="display:none;">Undefined</span>
+            {% lng "Indefinido" "Undefined" %}
           </td>
         {% endif %}
 
@@ -61,8 +60,7 @@
                 {% if alocacao.projeto and alocacao.projeto.organizacao %}
                   [<a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">{{alocacao.projeto.organizacao}}</a>]
                 {% else %}
-                  <span lang="pt">[SEM ORGANIZAÇÃO]</span>
-                  <span lang="en" style="display:none;">[NO ORGANIZATION]</span>
+                  {% lng "[SEM ORGANIZAÇÃO]" "[NO ORGANIZATION]" %}
                 {% endif %}
                 <a href="{% url 'projeto_completo' alocacao.projeto.id %}">{{alocacao.projeto.get_titulo}}</a>
                 {% include "tipo_projeto.html" with projeto=alocacao.projeto %}

@@ -232,30 +232,25 @@
         {% if projetos_selecionados %}
           <div><ul style="list-style-type: '&#x2726; ';">
             <li>
-              <span lang="pt">Total de projetos realizados no semestre: </span>
-              <span lang="en">Total of projects carried out in the semester: </span>
+              {% lng "Total de projetos realizados no semestre: " "Total of projects carried out in the semester: " %}
               {{selecionados|add:nao_selecionados}}
             </li>  
             <li>
-              <span lang="pt">Projetos selecionados para certificação Falconi: </span>
-              <span lang="en">Projects selected for Falconi certification: </span>
+              {% lng "Projetos selecionados para certificação Falconi: " "Projects selected for Falconi certification: " %}
               {{selecionados}}
             </li>
             <li>
-              <span lang="pt">Projetos que obtiveram certificação</span>
-              <span lang="en">Projects that obtained certification</span>
+              {% lng "Projetos que obtiveram certificação" "Projects that obtained certification" %}
               <u>Destaque Capstone FALCONI-INSPER</u>: <span id="n_destaque"></span>
             </li>
             <li>
-              <span lang="pt">Projetos que obtiveram certificação</span>
-              <span lang="en">Projects that obtained certification</span>
+              {% lng "Projetos que obtiveram certificação" "Projects that obtained certification" %}
               <u>Excelência Capstone FALCONI-INSPER</u>: <span id="n_excelencia"></span>
             </li>
           </ul></div><br><br>
         {% else %}
           <div>
-            <span lang="pt">Não há projetos selecionados para certificação Falconi nesta edição.</span>
-            <span lang="en">There are no projects selected for Falconi certification in this edition.</span>
+            {% lng "Não há projetos selecionados para certificação Falconi nesta edição." "There are no projects selected for Falconi certification in this edition." %}
           </div>
         {% endif %}
 
@@ -263,8 +258,7 @@
 
             <p style="page-break-before: always"></p>
             <h4 style="margin-bottom: 18px;">
-              <span lang="pt">Projetos Selecionados:</span>
-              <span lang="en">Selected Projects:</span>
+              {% lng "Projetos Selecionados:" "Selected Projects:" %}
             </h4>
             
             <script>

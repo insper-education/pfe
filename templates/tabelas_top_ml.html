@@ -24,7 +24,8 @@
             {% if cabecalho.tooltip %}data-toggle="tooltip" data-html="true" animation="true" title="{{cabecalho.tooltip|safe}}"{% endif %}
             {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
             data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
-            ><span lang="pt" style="margin-right: 0.6ex;">{{cabecalho.pt|safe}}</span><span lang="en" style="display: none; margin-right: 0.6ex;">{{cabecalho.en|safe}}</span></th>
+            ><span style="margin-right: 0.6ex;">{% lng cabecalho.pt|safe cabecalho.en|safe %}</span>
+          </th>
         {% endfor %}
       </tr>
     </thead>
@@ -32,8 +33,7 @@
       <caption style="text-align: right"><small>
         {% for caption in captions %}
           <span style="white-space: nowrap;"><b>{{caption.sigla}}</b>:
-            <span lang="pt">{{caption.pt|safe}}</span>
-            <span lang="en" style="display: none;">{{caption.en|safe}}</span>
+            {% lng caption.pt|safe caption.en|safe %}
           </span>
           {% if not forloop.last %}|{% endif %}
         {% endfor %}

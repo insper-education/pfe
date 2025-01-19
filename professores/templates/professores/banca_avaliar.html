@@ -34,7 +34,6 @@
     <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
   {% endif %}
 
-  <span lang="pt"></span><span lang="en"></span>
 
   {% if banca %}
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
@@ -43,26 +42,24 @@
       {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
       {% if banca.composicao.exame is not None %}
-        <b lang="pt">Tipo de Banca:</b>
-        <b lang="en">Presentation:</b>
+        <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
         {{ banca.composicao.exame }}
         <br>
       {% endif %}
 
       {% if estudante %}
-        <b lang="pt">Estudante em Probation:</b>
-        <b lang="en">Student in Probation:</b>
+        <b>{% lng "Estudante em Probation" "Student in Probation" %}:</b>
         {{ estudante.user.get_full_name }}
         <br>
       {% endif %}
 
       <br>
-      <b lang="pt">Data da Banca:</b><b lang="en">Date of Presentation:</b>
+      <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
       {% comment %} {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}} {% endcomment %}
       {% if banca.startDate %}
         <span class="texto-longo">
           {{banca.startDate.date}}
-          <span lang="pt">{% language "pt-br" %}
+          <span lang="pt" >{% language "pt-br" %}
             ({{banca.startDate|date:"l"}})
             das{% endlanguage %}
           </span>
@@ -74,7 +71,7 @@
         </span>
         <span class="texto-curto">
           {{ banca.startDate|date:"d/m/y" }}
-          <span lang="pt">{% language "pt-br" %}
+          <span lang="pt" >{% language "pt-br" %}
             ({{banca.startDate|date:"l"}})
             das{% endlanguage %}
           </span>
@@ -86,21 +83,20 @@
         </span>
       {% endif %}
       {% if banca.endDate %}
-        <span lang="pt">às</span>
-        <span lang="en" style="display: none;">to</span>
+        {% lng "às" "to" %}
         {{banca.endDate.time}}
       {% endif %}
 
       <br>
       {% if banca.location %}
-        <b lang="pt">Local:</b><b lang="en">Location:</b> {{banca.location}}<br>
+        <b>{% lng "Local" "Location" %}:</b> {{banca.location}}<br>
       {% endif %}  
       {% if banca.link %}
         <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
         <br>
       {% endif %}
       
-      <br><b><label style="margin: 0px;" for="avaliador"><span lang="pt">Avaliador(a)</span><span lang="en">Evaluator</span>:</label></b>
+      <br><b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b>
       <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
         oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
         oninput="this.setCustomValidity('')">
@@ -141,12 +137,10 @@
       {% if composicao.orientacoes %}
         <div class="borientacoes">
           <h5 style="margin-bottom: 12px;">
-            <span lang="pt">Orientações Gerais</span>
-            <span lang="en">Guidelines</span>
+            {% lng "Orientações Gerais" "Guidelines" %}
           </h5>
           <p class="texto-alinhado">
-            <span lang="pt">{{composicao.orientacoes|safe}}</span>
-            <span lang="en">{{composicao.orientacoes_en|safe}}</span>
+            {% lng composicao.orientacoes|safe composicao.orientacoes_en|safe %}
           </p>
         </div>
       {% endif %}
@@ -158,7 +152,7 @@
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
         <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
               title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-          <span lang="pt">Observações Estudantes (enviada para todo o grupo)</span ><span lang="en">Evaluation Observations for Students (will be sent to all students)</span>:
+          {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
         </b></label><br>
         <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
         <br><br>
@@ -167,29 +161,30 @@
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
       <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        <span lang="pt">Observações Orientador (somente enviada para orientador)</span ><span lang="en">Evaluation Observations (will only be sent to advisor)</span>:
+        {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
       </b></label><br>
       <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
       <br><br>
       
       {% if banca.startDate.date > today.date %}
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
-          <span lang="pt" class="red-bold">Você está acessado o formulário antes da data agendada da banca.</span>
-          <span lang="en" class="red-bold">You have accessed the form before the scheduled evaluation date.</span>
+          <span class="red-bold">
+            {% lng "Você está acessado o formulário antes da data agendada da banca." "You have accessed the form before the scheduled evaluation date." %}
+          </span>
           <br>
-          <span lang="pt" class="red-bold">Tem certeza que deseja enviar a avaliação agora!!</span>
-          <span lang="en" class="red-bold">Are you sure you want to submit your evaluation now!!</span>
+          <span class="red-bold">
+            {% lng "Tem certeza que deseja enviar a avaliação agora!!" "Are you sure you want to submit your evaluation now!!" %}
+          </span>
           <br>
         </div><br>
       {% endif %}
 
-      <button class="btn btn-primary mb-1" type="submit"><span lang="pt">Enviar Avaliação</span><span lang="en">Submit Evaluation</span></button>
+      <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Avaliação" "Submit Evaluation" %}</button>
       <p>&nbsp;</p>
 
     </form>
   {% else %}
-    <p lang="pt">Não existe projeto disponível para avaliar.</p>
-    <p lang="en">There is no project available to evaluate.</p>
+    <p>{% lng "Não existe projeto disponível para avaliar." "There is no project available to evaluate." %}</p>
   {% endif %}
 
   <script>

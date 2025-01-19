@@ -14,8 +14,7 @@
   <form method="post">{% csrf_token %}
     <input type="checkbox" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
     <button class="btn btn-primary mb-1" type="submit">
-      <span lang="pt">Enviar</span>
-      <span lang="en">Send</span>
+      {% lng "Enviar" "Send" %}
     </button>
   </form>
 

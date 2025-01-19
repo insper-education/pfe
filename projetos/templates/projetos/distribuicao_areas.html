@@ -66,11 +66,10 @@
     </div>
 
     <div style="line-height: 1;">
-        <b lang="pt">Outras:</b>
-        <b lang="en">Others:</b>
-        {% for outra in outras %}
-            {{outra.outras}}{% if not forloop.last %},{% endif %}
-        {% endfor %}
+      <b>{% lng "Outras" "Others" %}:</b>
+      {% for outra in outras %}
+          {{outra.outras}}{% if not forloop.last %},{% endif %}
+      {% endfor %}
     </div>
 
     <br>

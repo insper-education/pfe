@@ -43,8 +43,7 @@
           {% if vencido %}disabled{% endif %}>
         </td>
         <td style="text-align: center;"><label for="titulo_areas" style="line-height:0.6em;"><b>
-          <span lang="pt">Áreas de Interesse</span>
-          <span lang="en" style="display:none;">Areas of Interest</span>
+          {% lng "Áreas de Interesse" "Areas of Interest" %}
         </b></label></td>
       </tr>
     {% endif %}
@@ -77,8 +76,7 @@
     
   {% if not not_outras %}
     <label style="display: inline-block; vertical-align: top; font-size: 14px;" for="outras">
-      <span lang="pt">Outras:</span>
-      <span lang="en" style="display:none;">Others:</span>
+      {% lng "Outras:" "Others:" %}
     </label> 
     <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
     {% if vencido %}disabled{% endif %}

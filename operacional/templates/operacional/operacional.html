@@ -7,152 +7,117 @@
 {% load linguas %}
 
 <a href="{% url 'avisos_listar' %}">
-  <span lang="pt">Agenda</span>
-  <span lang="en" style="display: none;">Agenda</span>
+  {% lng "Agenda" "Agenda" %}
 </a><br>
 <a href="{% url 'emails' %}">
-  <span lang="pt">Listas de e-mails</span>
-  <span lang="en" style="display: none;">E-mail lists</span>
+  {% lng "Listas de e-mails" "E-mail lists" %}
 </a><br>
 <br>
 
 <h5>
-  <span lang="pt">Feedbacks</span>
-  <span lang="en" style="display: none;">Feedbacks</span>
+  {% lng "Feedbacks" "Feedbacks" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_acompanhamento' %}">
-  <span lang="pt">Acompanhamento Intermediário das Organizações</span>
-  <span lang="en" style="display: none;">Organizations' Intermediate Feedback</span>
+  {% lng "Acompanhamento Intermediário das Organizações" "Organizations' Intermediate Feedback" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback' %}">
-  <span lang="pt">Comentários Finais das Organizações</span>
-  <span lang="en" style="display: none;">Organizations' Final Feedback</span>
+  {% lng "Comentários Finais das Organizações" "Organizations' Final Feedback" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'lista_feedback_estudantes' %}">
-  <span lang="pt">Acompanhamento Final dos Estudantes</span>
-  <span lang="en" style="display: none;">Students' Final Feedback</span>
+  {% lng "Acompanhamento Final dos Estudantes" "Students' Final Feedback" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Controles</span>
-  <span lang="en" style="display: none;">Control</span>
+  {% lng "Controles" "Control" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_lista' 'proximas' %}">
-  <span lang="pt">Bancas</span>
-  <span lang="en" style="display: none;">Examination Boards</span>
+  {% lng "Bancas" "Examination Boards" %}
   <a href="{% url 'bancas_tabela_agenda' %}">
-    <span lang="pt">(tabela)</span>
-    <span lang="en" style="display: none;">(table)</span>
+    {% lng "(tabela)" "(table)" %}
   </a>
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'dinamicas_index' %}">
-  <span lang="pt">Mentorias</span>
-  <span lang="en" style="display: none;">Mentorships</span>
+  {% lng "Mentorias" "Mentorships" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'pendencias_professores' %}">
-  <span lang="pt">Pendencias professores</span>
-  <span lang="en" style="display: none;">Professors' pending tasks</span>
+  {% lng "Pendencias professores" "Professors' pending tasks" %}
 </a><div>
 
 <br>
 
 <h5>
-  <span lang="pt">Listagem completa</span>
-  <span lang="en" style="display: none;">Complete list</span>
+  {% lng "Listagem completa" "Complete list" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_usuarios' %}">
-  <span lang="pt">Usuários</span>
-  <span lang="en" style="display: none;">Users</span>
+  {% lng "Usuários" "Users" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'estudantes_lista' %}">
-  <span lang="pt">Estudantes</span>
-  <span lang="en" style="display: none;">Students</span>
+  {% lng "Estudantes" "Students" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_parceiros' %}">
-  <span lang="pt">Parceiros</span>
-  <span lang="en" style="display: none;">Partners</span>
+  {% lng "Parceiros" "Partners" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'todos_professores' %}">
-  <span lang="pt">Professores</span>
-  <span lang="en" style="display: none;">Professors</span>
+  {% lng "Professores" "Professors" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'comite' %}">
-  <span lang="pt">Comitê</span>
-  <span lang="en" style="display: none;">Committee</span>
+  {% lng "Comitê" "Committee" %}
 </a></div>
 
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_lista' %}">
-  <span lang="pt">Organizações</span>
-  <span lang="en" style="display: none;">Organizations</span>
+  {% lng "Organizações" "Organizations" %}
 </a></div>
 
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'propostas_lista' %}">
-  <span lang="pt">Propostas</span>
-  <span lang="en" style="display: none;">Proposals</span>
+  {% lng "Propostas" "Proposals" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_lista' %}">
-  <span lang="pt">Projetos</span>
-  <span lang="en" style="display: none;">Projects</span>
+  {% lng "Projetos" "Projects" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Tabelas de alocação</span>
-  <span lang="en" style="display: none;">Allocation tables</span>
+  {% lng "Tabelas de alocação" "Allocation tables" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'orientadores_tabela' %}">
-  <span lang="pt">Orientadores</span>
-  <span lang="en" style="display: none;">Advisors</span>
+  {% lng "Orientadores" "Advisors" %}
 </a><a href="{% url 'orientadores_tabela_completa' %}">
-  <span lang="pt">(completa)</span>
-  <span lang="en" style="display: none;">(complete)</span>
+  {% lng "(completa)" "(complete)" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'coorientadores_tabela' %}">
-  <span lang="pt">Coorientadores</span>
-  <span lang="en" style="display: none;">Co-advisors</span>
+  {% lng "Coorientadores" "Co-advisors" %}
 </a> <a href="{% url 'coorientadores_tabela_completa' %}">
-  <span lang="pt">(completa)</span>
-  <span lang="en" style="display: none;">(complete)</span>
+  {% lng "(completa)" "(complete)" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'organizacoes_tabela' %}">
-  <span lang="pt">Organizações</span>
-  <span lang="en" style="display: none;">Organizations</span>
+  {% lng "Organizações" "Organizations" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bancas_tabela_alocacao' %}">
-  <span lang="pt">Bancas</span>
-  <span lang="en" style="display: none;">Examination Boards</span>
+  {% lng "Bancas" "Examination Boards" %}
 </a> <a href="{% url 'bancas_tabela_alocacao_completa' %}">
-  <span lang="pt">(completa)</span>
-  <span lang="en" style="display: none;">(complete)</span>
+  {% lng "(completa)" "(complete)" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'aulas_tabela' %}">
-  <span lang="pt">Aulas</span>
-  <span lang="en" style="display: none;">Classes</span>
+  {% lng "Aulas" "Classes" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'mentorias_tabela' %}">
-  <span lang="pt">Mentorias</span>
-  <span lang="en" style="display: none;">Mentorships</span>
+  {% lng "Mentorias" "Mentorships" %}
 </a></div>
 <br>
 
 <h5>
-  <span lang="pt">Certificados</span>
-  <span lang="en" style="display: none;">Certificates</span>
+  {% lng "Certificados" "Certificates" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificados_submetidos' %}">
-  <span lang="pt">Listar Certificados</span>
-  <span lang="en" style="display: none;">List Certificates</span>
+  {% lng "Listar Certificados" "List Certificates" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'selecao_geracao_certificados' %}">
-  <span lang="pt">Gerar Novos Certificados</span>
-  <span lang="en" style="display: none;">Generate New Certificates</span>
+  {% lng "Gerar Novos Certificados" "Generate New Certificates" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'certificacao_falconi' %}">
-  <span lang="pt">Certificações Falconi</span>
-  <span lang="en" style="display: none;">Falconi Certifications</span>
+  {% lng "Certificações Falconi" "Falconi Certifications" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'carregar_certificado' %}">
-  <span lang="pt">Carregar Certificado</span>
-  <span lang="en" style="display: none;">Load Certificate</span>
+  {% lng "Carregar Certificado" "Load Certificate" %}
 </a></div>

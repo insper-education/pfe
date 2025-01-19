@@ -19,13 +19,19 @@
 
   {% if vencido %}
     <h5 class="red-bold">
-      <span lang="pt">Fora do Período de Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %}</span>
-      <span lang="en" style="display:none">Out of {% if momento == "intermediaria" %}Intermediate{% else %}Final{% endif %} Peer Evaluation Period</span>
+      {% if momento == "intermediaria" %}
+        {% lng "Fora do Período de Avaliação de Pares Intermediária" "Out of Intermediate Peer Evaluation Period" %}
+      {% else %}
+        {% lng "Fora do Período de Avaliação de Pares Final" "Out of Final Evaluation Period" %}
+      {% endif %}
     </h5>
   {% else %}
     <h5>
-      <span lang="pt">Período de Avaliação de Pares {% if momento == "intermediaria" %}Intermediária{% else %}Final{% endif %} de {{inicio}} até {{fim}}</span>
-      <span lang="en" style="display:none">{% if momento == "intermediaria" %}Intermediate{% else %}Final{% endif %} Peer Evaluation Period from {{inicio}} to {{fim}}</span>
+      {% if momento == "intermediaria" %}
+        {% lng "Período de Avaliação de Pares Intermediária" "Intermediate Peer Evaluation Period" %}
+      {% else %}
+        {% lng "Período de Avaliação de Pares Final" "Final Peer Evaluation Period" %}
+      {% endif %}
     </h5>
   {% endif %}
 
@@ -38,32 +44,30 @@
       <br>
       <div style="max-width: 700px;">
         <b>
-          <span lang="pt">Colega:</span>
-          <span lang="en" style="display:none">Colleague:</span>
-          {{colega.aluno}}
+          {% lng "Colega:" "Colleague:" %}          {{colega.aluno}}
           {% if colega.aluno.externo %}
             [{{colega.aluno.externo}}]
             <span style="color: #007bff;">
-              <span lang="pt">(opcional)</span>
-              <span lang="en" style="display:none">(optional)</span>
-            </span>
+              {% lng "(opcional)" "(optional)" %}            </span>
           {% endif %}
         </b>
       </div>
 
       <br>
       <label for="aprecia">
-        <span lang="pt">O que você aprecia n{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}?</span>
-        <span lang="en" style="display:none">What do you appreciate about {{colega.aluno}}?</span>
+        {% lng_g colega.aluno.user.genero "O que você aprecia no" "O que você aprecia na" "What do you appreciate about" %}
+        {{colega.aluno}}?
       </label><br>
+        
       <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
       {% if not colega.aluno.externo %}required{% endif %}
       {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
       <br><br>
 
       <label for="atrapalhando">
-        <span lang="pt">O que você vê {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} fazendo, ou deixando de fazer, que está atrapalhando?</span>
-        <span lang="en" style="display:none">What do you see {{colega.aluno}} doing, or not doing, that is hindering?</span>
+        {% lng_g colega.aluno.user.genero "O que você vê o" "O que você vê a" "What do you see" %}
+        {{colega.aluno}}
+        {% lng "fazendo, ou deixando de fazer, que está atrapalhando?" "doing, or not doing, that is hindering?" %}
       </label><br>
       <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
       {% if not colega.aluno.externo %}required{% endif %}
@@ -71,8 +75,9 @@
       <br><br>
 
       <label for="mudar">
-        <span lang="pt">O que {% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}} pode mudar, que faria diferença para você?</span>
-        <span lang="en" style="display:none">What can {{colega.aluno}} change that would make a difference to you?</span>
+        {% lng_g colega.aluno.user.genero "O que o" "O que a" "What can" %}
+        {{colega.aluno}}
+        {% lng "pode mudar, que faria diferença para você?" "change that would make a difference to you?" %}
       </label><br>
       <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
       {% if not colega.aluno.externo %}required{% endif %}
@@ -81,129 +86,99 @@
 
       <br><br>
       <b>
-        <span lang="pt">Entrega d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-        <span lang="en" style="display:none">Delivery of {{colega.aluno}}</span>
+        {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
+        {{colega.aluno}}
       </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="entrega{{colega.id}}" value="0" 
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.</span>
-          <span lang="en" style="display:none">Delivered well below expectations, putting the delivery at risk and forcing other member(s) to change personal plans to guarantee it.</span>
-        </label><br>
+          {% lng "Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la." "Delivered well below expectations, putting the delivery at risk and forcing other member(s) to change personal plans to guarantee it." %}        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Entregou abaixo do esperado.</span>
-          <span lang="en" style="display:none">Delivered below expectations.</span>
-        </label><br>
+          {% lng "Entregou abaixo do esperado." "Delivered below expectations." %}        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Entregou precisamente o esperado.</span>
-          <span lang="en" style="display:none">Delivered exactly what was expected.</span>
-        </label><br>
+          {% lng "Entregou precisamente o esperado." "Delivered exactly what was expected." %}        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Entregou acima do esperado.</span>
-          <span lang="en" style="display:none">Delivered above expectations.</span>
-        </label><br>
+          {% lng "Entregou acima do esperado." "Delivered above expectations." %}        </label><br>
 
         <label><input type="radio" name="entrega{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.entrega == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.</span>
-          <span lang="en" style="display:none">Delivered well above expectations, changing personal plans to guarantee a delivery that was at risk.</span>
-        </label><br>
+          {% lng "Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco." "Delivered well above expectations, changing personal plans to guarantee a delivery that was at risk." %}        </label><br>
       </div>
 
 
       <br>
       <b>
-        <span lang="pt">Iniciativa d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-        <span lang="en" style="display:none">Initiative of {{colega.aluno}}</span>
+        {% lng_g colega.aluno.user.genero "Iniciativa do" "Iniciativa da" "Initiative of" %}
+        {{colega.aluno}}
       </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="iniciativa{{colega.id}}" value="0"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Mesmo quando lembrado, não cumpriu as tarefas designadas.</span>
-          <span lang="en" style="display:none">Even when reminded, did not fulfill the assigned tasks.</span>
-        </label><br>
+          {% lng "Mesmo quando lembrado, não cumpriu as tarefas designadas." "Even when reminded, did not fulfill the assigned tasks." %}        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Precisou ser lembrado, mas cumpriu as tarefas designadas.</span>
-          <span lang="en" style="display:none">Needed to be reminded, but fulfilled the assigned tasks.</span>
-        </label><br>
+          {% lng "Precisou ser lembrado, mas cumpriu as tarefas designadas." "Needed to be reminded, but fulfilled the assigned tasks." %}        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.</span>
-          <span lang="en" style="display:none">Autonomously, fulfilled the assigned tasks, neither more nor less.</span>
-        </label><br>
+          {% lng "Autonomamente, cumpriu as tarefas designadas, nem mais nem menos." "Autonomously, fulfilled the assigned tasks, neither more nor less." %}        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.</span>
-          <span lang="en" style="display:none">In addition to fulfilling the assigned tasks, helped other member(s) who were having difficulties.</span>
-        </label><br>
+          {% lng "Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades." "In addition to fulfilling the assigned tasks, helped other member(s) who were having difficulties." %}        </label><br>
 
         <label><input type="radio" name="iniciativa{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.iniciativa == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.</span>
-          <span lang="en" style="display:none">Monopolized part of the tasks, assuming tasks of other member(s) even when there was no evidence of difficulties.</span>
-        </label><br>
+          {% lng "Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades." "Monopolized part of the tasks, assuming tasks of other member(s) even when there was no evidence of difficulties." %}        </label><br>
       </div>
 
       <br>
       <b>
-        <span lang="pt">Comunicação d{% if colega.aluno.user.genero == "F" %}a{% else %}o{% endif %} {{colega.aluno}}</span>
-        <span lang="en" style="display:none">Communication of {{colega.aluno}}</span>
+        {% lng_g colega.aluno.user.genero "Comunicação do" "Comunicação da" "Communication of" %}
+        {{colega.aluno}}
       </b>
       <div style="max-width: 700px;">
         <label><input type="radio" name="comunicacao{{colega.id}}" value="0"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.</span>
-          <span lang="en" style="display:none">Had difficulties, never communicated them and in the end they prevented the delivery.</span>
-        </label><br>
+          {% lng "Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega." "Had difficulties, never communicated them and in the end they prevented the delivery." %}        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="1"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.</span>
-          <span lang="en" style="display:none">Had difficulties and never communicated them, but at least it did not prevent the delivery.</span>
-        </label><br>
+          {% lng "Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega." "Had difficulties and never communicated them, but at least it did not prevent the delivery." %}        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="2"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Aparentemente não teve dificuldades, mas nunca reportou nada.</span>
-          <span lang="en" style="display:none">Apparently had no difficulties, but never reported anything.</span>
-        </label><br>
+          {% lng "Aparentemente não teve dificuldades, mas nunca reportou nada." "Apparently had no difficulties, but never reported anything." %}        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="3"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.</span>
-          <span lang="en" style="display:none">Communicated difficulties. Regardless of whether the delivery was made or not, the team was not surprised.</span>
-        </label><br>
+          {% lng "Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida." "Communicated difficulties. Regardless of whether the delivery was made or not, the team was not surprised." %}        </label><br>
 
         <label><input type="radio" name="comunicacao{{colega.id}}" value="4"
           {% if not colega.aluno.externo %}required{% endif %}
           {% if par.comunicacao == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-          <span lang="pt">Apesar de não ter dificuldades, estava sempre reportando como estava indo.</span>
-          <span lang="en" style="display:none">Despite having no difficulties, was always reporting how it was going.</span>
-        </label><br>
+          {% lng "Apesar de não ter dificuldades, estava sempre reportando como estava indo." "Despite having no difficulties, was always reporting how it was going." %}        </label><br>
       </div>
       <br>
       <hr>
@@ -212,9 +187,7 @@
 
     <br>
     <button class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
-      <span lang="pt">Enviar</span>
-      <span lang="en" style="display:none">Submit</span>
-    </button>
+      {% lng "Enviar" "Submit" %}    </button>
 
   </form>
 

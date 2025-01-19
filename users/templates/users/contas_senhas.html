@@ -21,7 +21,7 @@
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
       <table id="EstudantesTable" class="tabela-padrao" ><thead><tr>
             <th>&nbsp;<input type="checkbox" id="todos_estudantes" checked>&nbsp;</th>
-            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')"><span lang="pt">Estudante</span><span lang="en">Student</span></th>
+            <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(2)')">{% lng "Estudante" "Student" %}</th>
             <th onclick="sort('#EstudantesTable', '.item', 'td:nth-child(3)')">e-mail</th>
         </tr></thead>
         <tbody>
@@ -37,10 +37,8 @@
         </tbody>
       </table>
 
-      <br><strong>
-        <span lang="pt">Total de Estudantes:</span>
-        <span lang="en">Total of Students:</span>
-      </strong> <span id="count_est">{{estudantes.count}}</span> ({{estudantes.count}})
+      <br><b>{% lng "Total de Estudantes" "Total of Students" %}:</b>
+      <span id="count_est">{{estudantes.count}}</span> ({{estudantes.count}})
 
       <br><br>
 
@@ -52,8 +50,7 @@
 
       <br><br>
       <button class="btn btn-primary mb-1" type="submit">
-        <span lang="pt">Enviar Contas e Senhas</span>
-        <span lang="en">Send Accounts and Passwords</span>
+        {% lng "Enviar Contas e Senhas" "Send Accounts and Passwords" %}
       </button>
 
     </form>

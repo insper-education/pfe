@@ -96,18 +96,15 @@
 
   {% if vencido %}
     <h2 class="red-bold">
-      <span lang="pt">Você não está cadastrado como estudante.</span>
-      <span lang="en" style="display:none">You are not registered as a student.</span>
+      {% lng "Você não está cadastrado como estudante." "You are not registered as a student." %}
     </h2>
   {% else %}
     {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
       <h2 class="red-bold">
-        <span lang="pt">Você não está registrado para o Capstone em {{ano}}.{{semestre}}</span>
-        <span lang="en" style="display:none">You are not registered for the Capstone in {{ano}}.{{semestre}}</span>
+        {% lng "Você não está registrado para o Capstone em {{ano}}.{{semestre}}" "You are not registered for the Capstone in {{ano}}.{{semestre}}" %}
       </h2>
       <h3 class="red-bold">
-        <span lang="pt">Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone.</span>
-        <span lang="en" style="display:none">If you believe there is an error in the information, please contact the Capstone coordination.</span>
+        {% lng "Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone." "If you believe there is an error in the information, please contact the Capstone coordination." %}
       </h3>
       <br>
     {% endif %}
@@ -115,11 +112,9 @@
 
   {% if not areas %}
     <h5 class="text-warning">
-      <span lang="pt">Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:</span>
-      <span lang="en" style="display:none">You have not selected any areas of interest yet, please make a selection before confirming the desired projects:</span>      
+      {% lng "Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:" "You have not selected any areas of interest yet, please make a selection before confirming the desired projects:" %}      
       <a href="{% url 'informacoes_adicionais' %}">
-        <span lang="pt">Áreas de Interesse</span>
-        <span lang="en" style="display:none">Areas of Interest</span>
+        {% lng "Áreas de Interesse" "Areas of Interest" %}
       </a>
     <h5><br><br>
   {% endif %}
@@ -127,13 +122,11 @@
   <div class="container-fluid mt-1">
     <div class="row">
       <div class="col-12 col-md-10">
-        <span lang="pt">Selecione as propostas conforme seu interesse</span>
-        <span lang="en" style="display:none">Select the proposals according to your interest</span>
+        {% lng "Selecione as propostas conforme seu interesse" "Select the proposals according to your interest" %}
       </div>
       <div class="col-12 col-md-2 text-md-right mt-2 mt-md-0">
         <button class="ordenar btn btn-primary" onclick="sortTable()">
-          <span lang="pt">Ordenar</span>
-          <span lang="en" style="display:none">Sort</span>&nbsp;&#x21e3;
+          {% lng "Ordenar" "Sort" %}&nbsp;&#x21e3;
         </button>
       </div>
     </div>
@@ -165,8 +158,7 @@
                         {% if proposta.titulo %}
                           {{proposta.titulo}}
                         {% else %}
-                          <span lang="pt">PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA</span>
-                          <span lang="en" style="display:none">PROBLEM IN RETRIEVING PROPOSAL TITLE</span>
+                          {% lng "PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA" "PROBLEM IN RETRIEVING PROPOSAL TITLE" %}
                         {% endif %}
                         <font color="darkblue">
                           {% if proposta.nome_organizacao %}
@@ -174,8 +166,7 @@
                           {% elif proposta.organizacao and proposta.organizacao.nome %}
                             ({{ proposta.organizacao.nome }})
                           {% else %}
-                            <span lang="pt">PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA</span>
-                            <span lang="en" style="display:none">PROBLEM IN RETRIEVING PROPOSAL ORGANIZATION</span>
+                            {% lng "PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA" "PROBLEM IN RETRIEVING PROPOSAL ORGANIZATION" %}
                           {% endif %}
                         </font>
 
@@ -196,8 +187,7 @@
             </table>
 
         {% else %}
-          <span lang="pt">Propostas ainda não liberadas.</span>
-          <span lang="en" style="display:none">Proposals not yet released.</span>
+          {% lng "Propostas ainda não liberadas." "Proposals not yet released." %}
         {% endif %}
 
       </div>
@@ -207,8 +197,8 @@
         </font>
 
         <small>
-          <span lang="pt">Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia {{prazo}}.</span>
-          <span lang="en" style="display:none">When you decide on the desired projects, click <b>Confirm</b>. You can reconfirm as many times as you want until {{prazo}}.</span>
+          {% lng "Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia" "When you decide on the desired projects, click <b>Confirm</b>. You can reconfirm as many times as you want until" %}
+          {{prazo}}.
         </small><br>
 
         <div class="row mt-3">
@@ -223,14 +213,12 @@
                     onclick="alert('Selecione suas áreas de interesse e experiências');"
                   {% endif %}
                   >
-              <span lang="pt">Confirmar</span>
-              <span lang="en" style="display:none">Confirm</span>
+              {% lng "Confirmar" "Confirm" %}
             </button>
           </div>
           <div class="col-12 col-md-10 text-md-left mt-0 mt-md-0">
             <small><font color="red">
-              <span lang="pt">Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse.</span>
-              <span lang="en" style="display:none">Select at least {{min_props}} proposals (1 to {{min_props}}), being 1 for the one you are most interested in.</span>
+              {% lng "Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse." "Select at least {{min_props}} proposals (1 to {{min_props}}), being 1 for the one you are most interested in." %}
             </font></small>
           </div>
         </div>
@@ -239,8 +227,7 @@
 
     {% else %}
       <p>
-        <span lang="pt">Não existem Propostas de Projetos disponíveis.</span>
-        <span lang="en" style="display:none">There are no Project Proposals available.</span>
+        {% lng "Não existem Propostas de Projetos disponíveis." "There are no Project Proposals available." %}
       </p>
     {% endif %}
 

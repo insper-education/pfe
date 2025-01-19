@@ -68,13 +68,13 @@
 {% block content %}
 
   {% if membros_comite %}
-    <strong lang="pt">Comitês</strong><strong lang="en">Committees</strong>
+    <b>{% lng "Comitês" "Committees" %}</b>
     <div class="row align-items-start mb-2">
       <div class="ml-3">
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
               <span class="input-group-text">
-                <span lang="pt">Comitê Capstone</span><span lang="en">Capstone Committee</span>
+                {% lng "Comitê Capstone" "Capstone Committee" %}
               </span>
           </div>
           <div class="meio_separador input-group-addon"></div>
@@ -85,7 +85,7 @@
               atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
             " target="_blank">
               <button class="btn btn-outline-secondary btn-sm" type="button">
-                <span lang="pt">todos</span><span lang="en">all</span>
+                {% lng "todos" "all" %}
               </button>
             </a>
           </div>
@@ -95,13 +95,13 @@
     <br>
   {% endif %}
 
-  <strong lang="pt">Por semestre</strong><strong lang="en">By semester</strong>
+  <b>{% lng "Por semestre" "By semester" %}</b>
   <div class="row align-items-start mb-2 table-responsive">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
           <label class="input-group-text" for="filterEdicaoSemestre">
-            <span lang="pt">Edição</span><span lang="en">Edition</span>
+            {% lng "Edição" "Edition" %}
           </label>
         </div>
         <div class="input-group-sm">
@@ -122,29 +122,29 @@
         <div class="input-group-append">
           <a id="Estudantes" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              <span lang="pt">Estudantes</span><span lang="en">Students</span>
+              {% lng "Estudantes" "Students" %}
             </button>
           </a>
 
           <a id="EstudantesInsper" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              <span lang="pt">Só Estudantes Insper</span><span lang="en">Only Insper Students</span>
+              {% lng "Só Estudantes Insper" "Only Insper Students" %}
             </button>
           </a>
 
           <a id="Orientadores" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              <span lang="pt">Orientadores</span><span lang="en">Advisors</span>
+              {% lng "Orientadores" "Advisors" %}
             </button>
           </a>
           <a id="Parceiros" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              <span lang="pt">Parceiros</span><span lang="en">Partners</span>
+              {% lng "Parceiros" "Partners" %}
             </button>
           </a>
           <a id="Bancas" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
-              <span lang="pt">Bancas</span><span lang="en">Examination Boards</span>
+              {% lng "Bancas" "Examination Boards" %}
             </button>
           </a>
         </div>
@@ -154,28 +154,28 @@
 
   <br>
 
-  <strong lang="pt">Por projeto</strong><strong lang="en">By project</strong>
+  <b>{% lng "Por projeto" "By project" %}</b>
   <br>
   <small>
     &nbsp;&nbsp;<b>
-      <span lang="pt">Copiados:</span><span lang="en">Copied:</span>
+      {% lng "Copiados:" "Copied:" %}
     </b>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
       <label class="form-check-label" for="estudantes">
-        <span lang="pt">Estudantes</span><span lang="en">Students</span>
+        {% lng "Estudantes" "Students" %}
       </label>
     </div>
     <div class="form-check form-check-inline mr-1">
       <input class="form-check-input" type="checkbox" id="orientador" value="orientador" checked>
       <label class="form-check-label" for="orientador">
-        <span lang="pt">Orientador</span><span lang="en">Advisor</span>
+        {% lng "Orientador" "Advisor" %}
       </label>
     </div>
     <div class="form-check form-check-inline mr-0">
       <input class="form-check-input" type="checkbox" id="parceiros" value="parceiros" checked>
       <label class="form-check-label" for="parceiros">
-        <span lang="pt">Parceiros</span><span lang="en">Partners</span>
+        {% lng "Parceiros" "Partners" %}
       </label>
     </div>
   </small>
@@ -185,7 +185,7 @@
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
           <label class="input-group-text" for="filterEdicaoProjetos">
-            <span lang="pt">Edição</span><span lang="en">Edition</span>
+            {% lng "Edição" "Edition" %}
           </label>
         </div>
         <div class="input-group-sm">
@@ -209,20 +209,12 @@
   <br>
   {% comment %} Texto em Vermelho {% endcomment %}
   <div class="text-danger">
-    <span lang="pt">
-      <b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente,
-      nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail.
-    </span>
-    <span lang="en">
-      <b>Attention:</b> the e-mails are generated automatically and the address line may become too long and not work directly,
-      in these cases, try copying the addresses with the right button and pasting them into your e-mail client.
-    </span>
+    {% lng "<b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente, nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail." "<b>Attention:</b> the e-mails are generated automatically and the address line may become too long and not work directly, in these cases, try copying the addresses with the right button and pasting them into your e-mail client." %}
   </div>
 
   {% if user.tipo_de_usuario == 4 %}
     <br>
-    <b lang="pt">Acesso de administração:</b>
-    <b lang="en">Administration access:</b>
+    <b>{% lng "Acesso de administração:" "Administration access:" %}</b>
     <br>
     {% if todos_alunos %}
       <a href="
@@ -231,7 +223,7 @@
         &amp;subject=Capstone%20&amp;body=Caros%20estudantes,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
       ">
-        <span lang="pt">Todos estudantes</span><span lang="en">All students</span>
+        {% lng "Todos estudantes" "All students" %}
       </a><br>
     {% endif %}
 
@@ -242,7 +234,7 @@
         &amp;subject=Capstone&amp;body=Caros%20professores%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
       " target="_blank">
-        <span lang="pt">Todos professores</span><span lang="en">All professors</span>
+        {% lng "Todos professores" "All professors" %}
       </a><br>
     {% endif %}
 
@@ -253,7 +245,7 @@
         &amp;subject=Capstone&amp;body=Caros%20parceiro%20do%Capstone,%0D%0A%0D%0A
         atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
       " target="_blank">
-        <span lang="pt">Todos parceiros</span><span lang="en">All partners</span>
+        {% lng "Todos parceiros" "All partners" %}
       </a><br>
     {% endif %}
 

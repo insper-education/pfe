@@ -21,12 +21,10 @@
         <thead class="table-info">
           <tr>
             <th scope="col" style="text-align: center;width:300px;"><span style="margin-right: 0.6ex;">
-              <span lang="pt">{{cabecalhos.0.pt}}</span>
-              <span lang="en">{{cabecalhos.0.en}}</span>
+              {% lng cabecalhos.0.pt cabecalhos.0.en %}
             </span></th>
             <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">
-              <span lang="pt">{{cabecalhos.1.pt}}</span>
-              <span lang="en">{{cabecalhos.1.en}}</span>
+              {% lng cabecalhos.1.pt cabecalhos.1.en %}
             </span></th>
           </tr>
         </thead>
@@ -50,11 +48,8 @@
           </tr>
           {% if forloop.last %}
             <tr ><td style="border-right: none;">
-              <b>
-                <span lang="pt">Total de Orientadores:</span>
-                <span lang="en">Total of Advisors:</span>
-                {{ forloop.counter }}
-              </b>
+              <b>{% lng "Total de Orientadores:" "Total of Advisors:" %}:</b>
+              {{ forloop.counter }}
             </td><td></td></tr>
           {% endif %}
         {% endfor %}

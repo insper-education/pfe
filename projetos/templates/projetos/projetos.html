@@ -7,28 +7,22 @@
 {% load linguas %}
 
 <a href="{% url 'projetos_fechados' %}">
-  <span lang="pt">Listagem Geral</span>
-  <span lang="en" style="display: none;">General Listing</span>
+  {% lng "Listagem Geral" "General Listing" %}
 </a><br>
 <a href="{% url 'organizacoes_projetos' %}">
-  <span lang="pt">Acompanhamento de Organizações com Projetos</span>
-  <span lang="en" style="display: none;">Follow-up of Organizations with Projects</span>
+  {% lng "Acompanhamento de Organizações com Projetos" "Follow-up of Organizations with Projects" %}
 </a><br>
 <br>
 
 <h5>
-  <span lang="pt">Análises</span>
-  <span lang="en" style="display: none;">Analyses</span>
+  {% lng "Análises" "Analyses" %}
 </h5>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_vs_propostas' %}">
-  <span lang="pt"> Organizações, Projetos e Propostas</span>
-  <span lang="en" style="display: none;">Organizations, Projects and Proposals</span>
+  {% lng " Organizações, Projetos e Propostas" "Organizations, Projects and Proposals" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'interesses_projetos' %}">
-  <span lang="pt">Interesses com Projetos</span>
-  <span lang="en" style="display: none;">Interests with Projects</span>
+  {% lng "Interesses com Projetos" "Interests with Projects" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'filtro_projetos' %}">
-  <span lang="pt">Filtro para Projetos</span>
-  <span lang="en" style="display: none;">Projects Filter</span>
+  {% lng "Filtro para Projetos" "Projects Filter" %}
 </a></div>

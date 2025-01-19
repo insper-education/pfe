@@ -70,8 +70,7 @@
   <span class="esconder">
     <a href="{% url 'proposta_submissao'%}" style="cursor:pointer;">
       <i class="fas fa-plus"></i>
-      <span lang="pt">Adicionar Proposta</span>
-      <span lang="en" style="display: none;">Add Proposal</span>
+      {% lng "Adicionar Proposta" "Add Proposal" %}
     </a>
   </span>
 
@@ -226,17 +225,14 @@
       </div>
 
       {% if liberadas_propostas %}
-        <span lang="pt">Sistema liberado para estudantes verem propostas de projetos até: {{limite_propostas}}. &#x1F7E2;</span>
-        <span lang="en">System released for students to see project proposals until: {{limite_propostas}}. &#x1F7E2;</span>
+        {% lng "Sistema liberado para estudantes verem propostas de projetos até" "System released for students to see project proposals until" %}:
+        {{limite_propostas}}. &#x1F7E2;
       {% else %}
-        <span lang="pt">Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;</span>
-        <span lang="en">System not yet released for students to see project proposals. &#x1F534;</span>
+        {% lng "Sistema ainda não está liberado para estudantes verem propostas de projetos. &#x1F534;" "System not yet released for students to see project proposals. &#x1F534;" %}
       {% endif %}<br>
       
       <p>&nbsp;</p>
-      <b lang="pt">Número Total de Propostas Publicadas:</b>
-      <b lang="en">Total Number of Published Proposals:</b>
-        <span id="propostas_publicadas"></span>
+      <b>{% lng "Número Total de Propostas Publicadas:" "Total Number of Published Proposals:" %}</b>        <span id="propostas_publicadas"></span>
         <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
           {% if propostas %}({{ propostas.count }}){% else %}(---){% endif %}
         </a><br>
@@ -254,34 +250,29 @@
       {% endwith %}
 
       <p>&nbsp;</p>
+
       <b>{% lng "Vagas por curso" "Positions per program" %}</b>
       <br>
       <table class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
             <th>
-              <span lang="pt">Curso</span>
-              <span lang="en">Program</span>
+              {% lng "Curso" "Program" %}
             </th>
             <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais possíveis para estudantes">
-              <span lang="pt">Vagas</span>
-              <span lang="en">Slots</span>
+              {% lng "Vagas" "Slots" %}
             </th>
             <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas para estudantes">
-              <span lang="pt">V. Disp.</span>
-              <span lang="en">S. Avail.</span>
+              {% lng "V. Disp." "S. Avail." %}
             </th>
             <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas totais proporcionais para estudantes">
-              <span lang="pt">P. Vagas</span>
-              <span lang="en">P. Slots</span>
+              {% lng "P. Vagas" "P. Slots" %}
             </th>
             <th data-toggle="tooltip" data-html="true" animation="true" title="Vagas disponibilizadas proporcionais para estudantes">
-              <span lang="pt">P. Disp.</span>
-              <span lang="en">P. Avail.</span>
+              {% lng "P. Disp." "P. Avail." %}
             </th>
             <th data-toggle="tooltip" data-html="true" animation="true" title="Total de vagas necessárias para o semestre">
-              <span lang="pt">Neces.</span>
-              <span lang="en">Requi.</span>
+              {% lng "Neces." "Requi." %}
             </th>
           </tr>
         </thead>

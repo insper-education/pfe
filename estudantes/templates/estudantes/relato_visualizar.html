@@ -13,18 +13,9 @@
 
   <form action="" method="post"> {% csrf_token %}
 
-    <b>
-      <span lang="pt">Estudante:</span>
-      <span lang="en" style="display: none;">Student:</span>
-    </b> {{relato.alocacao.aluno}}<br>
-    <b>
-      <span lang="pt">Projeto:</span>
-      <span lang="en" style="display: none;">Project:</span>
-    </b> {{relato.alocacao.projeto}}<br>
-    <b>
-      <span lang="pt">Relato submetido:</span>
-      <span lang="en" style="display: none;">Submitted report:</span>
-    </b> {{relato.momento}}<br>
+    <b>{% lng "Estudante:" "Student:" %}</b> {{relato.alocacao.aluno}}<br>
+    <b>{% lng "Projeto:" "Project:" %}</b> {{relato.alocacao.projeto}}<br>
+    <b>{% lng "Relato submetido:" "Submitted report:" %}</b> {{relato.momento}}<br>
     <br>
 
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="4096" disabled>{{relato.texto}}</textarea>

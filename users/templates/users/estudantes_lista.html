@@ -28,8 +28,7 @@
   <span class="esconder">
     <a href="{% url 'cadastrar_usuario' %}?tipo=estudante" style="cursor:pointer;">
       <i class="fas fa-plus"></i>
-      <span lang="pt">Adicionar usuário</span>
-      <span lang="en" style="display: none;">Add user</span>
+      {% lng "Adicionar usuário" "Add user" %}
     </a>
   </span>
   
@@ -102,8 +101,7 @@
         </tr>
         {% endfor %}
         <caption style="text-align:right"><small>
-          <span lang="pt">Projetos <u>sublinhados</u> são de Capstone Avançado</span>
-          <span lang="en" style="display: none;">Projects <u>underlined</u> are Advanced Capstone</span>
+          {% lng "Projetos <u>sublinhados</u> são de Capstone Avançado" "Projects <u>underlined</u> are Advanced Capstone" %}
         </small></caption>
       </table>
     </div>
@@ -114,16 +112,14 @@
     {% if totais.total > 0 %}
       <br><br>
       <h5>
-        <span lang="pt">Quantidade de estudantes alocados em projetos por curso</span>
-        <span lang="en" style="display: none;">Number of students allocated in projects by course</span>
+        {% lng "Quantidade de estudantes alocados em projetos por curso" "Number of students allocated in projects by course" %}
       </h5>
       <div class="table-responsive">
       <table id="AlunosTable" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
               <th class="text-center" style="border-right: solid 3px;">
-                <span lang="pt">Período</span>
-                <span lang="en" style="display: none;">Semester</span>
+                {% lng "Período" "Semester" %}
               </th>
               {% for curso in cursos %}
                 <th class="text-center">{{curso.sigla}}</th>
@@ -154,8 +150,7 @@
         {% if ano == 0 or semestre == 0 %}
           <tr class="item">
             <td class="text-center" style="border-right: solid 3px; border-top: double;">
-              <span lang="pt">Totais</span>
-              <span lang="en" style="display: none;">Totals</span>
+              {% lng "Totais" "Totals" %}
             </td>
               {% for curso in cursos %}
                 <td class="text-center" style="border-top: double;">
@@ -173,8 +168,7 @@
       </table>
       {% if ano == 0 or semestre == 0 %}
         <small>
-          <span lang="pt">Estudantes reprovados e do Capstone avançado contam mais de uma vez</span>
-          <span lang="en" style="display: none;">Failed students and Advanced Capstone students count more than once</span>
+          {% lng "Estudantes reprovados e do Capstone avançado contam mais de uma vez" "Failed students and Advanced Capstone students count more than once" %}
         </small>
       {% endif %}
       </div>

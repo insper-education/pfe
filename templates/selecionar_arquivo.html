@@ -54,8 +54,7 @@
 
 <div class="file-input-container">
   <label for="{{arquivo_nome}}" class="file-label">
-      <span lang="pt">Selecionar Arquivo</span>
-      <span lang="en" style="display: none;">Choose File</span>
+      {% lng "Selecionar Arquivo" "Choose File" %}
   </label>
   <input id="{{arquivo_nome}}" class="file-input" type="file" 
          name="{{arquivo_nome}}"
@@ -64,8 +63,9 @@
          >
   <div id="file-name" class="file-name">
     <span class="name"></span>
-    <span lang="pt" class="noname">Nenhum arquivo selecionado</span>
-    <span lang="en" class="noname" style="display: none;">No file chosen</span>
+    <span class="noname">
+      {% lng "Nenhum arquivo selecionado" "No file chosen" %}
+    </span>
   </div>
 </div>
 

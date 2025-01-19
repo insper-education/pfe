@@ -136,14 +136,12 @@
     {% endfor %}
 
   {% else %}
-    <p lang="pt">Não existem projetos fechados nesse semestre.</p>
-    <p lang="en">There are no closed projects in this semester.</p>
+    {% lng "Não existem projetos fechados nesse semestre." "There are no closed projects in this semester." %}
     <br><br>
   {% endif %}
 
   <br>
-  <b lang="pt">Total de projetos:</b>
-  <b lang="en">Total of projects:</b>
+  <b>{% lng "Total de projetos:" "Total of projects:" %}</b>
   {{projetos|length}}<br>
   <br><br>
     </div>
@@ -156,8 +154,7 @@
   <h5>Links:</h5>
   <ul>
     <li><a href="{% url 'projetos_fechados' %}">
-      <span lang="pt">Visualizar Projetos Fechados</span>
-      <span lang="en">View Closed Projects</span>
+      {% lng "Visualizar Projetos Fechados" "View Closed Projects" %}
     </a></li>
   </ul>
 

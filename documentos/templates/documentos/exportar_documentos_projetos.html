@@ -22,9 +22,7 @@
   
     <div class="atualizar">
 
-      <span lang="pt">Total de Projetos</span>
-      <span lang="en">Total of Projects</span>
-      = {{projetos.count}} 
+      {% lng "Total de Projetos" "Total of Projects" %} = {{projetos.count}} 
               
       <script>
         function carrega_pagina() {};
@@ -37,12 +35,12 @@
 
     {% comment %} <input type="submit" value="Exportar" class="btn btn-primary" id="exportButton"> {% endcomment %}
     <button type="submit" class="btn btn-primary" id="exportButton">
-      <span lang="pt">Exportar</span>
-      <span lang="en">Export</span>
+      {% lng "Exportar" "Export" %}
     </button>
 
-    <small lang="pt">Após clicar no botão, aguarde o arquivo. Pode demorar vários segundos para o download começar.</small>
-    <small lang="en">After clicking the button, wait for the file. It may take several seconds for the download to start.</small>
+    <small>
+      {% lng "Após clicar no botão, aguarde o arquivo. Pode demorar vários segundos para o download começar." "After clicking the button, wait for the file. It may take several seconds for the download to start." %}
+    </small>
 
   </form>
 

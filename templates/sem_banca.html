@@ -15,8 +15,7 @@
           <div>
             {% include "cabecalho_projeto.html" with com_tit_original=True %}
             <br>
-            <b lang="pt">Mensagem:</b>
-            <b lang="en">Message:</b>
+            <b>{% lng "Mensagem" "Message" %}:</b>
             <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
               data-url="{% url 'mensagem_email' 'banca_projeto' projeto.pk %}" href="{% url 'mensagem_email' 'banca_projeto' projeto.pk %}"> 
               avaliadores
@@ -28,8 +27,7 @@
               data-url="{% url 'bancas_criar' %}" href="{% url 'bancas_criar'%}">
               <button class="btn btn-primary mb-1"
               {% if user.tipo_de_usuario != 4 and user != projeto.orientador.user %}disabled{% endif %}>
-                <span lang="pt">Criar</span>
-                <span lang="en">Create</span>
+                {% lng "Criar" "Create" %}
               </button>
             </a>
           </div>

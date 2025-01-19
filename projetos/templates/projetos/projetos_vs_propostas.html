@@ -22,13 +22,17 @@
         <canvas id="bar-projetos"></canvas>
       </div>
             
-      <small lang="pt">
-          <p>Recebemos <b>{{total_propostas}}</b> propostas de projetos no total.</p>
-          <p>Realizados <b>{{total_projetos}}</b> projetos no total.</p>
-      </small>
-      <small lang="en">
-          <p>Received <b>{{total_propostas}}</b> project proposals.</p>
-          <p>Carried out <b>{{total_projetos}}</b> projects.</p>
+      <small>
+        <p>
+          {% lng "Recebemos" "Received" %}
+          <b>{{total_propostas}}</b>
+          {% lng "propostas de projetos no total." "project proposals." %}
+        </p>
+        <p>
+          {% lng "Realizados" "Carried out" %}
+          <b>{{total_projetos}}</b>
+          {% lng "projetos no total." "projects." %}
+        </p>
       </small>
       <br>
 
@@ -37,19 +41,17 @@
       </div>
       
       <small lang="pt">
-          <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
-          <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
-          <br><p>Obs: Dados de prospecção são em geral incompletos e baseados apenas nas anotações armazenadas.</p>
+        <p>Recebemos propostas de <b>{{total_org_propostas}}</b> organizações distintas.</p>
+        <p>Realizados projetos com <b>{{total_org_projetos}}</b> organizações distintas.</p>
+        <br><p>Obs: Dados de prospecção são em geral incompletos e baseados apenas nas anotações armazenadas.</p>
       </small>
       <small lang="en">
-          <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
-          <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
-          <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
+        <p>Proposals received from <b>{{total_org_propostas}}</b> differente organizations.</p>
+        <p>Projects carried out from  <b>{{total_org_projetos}}</b> different organizations.</p>
+        <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
       </small>
       <br><br>
-
     </div>
-
   </div>
 
   <script>
@@ -60,47 +62,46 @@
           labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
           datasets: [
             {
-                label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
-                backgroundColor: "#8ebed2",
-                data: [{% for num in num_propostas %}{{num}}, {% endfor %}],
-                projetos: [
-                    {% for proj in nome_propostas %}
-                        [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
-                    {% endfor %}
-                ],
+              label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
+              backgroundColor: "#8ebed2",
+              data: [{% for num in num_propostas %}{{num}}, {% endfor %}],
+              projetos: [
+                  {% for proj in nome_propostas %}
+                    [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
+                  {% endfor %}
+              ],
             }, 
             {
-                label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
-                backgroundColor: "#656efd",
-                data: [{% for num in num_projetos %}{{num}}, {% endfor %}],
-                projetos: [
-                    {% for proj in nome_projetos %}
-                        [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.get_titulo}}`],{% endfor %}],
-                    {% endfor %}
-                ],
+              label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
+              backgroundColor: "#656efd",
+              data: [{% for num in num_projetos %}{{num}}, {% endfor %}],
+              projetos: [
+                {% for proj in nome_projetos %}
+                  [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.get_titulo}}`],{% endfor %}],
+                {% endfor %}
+              ],
             }, 
           ]
         },
         options: {
             legend: { display: true },
             title: {
-                display: true,
-                text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
+              display: true,
+              text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
             }, 
             plugins: {
                 datalabels: {
-                    color: "#000000",
-                    font: function(context) {
-
-                        var dataset_visibeis = context.chart.getVisibleDatasetCount()
-                        var width = context.chart.width;
-                        var size = 1.0;
-                        if(dataset_visibeis>0) {
-                            size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
-                        }
-                        
-                        return {size: size};
+                  color: "#000000",
+                  font: function(context) {
+                    var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                    var width = context.chart.width;
+                    var size = 1.0;
+                    if(dataset_visibeis>0) {
+                        size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
                     }
+                    
+                    return {size: size};
+                  }
                 },
             },
             tooltips: {
@@ -121,57 +122,56 @@
         labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
         datasets: [
             {
-                label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
-                backgroundColor: "#ffe0f0",
-                data: [{% for num in org_prospectadas %}{{num}}, {% endfor %}]
+              label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
+              backgroundColor: "#ffe0f0",
+              data: [{% for num in org_prospectadas %}{{num}}, {% endfor %}]
             }, 
             {
-                label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
-                backgroundColor: "#e56883",
-                data: [{% for num in org_propostas %}{{num}}, {% endfor %}]
+              label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
+              backgroundColor: "#e56883",
+              data: [{% for num in org_propostas %}{{num}}, {% endfor %}]
             },
             {
-                label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
-                backgroundColor: "#f84359",
-                data: [{% for num in org_projetos %}{{num}}, {% endfor %}]
+              label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
+              backgroundColor: "#f84359",
+              data: [{% for num in org_projetos %}{{num}}, {% endfor %}]
             },
         ]
         },
         options: {
             legend: { display: true },
             title: {
-                display: true,
-                text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
+              display: true,
+              text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
             },
             plugins: {
-                datalabels: {
-                    color: '#000000',
-                    font: function(context) {
-                        var dataset_visibeis = context.chart.getVisibleDatasetCount()
-                        var width = context.chart.width;
-                        var size = 1.0;
-                        if(dataset_visibeis>0) {
-                            size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
-                        }
-                        return {
-                            size: size
-                        };
-                    }
-                },
-                
+              datalabels: {
+                color: '#000000',
+                font: function(context) {
+                  var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                  var width = context.chart.width;
+                  var size = 1.0;
+                  if(dataset_visibeis>0) {
+                      size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                  }
+                  return {
+                      size: size
+                  };
+                }
+              },
             }
         }
     };
 
 
     function carrega_semestre() {  
-        // Chart da quantidade de projetos
-        var bar_projetos = document.getElementById("bar-projetos").getContext("2d");
-        window.projeto = new Chart(bar_projetos, config_projetos);
+      // Chart da quantidade de projetos
+      var bar_projetos = document.getElementById("bar-projetos").getContext("2d");
+      window.projeto = new Chart(bar_projetos, config_projetos);
 
-        // Chart da quantidade de organizacoes
-        var bar_organizacoes = document.getElementById("bar-organizacoes").getContext("2d");
-        window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
+      // Chart da quantidade de organizacoes
+      var bar_organizacoes = document.getElementById("bar-organizacoes").getContext("2d");
+      window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
     }
 
     window.onload = carrega_semestre

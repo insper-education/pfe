@@ -17,8 +17,7 @@
     <a href="{% url 'acompanhamento_view'%}" class="open-acompanhamento" style="cursor:pointer;"
     data-url="{% url 'acompanhamento_view' %}">
       <i class="fas fa-plus"></i>
-      <span lang="pt">Adicionar Acompanhamento</span>
-      <span lang="en" style="display: none;">Add Follow-up</span>
+      {% lng "Adicionar Acompanhamento" "Add Follow-up" %}
     </a>
   </span>
 
@@ -26,10 +25,10 @@
     <table id="AcompanhamentoTable" class="tabela-padrao">
       <thead>
       <tr>
-        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')"><span lang="pt">Autor</span><span lang="en">Author</span></th>
-        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')"><span lang="pt">Organização</span><span lang="en">Organization</span></th>
-        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(3)')"><span lang="pt">Data</span><span lang="en">Date</span></th></th>
-        <th class="text-center"><span lang="pt">Mensagem</span><span lang="en">Message</span></th>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(1)')">{% lng "Autor" "Author" %}</th>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(2)')">{% lng "Organização" "Organization" %}</th>
+        <th onclick="sort('#AcompanhamentoTable', '.item', 'td:nth-child(3)')">{% lng "Data" "Date" %}</th></th>
+        <th class="text-center">{% lng "Mensagem" "Message" %}</th>
       </tr></thead>  
       <tbody> 
       {% for acompanhamento in acompanhamentos %} 
@@ -40,7 +39,7 @@
                 {{ acompanhamento.autor.get_full_name }}
               </a>
             {% else %}
-              <span lang="pt">Anônimo</span><span lang="en">Anonymous</span>
+              {% lng "Anônimo" "Anonymous" %}
             {% endif %}
           </td>
           <td>
@@ -49,7 +48,7 @@
                 {{ acompanhamento.autor.parceiro.organizacao }}
               </a>
             {% else %}
-              <span lang="pt">Anônimo</span><span lang="en">Anonymous</span>
+              {% lng "Anônimo" "Anonymous" %}
             {% endif %}
           </td>
           <td>{{acompanhamento.data|date:"Y.m.d"}}</td>

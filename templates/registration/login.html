@@ -28,14 +28,7 @@
       <div class="col-sm-9 col-md-7 col-lg-7">
         <div class="card shadow-sm">
           <div class="card-header text-center bg-primary text-white">
-            <h2>
-              <span lang="pt">
-                Autenticação de Usuário
-              </span>
-              <span lang="en" style="display: none;">
-                User Authentication
-              </span>
-            </h2>
+            <h2>{% lng "Autenticação de Usuário" "User Authentication" %}</h2>
           </div>
           <div class="card-body">
             <form method="post">
@@ -79,14 +72,12 @@
               </div>
             </form>
             <p class="text-center mt-3"><a href="{% url 'password_reset' %}">
-              <span lang="pt">Criar/Recriar senha</span>
-              <span lang="en" style="display: none;">Create/Reset password</span>
+              {% lng "Criar/Recriar senha" "Create/Reset password" %}
             </a></p>
           </div>
           <div class="card-footer text-muted text-center">
             <p class="mb-0">
-              <span lang="pt">Atenção: você não deve colocar o @insper.edu.br ou @al.insper.edu.br, coloque somente o seu login.</span>
-              <span lang="en" style="display: none;">Attention: you should not put the @insper.edu.br or @al.insper.edu.br, put only your login.</span>
+              {% lng "Atenção: você não deve colocar o @insper.edu.br ou @al.insper.edu.br, coloque somente o seu login." "Attention: you should not put the @insper.edu.br or @al.insper.edu.br, put only your login." %}
             </p>
           </div>
         </div>

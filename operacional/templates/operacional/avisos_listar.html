@@ -14,7 +14,7 @@
 
 {% block content %}
 
-  <label for="filter"><span lang="pt">Filtro</span><span lang="en" style="display:none;">Filter</span>:</label>
+  <label for="filter">{% lng "Filtro" "Filter" %}:</label>
   <select id="filter" class="filter" data-tableId="projetos">
     <option value="todos" {% if filtro == "todos" %}selected="selected"{% endif %}
      class="troca_lingua" data-pt="todos" data-en="all">todos</option>
@@ -53,8 +53,7 @@
               </span>
             </td>
             <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
-              <span lang="pt">{{a.evento.tipo_evento.nome}}</span>
-              <span lang="en" style="display:none;">{{a.evento.tipo_evento.nome_en}}</span>
+              {% lng a.evento.tipo_evento.nome a.evento.tipo_evento.nome_en %}
             </td>
           </tr>
 
@@ -95,8 +94,7 @@
                 <span class="texto-longo">{{a.data}}</span>
                 <span class="texto-curto">{{a.data|date:"d/m/y"}}</span>
               {% else %}
-                <span lang="pt">Sem evento no semestre</span>
-                <span lang="en" style="display:none;">No event this semester</span>
+                {% lng "Sem evento no semestre" "No event this semester" %}
               {% endif %}
             </label>
           </td>
@@ -131,20 +129,17 @@
         {% endif %}
 
       {% empty %}
-        <p lang="pt">Não existem avisos.</p>
-        <p lang="en" style="display:none;">There are no notices.</p>
+        <p>{% lng "Não existem avisos." "There are no notices." %}</p>
       {% endfor %}
     {% include "tabelas_bottom.html" %}
 
     <div class="mt-4">
       <a href="{% url 'cria_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
-        <span lang="pt">Cria Aviso</span>
-        <span lang="en" style="display:none;">Create Notice</span>
+        {% lng "Cria Aviso" "Create Notice" %}
       </a>
       <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
         onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
-        <span lang="pt">Reenviar Avisos do Dia</span>
-        <span lang="en" style="display:none;">Resend Daily Notices</span>
+        {% lng "Reenviar Avisos do Dia" "Resend Daily Notices" %}
       </a>
     </div>
 

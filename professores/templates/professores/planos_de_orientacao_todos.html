@@ -87,7 +87,7 @@
             <strong>{% lng "Projeto" "Project" %}:</strong>
             <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
             {% if projeto.organizacao %}<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">[{{ projeto.organizacao.nome }}]</a>{% else %}[ORGANIZAÇAO NÃO DEFINIDA]{% endif %}
-            <br><strong lang="pt">Orientador:</strong><strong lang="en">Advisor:</strong>
+            <br><b>{% lng "Orientador" "Advisor" %}:</b>
               {% if projeto.orientador %}
                 <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador}}</a>
               {% else %}
@@ -103,10 +103,11 @@
     </table>
 
     <p>&nbsp;</p>
-    <strong lang="pt">Número de Planos de Orientação:</strong><strong lang="en">Number of Orientation Plans:</strong>
+    
+    <b>{% lng "Número de Planos de Orientação:" "Number of Orientation Plans:" %}:</b>
     {{projetos|length}}<br>
-    <span lang="pt">Submetidos</span><span lang="en">Submitted</span>: <span id="submetidos"></span><br>
-    <span lang="pt">Ausentes</span><span lang="en">Missing</span>: <span id="ausentes"></span><br>
+    {% lng "Submetidos" "Submitted" %}: <span id="submetidos"></span><br>
+    {% lng "Ausentes" "Missing" %}: <span id="ausentes"></span><br>
     <script>
       tsubmetidos = Object.keys(submetidos).length;
       tausentes = Object.keys(ausentes).length

@@ -15,8 +15,7 @@
     <h3>[{{alocado.projeto.organizacao}}]
        {{alocado.projeto.titulo_final}} ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})</h3>
     <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>
-      <span lang="pt">Título original da proposta</span>
-      <span lang="en" style="display:none">Original title of the proposal</span>
+      {% lng "Título original da proposta" "Original title of the proposal" %}
     </b>: {{alocado.projeto.proposta.titulo}}</small><br>
   {% else %}
     <h3>{{alocado.projeto.get_titulo}} [{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h3>
@@ -28,8 +27,7 @@
   <form {% if alocado.projeto %}action="{% url 'upload_estudantes_projeto' alocado.projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="titulo_final"><strong>
-      <span lang="pt">Título Final do Projeto</span>
-      <span lang="en" style="display:none">Final Title of the Project</span>
+      {% lng "Título Final do Projeto" "Final Title of the Project" %}
     </strong></label><br>
     <textarea id="titulo_final" name="titulo_final" rows="1" maxlength="{% max_length Projeto 'titulo_final' %}"
     placeholder="Indique o título final do projeto usado no relatório (se diferente do título original da proposta)"
@@ -37,8 +35,7 @@
     <br><br>
 
     <label for="resumo"><strong>
-      <span lang="pt">Resumo (português)</span>
-      <span lang="en" style="display:none">Resumo (portuguese)</span>
+      {% lng "Resumo (português)" "Resumo (portuguese)" %}
     </strong></label><br>
     <textarea id="resumo" name="resumo" rows="6" maxlength="{% max_length Projeto 'resumo' %}"
     placeholder="Informe o resumo em português do projeto do relatório. Copie diretamente do seu relatório."
@@ -46,8 +43,7 @@
     <br><br>
 
     <label for="abstract"><strong>
-      <span lang="pt">Abstract (inglês)</span>
-      <span lang="en" style="display:none">Abstract (english)</span>
+      {% lng "Abstract (inglês)" "Abstract (english)" %}
     </strong></label><br>
     <textarea id="abstract" name="abstract" rows="6" maxlength="{% max_length Projeto 'abstract' %}"
     placeholder="Informe o resumo em inglês do projeto do relatório. Copie diretamente do seu relatório."
@@ -55,22 +51,14 @@
     <br><br>
 
     <label for="palavras_chave"><strong>
-      <span lang="pt">Palavras-chave</span>
-      <span lang="en" style="display:none">Keywords</span>
+      {% lng "Palavras-chave" "Keywords" %}
     </strong></label><br>
     <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length Projeto 'palavras_chave' %}"
     placeholder="Informe as palavras-chave do projeto do relatório. Copie diretamente do seu relatório."
     >{% if alocado.projeto.palavras_chave %}{{alocado.projeto.palavras_chave}}{% endif %}</textarea>
     <br>
     <small>
-      <span lang="pt">
-        Ao final do semestre, inserir/atualizar o resumo, abstract e palavras-chave para indexação do relatório.
-        Copie diretamente do seu relatório.
-      </span>
-      <span lang="en" style="display:none">
-        At the end of the semester, insert/update the summary, abstract and keywords for indexing the report.
-        Copy directly from your report.
-      </span>
+      {% lng "Ao final do semestre, inserir/atualizar o resumo, abstract e palavras-chave para indexação do relatório. Copie diretamente do seu relatório." "At the end of the semester, insert/update the summary, abstract and keywords for indexing the report. Copy directly from your report." %}
     </small>
     <div class="text-right">
       <input class="btn btn-primary btn-sm" type="submit" name="Salvar" value="Salvar" {% if professor or not alocado.projeto %}disabled{% endif %}>
@@ -84,16 +72,14 @@
   {% csrf_token %}
 
     <label for="site"><b>
-      <span lang="pt">Site do projeto (opcional)</span>
-      <span lang="en" style="display:none">Project site (optional)</span>
+      {% lng "Site do projeto (opcional)" "Project site (optional)" %}
     </b></label>
     {% with site=alocado.projeto.get_site %}
     <div class="row">
       <div class="col-md-6">
         {% if site %}
           <i>
-            <span lang="pt">site estático:</span>
-            <span lang="en" style="display:none">static site:</span>
+            {% lng "site estático:" "static site:" %}
           </i>
           <a style="background-color: #FFFFFF; padding: 4px;"
              href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
@@ -125,8 +111,7 @@
         {% endif %}
         <br>
         <div style="font-size: 12px; line-height:1.0;">
-          <span lang="pt">carrega um arquivo .zip com um site estático para o projeto</span>
-          <span lang="en" style="display:none">uploads a .zip file with a static site for the project</span>
+          {% lng "carrega um arquivo .zip com um site estático para o projeto" "uploads a .zip file with a static site for the project" %}
         </div>
         <br>
       </div>
@@ -135,14 +120,12 @@
     
 
     <label for="pastas_do_projeto"><strong>
-      <span lang="pt">Pastas do projeto (opcional)</span>
-      <span lang="en" style="display:none">Project folders (optional)</span>
+      {% lng "Pastas do projeto (opcional)" "Project folders (optional)" %}
     </strong></label><br>
     <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
     >{% if alocado.projeto.pastas_do_projeto %}{{alocado.projeto.pastas_do_projeto}}{% endif %}</textarea>
     <div style="font-size: 12px; line-height:1.0;">
-      <span lang="pt">Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado)</span>
-      <span lang="en" style="display:none">Links to repositories with project data/code (for advisor access / keep private)</span>
+      {% lng "Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado)" "Links to repositories with project data/code (for advisor access / keep private)" %}
     </div>
 
     <div class="text-right">
@@ -154,26 +137,22 @@
 
 <div>
   <strong>
-    <span lang="pt">Descrição da proposta (escrito pela organização parceira):</span>
-    <span lang="en" style="display:none">Proposal description (written by the partner organization):</span>
+    {% lng "Descrição da proposta (escrito pela organização parceira):" "Proposal description (written by the partner organization):" %}
   </strong> {{alocado.projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
 
   {% if alocado.projeto.proposta.expectativas %}
     <strong>
-      <span lang="pt">Expectativas de resultados/entregas:</span>
-      <span lang="en" style="display:none">Expectations of results/deliverables:</span>
+      {% lng "Expectativas de resultados/entregas:" "Expectations of results/deliverables:" %}
     </strong> {{alocado.projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
   {% endif %}
 
   {% if alocado.projeto.proposta.recursos %}
     <strong>
-      <span lang="pt">Recursos a serem disponibilizados aos Estudantes:</span>
-      <span lang="en" style="display:none">Resources to be made available to Students:</span>
+      {% lng "Recursos a serem disponibilizados aos Estudantes:" "Resources to be made available to Students:" %}
     </strong> {{ alocado.projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
     {% if alocado.projeto.proposta.observacoes %}
       <strong>
-        <span lang="pt">Outras observações:</span>
-        <span lang="en" style="display:none">Other observations:</span>
+        {% lng "Outras observações:" "Other observations:" %}
       </strong> {{ alocado.projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     {% endif %}
   {% endif %}
@@ -185,13 +164,11 @@
   {% endif %}
 
   <h5>
-    <span lang="pt">Organização:</span>
-    <span lang="en" style="display:none">Organization:</span>
+    {% lng "Organização:" "Organization:" %}
     {{ alocado.projeto.organizacao.nome }}
   </h5>
   <strong>
-    <span lang="pt">endereço:</span>
-    <span lang="en" style="display:none">address:</span>
+    {% lng "endereço:" "address:" %}
   </strong> {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
   <strong>website:</strong> <a href="{{ alocado.projeto.organizacao.website|add_http }}">{{ alocado.projeto.organizacao.website }}</a><br>
 </div>
@@ -199,8 +176,7 @@
 <div>
   {% if alocado.projeto.orientador %}
     <h5>
-      <span lang="pt">Orientador{% if alocado.projeto.orientador.user.genero == 'F' %}a{% endif %}</span>
-      <span lang="en" style="display:none">Advisor</span>
+      {% lng_g alocado.projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}
     </h5>
     <ul>
       <li><a href="mailto:{{alocado.projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}}</a>
@@ -211,8 +187,7 @@
   {% endif %}
 
   <h5>
-    <span lang="pt">Estudantes do Grupo</span>
-    <span lang="en" style="display:none">Group Students</span>
+    {% lng "Estudantes do Grupo" "Group Students" %}
   </h5>
   <ul>
     {% for membro in alocado.projeto.alocacao_set.all %} 

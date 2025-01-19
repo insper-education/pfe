@@ -17,22 +17,19 @@
 {% block content %}
   
   <strong>
-    <span lang="pt">Título:</span>
-    <span lang="en" style="display: none;">Title:</span>
+    {% lng "Título:" "Title:" %}
   </strong>
   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
     {{projeto.titulo_final}}<br>
     <small style="display: inline-block; padding-left: 0.7em;">
-      <span lang="pt">Título original da proposta:</span>
-      <span lang="en" style="display: none;">Original title of the proposal:</span>
+      {% lng "Título original da proposta:" "Original title of the proposal:" %}
       {{projeto.proposta.titulo}}</small><br>
   {% else %}
     {{projeto.get_titulo}}
   {% endif %}<br>
 
   <strong>
-    <span lang="pt">Semestre:</span>
-    <span lang="en" style="display: none;">Semester:</span>
+    {% lng "Semestre:" "Semester:" %}
   </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
@@ -47,8 +44,7 @@
   {% if projeto.abstract %}
     <br><div class="abstract" style="margin-top: 8px;">
       <strong>
-        <span lang="pt">Resumo em Inglês do Projeto:</span>
-        <span lang="en" style="display: none;">Project Abstract:</span>
+        {% lng "Resumo em Inglês do Projeto:" "Project Abstract:" %}
       </strong>
       {{ projeto.abstract|linebreaks }}
     </div>
@@ -57,8 +53,7 @@
   {% if projeto.palavras_chave %}
     <br><div class="palavras_chave" style="margin-top: 8px;">
       <strong>
-        <span lang="pt">Palavras-chave:</span>
-        <span lang="en" style="display: none;">Keywords:</span>
+        {% lng "Palavras-chave:" "Keywords:" %}
       </strong>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
@@ -75,8 +70,7 @@
   {% if projeto.pastas_do_projeto %}
     <br><br>
     <h4>
-      <span lang="pt">Pastas do projeto:</span>
-      <span lang="en" style="display: none;">Project repositories:</span>
+      {% lng "Pastas do projeto:" "Project repositories:" %}
     </h4>
     <div style="display: flex; align-items: flex-start;">
       <div>&#128193;&nbsp;</div>
@@ -95,8 +89,7 @@
   <h4 data-toggle="tooltip" data-html="true" animation="true" title="
      Nome da organização/empresa que está propondo o projeto.
     ">
-    <span lang="pt">Organização:</span>
-    <span lang="en" style="display: none;">Organization:</span>
+    {% lng "Organização:" "Organization:" %}
     {% if projeto.organizacao and projeto.organizacao.nome %}
       {{projeto.organizacao.nome}}
     {% elif projeto.proposta.nome_organizacao %}
@@ -110,8 +103,7 @@
   <p>
     {% if projeto.organizacao and projeto.organizacao.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço da matriz da organização parceira.">
-        <span lang="pt">Endereço Matriz:</span>
-        <span lang="en" style="display: none;">Headquarters Address:</span>
+        {% lng "Endereço Matriz:" "Headquarters Address:" %}
       </strong>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
@@ -119,8 +111,7 @@
       </a>
     {% elif projeto.proposta.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço para desenvolver o projeto.">
-        <span lang="pt">Endereço Local:</span>
-        <span lang="en" style="display: none;">Local Address:</span>
+        {% lng "Endereço Local:" "Local Address:" %}
       </strong>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.endereco}}">
@@ -151,8 +142,7 @@
   {% if projeto.proposta.descricao %}
     <p>
       <strong data-toggle="tooltip" data-html="true" animation="true" title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
-        <span lang="pt">Descrição da proposta:</span>
-        <span lang="en" style="display: none;">Proposal Description:</span>
+        {% lng "Descrição da proposta:" "Proposal Description:" %}
       </strong>
       {{projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -167,8 +157,7 @@
       Exemplos de resultados ou entregas esperadas.
       Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
       Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no Capstone.">
-        <span lang="pt">Expectativas de resultados/entregas:</span>
-        <span lang="en" style="display: none;">Expected results/deliverables:</span>
+        {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
       </strong>
       {{projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
@@ -183,8 +172,7 @@
       Recursos que as organizações informaram que irão disponibilizar para os estudantes.
       O Capstone irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibilidade.
       Não existe nenhuma garantia que o Capstone irá suprir material de consumo para os estudantes, em geral não há recursos para isso.">
-        <span lang="pt">Recursos a serem disponibilizados:</span>
-        <span lang="en" style="display: none;">Resources to be provided:</span>
+        {% lng "Recursos a serem disponibilizados:" "Resources to be provided:" %}
       </strong>
       {{projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -193,8 +181,7 @@
   {% if projeto.proposta.observacoes %}
     <p>
       <strong data-toggle="tooltip" data-html="true" animation="true" title="Outras observações que a organização parceira considerou relevante para informar aos estudantes.">
-        <span lang="pt">Outras observações:</span>
-        <span lang="en" style="display: none;">Other observations:</span>
+        {% lng "Outras observações:" "Other observations:" %}
       </strong>
       {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
@@ -203,8 +190,7 @@
   {% if projeto.proposta.anexo %}
     <p>
       <strong>
-        <span lang="pt">Anexo:</span>
-        <span lang="en" style="display: none;">Attachment:</span>
+        {% lng "Anexo:" "Attachment:" %}
       </strong>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
     </p><br>
@@ -213,15 +199,13 @@
   <!-- Campo opcional -->
   {% if projeto.organizacao and projeto.organizacao.informacoes %}
     <p><strong>
-      <span lang="pt">Informações sobre a empresa:</span>
-      <span lang="en" style="display: none;">Information about the company:</span>
+      {% lng "Informações sobre a empresa:" "Information about the company:" %}
     </strong>
     {{projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
     <br></p>
   {% elif projeto.proposta and projeto.proposta.descricao_organizacao %}
     <p><strong>
-      <span lang="pt">Informações sobre a empresa:</span>
-      <span lang="en" style="display: none;">Information about the company:</span>
+      {% lng "Informações sobre a empresa:" "Information about the company:" %}
     </strong>
     {{projeto.proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     <br></p>
@@ -230,8 +214,7 @@
   <!-- Campo opcional -->
   {% if projeto.proposta.departamento %}
     <p><strong>
-      <span lang="pt">Informações sobre o departamento na organização:</span>
-      <span lang="en" style="display: none;">Information about the department in the organization:</span>
+      {% lng "Informações sobre o departamento na organização:" "Information about the department in the organization:" %}
     </strong>
     {{projeto.proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
