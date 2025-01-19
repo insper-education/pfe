@@ -443,7 +443,7 @@ def estudante_feedback_geral(request, usuario):
         "titulo": {"pt": "Formulário de Feedback dos Estudantes", "en": "Student Feedback Form"},
         "usuario": usuario,
         "projeto": projeto,
-        "mensagem": mensagem,
+        "mensagem_aviso": mensagem,
     }
     return render(request, "estudantes/estudante_feedback.html", context)
 
@@ -569,7 +569,7 @@ def avaliacao_pares(request, momento):
         context["colegas"] = colegas
 
     else:  # Supostamente professores
-        context["mensagem"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
         context["colegas"] = [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
 
     context["vencido"] = prazo
@@ -627,7 +627,7 @@ def informacoes_adicionais(request):
         }
     else:  # Supostamente professores
         context = {
-            "mensagem": "Você não está cadastrado como estudante.",
+            "mensagem_aviso": "Você não está cadastrado como estudante.",
             "vencido": True,
         }
     
@@ -676,7 +676,7 @@ def minhas_bancas(request):
         
         context["bancas"] =  bancag | bancai
     else:
-        context["mensagem"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
     return render(request, "estudantes/minhas_bancas.html", context)
 
 
@@ -717,7 +717,7 @@ def relato_quinzenal(request):
 
         if not alocacao:
             context["prazo"] = None
-            context["mensagem"] = "Você não está alocado em um projeto esse semestre."
+            context["mensagem_aviso"] = "Você não está alocado em um projeto esse semestre."
 
             return render(request, "estudantes/relato_quinzenal.html", context)
 
@@ -764,7 +764,7 @@ def relato_quinzenal(request):
         context["texto_relato"] = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
 
     else:  # Supostamente professores
-        context["mensagem"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
 
     return render(request, "estudantes/relato_quinzenal.html", context)
 
@@ -819,7 +819,7 @@ def submissao_documento(request):
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
             projeto = Projeto.objects.filter(orientador=request.user.professor).last()
-            context["mensagem"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
+            context["mensagem_aviso"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
     else:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         projeto = alocacao.projeto if alocacao else None

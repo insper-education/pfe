@@ -24,15 +24,6 @@
     <button class="btn btn-primary mb-1 mt-2" type="submit">
       {% lng "Cadastrar Disciplina" "Register Course" %}
     </button>
-    
-    <br>
-    {% if mensagem %}
-      <span id="message" class="red-bold">{{mensagem|linebreaks}}</span>
-      <script>
-        setTimeout(function() {$("#message").fadeOut("fast");}, 5000);
-      </script>
-    {% endif %}
-    <br>
 
     {% include "tabelas_top_ml.html" with tabela="Disciplinas" cabecalhos=cabecalhos tabela_simples=True %}
       {% for disciplina in disciplinas %}

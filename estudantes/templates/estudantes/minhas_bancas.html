@@ -14,10 +14,6 @@
 
 {% block content %}
 
-  {% if mensagem %}
-    <h5 class="red-bold">{{mensagem}}</h5>
-  {% endif %}
-
   {% if bancas %}
     {% for banca in bancas.reverse %} 
       <div class="div_arredondado">

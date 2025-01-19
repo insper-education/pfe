@@ -51,11 +51,6 @@
 {% endblock %}
 
 {% block content %}
-    <br>
-
-  {% if mensagem %}
-    <h5 class="red-bold">{{mensagem}}</h5>
-  {% endif %}
 
   <form method="post"> {% csrf_token %}
 

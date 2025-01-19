@@ -30,11 +30,6 @@
 
 {% block content %}
 
-  {% if mensagem %}
-    <span class="red-bold">{{mensagem|safe|linebreaks}}</span><br>
-  {% endif %}
-
-
   {% if banca %}
     <form method="post" id="avaliacaoform" enctype="multipart/form-data">
       {% csrf_token %}

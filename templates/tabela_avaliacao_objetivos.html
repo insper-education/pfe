@@ -171,6 +171,7 @@
   {% endfor %}
 
 {% else %}
-  <span lang="pt" class="red-bold">Não foram definidos Objetivos de Aprendizagem para essa Avaliação.</span><br>
-  <span lang="en" class="red-bold">No Learning Goals were defined for this Assessment.</span><br>
+  <span class="red-bold">
+    {% lng "Não foram definidos Objetivos de Aprendizagem para essa Avaliação." "No Learning Goals were defined for this Assessment." %}
+  </span><br>
 {% endif %}

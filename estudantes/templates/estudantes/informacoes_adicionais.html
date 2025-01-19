@@ -24,8 +24,7 @@
 {% endblock %}
 
 {% block content %}
-  
-  {% if mensagem %}<h6 class="red-bold">{{mensagem}}</h6>{% endif %}
+    
   {% if vencido and user.tipo_de_usuario == 1 %}<h6 class="red-bold">Prazo vencido. Você não pode editar seus dados!</h6>{% endif %}
 
   <form method="post"> {% csrf_token %}  

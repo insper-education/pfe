@@ -570,7 +570,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
             "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
             "today": datetime.datetime.now(),
-            "mensagem": mensagem,
+            "mensagem_aviso": mensagem,
             "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
         }
         return render(request, "professores/banca_avaliar.html", context=context)

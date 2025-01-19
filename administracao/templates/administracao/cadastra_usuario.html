@@ -16,21 +16,14 @@
 
 {% block content %}
 
-  {% if mensagem %}
-    <div style="border: 2px solid red; padding: 4px; width: fit-content;">
-      {{ mensagem|safe|linebreaks }}
-    </div><br>
-  {% endif %}
-
-  {% comment %} <form id="cadastrauser" method="post" enctype="multipart/form-data">{% csrf_token %} {% endcomment %}
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
     {% lng "Selecione o tipo de usuário:" "Select the type of user:" %}
     <br>
-    <label for="estudante"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>&nbsp;{% lng "Estudante" "Student" %}</label>
-    <label for="professor"><input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}>&nbsp;{% lng "Professor" "Professor" %}</label>
-    <label for="funcionario"><input type="radio" class="tipo" name="tipo_de_usuario" id="funcionario" value="funcionario" required {% if tipo == "funcionario"%}checked="checked"{% endif %}>&nbsp;{% lng "Funcionário" "Employee" %}</label>
-    <label for="parceiro"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>&nbsp;{% lng "Parceiro" "Partner" %}</label>
+    <label class="mr-2" for="estudante"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>&nbsp;{% lng "Estudante" "Student" %}</label>
+    <label class="mr-2" for="professor"><input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}>&nbsp;{% lng "Professor" "Professor" %}</label>
+    <label class="mr-2" for="funcionario"><input type="radio" class="tipo" name="tipo_de_usuario" id="funcionario" value="funcionario" required {% if tipo == "funcionario"%}checked="checked"{% endif %}>&nbsp;{% lng "Funcionário" "Employee" %}</label>
+    <label class="mr-2" for="parceiro"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>&nbsp;{% lng "Parceiro" "Partner" %}</label>
     <br><br>
 
     <label for="nome">
@@ -39,13 +32,13 @@
     <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
     
-    <div style="margin-left: 24px;">
-      <label for="pronome_tratamento">
+    <div style="margin: 6px 4px 6px 24px;">
+      <label for="pronome_tratamento" style="margin-top: 6px;">
         {% lng "Pronome de Tratamento (opcional)" "Treatment Pronoun (optional)" %}      
       </label>
       <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
       
-      <label for="nome_social">
+      <label for="nome_social" style="margin-top: 6px;">
         {% lng "Nome Social (opcional)" "Social Name (optional)" %}
       </label>
       <input type="text" size="57" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
@@ -86,12 +79,6 @@
       {% lng "Observações:" "Observations:" %}
     </label><br>
     <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea><br>
-
-
-    {% comment %}
-    <input type="checkbox" id="membro_comite" name="membro_comite" value="True">
-    <label for="membro_comite"> Membro do Comitê</label><br>  
-    {% endcomment %}
 
     <br>
 

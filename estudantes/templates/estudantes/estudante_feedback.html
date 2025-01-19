@@ -37,10 +37,6 @@
 
 {% block content %}
 
-  {% if mensagem %}
-    <h5 style="color:red">{{mensagem|safe}}</h5>
-  {% endif %}
-
   <form action="" method="post"> {% csrf_token %}  
 
       <label for="nome" class="col-form-label">

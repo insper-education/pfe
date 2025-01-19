@@ -53,23 +53,7 @@
 {% endblock %}
 
 {% block content %}
-  
-  {% if mensagem %}
-    <span class="red-bold">{{mensagem|safe|linebreaks}}</span>
-    <br>
-  {% endif %}
 
-  {% comment %}
-  <label for="filter">Edição:</label>
-  <select id="filter" onchange="location = this.options[this.selectedIndex].value;">
-    {% for loop in loop_anos %}
-      <option value="{{loop}}.2" {% if ano == loop and semestre == 2 %}selected{% endif %}>{{loop}}.2</option>
-      <option value="{{loop|add:1}}.1" {% if ano == loop|add:1 and semestre == 1 %}selected{% endif %}>{{loop|add:1}}.1</option>
-    {% endfor %}
-  </select>
-  {% endcomment %}
-
-  {% comment %} class="container-fluid" {% endcomment %}
   <div id="lista_projetos">
   {% if projetos %}
 

@@ -12,25 +12,12 @@
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   {% include "style_display_avaliacoes.html" %}
-
 {% endblock %}
 
 
 {% block content %}
 
-  {% if mensagem %}
-    <span class="red-bold">{{mensagem|linebreaks}}</span>
-    <br>
-  {% endif %}
-
-  {% if projeto %}
-    {% include "cabecalho_projeto.html" with com_email=True %}
-    <br>
-  {% else %}
-    <h4>
-      {% lng "Nenhum projeto encontrado!" "No project found!" %}
-    </h4><br>
-  {% endif %}
+  {% include "cabecalho_projeto.html" with com_email=True %}<br>
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
