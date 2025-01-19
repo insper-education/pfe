@@ -14,15 +14,17 @@
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
   <style>
-    textarea {
+    .obs {
       margin: 0px 10px 6px 10px;
+      width: 99%;
     }
-    ul {
+    .oas {
       list-style-type: none;
-      margin-bottom: 2px;
+      margin-bottom: 12px;
       margin-top: 6px;
+      padding-left: 12px;
     }
-    ul li span {
+    .oas li span {
       display: inline-block;
       min-width: 13em;
     }
@@ -55,56 +57,57 @@
           <div class="div_arredondado">
             
             <b>{{composicao.exame.titulo}} [{{aval_first_name}} {{aval_last_name}}] : <span id="a{{composicao.exame.id}}_media_p{{aval_id}}"></span></b>
-            <ul>
+            <ul class="oas">
               {% with avaliacoes=avaliacoes|pega_tipo:composicao.exame|pega_avaliador:aval_id %}
               {% for peso in composicao.peso_set.all %}
-                <li>
-                  <span>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</span>
-                  {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
-                    <div class="bloco_avali">
-                      {% lng "peso:" "weight:" %}
-                      <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
-                            name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
-                            min="0" max="100" step="any" style="width: 5em;"
-                            value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
-                            {% if not user.admin %}disabled{% endif %}
-                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
-                    </div>
-                    <div class="bloco_avali">
-                      {% lng "nota" "numeric grade" %}:
-                      <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}"
-                            name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
-                            min="0" max="10" step="any" style="width: 4em;"
-                            {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
-                            {% if not user.admin %}disabled{% endif %}
-                            {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
-                    </div>
-                          
-                    <div class="bloco_avali">
-                      {% lng "conceito" "letter grade" %}:
-                      <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
-                              name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+                <li class="pintern">
+                  <span><b>{% if peso.objetivo %}{{peso.objetivo.titulo}}{% else %}Avaliação Única{% endif %}</b></span>
+                  <span class="inputs"> 
+                    {% with objetivo=avaliacoes|pega_objetivo:peso.objetivo %}
+                      <div class="bloco_avali ">
+                        {% lng "peso:" "weight:" %}
+                        <input class="peso" id="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}"
+                              name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
+                              min="0" max="100" step="any" style="width: 5em;"
+                              value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
                               {% if not user.admin %}disabled{% endif %}
-                              {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
-                            {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
-                              <option value="{{x}}">{{x}}</option>
-                            {% endfor %}{% endwith %}
-                      </select>
-                    </div>
+                              {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                      </div>
+                      <div class="bloco_avali">
+                        {% lng "nota" "numeric grade" %}:
+                        <input class="nota" id="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}"
+                              name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
+                              min="0" max="10" step="any" style="width: 4em;"
+                              {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
+                              {% if not user.admin %}disabled{% endif %}
+                              {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
+                      </div>
+                      <div class="bloco_avali">
+                        {% lng "conceito" "letter grade" %}:
+                        <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+                                name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
+                                {% if not user.admin %}disabled{% endif %}
+                                {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
+                              {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
+                                <option value="{{x}}">{{x}}</option>
+                              {% endfor %}{% endwith %}
+                        </select>
+                      </div>
 
-                    <script>
-                      $(function() {
-                          $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
-                            $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val(converteC($(this).val()));
-                          });
-                          $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
-                            $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($(this).val()));
-                          });
-                      })
-                      $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val()));
-                    </script>
+                      <script>
+                        $(function() {
+                            $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
+                              $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val(converteC($(this).val()));
+                            });
+                            $("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").on("change",function() {
+                              $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($(this).val()));
+                            });
+                        })
+                        $("#a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}").val(converteN($("#a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}").val()));
+                      </script>
 
-                  {% endwith %}
+                    {% endwith %}
+                  </span>
                 <br>
                 </li>
               {% endfor %}
@@ -116,14 +119,14 @@
               </div>
               <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" 
                         name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
-                        style="width: 98%;" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+                        class="obs" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
               <div style="margin-top: 6px; margin-left: 10px;">
                 {% lng "Observações para Orientador" "Observations for Advisor" %}:
               </div>
               <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" 
                         name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
-                        style="width: 98%;" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+                        class="obs" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
               <br>
             {% endwith %}

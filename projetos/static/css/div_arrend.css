@@ -37,7 +37,8 @@
 
 .pintern {
   border: 1px solid grey;
-  display:block;
-  margin: 8px 0px 0px 0px;
+  display: block;
+  margin: 6px 0px 0px 0px;
   background-color: #FAFAF3;
+  padding: 2px 4px;
 }
