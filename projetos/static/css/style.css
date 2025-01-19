@@ -8,11 +8,14 @@ textarea {width: 100%;}
 
 /* O espaço padrão é muito grande (uso em vários lugares) */
 ul, ol {
-  /* padding-left: 28px; */
   padding-left: 1.5rem;
   margin-bottom: 0.5rem;
   font-size: 0.94rem;
-  /* margin: 0px 0px 8px 0px; */
+}
+
+li {
+  line-height: 1.2;
+  margin-bottom: 6px;
 }
 
 /* Não me parece uma boa ideia */
