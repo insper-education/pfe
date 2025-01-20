@@ -571,7 +571,7 @@ def tabela_seguros(request):
     tipo_documento = TipoDocumento.objects.get(nome="Seguros")
     seguros = Documento.objects.filter(tipo_documento=tipo_documento)
     context = {
-        "titulo": {"pt": "Seguros Emitidos", "en": "Insurance Policies"},
+        "titulo": {"pt": "Seguros Emitidos", "en": "Insurance Documents"},
         "seguros": seguros,
         }
     return render(request, "documentos/tabela_seguros.html", context)

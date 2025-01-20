@@ -31,7 +31,7 @@
   {% if professor %}
     <h5 style="color: red;">
       {% lng "Mostrando como é a tela, usando qualquer estudante de exemplo." "Showing how the screen looks like, using any student as an example." %}
-    </h5><br><br>
+    </h5><br>
   {% endif %}
 
   {% for alocado in alocados %}
@@ -50,9 +50,7 @@
         {% with notas=alocado|get_notas_alocacao2 %}
           {% if notas %}
             <div>
-              <h5>
-                {% lng "Resultados" "Results" %}
-              </h5>
+              <h5>{% lng "Resultados" "Results" %}</h5>
               <div style="background: #FFFFFF; padding: 6px;">
               {% include "display_notas_individuais.html" %}
               </div>
@@ -63,9 +61,7 @@
         {% with encontros=alocado.projeto.encontro_set.all %}
         {% if encontros %}
         <div>
-          <h5>
-            {% lng "Mentorias Marcadas" "Scheduled Mentoring Sessions" %}
-          </h5>
+          <h5>{% lng "Mentorias Marcadas" "Scheduled Mentoring Sessions" %}</h5>
           <ul>
             {% for dinamica in encontros %} 
               <li>
@@ -82,15 +78,13 @@
         {% with certificados=alocado|get_certificados_est %}
         {% if certificados %}
         <div>
-          <h5>
-            {% lng "Certificados Recebidos" "Certificates Received" %}
-          </h5>
+          <h5>{% lng "Certificados Recebidos" "Certificates Received" %}</h5>
           <ul>
             {% for documento in certificados %} 
               <li>
                 {% if documento.documento and documento.link %}
-                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
                 {% else %}
                   {% if documento.documento %}
                     <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>

@@ -17,21 +17,21 @@
 
   <table class="table table-borderless table-sm arredondado">
     {% for projeto in projetos %}
-      {% ifchanged projeto.periodo %}
+      {% ifchanged projeto.periodo.pt %}
       {% if not forloop.first %}</tbody>{% endif %}
-      <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+      <thead><tr><th id="{{projeto.periodo.pt}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
         {% lng projeto.periodo.pt projeto.periodo.en %}
-        {% if projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+        {% if projeto.periodo.pt == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
       <tbody>
     {% endifchanged %}
 
-    <tr class="{{projeto.periodo}} {% if projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
+    <tr class="{{projeto.periodo.pt}} {% if projeto.periodo.pt == "Anteriores" %}hidden_tr{% endif %}"><td>
       <div></div>
       {% with n_alocacoes=projeto.alocacao_set.all.count %}
         {% if n_alocacoes == 0 %}
           {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
         {% endif %}
-        <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
+        <b style="margin-right: 1px;">#{{ forloop.revcounter }}.</b>
         <a href="{% url 'projeto_completo' projeto.id %}">
           {{projeto.ano}}.{{projeto.semestre}}
           [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}

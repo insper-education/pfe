@@ -26,33 +26,33 @@
 
   <form {% if alocado.projeto %}action="{% url 'upload_estudantes_projeto' alocado.projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <label for="titulo_final"><strong>
+    <label for="titulo_final"><b>
       {% lng "Título Final do Projeto" "Final Title of the Project" %}
-    </strong></label><br>
+    </b></label><br>
     <textarea id="titulo_final" name="titulo_final" rows="1" maxlength="{% max_length Projeto 'titulo_final' %}"
     placeholder="Indique o título final do projeto usado no relatório (se diferente do título original da proposta)"
     >{% if alocado.projeto.titulo_final %}{{alocado.projeto.titulo_final}}{% endif %}</textarea>
     <br><br>
 
-    <label for="resumo"><strong>
+    <label for="resumo"><b>
       {% lng "Resumo (português)" "Resumo (portuguese)" %}
-    </strong></label><br>
+    </b></label><br>
     <textarea id="resumo" name="resumo" rows="6" maxlength="{% max_length Projeto 'resumo' %}"
     placeholder="Informe o resumo em português do projeto do relatório. Copie diretamente do seu relatório."
     >{% if alocado.projeto.resumo %}{{alocado.projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
-    <label for="abstract"><strong>
+    <label for="abstract"><b>
       {% lng "Abstract (inglês)" "Abstract (english)" %}
-    </strong></label><br>
+    </b></label><br>
     <textarea id="abstract" name="abstract" rows="6" maxlength="{% max_length Projeto 'abstract' %}"
     placeholder="Informe o resumo em inglês do projeto do relatório. Copie diretamente do seu relatório."
     >{% if alocado.projeto.abstract %}{{alocado.projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
-    <label for="palavras_chave"><strong>
+    <label for="palavras_chave"><b>
       {% lng "Palavras-chave" "Keywords" %}
-    </strong></label><br>
+    </b></label><br>
     <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length Projeto 'palavras_chave' %}"
     placeholder="Informe as palavras-chave do projeto do relatório. Copie diretamente do seu relatório."
     >{% if alocado.projeto.palavras_chave %}{{alocado.projeto.palavras_chave}}{% endif %}</textarea>
@@ -78,9 +78,7 @@
     <div class="row">
       <div class="col-md-6">
         {% if site %}
-          <i>
-            {% lng "site estático:" "static site:" %}
-          </i>
+          <i>{% lng "site estático:" "static site:" %}</i>
           <a style="background-color: #FFFFFF; padding: 4px;"
              href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
           <br>
@@ -117,11 +115,10 @@
       </div>
     </div>
     {% endwith %}
-    
 
-    <label for="pastas_do_projeto"><strong>
+    <label for="pastas_do_projeto"><b>
       {% lng "Pastas do projeto (opcional)" "Project folders (optional)" %}
-    </strong></label><br>
+    </b></label><br>
     <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
     >{% if alocado.projeto.pastas_do_projeto %}{{alocado.projeto.pastas_do_projeto}}{% endif %}</textarea>
     <div style="font-size: 12px; line-height:1.0;">
@@ -136,24 +133,20 @@
 
 
 <div>
-  <strong>
-    {% lng "Descrição da proposta (escrito pela organização parceira):" "Proposal description (written by the partner organization):" %}
-  </strong> {{alocado.projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
+  <b>{% lng "Descrição da proposta (escrito pela organização parceira):" "Proposal description (written by the partner organization):" %}</b>
+  {{alocado.projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
 
   {% if alocado.projeto.proposta.expectativas %}
-    <strong>
-      {% lng "Expectativas de resultados/entregas:" "Expectations of results/deliverables:" %}
-    </strong> {{alocado.projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
+    <b>{% lng "Expectativas de resultados/entregas:" "Expectations of results/deliverables:" %}</b>
+    {{alocado.projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
   {% endif %}
 
   {% if alocado.projeto.proposta.recursos %}
-    <strong>
-      {% lng "Recursos a serem disponibilizados aos Estudantes:" "Resources to be made available to Students:" %}
-    </strong> {{ alocado.projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
+    <b>{% lng "Recursos a serem disponibilizados aos Estudantes:" "Resources to be made available to Students:" %}</b>
+    {{ alocado.projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
     {% if alocado.projeto.proposta.observacoes %}
-      <strong>
-        {% lng "Outras observações:" "Other observations:" %}
-      </strong> {{ alocado.projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
+      <b>{% lng "Outras observações:" "Other observations:" %}</b>
+      {{ alocado.projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     {% endif %}
   {% endif %}
 </div>
@@ -167,17 +160,14 @@
     {% lng "Organização:" "Organization:" %}
     {{ alocado.projeto.organizacao.nome }}
   </h5>
-  <strong>
-    {% lng "endereço:" "address:" %}
-  </strong> {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
-  <strong>website:</strong> <a href="{{ alocado.projeto.organizacao.website|add_http }}">{{ alocado.projeto.organizacao.website }}</a><br>
+  <b>{% lng "endereço:" "address:" %}</b>
+  {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
+  <b>website:</b> <a href="{{ alocado.projeto.organizacao.website|add_http }}">{{ alocado.projeto.organizacao.website }}</a><br>
 </div>
 
 <div>
   {% if alocado.projeto.orientador %}
-    <h5>
-      {% lng_g alocado.projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}
-    </h5>
+    <h5 style="margin-bottom: 4px;">{% lng_g alocado.projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}</h5>
     <ul>
       <li><a href="mailto:{{alocado.projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}}</a>
         <span class="texto-longo emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}">&lt;{{alocado.projeto.orientador.user.email}}&gt;</a></span>
@@ -186,9 +176,7 @@
     </ul>
   {% endif %}
 
-  <h5>
-    {% lng "Estudantes do Grupo" "Group Students" %}
-  </h5>
+  <h5 style="margin-bottom: 4px;">{% lng "Estudantes do Grupo" "Group Students" %}</h5>
   <ul>
     {% for membro in alocado.projeto.alocacao_set.all %} 
       <li>

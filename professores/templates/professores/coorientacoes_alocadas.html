@@ -17,20 +17,20 @@
 
   <table class="table table-borderless table-sm arredondado"><tbody>
     {% for coorientacao in coorientacoes %}
-      {% ifchanged coorientacao.projeto.periodo %}
+      {% ifchanged coorientacao.projeto.periodo.pt %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{coorientacao.projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+        <thead><tr><th id="{{coorientacao.projeto.periodo.pt}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
           {% lng coorientacao.projeto.periodo.pt coorientacao.projeto.periodo.en %}
-          {% if coorientacao.projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+          {% if coorientacao.projeto.periodo.pt == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
-      <tr class="{{coorientacao.projeto.periodo}} {% if coorientacao.projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
+      <tr class="{{coorientacao.projeto.periodo.pt}} {% if coorientacao.projeto.periodo.pt == "Anteriores" %}hidden_tr{% endif %}"><td>
         {% with n_alocacoes=coorientacao.projeto.alocacao_set.all.count %}
           {% if n_alocacoes == 0 %}
             {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
           {% endif %}
-          <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
+          <b style="margin-right: 1px;">#{{ forloop.revcounter }}.</b>
           <a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
             {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}
             [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}

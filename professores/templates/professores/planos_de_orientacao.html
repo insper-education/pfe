@@ -25,22 +25,21 @@
     <i class="far fa-file-alt"></i> {{template.tipo_documento}}
     {% lng "(opcional)" "(optional)" %}
   </a><br>
-  <br>
 
   <table class="table table-borderless table-sm arredondado">
     {% for projeto in projetos %}
-      {% ifchanged projeto.periodo %}
+      {% ifchanged projeto.periodo.pt %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{projeto.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+        <thead><tr><th id="{{projeto.periodo.pt}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
           {% lng projeto.periodo.pt projeto.periodo.en %}
-          {% if projeto.periodo == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
+          {% if projeto.periodo.pt == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
-      <tr class="{{projeto.periodo}} {% if projeto.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
+      <tr class="{{projeto.periodo.pt}} {% if projeto.periodo.pt == "Anteriores" %}hidden_tr{% endif %}"><td>
         {% for documento in projeto|get_planos_de_orientacao %}
-          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
+          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
             data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-            {% if projeto.periodo == "Anteriores" %}
+            {% if projeto.periodo.pt == "Anteriores" %}
             {% with documento=projeto.documento_set.all|tipo_documento:"Plano de Orientação" %}
               href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
             {% endwith %}
@@ -50,9 +49,9 @@
             {% endif %}
             ><b><i class="fas fa-file-alt"></i>
         {% empty %}
-          <a {% if projeto.periodo == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
+          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
             data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
-            {% if projeto.periodo != "Anteriores" %}
+            {% if projeto.periodo.pt != "Anteriores" %}
             class="open-documento"
             data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}"
             {% endif %}

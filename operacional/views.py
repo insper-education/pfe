@@ -113,7 +113,6 @@ def avisos_listar(request):
     return render(request, "operacional/avisos_listar.html", context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def emails(request):

@@ -18,17 +18,17 @@
 
   <table class="table table-borderless table-sm arredondado">
     {% for banca in bancas %}
-      {% ifchanged banca.periodo %}
+      {% ifchanged banca.periodo.pt %}
         {% if not forloop.first %}</tbody>{% endif %}
-        <thead><tr><th id="{{banca.periodo}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
+        <thead><tr><th id="{{banca.periodo.pt}}" style="margin-top: 1em; font-weight: bold; font-size: 1.2rem;">
           {% lng banca.periodo.pt banca.periodo.en %}
            {% if banca.periodo.pt == "Anteriores" %}<span class="seta-baixo"></span>{% endif %}</th></tr></thead>
         <tbody>
       {% endifchanged %}
 
-      <tr class="{{banca.periodo}} {% if banca.periodo == "Anteriores" %}hidden_tr{% endif %}"><td>
+      <tr class="{{banca.periodo.pt}} {% if banca.periodo.pt == "Anteriores" %}hidden_tr{% endif %}"><td>
         <div>
-          <small style="margin-right: 1px;">#{{ forloop.revcounter }}.</small>
+          <b style="margin-right: 1px;">#{{ forloop.revcounter }}.</b>
           <a href="{% url 'banca_ver' banca.id %}">
             <b>{{ banca.get_tipo }}</b> &#x2726;
             {% if banca.startDate %}

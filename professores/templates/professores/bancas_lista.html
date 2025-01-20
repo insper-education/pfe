@@ -242,7 +242,7 @@
                   <b>{% lng "Mensagem:" "Message:" %}</b>
                   <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
                     data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 
-                    avaliadores
+                    {% lng "avaliadores" "examiners" %}
                   </a>
                 <a href="{% url 'event_ics_export' banca.id %}">ics</a>
                 </div>

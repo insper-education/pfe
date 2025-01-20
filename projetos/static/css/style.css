@@ -177,11 +177,10 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
 }
 
 @media only screen and (max-width: 740px) {
-  table, th, td {
-    font-size: 14px;
-  }
+  table, th, td {font-size: 14px;}
   h3 {font-size: 1.17em;}
   h4 {font-size: 1.12em;}
+  textarea {font-size: 15px;}
 }
 
 @media only screen and (max-width: 480px) {
@@ -190,6 +189,7 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   h4 {font-size: 1.05em;}
   label {font-size: 15px;}
   input {font-size: 15px;}
+  textarea {font-size: 14px;}
 } 
 
 @media (max-width: 800px) {
