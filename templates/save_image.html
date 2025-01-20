@@ -50,9 +50,7 @@
 
   function get_image(tipo) {
 
-    if (typeof ajusta === "function") {
-      ajusta();
-    }
+    if (typeof ajusta === "function") ajusta();
 
     $(".esconder").hide();
 
@@ -97,9 +95,7 @@
 
       $(".esconder").show();
 
-      if (typeof reajusta === "function") {
-        reajusta();
-      }
+      if (typeof reajusta === "function") reajusta();
 
     }, 600);
   }

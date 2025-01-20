@@ -18,7 +18,7 @@ function mudaVisibilidadeBarras(visibilidade) {
 }
   
 function ajusta() {
-    document.querySelector("#tudo").style.width = "1200px";  
+    document.querySelector("#tudo").style.width = "1220px";  
     // Escondendo informações
     mudaVisibilidadeBarras(false);
     carrega_semestre();
