@@ -174,19 +174,11 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
 def selecao_geracao_certificados(request):
     """Recupera um certificado pelos dados."""
     configuracao = get_object_or_404(Configuracao)
-    tipos_certificados = {}
-    for tipo in TipoCertificado.objects.all():
-        if tipo.grupo_cert:
-            if tipo.grupo_cert in tipos_certificados:
-                tipos_certificados[tipo.grupo_cert].append(tipo.titulo)
-            else:
-                tipos_certificados[tipo.grupo_cert] = [tipo.titulo]
-
     context = {
         "titulo": {"pt": "Seleção de Geração de Certificados", "en": "Certificate Generation Selection"},
         "edicoes": get_edicoes(Projeto)[0],
         "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
-        "tipos_certificados": tipos_certificados,
+        "grupos": GrupoCertificado.objects.all(),
         }
     return render(request, "documentos/selecao_geracao_certificados.html", context)
 

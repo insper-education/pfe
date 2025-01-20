@@ -7,12 +7,6 @@
 
 {% block head %}
   {% load linguas %}
-  <style>
-    .lab {
-      margin-left: 8px;
-    }
-  </style>
-
 {% endblock %}
 
 {% block content %}
@@ -21,17 +15,20 @@
 
     {% include "edicoes.html" %}
     {% lng "Gera os certificados dos tipos e datas especificadas." "Generates certificates of the specified types and dates." %}
-    <br><br>
+    <br>
 
-    {% for tipo, items in tipos_certificados.items %}
-      <label class="lab"><input id="{{ tipo }}" name="{{ tipo }}" type="checkbox" checked />
-        {% for item in items %}
-          {{ item }}
-          {% if not forloop.last %} / {% endif %}
-        {% endfor %}
+    {% for grupo in grupos %}
+      <label class="ml-2 mt-2"><input id="{{ grupo.sigla }}" 
+        name="{{ grupo.sigla }}" type="checkbox" checked />
+        {{ grupo.nome }}
+        <div style="line-height: 1.1; font-size: 0.8em;">
+          {% for g in grupo.tipocertificado_set.all %}
+            {{ g }} {% if not forloop.last %} / {% endif %}
+          {% endfor %}
+        </div>
       </label><br>
     {% endfor %}
-    <br><br>
+    <br>
 
     <button class="btn btn-primary mb-1 mt-2" type="submit">
       {% lng "Gerar Certificados" "Generate Certificates" %}

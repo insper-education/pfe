@@ -47,13 +47,13 @@ class GrupoCertificado(models.Model):
                             help_text="Nome do grupo de certificado")
     
     nome_en = models.CharField("Nome EN", max_length=128, null=True, blank=True,
-                                 help_text="Nome do grupo de certificado em inglês")
+                               help_text="Nome do grupo de certificado em inglês")
     
     sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
-                            help_text="Sigla do grupo de certificado")
+                             help_text="Sigla do grupo de certificado")
     
     cor = models.CharField("Cor", max_length=6, null=True, blank=True,
-                            help_text="Cor do grupo de certificado em hexadecimal")
+                           help_text="Cor do grupo de certificado em hexadecimal")
     
     def __str__(self):
         return self.nome
