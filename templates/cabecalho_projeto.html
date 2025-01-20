@@ -44,8 +44,10 @@
           <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
         {% endif %}
         <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-        <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-        <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+        {% if not sem_email %}
+          <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+          <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+        {% endif %}
       {% else %}
         {% lng "Orientador: Não definido" "Advisor: Not defined" %}
       {% endif %}
@@ -111,13 +113,11 @@
     {% endif %}
 
     {% if com_semestre %}
-      <b>{% lng "Semestre" "Semester" %}:
-      {{projeto.ano}}.{{projeto.semestre}}<br>
+      <b>{% lng "Semestre" "Semester" %}:</b> {{ projeto.get_edicao }}<br>
     {% endif %}
 
     {% if projeto.organizacao %}
-      <b>{% lng "Organização" "Organization" %}:</b>
-      {{projeto.organizacao.nome}}
+      <b>{% lng "Organização" "Organization" %}:</b> {{projeto.organizacao.nome}}
     {% else %}
       {% lng "Organização: Não definida" "Organization: Not defined" %}
     {% endif %}<br>

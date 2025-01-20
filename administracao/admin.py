@@ -10,7 +10,7 @@ Data: 14 de Novembro de 2019
 from django.contrib import admin
 
 from .models import Carta
-from .models import TipoCertificado, TipoEvento
+from .models import TipoCertificado, TipoEvento, GrupoCertificado
 
 @admin.register(Carta)
 class CartaAdmin(admin.ModelAdmin):
@@ -19,7 +19,16 @@ class CartaAdmin(admin.ModelAdmin):
     ordering = ("template",)
     search_fields = ["template",]
 
-admin.site.register(TipoCertificado)
+@admin.register(TipoCertificado)
+class TipoCertificadoAdmin(admin.ModelAdmin):
+    """Definição do que aparece no sistema de administração do Django."""
+    list_display = ("titulo", "sigla", "grupo_certificado")
+    ordering = ("titulo",)
+    search_fields = ["titulo", "sigla"]
+
+
+
+admin.site.register(GrupoCertificado)
 
 @admin.register(TipoEvento)
 class TipoEventoAdmin(admin.ModelAdmin):

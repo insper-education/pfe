@@ -40,6 +40,30 @@ class Carta(models.Model):
         return self.template
 
 
+class GrupoCertificado(models.Model):
+    """Grupos de certificados."""
+
+    nome = models.CharField("Nome", max_length=128, unique=True,
+                            help_text="Nome do grupo de certificado")
+    
+    nome_en = models.CharField("Nome EN", max_length=128, null=True, blank=True,
+                                 help_text="Nome do grupo de certificado em inglês")
+    
+    sigla = models.CharField("Sigla", max_length=4, null=True, blank=True, unique=True,
+                            help_text="Sigla do grupo de certificado")
+    
+    cor = models.CharField("Cor", max_length=6, null=True, blank=True,
+                            help_text="Cor do grupo de certificado em hexadecimal")
+    
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        ordering = [ "nome",]
+        verbose_name = "Grupo de Certificado"
+        verbose_name_plural = "Grupos de Certificados"
+
+
 class TipoCertificado(models.Model):
     """Tipos de certificados."""
     
@@ -55,10 +79,13 @@ class TipoCertificado(models.Model):
     # REMOVER, após migração de dados
     tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
                                             help_text="ID temporário para migração de dados de certificados")
-    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
-
+    
     grupo_cert = models.CharField("Grupo de Certificado", max_length=4, null=True, blank=True,
                                   help_text="Grupo de certificado")
+    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
+    
+    grupo_certificado = models.ForeignKey("administracao.GrupoCertificado", null=True, blank=True, on_delete=models.SET_NULL,
+                                            help_text="Grupo de certificado")
     
     subtitulo = models.CharField("Subtítulo", max_length=48, null=True, blank=True,
                                  help_text="Subtítulo do tipo de certificado, para o nome dos arquivos")

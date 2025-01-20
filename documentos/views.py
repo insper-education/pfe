@@ -27,7 +27,7 @@ from .support import render_from_text_to_pdf_file
 
 from academica.models import Exame, ExibeNota
 
-from administracao.models import TipoCertificado
+from administracao.models import TipoCertificado, GrupoCertificado
 
 from documentos.models import TipoDocumento
 
@@ -112,17 +112,10 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        tipos_certificados = [
-            ("Estudantes (Certificação Falconi, etc)", "Student (Falconi Certification, etc)", "E"),
-            ("Orientadores", "Advisor", "O"),
-            ("Coorientadores", "Co-advisor", "C"),
-            ("Bancas", "Examination Boards", "B"),
-            ("Mentorias Profissionais (antiga Mentorial Falconi)", "Professional Mentoring (former Falconi Mentoring)", "MP"),
-            ("Mentorias Técnicas", "Technical Mentoring", "MT"),
-        ]
+    
         context = {
             "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
-            "tipos_certificados": tipos_certificados,
+            "grupos_certificados": GrupoCertificado.objects.all(),
             "edicoes": get_edicoes(Certificado)[0],
             "selecionada": edicao,
             "tipos": tipos.split(',') if tipos else None,

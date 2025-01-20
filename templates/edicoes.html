@@ -276,7 +276,7 @@
       {% if com_pessoas %}
         <div class="input-group input-group-sm mt-1 mr-4">
             <div class="input-group-prepend">
-              <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">
+              <label class="to_label input-group-text" for="usuario"><span class="to_hide">
                 {% lng "Pessoa" "Person" %}
               </span></label>
             </div>
@@ -287,6 +287,26 @@
             </select>
         </div>
       {% endif %}
+
+      {% if grupos_certificados %}
+        <div class="input-group input-group-sm mt-1 flex-nowrap">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="tipos"><span class="to_hide">
+                {% lng "Tipos" "Types" %}
+              </span></label>
+            </div>
+            <select id="tipos" class="selectpicker form-control form-control-sm"
+            data-style="mr-sm border " data-width="10em"
+            title="Nada selecionado" multiple>
+              {% for tipo in grupos_certificados %}
+                <option {% if not tipos or tipo.sigla in tipos %}selected="selected"{% endif %} 
+                class="troca_lingua" data-pt="{{ tipo.nome }}" data-en="{{ tipo.nome_en }}"
+                value="{{ tipo.sigla }}"  title="{{ tipo.sigla }}">{{ tipo.nome }}</option>
+              {% endfor %}
+            </select>
+        </div>
+      {% endif %}
+
     </div>
   </div>
 </div>

@@ -954,30 +954,6 @@ class Banca(models.Model):
 
         return avaliadores
 
-
-    # def get_relatorio(self):
-    #     """Retorna o relatório da banca."""
-    #     if self.composicao.exame.sigla == "BF": # Final
-    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-    #     elif self.composicao.exame.sigla == "BI": # Intermediária
-    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-    #     elif self.composicao.exame.sigla == "F":  # Falconi
-    #         # Reaproveita o tipo de documento da banca final
-    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.projeto)
-    #     elif self.composicao.exame.sigla == "P":  # Probation
-    #         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
-    #         documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=self.alocacao.projeto)
-    #     else:
-    #         return None
-        
-    #     if documento.exists():
-    #         return documento.order_by("data").last()
-        
-    #     return None
-
     def get_projeto(self):
         """Retorna o projeto da banca."""
         if self.alocacao:
@@ -1982,6 +1958,14 @@ class Certificado(models.Model):
                 return Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla="P").last()  # (3, "Probation"),
         return None
     
+    def get_projeto(self):
+        """Retorna o projeto do certificado."""
+        if self.alocacao:
+            return self.alocacao.projeto
+        if self.projeto:
+            return self.projeto
+        return None
+
     class Meta:
         verbose_name = "Certificado"
         verbose_name_plural = "Certificados"

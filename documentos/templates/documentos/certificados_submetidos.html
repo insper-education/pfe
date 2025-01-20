@@ -17,7 +17,7 @@
     #certificados {
       border: 0px;
       border-collapse: separate;
-      border-spacing: 1em;
+      border-spacing: 0em 1em;
       padding-left: 0px;
       padding-right: 0px;
     }
@@ -29,12 +29,9 @@
       background-color: #F0F0F0;
     }
 
-    tr.estudantes td {border-color: #FF0000;}
-    tr.orientador td {border-color: #0000FF;}
-    tr.coorientador td {border-color: #00FF00;}
-    tr.banca td {border-color: #FF00FF;}
-    tr.mentoria_profissional td {border-color: #FFFF00;}
-    tr.mentoria_tecnica td {border-color: #00FFFF;}
+    {% for tipo in grupos_certificados %}
+      tr.certificado{{tipo.sigla}} td {border-color: #{{tipo.cor}};}
+    {% endfor %}
 
   </style>
 
@@ -44,97 +41,16 @@
 
   {% include "edicoes.html" %}
 
-  <div class="row align-items-start mb-1" style="display: inline-block; margin-right: 3px;">
-    <div class="ml-3 form-inline">
-      <div class="input-group input-group-sm mt-1 flex-nowrap">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterEdicao" onClick="carrega_pagina()"><span class="to_hide">
-              {% lng "Tipos" "Types" %}
-            </span></label>
-          </div>
-          <select id="tipos" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="10em"
-                  title="Nada selecionado" multiple>
-            {% for tipo in tipos_certificados %}
-              <option {% if not tipos or tipo.2 in tipos %}selected="selected"{% endif %} 
-              class="troca_lingua" data-pt="{{ tipo.0 }}" data-en="{{ tipo.1 }}"
-              title="{{ tipo.2 }}">{{ tipo.0 }}</option>
-            {% endfor %}
-          </select>
-      </div>
-    </div>
-  </div>
-
-  <script>
-
-    function conta() {
-      $("#t_estudantes").text($(".estudantes:visible").length);
-      $("#t_orientador").text($(".orientador:visible").length);
-      $("#t_coorientador").text($(".coorientador:visible").length);
-      $("#t_banca").text($(".banca:visible").length);
-      $("#t_mentoria_tecnica").text($(".mentoria_tecnica:visible").length);
-      $("#t_mentoria_profissional").text($(".mentoria_profissional:visible").length);
-      $("#t_total").text($(".certificado:visible").length);
-    }
-
-    // routine to check the state of each option in #tipos and show/hide the corresponding rows
-    function esconde_mostra_opcoes() {
-      $("#tipos").find("option").each(function(index, element){
-        if($(element).is(":selected")){
-          if(index == 0){$(".estudantes").show();}
-          if(index == 1){$(".orientador").show();}
-          if(index == 2){$(".coorientador").show();}
-          if(index == 3){$(".banca").show();}
-          if(index == 4){$(".mentoria_tecnica").show();}
-          if(index == 5){$(".mentoria_profissional").show();}
-        } else {
-          if(index == 0){$(".estudantes").hide();}
-          if(index == 1){$(".orientador").hide();}
-          if(index == 2){$(".coorientador").hide();}
-          if(index == 3){$(".banca").hide();}
-          if(index == 4){$(".mentoria_tecnica").hide();}
-          if(index == 5){$(".mentoria_profissional").hide();}
-        }
-      });
-    }
-
-    $("#tipos").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      esconde_mostra_opcoes();
-      conta();
-    });
-    
-  </script>
-
   {% if gerados %}
-    <br><br>
-    <h4>
-      {{ gerados }}
-      {% lng "novos certificados gerados." "new certificates generated." %}
-    </h4>
+    <br><h4>{{ gerados }} {% lng "novos certificados gerados." "new certificates generated." %}</h4>
   {% endif %}
 
   <div class="atualizar">
 
     <div class="table-responsive">
       <table id="certificados">
-
-        {% if certificados %}
-
-          {% for certificado in certificados %}
-
-            {% if certificado.tipo_certificado.grupo_cert == "E" %}
-              <tr class="estudantes certificado">
-            {% elif certificado.tipo_certificado.grupo_cert == "O" %}
-              <tr class="orientador certificado">
-            {% elif certificado.tipo_certificado.grupo_cert == "C" %}
-              <tr class="coorientador certificado">
-            {% elif certificado.tipo_certificado.grupo_cert == "B" %}
-              <tr class="banca certificado">
-            {% elif certificado.tipo_certificado.grupo_cert == "MP" %}
-              <tr class="mentoria_profissional certificado">
-            {% elif certificado.tipo_certificado.grupo_cert == "MT" %}
-              <tr class="mentoria_tecnica certificado">
-            {% endif %}
-
+        {% for certificado in certificados %}
+          <tr class="certificado{{certificado.tipo_certificado.grupo_certificado.sigla}} certificado">
             <td>
               <b style="font-weight: bold; font-size: 1.2em;">{{certificado.tipo_certificado}}</b><br>
               <b>{% lng "Nome" "Name" %}</b>:
@@ -153,16 +69,9 @@
                 {{certificado.data|date:"DATE_FORMAT"}}<br>
               {% endif %}
 
-              {% if certificado.projeto %}
-                <b>Projeto:</b> <a href="{% url 'projeto_completo' certificado.projeto.id %}">
-                  {{certificado.projeto.get_titulo}}
-                </a><br>
-                <b>Período de projeto:</b> {{certificado.projeto.ano}}.{{certificado.projeto.semestre}}<br>
-                <b>Organização:</b> <a href="{% url 'organizacao_completo' certificado.projeto.organizacao.id %}">{{ certificado.projeto.organizacao.nome }}</a><br>
-              {% endif %}
+              {% include "cabecalho_projeto.html" with projeto=certificado.get_projeto com_semestre=True sem_email=True %}
 
               {% if certificado.documento %}
-                {% comment %} <a href="{{ certificado.documento.url }}"><img style="max-height:240px;" src="{{ certificado.documento.url }}" alt="Certificado {{ certificado.usuario }} {{ certificado.projeto }}"></a><br> {% endcomment %}
                 <b>{% lng "Certificado" "Certificate" %}:</b> 
                 <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
               {% endif %}
@@ -174,31 +83,56 @@
             </td>
           </tr>
 
-          {% endfor %}
-        
-        {% else %}
+        {% empty %}
           <tr><td style="border: 0px;">
             {% lng "Não existem certificados." "There are no certificates." %}
           </td></tr>
-        {% endif %}
-      
+        {% endfor %}
       </table>
-    </div>
-
-    <br>
-    <div class="contagem">
-      <b>Quantidades</b><br>
-      &bull; Estudantes: <span id="t_estudantes"></span><br>
-      &bull; Orientador: <span id="t_orientador"></span><br>
-      &bull; Coorientação: <span id="t_coorientador"></span><br>
-      &bull; Banca: <span id="t_banca"></span><br>
-      &bull; Mentoria Técnica: <span id="t_mentoria_tecnica"></span><br>
-      &bull; Mentoria Profissional: <span id="t_mentoria_profissional"></span><br>
-      <b>&bull; Total: <span id="t_total"></span><b><br>
     </div>
 
   </div>
   
+  <br>
+  <div class="contagem">
+    <b>{% lng "Quantidades" "Quantities" %}</b><br>
+    {% for tipo in grupos_certificados %}
+      &bull; {{tipo.nome}}: <span id="t_{{tipo.sigla}}"></span><br>
+    {% endfor %}
+    <b>&bull; Total: <span id="t_total"></span><b><br>
+  </div>
+
+  <script>
+    function conta() {
+      {% for tipo in grupos_certificados %}
+        $("#t_{{tipo.sigla}}").text($(".certificado{{tipo.sigla}}:visible").length);
+      {% endfor %}
+      $("#t_total").text($(".certificado:visible").length);
+    }
+
+    // routine to check the state of each option in #tipos and show/hide the corresponding rows
+    function esconde_mostra_opcoes() {
+      $("#tipos").find("option").each(function(index, element){
+        if($(element).is(":selected")){
+          {% comment %} console.log(element.value); {% endcomment %}
+          {% for tipo in grupos_certificados %}
+            if(element.value == "{{tipo.sigla}}"){$(".certificado{{tipo.sigla}}").show();}
+          {% endfor %}
+        } else {
+          {% for tipo in grupos_certificados %}
+            if(element.value == "{{tipo.sigla}}"){$(".certificado{{tipo.sigla}}").hide();}
+          {% endfor %}
+        }
+      });
+    }
+
+    $("#tipos").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+      esconde_mostra_opcoes();
+      conta();
+    });
+    
+  </script>
+
   <script>
 
     var request_ajax_c = null;
