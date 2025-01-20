@@ -328,6 +328,12 @@ def copia_calendario(request):
                                      location=evento.location,
                                      tipo_evento=evento.tipo_evento,
                                      atividade=evento.atividade).exists():
+            
+            # Limpa os anexos das aulas (serão repostos)
+            if evento.tipo_evento.sigla == "A":
+                evento.documento = None
+                evento.documento2 = None
+
             evento.save()
 
     return redirect("calendario")
