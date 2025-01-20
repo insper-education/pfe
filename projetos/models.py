@@ -423,7 +423,9 @@ class Proposta(models.Model):
 
     @property
     def get_edicao(self):
-        return str(self.ano)+"."+str(self.semestre)
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "ERRO AO IDENTIFICAR PERÍODO"
 
     def get_anexo(self):
         """Nome do arquivo do anexo."""

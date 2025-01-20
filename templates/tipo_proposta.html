@@ -4,31 +4,33 @@
   Data: 15 de Dezembro de 2023
 {% endcomment %}
 
+{% load linguas %}
+
 {% if proposta.internacional or proposta.intercambio or proposta.colaboracao or proposta.empreendendo %}
-
-  {% if com_tipo %}
-    <p><strong>Tipo</strong>: 
-  {% endif %}
-
-  <strong style="color:red">
-  {% if proposta.internacional %}
-    {% if descr_short %}IN{% else %}[Internacional]{% endif %}
-  {% endif %}
-  {% if proposta.intercambio %}
-    {% if descr_short %}IC{% else %}[Intercâmbio]{% endif %}
-  {% endif %}
-  {% if proposta.colaboracao %}
-    {% if descr_short %}CO{% else %}[Em colaboração com: {{ proposta.colaboracao }}]{% endif %}
-  {% endif %}
-  {% if proposta.empreendendo %}
-    {% if descr_short %}E!{% else %}[Empreendendo]{% endif %}
-  {% endif %}
-  </strong>
-
-  {% if com_tipo %}
-    </p>
-  {% endif %}
-
+  {% if com_tipo %}<p><b>Tipo</b>: {% endif %}
+  <b style="color:red">
+    {% if proposta.internacional %}
+      {% if descr_long %}
+        {% lng "Proposta Internacional de Projeto, a comunicação do projeto será em inglês." "International Project Proposal, the project communication will be in English." %}<br>
+      {% elif descr_short %}IN{% else %}[Internacional]{% endif %}
+    {% endif %}
+    {% if proposta.intercambio %}
+      {% if descr_long %}
+        {% lng "Proposta em Programa de Intercâmbio." "International Exchange Program Proposal." %}<br>
+      {% elif descr_short %}IC{% else %}[Intercâmbio]{% endif %}
+    {% endif %}
+    {% if proposta.colaboracao %}
+      {% if descr_long %}
+        {% lng "Proposta em colaboração com" "Proposal in collaboration with" %}: {{ proposta.colaboracao }}.<br>
+      {% elif descr_short %}CO{% else %}[Em colaboração com: {{ proposta.colaboracao }}]{% endif %}
+    {% endif %}
+    {% if proposta.empreendendo %}
+      {% if descr_long %}
+        {% lng "Proposta de grupo de estudantes regulares empreendendo em próprio projeto." "Regular students group proposal undertaking their own project." %}<br>
+      {% elif descr_short %}E!{% else %}[Empreendendo]{% endif %}
+    {% endif %}
+  </b>
+  {% if com_tipo %}</p>{% endif %}
 {% else %}
   {% if descr_short %}RE{% else %}[Regular]{% endif %}
 {% endif %}

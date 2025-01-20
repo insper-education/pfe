@@ -15,7 +15,7 @@ function editEvent(event) {
     $('#event-modal input[name="event-location"]').val(evento ? evento.location : '');
     $('#event-modal input[name="event-atividade"]').val(evento ? evento.atividade : '');
     $('#event-modal textarea[name="event-descricao"]').val(evento ? evento.descricao : '');
-    $('#event-modal input[name="event-observation"]').val(evento ? evento.observation : '');
+    $('#event-modal input[name="event-observacao"]').val(evento ? evento.observacao : '');
     $('#event-modal select[name="event-responsavel"]').val(evento ? evento.responsavel : '');      
     $('#event-modal select[name="event-material"]').val(evento ? evento.material : '');
     $('#event-modal select[name="event-material2"]').val(evento ? evento.material2 : '');
@@ -96,5 +96,3 @@ $(document).ready(function() {
     });
 
 });
-
-

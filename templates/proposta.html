@@ -11,10 +11,7 @@
 
   {% if proposta.titulo %}
     <h5 data-toggle="tooltip" data-html="true" animation="true" 
-    title="
-    Título provisório para a proposta de projeto.
-    Durante a execução do projeto o título poderá/deverá sofrer atualizações.
-    ">
+     title="Título provisório para a proposta de projeto. Durante a execução do projeto o título poderá/deverá sofrer atualizações.">
       <b>{% lng "Proposta:" "Proposal:" %}</b>
       {% if proposta.organizacao %}
         [{{proposta.organizacao}}]
@@ -24,120 +21,70 @@
       {{proposta.titulo}}
     </h5>
   {% else %}
-    <h5 class="titulo">
-      <span class="text-danger">{% lng "Problema na identificação do título" "Problem in identifying the title" %}</span>
-    </h5>
+    <h5 class="titulo text-danger">{% lng "Problema na identificação do título" "Problem in identifying the title" %}</h5>
   {% endif %}
 
-  {% if proposta.ano and proposta.semestre %}
-    <strong>
-      {% lng "Semestre:" "Semester:" %}
-    </strong> {{proposta.ano}}.{{proposta.semestre}}<br>
-  {% endif %}
-
-  {% if proposta.internacional %}
-    <strong style="color:red">
-      {% lng "Proposta Internacional de Projeto, a comunicação do projeto será em inglês." "International Project Proposal, the project communication will be in English." %}
-    </strong><br>
-  {% endif %}
-
-  {% if proposta.intercambio %}
-    <strong style="color:red">
-      {% lng "Proposta em Programa de Intercâmbio." "International Exchange Program Proposal." %}
-    </strong><br>
-  {% endif %}
-
-  {% if proposta.empreendendo %}
-    <strong style="color:red">
-      {% lng "Proposta de grupo de estudantes regulares empreendendo em próprio projeto." "Regular students group proposal undertaking their own project." %}
-    </strong><br>
-  {% endif %}
-
-  {% if proposta.colaboracao %}
-    <strong style="color:red">
-      {% lng "Proposta em colaboração com:" "Proposal in collaboration with:" %}
-      {{ proposta.colaboracao }}.
-    </strong><br>
-  {% endif %}
+  <b>{% lng "Semestre:" "Semester:" %}</b> {{ proposta.get_edicao }}<br>
   
-
-  <br>
+  {% include "tipo_proposta.html" with descr_long=True %}<br>
 
   {% if proposta.descricao %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-        Uma breve descrição do que se trata o projeto e outras informações relevantes.
-      ">
+      <b data-toggle="tooltip" data-html="true" animation="true"
+       title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
         {% lng "Descrição:" "Description:" %}
-      </strong>
-      {{proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
+      </b> {{proposta.descricao|linebreaks|bleach_urlize|safe}}
     </p>
   {% else %}
-    <p>
-      <u>
-        {% lng "Campo de descrição ausente." "Description field missing." %}
-      <u><br>
-    </p>
-    {% comment %} Campo deveria ser obrigatório {% endcomment %}
+    <p><u>{% lng "Campo de descrição ausente." "Description field missing." %}<u><br></p>
   {% endif %}
 
   {% if proposta.expectativas %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      <b data-toggle="tooltip" data-html="true" animation="true" title="
         Exemplos de resultados ou entregas esperadas.
         Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
-        Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios.
-      ">
+        Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios.">
         {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
-      </strong>
+      </b>
       {{proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
   {% else %}
-      <p>
-        <u>
-          {% lng "Campo de expectativas ausente." "Expectations field missing." %}
-        <u><br>
-      </p>
-      {% comment %} Campo deveria ser obrigatório {% endcomment %}
+      <p><u>{% lng "Campo de expectativas ausente." "Expectations field missing." %}<u><br></p>
   {% endif %}
 
   {% if proposta.recursos %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      <b data-toggle="tooltip" data-html="true" animation="true" title="
         Recursos que as organizações informaram que irão disponibilizar para os estudantes.
         O Insper irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
-        Não existe nenhuma garantia que o Insper irá suprir material de consumo para os grupos de estudantes, em geral não há recursos para isso.
-      ">
+        Não existe nenhuma garantia que o Insper irá suprir material de consumo para os grupos de estudantes, em geral não há recursos para isso.">
         {% lng "Recursos a serem disponibilizados:" "Resources to be made available:" %}
-      </strong>
+      </b>
       {{proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 
   {% if proposta.observacoes %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
-        Outras observações que a organização parceira considerou relevante para informar aos estudantes.
-      ">
+      <b data-toggle="tooltip" data-html="true" animation="true"
+       title="Outras observações que a organização parceira considerou relevante para informar aos estudantes.">
         {% lng "Outras observações:" "Other observations:" %}
-      </strong>
+      </b>
       {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% endif %}
 
   {% if proposta.anexo %}
     <p>
-      <strong>
-        {% lng "Anexo:" "Attachment:" %}
-      </strong>
+      <b>{% lng "Anexo:" "Attachment:" %}</b>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
     </p>
   {% endif %}
 
   {% if completo %}
-    <br><strong>
-      {% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}
-    </strong><br>
+    <br>
+    <b>{% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}</b><br>
     <ul>
     {% for interesse in proposta.get_interesses_selecionados %}
       <li>{{ interesse.1 }}</li>
@@ -148,9 +95,5 @@
   {% endif %}
 
 {% else %}
-
-  <strong>
-    {% lng "Não foi possível carregar a proposta!" "Unable to load the proposal!" %}
-  </strong>
-
+  <b>{% lng "Não foi possível carregar a proposta!" "Unable to load the proposal!" %}</b>
 {% endif %}

@@ -241,32 +241,36 @@ def atualiza_evento(request):
         tevento = TipoEvento.objects.get(id=type)
         evento.tipo_evento = tevento
     
-    startDate = request.POST.get("startDate", None)  # Data foi ajustada para YYYY-MM-DD
-    if startDate:
-        evento.startDate = dateutil.parser.parse(startDate)
+    if "startDate" in request.POST:
+        startDate = request.POST.get("startDate", None)  # Data foi ajustada para YYYY-MM-DD
+        if startDate:
+            evento.startDate = dateutil.parser.parse(startDate)
+        else:
+            evento.startDate = None
     
-    endDate = request.POST.get("endDate", None)  # Data foi ajustada para YYYY-MM-DD
-    if endDate:
-        evento.endDate = dateutil.parser.parse(endDate)
+    if "endDate" in request.POST:
+        endDate = request.POST.get("endDate", None)  # Data foi ajustada para YYYY-MM-DD
+        if endDate:
+            evento.endDate = dateutil.parser.parse(endDate)
+        else:
+            evento.endDate = None
     
-    location = request.POST.get("event-location", "")
-    if location:
+    if "event-location" in request.POST:
+        location = request.POST.get("event-location", "")
         evento.location = location[:Evento._meta.get_field("location").max_length]
-    else:
-        evento.location = None
-
-    observacao = request.POST.get("event-observation", "")
-    if observacao:
+    
+    if "event-observacao" in request.POST:
+        observacao = request.POST.get("event-observacao", "")
         evento.observacao = observacao[:Evento._meta.get_field("observacao").max_length]
 
-    atividade = request.POST.get("event-atividade", "")
-    if atividade:
+    if "event-atividade" in request.POST:
+        atividade = request.POST.get("event-atividade", "")
         evento.atividade = atividade[:Evento._meta.get_field("atividade").max_length]
-
-    descricao = request.POST.get("event-descricao", "")
-    if descricao:
+    
+    if "event-descricao" in request.POST:
+        descricao = request.POST.get("event-descricao", "")
         evento.descricao = descricao[:Evento._meta.get_field("descricao").max_length]
-
+    
     responsavel = request.POST.get("event-responsavel", None)
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 

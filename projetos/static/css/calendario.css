@@ -44,7 +44,7 @@ table, th, td {border: 0px;}
 }
 
 .event-location,
-.event-observation,
+.event-observacao,
 .event-atividade,
 .event-descricao,
 .event-responsavel,
@@ -57,7 +57,7 @@ table, th, td {border: 0px;}
 .event-responsavel {color:brown;}
 .event-location {color:darkgreen;}
 .event-atividade {color:darkblue;}
-.event-observation {color:red;}
+.event-observacao {color:red;}
 
 .semestre1 {
   border-radius: 5px 0px 0px 5px;

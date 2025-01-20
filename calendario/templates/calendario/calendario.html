@@ -37,7 +37,7 @@
             id: {{ evento.id }},
             name: "{{ evento.get_title }}",
             location: "{% if evento.location %}{{ evento.location }}{% endif %}",
-            observation: `{{ evento.observacao }}`,
+            observacao: `{{ evento.observacao }}`,
             atividade: `{{ evento.atividade }}`,
             descricao: `{{ evento.descricao }}`,
             responsavel: {% if evento.responsavel %}{{ evento.responsavel.id }}{% else %}0{% endif %},
@@ -60,7 +60,7 @@
               id: {{evento.id}},
               name: "{{evento.get_title}}",
               location: "{% if evento.location %}{{evento.location}}{% endif %}",
-              observation: `{{evento.observacao}}`,
+              observacao: `{{evento.observacao}}`,
               atividade: `{{evento.atividade}}`,
               descricao: `{{evento.descricao}}`,
               responsavel: {% if evento.responsavel %}{{evento.responsavel.id}}{% else %}0{% endif %},
@@ -162,8 +162,8 @@
                 content += '<div class="event-responsavel">' + "Professor: " + text + '</div>';
               }
 
-              if (e.events[i].observation) {
-                content += '<div class="event-observation">' + "Obs: " + e.events[i].observation + '</div>';
+              if (e.events[i].observacao) {
+                content += '<div class="event-observacao">' + "Obs: " + e.events[i].observacao + '</div>';
               }
               content += '</div>';
             }
@@ -200,18 +200,10 @@
           enableRangeSelection: true,
           enableContextMenu: true,  // botão da direita sobre o dia
           contextMenuItems: [
-            {
-              text: "Editar",
-              click: editEvent
-            },
-            {
-              text: "Remover",
-              click: deleteEvent
-            }
+            {text: "Editar", click: editEvent},
+            {text: "Remover", click: deleteEvent}
           ],
-          selectRange: function (e) {
-            editEvent(e);
-          },
+          selectRange: function (e) {editEvent(e);},
         {% else %}
           enableRangeSelection: false,
           enableContextMenu: false,  // botão da direita sobre o dia
