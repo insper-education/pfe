@@ -114,9 +114,7 @@ def index_estudantes(request):
 @login_required
 def alinhamentos_gerais(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
-    context = {
-        "titulo": {"pt": "Alinhamentos Gerais", "en": "General Alignments"},
-    }
+    context = {"titulo": {"pt": "Alinhamentos Gerais", "en": "General Alignments"},}
     return render(request, "estudantes/alinhamentos_gerais.html", context)
 
 @login_required
@@ -473,9 +471,8 @@ def estudante_feedback_hashid(request, hashid):
 @transaction.atomic
 def avaliacao_pares(request, momento):
     """Permite realizar a avaliação de pares."""
-    configuracao = get_object_or_404(Configuracao)
-
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    configuracao = get_object_or_404(Configuracao)
 
     estudante = request.user.aluno if request.user.tipo_de_usuario == 1 else None
 
@@ -577,7 +574,11 @@ def avaliacao_pares(request, momento):
     context["inicio"] = inicio
     context["fim"] = fim
     context["configuracao"] = configuracao
-    
+
+    context["TIPO_ENTREGA"] = Pares.TIPO_ENTREGA
+    context["TIPO_INICIATIVA"] = Pares.TIPO_INICIATIVA
+    context["TIPO_COMUNICACAO"] = Pares.TIPO_COMUNICACAO
+
     return render(request, "estudantes/avaliacao_pares.html", context)
 
 
@@ -812,9 +813,7 @@ def submissao_documento(request):
 
     configuracao = get_object_or_404(Configuracao)
 
-    context = {
-        "titulo": {"pt": "Submissão de Documentos", "en": "Document Submission"},
-        }
+    context = {"titulo": {"pt": "Submissão de Documentos", "en": "Document Submission"},}
 
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor

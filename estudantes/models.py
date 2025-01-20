@@ -85,35 +85,35 @@ class Pares(models.Model):
                                    help_text="O que o colega pode mudar")
     
     TIPO_ENTREGA = (
-        (0, "Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la."),
-        (1, "Entregou abaixo do esperado."),
-        (2, "Entregou precisamente o esperado."),
-        (3, "Entregou acima do esperado."),
-        (4, "Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco."),
+        (0, "Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la.", "Delivered well below expectations, putting the delivery at risk and forcing other member(s) to change personal plans to guarantee it."),
+        (1, "Entregou abaixo do esperado.",  "Delivered below expectations."),
+        (2, "Entregou precisamente o esperado.", "Delivered exactly what was expected."),
+        (3, "Entregou acima do esperado.", "Delivered above expectations."),
+        (4, "Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco.", "Delivered well above expectations, changing personal plans to guarantee a delivery that was at risk."),
     )
-    entrega = models.PositiveSmallIntegerField(choices=TIPO_ENTREGA,
+    entrega = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_ENTREGA],
                                                null=True, blank=True,
                                                help_text="Define o tipo de entrega")
 
     TIPO_INICIATIVA = (
-        (0, "Mesmo quando lembrado, não cumpriu as tarefas designadas."),
-        (1, "Precisou ser lembrado, mas cumpriu as tarefas designadas."),
-        (2, "Autonomamente, cumpriu as tarefas designadas, nem mais nem menos."),
-        (3, "Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades."),
-        (4, "Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades."),
+        (0, "Mesmo quando lembrado, não cumpriu as tarefas designadas.", "Even when reminded, did not fulfill the assigned tasks."),
+        (1, "Precisou ser lembrado, mas cumpriu as tarefas designadas.", "Needed to be reminded, but fulfilled the assigned tasks."),
+        (2, "Autonomamente, cumpriu as tarefas designadas, nem mais nem menos.", "Autonomously, fulfilled the assigned tasks, neither more nor less."),
+        (3, "Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades.", "In addition to fulfilling the assigned tasks, helped other member(s) who were having difficulties."),
+        (4, "Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades.", "Monopolized part of the tasks, assuming tasks of other member(s) even when there was no evidence of difficulties."),
     )
-    iniciativa = models.PositiveSmallIntegerField(choices=TIPO_INICIATIVA,
-                                               null=True, blank=True,
-                                               help_text="Define o tipo de entrega")
+    iniciativa = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_INICIATIVA],
+                                                  null=True, blank=True,
+                                                  help_text="Define o tipo de entrega")
 
     TIPO_COMUNICACAO = (
-        (0, "Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega."),
-        (1, "Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega."),
-        (2, "Aparentemente não teve dificuldades, mas nunca reportou nada."),
-        (3, "Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida."),
-        (4, "Apesar de não ter dificuldades, estava sempre reportando como estava indo."),
+        (0, "Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega.", "Had difficulties, never communicated them and in the end they prevented the delivery."),
+        (1, "Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega.", "Had difficulties and never communicated them, but at least it did not prevent the delivery."),
+        (2, "Aparentemente não teve dificuldades, mas nunca reportou nada.", "Apparently had no difficulties, but never reported anything."),
+        (3, "Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida.", "Communicated difficulties. Regardless of whether the delivery was made or not, the team was not surprised."),
+        (4, "Apesar de não ter dificuldades, estava sempre reportando como estava indo.", "Despite having no difficulties, was always reporting how it was going."),
     )
-    comunicacao = models.PositiveSmallIntegerField(choices=TIPO_COMUNICACAO,
+    comunicacao = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_COMUNICACAO],
                                                null=True, blank=True,
                                                help_text="Define o tipo de entrega")
 

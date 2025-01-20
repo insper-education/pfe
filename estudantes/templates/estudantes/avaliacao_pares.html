@@ -49,16 +49,14 @@
     <hr>
     
     {% for colega, par in colegas %}
-      <br>
-      <div class="bloco">
-        <b>
+
+      <div class="bloco"><b>
           {% lng "Colega:" "Colleague:" %} {{colega.aluno}}
           {% if colega.aluno.externo %}
             [{{colega.aluno.externo}}]
             <span style="color: #007bff;">{% lng "(opcional)" "(optional)" %}</span>
           {% endif %}
-        </b>
-      </div>
+      </b></div>
 
       <div class="div_arredondado bloco">
         <label for="aprecia"><b>
@@ -97,33 +95,16 @@
           {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
           {{colega.aluno}}
         </b>
-        <div class="mt-1 bloco">
-          <label><input type="radio" name="entrega{{colega.id}}" value="0" 
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.entrega == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Entregou muito abaixo de esperado, colocando a entrega em risco e obrigando outro(s) membro(s) a mudarem planejamentos pessoais para garanti-la." "Delivered well below expectations, putting the delivery at risk and forcing other member(s) to change personal plans to guarantee it." %}</label>
-
-          <label><input type="radio" name="entrega{{colega.id}}" value="1"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.entrega == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Entregou abaixo do esperado." "Delivered below expectations." %}</label>
-
-          <label><input type="radio" name="entrega{{colega.id}}" value="2"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.entrega == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Entregou precisamente o esperado." "Delivered exactly what was expected." %}</label>
-
-          <label><input type="radio" name="entrega{{colega.id}}" value="3"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.entrega == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Entregou acima do esperado." "Delivered above expectations." %}</label>
-
-          <label><input type="radio" name="entrega{{colega.id}}" value="4"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.entrega == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Entregou muito acima do esperado, mudando planejamentos pessoais para garantir uma entrega que estava em risco." "Delivered well above expectations, changing personal plans to guarantee a delivery that was at risk." %}</label>
+        <div class="mt-1">
+          {% for tipo in TIPO_ENTREGA %}
+            <label><input type="radio" name="entrega{{colega.id}}" value="{{tipo.0}}" 
+              {% if not colega.aluno.externo %}required{% endif %}
+              {% if par.entrega == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% lng tipo.1 tipo.2 %}</label>
+          {% endfor %}
         </div>
       </div>
+
 
       <div class="div_arredondado bloco">
         <b>
@@ -131,30 +112,12 @@
           {{colega.aluno}}
         </b>
         <div class="mt-1">
-          <label><input type="radio" name="iniciativa{{colega.id}}" value="0"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.iniciativa == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Mesmo quando lembrado, não cumpriu as tarefas designadas." "Even when reminded, did not fulfill the assigned tasks." %}</label>
-
-          <label><input type="radio" name="iniciativa{{colega.id}}" value="1"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.iniciativa == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Precisou ser lembrado, mas cumpriu as tarefas designadas." "Needed to be reminded, but fulfilled the assigned tasks." %}</label>
-
-          <label><input type="radio" name="iniciativa{{colega.id}}" value="2"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.iniciativa == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Autonomamente, cumpriu as tarefas designadas, nem mais nem menos." "Autonomously, fulfilled the assigned tasks, neither more nor less." %}</label>
-
-          <label><input type="radio" name="iniciativa{{colega.id}}" value="3"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.iniciativa == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Além de cumprir as tarefas designadas, ajudou outros(s) membro(s) que estavam tendo dificuldades." "In addition to fulfilling the assigned tasks, helped other member(s) who were having difficulties." %}</label>
-
-          <label><input type="radio" name="iniciativa{{colega.id}}" value="4"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.iniciativa == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Monopolizou parte das tarefas, assumindo tarefas de outro(s) membro(s) mesmo quando não havia evidência de dificuldades." "Monopolized part of the tasks, assuming tasks of other member(s) even when there was no evidence of difficulties." %}</label>
+          {% for tipo in TIPO_INICIATIVA %}
+            <label><input type="radio" name="iniciativa{{colega.id}}" value="{{tipo.0}}" 
+              {% if not colega.aluno.externo %}required{% endif %}
+              {% if par.iniciativa == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% lng tipo.1 tipo.2 %}</label>
+          {% endfor %}
         </div>
       </div>
 
@@ -164,30 +127,12 @@
           {{colega.aluno}}
         </b>
         <div class="mt-1">
-          <label><input type="radio" name="comunicacao{{colega.id}}" value="0"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.comunicacao == 0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Teve dificuldades, nunca as comunicou e ao final elas impediram a entrega." "Had difficulties, never communicated them and in the end they prevented the delivery." %}</label>
-
-          <label><input type="radio" name="comunicacao{{colega.id}}" value="1"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.comunicacao == 1 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Teve dificuldades e nunca as comunicou, mas pelo menos não impediram a entrega." "Had difficulties and never communicated them, but at least it did not prevent the delivery." %}</label>
-
-          <label><input type="radio" name="comunicacao{{colega.id}}" value="2"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.comunicacao == 2 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Aparentemente não teve dificuldades, mas nunca reportou nada." "Apparently had no difficulties, but never reported anything." %}</label>
-
-          <label><input type="radio" name="comunicacao{{colega.id}}" value="3"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.comunicacao == 3 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Comunicou dificuldades. Independente da entrega ter sido feita ou não, a equipe não foi surpreendida." "Communicated difficulties. Regardless of whether the delivery was made or not, the team was not surprised." %}</label>
-
-          <label><input type="radio" name="comunicacao{{colega.id}}" value="4"
-            {% if not colega.aluno.externo %}required{% endif %}
-            {% if par.comunicacao == 4 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
-            {% lng "Apesar de não ter dificuldades, estava sempre reportando como estava indo." "Despite having no difficulties, was always reporting how it was going." %}</label>
+          {% for tipo in TIPO_COMUNICACAO %}
+            <label><input type="radio" name="comunicacao{{colega.id}}" value="{{tipo.0}}" 
+              {% if not colega.aluno.externo %}required{% endif %}
+              {% if par.comunicacao == tipo.0 %}checked="checked"{% endif %} {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>
+              {% lng tipo.1 tipo.2 %}</label>
+          {% endfor %}
         </div>
       </div>
 

@@ -9,8 +9,6 @@
   {% load static %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
-
-  {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}
   <style>
     label {margin: 6px 0px 6px 0px;}
@@ -56,15 +54,12 @@
         {% endif %}
       </h4>
     {% else %}
-        <h4>
-          {% lng "Somente visualização das opções de encontros (você não está registrado como estudante)" "Only viewing the meeting options (you are not registered as a student)" %}
-        </h4>
+      <h4>{% lng "Somente visualização das opções de encontros (você não está registrado como estudante)" "Only viewing the meeting options (you are not registered as a student)" %}</h4>
     {% endif %}
     <br>
 
     {% if aviso %}
-        <h4 class="red-bold">{{aviso|linebreaks}}</h4>
-        <br><br>
+      <h4 class="red-bold">{{aviso|linebreaks}}</h4><br><br>
     {% endif %}
 
     {% if encontros %}
@@ -122,32 +117,32 @@
     </div>
 
     {% if encontros %}
-        <br>
-        <button class="btn btn-primary mb-1 ml-2" type="submit" 
-        {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
-          {% if agendado %}
-            {% lng "Reagendar" "Reschedule" %}
-          {% else %}
-            {% lng "Agendar" "Schedule" %}
-          {% endif %}
-        </button>
-
+      <br>
+      <button class="btn btn-primary mb-1 ml-2" type="submit" 
+       {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
         {% if agendado %}
-            <button class="btn btn-danger mb-1 ml-2" id="cancelar" 
-              {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
-              {% lng "Cancelar Agendamento" "Cancel Schedule" %}
-            </button>
-            <script>
-                $("#cancelar").click(function() {
-                    if(confirm("Tem certeza que deseja cancelar o agendamento para {{agendado.startDate}}?")){
-                        event.preventDefault(); 
-                        window.location = "{% url 'encontros_cancelar' agendado.id %}";
-                    } else {
-                        return false;
-                    }
-                });
-            </script>
+          {% lng "Reagendar" "Reschedule" %}
+        {% else %}
+          {% lng "Agendar" "Schedule" %}
         {% endif %}
+      </button>
+
+      {% if agendado %}
+        <button class="btn btn-danger mb-1 ml-2" id="cancelar" 
+          {% if user.tipo_de_usuario != 1 or not projeto %}disabled{% endif %}>
+          {% lng "Cancelar Agendamento" "Cancel Schedule" %}
+        </button>
+        <script>
+          $("#cancelar").click(function() {
+            if(confirm("Tem certeza que deseja cancelar o agendamento para {{agendado.startDate}}?")){
+              event.preventDefault(); 
+              window.location = "{% url 'encontros_cancelar' agendado.id %}";
+            } else {
+              return false;
+            }
+          });
+        </script>
+      {% endif %}
 
     {% endif %}
 
@@ -158,23 +153,19 @@
 
       var update = function() {
         $.ajax({
-            type: "GET",
-            url: "{% url 'encontros_marcar' %}",
-            data: {"csrfmiddlewaretoken": "{{ csrf_token }}",},
-            success: function(response){
-
-                var value = $( "input[type=radio][name=selection]:checked" ).val();
-
-                $("#horarios").replaceWith($("#horarios",response));
-
-                if(!$("input[type=radio][name=selection][value=" + value + "]").prop('disabled')){
-                    $("input[type=radio][name=selection][value=" + value + "]").prop('checked', true);
-                }
-                $(".tooltip-inner").remove();
-                $(".tooltip-arrow").remove();
-
-            },
-            {% include "ajax_error_function.js" %}
+          type: "GET",
+          url: "{% url 'encontros_marcar' %}",
+          data: {"csrfmiddlewaretoken": "{{ csrf_token }}",},
+          success: function(response){
+            var value = $( "input[type=radio][name=selection]:checked" ).val();
+            $("#horarios").replaceWith($("#horarios",response));
+            if(!$("input[type=radio][name=selection][value=" + value + "]").prop("disabled")){
+              $("input[type=radio][name=selection][value=" + value + "]").prop("checked", true);
+            }
+            $(".tooltip-inner").remove();
+            $(".tooltip-arrow").remove();
+          },
+          {% include "ajax_error_function.js" %}
         });
       };
 

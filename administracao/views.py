@@ -1287,9 +1287,7 @@ def backup(request, formato):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    context = {
-        "titulo": {"pt": "Relatório", "en": "Report"},
-        }
+    context = {"titulo": {"pt": "Relatório", "en": "Report"},}
 
     edicao = request.GET.get("edicao", None)
     if edicao and edicao != "todas":

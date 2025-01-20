@@ -7,9 +7,7 @@
 
 {% block head %}
   {% load linguas %}
-
   <style>
-    
     datalist {
       display: flex;
       width: 100%;
@@ -25,138 +23,132 @@
       justify-content: center;
       z-index: -1;
     }
-
     @media only screen and (max-width: 400px) {
       option {
         font-size: 3vw;
       }
     }
-
   </style>
 {% endblock %}
 
 {% block content %}
-
   <form action="" method="post"> {% csrf_token %}  
+    <span class="col-form-label">
+      {% lng "Nome:" "Name:" %}
+    </span> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
 
-      <label for="nome" class="col-form-label">
-        {% lng "Nome:" "Name:" %}
-      </label> {% if usuario %}{{usuario.get_full_name}}{% endif %}<br>
+    <span class="col-form-label">
+      {% lng "Projeto:" "Project:" %}
+    </span> {% if projeto %}{{projeto}}{% endif %}<br>
+    
+    <p class="text-danger">
+      {% lng "Os dados serão tratados como confidênciais." "The data will be treated as confidential." %}
+    </p>
 
-      <label for="projeto" class="col-form-label">
-        {% lng "Projeto:" "Project:" %}
-      </label> {% if projeto %}{{projeto}}{% endif %}<br>
-      
-      <p class="text-danger">
-        {% lng "Os dados serão tratados como confidênciais." "The data will be treated as confidential." %}
-      </p>
-
-      <label for="recomendaria" class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos mais projetos nos próximos semestres com a {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}?</label>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria1" value="option1" {% if feedback %}disabled  {% if feedback.recomendaria == 1 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="recomendaria1">
-          Não recomendo
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria2" value="option2" {% if feedback %}disabled  {% if feedback.recomendaria == 2 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="recomendaria2">
-          Recomendo com ressalvas
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria3" value="option3" {% if feedback %}disabled  {% if feedback.recomendaria == 3 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="recomendaria3">
-          Recomendo fortemente
-        </label>
-      </div>
-
-      <label for="primeira_opcao" class="mt-5" style="max-width: 860px;">Agora que você conhece mais da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?</label>
-      <div class="form-check">
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="primeira_opcao" id="primeira_opcaoS" value="optionS" {% if feedback %}disabled  {% if feedback.primeira_opcao == True %}checked="checked"{% endif %} {% endif %}>
-          <label class="form-check-label" for="primeira_opcaoS">
-            Sim
-          </label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="primeira_opcao" id="primeira_opcaoN" value="optionN" {% if feedback %}disabled  {% if feedback.primeira_opcao == False %}checked="checked"{% endif %} {% endif %}>
-          <label class="form-check-label" for="primeira_opcaoN">
-            Não
-          </label>
-        </div>
-      </div>
-
-      <label for="proposta" class="mt-5" style="max-width: 860px;">Tendo ou não buscado alguma proposta da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %} para estágio ou contrato de trabalho.</label>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="proposta" id="proposta1" value="option1" {% if feedback %}disabled  {% if feedback.proposta == 1 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="proposta1">
-          Recebi convite e apliquei
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="proposta" id="proposta2" value="option2" {% if feedback %}disabled  {% if feedback.proposta == 2 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="proposta2">
-          Não recebi convite, mas apliquei
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="proposta" id="proposta3" value="option3" {% if feedback %}disabled  {% if feedback.proposta == 3 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="proposta3">
-          Recebi convite, mas não apliquei
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="proposta" id="proposta4" value="option4" {% if feedback %}disabled  {% if feedback.proposta == 4 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="proposta4">
-          Não recebi, nem apliquei
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="proposta" id="proposta5" value="option5" {% if feedback %}disabled  {% if feedback.proposta == 5 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="proposta5">
-          Não haviam vagas em aberto
-        </label>
-      </div>
-
-      <label for="trabalhando" class="mt-5" style="max-width: 860px;">Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?</label>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando1" value="option1" {% if feedback %}disabled  {% if feedback.trabalhando == 1 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="trabalhando1">
-          {% if projeto.proposta.organizacao %}{{projeto.proposta.organizacao}}{% else %}Empresa do projeto{% endif %}
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando2" value="option2" {% if feedback %}disabled  {% if feedback.trabalhando == 2 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="trabalhando2">
-          Outra
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando3" value="option3" {% if feedback %}disabled  {% if feedback.trabalhando == 3 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="trabalhando3">
-          Ainda não
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando4" value="option4" {% if feedback %}disabled  {% if feedback.trabalhando == 4 %}checked="checked"{% endif %} {% endif %}>
-        <label class="form-check-label" for="trabalhando4">
-          Prefiro não responder
-        </label>
-      </div>
-
-      <label for="outros" class="mt-5" style="max-width: 860px;">Tem outras observações que gostaria de compartilhar conosco?
-      Esse espaço é livre para suas observações e agradecemos qualquer feedback mais detalhado que possa nos passar.</label>
-      <textarea name="outros" class="form-control" style="max-width: 860px;" rows="5" id="outros" maxlength="1000" {% if feedback %}disabled{% endif %}>{% if feedback.outros %}{{feedback.outros}}{% endif %}</textarea>
-
-      <br><br><br>
-      {% if not feedback %}
-        <button type="submit" class="btn btn-primary mb-1">
-          {% lng "Enviar Feedback" "Send Feedback" %}
-        </button>
-      {% endif %}
-
+    <div class="mt-5" style="max-width: 860px;">O quanto você recomendaria fazermos mais projetos nos próximos semestres com a {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}?</div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria1" value="option1" {% if feedback %}disabled  {% if feedback.recomendaria == 1 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="recomendaria1">
+        Não recomendo
+      </label>
     </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria2" value="option2" {% if feedback %}disabled  {% if feedback.recomendaria == 2 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="recomendaria2">
+        Recomendo com ressalvas
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="recomendaria" id="recomendaria3" value="option3" {% if feedback %}disabled  {% if feedback.recomendaria == 3 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="recomendaria3">
+        Recomendo fortemente
+      </label>
+    </div>
+
+    <div class="mt-5" style="max-width: 860px;">Agora que você conhece mais da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %}, essa seria uma das primeiras opções para você fazer estágio ou ser contratado de forma efetiva?</div>
+    <div class="form-check">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="primeira_opcao" id="primeira_opcaoS" value="optionS" {% if feedback %}disabled  {% if feedback.primeira_opcao == True %}checked="checked"{% endif %} {% endif %}>
+        <label class="form-check-label" for="primeira_opcaoS">
+          Sim
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="primeira_opcao" id="primeira_opcaoN" value="optionN" {% if feedback %}disabled  {% if feedback.primeira_opcao == False %}checked="checked"{% endif %} {% endif %}>
+        <label class="form-check-label" for="primeira_opcaoN">
+          Não
+        </label>
+      </div>
+    </div>
+
+    <div class="mt-5" style="max-width: 860px;">Tendo ou não buscado alguma proposta da {% if projeto %}{{projeto.proposta.organizacao}}{% else %}empresa que você realizou o projeto esse semestre{% endif %} para estágio ou contrato de trabalho.</div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="proposta" id="proposta1" value="option1" {% if feedback %}disabled  {% if feedback.proposta == 1 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="proposta1">
+        Recebi convite e apliquei
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="proposta" id="proposta2" value="option2" {% if feedback %}disabled  {% if feedback.proposta == 2 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="proposta2">
+        Não recebi convite, mas apliquei
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="proposta" id="proposta3" value="option3" {% if feedback %}disabled  {% if feedback.proposta == 3 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="proposta3">
+        Recebi convite, mas não apliquei
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="proposta" id="proposta4" value="option4" {% if feedback %}disabled  {% if feedback.proposta == 4 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="proposta4">
+        Não recebi, nem apliquei
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="proposta" id="proposta5" value="option5" {% if feedback %}disabled  {% if feedback.proposta == 5 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="proposta5">
+        Não haviam vagas em aberto
+      </label>
+    </div>
+
+    <div class="mt-5" style="max-width: 860px;">Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?</div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando1" value="option1" {% if feedback %}disabled  {% if feedback.trabalhando == 1 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="trabalhando1">
+        {% if projeto.proposta.organizacao %}{{projeto.proposta.organizacao}}{% else %}Empresa do projeto{% endif %}
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando2" value="option2" {% if feedback %}disabled  {% if feedback.trabalhando == 2 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="trabalhando2">
+        Outra
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando3" value="option3" {% if feedback %}disabled  {% if feedback.trabalhando == 3 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="trabalhando3">
+        Ainda não
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="trabalhando" id="trabalhando4" value="option4" {% if feedback %}disabled  {% if feedback.trabalhando == 4 %}checked="checked"{% endif %} {% endif %}>
+      <label class="form-check-label" for="trabalhando4">
+        Prefiro não responder
+      </label>
+    </div>
+
+    <label for="outros" class="mt-5" style="max-width: 860px;">Tem outras observações que gostaria de compartilhar conosco?
+    Esse espaço é livre para suas observações e agradecemos qualquer feedback mais detalhado que possa nos passar.</label>
+    <textarea name="outros" class="form-control" style="max-width: 860px;" rows="5" id="outros" maxlength="1000" {% if feedback %}disabled{% endif %}>{% if feedback.outros %}{{feedback.outros}}{% endif %}</textarea>
+
+    <br><br><br>
+    {% if not feedback %}
+      <button type="submit" class="btn btn-primary mb-1">
+        {% lng "Enviar Feedback" "Send Feedback" %}
+      </button>
+    {% endif %}
 
   </form>
 

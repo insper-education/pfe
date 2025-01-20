@@ -8,7 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-
+  <script src="{% static 'js/Sortable.min.js' %}"></script>
   <style>
     .explanatory-text {
       max-width: 1050px;
@@ -23,11 +23,7 @@
       color: #333;
     }
   </style>
-
-  <script src="{% static 'js/Sortable.min.js' %}"></script>
-
 {% endblock %}
-
 
 {% block content %}
 
