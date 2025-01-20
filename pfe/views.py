@@ -50,24 +50,10 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-
-from administracao.models import TipoCertificado, GrupoCertificado
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = "Feito"
-
-    for grupo in GrupoCertificado.objects.all():
-        print(grupo)
-        print(grupo.nome)
-        print(grupo.sigla)
-        print(grupo.cor)
-        print(grupo.nome_en)
-        print(grupo.descricao)
-        print("")
-
     return HttpResponse(message)
 
