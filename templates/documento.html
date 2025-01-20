@@ -14,21 +14,17 @@
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </div>
       {% else %}
         {% if documento.documento %}
           <div class="item_lista"><span class="return">&#x21B3;</span>
             <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
              href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
             {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-          </div>
-        {% endif %}
-        {% if documento.link %}
+        {% elif documento.link %}
           <div class="item_lista"><span class="return">&#x21B3;</span>
             <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
              href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
             {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-          </div>
         {% endif %}
       {% endif %}
   {% else %}
@@ -40,24 +36,26 @@
       <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
         href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
       {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-      </div>
     {% else %}
       {% if documento.documento %}
         <div class="item_lista"><span class="circulo">&#9899;</span>
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </div>
-      {% endif %}
-      {% if documento.link %}
+      {% elif documento.link %}
         <div class="item_lista"><span class="circulo">&#9899;</span>
           <a {% if documento.data %}data-toggle="tooltip" data-html="true" animation="true" title="Data: {{documento.data|date:"d/m/Y"}}"{% endif %}
            href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
           {% if documento.lingua_do_documento == 1 %}<sup>(Inglês)</sup>{% endif %}
-        </div>
       {% endif %}
     {% endif %}
   {% endif %}
+  {% if request.user.admin %}
+    <a href="#" class="open-documento" data-url="{% url 'adiciona_documento_tipo' documento.tipo_documento.sigla %}"> 
+      <i class="fas fa-pencil-alt" style="font-size: 0.8em;"></i>
+    </a>
+  {% endif %}
+  </div>
 {% endif %}
 
 
