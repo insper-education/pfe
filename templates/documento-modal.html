@@ -4,25 +4,19 @@
   Data: 1 de Junho de 2021
 {% endcomment %}
 
-{% comment %} <style>
-  .open-documento {
-    cursor: pointer;
-  }
-</style> {% endcomment %}
-
 <script>
   var documento;
   var url;
   
   $(document).on("click", ".open-documento", function (e) {
     e.preventDefault();
-    var $popup = $("#popup");
+    var $popup = $("#popup_documento");
     documento = $(this).data("documento");
     url = $(this).data("url");
 
     var address = url
     if(documento) {
-        address += '/'+documento+'/'
+        address += '/'+documento+'/';
     }
 
     $(".modal-content", $popup).load(address, function(response, status, xhr) {
@@ -36,10 +30,4 @@
 
 </script>
 
-<!-- Modal -->
-<div class="modal fade" id="popup" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    </div>
-  </div>
-</div>
+{% include "janela_modal.html" with nome="popup_documento" %}

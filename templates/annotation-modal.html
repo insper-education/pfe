@@ -48,7 +48,7 @@
 
   $(document).on("click", ".create-annotation", function (e) {
     e.preventDefault();
-    var $popup = $("#popup");
+    var $popup = $("#popup_anotacao");
     anotacao = $(this).data("anotacao");
     organizacao = $(this).data("organizacao"); //pode não existir
     url = $(this).data("url");
@@ -67,9 +67,6 @@
   });
 
 </script>
-
-
-
 
 <div class="modal fade" id="confirm" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -91,15 +88,7 @@
   </div>
 </div>
 
-
-<!-- Modal -->
-<div class="modal fade" id="popup" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div id="modal-content" class="modal-content">
-    </div>
-  </div>
-</div>
-
+{% include "janela_modal.html" with nome="popup_anotacao" %}
 
 <script>
 

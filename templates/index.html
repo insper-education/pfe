@@ -124,9 +124,7 @@
       if (cardContent.style.display === "none" || cardContent.style.display === "") {
         fetch(dynamicUrl)
           .then(response => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
+            if (!response.ok) throw new Error("Network response was not ok");
             return response.text();
           })
           .then(html => {
@@ -137,11 +135,8 @@
             const scripts = cardContent.querySelectorAll("script");
             scripts.forEach(script => {
               const newScript = document.createElement("script");
-              if (script.src) {
-                newScript.src = script.src;
-              } else {
-                newScript.textContent = script.textContent;
-              }
+              if (script.src) newScript.src = script.src;
+              else newScript.textContent = script.textContent;
               document.body.appendChild(newScript);
               document.body.removeChild(newScript);
             });

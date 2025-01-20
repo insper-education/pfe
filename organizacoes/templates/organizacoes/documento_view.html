@@ -122,7 +122,7 @@
             {% for proj in projetos %}
               <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
                 {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
-                {% include "tipo_projeto.html" with projeto=proj %}
+                {% include "tipo_projeto.html" with projeto=proj sem_cor=True %}
               </option>
             {% endfor %}
           </select>

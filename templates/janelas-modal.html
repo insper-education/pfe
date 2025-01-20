@@ -12,7 +12,7 @@
   function abrir_modal(e) {
 
     if (e != null) e.preventDefault();
-    var $popup = $("#popup");
+    var $popup = $("#popup_janelas");
     data = $(this).data("data");
     url = $(this).data("url");
 
@@ -46,10 +46,4 @@
 
 </script>
 
-<!-- Modal -->
-<div class="modal fade" id="popup" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    </div>
-  </div>
-</div>
+{% include "janela_modal.html" with nome="popup_janelas" %}
