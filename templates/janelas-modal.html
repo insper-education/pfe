@@ -12,7 +12,7 @@
   function abrir_modal(e) {
 
     if (e != null) e.preventDefault();
-    var $popup = $("#popup_janelas");
+    var $popup = $("#popup");
     data = $(this).data("data");
     url = $(this).data("url");
 
@@ -46,4 +46,4 @@
 
 </script>
 
-{% include "janela_modal.html" with nome="popup_janelas" %}
+{% comment %} {% include "janela_modal.html" with nome="popup_janelas" %} {% endcomment %}

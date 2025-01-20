@@ -11,7 +11,7 @@
 
   $(document).on("click", ".link-disciplina", function (e) {
     e.preventDefault();
-    var $popup = $("#popup_disciplina");
+    var $popup = $("#popup");
     proposta = $(this).data("proposta");
     url = $(this).data("url");
 
@@ -22,7 +22,7 @@
 
 </script>
 
-{% include "janela_modal.html" with nome="popup_disciplina" %}
+{% comment %} {% include "janela_modal.html" with nome="popup_disciplina" %} {% endcomment %}
 
 <script>
 

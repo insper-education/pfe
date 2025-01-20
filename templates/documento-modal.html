@@ -10,7 +10,7 @@
   
   $(document).on("click", ".open-documento", function (e) {
     e.preventDefault();
-    var $popup = $("#popup_documento");
+    var $popup = $("#popup");
     documento = $(this).data("documento");
     url = $(this).data("url");
 
@@ -29,5 +29,3 @@
   });
 
 </script>
-
-{% include "janela_modal.html" with nome="popup_documento" %}

@@ -48,7 +48,7 @@
 
   $(document).on("click", ".create-annotation", function (e) {
     e.preventDefault();
-    var $popup = $("#popup_anotacao");
+    var $popup = $("#popup");
     anotacao = $(this).data("anotacao");
     organizacao = $(this).data("organizacao"); //pode não existir
     url = $(this).data("url");
@@ -88,7 +88,7 @@
   </div>
 </div>
 
-{% include "janela_modal.html" with nome="popup_anotacao" %}
+{% comment %} {% include "janela_modal.html" with nome="popup_anotacao" %} {% endcomment %}
 
 <script>
 

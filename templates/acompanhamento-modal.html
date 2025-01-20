@@ -10,7 +10,7 @@
   
   $(document).on("click", ".open-acompanhamento", function (e) {
     e.preventDefault();
-    var $popup = $("#popup_acompanhamento");
+    var $popup = $("#popup");
     
     url = $(this).data("url");
   
@@ -29,7 +29,7 @@
 
 </script>
 
-{% include "janela_modal.html" with nome="popup_acompanhamento" %}
+{% comment %} {% include "janela_modal.html" with nome="popup_acompanhamento" %} {% endcomment %}
 
 <script>
 
