@@ -61,38 +61,25 @@
 
         <a href="{% url 'info'%}">{% lng "Informações" "Information" %}</a>
         {% if user.is_authenticated %}
-          <a href="{% url 'perfil' %}">
-            {% lng "Perfil" "Profile" %}          </a>
-          <a href="{% url 'index' %}">
-            {% lng "Página Geral" "General Page" %}          </a>
-          <a href="{% url 'calendario' %}">
-            {% lng "Calendário" "Calendar" %}          </a>
+          <a href="{% url 'perfil' %}">{% lng "Perfil" "Profile" %}</a>
+          <a href="{% url 'index' %}">{% lng "Página Geral" "General Page" %}</a>
+          <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
           {% if not user.parc %}
-              <a href="{% url 'index_estudantes' %}">
-                {% lng "Área dos Estudantes" "Students' Area" %}              </a>
+            <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
           {% endif %}
         {% endif %}      
-        <a href="{% url 'index_organizacoes' %}">
-          {% lng "Área das Parceiros" "Partners' Area" %}        </a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
+        <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
         {% if user.is_authenticated %}
           {% if perms.users.altera_professor %}
-            <a href="{% url 'index_professor'%}">
-              {% lng "Área do Professor" "Professor's Area" %}            </a>
-            <a href="{% url 'index_academica' %}">
-              {% lng "Área Acadêmica" "Academic Area" %}            </a>
-            <a href="{% url 'index_operacional'%}">
-              {% lng "Área Operacional" "Operational Area" %}            </a>
-            <a href="{% url 'index_administracao'%}">
-              {% lng "Área Administrativa" "Administrative Area" %}            </a>
-            <a href="{% url 'index_propostas'%}">
-              {% lng "Propostas" "Proposals" %}            </a>
-            <a href="{% url 'index_projetos'%}">
-              {% lng "Projetos" "Projects" %}            </a>
+            <a href="{% url 'index_professor'%}">{% lng "Área do Professor" "Professor's Area" %}</a>
+            <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
+            <a href="{% url 'index_operacional'%}">{% lng "Área Operacional" "Operational Area" %}</a>
+            <a href="{% url 'index_administracao'%}">{% lng "Área Administrativa" "Administrative Area" %}</a>
+            <a href="{% url 'index_propostas'%}">{% lng "Propostas" "Proposals" %}</a>
+            <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
           {% endif %}
         {% endif %}
-        <a href="{% url 'index_documentos'%}">
-          {% lng "Documentos" "Documents" %}        </a>
-
+        <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
         {% if user.is_authenticated %}
           <a href="{% url 'logout'%}">Logout</a>
         {% else %}
@@ -139,6 +126,7 @@
   {% endif %}
   
   {% comment %} {% include "janela_modal.html" with nome="popup" %} {% endcomment %}
+  {% comment %} Modal comum para ser usado em várias páginas {% endcomment %}
   <div class="modal fade" id="popup" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">

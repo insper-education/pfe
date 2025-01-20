@@ -12,9 +12,7 @@
     <a class="imprimir" href="{% url 'professor_detail' orientador.id %}">  {% comment %} target="_blank" {% endcomment %}
   {% endif %}
   {{ orientador }}
-  {% if user.prof_a %}
-    </a>
-  {% endif %}
+  {% if user.prof_a %}</a>{% endif %}
   {% if coorientadores %}
   <small>
     <span class="coorientadores">
@@ -25,9 +23,7 @@
           <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
         {% endif %}
           {{coorientador.usuario.get_full_name}}
-        {% if user.prof_a %}
-          </a>
-        {% endif %}
+        {% if user.prof_a %}</a>{% endif %}
         {% comment %} <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a> {% endcomment %}
         {% if not forloop.last %}; {% endif %}
       {% endfor %}
