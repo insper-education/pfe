@@ -114,50 +114,44 @@
                     <span id="contato_autor{{organizacao.id}}">
                       ---:
                     </span>
-                    <a
-                      id='organizacao{{organizacao.id}}'
-                      data-organizacao='{{organizacao.id}}'
-                      class="edit-annotation imprimir"
+                    <a id='organizacao{{organizacao.id}}'
+                       data-organizacao='{{organizacao.id}}'
+                       class="edit-annotation imprimir"
                       >---------</a
                     >
                   </div>
                   <div class="esconder" style="float:right;">
                     {% if organizacao %}
-                      <a
-                        style="font-size: 0.5em; vertical-align: super;"
-                        data-organizacao='{{organizacao.id}}'
-                        class="create-annotation"
-                        href="{% url 'anotacao' organizacao.id %}"
-                        data-url="{% url 'anotacao' organizacao.id %}"
+                      <a style="font-size: 0.5em; vertical-align: super;"
+                         data-organizacao='{{organizacao.id}}'
+                         class="create-annotation"
+                         href="{% url 'anotacao' organizacao.id %}"
+                         data-url="{% url 'anotacao' organizacao.id %}"
                         >&#10133;</a
                       >
                     {% else %}
-                      <small>ERRO</small>
+                      <small>{% lng "ERRO" "ERROR" %}</small>
                     {% endif %}
                   </div>
                 {% else %}
                   {% comment %} {{contato.texto}} {% endcomment %}
                     <div style="float:left;width: 92%;">
-                      <span id="contato_autor{{organizacao.id}}">
-                        {{contato.autor.first_name}}:
-                      </span>
-                      <a
-                        id='organizacao{{organizacao.id}}'
-                        data-organizacao='{{organizacao.id}}'
-                        class="edit-annotation imprimir"
-                        href="{% url 'anotacao' organizacao.id %}"
-                        data-url="{% url 'anotacao' organizacao.id %}"
-                        data-anotacao="{{contato.id}}"
+                      <span id="contato_autor{{organizacao.id}}">{{contato.autor.first_name}}:</span>
+                      <a id='organizacao{{organizacao.id}}'
+                         data-organizacao='{{organizacao.id}}'
+                         class="edit-annotation imprimir"
+                         href="{% url 'anotacao' organizacao.id %}"
+                         data-url="{% url 'anotacao' organizacao.id %}"
+                         data-anotacao="{{contato.id}}"
                         >{{contato.texto}}</a
                       >
                     </div>
                     <div class="esconder" style="float:right;">
-                      <a
-                        style="font-size: 0.5em; vertical-align: super;"
-                        data-organizacao='{{organizacao.id}}'
-                        class="create-annotation"
-                        href="{% url 'anotacao' organizacao.id %}"
-                        data-url="{% url 'anotacao' organizacao.id %}"
+                      <a style="font-size: 0.5em; vertical-align: super;"
+                         data-organizacao='{{organizacao.id}}'
+                         class="create-annotation"
+                         href="{% url 'anotacao' organizacao.id %}"
+                         data-url="{% url 'anotacao' organizacao.id %}"
                         >&#10133;</a
                       >
                     </div>
@@ -190,10 +184,13 @@
     <div class="flex-container">
       <div class="flex-item">
         <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
-          <b>{% lng "Organizações em tratativas" "Organizations in negotiations" %}:</b> {{organizacoes|length}}<br>
+          <div class="mb-2">
+            <b>{% lng "Organizações em tratativas" "Organizations in negotiations" %}:</b> {{organizacoes|length}}<br>
+          </div>
           {% for tipo in tipo_retorno %}
             <div class="d-flex align-items-start">
-              <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" style="background-color:#{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
+              <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2"
+              style="line-height: 1.2; background-color: #{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
               <span class="text-truncate">{{tipo.nome}}</span>
               <span id="retorno{{tipo.id}}" class="calc_aux ml-2"></span>
             </div>
