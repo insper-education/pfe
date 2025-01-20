@@ -57,7 +57,6 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
 
     if request.is_ajax() and "texto" in request.POST:
-
         if anotacao_id:
             anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
         else:
@@ -72,7 +71,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
             except (ValueError, OverflowError):
                 anotacao_obj.momento = datetime.datetime.now()
 
-        if "texto" not in request.POST and "tipo_retorno" not in request.POST:
+        if "texto" in request.POST and "tipo_retorno" in request.POST:
             anotacao_obj.autor = request.user
 
             anotacao_obj.texto = request.POST["texto"]

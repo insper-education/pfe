@@ -18,7 +18,7 @@
 
     var address = url
     if(anotacao) {
-        address += '/'+anotacao+'/'
+        address += '/'+anotacao+'/';
     }
 
     $(".modal-content", $popup).load(address, function () {
@@ -66,6 +66,7 @@
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
+          if(response.atualizado) {
             if(anotacao) {
               $("#anotacao"+anotacao).data("anotacao", response.anotacao_id);
               $("#anotacao"+anotacao).text(texto);
@@ -74,8 +75,11 @@
               $("#lista_anotacoes").prepend("<li><a class='open-annotation' href='"+url+"' data-url='"+url+"' data-anotacao='"+response.anotacao_id+"'>"+response.autor_nome+" "+response.autor_sobrenome+" [<span id='data"+response.anotacao_id+"'>"+response.data_full+"</span>] : <span id='anotacao"+response.anotacao_id+"'>"+texto+'</span></a></li>');
             }
             $("#sem_anotacoes").hide();
+          } else {
+            alert("Erro ao atualizar anotação, contactar: <lpsoares@insper.edu.br>");
+          }
         },
-        {% include "ajax_error_function.js" %}
+        {% include "ajax_error_function.js" with com_alerta=True %}
     });
 
   }

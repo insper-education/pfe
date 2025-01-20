@@ -8,7 +8,9 @@ error: function(request, status, error) {
   if(request.responseText) {
     {% if user.tipo_de_usuario == 4 %} 
       console.log("error"+request.responseText);
-      //alert(request.responseText);
+    {% endif %}
+    {% if com_alerta %}
+      alert(request.responseText);
     {% endif %}
     jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
   } else {

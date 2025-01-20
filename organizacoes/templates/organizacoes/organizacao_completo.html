@@ -211,13 +211,11 @@
     <ul id="lista_anotacoes" style="padding-left: 18px;">
       {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
         <li>
-          <a
-            class="open-annotation"
-            href="{% url 'anotacao' organizacao.id %}"
-            data-url="{% url 'anotacao' organizacao.id %}"
-            data-anotacao="{{anotacao.id}}"
-          >
-            {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
+          <a class="open-annotation"
+             href="{% url 'anotacao' organizacao.id %}"
+             data-url="{% url 'anotacao' organizacao.id %}"
+             data-anotacao="{{anotacao.id}}">
+               {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
           </a>
         </li>
       {% endfor %}
