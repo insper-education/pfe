@@ -37,18 +37,14 @@
           {% endif %}
 
           <div class="mt-2">
-            <b>
-              {% lng "Membros da Banca:" "Examination Board Members:" %}
-            </b>
+            <b>{% lng "Membros da Banca:" "Examination Board Members:" %}</b>
             {% include "membros_da_banca.html" %}
 
             {% if user.tipo_de_usuario != 1 or banca|exibe_notas_banca %} {% comment %} Filtra certas avaliações para estudantes não verem {% endcomment %}
               {% with avaliacao=banca.get_avaliacoes_bancas %}
                 {% if avaliacao.objetivos %}
                   <hr>
-                  <b>
-                    {% lng "Média dos Conceitos da Banca:" "Board's Average Grades:" %}
-                  </b><br>
+                  <b>{% lng "Média dos Conceitos da Banca" "Board's Average Grades" %}:</b><br>
                   {% for objetivo, avaliacao in avaliacao.objetivos.items %}
                     &nbsp;&#x21A3; {{objetivo.titulo}}: 
                       {% if banca.alocacao %} {% comment %} PROBATION {% endcomment %}
@@ -77,7 +73,6 @@
                       = {{avaliacao.nota|floatformat:2}}
                     </b><br>
                   {% endif %}
-                  {% comment %} <small>Obs: Os conceitos e notas da banca vão variar conforme membros da banca postam suas avaliações.<br></small> {% endcomment %}
                 {% endif %}
 
                 {% with observacoes_estudantes=banca.get_observacoes_estudantes %}

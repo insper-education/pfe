@@ -76,10 +76,6 @@ def em_probation(alocacao):
                             avaliacao = paval.filter(avaliador=membro).last()
                             if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                 valido = False
-                        if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                            avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
-                            if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                valido = False
 
                     if valido:
                         val_objetivos, _, _ = get_objetivos(alocacao, paval)

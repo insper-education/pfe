@@ -76,15 +76,9 @@
 
   <b>{% lng "Membros da Banca" "Examination Board Members" %}</b>
   <ol>
-    {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %} {% comment %} Intermediária ou Final {% endcomment %}
-      <li>{{banca.get_projeto.orientador.user.get_full_name}} 
-        [{% lng_g banca.get_projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}]
-        <span class="texto-longo emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
-        <span class="texto-curto emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-      </li>
-    {% endif %}
     {% for membro in banca.membros %}        
       <li>{{membro.get_full_name}}
+        {% if banca.get_projeto.orientador.user == membro %}[{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
         <span class="texto-longo emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
         <span class="texto-curto emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
       </li>

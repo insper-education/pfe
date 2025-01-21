@@ -46,7 +46,7 @@
             <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=relatorio.projeto.alocacao_set.all pequeno=True %}</td>
             <td>{% include "academica/includes/bloco_orientador.html" with orientador=relatorio.projeto.orientador %}</td>
             <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=relatorio.projeto.organizacao %}</td>
-            <td>{% include "academica/includes/bloco_banca.html" with membros=relatorio.projeto.get_banca_final.membros pequeno=True %}</td>
+            <td>{% include "academica/includes/bloco_banca.html" with membros=relatorio.projeto.get_banca_final.membros projeto=relatorio.projeto pequeno=True %}</td>
             <td style="text-align:center">{{relatorio.projeto.get_edicao}}</td>
 
             <td style="text-align:center"> {% comment %} Documento {% endcomment %}

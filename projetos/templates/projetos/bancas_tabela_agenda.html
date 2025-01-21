@@ -113,20 +113,12 @@
               </ul>
             {% endif %}
           </td>
-          {% comment %} <td class="text-center">
-            {{projeto.ano}}&middot;{{projeto.semestre}}
-          </td> {% endcomment %}
           <td>
             <ul>
-              {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
-                <li>
-                  <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">{{ banca.projeto.orientador }} [orientador]</a>
-                  <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a>
-                </li>
-              {% endif %}
               {% for membro in banca.membros %}
                 <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
                 <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
+                {% if banca.projeto.orientador.user == membro %}[{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
               {% endfor %}
             </ul>
           </td>

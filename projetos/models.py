@@ -835,7 +835,10 @@ class Banca(models.Model):
 
     def membros(self):
         """Retorna os membros da banca."""
-        selecao = [ m for m in [self.membro1, self.membro2, self.membro3] if m is not None]
+        selecao = []
+        if self.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+            selecao += [self.projeto.orientador.user]
+        selecao += [ m for m in [self.membro1, self.membro2, self.membro3] if m is not None]
         return selecao
     
     class Meta:
@@ -881,12 +884,6 @@ class Banca(models.Model):
 
             for membro in self.membros():
                 avaliacao = avaliacoes.filter(avaliador=membro).last()
-                if not avaliacao:
-                    return None
-                if now - avaliacao.momento < datetime.timedelta(hours=prazo_horas):
-                    return None
-            if self.composicao.exame.sigla in ["BI", "BF"]:  # Banca Final ou Intermediária também precisam da avaliação do orientador
-                avaliacao = avaliacoes.filter(avaliador=self.projeto.orientador.user).last()
                 if not avaliacao:
                     return None
                 if now - avaliacao.momento < datetime.timedelta(hours=prazo_horas):
@@ -961,6 +958,17 @@ class Banca(models.Model):
         if self.projeto:
             return self.projeto
         return None
+    
+    @staticmethod
+    def get_bancas_com_membro(membro):
+        bancas = (Banca.objects.filter(membro1=membro) |
+                  Banca.objects.filter(membro2=membro) |
+                  Banca.objects.filter(membro3=membro))
+
+        # Orientador é automaticamente membro de banca final e intermediária
+        if hasattr(membro, "Professor"):
+            bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla__in=("BI", "BF"))
+        return bancas
 
 
 class Encontro(models.Model):

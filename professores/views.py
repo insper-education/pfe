@@ -124,7 +124,8 @@ def ajax_bancas(request):
             orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
             organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
             estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
-            membros = [membro.get_full_name() for membro in banca.membros()]
+            #membros = [membro.get_full_name() for membro in banca.membros()]
+            membros = banca.membros()
             editable = request.user.tipo_de_usuario == 4 or (projeto and projeto.orientador == request.user.professor)
 
             title = f"[{organizacao_sigla}] {projeto.get_titulo()}" if projeto else "Projeto ou alocação não identificados"
@@ -133,9 +134,11 @@ def ajax_bancas(request):
             if banca.location:
                 title += f"\n<br>Local: {banca.location}"
             title += "\n<br>Banca:"
-            if banca.composicao.exame.sigla in ["Bi", "BF"] and projeto.orientador:
-                title += f"\n<br>&bull; {orientador} (O)"
-            title += "".join([f"\n<br>&bull; {membro}" for membro in membros])
+            for membro in membros:
+                title += f"\n<br>&bull; {membro.get_full_name()}"
+                if projeto.orientador.user == membro:
+                    title += " (O)"
+
 
             bancas[banca.id] = {
                 "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -147,7 +150,7 @@ def ajax_bancas(request):
                 "color": f"#{banca.composicao.exame.cor}",
                 "editable": editable,
                 "title": title,
-                **{f"membro{num+1}": membro for num, membro in enumerate(membros)}
+                **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
             }
 
         return JsonResponse(bancas)
@@ -303,18 +306,13 @@ def avaliar_bancas(request, prof_id=None):
 
         if "edicao" in request.POST:
 
-            if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+            if prof_id and request.user.admin:  # Administrador
                 professor = get_object_or_404(Professor, pk=prof_id)
             else:
                 professor = request.user.professor
-            
-            bancas = (Banca.objects.filter(membro1=professor.user) |
-                      Banca.objects.filter(membro2=professor.user) |
-                      Banca.objects.filter(membro3=professor.user))
 
-            # Orientador é automaticamente membro de banca final e intermediária
-            bancas = bancas | Banca.objects.filter(projeto__orientador=professor, composicao__exame__sigla__in=["BI", "BF"])
-        
+            bancas = Banca.get_bancas_com_membro(professor.user)
+
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
@@ -612,13 +610,8 @@ def banca_ver(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_alocadas(request):
     """Mostra detalhes sobre o professor."""
-    bancas = (Banca.objects.filter(membro1=request.user) |
-              Banca.objects.filter(membro2=request.user) |
-              Banca.objects.filter(membro3=request.user))
     
-    if request.user.professor:
-        # Orientador é automaticamente membro de banca final e intermediária
-        bancas = bancas | Banca.objects.filter(projeto__orientador=request.user.professor, composicao__exame__sigla__in=("BI", "BF"))
+    bancas = Banca.get_bancas_com_membro(request.user)
 
     # Usado para inverter as datas das bancas atuais
     periodo = timezone.now().date() - datetime.timedelta(days=30)
@@ -652,8 +645,8 @@ def bancas_tabela_alocacao_completa(request):
         membros = dict()
         bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
         for banca in bancas:
-            if banca.projeto.orientador:
-                membros.setdefault(banca.projeto.orientador.user, []).append(banca)
+            # if banca.projeto.orientador:
+            #     membros.setdefault(banca.projeto.orientador.user, []).append(banca)
             for membro in banca.membros():
                 membros.setdefault(membro, []).append(banca)
 
@@ -1080,11 +1073,6 @@ def mensagem_email(request, tipo=None, primarykey=None):
         projeto = banca.get_projeto()
 
         para = ""
-        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
-            if projeto and projeto.orientador:
-                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-                for coorientador in projeto.coorientador_set.all():
-                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
         if banca:
             for membro in banca.membros():
                 para += membro.get_full_name() + " <" + membro.email + ">; "
@@ -1871,7 +1859,6 @@ def coorientadores_tabela(request):
     return render(request, "professores/coorientadores_tabela.html", context)
 
 
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def pendencias_professores(request):
@@ -1880,11 +1867,9 @@ def pendencias_professores(request):
     orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
     orientadores = Professor.objects.filter(id__in=orientadores_ids)
     
-    membro_banca = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).values_list("membro1", "membro2", "membro3")
-    membros_banca = set()
-    for membros in membro_banca:
-        membros_banca.update(membros)
-    membros_banca = Professor.objects.filter(user__id__in=membros_banca)  
+    bancas = Banca.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+    membros_banca_ids = {membro.id for banca in bancas for membro in banca.membros()}
+    membros_banca = Professor.objects.filter(user__id__in=membros_banca_ids)  
 
     professores = {}
     for professor in orientadores | membros_banca:

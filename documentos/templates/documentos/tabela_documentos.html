@@ -41,14 +41,14 @@
       {% for projeto in projetos %} 
         <tr class="item">
           <td>{% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}</td>
-          <td style="min-width:18em;">{% include "estudantes/includes/bloco_estudantes.html" with grupo=projeto.alocacao_set.all pequeno=True %}</td>
+          <td style="min-width: 18em;">{% include "estudantes/includes/bloco_estudantes.html" with grupo=projeto.alocacao_set.all pequeno=True %}</td>
           <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador coorientadores=projeto.coorientador_set.all %}</td>
-          <td style="text-align:center">{{projeto.ano}}.{{projeto.semestre}}</td>
+          <td style="text-align:center">{{projeto.get_edicao}}</td>
           <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
-          <td>{% include "academica/includes/bloco_banca.html" with membros=projeto.get_banca_final.membros pequeno=True %}</td>  <!-- Banca Final -->
+          <td>{% include "academica/includes/bloco_banca.html" with membros=projeto.get_banca_final.membros projeto=projeto pequeno=True %}</td>  <!-- Banca Final -->
           
           <!-- Documentos -->
-          <td style="text-align:left;min-width:18em;">
+          <td style="text-align: left; min-width: 18em; line-height: 1.1;">
             <small>
               {% for documento in projeto.documento_set.all %} 
                 {% if documento.confidencial %}
@@ -88,6 +88,14 @@
           </td>
         </tr>
       {% endfor %}
+      <caption>
+        <span class="texto-curto" style="font-size: 0.7em;">
+          EC = Engenharia de Computação |
+          EM = Engenharia Mecânica |
+          EX = Engenharia Mecatrônica |
+          CC = Ciência da Computação
+        </span>
+      </caption>
     {% include "tabelas_bottom.html" %}
   </div>
 

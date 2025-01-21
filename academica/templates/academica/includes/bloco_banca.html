@@ -12,11 +12,10 @@
     {% for membro in membros %}
       <li style="line-height: 1.0; margin-bottom: 0.5em;">
         {% if pequeno %}<small>{% endif %}
-        {% if user.prof_a %}
-          <a class="imprimir" href="{% url 'user_detail' membro.id %}">  {% comment %} target="_blank" {% endcomment %}
-        {% endif %}
+        {% if user.prof_a %}<a class="imprimir" href="{% url 'user_detail' membro.id %}">{% endif %}
         {{membro.get_full_name}}
         {% if user.prof_a %}</a>{% endif %}
+        {% if projeto.orientador.user == membro %}[{% lng_g projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
         {% if pequeno %}</small>{% endif %}
       </li>
     {% endfor %}

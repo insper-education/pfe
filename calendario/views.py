@@ -122,6 +122,8 @@ def gera_descricao_banca(banca, estudantes):
         description += "\n\nMembros da Banca:"
     for membro in banca.membros():
         description += "\n- {0}".format(membro.get_full_name())
+        if membro == banca.projeto.orientador.user:
+            description += " [orientador]"
     description += "\n\nEstudantes:"
     for estudante in estudantes:
         description += "\n- {0}".format(estudante.user.get_full_name())

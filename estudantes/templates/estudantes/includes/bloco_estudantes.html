@@ -21,7 +21,10 @@
         {% if user.prof_a %}
           </a>
         {% endif %}
-        <span class="curso">[{{ alocacao.aluno.curso2 }}]</span>
+        <span class="curso">
+          <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+          <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>  
+        </span>
         {% if pequeno %}
           </small>
         {% endif %}

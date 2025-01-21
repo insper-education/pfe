@@ -18,22 +18,16 @@
 
   <div class="table-responsive">
   
-    {% for membros,periodo in anos %} 
+    {% for membros, periodo in anos %} 
       <big>{{periodo}}</big>
       {% if membros %}
         <table id="MembrosTable" class="table table-bordered table-hover table-sm" style="width: auto;">
           <thead class="table-info">
             <tr>
-              <th scope="col" class="text-center">
-                {% lng "Nome" "Name" %}
-              </th>
+              <th scope="col" class="text-center">{% lng "Nome" "Name" %}</th>
               <th scope="col" class="text-center">e-mail</th>
-              <th scope="col" class="text-center">
-                {% lng "Quant." "Quant." %}
-              </th>
-              <th scope="col" class="text-center">
-                {% lng "Projetos" "Projects" %}
-              </th>
+              <th scope="col" class="text-center">{% lng "Quant." "Quant." %}</th>
+              <th scope="col" class="text-center">{% lng "Projetos" "Projects" %}</th>
             </tr>
           </thead>
           {% for membro, bancas in membros.items %}

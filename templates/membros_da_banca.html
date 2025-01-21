@@ -4,11 +4,14 @@
   Data: 7 de Outubro de 2024
 {% endcomment %}
 
+{% load linguas %}
+
 <ol>
-  {% if banca.get_projeto.orientador and banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
-    <li> {{banca.get_projeto.orientador.user.get_full_name}} [orientador] <a href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></li>
-  {% endif %}
   {% for membro in banca.membros %}
-    <li>{{membro.get_full_name}} <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></li>
+    <li>
+      {{membro.get_full_name}}
+      {% if banca.projeto.orientador.user == membro %}[{% lng "orientador" "advisor" %}]{% endif %}
+      <a href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a>
+    </li>
   {% endfor %}
 </ol>

@@ -790,27 +790,18 @@ def estudante_detail(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def professor_detail(request, primarykey):
     """Mostra detalhes sobre o professor."""
+    professor = get_object_or_404(Professor, pk=primarykey)
     context = {
-        "titulo": {"pt": "Professor", "en": "Professor"},
-        "professor": get_object_or_404(Professor, pk=primarykey)
+            "titulo": {"pt": "Professor", "en": "Professor"},
+            "professor": professor,
+            "projetos": Projeto.objects.filter(orientador=professor),
+            "coorientacoes": Coorientador.objects.filter(usuario=professor.user).order_by("projeto__ano", "projeto__semestre"),
+            "bancas": Banca.get_bancas_com_membro(professor.user),
+            "mentorias": Encontro.objects.filter(facilitador=professor.user, projeto__isnull=False).order_by("startDate"),
+            "aulas": Evento.objects.filter(tipo_evento__sigla="A", responsavel=professor.user),
+            "estilos": EstiloComunicacao.objects.all(),
+            "estilos_respostas": get_respostas_estilos(professor.user),
         }
-
-    context["projetos"] = Projeto.objects.filter(orientador=context["professor"])
-    context["coorientacoes"] = Coorientador.objects.filter(usuario=context["professor"].user).order_by("projeto__ano", "projeto__semestre")
-
-    bancas = (Banca.objects.filter(membro1=context["professor"].user) |
-              Banca.objects.filter(membro2=context["professor"].user) |
-              Banca.objects.filter(membro3=context["professor"].user))
-
-    # Orientador é automaticamente membro de banca final e intermediária    
-    bancas = bancas | Banca.objects.filter(projeto__orientador=context["professor"], composicao__exame__sigla__in=("BI", "BF"))
-
-    context["bancas"] = bancas.order_by("startDate")
-    context["mentorias"] = Encontro.objects.filter(facilitador=context["professor"].user, projeto__isnull=False).order_by("startDate")
-    context["aulas"] = Evento.objects.filter(tipo_evento__sigla="A", responsavel=context["professor"].user) # (12, 'Aula', 'lightgreen'),
-    context["estilos"] = EstiloComunicacao.objects.all()
-    context["estilos_respostas"] = get_respostas_estilos(context["professor"].user)
-
     return render(request, "users/professor_detail.html", context=context)
 
 
@@ -823,12 +814,6 @@ def parceiro_detail(request, primarykey=None):
         return HttpResponse("Parceiro não encontrado.", status=401)
     
     parceiro = get_object_or_404(Parceiro, pk=primarykey)
-    
-    bancas = (Banca.objects.filter(membro1=parceiro.user) |
-              Banca.objects.filter(membro2=parceiro.user) |
-              Banca.objects.filter(membro3=parceiro.user))
-
-    bancas = bancas.order_by("startDate")
 
     context = {
         "titulo": {"pt": "Parceiro", "en": "Partner"},
@@ -836,7 +821,7 @@ def parceiro_detail(request, primarykey=None):
         "conexoes": Conexao.objects.filter(parceiro=parceiro),
         "mentorias": Encontro.objects.filter(facilitador=parceiro.user),
         "aulas": Evento.objects.filter(tipo_evento__sigla="A", responsavel=parceiro.user),
-        "bancas": bancas,
+        "bancas": Banca.get_bancas_com_membro(parceiro.user).order_by("startDate"),
     }
     return render(request, "users/parceiro_detail.html", context=context)
 

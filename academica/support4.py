@@ -123,10 +123,6 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     avaliacao = paval.filter(avaliador=membro).last()
                                     if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
                                         valido = False
-                                if banca.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-                                    avaliacao = paval.filter(avaliador=alocacao.projeto.orientador.user).last()
-                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                        valido = False
 
                         if valido:
                             pnota, ppeso, _ = get_banca_estudante(estudante, paval)

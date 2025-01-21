@@ -157,14 +157,9 @@ def emails_semestre(request):
 
                 conexoes += list(Conexao.objects.filter(projeto=projeto))
 
-                bancas = Banca.objects.filter(projeto=projeto).select_related("membro1", "membro2", "membro3")
+                bancas = Banca.objects.filter(projeto=projeto)
                 for banca in bancas:
-                    if banca.membro1:
-                        membros_bancas.add(banca.membro1)
-                    if banca.membro2:
-                        membros_bancas.add(banca.membro2)
-                    if banca.membro3:
-                        membros_bancas.add(banca.membro3)
+                    membros_bancas.update(banca.membros())
 
             data = {}  # Dicionario com as pessoas do projeto
 

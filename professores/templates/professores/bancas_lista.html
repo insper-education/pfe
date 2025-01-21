@@ -177,45 +177,28 @@
               {% if banca.membros %}
                 <div class="banca" style="margin-top: 8px;">
                   <b>{% lng "Membros da Banca da Avaliação:" "Examination Board Members:" %}</b>
-                  {% with is_ori=banca.get_projeto.orientador %}
-                    <a class="email" href="mailto:{% if is_ori and banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}{{banca.get_projeto.orientador.user.email}}{% endif %};{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% if is_ori and banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}{{banca.get_projeto.orientador.user.get_full_name}}, {% endif %}{% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
-                      <i class="fas fa-mail-bulk"></i>
-                    </a>
-                    <ol style="margin-bottom:0px;">
-                      {% if is_ori and banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
+                  <a class="email" href="mailto:{% for membro in banca.membros %}{{membro.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{banca.get_projeto}}&body={% for membro in banca.membros %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{membro.get_full_name}}{% endfor %},%0D%0A%0D%0" target="_blank">
+                    <i class="fas fa-mail-bulk"></i>
+                  </a>
+                  <ol style="margin-bottom:0px;">
+                    {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
+                      {% for membro in banca.membros %}
                         <li>
-                          <a class="imprimir" href="{% url 'professor_detail' banca.get_projeto.orientador.id %}">
-                            {{banca.get_projeto.orientador.user.get_full_name}} 
-                          </a>         
-                          {% if banca.get_projeto.proposta.intercambio %}
-                            {% lng_g banca.get_projeto.orientador.user.genero "[Professor Responsável]" "[Professora Responsável]" "[Responsible Professor]" %}
-                          {% else %}
-                            {% lng_g banca.get_projeto.orientador.user.genero "[Orientador]" "[Orientadora]" "[Advisor]" %}
+                          <a class="imprimir" href="{% url 'user_detail' membro.id %}">
+                            {{membro.get_full_name}}
+                          </a>
+                          {% if banca.projeto.orientador.user == membro %}
+                            [{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]
                           {% endif %}
-                          <span class="texto-longo emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}">&lt;{{banca.get_projeto.orientador.user.email}}&gt;</a></span>
-                          <span class="texto-curto emails"><a class="email" href="mailto:{{banca.get_projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-                          
+                          {% if membro.id in coorientadores %}
+                            [{% lng_g membro.genero "Coorientador" "Coorientadora" "Co-Advisor" %}]
+                          {% endif %}
+                          <span class="texto-longo emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
+                          <span class="texto-curto emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
                         </li>
-                      {% endif %}
-
-                      {% with coorientadores=banca.get_projeto.get_coorientadores_ids %}
-                        {% for membro in banca.membros %}
-                          <li>
-                            <a class="imprimir" href="{% url 'user_detail' membro.id %}">
-                              {{membro.get_full_name}}
-                            </a>
-                            {% if membro.id in coorientadores %}
-                              {% lng_g membro.genero "[Coorientador]" "[Coorientadora]" "[Co-Advisor]" %}
-                            {% endif %}
-                            <span class="texto-longo emails"><a class="email" href="mailto:{{membro.email}}">&lt;{{membro.email}}&gt;</a></span>
-                            <span class="texto-curto emails"><a class="email" href="mailto:{{membro.email}}"><i class="far fa-envelope"></i></a></span>
-                            
-                          </li>
-                        {% endfor %}
-                      {% endwith %}
-
-                    </ol>
-                  {% endwith %}
+                      {% endfor %}
+                    {% endwith %}
+                  </ol>
                 </div>
               {% endif %}
 

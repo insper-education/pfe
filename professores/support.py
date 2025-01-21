@@ -135,9 +135,6 @@ def coleta_membros_banca(banca=None):
 
     if (banca is None) or sigla in ["BF", "BI", "P"]:  # Banca Final, Intermediária e Probation
         academicos = PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])
-        if banca and sigla in ["BF", "BI"]:  # Banca Final, Intermediária
-            if banca.get_projeto() and banca.get_projeto().orientador:
-                id_membros.append(banca.get_projeto().orientador.user.id) # orientador
 
     if (banca is None) or sigla == "F":  # Banca Falconi
         try:
@@ -244,11 +241,8 @@ def recupera_avaliadores_bancas(sigla, ano, semestre):
     bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
     for banca in bancas_f:
         for membro in banca.membros():
-            if membro:
-                pessoas.append(membro)
-                bancas.append(banca)
-        if sigla in ["BI", "BF"]:  # Em bancas intermediárias e finais, orientadores também são membros
-            pessoas.append(banca.projeto.orientador.user)
+            #if membro:
+            pessoas.append(membro)
             bancas.append(banca)
     return zip(pessoas, bancas)
 
@@ -532,8 +526,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     recipient_list = []
     orientador = projeto.orientador
     membros = banca.membros()
-    if banca.composicao.exame.sigla in ["BF", "BI"] and orientador:
-        recipient_list.append(projeto.orientador.user.email)
+    # if banca.composicao.exame.sigla in ["BF", "BI"] and orientador:
+    #     recipient_list.append(projeto.orientador.user.email)
     recipient_list.extend(membro.email for membro in membros)
     if banca.alocacao:  # Probation
         recipient_list.append(banca.alocacao.aluno.user.email)
