@@ -5,6 +5,7 @@
 {% endcomment %}
 
 {% load static %}
+{% load linguas %}
 <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
@@ -20,7 +21,9 @@
   {% csrf_token %}
 
   <div class="modal-header">
-    <h5 id="anotacao" class="modal-title">Anotação{% if organizacao %}: {{ organizacao.nome }}{% endif %}</h5>    
+    <h5 id="anotacao" class="modal-title">
+      {% lng "Anotação" "Annotation" %}
+      {% if organizacao %}: {{ organizacao.nome }}{% endif %}</h5>    
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -29,7 +32,7 @@
   <div class="modal-body">
 
     {% if organizacoes and not organizacao %}
-      <label for="organizacao_id">Organização:</label>
+      <label for="organizacao_id">{% lng "Organização" "Organization" %}:</label>
       <small><a href="{% url 'cadastrar_organizacao' %}">&#10133;</a></small>
       <select id="organizacao_id" name="organizacao_id" class="form-control selectpicker" title="Selecione uma organização" data-live-search="true" required>
         <option disabled selected value> -- selecione uma organização -- </option>
@@ -40,13 +43,14 @@
       <br><br>
     {% endif %}
 
-    <label for="data_hora">Data e Hora: </label> <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
+    <label for="data_hora">{% lng "Data e Hora" "Date and Time" %}:</label>
+    <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
     
-    <label for="texto">Anotação:</label><br>
+    <label for="texto">{% lng "Anotação" "Annotation" %}:</label><br>
     <textarea id="texto" name="texto" class="form-control" rows="5" required>{% if anotacao %}{{anotacao.texto}}{% endif %}</textarea>
     <br>
 
-    <label for="tipo_retorno">Tipo de contato:</label>
+    <label for="tipo_retorno">{% lng "Tipo de contato" "Contact type" %}:</label>
     <select id="tipo_retorno" name="tipo_retorno" class="form-control" required>
       {% if not anotacao %}
         <option disabled selected value> -- selecione tipo de contato -- </option>
@@ -63,8 +67,8 @@
     <input type="submit" style="display:none;"/>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-    <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">Atualizar</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% lng "Fechar" "Close" %}</button>
+    <button id="atualiza" type="button" class="btn btn-primary" data-dismiss="modal">{% lng "Atualizar" "Update" %}</button>
   </div>
 
 </form>

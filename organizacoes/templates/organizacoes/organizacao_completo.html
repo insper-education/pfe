@@ -9,6 +9,7 @@
   {% load static %}
   {% load format_cnpj %}
   {% load order_by %}
+  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}
@@ -22,18 +23,21 @@
   <h4>{{organizacao.nome}}</h4>
   
   {% if organizacao.website %}
-    <strong>website:</strong> <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a><br>  
+    <b>website:</b>
+    <a href="{{ organizacao.website }}"> {{ organizacao.website }} </a><br>  
   {% endif %}
   {% if organizacao.informacoes %}
-    <strong>Informações sobre a empresa :</strong> {{ organizacao.informacoes|linebreaks }}
+    <b>{% lng "Informações sobre a empresa" "Company information" %}:</b>
+    {{ organizacao.informacoes|linebreaks }}
   {% endif %}
 
   {% if organizacao.area_curso.all %}
-    <strong>Áreas de projetos :</strong>
+    <b>{% lng "Áreas de projetos" "Project areas" %}:</b>
     {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.<br>
   {% endif %}
 
-  <br><strong>contato(s):</strong>
+  <br>
+  <b>{% lng "contato(s)" "contact(s)" %}:</b>
   <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>
   <br>
   <ul>
@@ -66,26 +70,20 @@
       {% if parceiro.user.instant_messaging %}
         <div>
           <img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;">
-          {% comment %} <a href="instant_messaging:{{parceiro.instant_messaging}}">{% endcomment %}
           {{parceiro.user.instant_messaging}}
-          {% comment %}</a>{% endcomment %} 
         </div>
       {% endif %}
     </li>
   {% endfor %}
   </ul>
 
-         
-        
-        
-
   <br>
-  <strong>Dados Cadastrais:</strong><br>
+  <b>{% lng "Dados de contato" "Contact data" %}:</b><br>
   &nbsp;&nbsp;&nbsp;Razão Social:
   {% if organizacao.razao_social %}
     {{ organizacao.razao_social }}
   {% else %}
-    <i style="color:red">Não disponível</i>
+    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <br>
@@ -93,7 +91,7 @@
   {% if organizacao.ramo_atividade %}
     {{ organizacao.ramo_atividade }}
   {% else %}
-    <i style="color:red">Não disponível</i>
+    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   <br>
@@ -103,7 +101,7 @@
     {{ organizacao.cnpj|cnpj }}
   </a>
   {% else %}
-    <i style="color:red">Não disponível</i>
+    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
   {% endif %}
   &nbsp;&nbsp;&nbsp;
   Inscrição Estadual:
@@ -112,26 +110,25 @@
       {{ organizacao.inscricao_estadual }}
     </a>
   {% else %}
-    <i style="color:red">Não disponível</i>
+    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
   {% endif %}
   <br>
-  &nbsp;&nbsp;&nbsp;endereço(s):
+  &nbsp;&nbsp;&nbsp;{% lng "Endereço" "Address" %}:
   {% if organizacao.endereco %}
     <a style="margin-left:16px;display:block;" href="http://maps.google.com/maps?q={{organizacao.endereco}}">
       {{ organizacao.endereco|linebreaks }}
     </a>
   {% else %}
-    <i style="color:red">Não disponível</i>
+    <i style="color:red">{% lng "Não disponível" "Not available" %}</i>
   {% endif %}
 
   <hr>
-  <h3>Documentos
+  <h3>
+    {% lng "Documentos" "Documents" %}
     <small class="esconder">
-      <a
-        class="open-documento" style="cursor:pointer;"
-        data-url="{% url 'adiciona_documento' organizacao.id %}"
-        >&#10133;</a
-      >
+      <a class="open-documento" style="cursor:pointer;"
+         data-url="{% url 'adiciona_documento' organizacao.id %}"
+      >&#10133;</a>
     </small>
   </h3>
   <div class="caixa_rolante">
@@ -139,11 +136,10 @@
   </div>
 
   <hr>
-  <h3>Certificados
+  <h3>
+    {% lng "Certificados" "Certificates" %}
     <small class="esconder">
-      <a href="{% url 'carregar_certificado' %}"
-        >&#10133;</a
-      >
+      <a href="{% url 'carregar_certificado' %}">&#10133;</a>
     </small>
   </h3>
   <div class="caixa_rolante">
@@ -155,7 +151,10 @@
   {% with propostas=organizacao.proposta_set.all %}
   {% if propostas %}
     <hr>
-    <h3>Propostas <small class="esconder"><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small></h3>
+    <h3>
+      {% lng "Propostas" "Proposals" %}
+      <small class="esconder"><a href="{% url 'proposta_submissao' %}?organizacao={{organizacao.id}}">&#10133;</a></small>
+    </h3>
     <div class="caixa_rolante">
     <ol reversed>
       {% for proposta in propostas reversed %}
@@ -176,7 +175,7 @@
 
   {% if projetos %}
     <hr>
-    <h3>Projetos</h3>
+    <h3>{% lng "Projetos" "Projects" %}</h3>
     <div class="caixa_rolante">
     <ol reversed>
       {% for projeto in projetos reversed %}
@@ -188,7 +187,6 @@
               {% if projeto.orientador %}
                 { {{projeto.orientador.user.get_full_name}} }
               {% endif %}
-              <br>
             </li>
           </a>
         {% endif %}
@@ -198,14 +196,15 @@
   {% endif %}
   
   <hr>
-  <h3>Anotações <small class="esconder">
-    <a
-      class="open-annotation"
+  <h3>
+    {% lng "Anotações" "Annotations" %}
+    <small class="esconder">
+    <a class="open-annotation"
       href="{% url 'anotacao' organizacao.id %}"
       data-url="{% url 'anotacao' organizacao.id %}"
-      >&#10133;</a
-    >
-  </small></h3>
+      >&#10133;</a>
+    </small>
+  </h3>
   
   <div class="caixa_rolante">
     <ul id="lista_anotacoes" style="padding-left: 18px;">
@@ -223,13 +222,15 @@
   </div>
   
   <span id="sem_anotacoes" {% if organizacao.anotacao_set.all %}style="visibility: hidden;"{% endif %}>
-    Ainda não existem anotações para essa organização.
+    {% lng "Ainda não existem anotações para essa organização." "There are no annotations for this organization yet." %}
   </span>
   
-  {% if user.tipo_de_usuario == 4 %}
+  {% if user.admin %}
     <br>
     <a href="{% url 'edita_organizacao' organizacao.id %}">
-    <button class="btn btn-primary mb-1" style="float: right;">Editar</button>
+      <button class="btn btn-primary mb-1" style="float: right;">
+        {% lng "Editar" "Edit" %}
+      </button>
     </a>
   {% endif %}
 
