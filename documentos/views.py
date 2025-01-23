@@ -23,7 +23,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
 #from .support import render_pdf_file
-from .support import render_from_text_to_pdf_file
+# from .support import render_from_text_to_pdf_file
+from .support import atualiza_certificado, generate_unique_arcname
 
 from academica.models import Exame, ExibeNota
 
@@ -36,7 +37,7 @@ from operacional.models import Curso
 from professores.support import recupera_avaliadores_bancas
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
-from projetos.support import get_upload_path
+# from projetos.support import get_upload_path
 
 from users.support import get_edicoes
 
@@ -124,48 +125,6 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
 
     return render(request, "documentos/certificados_submetidos.html", context)
 
-
-def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
-    """Atualiza os certificados."""
-    configuracao = get_object_or_404(Configuracao)
-
-    certificado, _ = \
-        Certificado.objects.get_or_create(usuario=usuario, projeto=projeto, tipo_certificado=tipo, alocacao=alocacao)
-
-    if projeto and not certificado.documento:
-
-        tipo_documento = TipoDocumento.objects.get(sigla="PT")
-        papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
-
-        context = {
-            "usuario": usuario,
-            "projeto": projeto,
-            "configuracao": configuracao,
-            "papel_timbrado": papel_timbrado.documento.url[1:],
-        }
-        if contexto:
-            context.update(contexto)
-
-        subtitulo = tipo.subtitulo if tipo.subtitulo else ""
-
-        path = get_upload_path(certificado, "")
-
-        full_path = settings.MEDIA_ROOT + "/" + path
-        os.makedirs(full_path, mode=0o777, exist_ok=True)
-
-        filename = full_path + "certificado" + subtitulo + ".pdf"
-
-        pdf = render_from_text_to_pdf_file(tipo.template.texto, context, filename)
-
-        if (not pdf) or pdf.err:
-            return HttpResponse("Erro ao gerar certificados.", status=401)
-
-        certificado.documento = path + "certificado" + subtitulo + ".pdf"
-        certificado.save()
-
-        return certificado
-
-    return None
 
 
 @login_required
@@ -255,6 +214,7 @@ def gerar_certificados(request):
     return redirect("certificados_submetidos", edicao=request.POST["edicao"], tipos=",".join(tipos), gerados=qcertificados)
 
 
+# @login_required
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
     tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
@@ -389,20 +349,6 @@ def tabela_documentos(request):
 
     return render(request, "documentos/tabela_documentos.html", context)
 
-
-# Function to generate a unique arcname if the provided one already exists in the zip file
-def generate_unique_arcname(zip_file, arcname):
-    arcname = arcname.replace('\\','/')
-    if arcname not in zip_file.namelist():
-        return arcname
-    else:
-        base_name, extension = os.path.splitext(arcname)
-        counter = 1
-        while True:
-            new_arcname = f"{base_name}_{counter}{extension}"
-            if new_arcname not in zip_file.namelist():
-                return new_arcname
-            counter += 1
 
 
 @login_required
@@ -561,7 +507,6 @@ def exibir_ocultar_notas(request):
                 exibe.save()
 
     return render(request, "documentos/exibir_ocultar_notas.html", context)
-
 
 
 @login_required

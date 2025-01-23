@@ -18,6 +18,8 @@ from django.db.models.functions import Coalesce
 
 from django.shortcuts import render, redirect, get_object_or_404
 
+from .support import trata_aviso
+
 from administracao.models import TipoCertificado, TipoEvento
 
 from projetos.support import get_upload_path, simple_upload
@@ -198,33 +200,6 @@ def emails_projetos(request):
             }
             return render(request, "operacional/emails_projetos.html", context=context)
     return HttpResponse("Algum erro não identificado.", status=401)
-
-
-
-def trata_aviso(aviso, request):
-    """Puxa dados do request e põe em aviso."""
-    try:
-        aviso.titulo = request.POST["titulo"]
-        aviso.delta = int(request.POST["delta"])
-        aviso.mensagem = request.POST["mensagem"]
-
-        id_evento = int(request.POST["evento"])
-        tipo_evento = TipoEvento.objects.get(id=id_evento)
-        aviso.tipo_evento = tipo_evento
-
-        aviso.coordenacao = "coordenacao" in request.POST
-        aviso.operacional = "operacional" in request.POST
-        aviso.comite_pfe = "comite_pfe" in request.POST
-        aviso.todos_alunos = "todos_alunos" in request.POST
-        aviso.todos_orientadores = "todos_orientadores" in request.POST
-        aviso.contatos_nas_organizacoes = "contatos_nas_organizacoes" in request.POST
-
-    except (ValueError, OverflowError):
-        return HttpResponse("Algum erro não identificado.", status=401)
-
-    aviso.save()
-
-    return None
 
 
 @login_required

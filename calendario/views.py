@@ -6,13 +6,13 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
-import json
+# import json
 import datetime
 import dateutil.parser
 
 from icalendar import Calendar, Event, vCalAddress
 
-from django.conf import settings
+# from django.conf import settings
 
 from django.db.models.functions import Lower
 
@@ -22,55 +22,20 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
+from .support import get_calendario_context, adicionar_participante_em_evento
+from .support import gera_descricao_banca, cria_material_aula
+
 from administracao.models import TipoEvento
 
 from users.models import PFEUser, Aluno
 
 from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento
 
-from projetos.tipos import TIPO_EVENTO
-from projetos.support import get_upload_path, simple_upload
+# from projetos.tipos import TIPO_EVENTO
+# from projetos.support import get_upload_path, simple_upload
 
 from documentos.models import TipoDocumento
 
-def get_calendario_context(user=None):
-    """Contexto para gerar calendário."""
-    eventos = Evento.objects.all()
-    configuracao = get_object_or_404(Configuracao)
-
-    # Se usuário não for Professor nem Admin filtra os eventos do próximo semestre
-    if user and user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-        if configuracao.semestre == 1:
-            eventos_ano = eventos.filter(startDate__year__lt=configuracao.ano)
-            eventos_semestre = eventos.filter(startDate__month__lte=7, startDate__year=configuracao.ano)
-            eventos = eventos_ano | eventos_semestre
-        else:
-            eventos = eventos.filter(startDate__year__lte=configuracao.ano)
-
-    tipos_eventos_sorter = sorted(TIPO_EVENTO, key=lambda x: (x[0]>100, x[1]))
-    tipos_eventos = [list(tipo) + ["Operação"] if tipo[0] > 100 else list(tipo) + ["Acadêmico"] for tipo in tipos_eventos_sorter]
-    # tipos_eventos = None
-
-    tipos_eventos = TipoEvento.objects.all().order_by("coordenacao", "nome")
-
-    eventos_academicos = {
-        "eventos": eventos.exclude(tipo_evento__sigla__in=["A", "L", "SP", "RQ", "FE"]).exclude(tipo_evento__coordenacao=True),
-        "aulas": eventos.filter(tipo_evento__sigla="A"), # 12, 'Aula'
-        "quinzenais": eventos.filter(tipo_evento__sigla="RQ"),  # 20, 'Relato Quinzenal'
-        "feedbacks": eventos.filter(tipo_evento__sigla="FE"),  # 30, 'Feedback dos Estudantes sobre Capstone'
-        "provas": eventos.filter(tipo_evento__sigla="SP"),  # 41, 'Semana de Provas'
-        "laboratorios": eventos.filter(tipo_evento__sigla="L"),  # 40, 'Laboratório'
-    }
-    
-    context = {
-        "configuracao": configuracao,
-        "eventos_academicos": eventos_academicos,
-        "coordenacao": Evento.objects.filter(tipo_evento__coordenacao=True),  # Eventos da coordenação
-        "tipos_eventos": tipos_eventos,
-        "Evento": Evento,
-    }
-
-    return context  # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
 
 
 @login_required
@@ -102,32 +67,6 @@ def calendario(request):
 
     return HttpResponse("Problema ao gerar calendário.", status=401)
 
-
-def adicionar_participante_em_evento(ical_event, usuario):
-    """Adiciona um usuario em um evento."""
-    # REMOVER OS xx DOS EMAILS
-    atnd = vCalAddress("MAILTO:{}".format(usuario.email))
-    atnd.params["CN"] = "{0}".format(usuario.get_full_name())
-    atnd.params["ROLE"] = "REQ-PARTICIPANT"
-    ical_event.add("attendee", atnd, encode=0)
-
-
-def gera_descricao_banca(banca, estudantes):
-    """Gera um descrição para colocar no aviso do agendamento."""
-    description = "Banca do Projeto {0}".format(banca.get_projeto())
-    if banca.link:
-        description += "\n\nLink: {0}".format(banca.link)
-    description += "\n\nOrientador:\n- {0}".format(banca.get_projeto().orientador)
-    if banca.membros():
-        description += "\n\nMembros da Banca:"
-    for membro in banca.membros():
-        description += "\n- {0}".format(membro.get_full_name())
-        if membro == banca.projeto.orientador.user:
-            description += " [orientador]"
-    description += "\n\nEstudantes:"
-    for estudante in estudantes:
-        description += "\n- {0}".format(estudante.user.get_full_name())
-    return description
 
 
 @login_required
@@ -186,40 +125,6 @@ def export_calendar(request, event_id):
         "attachment; filename=Banca{0}.ics".format(banca.pk)
 
     return response
-
-
-def cria_material_aula(request, campo_arquivo, campo_link):
-        """Cria material de aula."""
-        max_length_link = Documento._meta.get_field("link").max_length
-        if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
-            return "<h1>Erro: Link maior que " + str(max_length_link) + " caracteres.</h1>"
-
-        max_length_doc = Documento._meta.get_field("documento").max_length
-        if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
-            return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
-        
-        documento = Documento.create()  # Criando documento na base de dados
-        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
-        documento.data = datetime.datetime.now()
-        
-        documento.lingua_do_documento = 0  # (0, 'Português')
-        documento.confidencial = False  # Por padrão aulas não são confidenciais
-        documento.usuario = request.user
-
-        # if len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
-        #     return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
-    
-        if campo_arquivo in request.FILES:
-            arquivo = simple_upload(request.FILES[campo_arquivo],
-                                    path=get_upload_path(documento, ""))
-            documento.documento = arquivo[len(settings.MEDIA_URL):]
-
-        if campo_link in request.POST:
-            link = request.POST.get(campo_link, "")
-            documento.link = link
-
-        documento.save()
-        return documento
 
 
 @login_required

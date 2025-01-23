@@ -17,7 +17,7 @@ from django.core.management import execute_from_command_line
 import django.db.models.query
 from django.template import Template, Context
 
-from calendario.views import get_calendario_context
+from calendario.support import get_calendario_context
 
 from .models import Aviso, Evento, Configuracao
 from .messages import email, htmlizar
