@@ -16,7 +16,7 @@ from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
-#from .support2 import converte_conceitos
+from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
 
 from academica.models import Exame, Composicao
 from academica.support import filtra_composicoes, filtra_entregas
@@ -27,9 +27,9 @@ from estudantes.models import Pares
 
 from projetos.messages import email, render_message
 from projetos.models import Organizacao, Projeto, Banca, Encontro
-#from projetos.models import Conexao
+from projetos.models import ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Avaliacao_Velha, Observacao_Velha
-from projetos.models import Configuracao, Documento, Evento, Avaliacao2
+from projetos.models import Configuracao, Documento, Evento
 from projetos.support2 import busca_relatos
 
 from users.models import PFEUser, Professor, Aluno, Alocacao
@@ -554,3 +554,52 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
     if enviar:
         email(subject, recipient_list, mensagem)
+
+
+# Mensagem preparada para o orientador/coordenador
+def mensagem_orientador(banca, geral=False):
+    objetivos = ObjetivosDeAprendizagem.objects.all()  
+    exame = banca.composicao.exame
+    projeto = banca.get_projeto()
+
+    # Buscando Avaliadores e Avaliações
+    avaliadores = {}
+    for objetivo in objetivos:
+        avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame)\
+                .order_by("avaliador", "-momento")
+        if banca.alocacao:
+            avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
+
+        for avaliacao in avaliacoes:
+            if avaliacao.avaliador not in avaliadores:
+                avaliadores[avaliacao.avaliador] = {}
+            if objetivo not in avaliadores[avaliacao.avaliador]:
+                avaliadores[avaliacao.avaliador][objetivo] = avaliacao
+                avaliadores[avaliacao.avaliador]["momento"] = avaliacao.momento
+
+    observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).order_by("avaliador", "-momento")
+    if banca.alocacao:
+        observacoes = observacoes.filter(alocacao=banca.alocacao)
+
+    for observacao in observacoes:
+        if observacao.avaliador not in avaliadores:
+            avaliadores[observacao.avaliador] = {}  # Não devia acontecer isso
+        if "observacoes_orientador" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
+        if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
+            avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
+
+    message3, obj_avaliados = calcula_notas_bancas(avaliadores)
+    message2 = calcula_media_notas_bancas(obj_avaliados)
+
+    context_carta = {
+        "banca": banca,
+        "objetivos": objetivos,
+        "projeto": projeto,
+    }
+    if geral:
+        message = render_message("Informe Geral de Avaliação de Banca", context_carta)
+    else:
+        message = render_message("Informe de Avaliação de Banca", context_carta)
+    
+    return message+message2+message3

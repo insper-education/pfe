@@ -24,7 +24,8 @@ from django.views import generic
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
-from .models import Alocacao, OpcaoTemporaria, UsuarioEstiloComunicacao
+from .models import Alocacao, OpcaoTemporaria
+#from .models import UsuarioEstiloComunicacao
 from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Composicao, CodigoColuna, Exame
@@ -240,8 +241,6 @@ def estudantes_lista(request):
                 "totais": totais,
                 "ano": ano,
                 "semestre": semestre,
-                #"ano_semestre": str(ano)+"."+str(semestre),
-                #"loop_anos": range(2018, configuracao.ano+1),
                 "cabecalhos": cabecalhos,
                 "curso_sel": curso_sel,
             }
@@ -462,7 +461,7 @@ def estudantes_objetivos(request):
                           {"pt": "e-mail", "en": "e-mail"},
                           {"pt": "Curso", "en": "Program"},
                           {"pt": "Projeto", "en": "Project"},
-                          ]        
+                          ]
             for objetivo in objetivos:
                 cabecalhos.append({
                     "pt": objetivo.titulo + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(grupo)"),
@@ -592,7 +591,6 @@ def estudantes_inscritos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def converte_opcoes(request, ano, semestre):
     """Mostra todos os estudantes que estão se inscrevendo em projetos."""
-
     for estudante in Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre):
         opcao = Opcao.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
         opcaotmp = OpcaoTemporaria.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
@@ -603,7 +601,6 @@ def converte_opcoes(request, ano, semestre):
                 if otmp.prioridade > 0:  # Caso seja zero, era para ser removido e deve ser ignorado    
                     opcao_final = Opcao.objects.create(aluno=estudante, proposta=otmp.proposta, prioridade=otmp.prioridade)
                     opcao_final.save()
-
     return redirect("estudantes_inscritos")
 
 
