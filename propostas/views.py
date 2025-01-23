@@ -431,10 +431,9 @@ def propostas_lista(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
-        edicoes, _, _ = get_edicoes(Proposta)
         context = {
             "titulo": {"pt": "Lista de Propostas", "en": "Proposals List"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Proposta)[0],
             }
 
     return render(request, "propostas/propostas_lista.html", context)

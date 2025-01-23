@@ -119,22 +119,17 @@ def avisos_listar(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def emails(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc.""" 
-    edicoes, _, _ = get_edicoes(Aluno)
-
     configuracao = get_object_or_404(Configuracao)
-    atual = str(configuracao.ano)+"."+str(configuracao.semestre)
-
     context = {
         "titulo": { "pt": "Listas de e-mails", "en": "Email lists" },
         "membros_comite": PFEUser.objects.filter(membro_comite=True),
         "todos_alunos": Aluno.objects.filter(trancado=False),
         "todos_professores": Professor.objects.all(),
         "todos_parceiros": Parceiro.objects.all(),
-        "edicoes": edicoes,
-        "atual": atual,
+        "edicoes": get_edicoes(Aluno)[0],
+        "atual": str(configuracao.ano)+"."+str(configuracao.semestre),
         "coordenacao": configuracao.coordenacao,
     }
-
     return render(request, "operacional/emails.html", context=context)
 
 
@@ -191,14 +186,10 @@ def emails_semestre(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def emails_projetos(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = request.POST["edicao"].split('.')
-            projetos = Projeto.objects.filter(ano=ano).filter(semestre=semestre)
-            context = {
-                "projetos": projetos,
-            }
-            return render(request, "operacional/emails_projetos.html", context=context)
+    if request.is_ajax() and "edicao" in request.POST:
+        ano, semestre = request.POST["edicao"].split('.')
+        context = {"projetos": Projeto.objects.filter(ano=ano).filter(semestre=semestre),}
+        return render(request, "operacional/emails_projetos.html", context=context)
     return HttpResponse("Algum erro não identificado.", status=401)
 
 
@@ -365,6 +356,3 @@ def plano_aulas(request):
         "edicoes": get_edicoes(Projeto)[0],
     }
     return render(request, "operacional/plano_aulas.html", context=context)
-
-    
-

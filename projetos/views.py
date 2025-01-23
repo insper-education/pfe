@@ -272,10 +272,9 @@ def distribuicao_areas(request):
 
         return render(request, "projetos/distribuicao_areas.html", context)
 
-    edicoes, _, _ = get_edicoes(Aluno)
     context = {
         "titulo": { "pt": "Tendência de Áreas de Interesse", "en": "Trend of Areas of Interest"},
-        "edicoes": edicoes,
+        "edicoes": get_edicoes(Aluno)[0],
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
     }
@@ -1382,9 +1381,6 @@ def evolucao_objetivos(request):
             titulo = objetivo.titulo if configuracao.lingua == "pt" else objetivo.titulo_en
             medias.append({"objetivo": titulo, "media": notas, "cor": cores[count], "faixas": faixas})
             count += 1
-
-
-
 
         # Número de estudantes por semestre
         students = []

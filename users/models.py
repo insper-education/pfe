@@ -7,7 +7,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-import inspect   # TEMPORARIAMENTE PARA DEBUG
+# import inspect   # TEMPORARIAMENTE PARA DEBUG
 
 # import datetime
 import re
@@ -21,20 +21,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
-# from academica.models import Exame
-# from projetos.models import Avaliacao2
-# from projetos.models import Banca
-# from projetos.models import Evento
-#from projetos.models import ObjetivosDeAprendizagem
-#from operacional.models import Curso
-#from estudantes.models import Relato
-#from estudantes.models import EstiloComunicacao
-#from projetos.models import Certificado
-#from projetos.models import Reprovacao
-#from projetos.support3 import calcula_objetivos
-#from academica.support3 import get_media_alocacao_i
-#from academica.support2 import get_objetivos
 
 from projetos.support import get_upload_path
 
@@ -322,30 +308,30 @@ class Aluno(models.Model):
             return str(self.curso2)
         return "Sem curso"
 
-    def get_banca_estudante(self, avaliacoes_banca):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_banca_estudante(self, avaliacoes_banca):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def get_edicoes_aluno(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_edicoes_aluno(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    def get_notas_estudante(self, request=None, ano=None, semestre=None, checa_banca=True):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_notas_estudante(self, request=None, ano=None, semestre=None, checa_banca=True):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
    
-    @property
-    def get_medias(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # @property
+    # def get_medias(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
     @property
     def get_alocacoes(self):
@@ -462,93 +448,93 @@ class Alocacao(models.Model):
         alocacao = cls(projeto=projeto, aluno=estudante)
         return alocacao
 
-    @property
-    def get_edicoes_alocacao(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # @property
+    # def get_edicoes_alocacao(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    def get_notas_alocacao(self, checa_banca=True):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_notas_alocacao(self, checa_banca=True):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
   
-    def em_probation(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def em_probation(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    @property
-    def get_media_alocacao(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # @property
+    # def get_media_alocacao(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    def get_medias_oo(self):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_medias_oo(self):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def get_oas(self, avaliacoes):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_oas(self, avaliacoes):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def get_oas_i(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_oas_i(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def get_oas_g(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_oas_g(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    def get_oas_t(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_oas_t(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    def media(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def media(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def peso(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def peso(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
-    @property
-    def get_relatos(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # @property
+    # def get_relatos(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    @property
-    def get_certificados(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # @property
+    # def get_certificados(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
     
-    def get_bancas(self):
-        function_name = inspect.currentframe().f_code.co_name
-        for i in range(16):
-            print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-        raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
+    # def get_bancas(self):
+    #     function_name = inspect.currentframe().f_code.co_name
+    #     for i in range(16):
+    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
+    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
 
 class UsuarioEstiloComunicacao(models.Model):
@@ -602,11 +588,14 @@ class Parceiro(models.Model):  # da empresa
     user = models.OneToOneField(PFEUser, related_name="parceiro",
                                 on_delete=models.CASCADE,
                                 help_text="Identificaçãdo do usuário")
+    
     organizacao = models.ForeignKey("projetos.Organizacao", on_delete=models.CASCADE,
                                     blank=True, null=True,
                                     help_text="Organização Parceira")
+    
     cargo = models.CharField("Cargo", max_length=90, blank=True,
                              help_text="Cargo Funcional")
+    
     principal_contato = models.BooleanField("Principal Contato", default=False)
 
     class Meta:

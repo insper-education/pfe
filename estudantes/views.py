@@ -157,12 +157,10 @@ def alocacao_hora(request):
     if request.user.tipo_de_usuario == 1:
         configuracao = get_object_or_404(Configuracao)
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
-        horarios = json.loads(request.POST.get("horarios", None))
-        alocacao.horarios = horarios
+        alocacao.horarios = json.loads(request.POST.get("horarios", None))
         alocacao.save()
     else:
         return JsonResponse({"atualizado": False}, status=500)
-
     return JsonResponse({"atualizado": True,})
 
 @login_required
@@ -172,12 +170,7 @@ def refresh_hora(request):
         return HttpResponse("Você não possui acesso.", status=401)
     
     projeto_id = request.GET.get("projeto_id", None)
-    if not projeto_id:
-        return HttpResponse("Projeto não encontrado.", status=404)
-    
-    projeto = Projeto.objects.filter(pk=projeto_id).last()
-    if not projeto:
-        return HttpResponse("Projeto não encontrado.", status=404)
+    projeto = get_object_or_404(Projeto, pk=projeto_id)
 
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     if not alocacoes:
@@ -653,9 +646,7 @@ def relato_quinzenal(request):
         "inicio_periodo": inicio_periodo,
     }
 
-    if request.user.tipo_de_usuario == 1:  # Estudante
-
-        configuracao = get_object_or_404(Configuracao)
+    if request.user.estud:  # Estudante
 
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
                                            projeto__ano=configuracao.ano,

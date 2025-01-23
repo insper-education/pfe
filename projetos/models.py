@@ -34,23 +34,32 @@ class Organizacao(models.Model):
 
     nome = models.CharField("Nome Fantasia", max_length=100, unique=True,
                             help_text="Nome fantasia da organização parceira")
+    
     sigla = models.CharField("Sigla", max_length=20, unique=True,
                              help_text="Sigla usada pela organização parceira")
+    
     endereco = models.TextField("Endereço", max_length=200, null=True, blank=True,
                                 help_text="Endereço da organização parceira")
+    
     website = models.URLField("website", max_length=300, null=True, blank=True,
                               help_text="website da organização parceira")
+    
     informacoes = models.TextField("Informações", max_length=1000, null=True, blank=True,
                                    help_text="Informações sobre a organização parceira")
+    
     logotipo = models.ImageField("Logotipo", upload_to=get_upload_path, null=True, blank=True,
                                  help_text="Logotipo da organização parceira")
+    
     cnpj = models.CharField("CNPJ", max_length=14, null=True, blank=True, 
                             help_text="Código de CNPJ da empresa")
+    
     inscricao_estadual = models.CharField("Inscrição Estadual", max_length=15,
                                           null=True, blank=True,
                                           help_text="Código da inscrição estadual")
+    
     razao_social = models.CharField("Razão Social", max_length=100, null=True, blank=True,
                                     help_text="Razão social da organização parceira")
+    
     ramo_atividade = models.TextField("Ramo de Atividade", max_length=1000, null=True, blank=True,
                                       help_text="Ramo de atividade da organização parceira")
 
