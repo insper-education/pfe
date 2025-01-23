@@ -6,7 +6,7 @@ Data: 8 de Janeiro de 2025
 """
 
 from projetos.models import Avaliacao2
-from projetos.support3 import converte_letra
+from academica.support_notas import converte_letra
 
 from django import template
 register = template.Library()

@@ -1047,7 +1047,7 @@ def certificacao_falconi(request):
             nota_banca_falconi, peso, avaliadores = get_banca_estudante(None, aval_banc_falconi)
             if peso is not None:
                 selecionados += 1
-                if nota_banca_falconi >= 9.5:  # conceito A+
+                if nota_banca_falconi >= 9.99:  # conceito A+
                     conceitos[7] += 1
                 elif nota_banca_falconi >= 9.0:  # conceito A
                     conceitos[6] += 1

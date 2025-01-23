@@ -32,6 +32,8 @@ from .support3 import resultado_projetos_intern
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
 
+from academica.support_notas import converte_letra, converte_conceito
+
 from administracao.support import usuario_sem_acesso
 
 from documentos.models import TipoDocumento
@@ -41,7 +43,6 @@ from estudantes.models import Relato, Pares
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, Certificado
 from projetos.models import Projeto, Configuracao, Organizacao
-from projetos.support3 import converte_letra, converte_conceito
 from projetos.support3 import get_objetivos_atuais
 from projetos.support2 import get_alocacoes, get_pares_colegas
 from projetos.messages import email, render_message, htmlizar

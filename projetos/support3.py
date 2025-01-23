@@ -9,77 +9,13 @@ Data: 8 de Janeiro de 2025
 import datetime
 import re
 
-
 from academica.models import Exame
 from projetos.models import Avaliacao2
-# from projetos.models import Banca
-# from projetos.models import Evento
 
 from users.models import Alocacao
 
 from academica.support2 import get_objetivos
 from academica.support4 import get_notas_estudante
-
-
-def converte_conceito(conceito):
-    """Converte de Letra para Número."""
-    if conceito == "A+":
-        return 10
-    elif conceito in ("A", "A "):
-        return 9
-    elif conceito == "B+":
-        return 8
-    elif conceito in ("B", "B "):
-        return 7
-    elif conceito == "C+":
-        return 6
-    elif conceito in ("C", "C "):
-        return 5
-    elif conceito in ("D+", "D+ "):
-        return 4
-    elif conceito in ("D", "D "):
-        return 3
-    elif conceito in ("D-", "D- "):
-        return 2
-    return 0
-
-
-def converte_letra(nota, mais="+", espaco=""):
-    """Converte de Número para Letra."""
-
-    if nota is None:
-        return None
-    
-    #if nota > 9.5:
-    if nota > 9.99:
-        return "A"+mais
-    #elif nota >= 8.5:
-    elif nota >= 9:
-        return "A"+espaco
-    #elif nota >= 7.5:
-    elif nota >= 8:
-        return "B"+mais
-    #elif nota >= 6.5:
-    elif nota >= 7:
-        return "B"+espaco
-    #elif nota >= 5.5:
-    elif nota >= 6:
-        return "C"+mais
-    #elif nota >= 4.5:
-    elif nota >= 5:
-        return "C"+espaco
-    #elif nota >= 3.5:
-    elif nota >= 4:
-        return "D"+mais
-    #elif nota >= 2.5:
-    elif nota >= 3:
-        return "D"+espaco
-    #elif nota >= 1.5:
-    elif nota >= 2:
-        return "D"+"-"
-    return "I"+espaco
-
-
 
 def get_objetivos_atuais(objetivos):
     

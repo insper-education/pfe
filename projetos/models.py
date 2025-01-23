@@ -13,7 +13,6 @@ import random
 import re
 
 from django.db import models
-#from django.db.models import F
 from django.conf import settings
 
 from django.urls import reverse  # To generate URLS by reversing URL patterns
@@ -27,15 +26,8 @@ from .support import get_upload_path
 
 from .tipos import TIPO_EVENTO
 
-from professores.support2 import converte_conceitos
+from academica.support_notas import converte_letra
 
-#from academica.models import Exame
-#from documentos.models import TipoDocumento
-#from administracao.models import TipoCertificado
-#from estudantes.models import Relato
-#from estudantes.models import Pares
-#from operacional.models import Curso
-#import users.models
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos."""
@@ -905,7 +897,7 @@ class Banca(models.Model):
                 peso += float(avaliacao.peso)
 
         for objetivo in objetivos:
-            objetivos[objetivo] = (objetivos[objetivo]/pesos[objetivo], converte_conceitos(objetivos[objetivo]/pesos[objetivo]))
+            objetivos[objetivo] = (objetivos[objetivo]/pesos[objetivo], converte_letra(objetivos[objetivo]/pesos[objetivo]))
 
         avaliacao = {}
         avaliacao["objetivos"] = objetivos
@@ -1720,30 +1712,10 @@ class Avaliacao2(models.Model):
         ordering = ["momento",]
 
     def get_conceito(self):
-        # Está duplicado, mas é para não quebrar o código
-        if( self.nota >= 9.5 ): return ("A+")
-        if( self.nota >= 8.5 ): return ("A")
-        if( self.nota >= 7.5 ): return ("B+")
-        if( self.nota >= 6.5 ): return ("B")
-        if( self.nota >= 5.5 ): return ("C+")
-        if( self.nota >= 4.5 ): return ("C")
-        if( self.nota >= 3.5 ): return ("D+")
-        if( self.nota >= 2.5 ): return ("D")
-        if( self.nota >= 1.5 ): return ("D-")
-        return ("I")
+        return converte_letra(self.nota)
 
     def get_conceitoX(self):
-        # Está duplicado, mas é para não quebrar o código
-        if( self.nota >= 9.5 ): return ("AX")
-        if( self.nota >= 8.5 ): return ("A")
-        if( self.nota >= 7.5 ): return ("BX")
-        if( self.nota >= 6.5 ): return ("B")
-        if( self.nota >= 5.5 ): return ("CX")
-        if( self.nota >= 4.5 ): return ("C")
-        if( self.nota >= 3.5 ): return ("DX")
-        if( self.nota >= 2.5 ): return ("D")
-        if( self.nota >= 1.5 ): return ("D-")
-        return ("I")
+        return converte_letra(self.nota, mais="X")
 
 
 class Avaliacao_Velha(models.Model):

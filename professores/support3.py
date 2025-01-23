@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404
 
 from projetos.models import Banca
 
-from projetos.support3 import converte_letra
+from academica.support_notas import converte_letra
 
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
