@@ -442,6 +442,7 @@ class Configuracao(models.Model):
     ano = models.PositiveIntegerField("Ano",
                                       validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text="Ano de operação do sistema")
+    
     semestre = models.PositiveIntegerField("Semestre",
                                            validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text="Semestre de operação do sistema")
@@ -488,19 +489,16 @@ class Configuracao(models.Model):
     
     horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
                                    help_text="Horários de Trabalho Semanais dos Estudantes")
-
     ###-----------------------------------------------------###
 
 
 
     ###----------------------Mensagens----------------------###
-
     msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
                                    help_text="Mensagem que descreve como será a Avaliação de Pares")
 
     msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,
                                    help_text="Mensagem de Envio Automático de e-mail")
-    
     ###-----------------------------------------------------###
 
     class Meta:
@@ -545,11 +543,13 @@ class Cursada(models.Model):
     """Relacionamento entre um aluno e uma disciplina cursada por ele."""
 
     disciplina = models.ForeignKey(Disciplina, null=True, blank=True, on_delete=models.SET_NULL,
-                                   help_text="disciplina cursada pelo aluno")
+                                   help_text="disciplina cursada pelo estudante")
+    
     aluno = models.ForeignKey("users.Aluno", null=True, blank=True, on_delete=models.SET_NULL,
-                              help_text="aluno que cursou a disciplina")
+                              help_text="estudante que cursou a disciplina")
+    
     nota = models.PositiveSmallIntegerField(validators=[MaxValueValidator(10)],
-                                            help_text="nota obtida pelo aluno na disciplina")
+                                            help_text="nota obtida pelo estudante na disciplina")
 
     class Meta:
         """Classe Meta."""
@@ -590,15 +590,17 @@ class Evento(models.Model):
 
     location = models.CharField(blank=True, null=True, max_length=80,
                                 help_text="Onde ocorrerá o evento")
+    
     startDate = models.DateField(default=datetime.date.today, blank=True,
                                  help_text="Inicio do Evento")
+    
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text="Fim do Evento")
 
     # REMOVER TIPO DE EVENTO
-    tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
-                                                      null=True, blank=True,
-                                                      help_text="Define o tipo do evento a ocorrer")
+    # tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
+    #                                                   null=True, blank=True,
+    #                                                   help_text="Define o tipo do evento a ocorrer")
     # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
     
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
@@ -623,21 +625,6 @@ class Evento(models.Model):
     documento2 = models.ForeignKey("projetos.Documento", null=True, blank=True, on_delete=models.SET_NULL,
                                   related_name="documento2",
                                   help_text="Material axuliar do evento, em caso de aulas, os slides da aula")
-
-
-    # PRECISA COLOCAR EM TIPO DE EVENTO (para os avisos)
-    # coordenacao = \
-    #     models.BooleanField(default=True, help_text="Para coordenação do Capstone")
-    # operacional = \
-    #     models.BooleanField(default=False, help_text="Para equipe operacional do Capstone")
-    # comite_pfe = \
-    #     models.BooleanField(default=False, help_text="Para os membros do comitê do Capstone")
-    # todos_alunos = \
-    #     models.BooleanField(default=False, help_text="Para todos os estudantes do semestre")
-    # todos_orientadores = \
-    #     models.BooleanField(default=False, help_text="Para todos os orientadores do semestre")
-    # contatos_nas_organizacoes = \
-    #     models.BooleanField(default=False, help_text="Para contatos nas organizações parceiras")
 
     def get_title(self):
         """Retorna em string o nome do evento."""
@@ -977,12 +964,16 @@ class Encontro(models.Model):
 
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto")
+    
     location = models.CharField(blank=True, max_length=280,
                                 help_text="sala em que vai ocorrer a dinâmica")
+    
     startDate = models.DateTimeField(default=datetime.datetime.now,
                                      help_text="Inicio da Dinâmica")
+    
     endDate = models.DateTimeField(default=datetime.datetime.now,
                                    help_text="Fim da Dinâmica")
+    
     facilitador = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                     on_delete=models.SET_NULL, related_name="facilitador",
                                     help_text="facilitador da dinâmica")
@@ -1029,7 +1020,7 @@ class TipoRetorno(models.Model):
     cor = models.CharField(max_length=6, default="FFFFFF", help_text="cor do tipo de retorno")
     
     # REMOVER TMP_ID
-    tmp_id = models.PositiveIntegerField(null=True, blank=True, help_text="id temporário")
+    # tmp_id = models.PositiveIntegerField(null=True, blank=True, help_text="id temporário")
 
     GRUPO_DE_RETORNO = ( # não mudar a ordem dos números
         (1, "Prospecção"),
@@ -1061,25 +1052,25 @@ class Anotacao(models.Model):
     texto = models.TextField(max_length=2000, help_text="Anotação")
 
     # Obsoleto - não usar
-    TIPO_DE_RETORNO = ( # não mudar a ordem dos números
-        (0, "Contactada para enviar proposta", "Prospecção"),
-        (1, "Interessada em enviar proposta", "Prospecção"),
-        (2, "Enviou proposta de projeto", "Prospecção"),
-        (3, "Não enviará proposta de projeto", "Prospecção"),
-        (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)", "Retorno"),
-        (5, "Notificamos que não conseguimos montar projeto", "Retorno"),
-        (6, "Contrato fechado para projeto", "Contratação"),
-        (7, "Envio de Relatório Final", "Relatório"),
-        (10, "Autorizou a publicação do Relatório Final", "Relatório"),
-        (11, "Negou a publicação do Relatório Final (público)", "Relatório"),
-        (12, "Contrato em análise", "Contratação"),
-        (13, "Acionada para assinatura de contrato", "Contratação"),
-        (254, "outros", ""),
-    )
+    # TIPO_DE_RETORNO = ( # não mudar a ordem dos números
+    #     (0, "Contactada para enviar proposta", "Prospecção"),
+    #     (1, "Interessada em enviar proposta", "Prospecção"),
+    #     (2, "Enviou proposta de projeto", "Prospecção"),
+    #     (3, "Não enviará proposta de projeto", "Prospecção"),
+    #     (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)", "Retorno"),
+    #     (5, "Notificamos que não conseguimos montar projeto", "Retorno"),
+    #     (6, "Contrato fechado para projeto", "Contratação"),
+    #     (7, "Envio de Relatório Final", "Relatório"),
+    #     (10, "Autorizou a publicação do Relatório Final", "Relatório"),
+    #     (11, "Negou a publicação do Relatório Final (público)", "Relatório"),
+    #     (12, "Contrato em análise", "Contratação"),
+    #     (13, "Acionada para assinatura de contrato", "Contratação"),
+    #     (254, "outros", ""),
+    # )
 
-    # Obsoleto - não usar
-    tipo_de_retorno = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_RETORNO], default=0)
-    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
+    # # Obsoleto - não usar
+    # tipo_de_retorno = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_RETORNO], default=0)
+    # # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 
     tipo_retorno = models.ForeignKey(TipoRetorno, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Tipo de retorno")
@@ -1165,6 +1156,7 @@ class Banco(models.Model):
 
     nome = models.CharField(max_length=50,
                             help_text="nome do banco")
+    
     codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
                                               help_text="código do banco")
 
@@ -1183,18 +1175,25 @@ class Reembolso(models.Model):
 
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="usuário pedindo reembolso")
+    
     banco = models.ForeignKey(Banco, null=True, on_delete=models.SET_NULL,
                               help_text="banco a se fazer o reembolso")
+    
     agencia = models.CharField(max_length=6, null=True, blank=True,
                                help_text="agência no banco")
+    
     conta = models.CharField(max_length=16, null=True, blank=True,
                              help_text="conta no banco")
+    
     descricao = models.TextField(max_length=2000,
                                  help_text="desrição do pedido de reembolso")
+    
     valor = models.DecimalField(max_digits=5, decimal_places=2,
                                 help_text="valor a ser reembolsado")
+    
     data = models.DateTimeField(default=datetime.datetime.now,
                                 help_text="data e hora da criação do pedido de reembolso")
+    
     nota = models.FileField(upload_to=get_upload_path, null=True, blank=True,
                             help_text="Nota(s) Fiscal(is)")
 
@@ -1214,10 +1213,10 @@ class Aviso(models.Model):
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text="Título do Aviso")
 
-    tipo_de_evento = models.\
-        PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
-                                  null=True, blank=True,
-                                  help_text="Define o tipo do evento de referência")
+    # tipo_de_evento = models.\
+    #     PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
+    #                               null=True, blank=True,
+    #                               help_text="Define o tipo do evento de referência")
     
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Tipo de evento")
@@ -1228,9 +1227,9 @@ class Aviso(models.Model):
                                 help_text="mensagem a ser enviar no texto")
     
     ### NÃO DEVE SER MAIS USADO ##############################################
-    realizado = models.BooleanField(default=False, help_text="Se já realizado no período")  # NAO MAIS USADO
-    data_realizado = models.DateField(default=datetime.date.today, blank=True,
-                                      help_text="Data de quando o evento foi realizado pela última vez")
+    # realizado = models.BooleanField(default=False, help_text="Se já realizado no período")  # NAO MAIS USADO
+    # data_realizado = models.DateField(default=datetime.date.today, blank=True,
+    #                                   help_text="Data de quando o evento foi realizado pela última vez")
     ##########################################################################
     
     datas_realizado = models.TextField(max_length=4096, default="[]",
@@ -1276,13 +1275,16 @@ class Entidade(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Acompanhamento(models.Model):
     """Acompanhamento das organizacoes parceiras."""
 
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="Data da Resposta")
+    
     autor = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                               help_text="quem enviou a observação de acompanhamento")
+    
     texto = models.TextField(max_length=1000, help_text="Feedback Outros")
 
     def __str__(self):
@@ -1300,10 +1302,13 @@ class Feedback(models.Model):
 
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="Data do Feedback")
+    
     nome = models.CharField(max_length=120, null=True, blank=True,
                             help_text="Nome de quem está dando o Feedback")
+    
     email = models.EmailField(max_length=80, null=True, blank=True,
                               help_text="e-mail de quem está dando o Feedback")
+    
     #isso esta bem baguncado
     empresa = models.CharField(max_length=120, null=True, blank=True,
                                help_text="Empresa de quem está dando o Feedback")
@@ -1328,7 +1333,6 @@ class Feedback(models.Model):
         """Cria um objeto (entrada) em Feedback."""
         feedback = cls()
         return feedback
-
 
 
 class FeedbackEstudante(models.Model):
@@ -1398,6 +1402,7 @@ class Conexao(models.Model):
 
     projeto = models.ForeignKey(Projeto, null=True, on_delete=models.SET_NULL,
                                 help_text="projeto que possui vínculo da conexão")
+    
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text="qualquer observação relevante")
     
@@ -1443,8 +1448,10 @@ class Coorientador(models.Model):
 
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="coorientador de um projeto")
+    
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto que foi coorientado")
+    
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text="qualquer observação relevante")
 
@@ -1461,12 +1468,6 @@ class Coorientador(models.Model):
         else:
             mensagem += "PROJETO NÃO DEFINIDO"
         return mensagem
-
-    # def certificado_coorientador(self):
-    #     """Se o coorientador pode emitir certificado."""
-    #     tipo_certificado = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
-    #     certificado = Certificado.objects.filter(projeto=self.projeto, usuario=self.usuario, tipo_certificado=tipo_certificado)
-    #     return certificado
 
     class Meta:
         verbose_name = "Coorientador"
@@ -1613,26 +1614,26 @@ class ObjetivosDeAprendizagem(models.Model):
 
 
     ### ESSES PESOS PODEM SER REMOVIDOS, NÃO DEVEM SER MAIS USADOS
-    peso_intermediario_individual = models.FloatField(default=0,
-                                                      help_text="peso intermediário individual")
+    # peso_intermediario_individual = models.FloatField(default=0,
+    #                                                   help_text="peso intermediário individual")
 
-    peso_intermediario_grupo = models.FloatField(default=0,
-                                                 help_text="peso intermediário grupo")
+    # peso_intermediario_grupo = models.FloatField(default=0,
+    #                                              help_text="peso intermediário grupo")
 
-    peso_final_individual = models.FloatField(default=0,
-                                              help_text="peso final individual")
+    # peso_final_individual = models.FloatField(default=0,
+    #                                           help_text="peso final individual")
 
-    peso_final_grupo = models.FloatField(default=0,
-                                         help_text="peso final grupo")
+    # peso_final_grupo = models.FloatField(default=0,
+    #                                      help_text="peso final grupo")
 
-    peso_banca_intermediaria = models.FloatField(default=0,
-                                                 help_text="peso para banca intermediária")
+    # peso_banca_intermediaria = models.FloatField(default=0,
+    #                                              help_text="peso para banca intermediária")
 
-    peso_banca_final = models.FloatField(default=0,
-                                         help_text="peso para banca final")
+    # peso_banca_final = models.FloatField(default=0,
+    #                                      help_text="peso para banca final")
 
-    peso_banca_falconi = models.FloatField(default=0,
-                                           help_text="peso para banca falconi")
+    # peso_banca_falconi = models.FloatField(default=0,
+    #                                        help_text="peso para banca falconi")
     ##############################################################
 
 

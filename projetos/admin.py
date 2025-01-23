@@ -286,8 +286,8 @@ class BancaAdmin(admin.ModelAdmin):
 class AvisoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ("titulo", "tipo_evento", "delta", "realizado", "data_realizado",)
-    list_filter = ("realizado", "coordenacao", "comite_pfe", "todos_alunos",
+    list_display = ("titulo", "tipo_evento", "delta",) # "realizado", "data_realizado",)
+    list_filter = ("coordenacao", "comite_pfe", "todos_alunos",  # "realizado",
                    "todos_orientadores", "contatos_nas_organizacoes",)
     ordering = ("delta",)
     actions = [dup_entrada]

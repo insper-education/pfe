@@ -104,7 +104,7 @@
                 {% lng "Avaliado por" "Evaluated by" %}
               </b>
             </th>
-            <th scope="col" style="text-align:center;">
+            {% comment %} <th scope="col" style="text-align:center;">
               <b>
                 {% lng "Peso Intermediário" "Intermediate Weight" %}
               </b>
@@ -113,7 +113,7 @@
               <b>
                 {% lng "Peso Final" "Final Weight" %}
               </b>
-            </th>
+            </th> {% endcomment %}
           </tr>
         </thead>
         <tbody>
@@ -126,7 +126,7 @@
                 </label>
               </div>
             </td>
-            <td style="text-align:center;">
+            {% comment %} <td style="text-align:center;">
               <input id="peso_intermediario_individual" name="peso_intermediario_individual" type="number" step='0.01' style="width: 5em;text-align: right;"
               {% if objetivo %}
                 value="{{objetivo.peso_intermediario_individual|stringformat:".2f"|unlocalize}}"
@@ -137,7 +137,7 @@
               {% if objetivo %}
                 value="{{objetivo.peso_final_individual|stringformat:".2f"|unlocalize}}"
               {% endif %} />
-            </td>
+            </td> {% endcomment %}
           </tr>
 
           <tr>
@@ -149,7 +149,7 @@
                 </label>
               </div>
             </td>
-            <td style="text-align:center;">
+            {% comment %} <td style="text-align:center;">
               <input id="peso_banca_intermediaria" name="peso_banca_intermediaria" type="number" step='0.01' style="width: 5em;text-align: right;"
               {% if objetivo %}
                 value="{{objetivo.peso_banca_intermediaria|stringformat:".2f"|unlocalize}}"
@@ -160,7 +160,7 @@
               {% if objetivo %}
                 value="{{objetivo.peso_banca_final|stringformat:".2f"|unlocalize}}"
               {% endif %} />
-            </td>
+            </td> {% endcomment %}
           </tr>
 
           <tr>
@@ -172,7 +172,7 @@
                 </label>
               </div>
             </td>
-            <td style="text-align:center;">
+            {% comment %} <td style="text-align:center;">
               <input id="peso_intermediario_grupo" name="peso_intermediario_grupo" type="number" step='0.01' style="width: 5em;text-align: right;"
               {% if objetivo %}
                 value="{{objetivo.peso_intermediario_grupo|stringformat:".2f"|unlocalize}}"
@@ -183,7 +183,7 @@
               {% if objetivo %}
                 value="{{objetivo.peso_final_grupo|stringformat:".2f"|unlocalize}}"
               {% endif %} />
-            </td>
+            </td> {% endcomment %}
           </tr>
 
           <tr>
@@ -197,12 +197,12 @@
             </td>
             <td style="text-align:center;"> 
             </td>
-            <td style="text-align:center;">
+            {% comment %} <td style="text-align:center;">
               <input id="peso_banca_falconi" name="peso_banca_falconi" type="number" step='0.01' style="width: 5em;text-align: right;"
               {% if objetivo %}
                 value="{{objetivo.peso_banca_falconi|stringformat:".2f"|unlocalize}}"
               {% endif %} />
-            </td>
+            </td> {% endcomment %}
           </tr>
 
         </tbody>
