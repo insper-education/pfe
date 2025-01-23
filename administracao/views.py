@@ -14,14 +14,10 @@ import logging
 
 from celery import Celery
 
-# from itertools import groupby
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-# from django.core.exceptions import SuspiciousOperation  # Para erro 400
-# from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
@@ -33,6 +29,7 @@ from axes.models import AccessAttempt, AccessLog
 
 from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
+from .support2 import create_backup, get_resource, get_queryset
 
 from documentos.support import render_to_pdf
 
@@ -44,22 +41,8 @@ from propostas.support import ordena_propostas
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, Feedback, Disciplina
-from projetos.resources import DisciplinasResource
-from projetos.resources import Avaliacoes2Resource
-from projetos.resources import ProjetosResource
-from projetos.resources import OrganizacoesResource
-from projetos.resources import OpcoesResource
-from projetos.resources import ProfessoresResource
-from projetos.resources import EstudantesResource
-from projetos.resources import ParceirosResource
-from projetos.resources import ConfiguracaoResource
-from projetos.resources import FeedbacksResource
-from projetos.resources import UsuariosResource
-from projetos.resources import ParesResource
-from projetos.resources import AlocacoesResource
 from projetos.support import simple_upload, get_upload_path
 from projetos.support2 import get_pares_colegas
-
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
@@ -381,13 +364,10 @@ def edita_usuario(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
-    if dado == "disciplinas":
-        resource = DisciplinasResource()
-    elif dado == "estudantes":
-        resource = EstudantesResource()
-    elif dado == "avaliacoes":
-        resource = Avaliacoes2Resource()
-    else:
+
+    resource = get_resource(dado)
+
+    if resource is None:
         return HttpResponseNotFound("<h1>Tipo de dado não reconhecido!</h1>")
 
     # https://simpleisbetterthancomplex.com/packages/2016/08/11/django-import-export.html
@@ -540,36 +520,11 @@ def exportar(request):
                 modelo = dado
             else:
                 modelo += "_" + dado
-            queryset = None
-            if dado == "projetos":
-                resource = ProjetosResource()
-                queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
-            elif dado == "organizacoes":
-                resource = OrganizacoesResource()
-            elif dado == "opcoes":
-                resource = OpcoesResource()
-            elif dado == "avaliacoes":
-                resource = Avaliacoes2Resource()
-            elif dado == "usuarios":
-                resource = UsuariosResource()
-            elif dado == "estudantes":
-                resource = EstudantesResource()
-                queryset = resource._meta.model.objects.filter(anoPFE=ano, semestrePFE=semestre)
-            elif dado == "professores":
-                resource = ProfessoresResource()
-            elif dado == "parceiros":
-                resource = ParceirosResource()
-            elif dado == "configuracao":
-                resource = ConfiguracaoResource()
-            elif dado == "feedbacks":
-                resource = FeedbacksResource()
-            elif dado == "alocacoes":
-                resource = AlocacoesResource()
-                queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-            elif dado == "pares":
-                resource = ParesResource()
-                queryset = resource._meta.model.objects.filter(alocacao_de__projeto__ano=ano, alocacao_de__projeto__semestre=semestre)
-            else:
+
+            resource = get_resource(dado)
+            queryset = get_queryset(resource, dado, ano, semestre)
+
+            if resource is None or queryset is None:
                 mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
                 context = {
                     "area_principal": True,
@@ -577,8 +532,6 @@ def exportar(request):
                 }
                 return render(request, "generic.html", context=context)
 
-            if queryset is None:
-                queryset = resource._meta.model.objects.all()
             dataset = resource.export(queryset)
             dataset.title = dado
             databook.add_sheet(dataset)
@@ -618,7 +571,6 @@ def exportar(request):
     return render(request, "administracao/exportar.html", context=context)
 
 
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def relatorios(request):
@@ -639,7 +591,6 @@ def relatorios(request):
         "edicoes": get_edicoes(Aluno)[0],
       }
     return render(request, "administracao/relatorios.html", context=context)
-
 
 
 @login_required
@@ -839,7 +790,6 @@ def propor(request):
         return JsonResponse(data)
 
     return HttpResponseNotFound("Requisição errada")
-
 
 
 @login_required
@@ -1116,31 +1066,9 @@ def export(request, modelo, formato):
     # APOSENTAR ESSE MÉTODO
     # NÃO USAR MAIS
 
-    if modelo == "projetos":
-        resource = ProjetosResource()
-    elif modelo == "organizacoes":
-        resource = OrganizacoesResource()
-    elif modelo == "opcoes":
-        resource = OpcoesResource()
-    elif modelo == "avaliacoes":
-        resource = Avaliacoes2Resource()
-    elif modelo == "usuarios":
-        resource = UsuariosResource()
-    elif modelo == "estudantes":
-        resource = EstudantesResource()
-    elif modelo == "professores":
-        resource = ProfessoresResource()
-    elif modelo == "parceiros":
-        resource = ParceirosResource()
-    elif modelo == "configuracao":
-        resource = ConfiguracaoResource()
-    elif modelo == "feedbacks":
-        resource = FeedbacksResource()
-    elif modelo == "pares":
-        resource = ParesResource()
-        # queryset = resource._meta.model.objects.filter(year=ano)
-        # dataset = resource.export(queryset)
-    else:
+    resource = get_resource(modelo)
+
+    if resource is None:
         mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
         context = {
             "area_principal": True,
@@ -1149,11 +1077,8 @@ def export(request, modelo, formato):
         return render(request, "generic.html", context=context)
 
     dataset = resource.export()
-
     databook = tablib.Databook()
-
     databook.add_sheet(dataset)
-
     if formato in ("xls", "xlsx"):
         response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
         formato = "xlsx"
@@ -1172,45 +1097,6 @@ def export(request, modelo, formato):
     response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
 
     return response
-
-
-def create_backup():
-    """Rotina para criar um backup."""
-    databook = tablib.Databook()
-
-    data_projetos = ProjetosResource().export()
-    data_projetos.title = "Projetos"
-    databook.add_sheet(data_projetos)
-
-    data_organizacoes = OrganizacoesResource().export()
-    data_organizacoes.title = "Organizacoes"
-    databook.add_sheet(data_organizacoes)
-
-    data_opcoes = OpcoesResource().export()
-    data_opcoes.title = "Opcoes"
-    databook.add_sheet(data_opcoes)
-
-    data_avaliacoes = Avaliacoes2Resource().export()
-    data_avaliacoes.title = "Avaliações"
-    databook.add_sheet(data_avaliacoes)
-
-    data_usuarios = UsuariosResource().export()
-    data_usuarios.title = "Usuarios"
-    databook.add_sheet(data_usuarios)
-
-    data_alunos = EstudantesResource().export()
-    data_alunos.title = "Alunos"
-    databook.add_sheet(data_alunos)
-
-    data_professores = ProfessoresResource().export()
-    data_professores.title = "Professores"
-    databook.add_sheet(data_professores)
-
-    data_configuracao = ConfiguracaoResource().export()
-    data_configuracao.title = "Configuracao"
-    databook.add_sheet(data_configuracao)
-
-    return databook
 
 
 @login_required
@@ -1348,6 +1234,8 @@ def tarefas_agendadas(request):
     }
     return render(request, "administracao/tarefas_agendadas.html", context)
 
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def cancela_tarefa(request, task_id):
     if request.method == "POST":
         celery_app.control.revoke(task_id, terminate=True)
