@@ -1045,10 +1045,13 @@ class Anotacao(models.Model):
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
                                    help_text="Data e hora da comunicação") # hora ordena para dia
+    
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização parceira")
+    
     autor = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                               related_name="professor_orientador", help_text="quem fez a anotação")
+    
     texto = models.TextField(max_length=2000, help_text="Anotação")
 
     # Obsoleto - não usar
@@ -1094,21 +1097,29 @@ class Documento(models.Model):
 
     organizacao = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Organização referente o documento")
+    
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Usuário do documento")
+    
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Documento do Projeto")
+    
     documento = models.FileField(null=True, blank=True, max_length=256,
                                  upload_to=get_upload_path,
                                  help_text="Link para o arquivo no servidor")
+    
     link = models.URLField("link", max_length=320, null=True, blank=True,
                            help_text="Link do documento na internets")
+    
     anotacao = models.CharField(null=True, blank=True, max_length=64,
                                 help_text="Qualquer anotação sobre o documento em questão")
+    
     data = models.DateTimeField(null=True, blank=True,
                             help_text="Data e hora do documento")
+    
     tipo_documento = models.ForeignKey("documentos.TipoDocumento", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Tipo de documento")
+    
     confidencial = models.BooleanField(default=True, help_text="Documento confidêncial")
 
     LINGUA_DO_DOCUMENTO = ( # não mudar a ordem dos números
@@ -1154,8 +1165,7 @@ class Documento(models.Model):
 class Banco(models.Model):
     """Lista dos Bancos Existentes no Brasil."""
 
-    nome = models.CharField(max_length=50,
-                            help_text="nome do banco")
+    nome = models.CharField(max_length=50, help_text="nome do banco")
     
     codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
                                               help_text="código do banco")
@@ -1223,14 +1233,9 @@ class Aviso(models.Model):
 
     delta = models.SmallIntegerField(default=0,
                                      help_text="dias passados do evento definido")
+    
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text="mensagem a ser enviar no texto")
-    
-    ### NÃO DEVE SER MAIS USADO ##############################################
-    # realizado = models.BooleanField(default=False, help_text="Se já realizado no período")  # NAO MAIS USADO
-    # data_realizado = models.DateField(default=datetime.date.today, blank=True,
-    #                                   help_text="Data de quando o evento foi realizado pela última vez")
-    ##########################################################################
     
     datas_realizado = models.TextField(max_length=4096, default="[]",
                                       help_text="Datas de quando o evento foi realizado")
@@ -1700,15 +1705,7 @@ class Avaliacao2(models.Model):
                              help_text="Caso o avaliador não tenha avaliado esse quesito")
 
     def __str__(self):
-        texto = ""
-        texto += str(self.exame.titulo)[0:8]
-        texto += " > "
-        texto += str(self.projeto)[0:12]
-        texto += " > "
-        texto += str(self.avaliador)
-        
-        return texto
-        return "Avaliação Não Definida"
+        return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"
 
     @classmethod
     def create(cls, projeto=None, alocacao=None):
@@ -1771,13 +1768,7 @@ class Avaliacao_Velha(models.Model):
                              help_text="Caso o avaliador não tenha avaliado esse quesito")
 
     def __str__(self):
-        texto = ""
-        texto += str(self.exame.titulo)[0:8]
-        texto += " > "
-        texto += str(self.projeto)[0:12]
-        texto += " > "
-        texto += str(self.avaliador)
-        return texto
+        return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"
 
     @classmethod
     def create(cls, projeto=None, alocacao=None):
@@ -1915,10 +1906,13 @@ class Certificado(models.Model):
 
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="pessoa que recebeu o certificado")
+    
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="projeto relacionado ao certificado")
+    
     alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="alocação relacionada ao certificado")
+    
     data = models.DateField(default=datetime.date.today, blank=True,
                             help_text="data do certificado")
 
@@ -2004,6 +1998,7 @@ class AreaDeInteresse(models.Model):
     # As áreas são de interesse ou do usuário ou da proposta (que passa para o projeto)
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="área dde interessada da pessoa")
+    
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="área de interesse da proposta")
 
@@ -2043,11 +2038,11 @@ class AreaDeInteresse(models.Model):
         area_de_interesse = cls(usuario=estudante.user, area=area)
         return area_de_interesse
 
-    @classmethod
-    def create_estudante_outras(cls, estudante, outras):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls(usuario=estudante.user, outras=outras)
-        return area_de_interesse
+    # @classmethod
+    # def create_estudante_outras(cls, estudante, outras):
+    #     """Cria uma Área de Interesse nova."""
+    #     area_de_interesse = cls(usuario=estudante.user, outras=outras)
+    #     return area_de_interesse
 
     @classmethod
     def create_proposta_area(cls, proposta, area):
@@ -2055,14 +2050,14 @@ class AreaDeInteresse(models.Model):
         area_de_interesse = cls(proposta=proposta, area=area)
         return area_de_interesse
 
-    @classmethod
-    def create_proposta_outras(cls, proposta, outras):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls(proposta=proposta, outras=outras)
-        return area_de_interesse
+    # @classmethod
+    # def create_proposta_outras(cls, proposta, outras):
+    #     """Cria uma Área de Interesse nova."""
+    #     area_de_interesse = cls(proposta=proposta, outras=outras)
+    #     return area_de_interesse
 
-    @classmethod
-    def create_usuario_area(cls, usuario, area):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls(usuario=usuario, area=area)
-        return area_de_interesse
+    # @classmethod
+    # def create_usuario_area(cls, usuario, area):
+    #     """Cria uma Área de Interesse nova."""
+    #     area_de_interesse = cls(usuario=usuario, area=area)
+    #     return area_de_interesse

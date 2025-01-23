@@ -29,6 +29,7 @@ from operacional.models import Curso
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
+
 def decodificar(campo, campos):
     """Recupera um campo de um documento PDF."""
     if campo in campos and "/V" in campos[campo]:
