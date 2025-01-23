@@ -73,7 +73,6 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
         logger.error(error_message)
 
 
-
 def create_message(estudante, ano, semestre):
     """Cria mensagem quando o estudante termina de preencher o formulário de seleção de propostas"""
     context_carta = {

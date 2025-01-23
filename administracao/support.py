@@ -7,6 +7,8 @@ Data: 13 de Junho de 2023
 
 import datetime
 import dateutil.parser
+import string
+import random
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, Group
@@ -14,14 +16,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied  # Para erro 400
 from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
-from django.http import Http404
+# from django.http import Http404
 
-from administracao.models import TipoEvento
+# from administracao.models import TipoEvento
 
 from users.models import PFEUser, Aluno, Professor, Parceiro
 
+from projetos.messages import email, render_message
 from projetos.models import Organizacao, Evento
-#from projetos.models import Configuracao
+from projetos.models import Configuracao
 from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
@@ -331,3 +334,30 @@ def registro_usuario(request, user=None):
     else:
         return ("Usuário inserido na base de dados.", 200, usuario)
     
+
+def envia_senha_mensagem(user):
+
+    # Atualizando senha do usuário.
+    senha = ''.join(random.SystemRandom().
+                    choice(string.ascii_lowercase + string.digits)
+                    for _ in range(6))
+    user.set_password(senha)
+    user.save()
+
+    context_carta = {
+        "user": user,
+        "senha": senha,
+        "coordenacao": get_object_or_404(Configuracao).coordenacao,
+    }
+    message_email = render_message("Envio Senha", context_carta)
+
+    # Enviando e-mail com mensagem para usuário.
+    subject = "Capstone | Conta de Usuário: " + user.get_full_name()
+    recipient_list = [user.email,]
+
+    email(subject, recipient_list, message_email)
+    mensagem = "<br><br>Enviado mensagem com senha para: "
+    mensagem += user.get_full_name() + " " + "&lt;" + user.email + "&gt;<br>\n"
+    codigo = 200
+    
+    return mensagem, codigo

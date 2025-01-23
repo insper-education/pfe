@@ -7,8 +7,6 @@ Data: 17 de Dezembro de 2020
 """
 
 import re
-import string
-import random
 import tablib
 import axes.utils
 import datetime
@@ -34,7 +32,7 @@ from django.utils import timezone
 from axes.models import AccessAttempt, AccessLog
 
 from .support import registra_organizacao, registro_usuario
-from .support import usuario_sem_acesso
+from .support import usuario_sem_acesso, envia_senha_mensagem
 
 from documentos.support import render_to_pdf
 
@@ -46,7 +44,6 @@ from propostas.support import ordena_propostas
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, Feedback, Disciplina
-from projetos.messages import email
 from projetos.resources import DisciplinasResource
 from projetos.resources import Avaliacoes2Resource
 from projetos.resources import ProjetosResource
@@ -62,6 +59,7 @@ from projetos.resources import ParesResource
 from projetos.resources import AlocacoesResource
 from projetos.support import simple_upload, get_upload_path
 from projetos.support2 import get_pares_colegas
+
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
@@ -218,51 +216,6 @@ def edita_organizacao(request, primarykey):
     }
 
     return render(request, "administracao/cadastra_organizacao.html", context=context)
-
-
-def envia_senha_mensagem(user):
-
-    # Atualizando senha do usuário.
-    senha = ''.join(random.SystemRandom().
-                    choice(string.ascii_lowercase + string.digits)
-                    for _ in range(6))
-    user.set_password(senha)
-    user.save()
-
-    configuracao = get_object_or_404(Configuracao)
-    coordenacao = configuracao.coordenacao
-
-    # USAR TEMPLATE ARMAZENADO E NÃO FAZER NA MÃO ESSE TEXTO
-
-    # Preparando mensagem para enviar para usuário.
-    message_email = user.get_full_name() + ",\n\n"
-    message_email += "\tVocê está recebendo sua conta e senha para acessar o sistema do "
-    message_email += "Projeto Final - Capstone."
-    message_email += "\n\n"
-    message_email += "\tO endereço do servidor é: "
-    message_email += "<a href='https://pfe.insper.edu.br/'>https://pfe.insper.edu.br/</a>"
-    message_email += "\n\n"
-
-    message_email += "\tSua conta é: <b>" + user.username + "</b>\n"
-    message_email += "\tSua senha é: <b>" + senha + "</b>\n"
-    message_email += "\n"
-    message_email += "\tQualquer dúvida, envie e-mail para: "
-    message_email += coordenacao.user.get_full_name() + " <a href='mailto:" + coordenacao.user.email + "'>&lt;" + coordenacao.user.email + "&gt;</a>"
-    message_email += "\n\n"
-    message_email += "\t\tatenciosamente, coordenação do Capstone\n"
-    message_email = message_email.replace('\n', "<br>\n")
-    message_email = message_email.replace('\t', "&nbsp;&nbsp;&nbsp;&nbsp;\t")
-
-    # Enviando e-mail com mensagem para usuário.
-    subject = "Capstone | Conta de Usuário: " + user.get_full_name()
-    recipient_list = [user.email,]
-
-    email(subject, recipient_list, message_email)
-    mensagem = "<br><br>Enviado mensagem com senha para: "
-    mensagem += user.get_full_name() + " " + "&lt;" + user.email + "&gt;<br>\n"
-    codigo = 200
-    
-    return mensagem, codigo
 
 
 @login_required
