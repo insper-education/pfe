@@ -1879,5 +1879,5 @@ def upload_estudantes_projeto(request, projeto_id):
 
 
 def grupos_formados(request):
-
+    """Mostra os grupos formados (brincadeira)."""
     return render(request, "projetos/grupos_formados.html", context={})

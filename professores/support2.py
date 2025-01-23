@@ -120,11 +120,3 @@ def calcula_notas_bancas(avaliadores):
 
     return message2, obj_avaliados
 
-
-
-
-
-
-
-
-
