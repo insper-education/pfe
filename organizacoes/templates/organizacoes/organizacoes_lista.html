@@ -13,6 +13,13 @@
 
 {% block content %}
 
+  <span class="esconder">
+    <a href="{% url "cadastrar_organizacao" %}">
+      <i class="fas fa-plus"></i> 
+      {% lng "Cadastrar Nova Organização" "Register New Organization" %}
+    </a>
+  </span>
+
   {% include "tabelas_top_ml.html" with tabela="Organizacoes" captions=captions cabecalhos=cabecalhos %}
     {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 
       <tr class="item">
@@ -43,10 +50,6 @@
 
   <b>{% lng "Total de Propostas Submetidas" "Total of Submitted Proposals" %}:</b>{{ total_submetidos }}<br>
   <b>{% lng "Total de Projetos Fechados" "Total of Confirmed Projects" %}:</b>: {{ total_fechados }}<br>
-
-  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_organizacao" %}'" type="button" style="float: right;">
-    {% lng "Cadastrar Nova Organização" "Register New Organization" %}
-  </button></small><br>
 
   <script>
     function carrega_pagina(){

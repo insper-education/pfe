@@ -46,12 +46,6 @@ class Exame(models.Model):
     
     def __str__(self):
         return str(self.titulo) 
-
-    @classmethod
-    def create(cls, titulo):
-        """Cria um objeto (entrada) em Exame."""
-        exame = cls(titulo=titulo)
-        return exame
     
     class Meta:
         verbose_name = "Exame"
@@ -106,12 +100,6 @@ class Composicao(models.Model):
             texto += "hoje"
         texto += " ]"
         return texto
-
-    @classmethod
-    def create(cls, organizacao):
-        """Cria um objeto (entrada) em Composicao."""
-        anotacao = cls(organizacao=organizacao)
-        return anotacao
 
     def get_composicoes(ano, semestre):
         """Filtra composições para um semestre."""

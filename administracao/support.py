@@ -66,22 +66,16 @@ def usuario_sem_acesso(request, acessos):
     if request.user.tipo_de_usuario not in acessos:
         raise PermissionDenied("Você não tem privilégios de acesso a essa área!")
 
-def registra_organizacao(request, org=None):
+def registra_organizacao(request, organizacao=None):
     """Rotina para cadastrar organizacao no sistema."""
-    if not org:
-        organizacao = Organizacao.create()
-    else:
-        organizacao = org
 
-    nome = request.POST.get("nome", None)
-    if nome:
-        organizacao.nome = nome.strip()
-
-    sigla = request.POST.get("sigla", None)
-    if sigla:
-        organizacao.sigla = sigla.strip()
-
+    if organizacao is None:
+        organizacao = Organizacao()
+    
+    organizacao.nome = request.POST.get("nome", "").strip()
+    organizacao.sigla = request.POST.get("sigla", "").strip()
     organizacao.endereco = request.POST.get("endereco", None)
+    organizacao.informacoes = request.POST.get("informacoes", None)
 
     website = request.POST.get("website", "").strip()
     if website:
@@ -92,12 +86,9 @@ def registra_organizacao(request, org=None):
     else:
         organizacao.website = None
 
-    organizacao.informacoes = request.POST.get("informacoes", None)
-
     cnpj = request.POST.get("cnpj", None)
     if cnpj:
         organizacao.cnpj = cnpj[:2]+cnpj[3:6]+cnpj[7:10]+cnpj[11:15]+cnpj[16:18]
-
     organizacao.inscricao_estadual = request.POST.get("inscricao_estadual", None)
     organizacao.razao_social = request.POST.get("razao_social", None)
     organizacao.ramo_atividade = request.POST.get("ramo_atividade", None)
@@ -114,11 +105,9 @@ def registra_organizacao(request, org=None):
 
 def registro_usuario(request, user=None):
     """Rotina para cadastrar usuário no sistema."""
-    usuario = PFEUser.create() if not user else user  # Cria um usuário novo ou atualiza um existente
+    usuario = PFEUser() if not user else user  # Cria um usuário novo ou atualiza um existente
 
-    email = request.POST.get("email", None)
-    if email:
-        usuario.email = email.strip()
+    usuario.email = request.POST.get("email", "").strip()
 
     if usuario.tipo_de_usuario == 4:  # Administrador
         pass # Não mudar status de administrador por aqui
@@ -163,9 +152,9 @@ def registro_usuario(request, user=None):
     usuario.nome_social = limpa_texto(request.POST.get("nome_social", None))
 
     if "genero" in request.POST:
-        if request.POST['genero'] == "masculino":
+        if request.POST["genero"] == "masculino":
             usuario.genero = 'M'
-        elif request.POST['genero'] == "feminino":
+        elif request.POST["genero"] == "feminino":
             usuario.genero = 'F'
     else:
         usuario.genero = 'X'
@@ -183,7 +172,7 @@ def registro_usuario(request, user=None):
         else:
             usuario.is_active = False
 
-    if 'comite' in request.POST:
+    if "comite" in request.POST:
         if request.POST["comite"] == '1':
             usuario.membro_comite = True
         else:
@@ -197,7 +186,7 @@ def registro_usuario(request, user=None):
     if usuario.tipo_de_usuario == 1:  # estudante
 
         if not hasattr(user, "aluno"):
-            estudante = Aluno.create(usuario)
+            estudante = Aluno(user=usuario)
         else:
             estudante = user.aluno
 
@@ -237,7 +226,7 @@ def registro_usuario(request, user=None):
     elif usuario.tipo_de_usuario == 2:  # professor
 
         if not hasattr(user, "professor"):
-            professor = Professor.create(usuario)
+            professor = Professor(user=usuario)
         else:
             professor = user.professor
 
@@ -295,7 +284,7 @@ def registro_usuario(request, user=None):
     elif usuario.tipo_de_usuario == 3:  # Parceiro
 
         if not hasattr(user, "parceiro"):
-            parceiro = Parceiro.create(usuario)
+            parceiro = Parceiro(user=usuario)
         else:
             parceiro = user.parceiro
 

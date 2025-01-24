@@ -68,17 +68,10 @@ class Organizacao(models.Model):
     area_curso = models.ManyToManyField("operacional.Curso", blank=True,
                                         help_text="Curso que mais se identifica com a área da organização")
 
-
     class Meta:
         ordering = [ "nome",]
         verbose_name = "Organização"
         verbose_name_plural = "Organizações"
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Organizacao."""
-        organizacao = cls()
-        return organizacao
 
     def __str__(self):
         """Retorno padrão textual."""
@@ -109,8 +102,10 @@ class Projeto(models.Model):
     pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
                                 help_text="Links para repositórios com dados/códigos dos projeto (para orientador acessar)")
 
-    organizacao_velho = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text="Organização parceira que propôs projeto")
+    ### REMOVER ####
+    # organizacao_velho = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
+    #                                 help_text="Organização parceira que propôs projeto")
+    ## ˆˆˆˆˆˆ^#####
 
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="projeto original em caso de avançado")
@@ -143,13 +138,6 @@ class Projeto(models.Model):
         permissions = (("altera_empresa", "Empresa altera valores"),
                        ("altera_professor", "Professor altera valores"), )
 
-    @classmethod
-    def create(cls, proposta):
-        """Cria um Projeto (entrada) na Banca."""
-        projeto = cls(proposta=proposta)
-        return projeto
-    
-    # Methods
     @property
     def procura_de_alunos(self):
         """Retorna só 4."""
@@ -166,12 +154,6 @@ class Projeto(models.Model):
         if not self.proposta.titulo:
             return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DO PROJETO"
         return self.proposta.titulo
-
-    # def certificado_orientador(self):
-    #     """Retorna link do certificado."""
-    #     tipo_certificado = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
-    #     certificado = Certificado.objects.filter(usuario=self.orientador.user, projeto=self, tipo_certificado=tipo_certificado)
-    #     return certificado
 
     @property
     def organizacao(self):
@@ -238,14 +220,16 @@ class Proposta(models.Model):
 
     nome = models.CharField("Nome", max_length=127,
                             help_text="Nome(s) de quem submeteu o projeto")
+
     email = models.CharField("e-mail", max_length=80, null=True, blank=True,
                              help_text="e-mail(s) de quem está dando o Feedback")
+
     website = models.URLField("website", max_length=300, null=True, blank=True,
                               help_text="website da organização")
 
     nome_organizacao = models.CharField("Organização", max_length=120, null=True, blank=True,
                                         help_text="Nome da Organização/Empresa")
-
+    
     endereco = models.TextField("Endereço", max_length=400, null=True, blank=True,
                                 help_text="Endereço da Instituição")
 
@@ -371,12 +355,6 @@ class Proposta(models.Model):
         ordering = [ "ano", "semestre", "organizacao" ]
         verbose_name = "Proposta"
         verbose_name_plural = "Propostas"
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Propostas."""
-        proposta = cls()
-        return proposta
 
     def perfis(self):
         perfis = [getattr(self, f"perfil{i}") for i in range(1, 5)]
@@ -578,11 +556,6 @@ class Recomendada(models.Model):
             nome = self.disciplina.nome
         return titulo + " >>> " + nome
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Recomendada."""
-        recomendada = cls()
-        return recomendada
 
 
 class Evento(models.Model):
@@ -675,12 +648,6 @@ class Evento(models.Model):
                 evento = Evento.objects.filter(tipo_evento__sigla="BF", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.endDate if evento else None
         return self.endDate
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Evento."""
-        evento = cls()
-        return evento
 
     def __str__(self):
         """Retorno padrão textual."""
@@ -794,15 +761,6 @@ class Banca(models.Model):
             texto += "(" + self.alocacao.aluno.user.get_full_name() + ") "
         texto +=  "[" + self.get_projeto().organizacao.sigla + "] " + self.get_projeto().get_titulo()
         return texto
-
-    @classmethod
-    def create(cls, projeto=None):
-        """Cria um objeto (entrada) na Banca."""
-        if projeto is None:
-            banca = cls()
-        else:
-            banca = cls(projeto=projeto)
-        return banca
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
@@ -1002,12 +960,6 @@ class Encontro(models.Model):
         """Retorna o projeto do encontro."""
         return self.projeto
 
-    @classmethod
-    def create(cls, startDate, endDate):
-        """Cria um objeto (entrada) no Encontro."""
-        encontro = cls(startDate=startDate, endDate=endDate)
-        return encontro
-
     def __str__(self):
         return str(self.startDate)
 
@@ -1054,38 +1006,11 @@ class Anotacao(models.Model):
     
     texto = models.TextField(max_length=2000, help_text="Anotação")
 
-    # Obsoleto - não usar
-    # TIPO_DE_RETORNO = ( # não mudar a ordem dos números
-    #     (0, "Contactada para enviar proposta", "Prospecção"),
-    #     (1, "Interessada em enviar proposta", "Prospecção"),
-    #     (2, "Enviou proposta de projeto", "Prospecção"),
-    #     (3, "Não enviará proposta de projeto", "Prospecção"),
-    #     (4, "Confirmamos estudantes para o(s) projeto(s) proposto(s)", "Retorno"),
-    #     (5, "Notificamos que não conseguimos montar projeto", "Retorno"),
-    #     (6, "Contrato fechado para projeto", "Contratação"),
-    #     (7, "Envio de Relatório Final", "Relatório"),
-    #     (10, "Autorizou a publicação do Relatório Final", "Relatório"),
-    #     (11, "Negou a publicação do Relatório Final (público)", "Relatório"),
-    #     (12, "Contrato em análise", "Contratação"),
-    #     (13, "Acionada para assinatura de contrato", "Contratação"),
-    #     (254, "outros", ""),
-    # )
-
-    # # Obsoleto - não usar
-    # tipo_de_retorno = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_DE_RETORNO], default=0)
-    # # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
-
     tipo_retorno = models.ForeignKey(TipoRetorno, null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Tipo de retorno")
 
     def __str__(self):
         return str(self.momento)
-
-    @classmethod
-    def create(cls, organizacao):
-        """Cria um objeto (entrada) em Anotação."""
-        anotacao = cls(organizacao=organizacao)
-        return anotacao
 
     class Meta:
         verbose_name = "Anotação"
@@ -1152,12 +1077,6 @@ class Documento(models.Model):
         self.documento.delete()
         super().delete()
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Documento."""
-        documento = cls()
-        return documento
-
     class Meta:
         ordering = ["-data"]
 
@@ -1169,12 +1088,6 @@ class Banco(models.Model):
     
     codigo = models.PositiveSmallIntegerField(validators=[MaxValueValidator(999)],
                                               help_text="código do banco")
-
-    @classmethod
-    def create(cls, nome, codigo):
-        """Cria um objeto (entrada) no Banco."""
-        banco = cls(nome=nome, codigo=codigo)
-        return banco
 
     def __str__(self):
         return str(self.nome)
@@ -1207,12 +1120,6 @@ class Reembolso(models.Model):
     nota = models.FileField(upload_to=get_upload_path, null=True, blank=True,
                             help_text="Nota(s) Fiscal(is)")
 
-    @classmethod
-    def create(cls, usuario):
-        """Cria um objeto (entrada) no Reembolso."""
-        reembolso = cls(usuario=usuario)
-        return reembolso
-
     def __str__(self):
         return str(str(self.usuario)+str(self.data))
 
@@ -1222,11 +1129,6 @@ class Aviso(models.Model):
 
     titulo = models.CharField(max_length=120, null=True, blank=True,
                               help_text="Título do Aviso")
-
-    # tipo_de_evento = models.\
-    #     PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
-    #                               null=True, blank=True,
-    #                               help_text="Define o tipo do evento de referência")
     
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Tipo de evento")
@@ -1264,11 +1166,6 @@ class Aviso(models.Model):
     def __str__(self):
         return str(self.titulo)
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Aviso."""
-        aviso = cls()
-        return aviso
 
 
 class Entidade(models.Model):
@@ -1295,11 +1192,6 @@ class Acompanhamento(models.Model):
     def __str__(self):
         return str(self.data)
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Acompanhamento."""
-        acompanhamento = cls()
-        return acompanhamento
 
 
 class Feedback(models.Model):
@@ -1333,11 +1225,6 @@ class Feedback(models.Model):
     def __str__(self):
         return str(self.data)
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Feedback."""
-        feedback = cls()
-        return feedback
 
 
 class FeedbackEstudante(models.Model):
@@ -1384,18 +1271,12 @@ class FeedbackEstudante(models.Model):
     trabalhando = models.PositiveSmallIntegerField(choices=TIPO_TRABALHANDO, null=True, blank=True,
                                                     help_text="Você já está trabalhando (ou em vias de trabalhar) em alguma empresa?")
 
-
     outros = models.TextField(max_length=1000, null=True, blank=True,
                               help_text="Feedback Outros")
 
     def __str__(self):
         return str(self.momento) + " - " + str(self.estudante) + " : " + str(self.projeto)
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em FeedbackEstudante."""
-        feedback = cls()
-        return feedback
 
 
 class Conexao(models.Model):
@@ -1707,12 +1588,6 @@ class Avaliacao2(models.Model):
     def __str__(self):
         return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"
 
-    @classmethod
-    def create(cls, projeto=None, alocacao=None):
-        """Cria um objeto (entrada) em Avaliação."""
-        avaliacao = cls(projeto=projeto, alocacao=alocacao)
-        return avaliacao
-
     class Meta:
         verbose_name = "Avaliação2"
         verbose_name_plural = "Avaliações2"
@@ -1727,9 +1602,6 @@ class Avaliacao2(models.Model):
 
 class Avaliacao_Velha(models.Model):
     """Quando avaliações de banca são refeitas, as antigas vem para essa base de dados."""
-
-    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1770,12 +1642,6 @@ class Avaliacao_Velha(models.Model):
     def __str__(self):
         return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"
 
-    @classmethod
-    def create(cls, projeto=None, alocacao=None):
-        """Cria um objeto (entrada) em Avaliação Velha."""
-        avaliacao = cls(projeto=projeto, alocacao=alocacao)
-        return avaliacao
-
     class Meta:
         verbose_name = "Avaliação Velha"
         verbose_name_plural = "Avaliações Velhas"
@@ -1786,8 +1652,7 @@ class Reprovacao(models.Model):
     """Reprovações controladas por falha em Objetivos de Aprendizagem."""
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
-    alocacao = models.ForeignKey("users.Alocacao", null=True,
-                                 on_delete=models.SET_NULL,
+    alocacao = models.ForeignKey("users.Alocacao", null=True, on_delete=models.SET_NULL,
                                  related_name="projeto_alocado_reprovacao",
                                  help_text="alocação que sofreu reprovação")
 
@@ -1796,12 +1661,6 @@ class Reprovacao(models.Model):
 
     def __str__(self):
         return str(self.alocacao) + "Nota: " + str(self.nota)
-
-    @classmethod
-    def create(cls, alocacao):
-        """Cria um objeto (entrada) em Reprovação."""
-        reprovacao = cls(alocacao=alocacao)
-        return reprovacao
 
     class Meta:
         verbose_name = "Reprovação"
@@ -1887,12 +1746,6 @@ class Observacao_Velha(models.Model):
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
-    @classmethod
-    def create(cls, projeto):
-        """Cria um objeto (entrada) em Observacao Velha."""
-        observacao = cls(projeto=projeto)
-        return observacao
-
     def __str__(self):
         return "Observação velha tipo : " + str(self.exame)
 
@@ -1924,12 +1777,6 @@ class Certificado(models.Model):
 
     documento = models.FileField("Documento", upload_to=get_upload_path, null=True, blank=True,
                                  help_text="Documento Digital")
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Certificado."""
-        certificado = cls()
-        return certificado
 
     def __str__(self):
         texto = self.usuario.get_full_name() + " >>> "
@@ -1967,6 +1814,7 @@ class Certificado(models.Model):
         verbose_name = "Certificado"
         verbose_name_plural = "Certificados"
 
+
 class Area(models.Model):
     """Projeto em que o aluno está alocado."""
 
@@ -1981,12 +1829,6 @@ class Area(models.Model):
 
     def __str__(self):
         return self.titulo
-
-    @classmethod
-    def create(cls, titulo):
-        """Cria uma Área nova."""
-        area = cls(titulo=titulo)
-        return area
 
     class Meta:
         verbose_name = "Área"
@@ -2025,39 +1867,3 @@ class AreaDeInteresse(models.Model):
         if self.outras:
             return self.outras
         return str(self.area)
-
-    @classmethod
-    def create(cls):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls()
-        return area_de_interesse
-
-    @classmethod
-    def create_estudante_area(cls, estudante, area):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls(usuario=estudante.user, area=area)
-        return area_de_interesse
-
-    # @classmethod
-    # def create_estudante_outras(cls, estudante, outras):
-    #     """Cria uma Área de Interesse nova."""
-    #     area_de_interesse = cls(usuario=estudante.user, outras=outras)
-    #     return area_de_interesse
-
-    @classmethod
-    def create_proposta_area(cls, proposta, area):
-        """Cria uma Área de Interesse nova."""
-        area_de_interesse = cls(proposta=proposta, area=area)
-        return area_de_interesse
-
-    # @classmethod
-    # def create_proposta_outras(cls, proposta, outras):
-    #     """Cria uma Área de Interesse nova."""
-    #     area_de_interesse = cls(proposta=proposta, outras=outras)
-    #     return area_de_interesse
-
-    # @classmethod
-    # def create_usuario_area(cls, usuario, area):
-    #     """Cria uma Área de Interesse nova."""
-    #     area_de_interesse = cls(usuario=usuario, area=area)
-    #     return area_de_interesse

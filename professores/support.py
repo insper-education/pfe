@@ -74,7 +74,7 @@ def editar_banca(banca, request):
             return "Data de início ou fim não informada!", None
 
     if banca is None:
-        banca = Banca.create()
+        banca = Banca()
 
     if "tipo" in request.POST and request.POST["tipo"] != "":
         exame = get_object_or_404(Exame, sigla=request.POST["tipo"])

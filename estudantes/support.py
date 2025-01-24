@@ -35,7 +35,8 @@ def cria_area_estudante(request, estudante):
     for area in todas_areas:
         if area.titulo in check_values:
             if not AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
-                AreaDeInteresse.create_estudante_area(estudante, area).save()
+                area = AreaDeInteresse.objects.create(usuario=estudante.user, area=area)
+                area.save()
         else:
             if AreaDeInteresse.objects.filter(area=area, usuario=estudante.user).exists():
                 AreaDeInteresse.objects.get(area=area, usuario=estudante.user).delete()

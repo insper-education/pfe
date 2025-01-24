@@ -138,16 +138,13 @@ def cria_documento(request, forca_confidencial=False, usuario=None):
         # Buscando documento na base de dados
         documento = get_object_or_404(Documento, id=request.POST["documentos"])
     else:
-        # Criando documento na base de dados
-        documento = Documento.create()
+        documento = Documento()  # Criando documento na base de dados
 
     if "organizacao" in request.POST and request.POST["organizacao"] != "":
         documento.organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao"])
 
     documento.projeto = projeto
-    
     documento.tipo_documento = tipo
-    
     documento.data = data
     documento.link = link
     documento.anotacao = anotacao

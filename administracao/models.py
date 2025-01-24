@@ -29,12 +29,6 @@ class Carta(models.Model):
         verbose_name = "Carta"
         verbose_name_plural = "Cartas"
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Carta."""
-        carta = cls()
-        return carta
-
     def __str__(self):
         """Retorno padrão textual."""
         return self.template

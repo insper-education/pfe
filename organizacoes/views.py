@@ -63,7 +63,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
             if not organizacao_id and "organizacao_id" in request.POST:
                 organizacao_id = request.POST["organizacao_id"]
                 organizacao = get_object_or_404(Organizacao, id=organizacao_id)
-            anotacao_obj = Anotacao.create(organizacao)
+            anotacao_obj = Anotacao(organizacao=organizacao)
 
         if "data_hora" in request.POST:
             try:
@@ -804,7 +804,7 @@ def organizacoes_tabela(request):
 def projeto_feedback(request):
     """Para Feedback das Organizações Parceiras."""
     if request.method == "POST":
-        feedback = Feedback.create()
+        feedback = Feedback()
         feedback.nome = request.POST.get("nome", "")
         feedback.email = request.POST.get("email", "")
         feedback.empresa = request.POST.get("empresa", "")

@@ -46,13 +46,14 @@ def areas_propostas(check_values, outras, proposta):
     for area in todas_areas:
         if area.titulo in check_values:
             if not AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
-                AreaDeInteresse.create_proposta_area(proposta, area).save()
+                area = AreaDeInteresse.objects.create(proposta=proposta, area=area)
+                area.save()
         else:
             if AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
                 AreaDeInteresse.objects.get(area=area, proposta=proposta).delete()
 
     if outras and outras != "":
-        (outra, _created) = AreaDeInteresse.objects.get_or_create(area=None, proposta=proposta)
+        outra, _ = AreaDeInteresse.objects.get_or_create(area=None, proposta=proposta)
         outra.outras = outras
         outra.save()
     else:
@@ -172,7 +173,7 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 def preenche_proposta(request, proposta):
     """Preenche um proposta a partir de um request."""
     if proposta is None:  # proposta nova
-        proposta = Proposta.create()
+        proposta = Proposta()
 
         try:
             configuracao = Configuracao.objects.get()
@@ -219,7 +220,7 @@ def preenche_proposta(request, proposta):
 def preenche_proposta_pdf(campos, proposta):
     """Preenche um proposta a partir de um dicionario PDF."""
     if proposta is None:  # proposta nova
-        proposta = Proposta.create()
+        proposta = Proposta()
 
         try:
             configuracao = Configuracao.objects.get()

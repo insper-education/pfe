@@ -699,7 +699,7 @@ def edita_notas(request, primarykey):
         if rep:
             reg = falha.last()
             if not reg:
-                reg = Reprovacao.create(alocacao=alocacao)
+                reg = Reprovacao(alocacao=alocacao)
             reg.nota = rep
             reg.save()
         else:

@@ -575,8 +575,7 @@ def carrega_bancos(request):
         line_count = 0
         for row in csv_reader:
             if line_count != 0:
-                # ('Nome: {}; Código {}'.format(row[0],row[1]))
-                banco = Banco.create(nome=row[0], codigo=row[1])
+                banco = Banco.objects.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
     mensagem = "Bancos carregados."
@@ -611,7 +610,7 @@ def reembolso_pedir(request):
         projeto = None
 
     if request.method == "POST":
-        reembolso = Reembolso.create(usuario)
+        reembolso = Reembolso(usuario=usuario)
         reembolso.descricao = request.POST["descricao"]
 
         cpf = int(''.join(i for i in request.POST["cpf"] if i.isdigit()))
@@ -1751,7 +1750,7 @@ def editar_projeto(request, primarykey):
         for estudante_id in estudantes_ids:
             if not Alocacao.objects.filter(projeto=projeto, aluno__id=estudante_id).exists():
                 estudante = get_object_or_404(Aluno, pk=estudante_id)
-                alocacao = Alocacao.create(estudante, projeto)
+                alocacao = Alocacao(aluno=estudante, projeto=projeto)
                 alocacao.save()
 
         # Define projeto com time misto (estudantes de outras instituições)
@@ -1806,7 +1805,7 @@ def nomes(request):
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
     if request.is_ajax() and "texto" in request.POST:
-        acompanhamento = Acompanhamento.create()
+        acompanhamento = Acompanhamento()
 
         try:
             parceiro_id = int(request.POST["parceiro"])

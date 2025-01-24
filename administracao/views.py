@@ -850,7 +850,7 @@ def montar_grupos(request):
                     try:
                         projeto = Projeto.objects.get(proposta=proposta, avancado=None)
                     except Projeto.DoesNotExist:
-                        projeto = Projeto.create(proposta)
+                        projeto = Projeto(proposta=proposta)
 
                     if not projeto.organizacao:
                         projeto.organizacao = proposta.organizacao
@@ -868,8 +868,8 @@ def montar_grupos(request):
                         else:
                             mensagem += "- "+str(alocacao.aluno)+"\n"
 
-                    for alocado in alocados:  # alocando estudantes no projeto
-                        alocacao = Alocacao.create(alocado, projeto)
+                    for estudante in alocados:  # alocando estudantes no projeto
+                        alocacao = Alocacao(projeto=projeto, aluno=estudante)
                         alocacao.save()
 
                 else:

@@ -37,12 +37,6 @@ class Relato(models.Model):
 
     def __str__(self):
         return str(self.alocacao) + " (" + str(self.momento) + ") "
-
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Relato."""
-        relato = cls()
-        return relato
     
     class Meta:
         verbose_name = "Relato"
@@ -120,12 +114,6 @@ class Pares(models.Model):
     def __str__(self):
         return str(self.alocacao_de) + " -> " + str(self.alocacao_para)
 
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em Pares."""
-        pares = cls()
-        return pares
-
     class Meta:
         verbose_name = "Avaliação de Pares"
         verbose_name_plural = "Avaliações de Pares"
@@ -135,8 +123,10 @@ class EstiloComunicacao(models.Model):
     """Estilos de Comunicação."""
 
     bloco = models.CharField(max_length=1, verbose_name="Código do Bloco", null=True, blank=True)
+    
     questao = models.TextField("Questão", max_length=256, null=True, blank=True,
                                    help_text="Questão a ser respondida")
+    
     resposta1 = models.TextField("Resposta 1", max_length=256, null=True, blank=True)
     resposta2 = models.TextField("Resposta 2", max_length=256, null=True, blank=True)
     resposta3 = models.TextField("Resposta 3", max_length=256, null=True, blank=True)
@@ -144,12 +134,6 @@ class EstiloComunicacao(models.Model):
 
     def __str__(self):
         return self.bloco + " - " + self.questao
-    
-    @classmethod
-    def create(cls):
-        """Cria um objeto (entrada) em EstiloComunicacao."""
-        estilo = cls()
-        return estilo
     
     class Meta:
         verbose_name = "Estilo de Comunicação"

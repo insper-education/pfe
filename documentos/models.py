@@ -31,18 +31,12 @@ class TipoDocumento(models.Model):
     
     def __str__(self):
         return str(self.nome) 
-
-    @classmethod
-    def create(cls, nome):
-        """Cria um objeto (entrada) em TipoDocumento."""
-        exame = cls(nome=nome)
-        return exame
     
     def primeiro_nome(self):
         """Retorna o primeiro nome do TipoDocumento."""
         return self.nome.split(" ")[0]
     
     class Meta:
-        ordering = [ "nome",]
+        ordering = ["nome",]
         verbose_name = "Tipo de Documento"
         verbose_name_plural = "Tipos de Documentos"

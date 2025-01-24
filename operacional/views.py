@@ -225,7 +225,7 @@ def carregar_certificado(request):
     if request.method == "POST":
         if "usuario" in request.POST and "tipo" in request.POST and "documento" in request.FILES:
 
-            certificado = Certificado.create()
+            certificado = Certificado()
 
             usuario_id = request.POST.get("usuario", None)
             certificado.usuario = get_object_or_404(PFEUser, id=usuario_id) if usuario_id else None
@@ -307,9 +307,7 @@ def cria_aviso(request):
     if request.method == "POST":
 
         if "mensagem" in request.POST:
-
-            aviso = Aviso.create()
-
+            aviso = Aviso()
             erro = trata_aviso(aviso, request)
             if erro:
                 return erro
@@ -318,10 +316,7 @@ def cria_aviso(request):
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
-    context = {
-        "eventos": TipoEvento.objects.all(),
-    }
-
+    context = {"eventos": TipoEvento.objects.all(),}
     return render(request, "operacional/edita_aviso.html", context)
 
 

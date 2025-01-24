@@ -1554,7 +1554,7 @@ def dinamicas_criar(request, data=None):
                     
             for vez in range(vezes):
 
-                encontro = Encontro.create(startDate+(vez*diferenca), endDate+(vez*diferenca))
+                encontro = Encontro(startDate=startDate+(vez*diferenca), endDate=endDate+(vez*diferenca))
 
                 if local:
                     encontro.location = local

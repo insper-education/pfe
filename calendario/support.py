@@ -98,7 +98,7 @@ def cria_material_aula(request, campo_arquivo, campo_link):
         if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
         
-        documento = Documento.create()  # Criando documento na base de dados
+        documento = Documento()  # Criando documento na base de dados
         documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
         documento.data = datetime.datetime.now()
         

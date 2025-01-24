@@ -35,7 +35,7 @@ def estudante_feedback_geral(request, usuario):
             return render(request, "generic.html", context=context)
 
     if request.method == "POST":
-        feedback = FeedbackEstudante.create()
+        feedback = FeedbackEstudante()
         feedback.estudante = usuario.aluno
         feedback.projeto = projeto
 

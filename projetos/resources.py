@@ -409,7 +409,7 @@ class EstudantesResource(resources.ModelResource):
 
             # recupera dados do estudante se ele já estava cadastrado
             # TIPO_DE_USUARIO_CHOICES = (1, "estudante")
-            (user, _created) = PFEUser.objects.get_or_create(username=username,
+            user, _created = PFEUser.objects.get_or_create(username=username,
                                                              email=email.strip(),
                                                              tipo_de_usuario=1)
 
@@ -436,7 +436,7 @@ class EstudantesResource(resources.ModelResource):
 
             user.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
 
-            (aluno, _created) = Aluno.objects.get_or_create(user=user)
+            aluno, _created = Aluno.objects.get_or_create(user=user)
 
             try:
                 aluno.curso2 = Curso.objects.get(sigla=row.get("curso"))

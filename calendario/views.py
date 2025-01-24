@@ -132,13 +132,13 @@ def export_calendar(request, event_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def atualiza_evento(request):
     """Ajax para atualizar eventos."""
-
+    
     try:
         event_id = request.POST.get("event-index", 0)
         if event_id:
             evento = Evento.objects.get(id=event_id)
         else:
-            evento = Evento.create()
+            evento = Evento()
             
     except Evento.DoesNotExist:
         return HttpResponseNotFound("<h1>Evento não encontrado!</h1>")

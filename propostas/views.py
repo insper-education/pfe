@@ -905,13 +905,10 @@ def link_organizacao(request, proposta_id):
         return JsonResponse(data)
 
     context = {
-        "organizacoes": Organizacao.objects.all().order_by(Lower('sigla')),
+        "organizacoes": Organizacao.objects.all().order_by(Lower("sigla")),
         "proposta": proposta,
     }
-
-    return render(request,
-                  'propostas/organizacao_view.html',
-                  context=context)
+    return render(request, "propostas/organizacao_view.html", context=context)
 
 
 @login_required
@@ -920,26 +917,26 @@ def link_organizacao(request, proposta_id):
 def link_disciplina(request, proposta_id):
     """Adicionar Disciplina Recomendada."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
-    if request.is_ajax() and 'disciplina_id' in request.POST:
+    if request.is_ajax() and "disciplina_id" in request.POST:
 
-        disciplina_id = int(request.POST['disciplina_id'])
+        disciplina_id = int(request.POST["disciplina_id"])
         disciplina = get_object_or_404(Disciplina, id=disciplina_id)
 
         ja_existe = Recomendada.objects.filter(proposta=proposta, disciplina=disciplina)
 
         if ja_existe:
-            return HttpResponseNotFound('Já existe')
+            return HttpResponseNotFound("Já existe")
 
-        recomendada = Recomendada.create()
+        recomendada = Recomendada()
         recomendada.proposta = proposta
         recomendada.disciplina = disciplina
         recomendada.save()
 
         data = {
-            'disciplina': str(disciplina),
-            'disciplina_id': disciplina.id,
-            'proposta_id': proposta_id,
-            'atualizado': True,
+            "disciplina": str(disciplina),
+            "disciplina_id": disciplina.id,
+            "proposta_id": proposta_id,
+            "atualizado": True,
         }
 
         return JsonResponse(data)
@@ -981,8 +978,7 @@ def projeto_criar(request, proposta_id):
     """Criar projeto de proposta."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
-    projeto = Projeto.create(proposta)
-    projeto.organizacao = proposta.organizacao
+    projeto = Projeto(proposta=proposta)
     projeto.ano = proposta.ano
     projeto.semestre = proposta.semestre
     projeto.save()
