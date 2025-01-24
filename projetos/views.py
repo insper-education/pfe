@@ -754,8 +754,6 @@ def lista_feedback_estudantes(request):
             "num_feedbacks": num_feedbacks,
             "alocacoes": alocacoes,
             "coordenacao": configuracao.coordenacao,
-
-            #"cabecalhos": ["Nome", "Projeto", "Data", "Mensagem", ],
             "cabecalhos": [{"pt": "Nome", "en": "Name"}, 
                            {"pt": "Projeto", "en": "Project"}, 
                            {"pt": "Data", "en": "Date"}, 

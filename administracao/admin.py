@@ -17,7 +17,7 @@ class CartaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
     list_display = ("template",)
     ordering = ("template",)
-    search_fields = ["template",]
+    search_fields = ["template", "texto"]
 
 @admin.register(TipoCertificado)
 class TipoCertificadoAdmin(admin.ModelAdmin):
@@ -25,8 +25,6 @@ class TipoCertificadoAdmin(admin.ModelAdmin):
     list_display = ("titulo", "sigla", "grupo_certificado")
     ordering = ("titulo",)
     search_fields = ["titulo", "sigla"]
-
-
 
 admin.site.register(GrupoCertificado)
 

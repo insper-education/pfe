@@ -526,8 +526,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     recipient_list = []
     orientador = projeto.orientador
     membros = banca.membros()
-    # if banca.composicao.exame.sigla in ["BF", "BI"] and orientador:
-    #     recipient_list.append(projeto.orientador.user.email)
+
     recipient_list.extend(membro.email for membro in membros)
     if banca.alocacao:  # Probation
         recipient_list.append(banca.alocacao.aluno.user.email)

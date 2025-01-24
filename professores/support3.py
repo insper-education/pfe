@@ -55,7 +55,6 @@ def get_banca_incompleta(projeto, sigla, avaliadores):
     return banca_incompleta
 
 
-
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
     if request.is_ajax():
@@ -77,7 +76,6 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 projetos = projetos_ori | projetos_coori
                 if projetos_coori.count() == 0:
                     show_orientador = False
-
 
             notas = {}
             nomes_relatorios = ["Relatório Intermediário", "Relatório Final"]

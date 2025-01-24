@@ -58,9 +58,7 @@ logger = logging.getLogger("django")
 @permission_required("users.view_administrador", raise_exception=True)
 def index_administracao(request):
     """Mostra página principal para administração do sistema."""
-    context = {
-            "titulo": {"pt": "Administração", "en": "Administration"},
-        }
+    context = {"titulo": {"pt": "Administração", "en": "Administration"},}
     if "/administracao/administracao" in request.path:
         return render(request, "administracao/administracao.html", context=context)
     else:
@@ -80,9 +78,7 @@ def index_carregar(request):
 @permission_required("projetos.add_disciplina", raise_exception=True)
 def cadastrar_disciplina(request, proposta_id=None):
     """Cadastra Organização na base de dados."""
-    cabecalhos = [
-        {"pt": "Disciplinas Cadastradas", "en": "Registered Courses"},
-    ]
+    cabecalhos = [{"pt": "Disciplinas Cadastradas", "en": "Registered Courses"},]
     context = {
         "titulo": {"pt": "Cadastro de Disciplina", "en": "Course Registration"},
         "disciplinas": Disciplina.objects.all().order_by("nome"),
@@ -505,8 +501,6 @@ def exportar(request):
     """Exporta dados."""
 
     if request.method == "POST" and request.user.tipo_de_usuario == 4:  # admin
-        # configuracao = get_object_or_404(Configuracao)
-    
         if "edicao" in request.POST and "dados" in request.POST and "formato" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
         else:
@@ -1234,12 +1228,14 @@ def tarefas_agendadas(request):
     }
     return render(request, "administracao/tarefas_agendadas.html", context)
 
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def cancela_tarefa(request, task_id):
     if request.method == "POST":
         celery_app.control.revoke(task_id, terminate=True)
     return redirect("/administracao/tarefas_agendadas")
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

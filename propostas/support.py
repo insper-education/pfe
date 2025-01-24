@@ -16,15 +16,15 @@ from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.db.models import Count, Q
 
+from administracao.models import Carta
+
 from projetos.models import Proposta, Configuracao
 from projetos.models import Area, AreaDeInteresse
 from projetos.messages import email
-from users.models import Opcao
-from users.models import PFEUser
-from users.support import adianta_semestre
-from administracao.models import Carta
 
-from operacional.models import Curso
+from users.models import Opcao
+from users.support import adianta_semestre
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")

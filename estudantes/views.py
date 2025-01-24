@@ -32,7 +32,6 @@ from administracao.support import get_limite_propostas, get_limite_propostas2, u
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento
-
 from projetos.messages import email, message_agendamento, create_message, message_cancelamento
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria

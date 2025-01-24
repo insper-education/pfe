@@ -123,7 +123,6 @@ def ajax_bancas(request):
             orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
             organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
             estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
-            #membros = [membro.get_full_name() for membro in banca.membros()]
             membros = banca.membros()
             editable = request.user.tipo_de_usuario == 4 or (projeto and projeto.orientador == request.user.professor)
 
@@ -652,8 +651,6 @@ def bancas_tabela_alocacao_completa(request):
         membros = dict()
         bancas = Banca.objects.all().filter(projeto__ano=ano).filter(projeto__semestre=semestre)
         for banca in bancas:
-            # if banca.projeto.orientador:
-            #     membros.setdefault(banca.projeto.orientador.user, []).append(banca)
             for membro in banca.membros():
                 membros.setdefault(membro, []).append(banca)
 
@@ -1595,7 +1592,6 @@ def dinamicas_criar(request, data=None):
         "projetos": projetos,
         "professores": professores,
         "falconis": falconis,
-        # "pessoas": pessoas,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
     }
@@ -2109,8 +2105,6 @@ def relato_avaliar(request, projeto_id, evento_id):
         return render(request, "professores/relato_avaliar.html", context=context)
 
 
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def objetivo_editar(request, primarykey):
@@ -2199,8 +2193,6 @@ def planos_de_orientacao_todos(request):
     return render(request, "professores/planos_de_orientacao_todos.html", context=context)
 
 
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def resultado_projetos_edicao(request, edicao):
@@ -2287,4 +2279,3 @@ def ver_pares_projeto(request, projeto_id, momento):
     }
 
     return render(request, "professores/ver_pares_projeto.html", context)
-

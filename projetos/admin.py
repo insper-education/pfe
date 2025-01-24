@@ -291,16 +291,7 @@ class AvisoAdmin(admin.ModelAdmin):
                    "todos_orientadores", "contatos_nas_organizacoes",)
     ordering = ("delta",)
     actions = [dup_entrada]
-    # fieldsets = \
-    #     ((None,
-    #       {"fields":
-    #        ("titulo", "tipo_evento", "delta", "mensagem", "realizado", "data_realizado")
-    #       }),
-    #      ("Interesse", {
-    #          "fields": ("coordenacao", "comite_pfe", "todos_alunos",
-    #                     "todos_orientadores", "contatos_nas_organizacoes",)
-    #      }),
-    #     )
+
 
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):

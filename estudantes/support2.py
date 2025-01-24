@@ -13,6 +13,7 @@ from django.shortcuts import render
 
 from projetos.models import Projeto, Evento, FeedbackEstudante
 
+
 # Get an instance of a logger
 logger = logging.getLogger("django")
 

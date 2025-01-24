@@ -12,14 +12,11 @@ import datetime
 from django.core.exceptions import ValidationError
 
 from academica.models import Exame
-
 from academica.support2 import get_objetivos
 
-from projetos.models import Reprovacao
-from projetos.models import Avaliacao2
-from projetos.models import Banca
-from projetos.models import Evento
+from projetos.models import Reprovacao, Avaliacao2, Banca, Evento
 from projetos.support3 import get_notas_alocacao
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -161,4 +158,3 @@ def get_media_alocacao_i(alocacao):
         "individual": individual,
         "probation": probation,
     }
-

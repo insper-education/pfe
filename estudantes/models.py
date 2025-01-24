@@ -6,7 +6,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
-
 from django.db import models
 
 import datetime

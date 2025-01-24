@@ -11,17 +11,14 @@ import datetime
 
 from django.core.exceptions import ValidationError
 
-from academica.models import Exame
+from .models import Exame
 
-from academica.support2 import get_objetivos
+from .support2 import get_objetivos
 
-
-from projetos.models import Avaliacao2
-from projetos.models import Banca
-from projetos.models import Evento
-
+from projetos.models import Avaliacao2, Banca, Evento
 
 from users.models import Alocacao
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")

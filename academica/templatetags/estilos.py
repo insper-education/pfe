@@ -5,8 +5,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 8 de Janeiro de 2025
 """
 
-# from academica.models import ExibeNota
-
 from django import template
 register = template.Library()
 

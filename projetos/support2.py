@@ -11,8 +11,11 @@ import datetime
 from .models import Area, AreaDeInteresse, Observacao
 
 from academica.models import Exame
+
 from estudantes.models import Pares, Relato
+
 from operacional.models import Curso
+
 from users.models import Alocacao
 
 
@@ -123,4 +126,3 @@ def busca_relatos(self):
         observacoes.append(obs)
 
     return zip(eventos, relatos, avaliados, observacoes)
-

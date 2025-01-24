@@ -23,25 +23,24 @@ from django.utils import timezone
 
 from .models import PerguntasRespostas
 
-from users.support import get_edicoes, adianta_semestre
-from users.models import Opcao, Aluno, Alocacao, PFEUser
-from users.models import Professor, Parceiro, Administrador
-
-from projetos.models import Proposta, Projeto, Organizacao, Disciplina, Conexao
-from projetos.models import Configuracao, Area, Recomendada
-from projetos.models import Evento
-#from projetos.models import AreaDeInteresse 
-
-from projetos.support import get_upload_path, simple_upload
-from projetos.support2 import get_nativamente
-from projetos.messages import email
-
-from operacional.models import Curso
+from .support import ordena_propostas_novo, ordena_propostas
+from .support import envia_proposta, preenche_proposta
 
 from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
 
-from .support import retorna_ternario, ordena_propostas_novo, ordena_propostas
-from .support import envia_proposta, preenche_proposta
+from operacional.models import Curso
+
+from projetos.models import Proposta, Projeto, Organizacao, Disciplina
+from projetos.models import Configuracao, Area, Recomendada
+from projetos.models import Evento
+from projetos.messages import email
+from projetos.support import get_upload_path, simple_upload
+from projetos.support2 import get_nativamente
+
+from users.models import Opcao, Aluno, Alocacao, PFEUser
+from users.models import Professor, Parceiro, Administrador
+from users.support import get_edicoes, adianta_semestre
+
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -50,9 +49,7 @@ logger = logging.getLogger("django")
 @permission_required("users.altera_professor", raise_exception=True)
 def index_propostas(request):
     """Mostra página principal de Propostas."""
-    context = {
-        "titulo": {"pt": "Propostas de Projetos", "en": "Project Proposals"},
-        }
+    context = {"titulo": {"pt": "Propostas de Projetos", "en": "Project Proposals"},}
     if "/propostas/propostas" in request.path:
         return render(request, "propostas/propostas.html", context=context)
     else:

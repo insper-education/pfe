@@ -14,13 +14,8 @@ from django.conf import settings
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied  # Para erro 400
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
-# from django.http import Http404
-
-# from administracao.models import TipoEvento
-
-from users.models import PFEUser, Aluno, Professor, Parceiro
 
 from projetos.messages import email, render_message
 from projetos.models import Organizacao, Evento
@@ -29,6 +24,7 @@ from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 
+from users.models import PFEUser, Aluno, Professor, Parceiro
 
 def limpa_texto(texto):
     """Remove caracteres especiais do texto."""
@@ -350,4 +346,3 @@ def envia_senha_mensagem(user):
     codigo = 200
     
     return mensagem, codigo
-

@@ -7,9 +7,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Maio de 2019
 """
 
-# import inspect   # TEMPORARIAMENTE PARA DEBUG
-
-# import datetime
 import re
 import logging
 from hashids import Hashids
@@ -295,31 +292,6 @@ class Aluno(models.Model):
         if self.curso2:
             return str(self.curso2)
         return "Sem curso"
-
-    # def get_banca_estudante(self, avaliacoes_banca):
-    #     function_name = inspect.currentframe().f_code.co_name
-    #     for i in range(16):
-    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
-    
-    # def get_edicoes_aluno(self):
-    #     function_name = inspect.currentframe().f_code.co_name
-    #     for i in range(16):
-    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
-
-    # def get_notas_estudante(self, request=None, ano=None, semestre=None, checa_banca=True):
-    #     function_name = inspect.currentframe().f_code.co_name
-    #     for i in range(16):
-    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
-   
-    # @property
-    # def get_medias(self):
-    #     function_name = inspect.currentframe().f_code.co_name
-    #     for i in range(16):
-    #         print(f"** {function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA ************")
-    #     raise NotImplementedError(f"{function_name} não é mais um atributo de Alocacao. VERIFICAR ALTERNATIVA")
 
     @property
     def get_alocacoes(self):

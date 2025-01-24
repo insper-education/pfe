@@ -6,19 +6,15 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
-# import json
 import datetime
 import dateutil.parser
 
 from icalendar import Calendar, Event, vCalAddress
 
-# from django.conf import settings
-
-from django.db.models.functions import Lower
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.sites.models import Site
 from django.db import transaction
+from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -27,15 +23,11 @@ from .support import gera_descricao_banca, cria_material_aula
 
 from administracao.models import TipoEvento
 
-from users.models import PFEUser, Aluno
+from documentos.models import TipoDocumento
 
 from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento
 
-# from projetos.tipos import TIPO_EVENTO
-# from projetos.support import get_upload_path, simple_upload
-
-from documentos.models import TipoDocumento
-
+from users.models import PFEUser, Aluno
 
 
 @login_required
@@ -66,7 +58,6 @@ def calendario(request):
         return render(request, "calendario/calendario.html", context)
 
     return HttpResponse("Problema ao gerar calendário.", status=401)
-
 
 
 @login_required

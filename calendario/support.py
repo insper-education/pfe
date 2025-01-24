@@ -5,9 +5,9 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 23 de Janeiro de 2025
 """
 
-
 import datetime
 from icalendar import vCalAddress
+
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
@@ -16,10 +16,8 @@ from administracao.models import TipoEvento
 from documentos.models import TipoDocumento
 
 from projetos.models import Configuracao, Evento, Documento
-
-from projetos.tipos import TIPO_EVENTO
 from projetos.support import get_upload_path, simple_upload
-
+from projetos.tipos import TIPO_EVENTO
 
 
 def get_calendario_context(user=None):
@@ -102,12 +100,9 @@ def cria_material_aula(request, campo_arquivo, campo_link):
         documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
         documento.data = datetime.datetime.now()
         
-        documento.lingua_do_documento = 0  # (0, 'Português')
+        documento.lingua_do_documento = 0  # (0, "Português")
         documento.confidencial = False  # Por padrão aulas não são confidenciais
         documento.usuario = request.user
-
-        # if len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
-        #     return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
     
         if campo_arquivo in request.FILES:
             arquivo = simple_upload(request.FILES[campo_arquivo],

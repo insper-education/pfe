@@ -7,7 +7,7 @@ Data: 16 de Junho de 2023
 """
 
 from django.db import models
-#from django.db.models.functions import Lower
+
 
 class Carta(models.Model):
     """Textos para serem usados em comunicações."""
@@ -25,7 +25,7 @@ class Carta(models.Model):
                                 help_text="Texto em inglês para ser usado em comunicações")
     
     class Meta:
-        ordering = [ "template",]
+        ordering = ["template",]
         verbose_name = "Carta"
         verbose_name_plural = "Cartas"
 
@@ -53,7 +53,7 @@ class GrupoCertificado(models.Model):
         return self.nome
 
     class Meta:
-        ordering = [ "nome",]
+        ordering = ["nome",]
         verbose_name = "Grupo de Certificado"
         verbose_name_plural = "Grupos de Certificados"
 
@@ -69,14 +69,6 @@ class TipoCertificado(models.Model):
 
     descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
                                 help_text="Descrição do tipo de certificado")
-    
-    # REMOVER, após migração de dados
-    tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
-                                            help_text="ID temporário para migração de dados de certificados")
-    
-    grupo_cert = models.CharField("Grupo de Certificado", max_length=4, null=True, blank=True,
-                                  help_text="Grupo de certificado")
-    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
     
     grupo_certificado = models.ForeignKey("administracao.GrupoCertificado", null=True, blank=True, on_delete=models.SET_NULL,
                                             help_text="Grupo de certificado")
@@ -111,17 +103,13 @@ class TipoEvento(models.Model):
                             help_text="Sigla do tipo de evento")
     
     coordenacao = models.BooleanField("Coordenação", default=False,
-                                      help_text="Evento de coordenação, senão é para estudantes")
-    
-    tmpID = models.PositiveSmallIntegerField("ID Temporário", null=True, blank=True,
-                                            help_text="ID temporário para migração de dados de eventos")
-                                            
+                                      help_text="Evento de coordenação, senão é para estudantes")                                        
 
     def __str__(self):
         return self.nome
     
     class Meta:
-        ordering = [ "nome",]
+        ordering = ["nome",]
         verbose_name = "Tipo de Evento"
         verbose_name_plural = "Tipos de Eventos"
         

@@ -25,7 +25,6 @@ from django.views import generic
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from .models import Alocacao, OpcaoTemporaria
-#from .models import UsuarioEstiloComunicacao
 from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Composicao, CodigoColuna, Exame
@@ -263,7 +262,6 @@ def estudantes_lista(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_notas(request, professor=None):
     """Gera lista com todos os alunos já registrados."""
-    # configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
         if "edicao" in request.POST:

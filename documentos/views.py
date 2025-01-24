@@ -22,8 +22,6 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
-#from .support import render_pdf_file
-# from .support import render_from_text_to_pdf_file
 from .support import atualiza_certificado, generate_unique_arcname
 
 from academica.models import Exame, ExibeNota
@@ -37,7 +35,6 @@ from operacional.models import Curso
 from professores.support import recupera_avaliadores_bancas
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
-# from projetos.support import get_upload_path
 
 from users.support import get_edicoes
 

@@ -7,7 +7,6 @@ Data: 27 de Dezembro de 2022
 """
 
 from django.db import models
-#from django.db.models.functions import Lower
 
 
 class Curso(models.Model):

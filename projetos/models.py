@@ -102,11 +102,6 @@ class Projeto(models.Model):
     pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
                                 help_text="Links para repositórios com dados/códigos dos projeto (para orientador acessar)")
 
-    ### REMOVER ####
-    # organizacao_velho = models.ForeignKey(Organizacao, null=True, blank=True, on_delete=models.SET_NULL,
-    #                                 help_text="Organização parceira que propôs projeto")
-    ## ˆˆˆˆˆˆ^#####
-
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="projeto original em caso de avançado")
 
@@ -417,12 +412,10 @@ class Proposta(models.Model):
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""
 
-    ano = models.PositiveIntegerField("Ano",
-                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
                                       help_text="Ano de operação do sistema")
     
-    semestre = models.PositiveIntegerField("Semestre",
-                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
+    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
                                            help_text="Semestre de operação do sistema")
 
     recipient_reembolso = models.CharField(max_length=127, blank=True,
@@ -570,12 +563,6 @@ class Evento(models.Model):
     endDate = models.DateField(default=datetime.date.today, blank=True,
                                help_text="Fim do Evento")
 
-    # REMOVER TIPO DE EVENTO
-    # tipo_de_evento = models.PositiveSmallIntegerField(choices=[subl[:2] for subl in TIPO_EVENTO],
-    #                                                   null=True, blank=True,
-    #                                                   help_text="Define o tipo do evento a ocorrer")
-    # ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
-    
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text="Tipo de evento")
 
@@ -721,8 +708,10 @@ class Banca(models.Model):
 
     location = models.CharField(null=True, blank=True, max_length=124,
                                 help_text="sala em que vai ocorrer banca")
+    
     startDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
                                      help_text="Inicio da Banca")
+    
     endDate = models.DateTimeField(default=datetime.datetime.now, null=True, blank=True,
                                    help_text="Fim da Banca")
     
@@ -732,17 +721,6 @@ class Banca(models.Model):
                                 related_name="membro2", help_text="membro da banca")
     membro3 = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name="membro3", help_text="membro da banca")
-
-    ### REMOVER TIPO DE BANCA
-    TIPO_DE_BANCA = ( # não mudar a ordem dos números
-        (0, "Final"),
-        (1, "Intermediária"),
-        (2, "Falconi"),
-        (3, "Probation"),
-    )
-    tipo_de_banca = models.PositiveSmallIntegerField(choices=TIPO_DE_BANCA, default=0)
-    #### ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
-
 
     link = models.CharField(max_length=512, blank=True,
                             help_text="Link para transmissão pela internet se houver")
@@ -968,11 +946,10 @@ class TipoRetorno(models.Model):
     """Tipos de retorno de comunicações com as organizações parceiras."""
 
     nome = models.CharField(max_length=64, help_text="nome do tipo de retorno")
+
     descricao = models.CharField(max_length=512, blank=True, help_text="descrição do tipo de retorno")
+
     cor = models.CharField(max_length=6, default="FFFFFF", help_text="cor do tipo de retorno")
-    
-    # REMOVER TMP_ID
-    # tmp_id = models.PositiveIntegerField(null=True, blank=True, help_text="id temporário")
 
     GRUPO_DE_RETORNO = ( # não mudar a ordem dos números
         (1, "Prospecção"),
@@ -1176,6 +1153,7 @@ class Entidade(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 
 class Acompanhamento(models.Model):
@@ -1479,7 +1457,6 @@ class ObjetivosDeAprendizagem(models.Model):
 
 
 
-
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
                                           help_text="Avaliação do Aluno (AA)")
 
@@ -1497,31 +1474,6 @@ class ObjetivosDeAprendizagem(models.Model):
 
     data_final = models.DateField("Data Final", null=True, blank=True,
                                   help_text="Data Final de Uso")
-
-
-    ### ESSES PESOS PODEM SER REMOVIDOS, NÃO DEVEM SER MAIS USADOS
-    # peso_intermediario_individual = models.FloatField(default=0,
-    #                                                   help_text="peso intermediário individual")
-
-    # peso_intermediario_grupo = models.FloatField(default=0,
-    #                                              help_text="peso intermediário grupo")
-
-    # peso_final_individual = models.FloatField(default=0,
-    #                                           help_text="peso final individual")
-
-    # peso_final_grupo = models.FloatField(default=0,
-    #                                      help_text="peso final grupo")
-
-    # peso_banca_intermediaria = models.FloatField(default=0,
-    #                                              help_text="peso para banca intermediária")
-
-    # peso_banca_final = models.FloatField(default=0,
-    #                                      help_text="peso para banca final")
-
-    # peso_banca_falconi = models.FloatField(default=0,
-    #                                        help_text="peso para banca falconi")
-    ##############################################################
-
 
     ordem = models.PositiveSmallIntegerField(help_text="ordem para aparecer nas listas")
 
@@ -1546,9 +1498,6 @@ class ObjetivosDeAprendizagem(models.Model):
 
 class Avaliacao2(models.Model):
     """Avaliações realizadas durante o projeto."""
-
-    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
@@ -1711,9 +1660,6 @@ class Observacao(models.Model):
 
 class Observacao_Velha(models.Model):
     """Quando Observações de banca são refeitas, as antigas vem para essa base de dados."""
-
-    # NÃO USAR MAIS TIPO DE AVALIAÇÃO, USAR EXAME
-    # tipo_de_avaliacao = models.PositiveSmallIntegerField(choices=TIPO_DE_AVALIACAO, default=0)
 
     # DEFINE O TIPO DE AVALIAÇÃO
     exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,

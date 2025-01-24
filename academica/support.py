@@ -11,16 +11,14 @@ from datetime import date
 
 from .models import Exame
 
-from projetos.models import Documento, Evento, Avaliacao2, Observacao
-
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
 from estudantes.models import EstiloComunicacao
 
-from users.models import Alocacao
-from users.models import Aluno
-from users.models import UsuarioEstiloComunicacao
+from projetos.models import Documento, Evento, Avaliacao2, Observacao
+
+from users.models import Alocacao, UsuarioEstiloComunicacao
 
 
 # Get an instance of a logger
@@ -113,7 +111,6 @@ def filtra_entregas(composicoes, projeto, user=None):
                 #  Estudantes externos não são avaliados diretamente
                 for alocacao in Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True):
                    
-                    # alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
                     documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
                                                           projeto=projeto, 
                                                           usuario=alocacao.aluno.user)
@@ -141,7 +138,6 @@ def filtra_entregas(composicoes, projeto, user=None):
     entregas = sorted(entregas, key=lambda t: (date.today() if t["evento"] is None else t["evento"].endDate))
 
     return entregas
-
 
 
 def media_falconi(projeto):
@@ -239,4 +235,3 @@ def get_respostas_estilos(usuario):
         "TOTAL Favorável": valores["PR_Fav"] + valores["S_Fav"] + valores["PN_Fav"] + valores["I_Fav"],
         "TOTAL Stress": valores["PR_Str"] + valores["S_Str"] + valores["PN_Str"] + valores["I_Str"],
     }
-    
