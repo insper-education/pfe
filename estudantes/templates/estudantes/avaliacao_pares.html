@@ -61,7 +61,7 @@
       <div class="div_arredondado bloco">
         <label for="aprecia"><b>
           {% lng_g colega.aluno.user.genero "O que você aprecia no" "O que você aprecia na" "What do you appreciate about" %}
-          {{colega.aluno}}?
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}?
         </b></label><br>
         <textarea id="aprecia{{colega.id}}" name="aprecia{{colega.id}}" rows="4" cols="80" maxlength="1000" 
         {% if not colega.aluno.externo %}required{% endif %}
@@ -71,7 +71,7 @@
       <div class="div_arredondado bloco">
         <label for="atrapalhando"><b>
           {% lng_g colega.aluno.user.genero "O que você vê o" "O que você vê a" "What do you see" %}
-          {{colega.aluno}}
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
           {% lng "fazendo, ou deixando de fazer, que está atrapalhando?" "doing, or not doing, that is hindering?" %}
         </b></label><br>
         <textarea id="atrapalhando{{colega.id}}" name="atrapalhando{{colega.id}}" rows="4" cols="80" maxlength="1000"
@@ -82,7 +82,7 @@
       <div class="div_arredondado bloco">
         <label for="mudar"><b>
           {% lng_g colega.aluno.user.genero "O que o" "O que a" "What can" %}
-          {{colega.aluno}}
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
           {% lng "pode mudar, que faria diferença para você?" "change that would make a difference to you?" %}
         </b></label><br>
         <textarea id="mudar{{colega.id}}" name="mudar{{colega.id}}" rows="4" cols="80" maxlength="1000"
@@ -93,7 +93,7 @@
       <div class="div_arredondado bloco">
         <b>
           {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
-          {{colega.aluno}}
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
         </b>
         <div class="mt-1">
           {% for tipo in TIPO_ENTREGA %}
@@ -109,7 +109,7 @@
       <div class="div_arredondado bloco">
         <b>
           {% lng_g colega.aluno.user.genero "Iniciativa do" "Iniciativa da" "Initiative of" %}
-          {{colega.aluno}}
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
         </b>
         <div class="mt-1">
           {% for tipo in TIPO_INICIATIVA %}
@@ -124,7 +124,7 @@
       <div class="div_arredondado bloco">
         <b>
           {% lng_g colega.aluno.user.genero "Comunicação do" "Comunicação da" "Communication of" %}
-          {{colega.aluno}}
+          {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
         </b>
         <div class="mt-1">
           {% for tipo in TIPO_COMUNICACAO %}

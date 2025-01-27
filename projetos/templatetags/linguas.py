@@ -62,15 +62,15 @@ def lng_b(pt_bool, pt_text_t, pt_text_f, en_text_t, en_text_f=None):
 # Quando a palavra muda por causa do gênero
 @register.simple_tag
 def lng_g(pt_genero, pt_text_m, pt_text_f, en_text_m, en_text_f=None):
-    if pt_genero.lower() == "m":
-        pt_text = pt_text_m
-        en_text = en_text_m
-    else:
+    if pt_genero.lower() == "f":
         pt_text = pt_text_f
         if en_text_f is None:
             en_text = en_text_m
         else:
             en_text = en_text_f
+    else:
+        pt_text = pt_text_m
+        en_text = en_text_m
     return thtml(pt_text, en_text)
 
 # Quando a palavra muda por causa do número
