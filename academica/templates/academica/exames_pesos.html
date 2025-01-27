@@ -61,5 +61,14 @@
   <small>
     {% lng "Terminar o semestre até junho e iniciar a partir de agosto." "End the semester by June and start from August." %}
   </small>
+  
+  <br>
+
+  <small>
+    {% for o in objetivos %}
+      {{o.sigla}}: {{o.titulo}}
+      {% if not forloop.last %}|{% endif %}
+    {% endfor %}
+  </small>
 
 {% endblock %}

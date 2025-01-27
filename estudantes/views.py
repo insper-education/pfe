@@ -31,7 +31,7 @@ from administracao.support import propostas_liberadas
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
-from projetos.models import Encontro, Banca, Entidade, Evento
+from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
 from projetos.messages import email, message_agendamento, create_message, message_cancelamento
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
@@ -727,6 +727,9 @@ def exames_pesos(request):
         for semestre in range(1, 3):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
+    # Filtrando objetivos por sigla (sem duplicidade)
+    objetivos = {obj.sigla: obj for obj in ObjetivosDeAprendizagem.objects.all()}.values()
+
     cabecalhos = [
         {"pt": "Semestre", "en": "Semester", "tsort": "1"},
         {"pt": "Exames", "en": "Evaluation"},
@@ -737,6 +740,7 @@ def exames_pesos(request):
         "titulo": {"pt": "Exames e Pesos", "en": "Exams and Weights"},
         "semestres": semestres,
         "cabecalhos": cabecalhos,
+        "objetivos": objetivos,
     }
 
     return render(request, "academica/exames_pesos.html", context)
