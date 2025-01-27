@@ -6,25 +6,12 @@
 
 {% load linguas %}
 
-{% comment %} REMOVER TUDO ISSO vvvvvv {% endcomment %}
 <style>
-  .th_objetivos {background-color: #F2F2F2;}
-  .td_objetivos {background-color: #FFFFFF;}
-  .th_na {background-color: #F2F2E9;}
-  @media only screen and (max-width: 800px) {
-    .tab_avaliacao tbody {display: flex;}
-    .tab_avaliacao tr {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .tab_avaliacao th, .tab_avaliacao td {        
-      flex-basis: 100%;
-      min-height: calc(130px - 5vw);
-    }
+  .tab_avaliacao th, .tab_avaliacao td {
+    border: 1px solid lightgray;
+    padding: 4px;
   }
 </style>
-{% comment %} REMOVER TUDO ISSO ^^^^^^ {% endcomment %}
-
 
 {% if objetivos %}
   <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5><br>
