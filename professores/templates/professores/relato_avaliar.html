@@ -94,8 +94,8 @@
           {% if relato %}
           <div style="width: 100%; display: inline; margin-left: 8px;">
             <label class="feedbacks" for="customFeedback{{relato.id}}">
-              Feedback (<pre>{% lng "opcional" "optional" %}</pre>)
-              {% if relato.feedback %}<span class="seta-baixo">{% else %}<span class="seta-cima">{% endif %}</span></label>
+              Feedback ({% lng "opcional" "optional" %})
+              {% if relato.feedback %}<span class="seta seta-baixo">{% else %}<span class="seta seta-cima">{% endif %}</span></label>
             <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
               <label for="feedback{{relato.id}}">Feedback:</label>
               <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
@@ -133,7 +133,7 @@
   <script>
     $(".feedbacks").on("click", function() {
       $(this).siblings("div").toggle(200);
-      $("span", this).toggleClass("seta-baixo seta-cima");
+      $("span.seta", this).toggleClass("seta-baixo seta-cima");
     });
   </script>
 
