@@ -110,12 +110,14 @@
 
     {% endfor %}
 
-    <label for="observacoes">
-      {% lng "Informe suas observações para a coordenação do Capstone." "Inform your observations to the Capstone coordination." %}
-    </label><br>
-    <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="{% max_length Observacao 'observacoes_orientador' %}" {% if not editor %}disabled{% endif %}
-              placeholder="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
-
+    <div style="max-width: 1222px;">
+      <label for="observacoes">
+        {% lng "Informe suas observações para a coordenação do Capstone (opcional)" "Inform your observations to the Capstone coordination (optional)" %}:
+      </label><br>
+      <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="{% max_length Observacao 'observacoes_orientador' %}" {% if not editor %}disabled{% endif %}
+                placeholder="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar.">{% if observacoes %}{{observacoes}}{% endif %}</textarea>
+    </div>
+    
     <p>&nbsp;</p>
 
     {% if editor %}
