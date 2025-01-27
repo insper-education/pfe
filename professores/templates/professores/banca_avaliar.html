@@ -140,7 +140,7 @@
         </div>
       {% endif %}
 
-      {% include "tabela_avaliacao_objetivos.html" %}
+      {% include "tabela_avaliacao_objetivos.html" with editor=True %}
       {% include "atualiza_objetivos.html" %}
 
       {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}

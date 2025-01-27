@@ -30,7 +30,7 @@
             <span class="nivel">
               <span lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>
             </span>(I)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I inputOA" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I inputOA" id="objetivo{{objetivo.id}}I" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.I" required {% if not editor %}disabled {% endif %}/>
           </label>
         </div>
         </th>
@@ -42,7 +42,7 @@
             <span class="nivel">
               <span lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>
             </span>(D)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D inputOA" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D inputOA" id="objetivo{{objetivo.id}}D" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.D " required {% if not editor %}disabled {% endif %}/>
           </label>
         </div>
         </th>
@@ -53,12 +53,12 @@
             <span class="nivel">
               <span lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>
             </span>(C)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C inputOA" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C inputOA" id="objetivo{{objetivo.id}}C" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C" required {% if not editor %}disabled {% endif %}/>
           </label>
           {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
           <label class="labels" for="objetivo{{objetivo.id}}CX">
             (C+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX inputOA" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX inputOA" id="objetivo{{objetivo.id}}CX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.C+" required {% if not editor %}disabled {% endif %}/>
           </label>
           {% endif %}
         </div>
@@ -71,11 +71,11 @@
             <span class="nivel">
               <span lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>
             </span>(B)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B inputOA" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B inputOA" id="objetivo{{objetivo.id}}B" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B" required {% if not editor %}disabled {% endif %}/>
           </label>
           <label class="labels" for="objetivo{{objetivo.id}}BX">
             (B+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX inputOA" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}B objetivo{{objetivo.id}}BX inputOA" id="objetivo{{objetivo.id}}BX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.B+" required {% if not editor %}disabled {% endif %}/>
           </label>
         </div>
         </th>
@@ -85,11 +85,11 @@
             <span class="nivel">
               <span lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>
             </span>(A)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A inputOA" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A inputOA" id="objetivo{{objetivo.id}}A" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A" required {% if not editor %}disabled {% endif %}/>
           </label>
           <label class="labels" for="objetivo{{objetivo.id}}AX">
             (A+)
-            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX inputOA" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required />
+            <input type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}A objetivo{{objetivo.id}}AX inputOA" id="objetivo{{objetivo.id}}AX" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.A+" required {% if not editor %}disabled {% endif %}/>
           </label>
         </div>
         </th>
@@ -144,7 +144,7 @@
           <td class="nav-side-wrapper th_na tabela{{objetivo.id}} objetivo{{objetivo.id}}NA" 
             colspan="{% if banca.composicao.exame.sigla != "P" %}6{% else %}5{% endif %}">
               <label style="margin-left: 8px;" for="objetivo{{objetivo.id}}NA">
-                <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA inputNA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required /> 
+                <input style="padding-bottom:2px;" type="radio" class="tabela{{objetivo.id}} objetivo{{objetivo.id}}NA inputNA" id="objetivo{{objetivo.id}}NA" name="objetivo.{{objetivo.id}}" value="{{objetivo.id}}.NA" required {% if not editor %}disabled {% endif %}/> 
                 <span lang="pt">Prefiro não avaliar este objetivo de aprendizagem</span>
                 <span lang="en">I prefer not to evaluate this learning goal</span>
               </label>
