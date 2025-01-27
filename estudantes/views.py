@@ -645,7 +645,7 @@ def relato_quinzenal(request):
         "inicio_periodo": inicio_periodo,
     }
 
-    if request.user.estud:  # Estudante
+    if request.user.estud():  # Estudante
 
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
                                            projeto__ano=configuracao.ano,
@@ -868,12 +868,17 @@ def selecao_propostas(request):
     areas_outras = AreaDeInteresse.objects.filter(usuario=request.user, area=None).exists()
     areas = areas_normais or areas_outras
 
+    txt_min_propos = {
+        "pt": f"Selecione ao menos {min_props} propostas (1 a {min_props}), sendo 1 para a que você tem mais interesse.",
+        "en": f"Select at least {min_props} proposals (1 to {min_props}), being 1 for the one you are most interested in."
+    }
+
     context = {
         "titulo": {"pt": "Seleção de Propostas de Projetos", "en": "Project Proposal Selection"},
         "liberadas_propostas": liberadas_propostas,
         "vencido": vencido,
         "propostas": propostas,
-        "min_props": min_props,
+        "txt_min_propos": txt_min_propos,
         "opcoes_temporarias": opcoes_temporarias,
         "ano": ano,
         "semestre": semestre,

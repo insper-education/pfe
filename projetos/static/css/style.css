@@ -111,6 +111,15 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   outline-offset: 5px;
 }
 
+#mensagem_aviso {
+  border: 2px dashed  darkred ;
+  color: red;
+  margin: 18px;
+  padding: 16px 8px 2px 8px;
+  background-color: lightyellow;
+  outline-offset: 5px;
+}
+
 /* Não mais usado */
 /* .mobile-container {
   max-width: 480px;

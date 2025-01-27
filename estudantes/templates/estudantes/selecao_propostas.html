@@ -216,19 +216,15 @@
               {% lng "Confirmar" "Confirm" %}
             </button>
           </div>
-          <div class="col-12 col-md-10 text-md-left mt-0 mt-md-0">
-            <small><font color="red">
-              {% lng "Selecione ao menos {{min_props}} propostas (1 a {{min_props}}), sendo 1 para a que você tem mais interesse." "Select at least {{min_props}} proposals (1 to {{min_props}}), being 1 for the one you are most interested in." %}
-            </font></small>
+          <div class="col-12 col-md-10 text-md-left mt-0 mt-md-0 text-danger small">
+            {% lng txt_min_propos.pt txt_min_propos.en %}
           </div>
         </div>
 
       </form>
 
     {% else %}
-      <p>
-        {% lng "Não existem Propostas de Projetos disponíveis." "There are no Project Proposals available." %}
-      </p>
+      <p>{% lng "Não existem Propostas de Projetos disponíveis." "There are no Project Proposals available." %}</p>
     {% endif %}
 
   </div>
