@@ -9,19 +9,29 @@ Data: 8 de Janeiro de 2025
 import datetime
 import re
 
+from .models import Avaliacao2, ObjetivosDeAprendizagem
+
 from academica.models import Exame
-from projetos.models import Avaliacao2
-
-from users.models import Alocacao
-
 from academica.support2 import get_objetivos
 from academica.support4 import get_notas_estudante
 
-def get_objetivos_atuais(objetivos):
+from users.models import Alocacao
+
+def get_objetivos_atuais(ano=None, semestre=None):
     
-    # Só os objetivos atualmente em uso
-    hoje = datetime.date.today()
-    objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+
+    if ano and semestre:
+        mes = 3 if semestre == 1 else 9
+        data = datetime.datetime(ano, mes, 1)
+        objetivos = objetivos.filter(data_inicial__lt=data)
+        objetivos = objetivos.filter(data_final__gt=data) | objetivos.filter(data_final__isnull=True)
+
+    else:
+        # Só os objetivos atualmente em uso
+        hoje = datetime.date.today()
+        objetivos = objetivos.filter(data_final__gt=hoje) | objetivos.filter(data_final__isnull=True)
+
 
     objetivos = objetivos.order_by("ordem")
 

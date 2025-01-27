@@ -32,6 +32,10 @@ urlpatterns = [
         views.estudantes_objetivos,
         name="estudantes_objetivos"),
 
+    path("projetos_objetivos/",
+        views.projetos_objetivos,
+        name="projetos_objetivos"),
+
     path("estudantes_inscritos/",
         views.estudantes_inscritos,
         name="estudantes_inscritos"),

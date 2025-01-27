@@ -14,7 +14,7 @@ from projetos.models import ObjetivosDeAprendizagem
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
-def get_objetivos(self, avaliacoes):
+def get_objetivos(avaliado, avaliacoes):
     """Retorna objetivos de um conjunto de avaliações."""
     lista_objetivos = {}
     avaliadores = set()
@@ -24,7 +24,7 @@ def get_objetivos(self, avaliacoes):
         if avaliacoes_p_obj:
             for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
                 if objtmp.sigla == objetivo.sigla:
-                    logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! {self} {objetivo.sigla}")
+                    logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! {avaliado} {objetivo.sigla}")
             lista_objetivos[objetivo] = {}
             for aval in avaliacoes_p_obj:
                 if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador

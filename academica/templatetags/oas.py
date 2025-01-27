@@ -5,10 +5,13 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 8 de Janeiro de 2025
 """
 
-from projetos.models import Avaliacao2
-from academica.support_notas import converte_letra
-
 from django import template
+
+from academica.support_notas import converte_letra
+from academica.support2 import get_objetivos
+
+from projetos.models import Avaliacao2
+
 register = template.Library()
 
 
@@ -43,19 +46,31 @@ def get_oas(avaliacoes):
 
     return oas
 
+
 @register.filter
 def get_oas_i(alocacao):
+    """Retorna Objetivos de Aprendizagem da alocação (individual) no semestre."""
     avaliacoes = Avaliacao2.objects.filter(alocacao=alocacao, exame__grupo=False)
     return get_oas(avaliacoes)
 
-# ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
-@register.filter
-def get_oas_g(alocacao):
-    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame__grupo=True)
-    return get_oas(avaliacoes)
 
-# ESSE CODIGO ESTA ERRADO, POIS NAO TRATA BANCAS, E OUTRAS REPETICOES DE AVALIACOES
+@register.filter
+def get_oas_g(projeto):
+    """Retorna Objetivos de Aprendizagem do projeto (grupo) no semestre."""
+    avaliacoes = Avaliacao2.objects.filter(projeto=projeto, exame__grupo=True)
+    resultados = get_objetivos(projeto, avaliacoes)[0]
+    objetivos = {}
+    for obj, val_pes in resultados.items():
+        cor = "black"
+        if val_pes[0] < 5:
+            cor = "red"
+        objetivos[obj] = {"media": [converte_letra(val_pes[0]), val_pes[0], cor], "peso": val_pes[1]}
+    return objetivos
+
+
 @register.filter
 def get_oas_t(alocacao):
-    avaliacoes = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame__grupo=False) | Avaliacao2.objects.filter(projeto=alocacao.projeto, exame__grupo=True)
-    return get_oas(avaliacoes)
+    """Retorna Objetivos de Aprendizagem da alocação (grupo e individual) no semestre."""
+    avaliacoes_i = Avaliacao2.objects.filter(alocacao=alocacao, exame__grupo=False)
+    avaliacoes_g = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame__grupo=True)
+    return get_oas(avaliacoes_i|avaliacoes_g)

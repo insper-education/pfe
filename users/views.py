@@ -42,7 +42,7 @@ from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontr
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.models import ObjetivosDeAprendizagem, Evento
 from projetos.messages import email
-from projetos.support3 import calcula_objetivos
+from projetos.support3 import calcula_objetivos, get_objetivos_atuais
 
 
 # Get an instance of a logger
@@ -433,37 +433,39 @@ def blackboard_notas(request, anosemestre):
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
-    configuracao = get_object_or_404(Configuracao)
-
     if request.is_ajax():
         if "edicao" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
+            alocacaoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+            # Filtra os Objetivos de Aprendizagem do semestre (Todos: individuais e juntando com os de grupo)
+            objetivos_t = get_objetivos_atuais(ano, semestre)
+
+            ### ISSO ESTA DESATUALIZADO E PRECISA USAR UM ESQUEMA MAIS ATUAL USANDO OS EXAMES
+            objetivos_i = objetivos_t.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
             
-            # Conta soh alunos não trancados
-            alunos_list = Aluno.objects.filter(trancado=False).order_by(Lower("user__first_name"), Lower("user__last_name"))
-            alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-            alunos_list = alunos_semestre | alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
-            #Nao está filtrando todos os semestres
-            mes = 3 if semestre == 1 else 9
-            data_projeto = datetime.datetime(ano, mes, 1)
-
-            # Filtra os Objetivos de Aprendizagem do semestre
-            objetivos = ObjetivosDeAprendizagem.objects.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
-            objetivos = objetivos.filter(data_inicial__lt=data_projeto)
-            objetivos = objetivos.filter(data_final__gt=data_projeto) | objetivos.filter(data_final__isnull=True)
-
-            objetivos = objetivos.order_by("ordem")
+            
 
             cabecalhos = [{"pt": "Nome", "en": "Name"},
                           {"pt": "e-mail", "en": "e-mail"},
                           {"pt": "Curso", "en": "Program"},
                           {"pt": "Projeto", "en": "Project"},
                           ]
-            for objetivo in objetivos:
+            
+            individual = True
+            for objetivo in objetivos_i:
                 cabecalhos.append({
-                    "pt": objetivo.titulo + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(grupo)"),
-                    "en": objetivo.titulo_en + ("<br>(individual)" if objetivo.avaliacao_aluno else "<br>(group)"),
+                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                    "individual": True,
+                })
+
+            individual = False
+            for objetivo in objetivos_t:
+                cabecalhos.append({
+                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                    "todas": True,
                 })
 
             captions = []
@@ -475,13 +477,9 @@ def estudantes_objetivos(request):
                 })
 
             context = {
-                "alunos_list": alunos_list,
-                "configuracao": configuracao,
-                "ano": ano,
-                "semestre": semestre,
-                "ano_semestre": str(ano)+'.'+str(semestre),
-                "loop_anos": range(2018, configuracao.ano+1),
-                "objetivos": objetivos,
+                "alocacaoes": alocacaoes,
+                "objetivos_i": objetivos_i,
+                "objetivos_t": objetivos_t,
                 "cabecalhos": cabecalhos,
                 "captions": captions,
             }
@@ -493,8 +491,54 @@ def estudantes_objetivos(request):
             "titulo": {"pt": "Objetivos de Aprendizagem por Estudante", "en": "Learning Goals by Student"},
             "edicoes": get_edicoes(Aluno)[0],
             }
-
     return render(request, "users/estudantes_objetivos.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def projetos_objetivos(request):
+    """Gera lista com todos os alunos já registrados."""
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
+            projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+            # Filtra os Objetivos de Aprendizagem do semestre
+            objetivos = get_objetivos_atuais(ano, semestre)
+            
+            individual = False
+
+            cabecalhos = [{"pt": "Projeto", "en": "Project"},]
+            for objetivo in objetivos:
+                cabecalhos.append({
+                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)"),
+                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)"),
+                })
+
+            captions = []
+            for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
+                captions.append({
+                    "sigla": curso.sigla_curta,
+                    "pt": curso.nome,
+                    "en": curso.nome_en,
+                })
+
+            context = {
+                "projetos": projetos,
+                "objetivos": objetivos,
+                "cabecalhos": cabecalhos,
+                "captions": captions,
+            }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+        context = {
+            "titulo": {"pt": "Objetivos de Aprendizagem por Projeto", "en": "Learning Goals by Project"},
+            "edicoes": get_edicoes(Aluno)[0],
+            }
+    return render(request, "users/projetos_objetivos.html", context=context)
+
 
 
 @login_required

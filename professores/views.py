@@ -410,7 +410,7 @@ def banca_avaliar(request, slug, documento_id=None):
     ####################################################################################
     # ISSO ESTÁ OBSOLETO
     # Subistituir por:     objetivos = composicao.pesos.all()
-    objetivos = get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all())
+    objetivos = get_objetivos_atuais()
     # Banca(Intermediária, Final, Probation) ou Falconi
     sigla = banca.composicao.exame.sigla
     if sigla in ["BI", "BF"]:
@@ -2135,7 +2135,7 @@ def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
     context = {
         "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
-        "objetivos": get_objetivos_atuais(ObjetivosDeAprendizagem.objects.all()), 
+        "objetivos": get_objetivos_atuais(), 
     }
     return render(request, "professores/objetivos_rubricas.html", context)
 

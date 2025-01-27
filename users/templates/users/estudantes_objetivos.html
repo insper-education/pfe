@@ -10,6 +10,7 @@
   {% load l10n %}
   {% load dictionary %}
   {% load oas %}
+  {% load linguas %}
   {% include "tabelas_includes.html" %}
   {% include "reload.html" %}
 {% endblock %}
@@ -17,81 +18,137 @@
 {% block content %}
 
   {% include "edicoes.html" with n_todas=True %}
-  
+
+  <div class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input esconder" id="aval_todas" name="aval_todas" onchange="carrega_pagina()" />
+    <label class="custom-control-label" for="aval_todas">
+      <span id="label_aval_individuais">{% lng "Somente Individuais" "Only Individual" %}</span>
+      /
+      <span id="label_aval_todas">{% lng "Todas Individuais + Grupo" "All Individual + Group" %}</span>
+    </label>
+  </div>
+
   <div class="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
-      {% for aluno in alunos_list %} 
+      {% for alocacao in alocacaoes %} 
         <tr class="item">
-          <th scope="row" data-order="{{aluno.user.get_full_name}}">
-            <a href="{% url 'estudante_detail' aluno.id %}">
-              {{aluno.user.get_full_name}}
-              {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span>{% endif %}
+          <th scope="row" data-order="{{alocacao.aluno.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+              {{alocacao.aluno.user.get_full_name}}
+              {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
             </a>
           </th>
 
           <td>
-            <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+            <a href="mailto:{{alocacao.aluno.user.email}}"> &lt;{{alocacao.aluno.user.email}}&gt;</a><br>
           </td>
-
-          {% if aluno.curso2 %}
-            <td style="color:#{{ aluno.curso2.cor }};">
-              {{ aluno.curso2.sigla_curta }}
-            </td>
-          {% else %}
-            <td>Indefinido</td>
-          {% endif %}
 
           <td>
-            {% if aluno.alocacao_set.all %}
-              {% for alocacao in aluno.alocacao_set.all %}
-                {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
-                    {{alocacao.projeto.get_titulo}}
-                  </a>
-                  {% if alocacao.projeto and alocacao.projeto.organizacao %}
-                    <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                      ({{alocacao.projeto.organizacao}})<br>
-                    </a>
-                  {% else %}
-                    SEM ORGANIZAÇÃO
-                  {% endif %}
-                  {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
-                {% endif %}
-              {% endfor %}
+            {% if alocacao.aluno.curso2 %}
+              <span style="color:#{{ alocacao.aluno.curso2.cor }};">
+                <span class="texto-longo">{{ alocacao.aluno.curso2 }}</span>
+                <span class="texto-curto">{{ alocacao.aluno.curso2.sigla_curta }}</span>
+              </span>
+            {% else %}
+              {% lng "Indefinido" "Undefined" %}
             {% endif %}
           </td>
-          {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-            {% with oa=alocacao|get_oas_i %}
-              {% for objetivo in objetivos %}
-                <td style="text-align:right;">
-                  {% if oa|get_value:objetivo %}
-                    <span data-toggle="tooltip" data-html="true" animation="true" title="
-                      {% for c in oa|get_value:objetivo|get_value:'conceito' %}
-                        <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
-                          {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
-                        </span><br>
-                      {% endfor %}
-                    "
-                    > 
-                      {% with media=oa|get_value:objetivo|get_value:"media" %}
-                        <span style="color: {{ media.2 }};">
-                          {{ media.0 }} ({{ media.1|stringformat:".2f" }})
-                        </span>
-                      {% endwith %}
-                    </span>
-                  {% endif %}
-                </td>
-              {% endfor %}
-            {% endwith %}  
+
+          <td>
+            {% if alocacao.projeto and alocacao.projeto.organizacao %}
+              <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                [{{alocacao.projeto.organizacao}}]
+              </a>
+            {% else %}
+              [{% lng "SEM ORGANIZAÇÃO" "NO ORGANIZATION" %}]
+            {% endif %}
+            <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+              {{alocacao.projeto.get_titulo}}
+            </a>
+            {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+          </td>
+
+          {% with oa=alocacao|get_oas_i %}
+            {% for objetivo in objetivos_i %}
+              <td style="text-align:right;">
+                {% if oa|get_value:objetivo %}
+                  <span data-toggle="tooltip" data-html="true" animation="true"
+                  title=" {% for c in oa|get_value:objetivo|get_value:'conceito' %}
+                            <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
+                              {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
+                            </span><br>
+                          {% endfor %}">
+                    {% with media=oa|get_value:objetivo|get_value:"media" %}
+                      <span style="color: {{ media.2 }};">
+                        {{ media.0 }} ({{ media.1|stringformat:".2f" }})
+                      </span>
+                    {% endwith %}
+                  </span>
+                {% endif %}
+              </td>
+            {% endfor %}
           {% endwith %}
+
+
+          {% with oa=alocacao|get_oas_t %}
+            {% for objetivo in objetivos_t %}
+              <td  style="text-align:right;">  <!-- esconde por padrão -->
+                {% if oa|get_value:objetivo %}
+                  <span data-toggle="tooltip" data-html="true" animation="true"
+                  title=" {% for c in oa|get_value:objetivo|get_value:'conceito' %}
+                            <span {% if c.2 < 5 %}style='color: red;'{% endif %}>
+                              {{ c.0.sigla }}: {{ c.1 }} ({{ c.2 }})
+                            </span><br>
+                          {% endfor %}">
+                    {% with media=oa|get_value:objetivo|get_value:"media" %}
+                      <span style="color: {{ media.2 }};">
+                        {{ media.0 }} ({{ media.1|stringformat:".2f" }})
+                      </span>
+                    {% endwith %}
+                  </span>
+                {% endif %}
+              </td>
+            {% endfor %}
+          {% endwith %}
+
         </tr>
       {% endfor %}
     {% include "tabelas_bottom.html" %}
     
+    {% lng "Obs: somente estudantes alocados em projetos no semestre aparecerão nessa lista." "Note: only students allocated to projects in the semester will appear in this list." %}
+
+    
     <script>
+
+      var table = null;
+  
+      function carrega_pagina() {
+        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#EstudantesTable").dataTable();
+          if(table) {
+            {% for c in cabecalhos %}
+              {% if c.individual %}
+                table.fnSetColumnVis( {{forloop.counter0}}, !$("#aval_todas").is(":checked") );
+              {% endif %}
+              {% if c.todas %}
+                table.fnSetColumnVis( {{forloop.counter0}}, $("#aval_todas").is(":checked") );
+              {% endif %}
+            {% endfor %}
+          }
+        }
+        if($("#aval_todas").is(":checked")) {
+          $("#label_aval_individuais").css("font-weight", "normal");
+          $("#label_aval_todas").css("font-weight", "bold");
+        } else {
+          $("#label_aval_individuais").css("font-weight", "bold");
+          $("#label_aval_todas").css("font-weight", "normal");
+        }
+      }
+      
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
-      }
+        carrega_pagina();
+      };
       window.onload = carrega_site
     </script>
 
