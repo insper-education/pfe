@@ -195,11 +195,11 @@
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
                       {% if relatorio_intermediario.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="color: darkgrey; font-weight: bold;"
+                        style="background-color: darkgrey; font-weight: bold;"
                       {% elif relatorio_intermediario.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="color: orange; font-weight: bold;"
+                        style="background-color: orange; font-weight: bold;"
                       {% elif relatorio_intermediario.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="color: red; font-weight: bold;"
+                        style="background-color: pink; font-weight: bold;"
                       {% endif %}
                       {% if relatorio_intermediario.nota_texto %}
                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.conceito|safe }}">
@@ -217,11 +217,11 @@
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
                       {% if relatorio_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="color: darkgrey; font-weight: bold;"
+                        style="background-color: darkgrey; font-weight: bold;"
                       {% elif relatorio_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="color: orange; font-weight: bold;"
+                        style="background-color: orange; font-weight: bold;"
                       {% elif relatorio_final.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="color: red; font-weight: bold;"
+                        style="background-color: pink; font-weight: bold;"
                       {% endif %}
                       {% if relatorio_final.nota_texto %}
                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.conceito|safe }}">
@@ -239,11 +239,11 @@
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_intermediaria.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="color: darkgrey; font-weight: bold;"
+                        style="background-color: darkgrey; font-weight: bold;"
                       {% elif banca_intermediaria.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="color: orange; font-weight: bold;"
+                        style="background-color: orange; font-weight: bold;"
                       {% elif banca_intermediaria.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="color: red; font-weight: bold;"
+                        style="background-color: pink; font-weight: bold;"
                       {% endif %}
                       {% if banca_intermediaria.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
@@ -261,11 +261,11 @@
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="color: darkgrey; font-weight: bold;"
+                        style="background-color: darkgrey; font-weight: bold;"
                       {% elif banca_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="color: orange; font-weight: bold;"
+                        style="background-color: orange; font-weight: bold;"
                       {% elif banca_final.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="color: red; font-weight: bold;"
+                        style="background-color: pink; font-weight: bold;"
                       {% endif %}
                       {% if banca_final.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
@@ -283,11 +283,11 @@
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_falconi.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="color: darkgrey; font-weight: bold;"
+                        style="background-color: darkgrey; font-weight: bold;"
                       {% elif banca_falconi.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="color: orange; font-weight: bold;"
+                        style="background-color: orange; font-weight: bold;"
                       {% elif banca_falconi.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="color: red; font-weight: bold;"
+                        style="background-color: pink; font-weight: bold;"
                       {% endif %}
 
                       {% if banca_falconi.nota_texto %}
