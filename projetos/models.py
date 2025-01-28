@@ -588,11 +588,18 @@ class Evento(models.Model):
 
     def get_title(self):
         """Retorna em string o nome do evento."""
-        return self.tipo_evento.nome
+        if self.tipo_evento:
+            return self.tipo_evento.nome
+        if self.atividade:
+            return self.atividade
+        return self.descricao
+        
   
     def get_color(self):
         """Retorna uma cor característica do evento para desenhar no calendário."""
-        return "#"+self.tipo_evento.cor
+        if self.tipo_evento:
+            return "#"+self.tipo_evento.cor
+        return "#808080"
 
     def get_semester(self):
         """Retorna o semestre do evento."""

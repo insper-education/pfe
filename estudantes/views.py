@@ -102,8 +102,11 @@ def index_estudantes(request):
     #get_limite_propostas2 return None caso não haja limite
     context["limite_propostas"] = get_limite_propostas2(configuracao)
 
-    tenevento = TipoEvento.objects.get(nome="Apresentação das propostas disponíveis para estudantes")
-    context["liberacao_visualizacao"] = Evento.objects.filter(tipo_evento=tenevento).last().startDate
+    try:
+        tenevento = TipoEvento.objects.get(nome="Apresentação das propostas disponíveis para estudantes")
+        context["liberacao_visualizacao"] = Evento.objects.filter(tipo_evento=tenevento).last().startDate
+    except:
+        context["liberacao_visualizacao"] = None
     context["titulo"] = {"pt": "Área dos Estudantes", "en": "Students Area"}
 
     if "/estudantes/estudantes" in request.path:
@@ -503,7 +506,7 @@ def avaliacao_pares(request, momento):
         context["colegas"] = colegas
 
     else:  # Supostamente professores
-        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
         context["colegas"] = [[{"aluno":"Fulano (exemplo)",id:0},None],[{"aluno":"Beltrano (exemplo)",id:0},None]],
 
     context["vencido"] = prazo
@@ -565,7 +568,7 @@ def informacoes_adicionais(request):
         }
     else:  # Supostamente professores
         context = {
-            "mensagem_aviso": "Você não está cadastrado como estudante.",
+            "mensagem_aviso": {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."},
             "vencido": True,
         }
     
@@ -614,7 +617,7 @@ def minhas_bancas(request):
         
         context["bancas"] =  bancag | bancai
     else:
-        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
     return render(request, "estudantes/minhas_bancas.html", context)
 
 
@@ -653,7 +656,7 @@ def relato_quinzenal(request):
 
         if not alocacao:
             context["prazo"] = None
-            context["mensagem_aviso"] = "Você não está alocado em um projeto esse semestre."
+            context["mensagem_aviso"] = {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated to a project this semester."}
 
             return render(request, "estudantes/relato_quinzenal.html", context)
 
@@ -700,7 +703,7 @@ def relato_quinzenal(request):
         context["texto_relato"] = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).order_by("momento").last()
 
     else:  # Supostamente professores
-        context["mensagem_aviso"] = "Você não está cadastrado como estudante."
+        context["mensagem_aviso"] = {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
 
     return render(request, "estudantes/relato_quinzenal.html", context)
 
@@ -757,7 +760,10 @@ def submissao_documento(request):
     if request.user.tipo_de_usuario != 1:  # Não é Estudante
          if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:  # Professor
             projeto = Projeto.objects.filter(orientador=request.user.professor).last()
-            context["mensagem_aviso"] = "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página."
+            context["mensagem_aviso"] = {
+                "pt": "Professor, esse é somente um exemplo do que os estudantes visualizam. Não envie documentos por essa página.",
+                "en": "Professor, this is just an example of what students see. Do not send documents through this page.",
+            }
     else:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         projeto = alocacao.projeto if alocacao else None
@@ -891,6 +897,10 @@ def selecao_propostas(request):
         "warnings": warnings,
         "limite_propostas": get_limite_propostas(configuracao),
     }
+
+    if request.user.tipo_de_usuario != 1:
+        context["mensagem_aviso"] = {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
+
     return render(request, "estudantes/selecao_propostas.html", context)
 
 @login_required

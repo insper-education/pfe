@@ -94,11 +94,7 @@
 
 {% block content %}
 
-  {% if vencido %}
-    <h2 class="red-bold">
-      {% lng "Você não está cadastrado como estudante." "You are not registered as a student." %}
-    </h2>
-  {% else %}
+  {% if not vencido %}
     {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
       <h2 class="red-bold">
         {% lng "Você não está registrado para o Capstone em {{ano}}.{{semestre}}" "You are not registered for the Capstone in {{ano}}.{{semestre}}" %}

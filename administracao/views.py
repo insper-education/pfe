@@ -90,10 +90,11 @@ def cadastrar_disciplina(request, proposta_id=None):
             assert "nome" in request.POST
             disciplina, _created = Disciplina.objects.get_or_create(nome=request.POST["nome"])
             if not _created:
-                context["mensagem_alerta_fade"] = "Conflito: Disciplina já cadastrada"
+                context["mensagem_alerta_fade"] = {"pt": "Conflito: Disciplina já cadastrada", "en": "Conflict: Course already registered"}
             else:
                 disciplina.save()
-                context["mensagem_alerta_fade"] = "Disciplina cadastrada na base de dados."
+                context["mensagem_alerta_fade"] = {"pt": "Disciplina cadastrada na base de dados.", "en": "Course registered in the database."}
+
         except:
             return HttpResponse("<h3 style='color:red'>Falha na inserção na base da dados.<br>"+settings.CONTATO+"<h3>")
 
@@ -285,7 +286,7 @@ def cadastrar_usuario(request):
             mensagem += proposta.contatos_administrativos
             mensagem += "<br>"
 
-        context["mensagem_aviso"] = mensagem
+        context["mensagem_aviso"] = {"pt": mensagem, "en": mensagem}
 
     context["titulo"] = {"pt": "Cadastro de Usuário", "en": "User Registration"}
 
@@ -889,7 +890,7 @@ def montar_grupos(request):
 
     context = {
         "titulo": { "pt": "Planejamento de Grupos por Proposta", "en": "Planning Groups by Proposal" },
-        "mensagem_aviso": mensagem,
+        "mensagem_aviso": {"pt": mensagem, "en": mensagem},
         "configuracao": configuracao,
         "propostas": propostas,
         "estudantes_opcoes": estudantes_opcoes,
@@ -912,7 +913,7 @@ def selecionar_orientadores(request):
 
     context = {
         "titulo": { "pt": "Selecionar Orientadores para os Projetos", "en": "Select Advisors for Projects" },
-        "mensagem_aviso": mensagem,
+        "mensagem_aviso": {"pt": mensagem, "en": mensagem},
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
         "orientadores": PFEUser.objects.filter(tipo_de_usuario__in=[2, 4])  #2prof 4adm,
     }
@@ -933,7 +934,7 @@ def fechar_conexoes(request):
 
     context = {
         "titulo": { "pt": "Fechar Conexões com Organizações", "en": "Close Connections with Organizations" },
-        "mensagem_aviso": mensagem,
+        "mensagem_aviso": {"pt": mensagem, "en": mensagem},
         "projetos": Projeto.objects.filter(ano=ano, semestre=semestre),
     }
 
@@ -1263,7 +1264,7 @@ def conexoes_estabelecidas(request):
 
     context = {
         "titulo": { "pt": "Conexões Estabelecidas", "en": "Established Connections" },
-        "mensagem_aviso": mensagem,
+        "mensagem_aviso": {"pt": mensagem, "en": mensagem},
         "usuarios": usuarios,
     }
 

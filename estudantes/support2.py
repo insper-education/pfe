@@ -70,6 +70,6 @@ def estudante_feedback_geral(request, usuario):
         "titulo": {"pt": "Formulário de Feedback dos Estudantes", "en": "Student Feedback Form"},
         "usuario": usuario,
         "projeto": projeto,
-        "mensagem_aviso": mensagem,
+        "mensagem_aviso": {"pt": mensagem, "en": mensagem},
     }
     return render(request, "estudantes/estudante_feedback.html", context)
