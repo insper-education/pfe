@@ -980,9 +980,9 @@ def analise_notas(request):
         medias_validas = list(filter(lambda d: d["pesos"] == 1.0, medias_lista))
 
         medias = {}
-        medias["ideal"] = len(list(filter(lambda d: d["media"] >= valor["ideal"], medias_validas)))
-        medias["regular"] = len(list(filter(lambda d: valor["ideal"] > d["media"] >= valor["regular"], medias_validas)))
-        medias["inferior"] = len(list(filter(lambda d: d["media"] < valor["regular"], medias_validas)))
+        medias["ideal"] = len(list(filter(lambda d: d["media"] is not None and valor["ideal"] is not None and d["media"] >= valor["ideal"], medias_validas)))
+        medias["regular"] = len(list(filter(lambda d: d["media"] is not None and valor["ideal"] is not None and valor["regular"] is not None and valor["ideal"] > d["media"] >= valor["regular"], medias_validas)))
+        medias["inferior"] = len(list(filter(lambda d: d["media"] is not None and valor["regular"] is not None and d["media"] < valor["regular"], medias_validas)))
         medias["total"] = len(medias_validas)
 
         context = {

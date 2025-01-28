@@ -52,7 +52,8 @@
           <td><a href="mailto:{{membro.email}}">{{membro.email}}</a></td>
           <td style="text-align: center;"> {{bancas|length}}</td>
           <td style="text-align: left;">
-            <small>{% for banca in bancas %}&bull; Banca {{banca.get_tipo}}: [{{banca.projeto.organizacao}}] {{banca.projeto.get_titulo}} ({{banca.startDate}})<br>{% endfor %}</small>
+            <small>
+              <ul>{% for banca in bancas %}<li>Banca {{banca.get_tipo}}: [{{banca.projeto.organizacao}}] {{banca.projeto.get_titulo}} ({{banca.startDate}})</li>{% endfor %}</ul></small>
           </td>
         </tr>
       {% endfor %}

@@ -17,22 +17,10 @@
         {% with estudantes=projeto.alocacao_set.all %}
           <tr class="item">
             <th scope="row" data-order="{{projeto.get_titulo}}">
-              <a href="{% url 'projeto_completo' projeto.id %}">
-                {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                  {{projeto.titulo_final}}<br>
-                  <small>Título original da proposta: {{projeto.proposta.titulo}}</small>
-                {% else %}
-                  {{projeto.get_titulo}}
-                {% endif %}
-                {% include "tipo_projeto.html" %}
-              </a>
+              {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
             </th>
-            <td>
-              {% for alocacao in estudantes %}&bull; {{alocacao.aluno.user.get_full_name}} [{{alocacao.aluno.curso2}}]{% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}<br>{% empty %}
-                Nenhum aluno alocado nesse projeto
-              {% endfor %}
-            </td>
-            <td class="text-center">{{projeto.ano}}.{{projeto.semestre}}</td>
+            <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
+            <td class="text-center">{{projeto.get_edicao}}</td>
             <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
             <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
           </tr>

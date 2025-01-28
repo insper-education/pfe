@@ -109,11 +109,13 @@
 
               <div class="orientador ml-1 mb-1">
                 {% if projeto.orientador %}
-                 {% if projeto.proposta.intercambio %}
-                    {% lng_g projeto.orientador.user.genero "[Professor Responsável]" "[Professora Responsável]" "[Responsible Professor]" %}
-                  {% else %}
-                    {% lng_g projeto.orientador.user.genero "[Orientador]" "[Orientadora]" "[Advisor]" %}
-                  {% endif %}
+                  <b>
+                    {% if projeto.proposta.intercambio %}
+                      {% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:
+                    {% else %}
+                      {% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
+                    {% endif %}
+                  </b>
                   <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
                   <span class="emails">
                     <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>

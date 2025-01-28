@@ -39,7 +39,7 @@
             {% elif proposta.nome_organizacao %}
               {{ proposta.nome_organizacao }}
             {% else %}
-              Organização não definida.
+              {% lng "Organização não definida" "Organization not defined" %}
             {% endif %}  
           </td>
 
@@ -55,7 +55,6 @@
         if($("#PropostasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
           table = $("#PropostasTable").dataTable();
           if(table) {
-            // Hide/Esconde certas colunas
             table.fnSetColumnVis( 1, !($("#filterEdicao").val()!="todas" ));  // esconde Período
           }
         }

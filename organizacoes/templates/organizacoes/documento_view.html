@@ -63,7 +63,7 @@
 
     <div class="mb-3 row text-nowrap text-truncate">
       {% if projeto %}
-        <div class="col-sm form-label">
+        <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
           <span for="organizacao">Organização:</span>
           <input type="hidden" id="organizacao" name="organizacao" value="{{projeto.organizacao.id}}"/>
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -75,7 +75,7 @@
           {% endif %}
         </div>
       {% elif organizacao %}
-        <div class="col-sm form-label">
+        <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
           <span for="organizacao">Organização:</span>
           <input type="hidden" id="organizacao" name="organizacao" value="{{organizacao.id}}"/>
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
@@ -103,13 +103,13 @@
 
     <div class="mb-3 row text-nowrap text-truncate">
       {% if projeto %}
-        <div class="col-sm form-label">
+        <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
           <span for="projeto">Projeto:</span>
           <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
             <a href="{% url 'projeto_completo' projeto.id %}">
           {% endif %}
-            {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
+          {{projeto.get_titulo}} ({{projeto.get_edicao}})
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
             </a>
           {% endif %}

@@ -116,9 +116,10 @@
           <td>
             <ul>
               {% for membro in banca.membros %}
-                <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a></li>
-                <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
-                {% if banca.projeto.orientador.user == membro %}[{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
+                <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a>
+                  <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
+                  {% if banca.projeto.orientador.user == membro %}[{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
+                </li>
               {% endfor %}
             </ul>
           </td>

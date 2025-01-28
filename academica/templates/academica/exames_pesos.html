@@ -66,7 +66,7 @@
 
   <small>
     {% for o in objetivos %}
-      {{o.sigla}}: {{o.titulo}}
+      <b>{{o.sigla}}</b>: {{o.titulo}}
       {% if not forloop.last %}|{% endif %}
     {% endfor %}
   </small>
