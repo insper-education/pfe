@@ -137,6 +137,10 @@ def ajax_bancas(request):
                 if projeto.orientador.user == membro:
                     title += " (O)"
 
+            if banca.composicao and banca.composicao.exame:
+                cor = banca.composicao.exame.cor
+            else:
+                cor = "808080"
 
             bancas[banca.id] = {
                 "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -145,7 +149,7 @@ def ajax_bancas(request):
                 "organizacao": organizacao_sigla,
                 "orientador": orientador,
                 "estudante": estudante,
-                "color": f"#{banca.composicao.exame.cor}",
+                "color": f"#{cor}",
                 "editable": editable,
                 "title": title,
                 **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
@@ -906,7 +910,7 @@ def bancas_tabela_alocacao(request):
             
             for banca in bancas:
                 if banca.projeto and banca.projeto.orientador:
-                    if banca.composicao.exame.sigla != "F":  # Nao eh Falconi
+                    if banca.composicao and banca.composicao.exame and banca.composicao.exame.sigla in ["BI", "BF"]:  # Nao eh Falconi ou Probation
                         membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 for membro in banca.membros():
                     membros.setdefault(membro, []).append(banca)

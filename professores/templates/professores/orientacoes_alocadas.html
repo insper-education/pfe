@@ -32,6 +32,7 @@
           {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
         {% endif %}
         <b style="margin-right: 1px;">#{{ forloop.revcounter }}.</b>
+        
         <a href="{% url 'projeto_completo' projeto.id %}">
           {{projeto.ano}}.{{projeto.semestre}}
           [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
@@ -45,11 +46,14 @@
             <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">[{% lng "CERTIFICADO" "CERTIFICATE" %}]</a>
           {% endif %}
         {% endwith %}
+        
       {% endwith %}
     </td></tr>
+    
     {% empty %}
       {% lng "Nenhuma orientação encontrada." "No supervision found." %}
     {% endfor %}
+     
   </tbody></table>
 
   {% include "toggle_anteriores.html" %}

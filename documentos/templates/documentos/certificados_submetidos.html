@@ -52,7 +52,13 @@
         {% for certificado in certificados %}
           <tr class="certificado{{certificado.tipo_certificado.grupo_certificado.sigla}} certificado">
             <td>
-              <b style="font-weight: bold; font-size: 1.2em;">{{certificado.tipo_certificado}}</b><br>
+              <b style="font-weight: bold; font-size: 1.2em;">
+                {% if certificado.tipo_certificado %}
+                  {{certificado.tipo_certificado}}
+                {% else %}
+                  {% lng "Certificado" "Certificate" %}
+                {% endif %}
+              </b><br>
               <b>{% lng "Nome" "Name" %}</b>:
               {% if certificado.usuario %}
                 {% if certificado.usuario.estud %}

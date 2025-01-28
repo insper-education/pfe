@@ -16,6 +16,7 @@ from django.db import models
 from django.conf import settings
 
 from django.urls import reverse  # To generate URLS by reversing URL patterns
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib import admin
 from django.template.defaultfilters import slugify
@@ -634,7 +635,7 @@ class Evento(models.Model):
         # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
         # (14, "Bancas Intermediárias", "#EE82EE"),
         # (15, "Bancas Finais", "#FFFF00"),
-        if self.tipo_evento.sigla in ["ERI", "ERF"]:
+        if self.tipo_evento and self.tipo_evento.sigla in ["ERI", "ERF"]:
             if self.tipo_evento.sigla == "ERI":
                 evento = Evento.objects.filter(tipo_evento__sigla="BI", startDate__gt=self.endDate).order_by("startDate").first()
                 return evento.endDate if evento else None
@@ -767,7 +768,7 @@ class Banca(models.Model):
     def membros(self):
         """Retorna os membros da banca."""
         selecao = []
-        if self.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+        if self.composicao and self.composicao.exame and self.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
             selecao += [self.projeto.orientador.user]
         selecao += [ m for m in [self.membro1, self.membro2, self.membro3] if m is not None]
         return selecao
@@ -777,7 +778,9 @@ class Banca(models.Model):
 
     def get_tipo(self):
         """Retorna o tipo da banca."""
-        return self.composicao.exame
+        if self.composicao and self.composicao.exame:
+            return self.composicao.exame
+        return None
     
     @property
     def periodo(self):
@@ -852,7 +855,12 @@ class Banca(models.Model):
         objetivos = ObjetivosDeAprendizagem.objects.all()
         avaliadores = {}
         projeto = self.get_projeto()
-        exame = self.composicao.exame
+        try:
+            exame = self.composicao.exame
+        except:
+            raise ValidationError("<h1>Erro ao identificar Composição e Exame!</h1>")
+
+            
         for objetivo in objetivos:
         
             if self.alocacao:  # Probation

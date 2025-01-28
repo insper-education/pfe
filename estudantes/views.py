@@ -628,8 +628,11 @@ def relato_quinzenal(request):
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
     hoje = datetime.date.today()
-    tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
-    prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
+    try:
+        tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
+        prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
+    except:
+        return HttpResponseNotFound("<h1>Erro ao buscar prazos!</h1>")
 
     if prazo:
         # Só mostra o relato N (config.periodo_relato) dias antes do prazo
