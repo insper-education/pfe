@@ -123,7 +123,6 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     return render(request, "documentos/certificados_submetidos.html", context)
 
 
-
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)

@@ -114,11 +114,26 @@ class PFEUser(AbstractUser):
         """Retorna se é estudante."""
         return self.tipo_de_usuario == 1
 
+    @property
+    def eh_estud(self):
+        """Retorna se é estudante."""
+        return self.tipo_de_usuario == 1
+
     def prof(self):
+        """Retorna se é professor (ou Administrador)."""
+        return self.tipo_de_usuario == 2
+    
+    @property
+    def eh_prof(self):
         """Retorna se é professor (ou Administrador)."""
         return self.tipo_de_usuario == 2
 
     def prof_a(self):
+        """Retorna se é professor (ou Administrador)."""
+        return self.tipo_de_usuario == 2 or self.tipo_de_usuario == 4
+    
+    @property
+    def eh_prof_a(self):
         """Retorna se é professor (ou Administrador)."""
         return self.tipo_de_usuario == 2 or self.tipo_de_usuario == 4
         
@@ -126,7 +141,17 @@ class PFEUser(AbstractUser):
         """Retorna se é parceiro."""
         return self.tipo_de_usuario == 3
     
+    @property
+    def eh_parc(self):
+        """Retorna se é parceiro."""
+        return self.tipo_de_usuario == 3
+    
     def admin(self):
+        """Retorna se é administrador."""
+        return self.tipo_de_usuario == 4
+    
+    @property
+    def eh_admin(self):
         """Retorna se é administrador."""
         return self.tipo_de_usuario == 4
 
