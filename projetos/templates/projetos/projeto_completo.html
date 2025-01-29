@@ -503,13 +503,23 @@
 
       <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
-       href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}">
+       {% if projeto.orientador %}
+        href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}"
+       {% else %}
+        disabled
+       {% endif %}
+      >
         {% lng "Avaliar Entregas" "Evaluate Deliveries" %}
       </a>
 
       <a class="btn btn-primary mb-1 mt-2 wbtn"
        data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
-       href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}">
+       {% if projeto.orientador %}
+        href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
+       {% else %}
+        disabled
+       {% endif %}
+      >
         {% lng "Avaliação de Pares" "Peer Evaluation" %}
       </a>
 
