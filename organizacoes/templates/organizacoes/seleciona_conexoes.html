@@ -49,11 +49,15 @@
 
 {% block content %}
 
-  <div>
-    {% lng "Projeto:" "Project:" %}
-    {{projeto}}
-  </div>
-  <br>
+  <div class="mb-2">{% lng "Projeto:" "Project:" %}{{projeto}}</div>
+
+  {% if user.eh_prof_a %}
+    <span class="esconder">
+      <a href="{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}">
+        <i class="fas fa-plus"></i> 
+        {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}</a>
+    </span><br>
+  {% endif %}
 
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
 
@@ -150,9 +154,12 @@
     </div>
     <br>
 
+    {% comment %} REMOVER VVVVVVVVVVVVVVVVV {% endcomment %}
     <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}'" type="button" style="float: right;">
       {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}
     </button></small><br>
+    {% comment %} REMOVER ^^^^^^^^^^^^^^^^^^^^ {% endcomment %}
+
   </form>
 
   <div id="message" class="message"></div>

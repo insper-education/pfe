@@ -19,10 +19,9 @@
     <span class="esconder">
       <a href="#"
        class="open-documento"
-       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
-        ><i class="fas fa-plus"></i> 
-         Adicionar nova Ata</a
-      >
+       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}">
+        <i class="fas fa-plus"></i> 
+        {% lng "Adicionar nova Ata" "Add new Meeting Minutes" %}</a>
     </span><br>
   {% endif %}
 
@@ -70,7 +69,9 @@
             </tr>
           {% endfor %}
         {% empty %}
-          <tr><td colspan="2">Não existem atas disponíveis.</td></tr>
+          <tr><td colspan="2">
+            {% lng "Não existem atas disponíveis." "There are no minutes available." %}
+          </td></tr>
         {% endfor %}
       </tbody>
     </table>
