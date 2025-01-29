@@ -16,3 +16,9 @@ def get_bancas(alocacao):
     bancas_proj = Banca.objects.filter(projeto=alocacao.projeto)
     bancas_prob = Banca.objects.filter(alocacao=alocacao)
     return bancas_proj | bancas_prob
+
+
+@register.filter()
+def bancas_com_membro(membro):
+    """Retorna as bancas que membro participou."""
+    return Banca.get_bancas_com_membro(membro)

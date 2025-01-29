@@ -2230,6 +2230,7 @@ def todos_professores(request):
             "professores": Professor.objects.all(),
             "cabecalhos": [{ "pt": "Nome", "en": "Name", },
                            { "pt": "e-mail", "en": "e-mail", },
+                           { "pt": "Área", "en": "Area", },
                            { "pt": "Bancas", "en": "Examination Boards", },
                            { "pt": "Orientações", "en": "Advising", },
                            { "pt": "Lattes", "en": "Lattes", },],

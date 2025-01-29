@@ -659,9 +659,7 @@ def organizacoes_lista(request):
     # Prefetch dos objetos relacionados
     propostas_prefetch = Prefetch("proposta_set", queryset=Proposta.objects.order_by("ano", "semestre"))
     anotacoes_prefetch = Prefetch("anotacao_set", queryset=Anotacao.objects.order_by("momento"))
-    projetos_prefetch = Prefetch("projeto_set", queryset=Projeto.objects.filter(alocacao__isnull=False).distinct())
-
-    organizacoes = organizacoes.prefetch_related(propostas_prefetch, anotacoes_prefetch, projetos_prefetch)
+    organizacoes = organizacoes.prefetch_related(propostas_prefetch, anotacoes_prefetch)
 
     fechados = []
     desde = []

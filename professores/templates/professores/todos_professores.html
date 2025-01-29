@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load linguas %}
+  {% load bancas %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
@@ -22,6 +23,7 @@
   {% include "tabelas_top_ml.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 
       <tr class="item" {% if not professor.user.is_active %} style="color: lightgrey;" {% endif %}>
+
         <th scope="row" data-sort="{{professor.user.get_full_name}}">
           {% if professor.user.membro_comite %}<u>{% endif %}
             <a href="{% url 'professor_detail' professor.id %}"
@@ -30,26 +32,32 @@
             </a>
           {% if professor.user.membro_comite %}</u>{% endif %}
         </th>
+
         <td>
-          <a href="mailto:{{professor.user.email}}"
-          {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
-            &lt;{{professor.user.email}}&gt;
+          <a href="mailto:{{professor.user.email}}" {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
+            {{professor.user.email}}
           </a>
         </td>
+
+        <td>{% if professor.areas %}{{ professor.areas }}{% endif %}</td>
+
         <td class="text-center">
-          {{professor.user.membro1.count|add:professor.user.membro2.count|add:professor.user.membro3.count|stringformat:"02d" }}
+          {{ professor.user|bancas_com_membro|length|stringformat:"02d" }}
         </td>
+
         <td class="text-center">
           {{professor.professor_orientador.count|stringformat:"02d"}}
         </td>
+
         <td>
           {% if professor.lattes %}
             <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"
-            {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
+             {% if not professor.user.is_active %} style="color: LightBlue;" {% endif %}>
               {{professor.lattes}}
             </a>
           {% endif %}
         </td>
+
       </tr>
     {% endfor %}
     </tbody>
