@@ -34,8 +34,10 @@ def render_message(template, context, urlize=True):
     return message
 
 def htmlizar(text):
-    """Coloca <br> nas quebras de linha."""
-    return text.replace('\n', '<br>\n')
+    """Coloca <br> nas quebras de linha e manter espaços."""
+    text = text.replace("\n", "<br>\n")
+    text = text.replace("  ", "&nbsp; ")
+    return text
 
 @shared_task
 def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
