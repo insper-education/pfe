@@ -5,6 +5,7 @@
 {% endcomment %}
 
 {% load static %}
+{% load linguas %}
 
 <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
 <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
@@ -25,7 +26,9 @@
   <form id="dinamicasform" method="post" enctype="multipart/form-data">{% csrf_token %}
 
     <div class="modal-header">
-      <h5 id="documentacao" class="modal-title">{% if encontro %}Editar Agendamento de{% else %}Agendar{% endif %} Mentoria</h5>    
+      <h5 id="documentacao" class="modal-title">
+        {% if encontro %}{% lng "Editar Agendamento de" "Edit" %} {% else %}{% lng "Agendar" "Schedule" %}{% endif %} {% lng "Mentoria" "Mentoring" %}
+      </h5>    
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -36,7 +39,9 @@
     {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
     <div class="container">   
         <label for="inicio" style="margin-right: 2rem;">
-        <span style="display:inline-block; width:5.5ex; text-align:right;">Inicio:</span>
+        <span style="display:inline-block; width:5.5ex; text-align:right;">
+          {% lng "Inicio" "Start" %}:
+        </span>
         <input id="inicio"  type="datetime-local" name="inicio"
         {% if encontro %}
           value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
@@ -47,7 +52,9 @@
         </label>
       
         <label for="fim" style="margin-right: 2rem;">
-        <span style="display:inline-block; width:5.5ex; text-align:right">Fim:</span>
+        <span style="display:inline-block; width:5.5ex; text-align:right">
+          {% lng "Fim" "End" %}:
+        </span>
         <input id="fim"  type="datetime-local" name="fim"
         {% if encontro %}
           value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}"
@@ -59,7 +66,9 @@
 
         {% if not encontro %}
         <label for="vezes" style="margin-right: 2rem;">
-          <span style="display:inline-block; width:5.5ex; text-align:right">Vezes:</span>
+          <span style="display:inline-block; width:5.5ex; text-align:right">
+            {% lng "Vezes" "Times" %}:
+          </span>
           <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
         </label>
         {% endif %} 
@@ -95,7 +104,8 @@
     </script>
 
     <br><br>
-    <label for="local">Local / Vídeo-conferência:
+    <label for="local">
+      {% lng "Local" "Location" %} / {% lng "Vídeo-conferência" "Video-conference" %}:
       <input id="local" name="local" type="text" size="36" style="width: 100%;" maxlength="280"
       {% if encontro %}
         value="{{encontro.location}}"
@@ -105,7 +115,7 @@
     <br>
 
     <br>
-    Facilitador:<br>
+    {% lng "Facilitador" "Facilitator" %}:<br>
     <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
       data-live-search="true" data-width="90%" data-size="10">
         <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
@@ -132,7 +142,7 @@
     
     <br><hr><br>
 
-    <label for="projeto">Projeto:</label>
+    <label for="projeto">{% lng "Projeto" "Project" %}:</label>
     <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
       data-live-search="true" data-width="75%" data-size="10">
       <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
@@ -152,27 +162,30 @@
       {% endfor %}
     </select><br><br>
 
-    Título: <label id="titulo" name="titulo">
+    {% lng "Título" "Title" %}:
+    <label id="titulo" name="titulo">
       {% if encontro and encontro.projeto %}
         {{encontro.projeto.get_titulo}}
       {% else %}
-        Titulo de Projeto não definido
+        {% lng "Título de Projeto não definido" "Project Title not defined" %}
       {% endif %}
     </label><br>
 
-    Organização: <label id="organizacao" name="organizacao">
+    {% lng "Organização" "Organization" %}:
+    <label id="organizacao" name="organizacao">
       {% if encontro and encontro.projeto and encontro.projeto.organizacao %}
         {{encontro.projeto.organizacao}}
       {% else %}
-        Organização Parceira não definida
+        {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
       {% endif %}
     </label><br>
     
-    Orientador(a): <label id="orientador" name="orientador">
+    {% lng "Orientador(a)" "Advisor" %}:
+    <label id="orientador" name="orientador">
       {% if encontro and encontro.projeto and encontro.projeto.orientador %}
         {{encontro.projeto.orientador}}
       {% else %}
-        Sem identificação de Orientador(a)
+        {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
       {% endif %}
     </label><br>
 
@@ -184,15 +197,21 @@
   </div>
 
   <div class="modal-footer">
-    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
+      {% lng "Fechar" "Close" %}
+    </button>
 
     <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
       {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
-      {% if encontro %}Atualizar{% else %}Criar{% endif %}
+      {% if encontro %}
+        {% lng "Atualizar" "Update" %}
+      {% else %}
+        {% lng "Criar" "Create" %}
+      {% endif %}
     </button>
     {% if encontro %}
       <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" onclick="operacao = 'excluir';">
-        Excluir Mentoria
+        {% lng "Excluir Mentoria" "Delete Mentoring" %}
       </button>
     {% endif %}
   </div>

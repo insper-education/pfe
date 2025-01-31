@@ -92,7 +92,7 @@
                   <span class="texto-curto">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
                 </span>
                 {% if e.facilitador %}<div class="bot_tag">
-                  {% lng "Facilitador:" "Facilitator:" %}
+                  {% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
                   {{e.facilitador.get_full_name}}</div>{% endif %}
                 {% if e.location %}
                   <div class="bot_tag">

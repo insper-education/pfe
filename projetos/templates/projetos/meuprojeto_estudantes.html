@@ -67,7 +67,10 @@
               <li>
                 {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
                 {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
-                {% if dinamica.facilitador %}; facilitador: {{dinamica.facilitador}} {% endif %}
+                {% if dinamica.facilitador %}|
+                  {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
+                  {{dinamica.facilitador.get_full_name}}
+                {% endif %}
               </li>
             {% endfor %}
           </ul>

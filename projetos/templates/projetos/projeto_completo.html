@@ -443,7 +443,7 @@
                     {% endif %}
                     {% if dinamica.facilitador %}
                       <li>
-                        {% lng "Facilitador" "Facilitator" %}:
+                        {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
                         <a href="{% url 'user_detail' dinamica.facilitador.id %}">
                           {{dinamica.facilitador}}
                         </a>

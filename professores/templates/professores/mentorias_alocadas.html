@@ -35,15 +35,6 @@
           {% if e.projeto  %}
             {% include "cabecalho_projeto.html" with com_email=True projeto=e.projeto com_grupo=True %}
             
-            {% comment %} Meio obvio, parece desnecessário {% endcomment %}
-            {% comment %} {% if e.facilitador %}
-              <div class="facilitador" style="margin-top: 8px;">
-                <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
-                <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
-                <br>
-              </div>
-            {% endif %} {% endcomment %}
-
             {% if e.location %}
               <div class="local" style="margin-top: 8px;">
                 <b>Local:</b> 
