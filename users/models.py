@@ -80,6 +80,10 @@ class PFEUser(AbstractUser):
 
     nome_social = models.CharField(max_length=150, null=True, blank=True,
                                    help_text="Na prática o nome que a pessoa é (ou gostaria de ser) chamada")
+    
+    avaliacao_grupo = models.ForeignKey("estudantes.AvaliacaoGrupo", null=True, blank=True, on_delete=models.SET_NULL,
+                               help_text="Resultados da Avaliacao de Grupo")
+
     class Meta:
         """Classe Meta."""
         verbose_name = "Usuário"
