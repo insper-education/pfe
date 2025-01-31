@@ -179,19 +179,10 @@ def registro_usuario(request, user=None):
     # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
     mensagem = ""
 
-    if usuario.tipo_de_usuario == 1 or hasattr(usuario, "aluno"):  # estudante
-
-        if not hasattr(user, "aluno"):
-            estudante = Aluno(user=usuario)
-        else:
-            estudante = user.aluno
-
+    if tipo_de_usuario == "estudante":  # estudante
+        estudante, _ = Aluno.objects.get_or_create(user=usuario)
         estudante.matricula = request.POST.get("matricula", None)
-
-        curso = request.POST.get("curso", None)
-
-        estudante.curso2 = Curso.objects.filter(sigla=curso).last()
-        
+        estudante.curso2 = Curso.objects.filter(sigla=request.POST.get("curso", None)).last()
         try:
             estudante.anoPFE = int(request.POST["ano"])
             estudante.semestrePFE = int(request.POST["semestre"])
@@ -199,7 +190,6 @@ def registro_usuario(request, user=None):
             estudante.anoPFE = None
             estudante.semestrePFE = None
             mensagem += "Erro na identificação do ano e semestre.<br>"
-
         try:
             estudante.cr = float(request.POST["cr"])
         except (ValueError, OverflowError, MultiValueDictKeyError):
@@ -219,13 +209,10 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 2 or hasattr(usuario, "professor"):  # professor
+    elif tipo_de_usuario == "professor" or tipo_de_usuario == "funcionario":  # professor
     #Realidade Virtual, Computação Gráfica, Jogos, Computação de Alto Desempenho.
-        if not hasattr(user, "professor"):
-            professor = Professor(user=usuario)
-        else:
-            professor = user.professor
-
+        professor, _ = Professor.objects.get_or_create(user=usuario)
+        
         if tipo_de_usuario == "funcionario":
             professor.dedicacao = "O"  # ("O", "Outro"),
             professor.departamento = limpa_texto(request.POST.get("departamento", None))
@@ -268,12 +255,8 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Professor"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 3 or hasattr(usuario, "parceiro"):  # Parceiro
-
-        if not hasattr(user, "parceiro"):
-            parceiro = Parceiro(user=usuario)
-        else:
-            parceiro = user.parceiro
+    elif tipo_de_usuario == "parceiro":  # Parceiro
+        parceiro, _ = Parceiro.objects.get_or_create(user=usuario)
 
         parceiro.cargo = request.POST.get("cargo", None)
         
