@@ -105,10 +105,10 @@ def registro_usuario(request, user=None):
 
     usuario.email = request.POST.get("email", "").strip()
 
+    tipo_de_usuario = request.POST.get("tipo_de_usuario", None)
     if usuario.tipo_de_usuario == 4:  # Administrador
         pass # Não mudar status de administrador por aqui
     else:
-        tipo_de_usuario = request.POST.get("tipo_de_usuario", None)
         if tipo_de_usuario == "estudante":
             usuario.tipo_de_usuario = 1  # (1, "estudante") 
         elif tipo_de_usuario == "professor":
@@ -179,7 +179,7 @@ def registro_usuario(request, user=None):
     # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
     mensagem = ""
 
-    if usuario.tipo_de_usuario == 1:  # estudante
+    if usuario.tipo_de_usuario == 1 or hasattr(user, "aluno"):  # estudante
 
         if not hasattr(user, "aluno"):
             estudante = Aluno(user=usuario)
@@ -190,7 +190,7 @@ def registro_usuario(request, user=None):
 
         curso = request.POST.get("curso", None)
 
-        estudante.curso2 = Curso.objects.get(sigla=curso)
+        estudante.curso2 = Curso.objects.filter(sigla=curso).last()
         
         try:
             estudante.anoPFE = int(request.POST["ano"])
@@ -219,8 +219,8 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 2:  # professor
-
+    elif usuario.tipo_de_usuario == 2 or hasattr(user, "professor"):  # professor
+    #Realidade Virtual, Computação Gráfica, Jogos, Computação de Alto Desempenho.
         if not hasattr(user, "professor"):
             professor = Professor(user=usuario)
         else:
@@ -228,7 +228,6 @@ def registro_usuario(request, user=None):
 
         if tipo_de_usuario == "funcionario":
             professor.dedicacao = "O"  # ("O", "Outro"),
-
             professor.departamento = limpa_texto(request.POST.get("departamento", None))
 
         else:
@@ -277,7 +276,7 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Professor"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 3:  # Parceiro
+    elif usuario.tipo_de_usuario == 3 or hasattr(user, "parceiro"):  # Parceiro
 
         if not hasattr(user, "parceiro"):
             parceiro = Parceiro(user=usuario)
