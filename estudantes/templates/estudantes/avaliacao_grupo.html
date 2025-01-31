@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load linguas %}
+  <style>
+    .explanatory-text {
+      max-width: 1050px;
+      margin: 10px 0px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
+
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="explanatory-text">
+    {% lng texto_estilo.pt texto_estilo.en %}
+  </div>
+
+  <form method="post">{% csrf_token %}
+    
+    <table class="tabela-padrao table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="hide-on-narrow">#</th>
+          <th>{% lng "Questão" "Question" %}</th>
+          <th>{% lng "Frequência" "Frequency" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for questao in questoes %}
+          <tr>
+            <td class="hide-on-narrow" style="text-align:center">{{ forloop.counter }}</td>
+            <td>{{ questao }}</td>
+            <td>
+              <label><input type="radio" name="question_{{ forloop.counter }}" value="1"> Baixa</label><br>
+              <label><input type="radio" name="question_{{ forloop.counter }}" value="2"> Média</label><br>
+              <label><input type="radio" name="question_{{ forloop.counter }}" value="3"> Alta</label>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button class="btn btn-primary mb-1 mt-2" type="submit">
+      {% lng "Enviar" "Submit" %}
+    </button>
+
+  </form>
+
+{% endblock %}

@@ -22,6 +22,10 @@ urlpatterns = [
          views.index_estudantes,
          name="estudantes"),
 
+     path("avaliacao_grupo/",
+         views.avaliacao_grupo,
+         name="avaliacao_grupo"),
+
     path("alinhamentos_gerais/",
          views.alinhamentos_gerais,
          name="alinhamentos_gerais"),

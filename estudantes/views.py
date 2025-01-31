@@ -386,6 +386,99 @@ def estilo_comunicacao(request):
     return render(request, "estudantes/estilo_comunicacao.html", context)
 
 
+
+@login_required
+def avaliacao_grupo(request):
+    """Para passar links de alinhamentos gerais de início de semestre."""
+
+    if request.method == "POST":
+        for estilo in EstiloComunicacao.objects.all():
+
+            if all(f"prioridade_resposta{i}_{estilo.id}" in request.POST for i in range(1, 5)):
+                prioridade_resposta1 = request.POST.get(f"prioridade_resposta1_{estilo.id}")
+                prioridade_resposta2 = request.POST.get(f"prioridade_resposta2_{estilo.id}")
+                prioridade_resposta3 = request.POST.get(f"prioridade_resposta3_{estilo.id}")
+                prioridade_resposta4 = request.POST.get(f"prioridade_resposta4_{estilo.id}")
+
+                usuario_estilo, created = UsuarioEstiloComunicacao.objects.update_or_create(
+                    usuario=request.user,
+                    estilo_comunicacao=estilo,
+                    defaults={
+                        "prioridade_resposta1": prioridade_resposta1,
+                        "prioridade_resposta2": prioridade_resposta2,
+                        "prioridade_resposta3": prioridade_resposta3,
+                        "prioridade_resposta4": prioridade_resposta4,
+                    }
+                )
+
+        respostas = get_respostas_estilos(request.user)
+        if respostas:
+
+            mensagem = "Opções submetidas com sucesso!<br>"
+            mensagem_resposta = "<br><h4>Tabela de Estilo de Comunicação</h4>"
+            mensagem_resposta += "<br><b>Respostas:</b>"
+            for key, value in respostas.items():
+                mensagem_resposta += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+
+            subject = "Capstone | Estilo de Comunicação"
+            recipient_list = [request.user.email, ]
+            email(subject, recipient_list, mensagem_resposta)
+            mensagem += mensagem_resposta
+
+        else:
+            mensagem = "Erro na submissão das opções."
+
+
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+
+        return render(request, "generic.html", context=context)
+
+    texto_estilo = {
+        "pt": """
+            <b>ORIENTAÇÕES:</b><br>
+                1. Responda esse questionário pensando em como o seu time está operando na realização do Capstone.<br>										
+                2. Preencha esse documento até 14/03 (esse material é confidencial!).																		
+            """,
+        "en": """
+            <b>INSTRUCTIONS:</b><br>
+                1. Answer this questionnaire thinking about how your team is operating in the Capstone project.<br>
+                2. Fill this form until 03/14 (this material is confidential!).
+            """,
+        }
+    
+    questoes = [
+        "Os membros da equipe são veementes e espontâneos quando discutem questões de interesse comum?",
+        "Os membros da equipe criticam as falhas ou os comportamentos contraproducentes uns dos outros?",
+        "Os membros da equipe sabem exatamente em que seus colegas estão trabalhando e como eles contribuem para o bem coletivo?",
+        "Os membros da equipe pedem desculpas sinceras uns aos outros quando dizem ou fazem algo inapropriado ou que possa prejudicar a equipe?",
+        "Os membros da equipe fazem sacrifícios (em termos, por exemplo, de orçamento, território, número de pessoal) de boa vontade em seus departamentos ou áreas de conhecimento, pelo bem da equipe?",
+        "Os membros da equipe admitem abertamente suas fraquezas e seus erros?",
+        "As reuniões de equipe são instigantes e não tediosas?",
+        "Os membros da equipe saem das reuniões confiantes em que seus colegas estão totalmente comprometidos com as decisões acordadas, ainda que tenha havido uma discordância inicial?",
+        "O ânimo da equipe é afetado de forma significativa quando algum objetivo coletivo não é alcançado?",
+        "Durante as reuniões de equipe, as questões mais importantes e difíceis são colocadas em pauta para serem resolvidas?",
+        "Os membros da equipe se preocupam em não decepcionar os colegas?",
+        "Os membros da equipe conhecem a vida pessoal uns dos outros e se sentem à vontade falando sobre esse tema?",
+        "Os membros da equipe terminam as discussões com resoluções claras e específicas e com tarefas a realizar?",
+        "Os membros da equipe desafiam-se uns aos outros em relação a seus planos e abordagens?",
+        "Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?",
+    ]
+
+    context = {
+        "titulo": {"pt": "Avaliação de Grupo", "en": "Group Evaluation"},
+        "questoes": questoes,
+        "texto_estilo": texto_estilo,
+    }
+
+    return render(request, "estudantes/avaliacao_grupo.html", context)
+
+
+
+
 @login_required
 @transaction.atomic
 def estudante_feedback(request):
