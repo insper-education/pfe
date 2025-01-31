@@ -179,7 +179,7 @@ def registro_usuario(request, user=None):
     # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
     mensagem = ""
 
-    if usuario.tipo_de_usuario == 1 or hasattr(user, "aluno"):  # estudante
+    if usuario.tipo_de_usuario == 1 or hasattr(usuario, "aluno"):  # estudante
 
         if not hasattr(user, "aluno"):
             estudante = Aluno(user=usuario)
@@ -219,7 +219,7 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 2 or hasattr(user, "professor"):  # professor
+    elif usuario.tipo_de_usuario == 2 or hasattr(usuario, "professor"):  # professor
     #Realidade Virtual, Computação Gráfica, Jogos, Computação de Alto Desempenho.
         if not hasattr(user, "professor"):
             professor = Professor(user=usuario)
@@ -232,16 +232,8 @@ def registro_usuario(request, user=None):
 
         else:
             dedicacao = request.POST.get("dedicacao", None)
-            if dedicacao == "TI":  # ("TI", "Tempo Integral"),
-                professor.dedicacao = "TI"
-            elif dedicacao == "TP":  # ("TP", 'Tempo Parcial'),
-                professor.dedicacao = "TP"
-            elif dedicacao == "V":  # ("V", "Visitante"),
-                professor.dedicacao = "V"
-            elif dedicacao == "E":  # ("E", "Externo"),
-                professor.dedicacao = "E"
-            elif dedicacao == "O":  # ("O", "Outro"),
-                professor.dedicacao = "O"
+            if dedicacao in [subl[0] for subl in Professor.TIPO_DEDICACAO]:
+                professor.dedicacao = dedicacao
             else:
                 professor.dedicacao = None
                 mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
@@ -276,7 +268,7 @@ def registro_usuario(request, user=None):
         usuario.groups.add(Group.objects.get(name="Professor"))  # Grupo de permissões
 
 
-    elif usuario.tipo_de_usuario == 3 or hasattr(user, "parceiro"):  # Parceiro
+    elif usuario.tipo_de_usuario == 3 or hasattr(usuario, "parceiro"):  # Parceiro
 
         if not hasattr(user, "parceiro"):
             parceiro = Parceiro(user=usuario)
