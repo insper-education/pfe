@@ -468,15 +468,23 @@ def avaliacao_grupo(request):
         "Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?",
     ]
 
+    disfuncoes = [
+        "Falta de Confiança",
+        "Medo de Conflitos",
+        "Falta de Comprometimento",
+        "Evitar responsabilizar os outros",
+        "Falta de atenção aos resultados",
+    ]
+
+
     context = {
         "titulo": {"pt": "Avaliação de Grupo", "en": "Group Evaluation"},
         "questoes": questoes,
         "texto_estilo": texto_estilo,
+        "disfuncoes": disfuncoes,
     }
 
     return render(request, "estudantes/avaliacao_grupo.html", context)
-
-
 
 
 @login_required
