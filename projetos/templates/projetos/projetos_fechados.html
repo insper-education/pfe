@@ -252,20 +252,30 @@
 
       <div class="totais">
         <b>{% lng "Total de projetos" "Total of projects" %} = {{ numero_projetos }}</b>
-        {% if numero_projetos_avancado > 0 %}
-          <span class="avancado">[ +{{ numero_projetos_avancado }} avançado{% if numero_projetos_avancado > 1 %}s{% endif %} ]</span>
-        {% endif %}
-        {% if projetos_time_misto > 0 %}
-          <span class="avancado">[ {{ projetos_time_misto }} time{% if projetos_time_misto > 1 %}s{% endif %} misto{% if projetos_time_misto > 1 %}s{% endif %} ]</span>
+        {% if numero_projetos_avancado > 0 or numero_projetos_time_misto > 0 %}
+          [
+          <span class="regulares">{{ numero_projetos_regulares }} {% lng_n numero_projetos_regulares "regular" "regulares" "regular" %}</span>
+          {% if numero_projetos_avancado > 0 %}
+            <span class="avancado">+ {{ numero_projetos_avancado }} {% lng_n numero_projetos_avancado "avançado" "avançados" "advanced" %}</span>
+          {% endif %}
+          {% if numero_projetos_time_misto > 0 %}
+            <span class="misto">+ {{ numero_projetos_time_misto }} {% lng_n numero_projetos_time_misto "time misto" "times misto" "mixed team" "mixed teams" %}</span>
+          {% endif %}
+          ]
         {% endif %}
         <br>
 
         <b>{% lng "Total de estudantes" "Total of students" %} = {{ numero_estudantes}}</b>
-        {% if numero_estudantes_avancado > 0 %}
-          <span class="avancado"> [ +{{ numero_estudantes_avancado }} avançado{% if numero_estudantes_avancado > 1 %}s{% endif %} ]</span>
-        {% endif %}
-        {% if numero_estudantes_externos > 0 %}
-          <span class="avancado">[ {{ numero_estudantes_externos }} externo{% if numero_estudantes_externos > 1 %}s{% endif %} ]</span>
+        {% if numero_estudantes_avancado > 0 or numero_estudantes_externos > 0 %}
+          [
+          <span class="regulares">{{ numero_estudantes_regulares }} {% lng_n numero_estudantes_regulares "regular" "regulares" "regular" %}</span>
+          {% if numero_estudantes_avancado > 0 %}
+            <span class="avancado">+ {{ numero_estudantes_avancado }} {% lng_n numero_estudantes_avancado "avançado" "avançados" "advanced" %}</span>
+          {% endif %}
+          {% if numero_estudantes_externos > 0 %}
+            <span class="externos">+ {{ numero_estudantes_externos }} {% lng_n numero_estudantes_externos "externo" "externos" "external" %}</span>
+          {% endif %}
+          ]
         {% endif %}
         <br>
 

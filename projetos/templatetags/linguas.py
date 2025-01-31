@@ -75,8 +75,12 @@ def lng_g(pt_genero, pt_text_m, pt_text_f, en_text_m, en_text_f=None):
 
 # Quando a palavra muda por causa do número
 @register.simple_tag
-def lng_n(pt_numero, pt_text_s, pt_text_p, en_text_s, en_text_p=None):
-    if pt_numero <= 1:
+def lng_n(numero, pt_text_s, pt_text_p, en_text_s, en_text_p=None):
+    try:
+        numero = int(numero)
+    except (ValueError, TypeError):
+        numero = 0
+    if numero <= 1:
         pt_text = pt_text_s
         en_text = en_text_s
     else:

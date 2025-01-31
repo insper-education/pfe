@@ -317,12 +317,14 @@ def projetos_fechados(request):
             qtd_est = []
 
             numero_estudantes = 0
+            numero_estudantes_regulares = 0
             numero_estudantes_avancado = 0
             numero_estudantes_externos = 0
 
             numero_projetos = 0
+            numero_projetos_regulares = 0
             numero_projetos_avancado = 0
-            projetos_time_misto = 0
+            numero_projetos_time_misto = 0
 
             for projeto in projetos_filtrados:
 
@@ -339,14 +341,13 @@ def projetos_fechados(request):
                 projetos_selecionados.append(projeto)
 
                 if projeto.avancado:
-                    numero_estudantes_avancado += len(estudantes_pfe)
                     numero_projetos_avancado += 1
+                elif projeto.time_misto:
+                    numero_projetos_time_misto += 1
                 else:
-                    numero_estudantes += len(estudantes_pfe)
-                    numero_projetos += 1
+                    numero_projetos_regulares += 1
 
-                if projeto.time_misto:
-                    projetos_time_misto += 1
+                numero_projetos += 1
 
                 prioridades = []
                 for estudante in estudantes_pfe:
@@ -360,6 +361,12 @@ def projetos_fechados(request):
 
                     if estudante.externo:
                         numero_estudantes_externos += 1
+                    elif projeto.avancado:
+                        numero_estudantes_avancado += 1
+                    else:
+                        numero_estudantes_regulares += 1
+
+                    numero_estudantes += 1
 
                 prioridade_list.append(zip(estudantes_pfe, prioridades))
                 cooperacoes.append(projeto.conexao_set.filter(colaboracao=True))
@@ -370,11 +377,14 @@ def projetos_fechados(request):
             context = {
                 "projetos": projetos,
                 "numero_projetos": numero_projetos,
+                "numero_projetos_regulares": numero_projetos_regulares,
                 "numero_projetos_avancado": numero_projetos_avancado,
+                "numero_projetos_time_misto": numero_projetos_time_misto,
                 "numero_estudantes": numero_estudantes,
+                "numero_estudantes_regulares": numero_estudantes_regulares,
                 "numero_estudantes_avancado": numero_estudantes_avancado,
                 "numero_estudantes_externos": numero_estudantes_externos,
-                "projetos_time_misto": projetos_time_misto,
+                
                 "configuracao": get_object_or_404(Configuracao),
             }
 
