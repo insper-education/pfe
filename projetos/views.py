@@ -384,7 +384,6 @@ def projetos_fechados(request):
                 "numero_estudantes_regulares": numero_estudantes_regulares,
                 "numero_estudantes_avancado": numero_estudantes_avancado,
                 "numero_estudantes_externos": numero_estudantes_externos,
-                
                 "configuracao": get_object_or_404(Configuracao),
             }
 
