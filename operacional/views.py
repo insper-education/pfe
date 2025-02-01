@@ -336,7 +336,7 @@ def plano_aulas(request):
         if "edicao" in request.POST:
             ano, semestre = request.POST["edicao"].split('.')
             context = {
-                "aulas": Evento.get_evento(nome="Aula", ano=ano, semestre=semestre),
+                "aulas": Evento.get_eventos(nome="Aula", ano=ano, semestre=semestre),
                 "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),
                 }
             return render(request, "operacional/plano_aulas.html", context=context)
