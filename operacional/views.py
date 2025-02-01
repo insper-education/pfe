@@ -334,7 +334,7 @@ def plano_aulas(request):
     if request.is_ajax():
 
         if "edicao" in request.POST:
-            ano, semestre = request.POST["edicao"].split('.')
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
             context = {
                 "aulas": Evento.get_eventos(nome="Aula", ano=ano, semestre=semestre),
                 "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),

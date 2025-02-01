@@ -677,7 +677,11 @@ class Evento(models.Model):
             ano = configuracao.ano
             semestre = configuracao.semestre
         elif ano and semestre:
-            pass
+            try:
+                ano = int(ano)
+                semestre = int(semestre)
+            except ValueError:
+                raise ValidationError("<h2>Erro com ano e/ou semestre!</h2>")
         else:
             configuracao = get_object_or_404(Configuracao)
             ano = configuracao.ano
