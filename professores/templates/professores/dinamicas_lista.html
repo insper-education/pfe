@@ -72,16 +72,17 @@
           <tr>
             <td>
               {% comment %} <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}"> {% endcomment %}
-              <b>Horário:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
+              <b>{% lng "Horário" "Time" %}:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
               {% if e.facilitador %}
                 <div class="facilitador" style="margin: 4px 0px 4px 0px;">
-                  <b>Facilitador:</b> <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
+                  <b>{% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:</b>
+                  <a class="imprimir" href="{% url 'user_detail' e.facilitador.id %}">{{ e.facilitador.get_full_name }}</a>
                   <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
                 </div>
               {% endif %}
               {% if e.location %}
                 <div class="local" style="margin: 4px 0px 4px 0px;">
-                  <b>Local/Link:</b> 
+                  <b>Local/Link:</b>
                   {% if e.url_location %}
                     <a href="{{e.location}}">
                   {% endif %}
@@ -95,7 +96,7 @@
               {% if e.projeto %}
                 {% include "cabecalho_projeto.html" with projeto=e.projeto %}
                 <div class="grupo" style="margin-top: 1px;">
-                  <b>Grupo:</b>
+                  <b>{% lng "Grupo" "Group" %}:</b>
                   <ol>
                     {% for alocacao in e.projeto.alocacao_set.all %} 
                       <li><a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}
@@ -106,12 +107,12 @@
                   </ol>
                 </div>
               {% else %}
-                Horário Livre<br><br>
+                {% lng "Horário Livre" "Available Time" %}<br><br>
               {% endif %}
 
               <span class="editar esconder" style="float: right;">
                 <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
-                  <button class="btn btn-primary">Editar</button>
+                  <button class="btn btn-primary">{% lng "Editar" "Edit" %}</button>
                 </a>
               </span>
 
@@ -121,11 +122,11 @@
       </tbody></table>
       <p>&nbsp;</p>
     {% else %}
-      <p>Não existem encontros.</p>
+      <p>{% lng "Não existem encontros." "There are no meetings." %}</p>
     {% endif %}
     <p>&nbsp;</p>
 
-    <h4>Calendário</h4>
+    <h4>{% lng "Calendário" "Calendar" %}</h4>
     {% include "calendario_dinamicas.html" %}
 
   </div>
@@ -133,7 +134,7 @@
   <div class="sem_agendamento">
     {% if sem_dinamicas %}
       <br>
-      <h5>Projetos ativos sem mentorias agendadas:</h5>
+      <h5>{% lng "Projetos ativos sem mentorias agendadas." "Active projects without scheduled mentoring." %}:</h5>
       <ul>
       {% for projeto in sem_dinamicas %}
         <li>
