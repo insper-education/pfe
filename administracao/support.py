@@ -210,7 +210,7 @@ def registro_usuario(request, user=None):
 
 
     elif tipo_de_usuario == "professor" or tipo_de_usuario == "funcionario":  # professor
-    #Realidade Virtual, Computação Gráfica, Jogos, Computação de Alto Desempenho.
+
         professor, _ = Professor.objects.get_or_create(user=usuario)
         
         if tipo_de_usuario == "funcionario":

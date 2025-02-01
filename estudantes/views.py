@@ -828,10 +828,12 @@ def relato_visualizar(request, id):
 def exames_pesos(request):
     """Exibe os exames e pessos por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    semestres = []
-    semestres.append(["2018", "2", filtra_composicoes(Composicao.objects.all(), 2018, 2)])
-    for ano in range(2019, configuracao.ano+2):
-        for semestre in range(1, 3):
+    semestres = [["2018", "2", filtra_composicoes(Composicao.objects.all(), 2018, 2)]]
+
+    p_ano = configuracao.ano if configuracao.semestre == 1 else configuracao.ano+1
+    for ano in range(2019, p_ano+1):
+        s_final = 2 if ano <= configuracao.ano else 1
+        for semestre in range(1, s_final+1):
             semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
 
     # Filtrando objetivos por sigla (sem duplicidade)
