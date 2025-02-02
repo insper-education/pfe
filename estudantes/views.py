@@ -388,7 +388,7 @@ def estilo_comunicacao(request):
 
 
 @login_required
-def avaliacao_grupo(request):
+def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
 
     if request.method == "POST":
@@ -478,13 +478,40 @@ def avaliacao_grupo(request):
 
 
     context = {
-        "titulo": {"pt": "Avaliação de Grupo", "en": "Group Evaluation"},
+        "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
         "questoes": questoes,
         "texto_estilo": texto_estilo,
         "disfuncoes": disfuncoes,
     }
 
-    return render(request, "estudantes/avaliacao_grupo.html", context)
+    return render(request, "estudantes/funcionalidade_grupo.html", context)
+
+
+@login_required
+def codigo_conduta(request):
+    """Discutir código de conduta dos estudantes."""
+    configuracao = get_object_or_404(Configuracao)
+    codigo_conduta = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+
+    if request.method == "POST":
+        post_data = request.POST.dict()
+        post_data.pop("csrfmiddlewaretoken", None)
+        post_data_json = json.dumps(post_data)
+        request.user.codigo_conduta = post_data_json
+        request.user.save()
+        mensagem = "Dados salvos com sucesso!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic.html", context=context)
+
+    context = {
+        "titulo": {"pt": "Código de Conduta", "en": "Code of Conduct"},
+        "codigo_conduta": codigo_conduta,
+        "respostas": json.loads(request.user.codigo_conduta) if request.user.codigo_conduta else None,
+    }
+    return render(request, "estudantes/codigo_conduta.html", context)
 
 
 @login_required

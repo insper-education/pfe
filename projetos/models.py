@@ -461,9 +461,11 @@ class Configuracao(models.Model):
     
     horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
                                    help_text="Horários de Trabalho Semanais dos Estudantes")
+
+    codigo_conduta = models.TextField("Código de Conduta", max_length=4096, null=True, blank=True,
+                                   help_text="Código de Conduta do Capstone")
     ###-----------------------------------------------------###
-
-
+    
 
     ###----------------------Mensagens----------------------###
     msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
@@ -472,6 +474,8 @@ class Configuracao(models.Model):
     msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,
                                    help_text="Mensagem de Envio Automático de e-mail")
     ###-----------------------------------------------------###
+
+
 
     class Meta:
         verbose_name = "Configuração"

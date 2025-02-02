@@ -8,6 +8,9 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+
+  {% load dictionary %}
+  
   <script src="{% static 'js/Sortable.min.js' %}"></script>
   <style>
     .explanatory-text {
@@ -34,32 +37,24 @@
   {% endif %}
 
   <form method="post">{% csrf_token %}
-    {% include "tabela_estilos.html" with usuario=request.user %}<br>
+
+    {% for group, perguntas in codigo_conduta.items %}
+      <div class="card mb-3">
+        <div class="card-header">{{ forloop.counter }} - {{ group }}</div>
+        <div class="card-body">
+          {% for id, p in perguntas.items %}
+            <div class="form-group">
+              <label for="{{ id }}">{{ p }}</label>
+              <textarea class="form-control" id="{{ id }}" name="{{ id }}" rows="3">{{ respostas|get_value:id }}</textarea>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    
     <button class="btn btn-primary mb-1 mt-2" type="submit">
       {% lng "Enviar" "Submit" %}
     </button>
   </form>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      document.querySelectorAll(".sortable-list").forEach(function(list) {
-        new Sortable(list, {
-          animation: 100,
-          ghostClass: "sortable-ghost",
-          onEnd: function(evt) {
-            const items = evt.to.children;
-            for (let i = 0; i < items.length; i++) {
-              const item = items[i];
-              const priority = i + 1;
-              item.setAttribute("data-priority", priority);
-              const estiloId = list.id.split('_')[1];
-              const respostaNumber = item.getAttribute("data-resposta-number");
-              document.getElementById(`prioridade_resposta${priority}_${estiloId}`).value = respostaNumber;
-            }
-          }
-        });
-      });
-    });
-  </script>
 
 {% endblock %}

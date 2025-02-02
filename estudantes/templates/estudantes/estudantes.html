@@ -109,22 +109,6 @@
     {% lng "Submissão de Documentos" "Document Submission" %}
   </a>
 </div>
-
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
-  <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
-      {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-      href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
-      {% lng "Avaliação de Pares Intermediária" "Intermediate Peer Evaluation" %}
-  </a>
-</div>
-
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
-  <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
-      {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-      href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
-        {% lng "Avaliação de Pares Final" "Final Peer Evaluation" %}
-  </a>
-</div>
 <br>
 
 
@@ -143,8 +127,27 @@
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
-  <a href="{% url 'avaliacao_grupo' %}">
+  <a href="{% url 'codigo_conduta' %}">
+    {% lng "Código de Conduta" "Code of Conduct" %}
+  </a>
+</div>
+<div class="item_lista"><span class="circulo">&#9899;</span>
+  <a href="{% url 'funcionalidade_grupo' %}">
     {% lng "Funcionalidade de Grupo" "Group Functionality" %}
+  </a>
+</div>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
+  <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
+      {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+      href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
+      {% lng "Avaliação de Pares Intermediária" "Intermediate Peer Evaluation" %}
+  </a>
+</div>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
+  <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
+      {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+      href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
+        {% lng "Avaliação de Pares Final" "Final Peer Evaluation" %}
   </a>
 </div>
 <br>

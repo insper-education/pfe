@@ -140,7 +140,7 @@ class EstiloComunicacao(models.Model):
 
 
 
-class AvaliacaoGrupo(models.Model):
+class FuncionalidadeGrupo(models.Model):
     FAIXA_ESCOLHAS = [
         (1, '1'),
         (2, '2'),
@@ -164,8 +164,8 @@ class AvaliacaoGrupo(models.Model):
     question_15 = models.IntegerField("Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?", choices=FAIXA_ESCOLHAS)
 
     def __str__(self):
-        return f"Avaliacao de Grupo {self.id}"
+        return f"Funcionalidade de Grupo {self.id}"
 
     class Meta:
-        verbose_name = "Avaliação de Grupo"
-        verbose_name_plural = "Avaliações de Grupo"
+        verbose_name = "Funcionalidade de Grupo"
+        verbose_name_plural = "Funcionalidades de Grupo"

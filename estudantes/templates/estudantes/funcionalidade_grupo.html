@@ -32,9 +32,11 @@
 
 {% block content %}
 
-  <div class="explanatory-text">
-    {% lng texto_estilo.pt texto_estilo.en %}
-  </div>
+  {% if texto_estilo %}
+    <div class="explanatory-text">
+      {% lng texto_estilo.pt texto_estilo.en %}
+    </div>
+  {% endif %}
 
   <form method="post">{% csrf_token %}
     

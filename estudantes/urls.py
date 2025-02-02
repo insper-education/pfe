@@ -22,9 +22,9 @@ urlpatterns = [
          views.index_estudantes,
          name="estudantes"),
 
-     path("avaliacao_grupo/",
-         views.avaliacao_grupo,
-         name="avaliacao_grupo"),
+     path("funcionalidade_grupo/",
+         views.funcionalidade_grupo,
+         name="funcionalidade_grupo"),
 
     path("alinhamentos_gerais/",
          views.alinhamentos_gerais,
@@ -57,6 +57,10 @@ urlpatterns = [
     path("estilo_comunicacao/",
          views.estilo_comunicacao,
          name="estilo_comunicacao"),
+
+    path("codigo_conduta/",
+         views.codigo_conduta,
+         name="codigo_conduta"),
 
     path("estudante_feedback",
          views.estudante_feedback,
