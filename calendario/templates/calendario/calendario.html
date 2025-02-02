@@ -295,57 +295,46 @@
             {% if eventos %}
               {% nospaces %}
                 {% for evento in eventos|dictsort:"endDate" %}
-                  {% if evento.get_title != "Feriado" and evento.get_title != "Aula cancelada" %}
-                    <span class="ano{{ evento.endDate.year }} ano">
-                      <span class="semestre {% if tipo_evento == "provas" %}prova{% endif %}" data-mes="{{ evento.endDate.month }}" data-dia="{{evento.endDate.day}}">
-                        {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
-                          <br>
-                          {% if tipo_evento == "provas" or tipo_evento == "laboratorios" %}
-                            <font style="background-image : linear-gradient(to bottom, transparent 80%, {{evento.get_color}} 80%">
-                              &nbsp;&nbsp;&nbsp;&nbsp;
-                            </font>
-                          {% else %}
-                            <font style="color:{{ evento.get_color }}">
-                              &#9608;
-                            </font>
-                          {% endif %}
-                          &nbsp;{{ evento.get_title }}:
-                          {% if evento.startDate == evento.endDate %} 
-                            {{ evento.endDate.day }}/{{ evento.endDate.month }}
-                          {% else %}
-                            {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
-                          {% endif %}
+                  <span class="ano{{ evento.endDate.year }} ano">
+                    <span class="semestre {% if tipo_evento == "provas" %}prova{% endif %}" data-mes="{{ evento.endDate.month }}" data-dia="{{evento.endDate.day}}">
+                      {% ifchanged evento.get_title evento.get_semester evento.endDate.year %}
+                        <br>
+                         {% if evento.tipo_evento.sublinhado %}
+                          <font style="background-image: linear-gradient(to bottom, transparent 80%, {{evento.get_color}} 80%"
+                          {% if evento.tipo_evento.descricao %}
+                            data-toggle="tooltip" data-html="true" animation="true"
+                            title="{{evento.tipo_evento.descricao|safe}}"
+                          {% endif %}>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                         {% else %}
+                          <font style="color:{{ evento.get_color }}"
+                          {% if evento.tipo_evento.descricao %}
+                            data-toggle="tooltip" data-html="true" animation="true"
+                            title="{{evento.tipo_evento.descricao|safe}}"
+                          {% endif %}>
+                            &#9608;
+                         {% endif %}
+                        </font>
+                        &nbsp;{{ evento.get_title }}:
+                        {% if evento.startDate == evento.endDate %} 
+                          {{ evento.endDate.day }}/{{ evento.endDate.month }}
                         {% else %}
-                          {% if evento.startDate == evento.endDate %} 
-                            ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
-                          {% else %}
-                            ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
-                          {% endif %}
-                        {% endifchanged %}
-                      </span>
+                          {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                        {% endif %}
+                      {% else %}
+                        {% if evento.startDate == evento.endDate %} 
+                          ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                        {% else %}
+                          ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                        {% endif %}
+                      {% endifchanged %}
                     </span>
-                  {% endif %}
+                  </span>
                 {% endfor %}
               {% endnospaces %}
             {% endif %}
           {% endfor %}
-
-
-          {% if eventos_academicos.laboratorios %}
-            <font style="text-decoration: underline solid orange">
-              <span id="linha_lab"><br>
-                {% lng "Dias sublinhados possuem disponibilidade de trabalho no espaço de projetos" "Underlined days have availability for project workspace" %}
-              </span>
-            </font>
-          {% endif %}
-          {% if eventos_academicos.provas %}
-            <font style="text-decoration: underline solid red">
-              <span id="linha_provas"><br>
-                {% lng "Semana de provas sublinhado em vermelho" "Week of tests underlined in red" %}
-              </span>
-            </font>
-          {% endif %}
-          </div>
+        </div>
 
       </div> <!--id="bloco_eventos"-->
 
@@ -361,13 +350,9 @@
             {% nospaces %}
             <table class="tab_pfe">
               <thead><tr>
-                      <th scope="col" class="cabec">
-                        {% lng "Data" "Date" %}
-                      </th>
-                      <th scope="col" class="cabec header_aula">
-                        {% lng "Aula" "Class" %}
-                      </th>
-                      <th scope="col" class="cabec header_local">Local</th>
+                <th scope="col" class="cabec">{% lng "Data" "Date" %}</th>
+                <th scope="col" class="cabec header_aula">{% lng "Aula" "Class" %}</th>
+                <th scope="col" class="cabec header_local">Local</th>
               </tr></thead>
               <tbody>
                 {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}

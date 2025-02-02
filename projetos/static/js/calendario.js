@@ -106,8 +106,8 @@ function setSemesterStyles(semesterActive) {
 
 function hideElements() {
   document.querySelectorAll(".semestre").forEach(el => el.style.display = "none");
-  $("#linha_lab").hide();
-  $("#linha_provas").hide();
+  // $("#linha_lab").hide();   NÃO MAIS SENDO USADO
+  // $("#linha_provas").hide();   NÃO MAIS SENDO USADO
 }
 
 function showElements(els) {

@@ -40,12 +40,13 @@ def get_calendario_context(user=None):
     tipos_eventos = TipoEvento.objects.all().order_by("coordenacao", "nome")
 
     eventos_academicos = {
-        "eventos": eventos.exclude(tipo_evento__sigla__in=["A", "L", "SP", "RQ", "FE"]).exclude(tipo_evento__coordenacao=True),
-        "aulas": eventos.filter(tipo_evento__sigla="A"), # 12, 'Aula'
-        "quinzenais": eventos.filter(tipo_evento__sigla="RQ"),  # 20, 'Relato Quinzenal'
-        "feedbacks": eventos.filter(tipo_evento__sigla="FE"),  # 30, 'Feedback dos Estudantes sobre Capstone'
-        "provas": eventos.filter(tipo_evento__sigla="SP"),  # 41, 'Semana de Provas'
-        "laboratorios": eventos.filter(tipo_evento__sigla="L"),  # 40, 'Laboratório'
+        "eventos": eventos.exclude(tipo_evento__sigla__in=["A", "L", "SP", "RQ", "FE", "FERI"]).exclude(tipo_evento__coordenacao=True),
+        "aulas": eventos.filter(tipo_evento__sigla="A"), # Aula
+        "quinzenais": eventos.filter(tipo_evento__sigla="RQ"),  # Relato Quinzenal
+        "feedbacks": eventos.filter(tipo_evento__sigla="FE"),  # Feedback dos Estudantes sobre Capstone
+        "feriados": eventos.filter(tipo_evento__sigla="FERI"),  # Feriado
+        "provas": eventos.filter(tipo_evento__sigla="SP"),  # Semana de Provas
+        "laboratorios": eventos.filter(tipo_evento__sigla="L"),  # Laboratório
     }
     
     context = {

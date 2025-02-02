@@ -103,7 +103,13 @@ class TipoEvento(models.Model):
                             help_text="Sigla do tipo de evento")
     
     coordenacao = models.BooleanField("Coordenação", default=False,
-                                      help_text="Evento de coordenação, senão é para estudantes")                                        
+                                      help_text="Evento de coordenação, senão é para estudantes")
+    
+    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+                                help_text="Descrição do tipo de evento")
+    
+    sublinhado = models.BooleanField("Sublinhado", default=False,
+                                    help_text="Sublinhado no calendário")
 
     def __str__(self):
         return self.nome
