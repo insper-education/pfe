@@ -462,6 +462,9 @@ class Configuracao(models.Model):
     horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
                                    help_text="Horários de Trabalho Semanais dos Estudantes")
 
+    questoes_funcionalidade = models.TextField("Questões de Funcionalidade", max_length=4096, null=True, blank=True,
+                                   help_text="Questões de Funcionalidade do Capstone")
+    
     codigo_conduta = models.TextField("Código de Conduta", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
     ###-----------------------------------------------------###

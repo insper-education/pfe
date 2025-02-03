@@ -391,6 +391,7 @@ def estilo_comunicacao(request):
 @login_required
 def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
+    configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():    
         if not request.user.funcionalidade_grupo:
@@ -407,50 +408,12 @@ def funcionalidade_grupo(request):
 
         return JsonResponse({"atualizado": False})
 
-    texto_estilo = {
-        "pt": """
-            <b>ORIENTAÇÕES:</b><br>
-                1. Responda esse questionário pensando em como o seu time está operando na realização do Capstone.<br>										
-                2. Preencha esse documento até 14/03 (esse material é confidencial!).																		
-            """,
-        "en": """
-            <b>INSTRUCTIONS:</b><br>
-                1. Answer this questionnaire thinking about how your team is operating in the Capstone project.<br>
-                2. Fill this form until 03/14 (this material is confidential!).
-            """,
-        }
-    
-    questoes = [
-        "Os membros da equipe são sinceros e espontâneos quando discutem questões de interesse comum?",
-        "Os membros da equipe apontam e identificam abertamente as falhas técnica e/ou os comportamentos contraproducentes uns dos outros?",
-        "Os membros da equipe sabem exatamente em que seus colegas estão trabalhando e como eles contribuem para o bem coletivo?",
-        "Os membros da equipe pedem desculpas sinceras uns aos outros quando dizem ou fazem algo inapropriado ou que possa prejudicar a equipe?",
-        "Os membros da equipe fazem sacrifícios (por exemplo: horários, demanda de trabalho) pelo bem da equipe e do projeto?",
-        "Os membros da equipe admitem abertamente suas fraquezas e seus erros?",
-        "As reuniões de equipe são instigantes e proveitosas?",
-        "Os membros da equipe saem das reuniões confiantes que seus colegas estão totalmente comprometidos com as decisões acordadas, ainda que tenha havido uma discordância inicial?",
-        "O ânimo da equipe é afetado de forma significativa quando algum objetivo do projeto não é alcançado?",
-        "Durante as reuniões de equipe, as questões mais importantes e difíceis são colocadas em pauta para serem resolvidas?",
-        "Os membros da equipe se preocupam em não decepcionar os colegas, o orientador, e a organização parceira?",
-        "Os membros da equipe conhecem a vida pessoal uns dos outros e se sentem à vontade falando sobre esse tema?",
-        "Os membros da equipe terminam as discussões com resoluções claras e específicas e com tarefas a realizar?",
-        "Os membros da equipe desafiam-se uns aos outros em relação a seus planos e abordagens?",
-        "Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?",
-    ]
-
-    disfuncoes = [
-        "Falta de Confiança",
-        "Medo de Conflitos",
-        "Falta de Comprometimento",
-        "Evitar responsabilizar os outros",
-        "Falta de atenção aos resultados",
-    ]
-
+    questoes_funcionalidade = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None    
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
-        "questoes": questoes,
-        "texto_estilo": texto_estilo,
-        "disfuncoes": disfuncoes,
+        "questoes": questoes_funcionalidade["questoes"],
+        "texto_estilo": questoes_funcionalidade["texto_estilo"],
+        "disfuncoes": questoes_funcionalidade["disfuncoes"],
         "funcionalidade_grupo": request.user.funcionalidade_grupo,
     }
 
