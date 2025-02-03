@@ -30,6 +30,8 @@ from administracao.models import Carta, TipoEvento
 from administracao.support import propostas_liberadas
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
+from estudantes.models import FuncionalidadeGrupo
+
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
 from projetos.messages import email, message_agendamento, create_message, message_cancelamento
@@ -386,56 +388,24 @@ def estilo_comunicacao(request):
     return render(request, "estudantes/estilo_comunicacao.html", context)
 
 
-
 @login_required
 def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
 
-    if request.method == "POST":
-        for estilo in EstiloComunicacao.objects.all():
+    if request.is_ajax():    
+        if not request.user.funcionalidade_grupo:
+            request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+            request.user.save()
 
-            if all(f"prioridade_resposta{i}_{estilo.id}" in request.POST for i in range(1, 5)):
-                prioridade_resposta1 = request.POST.get(f"prioridade_resposta1_{estilo.id}")
-                prioridade_resposta2 = request.POST.get(f"prioridade_resposta2_{estilo.id}")
-                prioridade_resposta3 = request.POST.get(f"prioridade_resposta3_{estilo.id}")
-                prioridade_resposta4 = request.POST.get(f"prioridade_resposta4_{estilo.id}")
+        questao = request.POST.get("questao", None)
+        if questao:
+            valor = request.POST.get("valor", None)
+            if valor:
+                setattr(request.user.funcionalidade_grupo, questao, valor)
+                request.user.funcionalidade_grupo.save()
+                return JsonResponse({"atualizado": True})
 
-                usuario_estilo, created = UsuarioEstiloComunicacao.objects.update_or_create(
-                    usuario=request.user,
-                    estilo_comunicacao=estilo,
-                    defaults={
-                        "prioridade_resposta1": prioridade_resposta1,
-                        "prioridade_resposta2": prioridade_resposta2,
-                        "prioridade_resposta3": prioridade_resposta3,
-                        "prioridade_resposta4": prioridade_resposta4,
-                    }
-                )
-
-        respostas = get_respostas_estilos(request.user)
-        if respostas:
-
-            mensagem = "Opções submetidas com sucesso!<br>"
-            mensagem_resposta = "<br><h4>Tabela de Estilo de Comunicação</h4>"
-            mensagem_resposta += "<br><b>Respostas:</b>"
-            for key, value in respostas.items():
-                mensagem_resposta += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
-
-            subject = "Capstone | Estilo de Comunicação"
-            recipient_list = [request.user.email, ]
-            email(subject, recipient_list, mensagem_resposta)
-            mensagem += mensagem_resposta
-
-        else:
-            mensagem = "Erro na submissão das opções."
-
-
-        context = {
-            "voltar": True,
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-
-        return render(request, "generic.html", context=context)
+        return JsonResponse({"atualizado": False})
 
     texto_estilo = {
         "pt": """
@@ -476,16 +446,16 @@ def funcionalidade_grupo(request):
         "Falta de atenção aos resultados",
     ]
 
-
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
         "questoes": questoes,
         "texto_estilo": texto_estilo,
         "disfuncoes": disfuncoes,
+        "funcionalidade_grupo": request.user.funcionalidade_grupo,
     }
 
     return render(request, "estudantes/funcionalidade_grupo.html", context)
-
+    
 
 @login_required
 def codigo_conduta(request):

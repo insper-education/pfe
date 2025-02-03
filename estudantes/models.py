@@ -147,21 +147,21 @@ class FuncionalidadeGrupo(models.Model):
         (3, '3'),
     ]
 
-    question_1 = models.IntegerField("Os membros da equipe são veementes e espontâneos quando discutem questões de interesse comum?", choices=FAIXA_ESCOLHAS)
-    question_2 = models.IntegerField("Os membros da equipe criticam as falhas ou os comportamentos contraproducentes uns dos outros?", choices=FAIXA_ESCOLHAS)
-    question_3 = models.IntegerField("Os membros da equipe sabem exatamente em que seus colegas estão trabalhando e como eles contribuem para o bem coletivo?", choices=FAIXA_ESCOLHAS)
-    question_4 = models.IntegerField("Os membros da equipe pedem desculpas sinceras uns aos outros quando dizem ou fazem algo inapropriado ou que possa prejudicar a equipe?", choices=FAIXA_ESCOLHAS)
-    question_5 = models.IntegerField("Os membros da equipe fazem sacrifícios (em termos, por exemplo, de orçamento, território, número de pessoal) de boa vontade em seus departamentos ou áreas de conhecimento, pelo bem da equipe?", choices=FAIXA_ESCOLHAS)
-    question_6 = models.IntegerField("Os membros da equipe admitem abertamente suas fraquezas e seus erros?", choices=FAIXA_ESCOLHAS)
-    question_7 = models.IntegerField("As reuniões de equipe são instigantes e não tediosas?", choices=FAIXA_ESCOLHAS)
-    question_8 = models.IntegerField("Os membros da equipe saem das reuniões confiantes em que seus colegas estão totalmente comprometidos com as decisões acordadas, ainda que tenha havido uma discordância inicial?", choices=FAIXA_ESCOLHAS)
-    question_9 = models.IntegerField("O ânimo da equipe é afetado de forma significativa quando algum objetivo coletivo não é alcançado?", choices=FAIXA_ESCOLHAS)
-    question_10 = models.IntegerField("Durante as reuniões de equipe, as questões mais importantes e difíceis são colocadas em pauta para serem resolvidas?", choices=FAIXA_ESCOLHAS)
-    question_11 = models.IntegerField("Os membros da equipe se preocupam em não decepcionar os colegas?", choices=FAIXA_ESCOLHAS)
-    question_12 = models.IntegerField("Os membros da equipe conhecem a vida pessoal uns dos outros e se sentem à vontade falando sobre esse tema?", choices=FAIXA_ESCOLHAS)
-    question_13 = models.IntegerField("Os membros da equipe terminam as discussões com resoluções claras e específicas e com tarefas a realizar?", choices=FAIXA_ESCOLHAS)
-    question_14 = models.IntegerField("Os membros da equipe desafiam-se uns aos outros em relação a seus planos e abordagens?", choices=FAIXA_ESCOLHAS)
-    question_15 = models.IntegerField("Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?", choices=FAIXA_ESCOLHAS)
+    question_1 = models.IntegerField("Os membros da equipe são veementes e espontâneos quando discutem questões de interesse comum?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_2 = models.IntegerField("Os membros da equipe criticam as falhas ou os comportamentos contraproducentes uns dos outros?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_3 = models.IntegerField("Os membros da equipe sabem exatamente em que seus colegas estão trabalhando e como eles contribuem para o bem coletivo?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_4 = models.IntegerField("Os membros da equipe pedem desculpas sinceras uns aos outros quando dizem ou fazem algo inapropriado ou que possa prejudicar a equipe?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_5 = models.IntegerField("Os membros da equipe fazem sacrifícios (em termos, por exemplo, de orçamento, território, número de pessoal) de boa vontade em seus departamentos ou áreas de conhecimento, pelo bem da equipe?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_6 = models.IntegerField("Os membros da equipe admitem abertamente suas fraquezas e seus erros?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_7 = models.IntegerField("As reuniões de equipe são instigantes e não tediosas?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_8 = models.IntegerField("Os membros da equipe saem das reuniões confiantes em que seus colegas estão totalmente comprometidos com as decisões acordadas, ainda que tenha havido uma discordância inicial?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_9 = models.IntegerField("O ânimo da equipe é afetado de forma significativa quando algum objetivo coletivo não é alcançado?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_10 = models.IntegerField("Durante as reuniões de equipe, as questões mais importantes e difíceis são colocadas em pauta para serem resolvidas?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_11 = models.IntegerField("Os membros da equipe se preocupam em não decepcionar os colegas?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_12 = models.IntegerField("Os membros da equipe conhecem a vida pessoal uns dos outros e se sentem à vontade falando sobre esse tema?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_13 = models.IntegerField("Os membros da equipe terminam as discussões com resoluções claras e específicas e com tarefas a realizar?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_14 = models.IntegerField("Os membros da equipe desafiam-se uns aos outros em relação a seus planos e abordagens?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_15 = models.IntegerField("Os membros da equipe demoram a cobrar o crédito das próprias contribuições, mas são rápidos em apontar as contribuições dos colegas?", choices=FAIXA_ESCOLHAS, null=True, blank=True)
 
     def __str__(self):
         return f"Funcionalidade de Grupo {self.id}"

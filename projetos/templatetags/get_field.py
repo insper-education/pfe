@@ -8,6 +8,10 @@ Data: 30 de Novembro de 2023
 from django import template
 register = template.Library()
 
+@register.filter
+def concat(val, arg):
+    return f"{val}{arg}"
+
 @register.simple_tag()
 def max_length(instance, field):
     """ Retorna o valor do campo limitado ao tamanho máximo do campo """
@@ -23,6 +27,11 @@ def max_length_menos(instance, field, menos):
         return None
     length = instance._meta.get_field(field).max_length - menos
     return length
+
+@register.filter
+def get_attr(instance, field):
+    """ Retorna o campo """
+    return getattr(instance, field)
 
 @register.simple_tag()
 def slice_max_length(instance, field):

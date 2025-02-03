@@ -45,7 +45,7 @@
           {% for id, p in perguntas.items %}
             <div class="form-group">
               <label for="{{ id }}">{{ p }}</label>
-              <textarea class="form-control" id="{{ id }}" name="{{ id }}" rows="3">{{ respostas|get_value:id }}</textarea>
+              <textarea class="form-control" id="{{ id }}" name="{{ id }}" rows="3">{% with r=respostas|get_value:id %}{% if r %}{{ r }}{% endif %} {% endwith %}</textarea>
             </div>
           {% endfor %}
         </div>

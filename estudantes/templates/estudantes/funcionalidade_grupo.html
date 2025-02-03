@@ -7,6 +7,7 @@
 
 {% block head %}
   {% load linguas %}
+  {% load get_field %}
   <style>
     .explanatory-text {
       max-width: 1050px;
@@ -39,7 +40,7 @@
   {% endif %}
 
   <form method="post">{% csrf_token %}
-    
+
     <table class="tabela-padrao table-striped table-hover table-responsive">
       <thead>
         <tr>
@@ -54,9 +55,13 @@
             <td class="hide-on-narrow" style="text-align:center">{{ forloop.counter }}</td>
             <td>{{ questao }}</td>
             <td>
-              <label><input type="radio" name="question_{{ forloop.counter }}" value="1"> {% lng "Baixa" "Low" %}</label><br>
-              <label><input type="radio" name="question_{{ forloop.counter }}" value="2"> {% lng "Média" "Medium" %}</label><br>
-              <label><input type="radio" name="question_{{ forloop.counter }}" value="3"> {% lng "Alta" "High" %}</label>
+              {% with question_key="question_"|concat:forloop.counter|stringformat:"s" %}
+                {% with f=funcionalidade_grupo|get_attr:question_key %}
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
+                {% endwith %}
+              {% endwith %}
             </td>
           </tr>
         {% endfor %}
@@ -121,7 +126,20 @@
       };
 
       $(document).ready(function() {
-        $("input[type=radio]").change(calc_grupo);
+        $("input[type=radio]").change(function() {
+          $.ajax({
+            data: {
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
+              "questao": $(this).attr("name"),
+              "valor": $(this).val()
+            },
+            dataType: "JSON",
+            type: "POST",
+            success: function(data) {},
+            {% include "ajax_error_function.js" %}
+          });
+          calc_grupo();
+        });
         calc_grupo();
       });
 
