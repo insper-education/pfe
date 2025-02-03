@@ -31,6 +31,8 @@ def max_length_menos(instance, field, menos):
 @register.filter
 def get_attr(instance, field):
     """ Retorna o campo """
+    if instance is None or not hasattr(instance, field):
+        return None
     return getattr(instance, field)
 
 @register.simple_tag()
