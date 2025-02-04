@@ -10,7 +10,7 @@ Data: 14 de Novembro de 2019
 from django.contrib import admin
 
 from .models import Carta
-from .models import TipoCertificado, TipoEvento, GrupoCertificado
+from .models import TipoCertificado, TipoEvento, GrupoCertificado, Despesa
 
 @admin.register(Carta)
 class CartaAdmin(admin.ModelAdmin):
@@ -42,4 +42,31 @@ class TipoEventoAdmin(admin.ModelAdmin):
     list_display = ("nome", "sigla", "cor")
     ordering = ("nome",)
     search_fields = ["nome", "sigla"]
+
+@admin.register(Despesa)
+class DespesaAdmin(admin.ModelAdmin):
+    """Definição do que aparece no sistema de administração do Django."""
+
+
+    # projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE,
+    #                             help_text="Projeto")
+    
+    # data = models.DateField("Data", null=True, blank=True,
+    #                         help_text="Data da despesa")
+    
+    # descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+    #                             help_text="Descrição da despesa")
+    
+    # valor_r = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+    #                             help_text="Valor da despesa em reais")
+    
+    # valor_d = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+    #                             help_text="Valor da despessa em dólares")
+    
+
+    list_display = ("projeto", "data", "descricao", "valor_r", "valor_d")
+    ordering = ("projeto",)
+    search_fields = ["projeto", "descricao"]
+    list_filter = ["data"]
+
 

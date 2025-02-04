@@ -465,6 +465,26 @@
   {% endif %}
 
   {% if user.prof_a %}
+    {% with despesas=projeto.despesa_set.all %}
+      {% if despesas %}
+        <hr>
+        <h4>{% lng "Despesas Financeiras do Projeto" "Financial Expenses of the Project" %}:</h4>
+        <ul>
+          {% for despesa in projeto.despesa_set.all %}
+            <li>
+              {% if despesa.data %}{{despesa.data}}{% else %}DATA INDEFINIDA{% endif %}
+              {% if despesa.descricao %} - [{{despesa.descricao}}]{% endif %}
+              = 
+              {% if despesa.valor_r %} R$ {{despesa.valor_r|stringformat:".2f"}}{% endif %}
+              {% if despesa.valor_d %} U$ {{despesa.valor_d|stringformat:".2f"}}{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  {% endif %}
+
+  {% if user.prof_a %}
 
     <hr>
     <div style="max-width: 95em; text-align: center;">

@@ -118,4 +118,29 @@ class TipoEvento(models.Model):
         ordering = ["nome",]
         verbose_name = "Tipo de Evento"
         verbose_name_plural = "Tipos de Eventos"
-        
+
+class Despesa(models.Model):
+    """Despesa realiza."""
+
+    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE,
+                                help_text="Projeto")
+    
+    data = models.DateField("Data", null=True, blank=True,
+                            help_text="Data da despesa")
+    
+    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+                                help_text="Descrição da despesa")
+    
+    valor_r = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+                                help_text="Valor da despesa em reais")
+    
+    valor_d = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+                                help_text="Valor da despessa em dólares")
+    
+    def __str__(self):
+        return f"{self.projeto} - {self.descricao}"
+    
+    class Meta:
+        ordering = ["projeto", "data",]
+        verbose_name = "Despesa"
+        verbose_name_plural = "Despesas"
