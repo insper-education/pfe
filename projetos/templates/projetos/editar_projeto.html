@@ -70,7 +70,7 @@
           {% lng "Orientador(a):" "Advisor:" %}
         </label>
         <select class="selectpicker show-tick" name="orientador" id="orientador" title="Selecione orientador do projeto"
-                data-width="81%" data-size="10">
+         data-live-search="true" data-width="81%" data-size="10">
             <option selected value> -- selecione um orientador(a) -- </option>
             <optgroup label="Comitê Capstone">
             {% for orientador in professores %}
@@ -100,7 +100,7 @@
           {% lng "Coorientador(a):" "Co-advisor:" %}
         </small></label>
         <select class="selectpicker show-tick" name="coorientador" id="coorientador" title="Selecione coorientador do projeto"
-        data-width="81%">
+         data-live-search="true" data-width="81%">
             <option selected value> -- selecione um coorientador(a) -- </option>
             {% for professor in professores %}
               <option value="{{professor.user.id}}" {% if professor.user.id == coorientadores.last.usuario.id %}selected{% endif %}>

@@ -31,12 +31,6 @@
   div.desligado > .estudante:before {
     content:"• ";
   }
-  
-  {% comment %} .logo_impressoras {
-    float: right;
-    margin-top: 4px;
-    margin-left: 8px;
-  } {% endcomment %}
 
   .logo_impressoras {
     font-size: 1.2em;
@@ -52,20 +46,8 @@
     color: #EEE;
   }
 
-{% comment %} 
-  @media only screen and (max-width: 740px) {
-    .img_impressora {
-      -moz-transform:scale(0.8);
-      -webkit-transform:scale(0.8);
-      transform:scale(0.8);
-    }  
-  } {% endcomment %}
-
 </style>
 
-{% comment %} <div class="logo_impressoras">
-  <img class="img_impressora" id="impressora" src="{% static 'images/icone_Printer.png' %}" alt="impressora" style="cursor: pointer;">
-</div> {% endcomment %}
 <div class="logo_impressoras">
   <i class="fas fa-print img_impressora" id="impressora" title="Impressora"></i>
   <span class="image-texto">PRT</span>
