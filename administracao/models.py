@@ -131,10 +131,10 @@ class Despesa(models.Model):
     descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
                                 help_text="Descrição da despesa")
     
-    valor_r = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+    valor_r = models.DecimalField("Valor R$", max_digits=12, decimal_places=2, null=True, blank=True,
                                 help_text="Valor da despesa em reais")
     
-    valor_d = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
+    valor_d = models.DecimalField("Valor US$", max_digits=12, decimal_places=2, null=True, blank=True,
                                 help_text="Valor da despessa em dólares")
     
     def __str__(self):
