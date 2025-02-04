@@ -236,6 +236,7 @@ class DocumentoAdmin(admin.ModelAdmin):
     list_filter = ("data", "tipo_documento", "confidencial", "lingua_do_documento", )
     search_fields = ["projeto__titulo_final", "projeto__proposta__titulo",
                      "usuario__username", "projeto__proposta__organizacao__sigla",]
+    actions = [dup_entrada]
 
 @admin.register(Banco)
 class BancoAdmin(admin.ModelAdmin):

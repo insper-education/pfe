@@ -411,22 +411,9 @@ def banca_avaliar(request, slug, documento_id=None):
             return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(configuracao.prazo_preencher_banca) + " dias após a data da banca!</h1>")
         return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
-    ####################################################################################
-    # ISSO ESTÁ OBSOLETO
-    # Subistituir por:     objetivos = composicao.pesos.all()
-    objetivos = get_objetivos_atuais()
-    # Banca(Intermediária, Final, Probation) ou Falconi
-    sigla = banca.composicao.exame.sigla
-    if sigla in ["BI", "BF"]:
-        objetivos = objetivos.filter(avaliacao_banca=True)
-    elif sigla == "F":  # Falconi
-        objetivos = objetivos.filter(avaliacao_falconi=True)
-    elif sigla == "P":  # Probation
-        objetivos = objetivos.filter(avaliacao_aluno=True)
-    else:
-        return HttpResponseNotFound("<h1>Tipo de Banca não indentificado</h1>")
-    ####################################################################################
-    
+    objetivos = banca.composicao.pesos.all()
+    pesos = Peso.objects.filter(composicao=banca.composicao)
+
     if request.method == "POST":
         if "avaliador" in request.POST:
 
@@ -569,7 +556,8 @@ def banca_avaliar(request, slug, documento_id=None):
             "individual": True if banca.alocacao else False,
             "pessoas": pessoas,
             "membros": membros,
-            "objetivos": objetivos,
+            #"objetivos": objetivos,
+            "pesos": pesos,
             "banca": banca,
             "composicao": composicao,
             "avaliador": avaliador_id,
@@ -1238,7 +1226,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
         alocacao = Alocacao.objects.get(projeto=projeto, aluno=estudante.aluno)
 
     objetivos = composicao.pesos.all()
-
+    pesos = Peso.objects.filter(composicao=composicao)
+    
     editor = request.user == projeto.orientador.user
     
     if request.method == "POST":
@@ -1411,13 +1400,15 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                                                 ).last()
         else:
             if not estudante or not alocacao:
-                return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
+                return HttpResponseNotFound("<h1>Estudante não encontrado!</h1>")
             observacao = Observacao.objects.filter(projeto=projeto,
                                                     exame=composicao.exame,
                                                     avaliador=projeto.orientador.user,
                                                     alocacao=alocacao
                                                 ).last()
 
+        atrasado = documentos.first().data.date() > evento.endDate  # primeiro é o último entregue por data
+        
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Entrega", "en": "Delivery Evaluation Form"},
             "projeto": projeto,
@@ -1426,12 +1417,13 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "documentos": documentos,
             "evento": evento,
             "periodo_para_rubricas": composicao.exame.periodo_para_rubricas,
-            "objetivos": objetivos,
+            "pesos": pesos,
             "today": datetime.datetime.now(),
             "conceitos": conceitos,
             "observacao": observacao,
             "editor": editor,
             "avaliacao": avaliacao,
+            "atrasado": atrasado,
         }
 
         return render(request, "professores/entrega_avaliar.html", context=context)

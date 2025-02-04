@@ -1082,7 +1082,7 @@ class Documento(models.Model):
         super().delete()
 
     class Meta:
-        ordering = ["-data"]
+        ordering = ["-data"]  # NÃO MUDAR
 
 
 class Banco(models.Model):
@@ -1506,16 +1506,10 @@ class ObjetivosDeAprendizagem(models.Model):
 
 
     def __str__(self):
-        texto = str(self.titulo) + "  [ "
-        if self.data_inicial:
-            texto += str(self.data_inicial)
-        texto += " -> "
-        if self.data_final:
-            texto += str(self.data_final)
-        else:
-            texto += "hoje"
-        texto += " ]"
-        return texto
+        data_inicial = str(self.data_inicial) if self.data_inicial else ""
+        data_final = str(self.data_final) if self.data_final else "hoje"
+        return f"{self.titulo}  [ {data_inicial} -> {data_final} ]"
+
 
     class Meta:
         verbose_name = "ObjetivosDeAprendizagem"
