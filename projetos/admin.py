@@ -13,27 +13,8 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 import django.contrib.admin.options as admin_opt
 
-# Dos projetos
-from .models import FeedbackEstudante, Projeto, Proposta, Organizacao, Banca, Coorientador
+from .models import *
 
-# Das disciplinas
-from .models import Disciplina, Cursada, Recomendada
-
-# Das dinâmicas (Mentorias)
-from .models import Encontro, Evento
-
-# Da coordenação
-from .models import Configuracao, Aviso, Documento, Anotacao, Reembolso, Banco, TipoRetorno
-
-# Do Insper
-from .models import Entidade
-
-# Das Organizações
-from .models import Feedback, Conexao, Acompanhamento
-from .models import ObjetivosDeAprendizagem, Certificado
-from .models import Avaliacao2, Observacao, Reprovacao
-from .models import Avaliacao_Velha, Observacao_Velha
-from .models import Area, AreaDeInteresse
 
 def dup_projeto(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados."""

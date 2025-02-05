@@ -9,8 +9,8 @@ Data: 14 de Novembro de 2019
 
 from django.contrib import admin
 
-from .models import Carta
-from .models import TipoCertificado, TipoEvento, GrupoCertificado, Despesa
+from .models import *
+
 
 @admin.register(Carta)
 class CartaAdmin(admin.ModelAdmin):

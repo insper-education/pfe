@@ -6,7 +6,8 @@ Data: 27 de Dezembro de 2022
 """
 
 from django.contrib import admin
-from .models import Curso
+from .models import *
+
 
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
@@ -14,4 +15,3 @@ class CursoAdmin(admin.ModelAdmin):
     list_display = ("nome", "sigla", "sigla_curta", "cor", )
     ordering = ("nome", )
     search_fields = ["nome", ]
-

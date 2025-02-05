@@ -8,8 +8,7 @@ Data: 15 de Maio de 2019
 import string
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from .models import PFEUser, Aluno, Professor, Parceiro, Administrador, UsuarioEstiloComunicacao
-from .models import Opcao, OpcaoTemporaria, Alocacao   # Mover para outra área
+from .models import *
 
 
 class FirstLetterFilter(SimpleListFilter):
