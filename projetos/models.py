@@ -128,7 +128,8 @@ class Projeto(models.Model):
                            help_text="site do projeto desenvolvido pelos estudantes")
     
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
-                           help_text="Data da última atualização dos dados do projeto pelos estudantes")
+                                                  help_text="Data da última atualização dos dados do projeto pelos estudantes")
+    
     class Meta:
         ordering = [ "ano", "semestre", "proposta__organizacao" ]  # Não mudar a ordem
         permissions = (("altera_empresa", "Empresa altera valores"),
@@ -465,7 +466,9 @@ class Configuracao(models.Model):
     questoes_funcionalidade = models.TextField("Questões de Funcionalidade", max_length=4096, null=True, blank=True,
                                    help_text="Questões de Funcionalidade do Capstone")
     
-    codigo_conduta = models.TextField("Código de Conduta", max_length=4096, null=True, blank=True,
+    codigo_conduta = models.TextField("Código de Conduta Individual", max_length=4096, null=True, blank=True,
+                                   help_text="Código de Conduta do Capstone")
+    codigo_conduta_projeto = models.TextField("Código de Conduta do Grupo", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
     ###-----------------------------------------------------###
     

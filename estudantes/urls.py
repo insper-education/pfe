@@ -62,6 +62,10 @@ urlpatterns = [
          views.codigo_conduta,
          name="codigo_conduta"),
 
+    path("codigo_conduta_projeto/",
+         views.codigo_conduta_projeto,
+         name="codigo_conduta_projeto"),
+
     path("estudante_feedback",
          views.estudante_feedback,
          name="estudante_feedback"),

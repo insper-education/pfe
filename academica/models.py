@@ -8,6 +8,8 @@ Data: 4 de Novembro de 2023
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from projetos.tipos import TIPO_EVENTO
 
@@ -181,3 +183,23 @@ class ExibeNota(models.Model):
     
     exibe = models.BooleanField("Exibe", default=True,
                              help_text="Exibe as notas para os estudantes")
+
+
+
+class CodigoConduta(models.Model):
+    """Código de Conduta associado a um usuário, projeto ou professor."""
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    origem = GenericForeignKey("content_type", "object_id")
+
+    codigo_conduta = models.TextField("Código de Conduta", max_length=32000, null=True, blank=True,
+                                      help_text="Código de Conduta")
+
+    def __str__(self):
+        return f"Código de Conduta para {self.origem}"
+
+    class Meta:
+        verbose_name = "Código de Conduta"
+        verbose_name_plural = "Códigos de Conduta"
+

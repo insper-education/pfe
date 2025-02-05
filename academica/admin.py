@@ -1,7 +1,8 @@
 from django.contrib import admin
 import django.contrib.admin.options as admin_opt
+from django.contrib.contenttypes.admin import GenericTabularInline
 
-from .models import Composicao, Peso, Exame, CodigoColuna, ExibeNota
+from .models import *
 
 
 def dup_peso(modeladmin: admin_opt.ModelAdmin, request, queryset):
@@ -58,3 +59,13 @@ class CodigoColunaAdmin(admin.ModelAdmin):
 class ExibeNotaAdmin(admin.ModelAdmin):
     """Exibe Nota para Estudantes."""
     list_display = ("exame", "ano", "semestre", "exibe")
+
+
+class CodigoCondutaInline(GenericTabularInline):
+    model = CodigoConduta
+    extra = 1
+
+@admin.register(CodigoConduta)
+class CodigoCondutaAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "content_type", "object_id", "codigo_conduta")
+    search_fields = ("codigo_conduta",)

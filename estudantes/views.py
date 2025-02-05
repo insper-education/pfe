@@ -18,12 +18,13 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante
 from .support2 import estudante_feedback_geral
 
-from academica.models import Composicao
+from academica.models import Composicao, CodigoConduta
 from academica.support import filtra_composicoes, filtra_entregas, get_respostas_estilos
 
 from administracao.models import Carta, TipoEvento
@@ -424,14 +425,19 @@ def funcionalidade_grupo(request):
 def codigo_conduta(request):
     """Discutir código de conduta dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
-    codigo_conduta = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+    perguntas_codigo_conduta = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+
+    codigo_conduta, _ = CodigoConduta.objects.get_or_create(
+            content_type=ContentType.objects.get_for_model(request.user),
+            object_id=request.user.id)
 
     if request.method == "POST":
         post_data = request.POST.dict()
         post_data.pop("csrfmiddlewaretoken", None)
         post_data_json = json.dumps(post_data)
-        request.user.codigo_conduta = post_data_json
-        request.user.save()
+        codigo_conduta.codigo_conduta = post_data_json
+        codigo_conduta.save()
+
         mensagem = "Dados salvos com sucesso!"
         context = {
             "area_principal": True,
@@ -440,9 +446,51 @@ def codigo_conduta(request):
         return render(request, "generic.html", context=context)
 
     context = {
-        "titulo": {"pt": "Código de Conduta", "en": "Code of Conduct"},
-        "codigo_conduta": codigo_conduta,
-        "respostas": json.loads(request.user.codigo_conduta) if request.user.codigo_conduta else None,
+        "titulo": {"pt": "Código de Conduta Individual", "en": "Individual Code of Conduct"},
+        "perguntas_codigo_conduta": perguntas_codigo_conduta,
+        "respostas": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
+    }
+    return render(request, "estudantes/codigo_conduta.html", context)
+
+
+@login_required
+def codigo_conduta_projeto(request):
+    """Discutir código de conduta dos estudantes."""
+    configuracao = get_object_or_404(Configuracao)
+    perguntas_codigo_conduta_projeto = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
+
+    if request.user.eh_estud:
+        projeto = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last().projeto
+        codigo_conduta, _ = CodigoConduta.objects.get_or_create(
+            content_type=ContentType.objects.get_for_model(projeto),
+            object_id=projeto.id)
+
+    elif request.user.eh_prof_a:
+        codigo_conduta, _ = CodigoConduta.objects.get_or_create(
+            content_type=ContentType.objects.get_for_model(request.user.professor),
+            object_id=request.user.professor.id)
+    else:
+        return HttpResponse("Você não possui acesso.", status=401)
+
+    if request.method == "POST":
+        post_data = request.POST.dict()
+        post_data.pop("csrfmiddlewaretoken", None)
+        post_data_json = json.dumps(post_data)
+        
+        codigo_conduta.codigo_conduta = post_data_json
+        codigo_conduta.save()
+
+        mensagem = "Dados salvos com sucesso!"
+        context = {
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic.html", context=context)
+
+    context = {
+        "titulo": {"pt": "Código de Conduta para o Projeto", "en": "Code of Conduct for the Project"},
+        "perguntas_codigo_conduta": perguntas_codigo_conduta_projeto,
+        "respostas": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
     }
     return render(request, "estudantes/codigo_conduta.html", context)
 

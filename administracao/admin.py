@@ -45,25 +45,7 @@ class TipoEventoAdmin(admin.ModelAdmin):
 
 @admin.register(Despesa)
 class DespesaAdmin(admin.ModelAdmin):
-    """Definição do que aparece no sistema de administração do Django."""
-
-
-    # projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE,
-    #                             help_text="Projeto")
-    
-    # data = models.DateField("Data", null=True, blank=True,
-    #                         help_text="Data da despesa")
-    
-    # descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
-    #                             help_text="Descrição da despesa")
-    
-    # valor_r = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
-    #                             help_text="Valor da despesa em reais")
-    
-    # valor_d = models.DecimalField("Valor", max_digits=12, decimal_places=2, null=True, blank=True,
-    #                             help_text="Valor da despessa em dólares")
-    
-
+    """Definição do que aparece no sistema de administração do Django."""   
     list_display = ("projeto", "data", "descricao", "valor_r", "valor_d")
     ordering = ("projeto",)
     search_fields = ["projeto", "descricao"]

@@ -83,9 +83,6 @@ class PFEUser(AbstractUser):
     
     funcionalidade_grupo = models.ForeignKey("estudantes.FuncionalidadeGrupo", null=True, blank=True, on_delete=models.SET_NULL,
                                help_text="Resultados da Funcionalidade de Grupo")
-    codigo_conduta = models.TextField("Código de Conduta", max_length=32000, null=True, blank=True,
-                                   help_text="Código de Conduta do Capstone")
-
 
     class Meta:
         """Classe Meta."""
