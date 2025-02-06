@@ -12,16 +12,9 @@
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
   <style>
-    input {
-      display: inline-block;
-    }
-    .enviar {
-      margin-right: 22px;
-    }
-    .bootstrap-select {
-      max-width: 100%;
-    }
-
+    input {display: inline-block;}
+    .enviar {margin-right: 22px;}
+    .bootstrap-select {max-width: 100%;}
   </style>
 {% endblock %}
 
@@ -129,5 +122,14 @@
       {% endif %}
 
     </form>
+    
+    <div class="mt-4 alert alert-light" style="max-width: 856px;">
+      <b>{% lng "Variáveis" "Variables" %}</b>:<br>
+      {% verbatim %}{{hoje}}{% endverbatim %} - {% lng "Data do dia de envio do aviso" "Date of the day of sending the notice" %}<br>
+      {% verbatim %}{{delta}}{% endverbatim %} - {% lng "Diferença de dias entre o envio do aviso e o aviso" "Difference in days between the sending of the notice and the notice" %}<br>
+      {% verbatim %}{{delta_invert}}{% endverbatim %} - {% lng "Diferença de dias entre o evento e o envio do aviso" "Difference in days between the event and the sending of the notice" %}<br>
+      {% verbatim %}{{evento}}{% endverbatim %} - {% lng "Evento relacionado" "Related event" %}<br>
+      &nbsp;&nbsp;{% lng "atributos" "attributes" %}: location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento<br>
+    </div>
 
 {% endblock %}

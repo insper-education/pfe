@@ -74,9 +74,9 @@ def avisos_do_dia():
         for aviso in Aviso.objects.filter(tipo_evento=evento.tipo_evento):
             data_evento = evento.get_data() + datetime.timedelta(days=aviso.delta)
             if data_evento == datetime.date.today():
-                avisos.append(aviso)
+                avisos.append([aviso, evento])
 
-    for aviso in avisos:
+    for aviso, evento in avisos:
 
         # Preparando mensagem como template para aplicar variáveis
         subject = "Capstone | Aviso: " + aviso.titulo
@@ -87,46 +87,51 @@ def avisos_do_dia():
 
         mensagem_como_template = Template(message)
 
+        context = {
+            "hoje": datetime.date.today(),
+            "delta": aviso.delta,
+            "delta_invert": -aviso.delta,
+            "evento": evento,
+            }
+
         recipient_list = []
+
+        mensagem_final = mensagem_como_template.render(Context(context))
+        print(mensagem_final)
+        return
 
         if aviso.coordenacao:
             email_coordenacoes = []
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
             
         if aviso.operacional:
             email_operacional = []
             email_operacional.append(str(configuracao.operacao.email))
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
                 
         if aviso.comite_pfe:
             comite = PFEUser.objects.filter(membro_comite=True)
             lista_comite = [obj.email for obj in comite]
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
                 
         if aviso.todos_alunos:
             estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
             lista_estudantes = [obj.user.email for obj in estudantes]
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
 
         if aviso.todos_orientadores:
             orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
             lista_orientadores = [obj.user.email for obj in orientadores]
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             email(subject, recipient_list + lista_orientadores, htmlizar(mensagem_final))
             
         if aviso.contatos_nas_organizacoes:
             recipient_list += []
-            context = {}
             mensagem_final = mensagem_como_template.render(Context(context))
             # email(subject, recipient_list, htmlizar(mensagem_final))  # Por enquanto, não envia para ninguém
     
