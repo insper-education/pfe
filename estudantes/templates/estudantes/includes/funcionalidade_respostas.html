@@ -1,0 +1,26 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if questoes_funcionalidade and funcionalidade_grupo %}
+  <h4>
+    {% lng "Funcionalidade de Grupo" "Group Functionality" %}
+    <span id="funcionalidade_com" class="seta-baixo"></span>
+  </h4>
+
+  <div id="bloco_funcionalidade" style="display: none;">
+    {% include "estudantes/includes/perguntas_funcionalidade.html" with usuario=aluno.user %}<br>
+  </div>
+  <script>
+    $("#funcionalidade_com").on("click", function() {
+      $("#bloco_funcionalidade").toggle(200);
+      $(this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
+
+{% endif %}

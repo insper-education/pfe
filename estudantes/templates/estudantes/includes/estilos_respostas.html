@@ -1,0 +1,36 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if estilos_respostas %}
+  <h4>
+    {% lng "Estilos de Comunicação" "Communication Styles" %}
+    <span id="estilo_com" class="seta-baixo"></span>
+  </h4>
+  <div id="bloco_estilo" style="display: none;">
+    {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
+    <b>{% lng "Resultados" "Results" %}:</b><br>
+    <table>
+      <tbody>
+        <tr><td>
+        {% for metrica, valor in estilos_respostas.items %}
+          <b>{{ metrica }}:</b> {{ valor }}<br>
+          {% if forloop.counter|divisibleby:2 %}</td></tr>
+            {% if not forloop.last %}<tr><td>{% endif %}
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script>
+    $("#estilo_com").on("click", function() {
+      $("#bloco_estilo").toggle(200);
+      $(this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
+{% endif %}

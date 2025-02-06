@@ -11,6 +11,8 @@ import random
 import datetime
 import tablib
 import logging
+import json
+
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -819,8 +821,15 @@ def estudante_detail(request, primarykey=None):
     context["alocacoes"] = alocacoes
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
     context["areast"] = Area.objects.filter(ativa=True)
+
+    # Estilos de Comunicação
     context["estilos"] = EstiloComunicacao.objects.all()
     context["estilos_respostas"] = get_respostas_estilos(estudante.user)
+
+    # Funcionalidade do Grupo
+    configuracao = get_object_or_404(Configuracao)
+    context["questoes_funcionalidade"] = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None
+    context["funcionalidade_grupo"] = request.user.funcionalidade_grupo
 
     return render(request, "users/estudante_detail.html", context=context)
 

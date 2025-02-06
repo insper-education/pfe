@@ -409,12 +409,9 @@ def funcionalidade_grupo(request):
 
         return JsonResponse({"atualizado": False})
 
-    questoes_funcionalidade = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None    
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
-        "questoes": questoes_funcionalidade["questoes"],
-        "texto_estilo": questoes_funcionalidade["texto_estilo"],
-        "disfuncoes": questoes_funcionalidade["disfuncoes"],
+        "questoes_funcionalidade": json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None,
         "funcionalidade_grupo": request.user.funcionalidade_grupo,
     }
 
