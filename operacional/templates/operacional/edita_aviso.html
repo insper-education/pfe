@@ -22,19 +22,15 @@
   
   <form method="post" id="edita_aviso" enctype="multipart/form-data">{% csrf_token %}
     
-    <div style="margin-bottom: 8px; display: inline-block;">
+    <div style="margin-top: 6px; margin-bottom: 8px; display: inline-block; max-width: 100%;">
       <label for="titulo">
-        <b>
-          {% lng "Aviso:" "Notice:" %}
-        </b>
+        <b>{% lng "Aviso:" "Notice:" %}</b>
       <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
     </div><br>
 
-    <div style="margin-bottom: 8px; margin-right: 25px; display: block;">
+    <div style="margin-top: 6px; margin-bottom: 8px; margin-right: 25px; display: block;">
       <label for="evento">
-        <b>
-          {% lng "Evento relacionado:" "Related event:" %}
-        </b>
+        <b>{% lng "Evento relacionado:" "Related event:" %}</b>
       </label>
       <select name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
           <option disabled selected value> -- selecione evento -- </option>
@@ -46,55 +42,49 @@
       </select>
     </div>
 
-    <div style="margin-bottom: 8px; display: inline-block;">
+    <div style="margin-top: 6px; margin-bottom: 8px; display: inline-block;">
       <label for="delta">
-        <b>
-          {% lng "Delta:" "Delta:" %}
-        </b>
+        <b>{% lng "Delta:" "Delta:" %}</b>
       <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
     </div><br>
 
     <div style="margin-bottom: 8px; display: inline-block;">
       <label for="delta">
-        <b>
-          {% lng "Mensagem:" "Message:" %}
-        </b>
+        <b>{% lng "Mensagem:" "Message:" %}</b>
         <br>
       <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
     </div><br>
     
     <div style="margin-bottom: 8px; display: inline-block;">
-      <b>
-        {% lng "Enviar para:" "Send to:" %}
-      </b><br>
+      <b>{% lng "Enviar para:" "Send to:" %}</b><br>
 
-      <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
       <label class="enviar" for="coordenacao">
+        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
         {% lng "Coordenação" "Coordination" %}
       </label>
       
-      <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}>
       <label class="enviar" for="operacional">
+        <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}>
         {% lng "Operacional" "Operational" %}
       </label>
       
-      <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
       <label class="enviar" for="comite_pfe">
+        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
         {% lng "Comitê" "Committee" %}
       </label>
 
-      <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
       <label class="enviar" for="todos_alunos">
+        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
         {% lng "Estudantes" "Students" %}
       </label>
 
-      <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
       <label class="enviar" for="todos_orientadores">
+        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
         {% lng "Orientadores" "Advisors" %}
       </label>
 
-      <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
       <label class="enviar" for="contatos_nas_organizacoes">
+        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
         {% lng "Organizações" "Organizations" %}
       </label>
 
