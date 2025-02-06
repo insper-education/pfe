@@ -208,9 +208,25 @@ def edita_aviso(request, primarykey=None):
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 
+    atributos = [field.name for field in Evento._meta.get_fields() if field.name != "id"]
+
+    variaveis = {
+        "hoje": { "pt": "Data do dia de envio do aviso", "en": "Date of the day of sending the notice" },
+        "edicao": { "pt": "Edição do Capstone", "en": "Capstone edition" },
+        "delta": { "pt": "Diferença de dias entre o envio do aviso e o aviso", "en": "Difference in days between the sending of the notice and the notice" },
+        "delta_invert": { "pt": "Diferença de dias entre o evento e o envio do aviso", "en": "Difference in days between the event and the sending of the notice" },
+        "inicio_aulas": { "pt": "Data de início das aulas no semestre", "en": "Start date of classes in the semester" },
+        "evento": { 
+            "pt": "Evento relacionado", "en": "Related event",
+            # "atributos": "location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento"
+            "atributos": atributos,
+            },
+    }
+
     context = {
         "aviso": aviso,
         "eventos": TipoEvento.objects.all(),
+        "variaveis": variaveis,
     }
 
     return render(request, "operacional/edita_aviso.html", context)

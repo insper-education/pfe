@@ -123,15 +123,14 @@
 
   </form>
   
-  <div class="mt-4 alert alert-light" style="max-width: 856px;">
+  <div class="mt-4 alert alert-light p-2" style="max-width: 854px;">
     <b>{% lng "Variáveis" "Variables" %}</b>:<br>
-    {% verbatim %}{{hoje}}{% endverbatim %} - {% lng "Data do dia de envio do aviso" "Date of the day of sending the notice" %}<br>
-    {% verbatim %}{{edicao}}{% endverbatim %} - {% lng "Edição do Capstone" "Capstone edition" %}<br>
-    {% verbatim %}{{delta}}{% endverbatim %} - {% lng "Diferença de dias entre o envio do aviso e o aviso" "Difference in days between the sending of the notice and the notice" %}<br>
-    {% verbatim %}{{delta_invert}}{% endverbatim %} - {% lng "Diferença de dias entre o evento e o envio do aviso" "Difference in days between the event and the sending of the notice" %}<br>
-    {% verbatim %}{{inicio_aulas}}{% endverbatim %} - {% lng "Data de início das aulas no semestre" "Start date of classes in the semester" %}<br>
-    {% verbatim %}{{evento}}{% endverbatim %} - {% lng "Evento relacionado" "Related event" %}<br>
-    &nbsp;&nbsp;{% lng "atributos" "attributes" %}: location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento<br>
+    {% for chave, valor in variaveis.items %}
+      &#123;&#123;{{chave}}&#125;&#125; - {% lng valor.pt valor.en %}<br>
+      {% if valor.atributos %}
+        <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
+      {% endif %}
+    {% endfor %}
   </div>
 
 {% endblock %}

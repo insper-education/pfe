@@ -67,6 +67,7 @@ def avisos_do_dia():
         return None
 
     eventos = Evento.get_eventos(configuracao=configuracao)  # Filtra avisos do semestre
+    inicio_aulas = Evento.get_evento(sigla="IA", ano=configuracao.ano, semestre=configuracao.semestre).startDate,
 
     # Checa avisos do dia
     avisos = []
@@ -93,7 +94,7 @@ def avisos_do_dia():
                 "delta": aviso.delta,
                 "delta_invert": -aviso.delta,
                 "evento": evento,
-                "inicio_aulas": Evento.get_evento(sigla="IA", ano=configuracao.ano, semestre=configuracao.semestre).startDate,
+                "inicio_aulas": inicio_aulas,
             }
 
         recipient_list = []
