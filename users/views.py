@@ -13,8 +13,8 @@ import tablib
 import logging
 import json
 
-
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse
@@ -29,7 +29,7 @@ from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
 from .models import Alocacao, OpcaoTemporaria
 from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
-from academica.models import Composicao, CodigoColuna, Exame
+from academica.models import Composicao, CodigoColuna, Exame, CodigoConduta
 from academica.support import filtra_composicoes, get_respostas_estilos
 from academica.support3 import get_media_alocacao_i
 
@@ -822,14 +822,21 @@ def estudante_detail(request, primarykey=None):
     context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
     context["areast"] = Area.objects.filter(ativa=True)
 
+    configuracao = get_object_or_404(Configuracao)
+
     # Estilos de Comunicação
     context["estilos"] = EstiloComunicacao.objects.all()
     context["estilos_respostas"] = get_respostas_estilos(estudante.user)
 
     # Funcionalidade do Grupo
-    configuracao = get_object_or_404(Configuracao)
     context["questoes_funcionalidade"] = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None
-    context["funcionalidade_grupo"] = request.user.funcionalidade_grupo
+    context["funcionalidade_grupo"] = estudante.user.funcionalidade_grupo
+
+    # Código de Conduta Individual
+    codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(estudante.user), object_id=estudante.user.id).last()
+    print(codigo_conduta)
+    context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+    context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
 
     return render(request, "users/estudante_detail.html", context=context)
 

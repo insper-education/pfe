@@ -1,0 +1,26 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if perguntas_codigo_conduta and respostas_conduta %}
+  <h4>
+    {% lng "Código de Conduta Individual" "Individual Code of Conduct" %}
+    <span id="conduta_com" class="seta-baixo"></span>
+  </h4>
+
+  <div id="bloco_conduta" style="display: none;">
+    {% include "estudantes/includes/tabela_conduta.html" %}<br>
+  </div>
+  <script>
+    $("#conduta_com").on("click", function() {
+      $("#bloco_conduta").toggle(200);
+      $(this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
+
+{% endif %}

@@ -13,12 +13,12 @@ from hashids import Hashids
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
 
 from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante
@@ -445,7 +445,7 @@ def codigo_conduta(request):
     context = {
         "titulo": {"pt": "Código de Conduta Individual", "en": "Individual Code of Conduct"},
         "perguntas_codigo_conduta": perguntas_codigo_conduta,
-        "respostas": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
+        "respostas_conduta": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
     }
     return render(request, "estudantes/codigo_conduta.html", context)
 

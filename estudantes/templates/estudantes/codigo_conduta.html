@@ -8,8 +8,6 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-
-  {% load dictionary %}
   
   <script src="{% static 'js/Sortable.min.js' %}"></script>
   <style>
@@ -38,19 +36,7 @@
 
   <form method="post">{% csrf_token %}
 
-    {% for group, perguntas in perguntas_codigo_conduta.items %}
-      <div class="card mb-3">
-        <div class="card-header">{{ forloop.counter }} - {{ group }}</div>
-        <div class="card-body">
-          {% for id, p in perguntas.items %}
-            <div class="form-group">
-              <label for="{{ id }}">{{ p }}</label>
-              <textarea class="form-control" id="{{ id }}" name="{{ id }}" rows="3">{% with r=respostas|get_value:id %}{% if r %}{{ r }}{% endif %}{% endwith %}</textarea>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    {% endfor %}
+    {% include "estudantes/includes/tabela_conduta.html" %}
     
     <button class="btn btn-primary mb-1 mt-2" type="submit">
       {% lng "Enviar" "Submit" %}

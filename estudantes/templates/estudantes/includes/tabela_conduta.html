@@ -1,0 +1,27 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load dictionary %}
+{% load linguas %}
+
+{% if perguntas_codigo_conduta %}
+
+  {% for group, perguntas in perguntas_codigo_conduta.items %}
+    <div class="card mb-3">
+      <div class="card-header">{{ forloop.counter }} - {{ group }}</div>
+      <div class="card-body">
+        {% for id, p in perguntas.items %}
+          <div class="form-group">
+            <label for="{{ id }}">{{ p }}</label>
+            <textarea class="form-control" id="{{ id }}" name="{{ id }}" rows="3">{% with r=respostas_conduta|get_value:id %}{% if r %}{{ r }}{% endif %}{% endwith %}</textarea>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+
+{% endif %}
