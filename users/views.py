@@ -825,18 +825,22 @@ def estudante_detail(request, primarykey=None):
     configuracao = get_object_or_404(Configuracao)
 
     # Estilos de Comunicação
-    context["estilos"] = EstiloComunicacao.objects.all()
-    context["estilos_respostas"] = get_respostas_estilos(estudante.user)
+    estilos_respostas = get_respostas_estilos(estudante.user)
+    if estilos_respostas:
+        context["estilos"] = EstiloComunicacao.objects.all()
+        context["estilos_respostas"] = estilos_respostas
 
     # Funcionalidade do Grupo
-    context["questoes_funcionalidade"] = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None
-    context["funcionalidade_grupo"] = estudante.user.funcionalidade_grupo
+    funcionalidade_grupo = estudante.user.funcionalidade_grupo
+    if funcionalidade_grupo:
+        context["questoes_funcionalidade"] = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None
+        context["funcionalidade_grupo"] = funcionalidade_grupo
 
     # Código de Conduta Individual
     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(estudante.user), object_id=estudante.user.id).last()
-    print(codigo_conduta)
-    context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
-    context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
+    if codigo_conduta:
+        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+        context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
 
     return render(request, "users/estudante_detail.html", context=context)
 

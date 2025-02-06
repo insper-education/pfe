@@ -14,6 +14,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
@@ -35,7 +36,7 @@ from .support2 import get_areas_propostas, get_areas_estudantes
 
 from .tasks import avisos_do_dia, eventos_do_dia
 
-from academica.models import Exame
+from academica.models import Exame, CodigoConduta
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
@@ -150,6 +151,13 @@ def projeto_completo(request, primarykey):
         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
         "horarios": horarios,
     }
+
+    # Código de Conduta do Grupo
+    codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
+    if codigo_conduta:
+        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
+        context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
+
     return render(request, "projetos/projeto_completo.html", context=context)
 
 

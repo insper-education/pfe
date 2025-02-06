@@ -179,6 +179,10 @@ def media_orientador(projeto):
 
 def get_respostas_estilos(usuario):
     
+    estilos = estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
+    if not estilos:
+        return None
+    
     valores = {
             "PR_Fav": 0,  # Pragmático - Escorre em Condições Favoráveis
             "PR_Str": 0,  # Pragmático - Escorre em Condições de Stress
@@ -189,19 +193,6 @@ def get_respostas_estilos(usuario):
             "I_Fav": 0,   # I - Escorre em Condições Favoráveis
             "I_Str": 0,   # I - Escorre em Condições de Stress
         }
-
-    estilos = estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
-    if not estilos:
-        return None
-    
-    # PR_Fav = A1 + G1 + M1 + B3 + H3 + N3 + C4 + I4 + O4  # D5+D35+D65+D12+D42+D72+D18+D48+D78
-    # PR_Str = D3 + J3 + P3 + E3 + K3 + Q3 + F2 + L2 + R2  # D22+D52+D82+D27+D57+D87+D31+D61+D91
-    # S_Fav = A2 + G2 + M2 + B1 + H1 + N1 + O3 + I3 + C3  # D6+D36+D66+D10+D40+D70+D77+D47+D17
-    # S_Str = D4 + J4 + P4 + E1 + K1 + Q1 + F4 + L4 + R4  # D23+D53+D83+D25+D55+D85+D33+D63+D93
-    # PN_Fav = A3 + M3 + G3 + B2 + H3 + N2 + C2 + I2 + O2  # D7+D67+D37+D11+D41+D71+D16+D46+D76
-    # PN_Str = D1 + J1 + P1 + E2 + K2 + Q2 + F1 + L1 + R1  # D20+D50+D80+D26+D56+D86+D30+D60+D90
-    # I_Fav = A4 + G4 + M4 + B4 + H4 + N4 + C1 + I1 + O1  # D8+D38+D68+D13+D43+D73+D15+D45+D75
-    # I_Str = D2 + J2 + P2 + E4 + K4 + Q4 + R3 + L3 + F3  # D21+D51+D81+D28+D58+D88+D92+D62+D32
 
     tabela = {
         "PR_Fav": ["A0", "G0", "M0", "B2", "H2", "N2", "C3", "I3", "O3"],

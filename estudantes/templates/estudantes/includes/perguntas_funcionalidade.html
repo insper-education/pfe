@@ -32,9 +32,15 @@
           <td>
             {% with question_key="question_"|concat:forloop.counter|stringformat:"s" %}
               {% with f=funcionalidade_grupo|get_attr:question_key %}
-                <label><input type="radio" name="question_{{ forloop.counter }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
-                <label><input type="radio" name="question_{{ forloop.counter }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
-                <label><input type="radio" name="question_{{ forloop.counter }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
+                {% if ver %}
+                  {% if f == 1 %}<input type="radio" name="question_{{ forloop.counter }}" value="1" checked style="display:none;">{% lng "Baixa" "Low" %}{% endif %}
+                  {% if f == 2 %}<input type="radio" name="question_{{ forloop.counter }}" value="2" checked style="display:none;">{% lng "Média" "Medium" %}{% endif %}
+                  {% if f == 3 %}<input type="radio" name="question_{{ forloop.counter }}" value="3" checked style="display:none;">{% lng "Alta" "High" %}{% endif %}
+                {% else %}
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
+                  <label><input type="radio" name="question_{{ forloop.counter }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
+                {% endif %}
               {% endwith %}
             {% endwith %}
           </td>

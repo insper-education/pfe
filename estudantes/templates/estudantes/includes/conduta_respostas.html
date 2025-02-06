@@ -14,7 +14,7 @@
   </h4>
 
   <div id="bloco_conduta" style="display: none;">
-    {% include "estudantes/includes/tabela_conduta.html" %}<br>
+    {% include "estudantes/includes/tabela_conduta.html" with ver=True %}<br>
   </div>
   <script>
     $("#conduta_com").on("click", function() {
