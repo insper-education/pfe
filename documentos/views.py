@@ -22,7 +22,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 
-from .support import atualiza_certificado, generate_unique_arcname
+from .support import atualiza_certificado, generate_unique_arcname, checa_documentos_certificado
 
 from academica.models import Exame, ExibeNota
 
@@ -43,11 +43,10 @@ from users.support import get_edicoes
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
     configuracao = get_object_or_404(Configuracao)
-    areas = json.loads(configuracao.index_documentos) if configuracao.index_documentos else None
     context = {
         "titulo": {"pt": "Documentações", "en": "Documentation"},
         "documentos": Documento.objects.all(),
-        "areas": areas,
+        "areas": json.loads(configuracao.index_documentos) if configuracao.index_documentos else None,
     }
 
     if "/documentos/documentos" in request.path:
@@ -63,36 +62,26 @@ def biblioteca_link(request, primarykey=None):
 
     if primarykey is None:
         return HttpResponseNotFound("<h1>Erro!</h1>")
-    if request.user.tipo_de_usuario != 4:
+    if not request.user.eh_admin:
         return HttpResponse("Sem privilégios necessários", status=401)
     
     relatorio = get_object_or_404(Documento, pk=primarykey)
 
     if request.is_ajax() and request.method == "POST":
-
-        atualizado = False
-
-        if "link" in request.POST:
-            relatorio.link = request.POST["link"].strip()
+        link = request.POST.get("link", "").strip()
+        if link:
+            relatorio.link = link
             relatorio.save()
-            atualizado = True
-        else:
-            return HttpResponse("Atualização não realizada.", status=401)
+            return JsonResponse({"atualizado": True, "link": relatorio.link})
+        return HttpResponse("Atualização não realizada.", status=401)
 
-        context = {
-                "atualizado": atualizado,
-                "link": relatorio.link,
-            }
-        return JsonResponse(context)
-    
-    else:
-        
-        context = {
-            "Documento": Documento,
-            "relatorio": relatorio,
-            "url": request.get_full_path(),
-        }
-        return render(request, "documentos/biblioteca_link.html", context)
+    context = {
+        "Documento": Documento,
+        "relatorio": relatorio,
+        "url": request.get_full_path(),
+    }
+    return render(request, "documentos/biblioteca_link.html", context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -143,17 +132,11 @@ def selecao_geracao_certificados(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def gerar_certificados(request):
     """Recupera um certificado pelos dados."""
-    configuracao = get_object_or_404(Configuracao)
 
     # Verifica se arquivo com assinatura e papel timbrado estão disponíveis
-    if not configuracao.coordenacao or not configuracao.coordenacao.assinatura or\
-       not os.path.exists(settings.MEDIA_ROOT+"/"+str(configuracao.coordenacao.assinatura)):
-        return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
-    tipo_documento = TipoDocumento.objects.get(sigla="PT")  # Papel Timbrado
-    papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
-    if not papel_timbrado or\
-       not os.path.exists(settings.MEDIA_ROOT+"/"+str(papel_timbrado.documento)):
-        return HttpResponse("Papel timbrado não encontrado.", status=401)
+    erro = checa_documentos_certificado()
+    if erro:
+        return erro
 
     if "edicao" not in request.POST:
         return HttpResponse("Algum erro não identificado.", status=401)
@@ -161,49 +144,26 @@ def gerar_certificados(request):
 
     tipos = []
     qcertificados = 0
-    if "O" in request.POST:
-        tipo = get_object_or_404(TipoCertificado, titulo="Orientação de Projeto")
-        tipos.append("O")
-        projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
-        for projeto in projetos:
-            if projeto.orientador:
-                certificado = atualiza_certificado(projeto.orientador.user, projeto, tipo)
-                qcertificados += 1 if certificado else 0
-
-    if "C" in request.POST:
-        tipo = get_object_or_404(TipoCertificado, titulo="Coorientação de Projeto")
-        tipos.append("C")
-        for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
-            certificado = atualiza_certificado(coorientador.usuario, coorientador.projeto, tipo)
-            qcertificados += 1 if certificado else 0
-
-    if "B" in request.POST:
-        tipos.append("B")
-        banca_types = [
-            ("BI", get_object_or_404(TipoCertificado, titulo="Membro de Banca Intermediária")),
-            ("BF", get_object_or_404(TipoCertificado, titulo="Membro de Banca Final")),
-            ("P", get_object_or_404(TipoCertificado, titulo="Membro de Banca de Probation")),
-            ("F", get_object_or_404(TipoCertificado, titulo="Membro da Banca Falconi"))
-        ]
-        for sigla, tipo in banca_types:
-            membro_banca = recupera_avaliadores_bancas(sigla, ano, semestre)
-            for membro, banca in membro_banca:
-                certificado = atualiza_certificado(membro, banca.get_projeto(), tipo, contexto={"banca": banca}, alocacao=banca.alocacao)
-                qcertificados += 1 if certificado else 0
-
-    if "MP" in request.POST:
-        tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Profissional")
-        tipos.append("MP")
-        for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
-            certificado = atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
-            qcertificados += 1 if certificado else 0
-
-    if "MT" in request.POST:
-        tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Técnica")
-        tipos.append("MT")
-        for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
-            certificado = atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), tipo)
-            qcertificados += 1 if certificado else 0
+    for grupo in ["O", "C", "MP", "MT", "B"]:
+        if grupo in request.POST:
+            tipos_cert = TipoCertificado.objects.filter(grupo_certificado__sigla=grupo)
+            tipos.append(grupo)
+            for tipo in tipos_cert:
+                if grupo == "O":
+                    for projeto in Projeto.objects.filter(ano=ano, semestre=semestre, orientador__isnull=False):
+                        qcertificados += atualiza_certificado(projeto.orientador.user, projeto, tipo)
+                if grupo == "C":
+                    for coorientador in Coorientador.objects.filter(projeto__ano=ano, projeto__semestre=semestre):    
+                        qcertificados += atualiza_certificado(coorientador.usuario, coorientador.projeto, tipo)
+                if grupo == "MP":
+                    for encontro in Encontro.objects.filter(projeto__ano=ano, projeto__semestre=semestre):
+                        qcertificados += atualiza_certificado(encontro.facilitador, encontro.get_projeto(), tipo, contexto={"dinamica": encontro})
+                if grupo == "MT":
+                    for conexao in Conexao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, mentor_tecnico=True):
+                        qcertificados += atualiza_certificado(conexao.parceiro.user, conexao.get_projeto(), tipo)
+                if grupo == "B":        
+                    for membro, banca in recupera_avaliadores_bancas(tipo.exame, ano, semestre):
+                        qcertificados += atualiza_certificado(membro, banca.get_projeto(), tipo, contexto={"banca": banca}, alocacao=banca.alocacao)
 
     if not tipos:
         return HttpResponse("Nenhum tipo de certificado selecionado.", status=401)

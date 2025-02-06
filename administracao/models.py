@@ -78,6 +78,9 @@ class TipoCertificado(models.Model):
     
     template = models.ForeignKey("administracao.Carta", null=True, blank=True, on_delete=models.SET_NULL,
                                     help_text="Template de certificado")
+    
+    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Exame associado ao certificado")
 
     def __str__(self):
         return self.titulo
@@ -85,6 +88,7 @@ class TipoCertificado(models.Model):
     class Meta:
         verbose_name = "Tipo de Certificado"
         verbose_name_plural = "Tipos de Certificados"
+        ordering = ["titulo",]
 
 
 class TipoEvento(models.Model):

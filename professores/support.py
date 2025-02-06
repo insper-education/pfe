@@ -234,11 +234,11 @@ def recupera_coorientadores_por_semestre(configuracao):
     return zip(professores_pfe[::-1], periodo[::-1])  # inverti lista deixando os mais novos primeiro
 
 
-def recupera_avaliadores_bancas(sigla, ano, semestre):
+def recupera_avaliadores_bancas(exame, ano, semestre):
     """Recupera listas de todos os membros das bancas especificadas."""
     pessoas = []
     bancas = []
-    bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
+    bancas_f = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame=exame)
     for banca in bancas_f:
         for membro in banca.membros():
             #if membro:

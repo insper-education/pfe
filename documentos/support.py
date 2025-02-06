@@ -96,9 +96,10 @@ def atualiza_certificado(usuario, projeto, tipo, contexto=None, alocacao=None):
         certificado.documento = path + "certificado" + subtitulo + ".pdf"
         certificado.save()
 
-        return certificado
+        # Retorna a quantidade de certificados gerados
+        return 1
 
-    return None
+    return 0
 
 
 # Function to generate a unique arcname if the provided one already exists in the zip file
@@ -114,3 +115,17 @@ def generate_unique_arcname(zip_file, arcname):
             if new_arcname not in zip_file.namelist():
                 return new_arcname
             counter += 1
+
+
+def checa_documentos_certificado():
+    """ Verifica se arquivo com assinatura e papel timbrado estão disponíveis. """
+    configuracao = get_object_or_404(Configuracao)
+    if not configuracao.coordenacao or not configuracao.coordenacao.assinatura or\
+       not os.path.exists(settings.MEDIA_ROOT+"/"+str(configuracao.coordenacao.assinatura)):
+        return HttpResponse("Arquivo de assinatura não encontrado.", status=401)
+    tipo_documento = TipoDocumento.objects.get(sigla="PT")  # Papel Timbrado
+    papel_timbrado = Documento.objects.filter(tipo_documento=tipo_documento).last()
+    if not papel_timbrado or\
+       not os.path.exists(settings.MEDIA_ROOT+"/"+str(papel_timbrado.documento)):
+        return HttpResponse("Papel timbrado não encontrado.", status=401)
+    return None

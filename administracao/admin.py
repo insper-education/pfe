@@ -31,7 +31,7 @@ class GrupoCertificadoAdmin(admin.ModelAdmin):
 @admin.register(TipoCertificado)
 class TipoCertificadoAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
-    list_display = ("titulo", "sigla", "grupo_certificado")
+    list_display = ("titulo", "sigla", "grupo_certificado", "exame")
     ordering = ("titulo",)
     search_fields = ["titulo", "sigla"]
 

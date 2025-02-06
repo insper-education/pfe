@@ -50,6 +50,7 @@ class Exame(models.Model):
     class Meta:
         verbose_name = "Exame"
         verbose_name_plural = "Exames"
+        ordering = ["titulo",]
 
 
 class Composicao(models.Model):
