@@ -20,117 +20,118 @@
 
 {% block content %}
   
-    <form method="post" id="edita_aviso" enctype="multipart/form-data">{% csrf_token %}
-      
-      <div style="margin-bottom: 8px; display: inline-block;">
-        <label for="titulo">
-          <b>
-            {% lng "Aviso:" "Notice:" %}
-          </b>
-        <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
-      </div><br>
-
-      <div style="margin-bottom: 8px; margin-right: 25px; display: block;">
-        <label for="evento">
-          <b>
-            {% lng "Evento relacionado:" "Related event:" %}
-          </b>
-        </label>
-        <select name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
-            <option disabled selected value> -- selecione evento -- </option>
-            {% for evento in eventos %}
-              <option value="{{evento.id}}" {% if aviso.tipo_evento.id == evento.id %}selected="selected"{% endif %}>
-                {{evento.nome}}
-              </option>
-            {% endfor %}
-        </select>
-      </div>
-
-      <div style="margin-bottom: 8px; display: inline-block;">
-        <label for="delta">
-          <b>
-            {% lng "Delta:" "Delta:" %}
-          </b>
-        <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
-      </div><br>
-
-      <div style="margin-bottom: 8px; display: inline-block;">
-        <label for="delta">
-          <b>
-            {% lng "Mensagem:" "Message:" %}
-          </b>
-          <br>
-        <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
-      </div><br>
-      
-      <div style="margin-bottom: 8px; display: inline-block;">
+  <form method="post" id="edita_aviso" enctype="multipart/form-data">{% csrf_token %}
+    
+    <div style="margin-bottom: 8px; display: inline-block;">
+      <label for="titulo">
         <b>
-          {% lng "Enviar para:" "Send to:" %}
-        </b><br>
+          {% lng "Aviso:" "Notice:" %}
+        </b>
+      <input type="text" size="88" maxlength="120" id="titulo" name="titulo" value="{{aviso.titulo}}" required></label>
+    </div><br>
 
-        <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
-        <label class="enviar" for="coordenacao">
-          {% lng "Coordenação" "Coordination" %}
-        </label>
-        
-        <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}>
-        <label class="enviar" for="operacional">
-          {% lng "Operacional" "Operational" %}
-        </label>
-        
-        <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
-        <label class="enviar" for="comite_pfe">
-          {% lng "Comitê" "Committee" %}
-        </label>
+    <div style="margin-bottom: 8px; margin-right: 25px; display: block;">
+      <label for="evento">
+        <b>
+          {% lng "Evento relacionado:" "Related event:" %}
+        </b>
+      </label>
+      <select name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
+          <option disabled selected value> -- selecione evento -- </option>
+          {% for evento in eventos %}
+            <option value="{{evento.id}}" {% if aviso.tipo_evento.id == evento.id %}selected="selected"{% endif %}>
+              {{evento.nome}}
+            </option>
+          {% endfor %}
+      </select>
+    </div>
 
-        <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
-        <label class="enviar" for="todos_alunos">
-          {% lng "Estudantes" "Students" %}
-        </label>
+    <div style="margin-bottom: 8px; display: inline-block;">
+      <label for="delta">
+        <b>
+          {% lng "Delta:" "Delta:" %}
+        </b>
+      <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
+    </div><br>
 
-        <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
-        <label class="enviar" for="todos_orientadores">
-          {% lng "Orientadores" "Advisors" %}
-        </label>
+    <div style="margin-bottom: 8px; display: inline-block;">
+      <label for="delta">
+        <b>
+          {% lng "Mensagem:" "Message:" %}
+        </b>
+        <br>
+      <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
+    </div><br>
+    
+    <div style="margin-bottom: 8px; display: inline-block;">
+      <b>
+        {% lng "Enviar para:" "Send to:" %}
+      </b><br>
 
-        <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
-        <label class="enviar" for="contatos_nas_organizacoes">
-          {% lng "Organizações" "Organizations" %}
-        </label>
+      <input type="checkbox" id="coordenacao" name="coordenacao" {% if aviso.coordenacao %}checked{% endif %}>
+      <label class="enviar" for="coordenacao">
+        {% lng "Coordenação" "Coordination" %}
+      </label>
+      
+      <input type="checkbox" id="operacional" name="operacional" {% if aviso.operacional %}checked{% endif %}>
+      <label class="enviar" for="operacional">
+        {% lng "Operacional" "Operational" %}
+      </label>
+      
+      <input type="checkbox" id="comite_pfe" name="comite_pfe" {% if aviso.comite_pfe %}checked{% endif %}>
+      <label class="enviar" for="comite_pfe">
+        {% lng "Comitê" "Committee" %}
+      </label>
 
-      </div><br>
+      <input type="checkbox" id="todos_alunos" name="todos_alunos" {% if aviso.todos_alunos %}checked{% endif %}>
+      <label class="enviar" for="todos_alunos">
+        {% lng "Estudantes" "Students" %}
+      </label>
 
-      <br>
-      <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-        {% lng_b aviso "Atualizar Aviso" "Criar Aviso" "Update Notice" "Create Notice" %}
+      <input type="checkbox" id="todos_orientadores" name="todos_orientadores" {% if aviso.todos_orientadores %}checked{% endif %}>
+      <label class="enviar" for="todos_orientadores">
+        {% lng "Orientadores" "Advisors" %}
+      </label>
+
+      <input type="checkbox" id="contatos_nas_organizacoes" name="contatos_nas_organizacoes" {% if aviso.contatos_nas_organizacoes %}checked{% endif %}>
+      <label class="enviar" for="contatos_nas_organizacoes">
+        {% lng "Organizações" "Organizations" %}
+      </label>
+
+    </div><br>
+
+    <br>
+    <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+      {% lng_b aviso "Atualizar Aviso" "Criar Aviso" "Update Notice" "Create Notice" %}
+    </button>
+
+    {% if aviso %}
+      &nbsp;&nbsp;
+      <button class="btn btn-primary mb-1" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+        {% lng "Apagar Aviso" "Delete Notice" %}
       </button>
 
-      {% if aviso %}
-        &nbsp;&nbsp;
-        <button class="btn btn-primary mb-1" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
-          {% lng "Apagar Aviso" "Delete Notice" %}
-        </button>
+      <script>
+        $("#apagar").click(function() {
+          if(confirm("Você tem certeza?")){
+            event.preventDefault();
+            window.location = "{% url 'deleta_aviso' aviso.id %}";
+          }
+        });
+      </script>
+    {% endif %}
 
-        <script>
-          $("#apagar").click(function() {
-            if(confirm("Você tem certeza?")){
-              event.preventDefault();
-              window.location = "{% url 'deleta_aviso' aviso.id %}";
-            }
-          });
-        </script>
-      {% endif %}
-
-    </form>
-    
-    <div class="mt-4 alert alert-light" style="max-width: 856px;">
-      <b>{% lng "Variáveis" "Variables" %}</b>:<br>
-      {% verbatim %}{{hoje}}{% endverbatim %} - {% lng "Data do dia de envio do aviso" "Date of the day of sending the notice" %}<br>
-      {% verbatim %}{{delta}}{% endverbatim %} - {% lng "Diferença de dias entre o envio do aviso e o aviso" "Difference in days between the sending of the notice and the notice" %}<br>
-      {% verbatim %}{{delta_invert}}{% endverbatim %} - {% lng "Diferença de dias entre o evento e o envio do aviso" "Difference in days between the event and the sending of the notice" %}<br>
-      {% verbatim %}{{inicio_aulas}}{% endverbatim %} - {% lng "Data de início das aulas no semestre" "Start date of classes in the semester" %}<br>
-      {% verbatim %}{{evento}}{% endverbatim %} - {% lng "Evento relacionado" "Related event" %}<br>
-      &nbsp;&nbsp;{% lng "atributos" "attributes" %}: location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento<br>
-    </div>
+  </form>
+  
+  <div class="mt-4 alert alert-light" style="max-width: 856px;">
+    <b>{% lng "Variáveis" "Variables" %}</b>:<br>
+    {% verbatim %}{{hoje}}{% endverbatim %} - {% lng "Data do dia de envio do aviso" "Date of the day of sending the notice" %}<br>
+    {% verbatim %}{{edicao}}{% endverbatim %} - {% lng "Edição do Capstone" "Capstone edition" %}<br>
+    {% verbatim %}{{delta}}{% endverbatim %} - {% lng "Diferença de dias entre o envio do aviso e o aviso" "Difference in days between the sending of the notice and the notice" %}<br>
+    {% verbatim %}{{delta_invert}}{% endverbatim %} - {% lng "Diferença de dias entre o evento e o envio do aviso" "Difference in days between the event and the sending of the notice" %}<br>
+    {% verbatim %}{{inicio_aulas}}{% endverbatim %} - {% lng "Data de início das aulas no semestre" "Start date of classes in the semester" %}<br>
+    {% verbatim %}{{evento}}{% endverbatim %} - {% lng "Evento relacionado" "Related event" %}<br>
+    &nbsp;&nbsp;{% lng "atributos" "attributes" %}: location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento<br>
+  </div>
 
 {% endblock %}

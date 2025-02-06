@@ -89,6 +89,7 @@ def avisos_do_dia():
 
         context = {
                 "hoje": datetime.date.today(),
+                "edicao": f"{configuracao.ano}.{configuracao.semestre}",
                 "delta": aviso.delta,
                 "delta_invert": -aviso.delta,
                 "evento": evento,

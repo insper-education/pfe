@@ -193,15 +193,17 @@ def emails_projetos(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def edita_aviso(request, primarykey):
+def edita_aviso(request, primarykey=None):
     """Edita aviso."""
-    aviso = get_object_or_404(Aviso, pk=primarykey)
+    aviso = get_object_or_404(Aviso, pk=primarykey) if primarykey else None
 
     if request.method == "POST":
         if "mensagem" in request.POST:
+            if primarykey is None:
+                aviso = Aviso()
             erro = trata_aviso(aviso, request)
             if erro:
-                return erro
+                return erro            
             return redirect("avisos_listar")
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
@@ -294,27 +296,6 @@ def carregar_certificado(request):
     }
 
     return render(request, "operacional/carregar_certificado.html", context)
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def cria_aviso(request):
-    """Cria aviso."""
-    if request.method == "POST":
-
-        if "mensagem" in request.POST:
-            aviso = Aviso()
-            erro = trata_aviso(aviso, request)
-            if erro:
-                return erro
-
-            return redirect("avisos_listar")
-
-        return HttpResponse("Problema com atualização de mensagem.", status=401)
-
-    context = {"eventos": TipoEvento.objects.all(),}
-    return render(request, "operacional/edita_aviso.html", context)
 
 
 @login_required
