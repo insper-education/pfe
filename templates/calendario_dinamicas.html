@@ -4,28 +4,19 @@
   Data: 20 de Outubro de 2024
 {% endcomment %}
 
-
 {% load static %}
 {% load date_extras %}
 {% load linguas %}
 
 <style>
   .strikeout {
-      text-decoration: line-through;
-      color: #808080;
+    text-decoration: line-through;
+    color: #808080;
   }
 </style>
 
 <div class="wrap">
-  <div class="one">
-    <br><br>
-    <a href="{% url 'dinamicas_lista'%}">
-      <h5>
-        {% lng "Listar Mentorias" "List Mentoring" %}
-      </h5>
-    </a>
-  </div>
-  <div class="two" id='calendar'></div>
+  <div id="calendar"></div>
 </div>
 
 <h4 style="margin: 8px 0 0 0;">

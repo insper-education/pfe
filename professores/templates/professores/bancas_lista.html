@@ -7,49 +7,11 @@
 
 {% block head %}
   {% load static %}
-  {% load escape_emails %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'professores/css/agendamentos.css' %}">
   {% include "heads_calendar.html" %}
   {% include "cores_bancas_mentorias.html" %}
-  <style>
-    select {
-      margin-right: 16px;
-    }
-  
-    .agendamento {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-    
-    .agendamento > * {
-        margin-left: 4px;
-    }
-    
-    .editar {
-        margin-left: auto;
-        float: right;
-    }
-
-    @media (max-width: 800px) {
-      .btn {
-          font-size: 0.75rem; /* Smaller font size */
-          padding: 0.25rem 0.5rem; /* Smaller padding */
-      }
-    }
-
-    .btn-xs {
-      padding: 0.0rem 0.5rem 0.0rem 0.5rem;
-      margin: 0px 0px 0px 0px;
-      font-size: 0.65rem;
-      line-height: 1.5;
-      border-radius: 0.2rem;
-    }
-
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -84,7 +46,7 @@
       }
     </script>
 
-    <select class="esconder" id="tipo" onchange="tipo_banca(this)">
+    <select class="esconder ml-3" id="tipo" onchange="tipo_banca(this)">
       <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} class="troca_lingua" data-pt="todas" data-en="all">
         todas
       </option>
@@ -98,19 +60,19 @@
         Probatória
       </option>
     </select>
-  
-    <span class="esconder">
-      <a href="{% url 'bancas_criar'%}"
-       class="open-modal" style="cursor:pointer;"
-       data-url="{% url 'bancas_criar' %}">
-        <i class="fas fa-plus"></i>
-        {% lng "Cadastrar Nova Banca" "Register New Examination Board" %}
-      </a>
-    </span>
 
   </div>
 
-  {% include "informacoes_ml.html" %}
+  {% include "informacoes_ml.html" %}<br>
+  
+  <span class="esconder">
+    <a href="{% url 'bancas_criar'%}"
+     class="open-modal" style="cursor:pointer;"
+     data-url="{% url 'bancas_criar' %}">
+      <i class="fas fa-plus"></i>
+      {% lng "Cadastrar Nova Banca" "Register New Examination Board" %}
+    </a>
+  </span>
 
   <div id="atualizar">
 

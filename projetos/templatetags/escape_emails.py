@@ -14,3 +14,12 @@ register = template.Library()
 def parse_quote(value):
     """Remove e-comercial e outros simbolos que podem comprometer a montagem da URL."""
     return parse.quote(str(value))
+
+@register.filter
+def limpa_texto_variavel(value):
+    """Remove simbolos que podem comprometer o nome de uma variável."""
+    variavel = value.replace(" ", "_").replace("-", "_").replace(".", "_").replace("(", "_").replace(")", "_").replace("/", "_").replace(":", "_")
+    variavel = variavel.replace(",", "_").replace(";", "_").replace("?", "_").replace("!", "_").replace("'", "_").replace('"', "_").replace("´", "_")
+    variavel = variavel.replace("`", "_").replace("^", "_").replace("~", "_").replace("*", "_").replace("+", "_").replace("=", "_").replace("{", "_")
+    variavel = variavel.replace("}", "_").replace("[", "_").replace("]", "_").replace("|", "_").replace("\\", "_").replace("<", "_").replace(">", "_")
+    return variavel

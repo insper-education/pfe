@@ -783,7 +783,8 @@ class Banca(models.Model):
         """Retorna os membros da banca."""
         selecao = []
         if self.composicao and self.composicao.exame and self.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
-            selecao += [self.projeto.orientador.user]
+            if self.projeto.orientador:
+                selecao += [self.projeto.orientador.user]
         selecao += [ m for m in [self.membro1, self.membro2, self.membro3] if m is not None]
         return selecao
     

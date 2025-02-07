@@ -158,6 +158,10 @@ urlpatterns = [
         views.dinamicas_index,
         name="dinamicas_index"),
 
+    path("dinamicas_index/<str:facilit_id>",
+        views.dinamicas_index,
+        name="dinamicas_index"),
+         
     path("dinamicas_criar/",
         views.dinamicas_criar,
         name="dinamicas_criar"),
@@ -175,6 +179,10 @@ urlpatterns = [
         name="dinamicas_editar"),
 
     path("dinamicas_lista/",
+        views.dinamicas_lista,
+        name="dinamicas_lista"),
+
+    path("dinamicas_lista/<str:edicao>",
         views.dinamicas_lista,
         name="dinamicas_lista"),
 

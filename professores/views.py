@@ -817,66 +817,6 @@ def bancas_editar(request, primarykey=None):
     return render(request, "professores/bancas_view.html", context)
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_lista(request, edicao):
-    """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-    context = {
-        "titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},
-        "periodo": edicao
-        }
-
-    if edicao == "proximas":
-        # Coletando bancas agendadas a partir de hoje
-        hoje = datetime.date.today()
-        bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-
-        # checando se projetos atuais tem banca marcada
-        configuracao = get_object_or_404(Configuracao)
-        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-        for banca in bancas:
-            if banca.projeto:
-                projetos = projetos.exclude(id=banca.projeto.id)
-        context["sem_banca"] = projetos
-
-    elif edicao == "todas":
-        bancas = Banca.objects.all().order_by("startDate")
-
-    elif '.' in edicao:
-        ano, semestre = map(int, edicao.split('.'))
-        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
-        bancas = (bancas_p | bancas_a).order_by("startDate")
-
-    else:
-        projeto = get_object_or_404(Projeto, id=edicao)
-        context["projeto"] = projeto
-        bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
-
-    context["bancas"] = bancas
-    context["edicoes"] = get_edicoes(Projeto)[0]
-    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-
-    context["informacoes"] = [
-            (".local", "local", "local"),
-            (".link", "video-conferência", "video-conference"),
-            (".grupo", "grupo", "group"),
-            (".orientacao", "orientação", "supervision"),
-            (".curso", "curso", "program"),
-            (".banca", "avaliadores", "examiners"),
-            (".avaliacao", "link avaliação", "evaluation link"),
-            (".agendamento", "agendamento", "schedule"),
-            (".email", "e-mail", "e-mail"),
-            (".editar", "editar", "edit"),
-            (".sem_agendamento", "sem agendamento", "without schedule"),
-        ]
-    
-    # Usando para #atualizar a página raiz no edit da banca
-    request.session["root_page_url"] = request.build_absolute_uri()
-    context["root_page_url"] = request.session["root_page_url"]
-
-    return render(request, "professores/bancas_lista.html", context)
-
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -935,10 +875,28 @@ def coorientacoes_alocadas(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def dinamicas_index(request, facilit_id=None):
+    """Menus de encontros/mentorias."""
+
+    encontros = Encontro.objects.all().order_by("startDate")
+    
+    if facilit_id and request.user.eh_admin:  # Administrador
+        facilitador = get_object_or_404(PFEUser, pk=facilit_id)
+        encontros = encontros.filter(facilitador=facilitador)
+
+    context = {
+        "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentorships"},
+        "encontros": encontros,
+        }
+    return render(request, "professores/dinamicas_index.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-    if prof_id and request.user.tipo_de_usuario == 4:  # Administrador
+    if prof_id and request.user.eh_admin:  # Administrador
         professor = get_object_or_404(Professor, pk=prof_id)
     else:
         professor = request.user.professor
@@ -970,7 +928,7 @@ def bancas_index(request, prof_id=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def dinamicas_lista(request):
+def dinamicas_lista(request, edicao=None):
     """Mostra os horários de dinâmicas."""
 
     if request.is_ajax():
@@ -1016,12 +974,11 @@ def dinamicas_lista(request):
             (".local", "local", "location"),
             (".grupo", "grupo", "group"),
             (".curso", "curso", "program"),
-            (".facilitador", "facilitador", "facilitator"),
             (".sem_agendamento", "sem agendamento", "no schedule"),
         ]
 
         context = {
-                "titulo": {"pt": "Mentorias", "en": "Mentoring"},
+                "titulo": {"pt": "Listagem das Mentorias", "en": "List of Mentoring"},
                 "edicoes": get_edicoes(Projeto)[0],
                 "informacoes": informacoes,
             }
@@ -1031,6 +988,70 @@ def dinamicas_lista(request):
     context["root_page_url"] = request.session["root_page_url"]
 
     return render(request, "professores/dinamicas_lista.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_lista(request, edicao):
+    """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
+    context = {
+        "titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},
+        "periodo": edicao
+        }
+
+
+    ## DEVERIA SER POR AJAX
+
+    if edicao == "proximas":
+        # Coletando bancas agendadas a partir de hoje
+        hoje = datetime.date.today()
+        bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+
+        # checando se projetos atuais tem banca marcada
+        configuracao = get_object_or_404(Configuracao)
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        for banca in bancas:
+            if banca.projeto:
+                projetos = projetos.exclude(id=banca.projeto.id)
+        context["sem_banca"] = projetos
+
+    elif edicao == "todas":
+        bancas = Banca.objects.all().order_by("startDate")
+
+    elif '.' in edicao:
+        ano, semestre = map(int, edicao.split('.'))
+        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+        bancas = (bancas_p | bancas_a).order_by("startDate")
+
+    else:
+        projeto = get_object_or_404(Projeto, id=edicao)
+        context["projeto"] = projeto
+        bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
+
+    context["bancas"] = bancas
+    context["edicoes"] = get_edicoes(Projeto)[0]
+    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
+
+    context["informacoes"] = [
+            (".local", "local", "local"),
+            (".link", "video-conferência", "video-conference"),
+            (".grupo", "grupo", "group"),
+            (".orientacao", "orientação", "supervision"),
+            (".curso", "curso", "program"),
+            (".banca", "avaliadores", "examiners"),
+            (".avaliacao", "link avaliação", "evaluation link"),
+            (".agendamento", "agendamento", "schedule"),
+            (".email", "e-mail", "e-mail"),
+            (".editar", "editar", "edit"),
+            (".sem_agendamento", "sem agendamento", "without schedule"),
+        ]
+    
+    # Usando para #atualizar a página raiz no edit da banca
+    request.session["root_page_url"] = request.build_absolute_uri()
+    context["root_page_url"] = request.session["root_page_url"]
+
+    return render(request, "professores/bancas_lista.html", context)
 
 
 @login_required
@@ -1494,18 +1515,6 @@ def resultado_bancas(request):
         "projeto": projeto,
     }
     return render(request, "professores/resultado_bancas.html", context=context)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def dinamicas_index(request):
-    """Menus de encontros."""
-    encontros = Encontro.objects.all().order_by("startDate")
-    context = {
-        "titulo": {"pt": "Mentorias", "en": "Mentorships"},
-        "encontros": encontros,
-        }
-    return render(request, "professores/dinamicas_index.html", context)
 
 
 @login_required

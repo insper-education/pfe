@@ -5,6 +5,7 @@
 {% endcomment %}
 
 {% load linguas %}
+{% load escape_emails %}
 
 {% if informacoes %}
 
@@ -70,8 +71,8 @@
     <div id="toggle">
       {% for inf in informacoes %}
         {% comment %} O quarto campo é o nome da classe, mas se for False desliga o botao {% endcomment %}
-        <label {% if inf.3 is not None and inf.3 != False %}class="{{inf.3}}"{% endif %}>
-          <input id="info_{{inf.1}}"
+        <label {% if inf.3 is not None and inf.3 != False %}class="{{inf.3}}"{% endif %} for="info_{{inf.1|limpa_texto_variavel}}">
+          <input id="info_{{inf.1|limpa_texto_variavel}}"
                  onchange="($(this).prop('checked') ? $(`{{inf.0|safe}}`).show() : $(`{{inf.0|safe}}`).hide())"
                  type="checkbox" {% if inf.3 is None or inf.3 != False %}checked{% endif %} />
           {% lng inf.1 inf.2 %}
@@ -90,7 +91,7 @@
 
     function muda_edicao(event) {        
       {% for inf in informacoes %}
-        if($(`#info_{{inf.1}}`).prop('checked')) {$(`{{inf.0|safe}}`).show()} else {$(`{{inf.0|safe}}`).hide()};
+        if($(`#info_{{inf.1|limpa_texto_variavel}}`).prop('checked')) {$(`{{inf.0|safe}}`).show()} else {$(`{{inf.0|safe}}`).hide()};
       {% endfor %}
     }
 

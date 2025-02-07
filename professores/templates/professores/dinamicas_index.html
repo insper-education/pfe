@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   {% include "heads_calendar.html" %}
   {% include "cores_bancas_mentorias.html" %}
 {% endblock %}
@@ -21,10 +22,11 @@
       {% lng "Agendar Mentoria" "Schedule Mentoring" %}
     </a>
   </span>
-  {% include "janelas-modal.html" %}
-
+  <br><br>
+  
   <div id="atualizar">
     {% include "calendario_dinamicas.html" %}
+    <br>
   </div>
     
   <script>
