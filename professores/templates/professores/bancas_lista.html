@@ -182,7 +182,7 @@
     <div class="sem_agendamento">
       {% if sem_banca %}
         <h5>{% lng "Projetos ativos sem bancas agendadas" "Active projects without scheduled examination boards" %}:
-          <a href="mailto:{% for projeto in sem_banca %}{{projeto.orientador.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Orientador{% if sem_banca|length > 1 %}s{% endif %}%20,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+          <a href="mailto:{% for projeto in sem_banca %}{{projeto.orientador.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Orientador{% if sem_banca|length > 1 %}s{% endif %}%20,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </h5>
