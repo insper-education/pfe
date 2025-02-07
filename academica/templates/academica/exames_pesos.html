@@ -15,7 +15,7 @@
 
 {% block content %}
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %}
       {% for ano, semestre, composicoes in semestres reversed %}
         <script> var peso = 0; </script>

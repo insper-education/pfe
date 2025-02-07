@@ -28,7 +28,7 @@
   </div>
   <br>
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
       {% for usuario in usuarios %}
         <tr class="item" {% if not usuario.is_active %} style="color: lightgrey;" {% endif %}>

@@ -71,7 +71,7 @@
           success: function(response){
 
             if (seqNumber === xhrCount) { // Processando resposta
-              $(".atualizar").replaceWith($(".atualizar",response));
+              $("#atualizar").replaceWith($("#atualizar", response));
               $(".tooltip-inner").remove();
               $(".tooltip-arrow").remove();
               {% if tabela %}

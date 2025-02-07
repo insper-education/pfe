@@ -23,7 +23,7 @@
   
   {% include "edicoes.html" with sem_edicao=True com_cursos=True %}
   
-  <div class="atualizar">
+  <div id="atualizar">
 
       {% if curso %}
         {% with file_name="evolucao_notas_"|addstr:curso %}

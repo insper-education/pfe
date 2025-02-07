@@ -45,7 +45,7 @@
     <br><h4>{{ gerados }} {% lng "novos certificados gerados." "new certificates generated." %}</h4>
   {% endif %}
 
-  <div class="atualizar">
+  <div id="atualizar">
 
     <div class="table-responsive">
       <table id="certificados">
@@ -162,7 +162,7 @@
         },
         success: function(response){
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
-            $(".atualizar").replaceWith($(".atualizar",response));
+            $("#atualizar").replaceWith($("#atualizar", response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             if (typeof carrega_pagina === "function") {

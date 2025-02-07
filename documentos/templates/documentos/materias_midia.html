@@ -25,7 +25,7 @@
     {% include "documento-modal.html" %}
   {% endif %}
   
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Materias" cabecalhos=cabecalhos %}
       {% for relatorio in documentos %}
         {% if relatorio.link or relatorio.documento %}

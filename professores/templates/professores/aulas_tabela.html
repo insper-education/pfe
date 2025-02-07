@@ -15,7 +15,7 @@
 
 {% block content %}
   {% include "edicoes.html" with com_pessoas=True %}
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Aulas" cabecalhos=cabecalhos %}
       {% for aula in aulas %}
         {% if aula.responsavel %}

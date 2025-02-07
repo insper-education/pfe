@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
       {% for membro, bancas in membros.items %}
         {% if membro.tipo_de_usuario == 2 or membro.tipo_de_usuario == 4 %}

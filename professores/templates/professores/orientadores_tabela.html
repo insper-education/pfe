@@ -15,7 +15,7 @@
   {% include "edicoes.html" %}
   {% include "informacoes_ml.html" %}
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Orientacoes" cabecalhos=cabecalhos %}
       {% for professor, grupos in orientacoes %} 
         <tr class="item">

@@ -26,7 +26,7 @@
         },
         success: function(response){
           if (seqNumber === xhrCount) { {% comment %} Processando resposta {% endcomment %}
-            $(".atualizar").replaceWith($(".atualizar",response));
+            $("#atualizar").replaceWith($("#atualizar", response));
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             {% if tabela %}

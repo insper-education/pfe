@@ -19,7 +19,7 @@
 
 {% block content %}
   {% include "edicoes.html" %}
-  <div class="atualizar">
+  <div id="atualizar">
     {% for banca in bancas %}
       {% with projeto=banca.get_projeto %}
         {% ifchanged projeto %}

@@ -34,7 +34,7 @@
     </div>
   </div>
   
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Relatorios" cabecalhos=cabecalhos %}
       {% for relatorio in relatorios %}
         {% if relatorio.link or relatorio.documento and relatorio.projeto %}

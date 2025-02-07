@@ -27,7 +27,7 @@
   {% include "edicoes.html" with n_todas=True %}
   {% include "informacoes_ml.html" %}
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos captions=captions %}
 
       {% for aluno in alunos_list %} 

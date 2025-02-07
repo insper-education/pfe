@@ -24,7 +24,7 @@
   {% include "edicoes.html" %}
 
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos %}
       {% for proposta in propostas %} 
         <tr class="item"> 

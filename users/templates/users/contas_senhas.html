@@ -16,7 +16,7 @@
 
   {% include "edicoes.html" %}<br>
 
-  <div class="atualizar">
+  <div id="atualizar">
 
     <form method="post" action="{% url 'envia_contas_senhas' %}" enctype="multipart/form-data">{% csrf_token %}
       <table id="EstudantesTable" class="tabela-padrao" ><thead><tr>

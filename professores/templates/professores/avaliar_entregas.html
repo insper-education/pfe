@@ -32,7 +32,7 @@
 
   {% include "edicoes.html" with com_entregas=tipos_entregas %}
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% if not edicoes %}
       {% for projeto, entregas in avaliacoes %}
         {% if projeto.tem_relatos %}

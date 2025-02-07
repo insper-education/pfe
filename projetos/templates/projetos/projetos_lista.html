@@ -11,7 +11,7 @@
 
 {% block content %}
   {% include "edicoes.html" with avancados=True %}
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %}
         {% with estudantes=projeto.alocacao_set.all %}

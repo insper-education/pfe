@@ -17,7 +17,7 @@
 
   {% include "edicoes.html" %}
 
-  <div class="atualizar">
+  <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Mentorias" cabecalhos=cabecalhos %}
       {% for membro, mentorias in mentores.items %}
         {% if membro.tipo_de_usuario == 2 or membro.tipo_de_usuario == 4 %}

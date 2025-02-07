@@ -18,7 +18,7 @@
 
   {% include "edicoes.html" with com_cursos=True %}
 
-  <div class="atualizar">
+  <div id="atualizar">
 
     {% if periodo  and curso %}
       {% with file_name="analise_objetivos_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
