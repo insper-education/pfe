@@ -16,55 +16,15 @@
 
 {% block content %}
 
-  <div>
-    <select class="esconder" id="proximas" onchange="location = this.options[this.selectedIndex].value;">
-      <option value="todas" {% if periodo == "todas" %}selected="todas"{% endif %} class="troca_lingua" data-pt="Todas" data-en="All">
-        Todas
-      </option>
-      {% for edicao in edicoes %}
-        <option value="{{edicao}}"
-          {% if periodo == edicao %}selected{% endif %}
-        >{{edicao}}</option>
-      {% endfor %}
-      <option value="proximas" {% if periodo == "proximas" %}selected="proximas"{% endif %} class="troca_lingua" data-pt="Próximas" data-en="Next">
-        Próximas
-      </option>
-      {% if projeto %}
-        <option value="{{projeto.id}}" selected>{{projeto}}</option>
-      {% endif %}
-    </select>
-  
-    <script>
-      function tipo_banca(selectObject) {
-        var value = selectObject.value;
-        if(value == "todos") {
-          $(".item").show();
-        } else {
-          $(".item").hide();
-          $('.'+value).show();
-        }
-      }
-    </script>
-
-    <select class="esconder ml-3" id="tipo" onchange="tipo_banca(this)">
-      <option value="todos" {% if tipo == "todos" %}selected="todos"{% endif %} class="troca_lingua" data-pt="todas" data-en="all">
-        todas
-      </option>
-      <option value="Intermediária" {% if tipo == "Intermediária" %}selected{% endif %} class="troca_lingua" data-pt="Intermediária" data-en="Intermediate">
-        Intermediária
-      </option>
-      <option value="Final" {% if tipo == "Final" %}selected{% endif %} class="troca_lingua" data-pt="Final" data-en="Final">
-        Final</option>
-      <option value="Falconi" {% if tipo == "Falconi" %}selected{% endif %}>Falconi</option>
-      <option value="Probation" {% if tipo == "Probation" %}selected{% endif %} class="troca_lingua" data-pt="Probatória" data-en="Probation">
-        Probatória
-      </option>
-    </select>
-
-  </div>
-
+  {% include "edicoes.html" with com_proximas=True com_tipo_banca=True %}
   {% include "informacoes_ml.html" %}<br>
   
+  {% if projeto %}
+    <script>
+      $("#filterEdicao").append($("<option>", {value: "{{projeto.id}}", text: "{{projeto.get_titulo}}", selected: "selected"}));
+    </script>
+  {% endif %}
+
   <span class="esconder">
     <a href="{% url 'bancas_criar'%}"
      class="open-modal" style="cursor:pointer;"
@@ -74,10 +34,10 @@
     </a>
   </span>
 
-  <div id="atualizar">
+    <div class="atualizar">
 
     {% if bancas %}
-      
+
         <table id="BancasTable" class="table table-borderless table-sm arredondado"><tbody>
           {% for banca in bancas %} 
           <tr class="item {{banca.composicao.exame}}">
@@ -209,7 +169,7 @@
           </tr>
           {% endfor %}
         </tbody></table>
-      {% comment %} </form> {% endcomment %}
+
     {% else %}
       {% lng "Não existem bancas definidas." "There are no defined examination boards." %}
     {% endif %}
@@ -228,19 +188,27 @@
 
   </div>
 
+  
   <script>
-    function carrega_pagina() {
-      montar_calendario();
-    };
-    function carrega_site() {
-      {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
-    };
-
+    // Callback function when #tipo_banca changes
+    $(document).ready(function() {
+      $("#tipo_banca").change(function() {
+        var value = $(this).val();
+        if(value == "todos") {
+          $(".item").show();
+        } else {
+          $(".item").hide();
+          $('.'+value).show();
+        }
+      });
+    });
+  
+    function carrega_pagina() {montar_calendario();};
+    function carrega_site() {carrega_pagina();};
     window.onload = carrega_site
-
   </script>
 
+  {% include "edicoes_ajax.html" %}
   {% include "janelas-modal.html" %}
 
 {% endblock %}

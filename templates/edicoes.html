@@ -93,6 +93,9 @@
               {% if com_trancou %}
                 <option class="opt_edi troca_lingua" value="trancou" data-pt="trancou" data-en="on hold">trancou</option>
               {% endif %}
+              {% if com_proximas %}
+                <option class="opt_edi troca_lingua" value="proximas" data-pt="próximas" data-en="next" {% if not selecionada %}selected{% endif %}>próximas</option>
+              {% endif %}
               </optgroup>
             </select>
             <div class="separador input-group-addon"></div>
@@ -211,6 +214,32 @@
           <div class="separador input-group-addon"></div>
         </div>
       {% endif %}
+
+      {% if com_tipo_banca %}
+        <div id="blocoFilterTipo" class="input-group input-group-sm mt-1 flex-nowrap">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="filterTipo" onClick="recarregar_pagina()"><span class="to_hide">
+              {% lng "Tipo de Banca" "Examination Board Type" %}
+            </span></label>
+          </div>
+          <select class="to_hide2 custom-select w-auto form-control" id="tipo_banca" name="tipo_banca">
+            <option value="todos" {% if tipo_banca == "todos" %}selected="todos"{% endif %} class="opt_edi troca_lingua" data-pt="todas" data-en="all">
+              todas
+            </option>
+            <option value="Intermediária" {% if tipo_banca == "Intermediária" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Intermediária" data-en="Intermediate">
+              Intermediária
+            </option>
+            <option value="Final" {% if tipo_banca == "Final" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Final" data-en="Final">
+              Final</option>
+            <option value="Falconi" {% if tipo_banca == "Falconi" %}selected{% endif %} class="opt_edi">Falconi</option>
+            <option value="Probation" {% if tipo_banca == "Probation" %}selected{% endif %} class="opt_edi troca_lingua" data-pt="Probatória" data-en="Probation">
+              Probatória
+            </option>
+          </select>
+          <div class="separador input-group-addon"></div>
+        </div>
+      {% endif %}
+
 
       {% if com_entregas %}
         <div id="blocoFilterEntregas" class="input-group input-group-sm mt-1 flex-nowrap">

@@ -134,7 +134,7 @@ def ajax_bancas(request):
             title += "\n<br>Banca:"
             for membro in membros:
                 title += f"\n<br>&bull; {membro.get_full_name()}"
-                if projeto.orientador.user == membro:
+                if projeto.orientador and projeto.orientador.user == membro:
                     title += " (O)"
 
             if banca.composicao and banca.composicao.exame:
@@ -931,41 +931,37 @@ def bancas_index(request, prof_id=None):
 def dinamicas_lista(request, edicao=None):
     """Mostra os horários de dinâmicas."""
 
-    if request.is_ajax():
-        if "edicao" in request.POST:
+    if request.is_ajax() and "edicao" in request.POST:
 
-            encontros = Encontro.objects.all().order_by("startDate")
+        encontros = Encontro.objects.all().order_by("startDate")
 
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                pass  # segue com encontros
-            elif edicao == "proximas":
-                hoje = datetime.date.today()
-                encontros = encontros.filter(startDate__gt=hoje)
-            else:
-                ano, semestre = map(int, edicao.split('.'))
-
-                encontros = encontros.filter(startDate__year=ano)
-                if semestre == 1:
-                    encontros = encontros.filter(startDate__month__lt=8)
-                else:
-                    encontros = encontros.filter(startDate__month__gt=7)
-
-            # checando se projetos atuais tem banca marcada
-            configuracao = get_object_or_404(Configuracao)
-            sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
-                                            semestre=configuracao.semestre)
-            for encontro in encontros:
-                if encontro.projeto:
-                    sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
-
-            context = {
-                "sem_dinamicas": sem_dinamicas,
-                "encontros": encontros,
-            }
-
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            pass  # segue com encontros
+        elif edicao == "proximas":
+            hoje = datetime.date.today()
+            encontros = encontros.filter(startDate__gt=hoje)
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
+            ano, semestre = map(int, edicao.split('.'))
+
+            encontros = encontros.filter(startDate__year=ano)
+            if semestre == 1:
+                encontros = encontros.filter(startDate__month__lt=8)
+            else:
+                encontros = encontros.filter(startDate__month__gt=7)
+
+        # checando se projetos atuais tem banca marcada
+        configuracao = get_object_or_404(Configuracao)
+        sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
+                                        semestre=configuracao.semestre)
+        for encontro in encontros:
+            if encontro.projeto:
+                sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
+
+        context = {
+            "sem_dinamicas": sem_dinamicas,
+            "encontros": encontros,
+        }
 
     else:
 
@@ -994,62 +990,69 @@ def dinamicas_lista(request, edicao=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, edicao):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
-    context = {
-        "titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},
-        "periodo": edicao
-        }
-
-
-    ## DEVERIA SER POR AJAX
-
-    if edicao == "proximas":
-        # Coletando bancas agendadas a partir de hoje
-        hoje = datetime.date.today()
-        bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-
-        # checando se projetos atuais tem banca marcada
-        configuracao = get_object_or_404(Configuracao)
-        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-        for banca in bancas:
-            if banca.projeto:
-                projetos = projetos.exclude(id=banca.projeto.id)
-        context["sem_banca"] = projetos
-
-    elif edicao == "todas":
-        bancas = Banca.objects.all().order_by("startDate")
-
-    elif '.' in edicao:
-        ano, semestre = map(int, edicao.split('.'))
-        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
-        bancas = (bancas_p | bancas_a).order_by("startDate")
-
-    else:
-        projeto = get_object_or_404(Projeto, id=edicao)
-        context["projeto"] = projeto
-        bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
-
-    context["bancas"] = bancas
-    context["edicoes"] = get_edicoes(Projeto)[0]
-    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-
-    context["informacoes"] = [
-            (".local", "local", "local"),
-            (".link", "video-conferência", "video-conference"),
-            (".grupo", "grupo", "group"),
-            (".orientacao", "orientação", "supervision"),
-            (".curso", "curso", "program"),
-            (".banca", "avaliadores", "examiners"),
-            (".avaliacao", "link avaliação", "evaluation link"),
-            (".agendamento", "agendamento", "schedule"),
-            (".email", "e-mail", "e-mail"),
-            (".editar", "editar", "edit"),
-            (".sem_agendamento", "sem agendamento", "without schedule"),
-        ]
+    context = {"titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},}
     
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
+
+    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
+
+    if request.is_ajax() and "edicao" in request.POST:
+        
+        edicao = request.POST["edicao"]
+
+        if edicao == "proximas":
+
+            # Coletando bancas agendadas a partir de hoje
+            hoje = datetime.date.today()
+            bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+
+            # checando se projetos atuais tem banca marcada
+            configuracao = get_object_or_404(Configuracao)
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+            for banca in bancas:
+                if banca.projeto:
+                    projetos = projetos.exclude(id=banca.projeto.id)
+            context["sem_banca"] = projetos
+
+        elif edicao == "todas":
+            bancas = Banca.objects.all().order_by("startDate")
+
+        elif '.' in edicao:
+            ano, semestre = map(int, edicao.split('.'))
+            bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+            bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+            bancas = (bancas_p | bancas_a).order_by("startDate")
+
+        else:
+            projeto = get_object_or_404(Projeto, id=edicao)
+            context["projeto"] = projeto
+            bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
+
+        context["bancas"] = bancas
+
+    else:
+        context["informacoes"] = [
+                (".local", "local", "local"),
+                (".link", "video-conferência", "video-conference"),
+                (".grupo", "grupo", "group"),
+                (".orientacao", "orientação", "supervision"),
+                (".curso", "curso", "program"),
+                (".banca", "avaliadores", "examiners"),
+                (".avaliacao", "link avaliação", "evaluation link"),
+                (".agendamento", "agendamento", "schedule"),
+                (".email", "e-mail", "e-mail"),
+                (".editar", "editar", "edit"),
+                (".sem_agendamento", "sem agendamento", "without schedule"),
+            ]
+        context["edicoes"] = get_edicoes(Projeto)[0]
+
+        if '.' in edicao:
+            context["selecionada"] = edicao
+        elif edicao != "proximas" and edicao != "todas":
+            projeto = get_object_or_404(Projeto, id=edicao)
+            context["projeto"] = projeto
 
     return render(request, "professores/bancas_lista.html", context)
 

@@ -16,11 +16,8 @@
 
 {% block content %}
 
-  {% include "edicoes.html" %}
-  <script>
-    $("#filterEdicao").append($("<option>", {value: "proximas", text: "proximas", selected: "selected"}));
-  </script>
-
+  {% include "edicoes.html" with com_proximas=True %}
+  
   {% include "informacoes_ml.html" %}<br>
 
   <span class="esconder">
@@ -101,33 +98,23 @@
         <br>
         <h5>{% lng "Projetos ativos sem mentorias agendadas." "Active projects without scheduled mentoring." %}:</h5>
         <ul>
-        {% for projeto in sem_dinamicas %}
-          <li>
-
-            {% if projeto.organizacao %}
-              [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}"
-                >{{ projeto.organizacao.nome }}</a
-              >]
-            {% endif %}
-
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
-            {% include "tipo_projeto.html" %}
-            
-          </li>
-        {% endfor %}
+          {% for projeto in sem_dinamicas %}
+            <li>
+              {% if projeto.organizacao %}
+                [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
+              {% endif %}
+              <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+              {% include "tipo_projeto.html" %}
+            </li>
+          {% endfor %}
         </ul>
       {% endif %}
     </div>
-
   </div>
-
 
   <script>
     function carrega_pagina() {montar_calendario();};
-    function carrega_site() {
-      {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
-    };
+    function carrega_site() {carrega_pagina();};
     window.onload = carrega_site
   </script>
 
