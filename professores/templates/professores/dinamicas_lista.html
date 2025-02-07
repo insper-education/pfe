@@ -96,7 +96,12 @@
     <div class="sem_agendamento">
       {% if sem_dinamicas %}
         <br>
-        <h5>{% lng "Projetos ativos sem mentorias agendadas." "Active projects without scheduled mentoring." %}:</h5>
+        <h5>
+          {% lng "Projetos ativos sem mentorias agendadas" "Active projects without scheduled mentoring" %}:
+          <a href="mailto:{% for projeto in sem_dinamicas %}{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email}}{% endfor %}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Orientador{% if sem_banca|length > 1 %}s{% endif %}%20,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+            <i class="fas fa-mail-bulk"></i>
+          </a>
+        </h5>
         <ul>
           {% for projeto in sem_dinamicas %}
             <li>
