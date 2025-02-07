@@ -419,7 +419,7 @@ class Alocacao(models.Model):
         verbose_name = "Alocação"
         verbose_name_plural = "Alocações"
         permissions = (("altera_professor", "Professor altera valores"), )
-        ordering = ["projeto__ano", "projeto__semestre", ]
+        ordering = ["projeto__ano", "projeto__semestre", "-aluno__externo",]
 
     def __str__(self):
         """Retorno padrão textual do objeto."""

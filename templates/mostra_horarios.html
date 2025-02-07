@@ -9,323 +9,341 @@
 {% load linguas %}
 <link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
 
+{% comment %} REMOVER vvvvvvv {% endcomment %}
+<style>
+  .highlight {
+    background-color: yellow !important;
+  }
+  .aexterno {
+    background-color: rgba(0, 0, 255, 0.1);
+  }
+</style>
+{% comment %} REMOVER ^^^^^^^ {% endcomment %}
+
+
 {% with alocacoes=projeto.alocacao_set.all %}
-{% for alocacao in alocacoes %}
-  <b>
-    <span class="texto-longo">{% lng "Estudante" "Student" %} {{ forloop.counter }}</span>
-    <span class="texto-longo">(</span>E{{ forloop.counter }}<span class="texto-longo">)</span>:
-  </b> 
-  <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>{{ alocacao.aluno.user.get_full_name }}</span>
-  {% if not request.user.estud %}
-    (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
-    {% lng "horas" "hours" %})
-  {% endif %}
-  <br>
-{% endfor %}
-<br>
-
-<div class="table-responsive">
-  <table class="tabela_horarios"> 
-    <thead>
-      <tr>
-        <th></th>
-        <th colspan="{{alocacoes|length}}">
-          {% lng "Segunda" "Monday" %}
-        </th>
-        <th colspan="{{alocacoes|length}}">
-          {% lng "Terça" "Tuesday" %}
-        </th>
-        <th colspan="{{alocacoes|length}}">
-          {% lng "Quarta" "Wednesday" %}
-        </th>
-        <th colspan="{{alocacoes|length}}">
-          {% lng "Quinta" "Thursday" %}
-        </th>
-        <th colspan="{{alocacoes|length}}">
-          {% lng "Sexta" "Friday" %}
-        </th>
-      </tr>
-      <tr>
-        <th class="horario">
-          {% lng "Horário" "Time" %}
-        </th>
-        {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
-          {% for alocacao in alocacoes %}
-            <th {% if forloop.last %}{% endif %} class="estud">E{{ forloop.counter }}</th>
-          {% endfor %}
-        {% endfor %}
-      </tr>
-      
-    </thead>
-    <tbody>
-      
-      {% for inicio, fim, dark in horarios %}
-        <tr>
-          {% with hora=forloop.counter0 %}
-          <td {% if dark %}class="overlay"{% endif %} >{{inicio}} <span class="hifen"></span> {{fim}}</td>
-          {% for i in "01234" %}
-            {% if i == "4" and hora == 1 %}
-              <td colspan="{{alocacoes|length}}" class="aula_regular">
-                {% lng "Aula Regular" "Regular Class" %}
-              </td>
-            {% else %}
-              {% for alocacao in alocacoes %}
-                {% if request.user == alocacao.aluno.user %}
-                  <td id="h_{{i}}_{{hora}}" class="h_{{i}}_{{hora}} meu{% if dark %} overlay{% endif %}"
-                  {% if forloop.last %}{% endif %}></td>
-                {% else %}
-                  <td id="h_{{i}}_{{hora}}_{{alocacao.id}}" class="h_{{i}}_{{hora}}{% if dark %} overlay{% endif %}"
-                  {% if forloop.last %}{% endif %}
-                  ></td>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-          {% endwith %}
-        </tr>
-      {% endfor %}
-
-    </tbody>
-  </table>
-
-  
-
-</div>
-{% if request.user.estud %}
-  <br>
-  {% lng "Instruções" "Instructions" %}:<br>
-  {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class)." %}
-  <br>
-  
-  <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
-  <span id="horas_alocadas">0</span><br><br>
-  {% lng "- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos." "- We suggest a minimum of 8 hours that all group members can work together." %}
-  <br>
-{% endif %}
-
-<b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
-<span id="horas_juntos">0</span><br>
-
-<br>							
-
-<script>
-
-  function set_horas(horas_comerciais, horas_outras) {
-    {% if request.user.estud %}
-      document.getElementById("horas_alocadas").innerText = horas_comerciais*2 + " horas (total = " + (horas_comerciais+horas_outras)*2 + " horas)";
-      if(horas_comerciais < 22/2) {
-        document.getElementById("horas_alocadas").style.color = "red";
-      } else {
-        document.getElementById("horas_alocadas").style.color = "green";
-      }
+  {% for alocacao in alocacoes %}
+    <b>
+      <span class="texto-longo">{% lng "Estudante" "Student" %} {{ forloop.counter }}</span>
+      <span class="texto-longo">(</span>E{{ forloop.counter }}<span class="texto-longo">)</span>:
+    </b> 
+    <span class="alocacao" {% if request.user == alocacao.aluno.user %}style="color:red"{% endif %}>
+      {{ alocacao.aluno.user.get_full_name }}
+      {% if alocacao.aluno.externo %}[{{alocacao.aluno.externo}}]{% endif %}
+    </span>
+    {% if not request.user.estud %}
+      (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
+      {% lng "horas" "hours" %})
     {% endif %}
-  }
+    <br>
+  {% endfor %}
+  <br>
 
-  function allElementsHaveHighlight(className) {
-    const elements = document.querySelectorAll(`.${className}`);
-    for (let element of elements) {
-      if (!element.classList.contains("highlight")) {
-        return false;
-      }
-    }
-    return true;
-  }
+  <div class="table-responsive">
+    <table class="tabela_horarios"> 
+      <thead>
+        <tr>
+          <th></th>
+          <th colspan="{{alocacoes|length}}">
+            {% lng "Segunda" "Monday" %}
+          </th>
+          <th colspan="{{alocacoes|length}}">
+            {% lng "Terça" "Tuesday" %}
+          </th>
+          <th colspan="{{alocacoes|length}}">
+            {% lng "Quarta" "Wednesday" %}
+          </th>
+          <th colspan="{{alocacoes|length}}">
+            {% lng "Quinta" "Thursday" %}
+          </th>
+          <th colspan="{{alocacoes|length}}">
+            {% lng "Sexta" "Friday" %}
+          </th>
+        </tr>
+        <tr>
+          <th class="horario">
+            {% lng "Horário" "Time" %}
+          </th>
+          {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
+            {% for alocacao in alocacoes %}
+              <th {% if forloop.last %}{% endif %} class="estud">E{{ forloop.counter }}</th>
+            {% endfor %}
+          {% endfor %}
+        </tr>
+        
+      </thead>
+      <tbody>
+        
+        {% for inicio, fim, dark in horarios %}
+          <tr>
+            {% with hora=forloop.counter0 %}
+            <td {% if dark %}class="overlay"{% endif %} >{{inicio}} <span class="hifen"></span> {{fim}}</td>
+            {% for i in "01234" %}
+              {% if i == "4" and hora == 1 %}
+                <td colspan="{{alocacoes|length}}" class="aula_regular">
+                  {% lng "Aula Regular" "Regular Class" %}
+                </td>
+              {% else %}
+                {% for alocacao in alocacoes %}
+                  {% if request.user == alocacao.aluno.user %}
+                    <td id="h_{{i}}_{{hora}}" 
+                        class="h_{{i}}_{{hora}}{% if alocacao.aluno.externo %}_e aexterno{% endif %} meu {% if dark %}overlay{% endif %}"
+                    {% comment %} {% if forloop.last %}{% endif %} {% endcomment %}
+                    ></td>
+                  {% else %}
+                    <td id="h_{{i}}_{{hora}}_{{alocacao.id}}"
+                        class="h_{{i}}_{{hora}}{% if alocacao.aluno.externo %}_e aexterno{% endif %} {% if dark %}overlay{% endif %}"
+                    {% comment %} {% if forloop.last %}{% endif %} {% endcomment %}
+                    ></td>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+            {% endwith %}
+          </tr>
+        {% endfor %}
 
-  function confere_juntos() {
-    contador = 0;
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < {{horarios|length}}; j++) {
-        if(allElementsHaveHighlight(`h_${i}_${j}`)) {
-          const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
-          for (let element of allHighlighted) {
-            element.classList.add("borderhighlight");
-          }
-          contador++;
-        } else {
-          const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
-          for (let element of allHighlighted) {
-            if (element.classList) {
-              element.classList.remove("borderhighlight");
-            }
-          }
-        }
-      }
-    }
-    contador--; // descontando aula regular
-    document.getElementById("horas_juntos").innerText = contador*2 + " horas";
-    if(contador < 4) {
-      document.getElementById("horas_juntos").style.color = "red";
-    } else {
-      document.getElementById("horas_juntos").style.color = "green";
-    }
-  }
+      </tbody>
+    </table>
 
+    
+
+  </div>
   {% if request.user.estud %}
-    document.addEventListener("DOMContentLoaded", (event) => {
-      let isMouseDown = false;
+    <br>
+    {% lng "Instruções" "Instructions" %}:<br>
+    {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class)." %}
+    <br>
+    
+    <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
+    <span id="horas_alocadas">0</span><br><br>
+    {% lng "- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos." "- We suggest a minimum of 8 hours that all group members can work together." %}
+    <br>
+  {% endif %}
 
-      const table = document.querySelector("table");
-      table.addEventListener("mousedown", (e) => {
-        if (e.target.classList.contains("meu")) {
-          isMouseDown = true;
-          e.target.classList.toggle("highlight");
+  <b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
+  <span id="horas_juntos">0</span><br>
+
+  <br>							
+
+  <script>
+
+    function set_horas(horas_comerciais, horas_outras) {
+      {% if request.user.estud %}
+        document.getElementById("horas_alocadas").innerText = horas_comerciais*2 + " horas (total = " + (horas_comerciais+horas_outras)*2 + " horas)";
+        if(horas_comerciais < 22/2) {
+          document.getElementById("horas_alocadas").style.color = "red";
+        } else {
+          document.getElementById("horas_alocadas").style.color = "green";
         }
-      });
+      {% endif %}
+    }
 
-      table.addEventListener("mouseover", (e) => {
-        if (isMouseDown && e.target.classList.contains("meu")) {
-          e.target.classList.toggle("highlight");
+    function allElementsHaveHighlight(className) {
+      const elements = document.querySelectorAll(`.${className}`);
+      for (let element of elements) {
+        if (!element.classList.contains("highlight")) {
+          return false;
         }
-      });
+      }
+      return true;
+    }
 
-      document.addEventListener("mouseup", () => {
-        isMouseDown = false;
-
-        // Identificando os horários selecionados
-        const horarios = [];
-        var horas_comerciais = 0;
-        var horas_outras = 0;
-        for (let i = 0; i < 5; i++) {
-          for (let j = 0; j < {{horarios|length}}; j++) {
-            const element = document.getElementById(`h_${i}_${j}`);
-            if (element && element.classList.contains("highlight")) {
-              horarios.push( [i,j] );
-              if(j == 0 || j == 1 || j == 3 || j == 4) {
-                horas_comerciais++;
-              } else {
-                horas_outras++;
+    function confere_juntos() {
+      contador = 0;
+      for (let i = 0; i < 5; i++) {  // Dias da semana (seg, ter, qua, qui, sex)
+        for (let j = 0; j < {{horarios|length}}; j++) {
+          if(allElementsHaveHighlight(`h_${i}_${j}`)) {
+            const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+            for (let element of allHighlighted) {
+              element.classList.add("borderhighlight");
+            }
+            contador++;
+          } else {
+            const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+            for (let element of allHighlighted) {
+              if (element.classList) {
+                element.classList.remove("borderhighlight");
               }
             }
           }
         }
+      }
+      contador--; // descontando aula regular
+      document.getElementById("horas_juntos").innerText = contador*2 + " horas";
+      if(contador < 4) {
+        document.getElementById("horas_juntos").style.color = "red";
+      } else {
+        document.getElementById("horas_juntos").style.color = "green";
+      }
+    }
 
-        set_horas(horas_comerciais, horas_outras);
-        confere_juntos();
+    {% if request.user.estud %}
+      document.addEventListener("DOMContentLoaded", (event) => {
+        let isMouseDown = false;
 
-        // Ajax para salvar a alocação
-        $.ajax({
-          url: "{% url 'alocacao_hora' %}",
-          type: "POST",
-          data: { 
-            horarios : JSON.stringify(horarios),
-            "csrfmiddlewaretoken": "{{ csrf_token }}"
-          },
-          dataType: "JSON",
-          success: function (data) {},
-          {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
-          {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
+        const table = document.querySelector("table");
+        table.addEventListener("mousedown", (e) => {
+          if (e.target.classList.contains("meu")) {
+            isMouseDown = true;
+            e.target.classList.toggle("highlight");
+          }
         });
 
-      });
-    });
-  {% endif %}
-
-
-  // Definindo Valores Iniciais
-  {% for alocacao in alocacoes %}
-    {% if alocacao.horarios %}
-      {% if request.user == alocacao.aluno.user %}
-        horarios = {{ alocacao.horarios|safe }};
-        var horas_comerciais = 0;
-        var horas_outras = 0;
-        for (let i = 0; i < horarios.length; i++) {
-          const [dia, horario] = horarios[i];
-          if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
-            horas_comerciais++;
-          } else {
-            horas_outras++;
+        table.addEventListener("mouseover", (e) => {
+          if (isMouseDown && e.target.classList.contains("meu")) {
+            e.target.classList.toggle("highlight");
           }
-          const element = document.getElementById(`h_${dia}_${horario}`);
-          if (element) {
-            element.classList.add("highlight");
-          }
-        }
-        set_horas(horas_comerciais, horas_outras);
+        });
 
-      {% else %}
-        horarios = {{ alocacao.horarios|safe }};
-        alocacao = {{ alocacao.id }};
-        for (let i = 0; i < horarios.length; i++) {
-          const [dia, horario] = horarios[i];
-          const element = document.getElementById(`h_${dia}_${horario}_${alocacao}`);
-          if (element) {
-            element.classList.add("highlight");
-          }
-        }
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-  confere_juntos();
+        document.addEventListener("mouseup", () => {
+          isMouseDown = false;
 
-  function isInHorarios(horarios, pair) {
-    return horarios.some(function(item) {
-      return item[0] === pair[0] && item[1] === pair[1];
-    });
-  }
-
-  function refresh_horas() {
-    $.ajax({
-      url: "{% url 'refresh_hora' %}",
-      type: "GET",
-      dataType: "json",
-      data: { 
-        projeto_id : {{ projeto.id }},
-        "csrfmiddlewaretoken": "{{ csrf_token }}"
-      },
-      success: function (data) {
-        for( id in data.todos_horarios ) {
-          horarios = data.todos_horarios[id];
-          if(horarios) {
-            horarios = JSON.parse(horarios);
-
-            {% if request.user.tipo_de_usuario != 1 %}
-              var horas_comerciais = 0;
-              var horas_outras = 0;
-              for (let i = 0; i < horarios.length; i++) {
-                const [dia, horario] = horarios[i];
-                if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
+          // Identificando os horários selecionados
+          const horarios = [];
+          var horas_comerciais = 0;
+          var horas_outras = 0;
+          for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < {{horarios|length}}; j++) {
+              const element = document.getElementById(`h_${i}_${j}`);
+              if (element && element.classList.contains("highlight")) {
+                horarios.push( [i,j] );
+                if(j == 0 || j == 1 || j == 3 || j == 4) {
                   horas_comerciais++;
                 } else {
                   horas_outras++;
                 }
               }
-              document.getElementById("a"+id).innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
+            }
+          }
 
-              if(horas_comerciais*2 < 22) {
-                document.getElementById("a"+id).style.color = "red";
-              } else {
-                document.getElementById("a"+id).style.color = "green";
-              }
-            {% endif %}
+          set_horas(horas_comerciais, horas_outras);
+          confere_juntos();
 
-            for (let i = 0; i < 5; i++) {
-              for (let j = 0; j < {{horarios|length}}; j++) {
-                const element = document.getElementById(`h_${i}_${j}_${id}`);
-                if (element) {
-                  if (isInHorarios(horarios, [i, j])) {
-                    element.classList.add("highlight");
+          // Ajax para salvar a alocação
+          $.ajax({
+            url: "{% url 'alocacao_hora' %}",
+            type: "POST",
+            data: { 
+              horarios : JSON.stringify(horarios),
+              "csrfmiddlewaretoken": "{{ csrf_token }}"
+            },
+            dataType: "JSON",
+            success: function (data) {},
+            {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
+            {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
+          });
+
+        });
+      });
+    {% endif %}
+
+
+    // Definindo Valores Iniciais
+    {% for alocacao in alocacoes %}
+      {% if alocacao.horarios %}
+        {% if request.user == alocacao.aluno.user %}
+          horarios = {{ alocacao.horarios|safe }};
+          var horas_comerciais = 0;
+          var horas_outras = 0;
+          for (let i = 0; i < horarios.length; i++) {
+            const [dia, horario] = horarios[i];
+            if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
+              horas_comerciais++;
+            } else {
+              horas_outras++;
+            }
+            const element = document.getElementById(`h_${dia}_${horario}`);
+            if (element) {
+              element.classList.add("highlight");
+            }
+          }
+          set_horas(horas_comerciais, horas_outras);
+
+        {% else %}
+          horarios = {{ alocacao.horarios|safe }};
+          alocacao = {{ alocacao.id }};
+          for (let i = 0; i < horarios.length; i++) {
+            const [dia, horario] = horarios[i];
+            const element = document.getElementById(`h_${dia}_${horario}_${alocacao}`);
+            if (element) {
+              element.classList.add("highlight");
+            }
+          }
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    confere_juntos();
+
+    function isInHorarios(horarios, pair) {
+      return horarios.some(function(item) {
+        return item[0] === pair[0] && item[1] === pair[1];
+      });
+    }
+
+    function refresh_horas() {
+      $.ajax({
+        url: "{% url 'refresh_hora' %}",
+        type: "GET",
+        dataType: "json",
+        data: { 
+          projeto_id : {{ projeto.id }},
+          "csrfmiddlewaretoken": "{{ csrf_token }}"
+        },
+        success: function (data) {
+          for( id in data.todos_horarios ) {
+            horarios = data.todos_horarios[id];
+            if(horarios) {
+              horarios = JSON.parse(horarios);
+
+              {% if request.user.tipo_de_usuario != 1 %}
+                var horas_comerciais = 0;
+                var horas_outras = 0;
+                for (let i = 0; i < horarios.length; i++) {
+                  const [dia, horario] = horarios[i];
+                  if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
+                    horas_comerciais++;
                   } else {
-                    if (element.classList) {
-                      element.classList.remove("highlight");
+                    horas_outras++;
+                  }
+                }
+                document.getElementById("a"+id).innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
+
+                if(horas_comerciais*2 < 22) {
+                  document.getElementById("a"+id).style.color = "red";
+                } else {
+                  document.getElementById("a"+id).style.color = "green";
+                }
+              {% endif %}
+
+              for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < {{horarios|length}}; j++) {
+                  const element = document.getElementById(`h_${i}_${j}_${id}`);
+                  if (element) {
+                    if (isInHorarios(horarios, [i, j])) {
+                      element.classList.add("highlight");
+                    } else {
+                      if (element.classList) {
+                        element.classList.remove("highlight");
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
 
-        confere_juntos();
-      },
-      {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
-      {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
-    });
-  }
+          confere_juntos();
+        },
+        {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
+        {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
+      });
+    }
 
-  // Verifica atualizações continuamente
-  setInterval(refresh_horas, {% if request.user.estud %}8000{% else %}60000{% endif %} );
-  refresh_horas();
+    // Verifica atualizações continuamente
+    setInterval(refresh_horas, {% if request.user.estud %}8000{% else %}60000{% endif %} );
+    refresh_horas();
 
-</script>
+  </script>
 
 {% endwith %}
