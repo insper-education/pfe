@@ -93,7 +93,11 @@ urlpatterns = [
     path("bancas_index/<str:prof_id>",
         views.bancas_index,
         name="bancas_index"),
-    
+
+    path("bancas_lista/",
+        views.bancas_lista,
+        name="bancas_lista"),
+
     path("bancas_lista/<str:edicao>",
         views.bancas_lista,
         name="bancas_lista"),

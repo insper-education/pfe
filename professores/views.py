@@ -988,7 +988,7 @@ def dinamicas_lista(request, edicao=None):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def bancas_lista(request, edicao):
+def bancas_lista(request, edicao=None):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     context = {"titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},}
     
@@ -1048,11 +1048,12 @@ def bancas_lista(request, edicao):
             ]
         context["edicoes"] = get_edicoes(Projeto)[0]
 
-        if '.' in edicao:
-            context["selecionada"] = edicao
-        elif edicao != "proximas" and edicao != "todas":
-            projeto = get_object_or_404(Projeto, id=edicao)
-            context["projeto"] = projeto
+        if edicao:
+            if '.' in edicao:
+                context["selecionada"] = edicao
+            elif edicao != "proximas" and edicao != "todas":
+                projeto = get_object_or_404(Projeto, id=edicao)
+                context["projeto"] = projeto
 
     return render(request, "professores/bancas_lista.html", context)
 
