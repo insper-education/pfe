@@ -7,12 +7,11 @@
 
 {% block head %}
   {% load static %}
+  {% load linguas %}
   {% load define_action %}
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
-    textarea {margin-bottom: 4px; }
-
     .quad_pfe {
       border: solid black 2px;
       border-radius: 8px;
@@ -36,31 +35,43 @@
       border-color: #CC0000; 
     }
 
+    .principal {
+      max-width:740px;
+      padding-left: 6px;
+      padding-right: 6px;
+    } 
+
   </style>
 {% endblock %}
 
 {% block content %}
 
-  <div class="container-fluid" style="max-width:740px; padding-left: 6px; padding-right: 6px;">
+  <div class="container-fluid principal">
     <div class="row justify-content-around">
-      <div class="col-xl-auto" style="margin-bottom: 18px;">
+      <div class="col-xl-auto">
         {% if edicao and liberadas_propostas %}
-          <h5 class="red-bold">Propostas de Projetos já liberadas para estudantes, edição desabilitada.</h5>
-          {% if user.tipo_de_usuario == 4 %} {% comment %} tipo_de_usuario == 4 >>> Administrador {% endcomment %}
-            <h5 class="red-bold">Você está logado como administrador e pode editar a proposta.</h5>
+          <h5 class="red-bold">
+            {% lng "Propostas de Projetos já liberadas para estudantes, edição desabilitada." "Project Proposals already released to students, edition disabled." %}
+          </h5>
+          {% if user.eh_admin %}
+            <h5 class="red-bold">
+              {% lng "Você está logado como administrador e pode editar a proposta." "You are logged in as an administrator and can edit the proposal." %}
+            </h5>
           {% endif %}
           <br>
         {% endif %}
 
         {% comment %} Isso permite o Administrador continuar editando a proposta {% endcomment %}
-        {% if user.tipo_de_usuario == 4 %}
-          {% define False as liberadas_propostas %}
-        {% endif %}
+        {% if user.eh_admin %}{% define False as liberadas_propostas %}{% endif %}
 
-        {% if professor %}
-          <strong>Seu Perfil é de Professor, você está preenchendo para alguma organização.</strong><br>
-        {% elif administrador %}
-          <strong>Seu Perfil é de Administrador, você está preenchendo para alguma organização.</strong><br>
+        {% if request.user.eh_prof %}
+          <strong>
+            {% lng "Seu Perfil é de Professor, você está preenchendo para alguma organização." "Your Profile is of Teacher, you are filling in for some organization." %}
+          </strong><br>
+        {% elif request.user.eh_admin %}
+          <strong>
+            {% lng "Seu Perfil é de Administrador, você está preenchendo para alguma organização." "Your Profile is of Administrator, you are filling in for some organization." %}
+          </strong><br>
         {% endif %}
         
       </div>
@@ -69,94 +80,149 @@
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
 
-            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="nome">Nome:</label> <input class="requiredField" type="text" size="75" maxlength="127" id="nome" name="nome" value="{% if parceiro %}{{full_name}}{% elif request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
-              pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
-            <label style="width: 3.5em; white-space: nowrap;" class="topico" for="email">e-mail:</label> <input class="requiredField" autocomplete="on" type="text" size="75"  maxlength="80" id="email" name="email" value="{% if parceiro %}{{email}}{% elif request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
-              pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
-            <small class="obs">Identifique quem está enviando ou atualizando a proposta</small>
+            <label class="topico" for="nome">{% lng "Nome" "Name" %}:</label>
+            <input class="requiredField" type="text" size="75" maxlength="127" 
+              id="nome" name="nome" value="{% if request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
+              pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" 
+              oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br>
+            <label class="topico" for="email">e-mail:</label>
+            <input class="requiredField" autocomplete="on" type="text" size="75" maxlength="80" 
+              id="email" name="email" value="{% if request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
+              pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" 
+              oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" 
+              oninput="this.setCustomValidity('')" required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+            <small class="obs">
+              {% lng "Identifique quem está enviando ou atualizando a proposta" "Identify who is sending or updating the proposal" %}
+            </small>
             <hr>
 
-            <label class="topico" for="organizacao">Nome da Instituição/Empresa
-            <small class="obs">sigla e nome comercial/fantasia (não é necessário indicar a Razão Social)</small>
+            <label class="topico" for="organizacao">
+              {% lng "Nome da Instituição/Empresa" "Name of the Institution/Company" %}<br>
+              <small class="obs">
+                {% lng "sigla e nome comercial/fantasia (não é necessário indicar a Razão Social)" "acronym and commercial/fantasy name (it is not necessary to indicate the Corporate Name)" %}
+              </small>
             </label><br>
-            <textarea class="requiredField" id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120" required {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.nome_organizacao %}{{ proposta.nome_organizacao }}{% endif %}</textarea>
+            <textarea class="requiredField" id="organizacao" name="organizacao" rows="1" cols="120" maxlength="120"  
+              {% if edicao and liberadas_propostas %}disabled{% endif %}
+              required>{% if proposta.nome_organizacao %}{{ proposta.nome_organizacao }}{% elif organizacao and organizacao.nome %}{{organizacao.nome}}{% endif %}</textarea>
 
-            <label class="topico" for="website">website:</label> <input class="requiredField" type="text" size="75"  maxlength="250" id="website" name="website" {% if proposta.website %}value="{{proposta.website}}"{% endif %} placeholder="https://www.insper.edu.br" required {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
+            <label class="topico" for="website">website:</label>
+            <input class="requiredField" type="text" size="75"  maxlength="250" id="website" name="website" 
+              value="{% if proposta.website %}{{proposta.website}}{% elif organizacao and organizacao.website %}{{organizacao.website}}{% endif %}"
+              placeholder="https://www.insper.edu.br" required 
+              {% if edicao and liberadas_propostas %}disabled{% endif %}><br><br>
 
-            <label class="topico" for="endereco">Endereço<br>
-            <small class="obs">Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)</small>
+            <label class="topico" for="endereco">
+              {% lng "Endereço" "Address" %}<br>
+              <small class="obs">
+                {% lng "Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)" "Place for possible meetings, technical visits or presentation of results (optional)" %}
+              </small>
             </label><br>
             <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" 
-              {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.endereco %}{{proposta.endereco}}{% endif %}</textarea>
+              {% if edicao and liberadas_propostas %}disabled{% endif %}
+              >{% if proposta.endereco %}{{proposta.endereco}}{% elif organizacao and organizacao.endereco %}{{organizacao.endereco}}{% endif %}</textarea>
             
-            <label class="topico" for="contatos_tecnicos">Contatos Técnicos<br>  
-            <small class="obs">nome/e-mail/telefone para que estudantes e orientadores entrem em contato a cerca do desenvolvimento do projeto</small>
+            <label class="topico" for="contatos_tecnicos">
+              {% lng "Contatos Técnicos" "Technical Contacts" %}<br>
+              <small class="obs">
+                {% lng "nome/e-mail/telefone para que estudantes e orientadores entrem em contato a cerca do desenvolvimento do projeto" "name/e-mail/phone for students and advisors to contact about the project development" %}
+              </small>
             </label><br>
             <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required 
               {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.contatos_tecnicos %}{{proposta.contatos_tecnicos}}{% endif %}</textarea>
         
-            <label class="topico" for="contatos_adm">Contatos Administrativos<br>     
-            <small class="obs">nome/e-mail/telefone para quem devemos entrar em contato para resolver questões contratuais ou RH (opcional)</small>
+            <label class="topico" for="contatos_adm">
+              {% lng "Contatos Administrativos" "Administrative Contacts" %}<br>
+              <small class="obs">
+                {% lng "nome/e-mail/telefone para quem devemos entrar em contato para resolver questões contratuais ou RH (opcional)" "name/e-mail/phone for who we should contact to resolve contractual or HR issues (optional)" %}
+              </small>
             </label><br>
             <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" 
               {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.contatos_administrativos %}{{proposta.contatos_administrativos}}{% endif %}</textarea>
 
-            <label class="topico" for="descricao_organizacao">Informações sobre a instituição/empresa<br>
-            <small class="obs">descreva a instituição/empresa para estudantes conhecerem o que ela faz (opcional)</small>
+            <label class="topico" for="descricao_organizacao">
+              {% lng "Informações sobre a instituição/empresa" "Information about the institution/company" %}<br>
+              <small class="obs">
+                {% lng "descreva a instituição/empresa para estudantes conhecerem o que ela faz (opcional)" "describe the institution/company for students to know what it does (optional)" %}
+              </small>
             </label><br>
             <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000"
-              {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.descricao_organizacao %}{{proposta.descricao_organizacao}}{% endif %}</textarea>
+              {% if edicao and liberadas_propostas %}disabled{% endif %}
+              >{% if proposta.descricao_organizacao %}{{proposta.descricao_organizacao}}{% elif organizacao and organizacao.informacoes %}{{organizacao.informacoes}}{% endif %}</textarea>
             
-            <label class="topico" for="info_departamento">Informações sobre a departamento<br>
-            <small class="obs">descreva o departamento/área para estudantes conhecerem o que ele faz (opcional)</small>
+            <label class="topico" for="info_departamento">
+              {% lng "Informações sobre o departamento" "Information about the department" %}<br>
+              <small class="obs">
+                {% lng "descreva o departamento/área para estudantes conhecerem o que ele faz (opcional)" "describe the department/area for students to know what it does (optional)" %}
+              </small>
             </label><br>
             <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" 
               {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.departamento %}{{proposta.departamento}}{% endif %}</textarea>
             <hr>
 
-            <label class="topico" for="titulo">Título provisório do projeto<br>
-            <small class="obs">um título para ser apresentado aos estudantes e ao longo do projeto, será possível revisar esse título</small>
+            <label class="topico" for="titulo">
+              {% lng "Título provisório do Projeto" "Provisional Title of the Project" %}<br>
+              <small class="obs">
+                {% lng "título para ser apresentado aos estudantes e ao longo do projeto, será possível revisar esse título" "title to be presented to students and throughout the project, it will be possible to review this title" %}
+              </small>
             </label><br>
-            <input class="requiredField" type="text" size="80" maxlength="160" id="titulo_prop" name="titulo_prop" {% if proposta.titulo %}value="{{proposta.titulo}}"{% endif %} required {% if edicao and liberadas_propostas %}disabled{% endif %}>
+            <input class="requiredField" type="text" size="80" maxlength="160" id="titulo_prop" name="titulo_prop" 
+              {% if proposta.titulo %}value="{{proposta.titulo}}"{% endif %} required {% if edicao and liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
-            <label class="topico" for="desc_projeto">Descrição da Proposta de Projeto<br>
-            <small class="obs">para discussão entre professores e que será visualizada pelos estudantes</small>
+            <label class="topico" for="desc_projeto">
+              {% lng "Descrição da Proposta de Projeto" "Description of the Project Proposal" %}<br>
+              <small class="obs">
+                {% lng "descrição para discussão entre professores e que será visualizada pelos estudantes" "description for discussion among teachers and that will be viewed by students" %}
+              </small>
             </label><br>
             <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required 
             {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.descricao %}{{proposta.descricao}}{% endif %}</textarea>
 
-            <label class="topico" for="expectativas">Expectativas de resultados/entregas<br>
-            <small class="obs">exemplo: protótipos, modelos, ferramentas, estudos, validações, testes, padrões</small>
+            <label class="topico" for="expectativas">
+              {% lng "Expectativas de resultados/entregas" "Expectations of results/deliveries" %}<br>
+              <small class="obs">
+                {% lng "exemplo: protótipos, modelos, ferramentas, estudos, validações, testes, padrões" "example: prototypes, models, tools, studies, validations, tests, standards" %}
+              </small>
             </label><br>
             <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" maxlength="3000" required 
               {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.expectativas %}{{proposta.expectativas}}{% endif %}</textarea>
 
-            <label class="topico" for="recursos">Recursos a serem disponibilizados ao grupo de estudantes<br>
-            <small class="obs">algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud. (opcional)</small>
+            <label class="topico" for="recursos">
+              {% lng "Recursos a serem disponibilizados ao grupo de estudantes" "Resources to be made available to the group of students" %}<br>
+              <small class="obs">
+                {% lng "algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud (opcional)" "something will be provided to students? ex: development kits, raw materials, access to cloud infrastructure (optional)" %}
+              </small>
             </label><br>
             <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000"
-              {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
+              {% if edicao and liberadas_propostas %}disabled{% endif %}
+              >{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
 
-            <label class="topico" for="observacoes">Outras observações que considere relevante para os estudantes<br>
-            <small class="obs">caso desejar apresentar alguma informação adicional aos estudantes (opcional)</small>
+            <label class="topico" for="observacoes">
+              {% lng "Outras observações que considere relevante para os estudantes" "Other observations that you consider relevant for students" %}<br>
+              <small class="obs">
+                {% lng "caso desejar apresentar alguma informação adicional aos estudantes (opcional)" "if you wish to present additional information to students (optional)" %}
+              </small>
             </label><br>
             <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" 
               {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
 
-            <label class="topico" for="arquivo">Anexos</label>
+            <label class="topico" for="arquivo">{% lng "Anexos" "Attachments" %}</label>
             {% include "selecionar_arquivo.html" with arquivo_nome="arquivo" arquivo_accept="text/plain, application/pdf, application/zip, application/x-zip, application/x-zip-compressed, .zip, .rar, .7zip, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, image/*, video/mp4, video/x-m4v, video/webm, video/x-matroska, video/*, .mkv" %}
 
-            <small class="obs">arquivo que contenha informações adicionais para os estudantes analisarem sobre o projeto (opcional)</small>
+            <small class="obs">
+              {% lng "arquivo que contenha informações adicionais para os estudantes analisarem sobre o projeto (opcional)" "file containing additional information for students to analyze about the project (optional)" %}
+            </small>
             
             {% if proposta.anexo %}
-              <br><small>Arquivo atual:
+              <br><small>
+                {% lng "Arquivo atual" "Current file" %}:
                 <a href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
               </small>
             {% endif %}
             <br><br>
 
-            {% if configuracao.maxMB_filesize and user.tipo_de_usuario != 4 %}
+            {% if configuracao.maxMB_filesize and not user.eh_admin %}
               {% comment %} Administrador pode enviar arquivos maiores que limite. {% endcomment %}
               <script>
                 document.getElementById("arquivo").onchange = function() {
@@ -168,7 +234,9 @@
               </script>
             {% endif %}
 
-            <span class="topico">Áreas/Habilidades envolvidas no projeto</span><br>
+            <span class="topico">
+              {% lng "Áreas/Habilidades envolvidas no projeto" "Areas/Skills involved in the project" %}
+            </span><br>
             {% if proposta %}
               {% with aa=proposta.areadeinteresse_set.all %}
                 {% if edicao and liberadas_propostas %}
@@ -190,8 +258,11 @@
             {% endif %}
             <br>
 
-            <div class="topico" for="interesses">Os principais interesses com o projeto são:<br>
-              <small class="obs">não será apresentado aos estudantes (opcional)</small>
+            <div class="topico" for="interesses">
+              {% lng "Os principais interesses com o projeto são" "The main interests with the project are" %}:<br>
+              <small class="obs">
+                {% lng "não será apresentado aos estudantes (opcional)" "will not be shown to students (optional)" %}
+              </small>
             </div>
             {% for interesse in interesses %}
               <label style="font-size: 13px;" for="{{interesse.0}}">
@@ -200,23 +271,13 @@
                 {% if vencido %}disabled{% endif %}
                 {% if edicao and liberadas_propostas %}disabled{% endif %}
                 >
-                {{ interesse.1 }}
+                {% lng interesse.1.1 interesse.1.2 %}}
               </label><br>
             {% endfor %}
             <br>
             <hr>
             <small style="display: block; line-height: 1.2;">
-            Obs.: Ao submeter o projeto, deve ficar claro que a intenção do Capstone é 
-            que os estudantes tenham um contato próximo com as pessoas responsáveis nas instituições parceiras 
-            para o desenvolvimento de uma solução em tecnologia. Em geral os estudantes se comunicam uma vez 
-            por semana para entender melhor o desafio, demonstrar resultados preliminares, fazerem 
-            planejamentos em conjunto, dentre de outros pontos que podem variar de projeto para projeto. 
-            Também deve ficar claro que embora não exista um custo direto para as instituições parceiras, 
-            essas terão de levar em conta que pelo menos um profissional deverá dedicar algumas horas 
-            semanalmente para acompanhar os estudantes. Além disso se a proposta contemplar gastos, como por 
-            exemplo servidores, matéria prima de alguma forma, o Insper não terá condição de bancar tais 
-            gastos e isso terá de ficar a cargo da empresa, contudo os estudantes terão acesso aos 
-            laboratórios do Insper para o desenvolvimento do projeto em horários agendados.
+              {% lng obs.pt obs.en %}
             </small>
   
           </div>
@@ -229,32 +290,40 @@
             <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 
             <div class="quad_pfe" style="border-color: red;">
-              <div style="margin-bottom: 8px; color: red; font-weight: 600;">Área Reservada ao Insper</div>
+              <div style="margin-bottom: 8px; color: red; font-weight: 600;">
+                {% lng "Área Reservada ao Insper" "Insper Reserved Area" %}
+              </div>
 
-                <label style="font-size: 13px;" for="internacional">
-                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="internacional" id="internacional" {% if proposta.internacional %}checked{% endif %}>
-                  <b>Internacional</b> (projeto sendo realizado com uma instituição no estrangeiro)
-                </label><br>
+              <label style="font-size: 13px;" for="internacional">
+                &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="internacional" id="internacional" {% if proposta.internacional %}checked{% endif %}>
+                <b>{% lng "Internacional" "International" %}</b>
+                {% lng "(projeto sendo realizado com uma instituição no estrangeiro)" "(project being carried out with an institution abroad)" %}
+              </label><br>
 
-                <label style="font-size: 13px;" for="intercambio">
-                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="intercambio" id="intercambio" {% if proposta.intercambio %}checked{% endif %}>
-                  <b>Intercâmbio</b> (estudantes farão projeto no intercâmbio com acompanhamento do Insper)
-                </label><br>
+              <label style="font-size: 13px;" for="intercambio">
+                &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="intercambio" id="intercambio" {% if proposta.intercambio %}checked{% endif %}>
+                <b>{% lng "Intercâmbio" "Exchange" %}</b>
+                {% lng "(estudantes farão projeto no intercâmbio com acompanhamento do Insper)" "(students will do project on exchange with Insper monitoring)" %}
+              </label><br>
 
-                <label style="font-size: 13px;" for="empreendendo">
-                  &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="empreendendo" id="empreendendo" {% if proposta.empreendendo %}checked{% endif %}>
-                  <b>Estudantes Empreendendo</b> (proposta de grupo de estudantes regulares empreendendo em próprio projeto)
-                </label><br>
+              <label style="font-size: 13px;" for="empreendendo">
+                &nbsp;<input style="position: relative; top: 2px;" type="checkbox" name="empreendendo" id="empreendendo" {% if proposta.empreendendo %}checked{% endif %}>
+                <b>{% lng "Estudantes Empreendedores" "Entrepeneur Students" %}</b> 
+                {% lng "(proposta de grupo de estudantes regulares empreendendo em próprio projeto)" "(proposal of group of regular students undertaking in own project)" %}
+              </label><br>
 
-                <label style="font-size: 13px;" for="colaboracao"><b>Colaboração</b> (proposta foi desenvolvida com a colaboração de uma outra organização)</label>:
-                <select name="colaboracao" id="colaboracao" class="selectpicker" data-live-search="true" data-width="100%" data-size="10">
-                    <option value=""> -- nenhuma organização -- </option>
-                    {% for organizacao in organizacoes %}
-                      <option value="{{organizacao.id}}" {% if proposta.colaboracao.id == organizacao.id %}selected="selected"{% endif %}>
-                        {{organizacao.nome}}
-                      </option>  
-                    {% endfor %}
-                </select>
+              <label style="font-size: 13px;" for="colaboracao">
+                <b>{% lng "Colaboração" "Collaboration" %}</b> 
+                {% lng "(proposta foi desenvolvida com a colaboração de uma outra organização)" "(proposal was developed with the collaboration of another organization)" %}:
+              </label>
+              <select name="colaboracao" id="colaboracao" class="selectpicker" data-live-search="true" data-width="100%" data-size="10">
+                  <option value=""> -- nenhuma organização -- </option>
+                  {% for organizacao in organizacoes %}
+                    <option value="{{organizacao.id}}" {% if proposta.colaboracao.id == organizacao.id %}selected="selected"{% endif %}>
+                      {{organizacao.nome}}
+                    </option>  
+                  {% endfor %}
+              </select>
               <br>
             </div>
           {% endif %}
@@ -263,22 +332,28 @@
             <div class="container">
               <div class="row justify-content-center">
                 <div class="form-check p-0 text-center">
-                  <input type="submit" class="btn btn-primary mb-1" 
-                    {% if edicao %}name="update" value="Atualizar Proposta de Projeto"{% else %}
-                    name="new" value="Enviar Proposta de Projeto"{% endif %}
-                    {% if vencida or liberadas_propostas %}disabled{% endif %}>
-                  {% if not liberadas_propostas %}
-                    {% if proposta and not liberadas_propostas %}
-                      {% if vencida %}
-                        <input type="submit" class="btn btn-primary mb-1" name="new" value="Nova Proposta de Projeto ">
-                      {% endif %}
-                      <input type="submit" class="btn btn-warning mb-1" name="remover" value="Remover Proposta de Projeto"
-                        onclick="return confirm('Você tem certeza que deseja remover esta proposta de projeto?');"
-                        {% if vencida %}disabled{% endif %}>
-                      {% if vencida %}
-                        <span class="red-bold" style="display: block;">Essa proposta foi submetida em um semestre anterior,
-                          ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes.<br></span>  
-                      {% endif %}
+
+                  <button type="submit" class="btn btn-primary mb-1" 
+                    {% if vencida or liberadas_propostas %}disabled{% endif %}
+                    {% if edicao %}name="update">{% lng "Atualizar Proposta de Projeto" "Update Project Proposal" %}
+                    {% else %}name="new">{% lng "Enviar Proposta de Projeto" "Submit Project Proposal" %}
+                    {% endif %}
+                  </button>
+                  {% if proposta and not liberadas_propostas %}
+                    {% if vencida %}
+                      <button type="submit" class="btn btn-primary mb-1" name="new">
+                        {% lng "Nova Proposta de Projeto " "New Project Proposal" %}
+                      </button>
+                    {% endif %}
+                    <button type="submit" class="btn btn-warning mb-1" name="remover"
+                      onclick="return confirm('Você tem certeza que deseja remover esta proposta de projeto?');"
+                      {% if vencida %}disabled{% endif %}>
+                      {% lng "Remover Proposta de Projeto" "Remove Project Proposal" %}
+                    </button>
+                    {% if vencida %}
+                      <span class="red-bold" style="display: block;">
+                        {% lng "Essa proposta foi submetida em um semestre anterior, ao clicar em Nova Proposta, você gerará uma nova proposta para ser apresentada agora para os estudantes." "This proposal was submitted in a previous semester, by clicking on New Proposal, you will generate a new proposal to be presented now to the students." %}
+                      <br></span>  
                     {% endif %}
                   {% endif %}
                 </div>
@@ -289,8 +364,9 @@
                     <label data-toggle="tooltip" data-html="true" animation="true" 
                           title="Após preencher o documento, você receberá um e-mail com o link para, se desejar, editar essa proposta." 
                           class="form-check-label" for="mensagem">
-                    <input style="position: relative; top: 2px;" class="form-check-input" type="checkbox" id="mensagem" name="mensagem" value="enviar" checked>
-                    enviar mensagem (e-mail) de confirmação</label>
+                      <input style="position: relative; top: 2px;" class="form-check-input" type="checkbox" id="mensagem" name="mensagem" value="enviar" checked>
+                      {% lng "enviar mensagem (e-mail) de confirmação" "send confirmation message (e-mail)" %}
+                    </label>
                   </div>
                 {% endif %}
 

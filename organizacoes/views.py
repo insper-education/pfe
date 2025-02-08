@@ -18,19 +18,16 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Prefetch
 
-from organizacoes.support import get_form_fields, cria_documento
+from organizacoes.support import cria_documento
 
-from administracao.support import limpa_texto, usuario_sem_acesso
+from administracao.support import usuario_sem_acesso
 
 from users.support import adianta_semestre, get_edicoes
-from users.models import PFEUser, Administrador, Parceiro, Professor, Aluno, Alocacao
+from users.models import PFEUser, Parceiro, Aluno, Alocacao
 
-from projetos.models import Area, Proposta, Organizacao
+from projetos.models import Proposta, Organizacao
 from projetos.models import Projeto, Configuracao, Feedback
 from projetos.models import Anotacao, Conexao, Documento, TipoRetorno
-from projetos.support import get_upload_path, simple_upload
-
-from propostas.support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
 from operacional.models import Curso
 from documentos.models import TipoDocumento
@@ -40,9 +37,7 @@ from documentos.models import TipoDocumento
 # @permission_required("projetos.add_proposta", raise_exception=True)
 def index_organizacoes(request):
     """Mostra página principal do parceiro de uma organização."""
-    contex = {
-        "titulo": {"pt": "Área dos Parceiros", "en": "Partners Area"},
-    }
+    contex = {"titulo": {"pt": "Área dos Parceiros", "en": "Partners Area"},}
     if "/organizacoes/organizacoes" in request.path:
         return render(request, "organizacoes/organizacoes.html", context=contex)
     else:
@@ -73,7 +68,6 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
         if "texto" in request.POST and "tipo_retorno" in request.POST:
             anotacao_obj.autor = request.user
-
             anotacao_obj.texto = request.POST["texto"]
             anotacao_obj.tipo_retorno = TipoRetorno.objects.get(id=request.POST["tipo_retorno"])
         else:
@@ -315,220 +309,6 @@ def parceiro_projetos(request):
     }
     return render(request, "organizacoes/parceiro_projetos.html", context)
 
-
-# @login_required
-def proposta_submissao(request):
-    """Formulário de Submissão de Proposta de Projetos."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        user = None
-
-    configuracao = get_object_or_404(Configuracao)
-    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-
-    parceiro = None
-    professor = None
-    administrador = None
-    organizacao = ""
-    website = "http://"
-    endereco = ""
-    descricao_organizacao = ""
-    full_name = ""
-    email_sub = ""
-
-    if user:
-
-        if user.tipo_de_usuario == 1:  # alunos
-            mensagem = "Você não está cadastrado como parceiro!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
-
-        full_name = user.get_full_name()
-        email_sub = user.email
-
-        if user.tipo_de_usuario == 3:  # parceiro
-            parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
-            organizacao = parceiro.organizacao
-            website = parceiro.organizacao.website
-            endereco = parceiro.organizacao.endereco
-            descricao_organizacao = parceiro.organizacao.informacoes
-        elif user.tipo_de_usuario == 2:  # professor
-            professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-        elif user.tipo_de_usuario == 4:  # admin
-            administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
-
-    if request.method == "POST":
-
-        proposta = preenche_proposta(request, None)
-
-        if "arquivo" in request.FILES:
-            arquivo = simple_upload(request.FILES["arquivo"],
-                                    path=get_upload_path(proposta, ""))
-            proposta.anexo = arquivo[len(settings.MEDIA_URL):]
-            proposta.save()
-
-        # Só faz essa parte se usuário logado e professor ou administrador:
-        if request.user.is_authenticated:
-            if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
-                proposta.internacional = True if request.POST.get("internacional", None) else False
-                proposta.intercambio = True if request.POST.get("intercambio", None) else False
-                proposta.empreendendo = True if request.POST.get("empreendendo", None) else False
-                colaboracao_id = request.POST.get("colaboracao", None)
-                if colaboracao_id:
-                    proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-                proposta.save()
-
-        enviar = "mensagem" in request.POST  # Por e-mail se enviar
-        mensagem = envia_proposta(proposta, request, enviar)
-
-        resposta = "Submissão de proposta de projeto realizada "
-        resposta += "com sucesso.<br>"
-
-        if enviar:
-            resposta += "Você deve receber um e-mail de confirmação "
-            resposta += "nos próximos instantes.<br>"
-
-        resposta += mensagem
-        context = {
-            "voltar": True,
-            "mensagem": resposta,
-        }
-        return render(request, "generic.html", context=context)
-
-    areas = Area.objects.filter(ativa=True)
-
-    organizacao_str = request.GET.get("organizacao", None)
-    if organizacao_str:
-        try:
-            organizacao_id = int(organizacao_str)
-            organizacao = Organizacao.objects.get(id=organizacao_id)
-        except (ValueError, Organizacao.DoesNotExist):
-            return HttpResponseNotFound("<h1>Organização não encontrado!</h1>")
-
-    interesses = [
-        ["aprimorar", Proposta.TIPO_INTERESSE[0][1], False],
-        ["realizar", Proposta.TIPO_INTERESSE[1][1], False],
-        ["iniciar", Proposta.TIPO_INTERESSE[2][1], False],
-        ["identificar", Proposta.TIPO_INTERESSE[3][1], False],
-        ["mentorar", Proposta.TIPO_INTERESSE[4][1], False],
-    ]
-    ano_semestre = str(ano)+"."+str(semestre)
-
-    context = {
-        "titulo": {"pt": "Submissão de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Submission (Capstone " + ano_semestre + ")" },
-        "full_name": full_name,
-        "email": email_sub,
-        "organizacao": organizacao,
-        "website": website,
-        "endereco": endereco,
-        "descricao_organizacao": descricao_organizacao,
-        "parceiro": parceiro,
-        "professor": professor,
-        "administrador": administrador,
-        "contatos_tecnicos": "",
-        "contatos_adm": "",
-        "info_departamento": "",
-        "titulo_prop": "",
-        "desc_projeto": "",
-        "expectativas": "",
-        "areast": areas,
-        "recursos": "",
-        "observacoes": "",
-        "edicao": False,
-        "interesses": interesses,
-        "ano_semestre": ano_semestre,
-        "configuracao": configuracao,
-        "organizacoes": Organizacao.objects.all(),
-    }
-    return render(request, "organizacoes/proposta_submissao.html", context)
-
-
-# @login_required
-def carrega_proposta(request):
-    """Página para carregar Proposta de Projetos em PDF."""
-    configuracao = get_object_or_404(Configuracao)
-    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-
-    full_name = ""
-    email_sub = ""
-    parceiro = False
-
-    if request.user and request.user.is_authenticated:
-
-        if request.user.tipo_de_usuario == 1:  # estudantes
-            mensagem = "Você não está cadastrado como parceiro!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
-
-        full_name = request.user.get_full_name()
-        email_sub = request.user.email
-
-        parceiro = request.user.tipo_de_usuario == 3  # parceiro
-
-    if request.method == "POST":
-
-        resposta = ""
-
-        if "arquivo" in request.FILES:
-            arquivo = simple_upload(request.FILES["arquivo"],
-                                    path=get_upload_path(None, ""))
-
-            fields = get_form_fields(arquivo[1:])
-            if fields is None:
-                mensagem = "<b>ERRO:</b> Arquivo formulário não reconhecido"
-                context = {
-                    "voltar": True,
-                    "mensagem": mensagem,
-                }
-                return render(request, "generic.html", context=context)
-
-            fields["nome"] = limpa_texto(request.POST.get("nome", "").strip())
-            fields["email"] = limpa_texto(request.POST.get("email", "").strip())
-
-            proposta, erros = preenche_proposta_pdf(fields, None)
-
-            enviar = "mensagem" in request.POST  # Por e-mail se enviar
-            mensagem = envia_proposta(proposta, request, enviar)
-
-            if erros:
-                resposta += "ERROS:<br><b style='color:red;font-size:40px'>"
-                resposta += erros + "<br><br>"
-                resposta += "</b>"
-
-            resposta += "Submissão de proposta de projeto realizada "
-            resposta += "com sucesso.<br>"
-
-            if enviar:
-                resposta += "Você deve receber um e-mail de confirmação "
-                resposta += "nos próximos instantes.<br><br>"
-
-        else:
-            mensagem = "Arquivo não identificado"
-
-        resposta += mensagem
-        context = {
-            "voltar": True,
-            "mensagem": resposta,
-        }
-        return render(request, "generic.html", context=context)
-
-    ano_semestre = str(ano)+'.'+str(semestre)
-    
-    context = {
-        "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
-        "full_name": full_name,
-        "email": email_sub,
-        "parceiro": parceiro,
-        "ano_semestre": ano_semestre,
-    }
-    return render(request, "organizacoes/carrega_proposta.html", context)
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -1009,3 +789,7 @@ def areas(request):
     organizacao.save()
 
     return JsonResponse({"atualizado": True,})
+
+def proposta_submissao_velho(request):
+    """Submissão de proposta de projeto (link antigo não deve mais ser usado)."""
+    return redirect("proposta_submissao")

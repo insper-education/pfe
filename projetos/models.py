@@ -262,13 +262,29 @@ class Proposta(models.Model):
     anexo = models.FileField("Anexo", upload_to=get_upload_path, null=True, blank=True,
                              help_text="Documento Anexo")
 
+
     # O principal interesse da empresa com o projeto é:
     TIPO_INTERESSE = (
-        (10, "aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo."),
-        (20, "realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado."),
-        (30, "iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo."),
-        (40, "identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente."),
-        (50, "mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto."),
+        (10, 
+         "aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo, sem interesse a curto prazo.",
+         "Enhance the understanding of a technology/solution with a focus on the medium term, without short-term interest.",
+         ),
+        (20, 
+         "realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente dependendo do resultado.",
+         "conduct a proof of concept, with the possibility of completing the development internally depending on the results.",
+         ),
+        (30, 
+         "iniciar o desenvolvimento de um projeto que, potencialmente, será continuado internamente no curto prazo.",
+         "initiate the development of a project that could potentially be continued internally in the short term.",
+         ),
+        (40, 
+         "identificar talentos, com intenção de contratá-los para continuar esse ou outros projetos internamente.",
+         "identify talent with the intention of hiring them to continue this or other projects internally.",
+         ),
+        (50, 
+         "mentorar estudantes para que empreendam com um produto ou tecnologia da empresa, podendo estabelecer uma parceria ou contrato de fornecimento caso seja criada uma startup a partir desse projeto.",
+         "Mentor students to encourage them to undertake a venture with a product or technology from the company, with the possibility of establishing a partnership or supply contract if a startup emerges from this project.",
+         ),
     )
     aprimorar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[0][1])
     realizar = models.BooleanField(default=False, help_text=TIPO_INTERESSE[1][1])
@@ -380,21 +396,21 @@ class Proposta(models.Model):
 
     def get_interesses(self):
         interesses = [
-            ["aprimorar", Proposta.TIPO_INTERESSE[0][1], self.aprimorar],
-            ["realizar", Proposta.TIPO_INTERESSE[1][1], self.realizar],
-            ["iniciar", Proposta.TIPO_INTERESSE[2][1], self.iniciar],
-            ["identificar", Proposta.TIPO_INTERESSE[3][1], self.identificar],
-            ["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar],
+            ["aprimorar", Proposta.TIPO_INTERESSE[0], self.aprimorar],
+            ["realizar", Proposta.TIPO_INTERESSE[1], self.realizar],
+            ["iniciar", Proposta.TIPO_INTERESSE[2], self.iniciar],
+            ["identificar", Proposta.TIPO_INTERESSE[3], self.identificar],
+            ["mentorar", Proposta.TIPO_INTERESSE[4], self.mentorar],
         ]
         return interesses
     
     def get_interesses_selecionados(self):
         interesses = []
-        if self.aprimorar: interesses += [["aprimorar", Proposta.TIPO_INTERESSE[0][1], self.aprimorar]]
-        if self.realizar: interesses += [["realizar", Proposta.TIPO_INTERESSE[1][1], self.realizar]]
-        if self.iniciar: interesses += [["iniciar", Proposta.TIPO_INTERESSE[2][1], self.iniciar]]
-        if self.identificar: interesses += [["identificar", Proposta.TIPO_INTERESSE[3][1], self.identificar]]
-        if self.mentorar: interesses += [["mentorar", Proposta.TIPO_INTERESSE[4][1], self.mentorar]]
+        if self.aprimorar: interesses += [["aprimorar", Proposta.TIPO_INTERESSE[0], self.aprimorar]]
+        if self.realizar: interesses += [["realizar", Proposta.TIPO_INTERESSE[1], self.realizar]]
+        if self.iniciar: interesses += [["iniciar", Proposta.TIPO_INTERESSE[2], self.iniciar]]
+        if self.identificar: interesses += [["identificar", Proposta.TIPO_INTERESSE[3], self.identificar]]
+        if self.mentorar: interesses += [["mentorar", Proposta.TIPO_INTERESSE[4], self.mentorar]]
         return interesses
 
     @property
@@ -1791,6 +1807,9 @@ class Area(models.Model):
 
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text="Titulo da área de interesse")
+    
+    titulo_en = models.CharField("Título Inglês", max_length=48, null=True, blank=True,
+                                 help_text="Titulo da área de interesse em inglês")
 
     descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
                                  help_text="Descrição da área de interesse")

@@ -81,13 +81,13 @@
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
     </p>
   {% endif %}
-
+  
   {% if completo %}
     <br>
     <b>{% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}</b><br>
     <ul>
     {% for interesse in proposta.get_interesses_selecionados %}
-      <li>{{ interesse.1 }}</li>
+      <li>{% lng interesse.1.1 interesse.1.2 %}</li>
     {% empty %}
       {% lng "Nenhuma opção de interesses foi selecionada" "No interest option was selected" %}
     {% endfor %}

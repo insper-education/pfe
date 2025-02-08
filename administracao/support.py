@@ -51,9 +51,7 @@ def propostas_liberadas(configuracao):
     """Verifica se as propostas estão liberadas."""
     hoje = datetime.date.today()
     liberacao = get_data_planejada(configuracao)
-    if liberacao and hoje >= liberacao:
-            return True
-    return False
+    return (liberacao and hoje >= liberacao)
 
 def usuario_sem_acesso(request, acessos):
     """Verifica se o usuário tem acesso a determinada área."""

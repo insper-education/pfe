@@ -22,6 +22,10 @@ urlpatterns = [
         views.index_propostas,
         name="propostas"),
 
+    path("carrega_proposta/",
+        views.carrega_proposta,
+        name="carrega_proposta"),
+
     path("map_est_proj/",
         views.mapeamento_estudantes_propostas,
         name="mapeamento_estudantes_propostas"),
@@ -45,6 +49,10 @@ urlpatterns = [
     path("proposta_detalhes/<int:primarykey>",
         views.proposta_detalhes,
         name="proposta_detalhes"),
+
+    path("proposta_submissao",
+        views.proposta_editar,
+        name="proposta_submissao"),
 
     path("proposta_editar/<slug:slug>",
         views.proposta_editar,

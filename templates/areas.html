@@ -65,7 +65,9 @@
                     data-toggle="tooltip" data-html="true" animation="true" title="{{area.descricao}}"
                 {% endif %}
                 >
-                <label for="{{area.id}}" class="ar_la">{{area.titulo}}</label>
+                <label for="{{area.id}}" class="ar_la">
+                  {% lng area.titulo area.titulo_en %}
+                </label>
             </td>
         </tr>
     {% endfor %}

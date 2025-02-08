@@ -24,11 +24,14 @@ from django.utils import timezone
 from .models import PerguntasRespostas
 
 from .support import ordena_propostas_novo, ordena_propostas
-from .support import envia_proposta, preenche_proposta
+from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
 from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
+from administracao.support import limpa_texto
 
 from operacional.models import Curso
+
+from organizacoes.support import get_form_fields
 
 from projetos.models import Proposta, Projeto, Organizacao, Disciplina
 from projetos.models import Configuracao, Area, Recomendada
@@ -645,19 +648,16 @@ def proposta_detalhes(request, primarykey):
 
 
 # @login_required
-def proposta_editar(request, slug):
-    """Formulário de Edição de Propostas de Projeto por slug."""
-    try:
-        user = PFEUser.objects.get(pk=request.user.pk)
-    except PFEUser.DoesNotExist:
-        user = None
+def proposta_editar(request, slug=None):
+    """Formulário de Submissão de Proposta de Projetos."""
+    configuracao = get_object_or_404(Configuracao)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
-    parceiro = None
-    professor = None
-    administrador = None
+    organizacao = None
 
-    if user:
-        if user.tipo_de_usuario == 1:  # alunos
+    if request.user and request.user.is_authenticated:
+
+        if request.user.eh_estud:  # estudante
             mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,
@@ -665,26 +665,24 @@ def proposta_editar(request, slug):
             }
             return render(request, "generic.html", context=context)
 
-        if user.tipo_de_usuario == 3:  # parceiro
+        if request.user.eh_parc:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
-        elif user.tipo_de_usuario == 2:  # professor
-            professor = get_object_or_404(Professor, pk=request.user.professor.pk)
-        elif user.tipo_de_usuario == 4:  # admin
-            administrador = get_object_or_404(Administrador, pk=request.user.administrador.pk)
+            organizacao = parceiro.organizacao
 
-    proposta = get_object_or_404(Proposta, slug=slug)
-
-    configuracao = get_object_or_404(Configuracao)
+    if slug:
+        proposta = get_object_or_404(Proposta, slug=slug)
+        vencida = proposta.ano != ano or proposta.semestre != semestre
+    else:
+        proposta = None
+        vencida = False
+    
     liberadas_propostas = propostas_liberadas(configuracao)
-    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-
-    vencida = proposta.ano != ano or proposta.semestre != semestre
 
     if request.method == "POST":
-        if (not liberadas_propostas) or (user.tipo_de_usuario == 4):
-            enviar = "mensagem" in request.POST  # Verifica check para enviar e-mail
-            if request.POST.get("new"):
-                 
+
+        if (not liberadas_propostas) or (request.user.eh_admin):
+            
+            if "new" in request.POST:
                 titulo = request.POST.get("titulo_prop", "").strip()
                 if titulo and Proposta.objects.filter(titulo=titulo, ano=ano, semestre=semestre).exists():
                     context = {
@@ -693,7 +691,7 @@ def proposta_editar(request, slug):
                     }
                     return render(request, "generic.html", context=context)
 
-                if proposta:
+                if proposta:  # Nova proposta baseada na antiga
                     organizacao = proposta.organizacao
                     colaboracao = proposta.colaboracao
                     anexo = proposta.anexo
@@ -701,11 +699,12 @@ def proposta_editar(request, slug):
                     proposta.organizacao = organizacao
                     proposta.colaboracao = colaboracao
                     proposta.anexo = anexo
+                    proposta.save()
                 else:
                     proposta = preenche_proposta(request, None)
-            elif request.POST.get("update"):
+            elif "update" in request.POST:
                 preenche_proposta(request, proposta)
-            elif request.POST.get("remover"):
+            elif "remover" in request.POST:
                 proposta.delete()
                 context = {
                     "voltar": True,
@@ -721,6 +720,7 @@ def proposta_editar(request, slug):
                 proposta.anexo = arquivo[len(settings.MEDIA_URL):]
                 proposta.save()
 
+            # Só faz essa parte se usuário logado e professor ou administrador:
             if request.user.is_authenticated:
                 if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
                     proposta.internacional = True if request.POST.get("internacional", None) else False
@@ -729,49 +729,89 @@ def proposta_editar(request, slug):
                     colaboracao_id = request.POST.get("colaboracao", None)
                     if colaboracao_id:
                         proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-            
-            # Salva a proposta no Banco de Dados
-            proposta.save()
+                    proposta.save()
 
+            enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
-            resposta = "Submissão de proposta de projeto "
-            resposta += "atualizada com sucesso.<br>"
 
+            resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
             if enviar:
-                resposta += "Você deve receber um e-mail de confirmação "
-                resposta += "nos próximos instantes.<br>"
-
+                resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
             resposta += "<br><hr>"
-            resposta += mensagem
 
             context = {
                 "voltar": True,
-                "mensagem": resposta,
+                "mensagem": resposta + mensagem,
             }
             return render(request, "generic.html", context=context)
 
-        return HttpResponse("Propostas não liberadas para edição.", status=401)
+        else:
+            return HttpResponse("Propostas não estão liberadas para submissão/edição.", status=401)
 
-    areas = Area.objects.filter(ativa=True)
+    organizacao_str = request.GET.get("organizacao", None)
+    if organizacao_str:
+        try:
+            organizacao = Organizacao.objects.get(id=organizacao_str)
+        except (ValueError, Organizacao.DoesNotExist):
+            return HttpResponseNotFound("<h1>Organização não encontrado!</h1>")
 
-    interesses = proposta.get_interesses()
-    ano_semestre = str(proposta.ano)+"."+str(proposta.semestre)
+    if proposta:
+        interesses = proposta.get_interesses()
+    else:
+        interesses = [
+            ["aprimorar", Proposta.TIPO_INTERESSE[0], False],
+            ["realizar", Proposta.TIPO_INTERESSE[1], False],
+            ["iniciar", Proposta.TIPO_INTERESSE[2], False],
+            ["identificar", Proposta.TIPO_INTERESSE[3], False],
+            ["mentorar", Proposta.TIPO_INTERESSE[4], False],
+        ]
+
+    ano_semestre = f"{ano}.{semestre}"
+
+    obs = {
+           "pt": """""
+                Observação: Ao submeter o projeto, é fundamental deixar claro que o objetivo do Capstone é 
+                proporcionar aos estudantes um contato próximo com os responsáveis das organizações parceiras 
+                para o desenvolvimento de uma solução tecnológica. Em geral, os estudantes se comunicam 
+                semanalmente com a instituição para compreender melhor o desafio, apresentar os resultados 
+                obtidos até o momento, planejar as próximas etapas em conjunto e tratar de outros aspectos 
+                que podem variar conforme o projeto.
+                Além disso, deve-se esclarecer que, embora não haja um custo direto para as organizações 
+                parceiras, será necessário que pelo menos um profissional dedique algumas horas semanais 
+                para acompanhar os estudantes. Caso a proposta envolva custos, como servidores ou materiais, 
+                o Insper pode não ter condições de arcar com essas despesas, cabendo à empresa assumi-las. 
+                Os estudantes, no entanto, terão acesso aos laboratórios do Insper para o desenvolvimento 
+                do projeto, mediante agendamento.
+           """,
+           "en": """
+                Note: When submitting the project, it is essential to clarify that the goal of the Capstone 
+                is to provide students with close contact with the representatives of partner institutions 
+                for the development of a technological solution. In general, students communicate with the 
+                institution on a weekly basis to better understand the challenge, present the results obtained 
+                so far, plan the next steps together, and address other aspects that may vary depending on 
+                the project.
+                Additionally, it should be made clear that although there is no direct cost for partner 
+                institutions, at least one professional will need to dedicate a few hours per week to support 
+                the students. If the proposal involves costs such as servers or materials, Insper may not be 
+                able to cover these expenses, and it will be up to the company to assume them. However, 
+                students will have access to Insper's laboratories for project development, subject to scheduling.
+           """
+    }
+
+    tipo_pt = "Edição" if proposta else "Submissão"
+    tipo_en = "Edit" if proposta else "Submission"
 
     context = {
-        "titulo": { "pt": "Edição de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal Edition " + ano_semestre + ")"},
+        "titulo": {"pt": tipo_pt + " de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal " + tipo_en + " (Capstone " + ano_semestre + ")" },
         "liberadas_propostas": liberadas_propostas,
-        "full_name": proposta.nome,
-        "email": proposta.email,
-        "parceiro": parceiro,
-        "professor": professor,
-        "administrador": administrador,
-        "areast": areas,
+        "organizacao": organizacao,
         "proposta": proposta,
-        "edicao": True,
+        "obs": obs,
+        "areast": Area.objects.filter(ativa=True),
+        "edicao": True if proposta else False,
         "interesses": interesses,
-        "ano_semestre": ano_semestre,
-        "vencida": vencida,
         "configuracao": configuracao,
+        "vencida": vencida,
         "organizacoes": Organizacao.objects.all(),
     }
     return render(request, "organizacoes/proposta_submissao.html", context)
@@ -792,6 +832,88 @@ def proposta_remover(request, slug):
     }
     return render(request, "generic.html", context=context)
 
+# @login_required
+def carrega_proposta(request):
+    """Página para carregar Proposta de Projetos em PDF."""
+    configuracao = get_object_or_404(Configuracao)
+    ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
+
+    full_name = ""
+    email_sub = ""
+    parceiro = False
+
+    if request.user and request.user.is_authenticated:
+
+        if request.user.tipo_de_usuario == 1:  # estudantes
+            mensagem = "Você não está cadastrado como parceiro!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+
+        full_name = request.user.get_full_name()
+        email_sub = request.user.email
+
+        parceiro = request.user.tipo_de_usuario == 3  # parceiro
+
+    if request.method == "POST":
+
+        resposta = ""
+
+        if "arquivo" in request.FILES:
+            arquivo = simple_upload(request.FILES["arquivo"],
+                                    path=get_upload_path(None, ""))
+
+            fields = get_form_fields(arquivo[1:])
+            if fields is None:
+                mensagem = "<b>ERRO:</b> Arquivo formulário não reconhecido"
+                context = {
+                    "voltar": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, "generic.html", context=context)
+
+            fields["nome"] = limpa_texto(request.POST.get("nome", "").strip())
+            fields["email"] = limpa_texto(request.POST.get("email", "").strip())
+
+            proposta, erros = preenche_proposta_pdf(fields, None)
+
+            enviar = "mensagem" in request.POST  # Por e-mail se enviar
+            mensagem = envia_proposta(proposta, request, enviar)
+
+            if erros:
+                resposta += "ERROS:<br><b style='color:red;font-size:40px'>"
+                resposta += erros + "<br><br>"
+                resposta += "</b>"
+
+            resposta += "Submissão de proposta de projeto realizada "
+            resposta += "com sucesso.<br>"
+
+            if enviar:
+                resposta += "Você deve receber um e-mail de confirmação "
+                resposta += "nos próximos instantes.<br><br>"
+
+        else:
+            mensagem = "Arquivo não identificado"
+
+        resposta += mensagem
+        context = {
+            "voltar": True,
+            "mensagem": resposta,
+        }
+        return render(request, "generic.html", context=context)
+
+    ano_semestre = str(ano)+'.'+str(semestre)
+    
+    context = {
+        "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
+        "full_name": full_name,
+        "email": email_sub,
+        "parceiro": parceiro,
+        "ano_semestre": ano_semestre,
+    }
+    return render(request, "organizacoes/carrega_proposta.html", context)
 
 @login_required
 @transaction.atomic

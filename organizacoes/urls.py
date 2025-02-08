@@ -70,10 +70,6 @@ urlpatterns = [
         views.adiciona_documento_tipo,
         name="adiciona_documento_tipo"),
 
-    path("carrega_proposta/",
-        views.carrega_proposta,
-        name="carrega_proposta"),
-
     path("organizacoes_lista/",
         views.organizacoes_lista,
         name="organizacoes_lista"),
@@ -107,8 +103,8 @@ urlpatterns = [
         name="parceiro_projetos"),
 
     path("proposta_submissao",
-        views.proposta_submissao,
-        name="proposta_submissao"),
+        views.proposta_submissao_velho,
+        name="proposta_submissao_velho"),
 
     path("projeto_feedback",
         views.projeto_feedback,

@@ -429,6 +429,15 @@ class AreaDeInteresseAdmin(admin.ModelAdmin):
     search_fields = ["usuario__username", "proposta__organizacao__sigla", "proposta__titulo",]
 
 
+#admin.site.register(Area)
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    """Area."""
+
+    list_display = ("titulo", "titulo_en", "descricao", "ativa",)
+    search_fields = ["area",]
+
+
+
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
-admin.site.register(Area)
 admin.site.register(TipoRetorno)
