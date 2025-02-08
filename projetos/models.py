@@ -333,37 +333,60 @@ class Proposta(models.Model):
 
 
     # Conformidade de Proposta
+    CONFORMIDADES = {
+        "habilidades": {
+            "pt": "A proposta de projeto requer conhecimentos e habilidades adquiridos em anos anteriores dos curso de graduação?",
+            "en": "Does the project proposal require knowledge and skills acquired from previous years of undergrad course work?",
+            },
+        "design": {
+            "pt": "A proposta do projeto exige que os alunos apliquem um processo sistemático de projeto em tecnologia para um sistema, componente ou processo para atender às necessidades desejadas?",
+            "en": "Does the project proposal require students to apply a systematic technical design process for a system, component, or process to meet desired needs?",
+            },
+        "realistico": {
+            "pt": "A proposta do projeto representa uma experiência do mundo real ou da indústria real que é solicitada formalmente por uma organização externa?",
+            "en": "Does the project proposal represent a have a real-world or real-industry experience that are formally requested by an external organization?",
+            },
+        "normas": {
+            "pt": "A proposta do projeto tem oportunidade de incorporar normas técnicas apropriadas que podem ser referenciados posteriormente nos relatórios do projeto?",
+            "en": "Does the project proposal have opportunity to incorporates appropriate technical standards that can be further referenced in the project reports?",
+            },
+        "restricoes": {
+            "pt": "A proposta do projeto possui um desafio de design que incorpora várias restrições realistas, como econômica, ambiental, social, política, ética, saúde e segurança, capacidade de fabricação e/ou sustentabilidade?",
+            "en": "Does the project proposal design challenge incorporate multiple realistic constraints, such as economic, environmental, social, political, ethical, health and safety, manufacturability, and/or sustainability?",
+            },
+        "experimentacao": {
+            "pt": "A proposta do projeto requer experimentação e habilidades práticas?",
+            "en": "Does the project proposal require experimentation and hands-on skills?",
+            },
+        "equipe": {
+            "pt": "A proposta do projeto permite o trabalho em equipe entre estudantes de um ou mais cursos de graduação?",
+            "en": "Does the project proposal allow teamwork among students in one or more undegrad programs?",
+            },
+        "duracao": {
+            "pt": "A proposta do projeto possui uma complexidade adequada a um semestre letivo (cerca de 4,5 meses)?",
+            "en": "Does the project proposal complexity is appropriate to one academic semester (around 4.5 months)?",
+            },
+        "carga": {
+            "pt": "A proposta do projeto é de complexidade suficiente para permitir que cada membro da equipe contribua com cerca de 360 horas entre aula, laboratório, reuniões e fora do horário de aula?",
+            "en": "Does the project proposal is sufficient complexity to allow each team member to contribute about 360 hours among class, laboratory, meetings, and outside class time?",
+            },
+        "mensuravel": {
+            "pt": "A proposta do projeto tem objetivos concretos e mensuráveis?",
+            "en": "Does the project proposal have concrete and measurable goals?",
+            },
+    }
 
-    habilidades = models.BooleanField(default=False, help_text="A proposta de projeto requer conhecimentos e habilidades adquiridos em anos anteriores dos curso de graduação?")
-    #Does the project proposal require knowledge and skills acquired from previous years of undergrad course work?
-
-    design = models.BooleanField(default=False, help_text="A proposta do projeto exige que os alunos apliquem um processo sistemático de projeto em tecnologia para um sistema, componente ou processo para atender às necessidades desejadas?")
-    #Does the project proposal require students to apply a systematic technical design process for a system, component, or process to meet desired needs?
-
-    realistico = models.BooleanField(default=False, help_text="A proposta do projeto representa uma experiência do mundo real ou da indústria real que é solicitada formalmente por uma organização externa?")
-    #Does the project proposal represent a have a real-world or real-industry experience that are formally requested by an external organization?
-
-    normas = models.BooleanField(default=False, help_text="A proposta do projeto tem oportunidade de incorporar normas técnicas apropriadas que podem ser referenciados posteriormente nos relatórios do projeto?")
-    #Does the project proposal have opportunity to incorporates appropriate technical standards that can be further referenced in the project reports?
-
-    restricoes = models.BooleanField(default=False, help_text="A proposta do projeto possui um desafio de design que incorpora várias restrições realistas, como econômica, ambiental, social, política, ética, saúde e segurança, capacidade de fabricação e/ou sustentabilidade?")
-    #Does the project proposal design challenge incorporate multiple realistic constraints, such as economic, environmental, social, political, ethical, health and safety, manufacturability, and/or sustainability?
-
-    experimentacao = models.BooleanField(default=False, help_text="A proposta do projeto requer experimentação e habilidades práticas?")
-    #Does the project proposal require experimentation and hands-on skills?
-
-    equipe = models.BooleanField(default=False, help_text="A proposta do projeto permite o trabalho em equipe entre estudantes de um ou mais cursos de graduação?")
-    #Does the project proposal allow teamwork among students in one or more undegrad programs?
-
-    duracao = models.BooleanField(default=False, help_text="A proposta do projeto possui uma complexidade adequada a um semestre letivo (cerca de 4,5 meses)?")
-    #Does the project proposal complexity is appropriate to one academic semester (around 4.5 months)?
-
-    carga = models.BooleanField(default=False, help_text="A proposta do projeto é de complexidade suficiente para permitir que cada membro da equipe contribua com cerca de 360 horas entre aula, laboratório, reuniões e fora do horário de aula?")
-    #Does the project proposal is sufficient complexity to allow each team member to contribute about 360 hours among class, laboratory, meetings, and outside class time?
-
-    mensuravel = models.BooleanField(default=False, help_text="A proposta do projeto tem objetivos concretos e mensuráveis?")
-    #Does the project proposal have concrete and measurable goals?
-
+    habilidades = models.BooleanField(default=False, help_text=CONFORMIDADES["habilidades"]["pt"])
+    design = models.BooleanField(default=False, help_text=CONFORMIDADES["design"]["pt"])
+    realistico = models.BooleanField(default=False, help_text=CONFORMIDADES["realistico"]["pt"])
+    normas = models.BooleanField(default=False, help_text=CONFORMIDADES["normas"]["pt"])
+    restricoes = models.BooleanField(default=False, help_text=CONFORMIDADES["restricoes"]["pt"])
+    experimentacao = models.BooleanField(default=False, help_text=CONFORMIDADES["experimentacao"]["pt"])
+    equipe = models.BooleanField(default=False, help_text=CONFORMIDADES["equipe"]["pt"])
+    duracao = models.BooleanField(default=False, help_text=CONFORMIDADES["duracao"]["pt"])
+    carga = models.BooleanField(default=False, help_text=CONFORMIDADES["carga"]["pt"])
+    mensuravel = models.BooleanField(default=False, help_text=CONFORMIDADES["mensuravel"]["pt"])
+    
     class Meta:
         ordering = [ "ano", "semestre", "organizacao" ]
         verbose_name = "Proposta"

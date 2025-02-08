@@ -607,6 +607,8 @@ def proposta_completa(request, primarykey):
         "procura": procura,
         "cursos": Curso.objects.all().order_by("id"),
         "liberacao_visualizacao": Evento.objects.filter(tipo_evento__sigla="APDE").last(),
+        "conformidades": proposta.CONFORMIDADES,
+
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 

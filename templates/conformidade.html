@@ -4,6 +4,9 @@
   Data: 17 de Novembro de 2023
 {% endcomment %}
 
+{% load linguas %}
+{% load get_field %}
+
 <style>
   #ConformidadeTable td {padding: 0px 3px 2px 3px;}
 
@@ -19,116 +22,14 @@
 </style>
 
 <table id="ConformidadeTable" class="table table-borderless" style="border: 0px; width: auto;">
-    <tbody>
+  <tbody>
+    {% for conformidade, descr in conformidades.items %}
       <tr>
         <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="habilidades" name="habilidades" value="True" {% if proposta.habilidades %}checked{% endif %}>
+          <input class="fechar_proposta conformidade" type="checkbox" id="{{conformidade}}" name="{{conformidade}}" value="True" {% if proposta|get_attr:conformidade %}checked{% endif %}>
         </td>
-        <td>
-          <label class="conf_la" for="habilidades" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal require knowledge and skills acquired from previous years of engineering course work?">
-            A proposta de projeto requer conhecimentos e habilidades adquiridos em anos anteriores dos curso de graduação?
-          </label>
-        </td>
+        <td><label class="conf_la" for="{{conformidade}}">{% lng descr.pt descr.en %}</label></td>
       </tr>
-
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="design" name="design" value="True" {% if proposta.design %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="design" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal require students to apply a systematic engineering design process for a system, component, or process to meet desired needs?">
-            A proposta do projeto exige que os alunos apliquem um processo sistemático de projeto em tecnologia para um sistema, componente ou processo para atender às necessidades desejadas?
-          </label>
-        </td>
-      </tr>
-
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="realistico" name="realistico" value="True" {% if proposta.realistico %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="realistico" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal represent a have a real-world or real-industry experience that are formally requested by an external organization?">
-            A proposta do projeto representa uma experiência do mundo real ou da indústria real que é solicitada formalmente por uma organização externa?
-          </label>
-        </td>
-      </tr>
-      
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="normas" name="normas" value="True" {% if proposta.normas %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="normas" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal have opportunity to incorporates appropriate engineering standards that can be further referenced in the project reports?">
-            A proposta do projeto tem oportunidade de incorporar normas técnicas apropriadas que podem ser referenciados posteriormente nos relatórios do projeto?
-          </label>
-        </td>
-      </tr>
-      
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="restricoes" name="restricoes" value="True" {% if proposta.restricoes %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="restricoes" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal design challenge incorporate multiple realistic constraints, such as economic, environmental, social, political, ethical, health and safety, manufacturability, and/or sustainability?">
-            A proposta do projeto possui um desafio de design que incorpora várias restrições realistas, como econômica, ambiental, social, política, ética, saúde e segurança, capacidade de fabricação e/ou sustentabilidade?
-          </label>
-        </td>
-      </tr>
-      
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="experimentacao" name="experimentacao" value="True" {% if proposta.experimentacao %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="experimentacao" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal require experimentation and hands-on skills?">
-            A proposta do projeto requer experimentação e habilidades práticas?
-          </label>
-        </td>
-      </tr>
-      
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="equipe" name="equipe" value="True" {% if proposta.equipe %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="equipe" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal allow teamwork among students in one or more engineering programs?">
-            A proposta do projeto permite o trabalho em equipe entre estudantes de um ou mais cursos de graduação?
-          </label>
-        </td>
-      </tr>
-      
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="duracao" name="duracao" value="True" {% if proposta.duracao %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="duracao" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal complexity is appropriate to one academic semester (around 4.5 months)?">
-            A proposta do projeto possui uma complexidade adequada a um semestre letivo (cerca de 4,5 meses)?
-          </label>
-        </td>
-      </tr>
-
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="carga" name="carga" value="True" {% if proposta.carga %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="carga" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal is sufficient complexity to allow each team member to contribute about 360 hours among class, laboratory, meetings, and outside class time?">
-            A proposta do projeto é de complexidade suficiente para permitir que cada membro da equipe contribua com cerca de 360 horas entre aula, laboratório, reuniões e fora do horário de aula?
-          </label>
-        </td>
-      </tr>        
-
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="mensuravel" name="mensuravel" value="True" {% if proposta.mensuravel %}checked{% endif %}>
-        </td>
-        <td>
-          <label class="conf_la" for="mensuravel" data-toggle="tooltip" data-html="true" animation="true" title="Does the project proposal have concrete and measurable goals?">
-            A proposta do projeto tem objetivos concretos e mensuráveis?
-          </label>
-        </td>
-      </tr>
-      
-    </tbody>
-  </table>
+    {% endfor %}
+  </tbody>
+</table>

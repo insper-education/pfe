@@ -27,7 +27,7 @@
         {% for curso in cursos %}
           {% if curso.curso_do_insper %}
             <th style="text-align:center; width:138px;">
-              {{curso.nome}}
+              {% lng curso.nome curso.nome_en %}
               {% if editavel %}<input type="checkbox" id="alunos{{curso.sigla_curta}}">{% endif %}
             </th>
           {% endif %}
