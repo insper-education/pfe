@@ -405,31 +405,30 @@ def propostas_lista(request):
     """Lista todas as propostas de projetos."""
 
     if request.is_ajax():
-        edicoes = []
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                propostas = Proposta.objects.all()
-            else:
-                ano, semestre = request.POST["edicao"].split('.')
-                propostas = Proposta.objects\
-                    .filter(ano=ano, semestre=semestre)
 
-            propostas = propostas.order_by("ano", "semestre", "organizacao", "titulo")
-
-            cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
-                                {"pt": "Período", "en": "Period"},
-                                {"pt": "Organização", "en": "Organization"},
-                                {"pt": "Tipo", "en": "Type"},
-                    ]
-            context = {
-                "propostas": propostas,
-                "edicao": edicao,
-                "cabecalhos": cabecalhos,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            propostas = Proposta.objects.all()
+        else:
+            ano, semestre = request.POST["edicao"].split('.')
+            propostas = Proposta.objects.filter(ano=ano, semestre=semestre)
+
+        cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
+                    {"pt": "Período", "en": "Period"},
+                    {"pt": "Organização", "en": "Organization"},
+                    {"pt": "Tipo", "en": "Type"},]
+        
+        context = {
+            "propostas": propostas,
+            "edicao": edicao,
+            "cabecalhos": cabecalhos,
+        }
+
+        
+            
     else:
         context = {
             "titulo": {"pt": "Lista de Propostas", "en": "Proposals List"},
@@ -576,15 +575,14 @@ def proposta_completa(request, primarykey):
     proposta = get_object_or_404(Proposta, pk=primarykey)
     configuracao = get_object_or_404(Configuracao)
 
-    membros_comite = PFEUser.objects.filter(membro_comite=True)
     projetos = Projeto.objects.filter(proposta=proposta)
 
     estudantes = []
     sem_opcao = []
     for projeto in projetos:
-        alocacoes = Alocacao.objects.filter(projeto=projeto)
+        alocacoes = Alocacao.objects.filter(projeto=projeto).select_related("aluno")
         for alocacao in alocacoes:
-            if Opcao.objects.filter(proposta=proposta, aluno=alocacao.aluno):
+            if Opcao.objects.filter(proposta=proposta, aluno=alocacao.aluno).exists():
                 estudantes.append(alocacao.aluno)
             else:
                 sem_opcao.append(alocacao.aluno)
@@ -600,7 +598,7 @@ def proposta_completa(request, primarykey):
         "proposta": proposta,
         "opcoes": opcoes,
         "projetos": projetos,
-        "comite": membros_comite,
+        "comite": PFEUser.objects.filter(membro_comite=True),
         "estudantes": estudantes,
         "sem_opcao": sem_opcao,
         "areast": Area.objects.filter(ativa=True),
@@ -608,7 +606,6 @@ def proposta_completa(request, primarykey):
         "cursos": Curso.objects.all().order_by("id"),
         "liberacao_visualizacao": Evento.objects.filter(tipo_evento__sigla="APDE").last(),
         "conformidades": proposta.CONFORMIDADES,
-
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 
@@ -618,7 +615,7 @@ def proposta_detalhes(request, primarykey):
     """Exibe proposta de projeto com seus detalhes para estudante aplicar."""
     proposta = get_object_or_404(Proposta, pk=primarykey)
     
-    if request.user.tipo_de_usuario == 1:  # (1, "estudante")
+    if request.user.eh_estud:  # estudante
         if not (request.user.aluno.anoPFE == proposta.ano and
                 request.user.aluno.semestrePFE == proposta.semestre):
             return HttpResponse("Usuário não tem permissão de acesso.",
@@ -627,17 +624,16 @@ def proposta_detalhes(request, primarykey):
             return HttpResponse("Usuário não tem permissão de acesso.",
                                 status=401)
 
-    if request.user.tipo_de_usuario == 3:  # (3, 'parceiro')
+    if request.user.eh_parc:  # parceiro
         return HttpResponse("Usuário não tem permissão de acesso.", status=401)
 
     opcoes = Opcao.objects.filter(proposta=proposta)
 
-    procura = {}
-    procura["1"] = opcoes.filter(prioridade=1).count()
-    procura["2"] = opcoes.filter(prioridade=2).count()
-    procura["3"] = opcoes.filter(prioridade=3).count()
-    procura["4"] = opcoes.filter(prioridade=4).count()
-    procura["5"] = opcoes.filter(prioridade=5).count()
+    prioridades = 5
+    procura = {
+            str(prioridade): 
+                opcoes.filter(prioridade=prioridade).count() for prioridade in range(1, prioridades+1)
+          }
 
     context = {
         "titulo": {"pt": "Detalhes da Proposta", "en": "Proposal Details"},
@@ -840,24 +836,15 @@ def carrega_proposta(request):
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
-    full_name = ""
-    email_sub = ""
-    parceiro = False
-
     if request.user and request.user.is_authenticated:
 
-        if request.user.tipo_de_usuario == 1:  # estudantes
+        if request.user.eh_estud:  # estudantes
             mensagem = "Você não está cadastrado como parceiro!"
             context = {
                 "area_principal": True,
                 "mensagem": mensagem,
             }
             return render(request, "generic.html", context=context)
-
-        full_name = request.user.get_full_name()
-        email_sub = request.user.email
-
-        parceiro = request.user.tipo_de_usuario == 3  # parceiro
 
     if request.method == "POST":
 
@@ -881,39 +868,32 @@ def carrega_proposta(request):
 
             proposta, erros = preenche_proposta_pdf(fields, None)
 
-            enviar = "mensagem" in request.POST  # Por e-mail se enviar
-            mensagem = envia_proposta(proposta, request, enviar)
-
             if erros:
-                resposta += "ERROS:<br><b style='color:red;font-size:40px'>"
-                resposta += erros + "<br><br>"
-                resposta += "</b>"
+                resposta += "ERROS:<br><b style='color:red;font-size:40px'>" + erros + "<br><br></b>"
+                mensagem = "Proposta de projeto não foi submetida."
+            else:
+                enviar = "mensagem" in request.POST  # Por e-mail se enviar
+                mensagem = envia_proposta(proposta, request, enviar)
+                
+                resposta += "Submissão de proposta de projeto realizada com sucesso.<br>"
 
-            resposta += "Submissão de proposta de projeto realizada "
-            resposta += "com sucesso.<br>"
-
-            if enviar:
-                resposta += "Você deve receber um e-mail de confirmação "
-                resposta += "nos próximos instantes.<br><br>"
+                if enviar:
+                    resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br><br>"
 
         else:
             mensagem = "Arquivo não identificado"
 
-        resposta += mensagem
         context = {
             "voltar": True,
-            "mensagem": resposta,
+            "mensagem": resposta + mensagem,
         }
         return render(request, "generic.html", context=context)
 
-    ano_semestre = str(ano)+'.'+str(semestre)
+    ano_semestre = f"{ano}.{semestre}"
     
     context = {
-        "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
-        "full_name": full_name,
-        "email": email_sub,
-        "parceiro": parceiro,
-        "ano_semestre": ano_semestre,
+        "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", 
+                   "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
     }
     return render(request, "organizacoes/carrega_proposta.html", context)
 
@@ -925,13 +905,11 @@ def publicar_propostas(request):
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
-        if request.user.tipo_de_usuario != 4:  # Administrador
+        if not request.user.eh_admin:  # Administrador
             return HttpResponse("Somente coordenadores podem alterar valores de publicação de propostas.", status=401)
         if "min_props" in request.POST:
             data = {"atualizado": True,}
             try:
-                #configuracao.liberadas_propostas = request.POST["liberadas_propostas"] == "true"
-                #data["liberadas_propostas"] = configuracao.liberadas_propostas
                 data["liberadas_propostas"] = propostas_liberadas(configuracao)
                 if int(request.POST["min_props"]) != configuracao.min_props:
                     configuracao.min_props = int(request.POST["min_props"])
@@ -1075,7 +1053,7 @@ def link_disciplina(request, proposta_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def remover_disciplina(request):
     """Remove Disciplina Recomendada."""
-    if request.is_ajax() and 'disciplina_id' in request.POST and 'proposta_id' in request.POST:
+    if request.is_ajax() and "disciplina_id" in request.POST and "proposta_id" in request.POST:
 
         try:
             proposta_id = int(request.POST["proposta_id"])
@@ -1099,9 +1077,10 @@ def projeto_criar(request, proposta_id):
     """Criar projeto de proposta."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
-    projeto = Projeto(proposta=proposta)
-    projeto.ano = proposta.ano
-    projeto.semestre = proposta.semestre
-    projeto.save()
+    projeto = Projeto.objects.create(
+        proposta=proposta,
+        ano=proposta.ano,
+        semestre=proposta.semestre
+    )
 
     return redirect("projeto_completo", primarykey=projeto.id)
