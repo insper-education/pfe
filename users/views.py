@@ -40,9 +40,8 @@ from estudantes.models import EstiloComunicacao
 
 from operacional.models import Curso
 
-from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro
+from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro, Evento
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
-from projetos.models import ObjetivosDeAprendizagem, Evento
 from projetos.messages import email
 from projetos.support3 import calcula_objetivos, get_objetivos_atuais
 
@@ -51,25 +50,22 @@ from projetos.support3 import calcula_objetivos, get_objetivos_atuais
 logger = logging.getLogger("django")
 
 @login_required
-def user_detail(request, primarykey=0):
+def user_detail(request, primarykey=None):
     """Retorna a página conforme o perfil do usuário."""
 
-    if primarykey == 0:
-        user = request.user
-    else:
+    if primarykey:
         user = get_object_or_404(PFEUser, pk=primarykey)
+    else:
+        user = request.user
 
-    try:
-        if user.tipo_de_usuario == 1:  # estudante
-            return redirect("estudante_detail", user.aluno.id)
-        elif user.tipo_de_usuario == 2:  # professor
-            return redirect("professor_detail", user.professor.id)
-        elif user.tipo_de_usuario == 3:  # parceiro
-            return redirect("parceiro_detail", user.parceiro.id)
-        elif user.tipo_de_usuario == 4:  # administrador (supor administrador como professor)
-            return redirect("professor_detail", user.professor.id)
-    except:
-        return HttpResponse("Usuário com problema em registro.", status=401)    
+    if user.eh_estud:  # estudante
+        return redirect("estudante_detail", user.aluno.id)
+    elif user.eh_prof:  # professor
+        return redirect("professor_detail", user.professor.id)
+    elif user.eh_parc:  # parceiro
+        return redirect("parceiro_detail", user.parceiro.id)
+    elif user.eh_admin:  # administrador (supor administrador como professor)
+        return redirect("professor_detail", user.professor.id)
 
     return HttpResponse("Usuário não encontrado.", status=401)
 
@@ -102,152 +98,147 @@ def estudantes_lista(request):
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            
-            # Conta soh estudantes
-            alunos_todos = Aluno.objects.order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-            ano = 0
-            semestre = 0
-
-            tabela_alunos = {}
-            cursos = []
-            totais = {}
-            totais["total"] = 0
-
-            # Filtra para estudantes de um curso específico
-            if "curso" in request.POST:
-                curso_sel = request.POST["curso"]
-                if curso_sel != "TE":  # Todos os estudantes (com externos)
-                    if curso_sel != 'T':  # Todos os estudantes (sem externos)
-                        alunos_todos = alunos_todos.filter(curso2__sigla_curta=curso_sel)
-                    else:
-                        alunos_todos = alunos_todos.filter(curso2__in=cursos_insper)
+        if "edicao" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
+        edicao = request.POST["edicao"]
         
+        ano = 0
+        semestre = 0
+
+        tabela_alunos = {}
+        cursos = []
+        totais = {"total": 0}
+
+        # Conta soh estudantes
+        alunos = Aluno.objects.all()
+
+        # Filtra para estudantes de um curso específico
+        curso_sel = request.POST.get("curso")
+        if curso_sel:
+            if curso_sel == "T":  # Todos os estudantes (sem externos)
+                alunos = alunos.filter(curso2__in=cursos_insper)
+            elif curso_sel != "TE":  # Todos os estudantes (com externos)
+                alunos = alunos.filter(curso2__sigla_curta=curso_sel)
+        
+        if edicao not in ("todas", "trancou"):
+            # Estudantes de um semestre em particular
+            ano, semestre = map(int, edicao.split('.'))
+
+            alunos_list = alunos.filter(trancado=False)
+
+            alunos_semestre = alunos_list\
+                .filter(alocacao__projeto__ano=ano,
+                        alocacao__projeto__semestre=semestre)\
+                .distinct()
             
-            if edicao not in ("todas", "trancou"):
-                # Estudantes de um semestre em particular
-                ano, semestre = map(int, edicao.split('.'))
+            tabela_alunos[ano] = {semestre: {}}
 
-                alunos_list = alunos_todos.filter(trancado=False)
+            for curso in Curso.objects.all().order_by("id"):
+                count_estud = alunos_semestre.filter(curso2__sigla=curso.sigla).count()
+                if count_estud > 0:
+                    if curso not in cursos:
+                        cursos.append(curso)
+                    tabela_alunos[ano][semestre][curso.sigla] = count_estud
+                    totais[curso.sigla] = count_estud
+                    totais["total"] += count_estud
 
-                alunos_semestre = alunos_list\
-                    .filter(alocacao__projeto__ano=ano,
-                            alocacao__projeto__semestre=semestre)\
-                    .distinct()
-                
-                tabela_alunos[ano] = {}
-                tabela_alunos[ano][semestre] = {}
+            tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
+            
+            alunos_list = alunos_semestre |\
+                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
 
-                for curso in Curso.objects.all().order_by("id"):
-                    count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
-                    if count_estud > 0:
-                        if curso not in cursos:
-                            cursos.append(curso)
-                        tabela_alunos[ano][semestre][curso.sigla] = count_estud
-                        totais[curso.sigla] = count_estud
-                        totais["total"] += count_estud
-
-                tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
-                
-                alunos_list = alunos_semestre |\
-                    alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
+        else:
+            
+            # Essa parte está em loop para pegar todos os alunos de todos os semestres
+            if edicao == "todas":
+                alunos_list = alunos.filter(trancado=False)
             else:
-                
-                # Essa parte está em loop para pegar todos os alunos de todos os semestres
-                if edicao == "todas":
-                    alunos_list = alunos_todos.filter(trancado=False)
-                else:
-                    alunos_list = alunos_todos.filter(trancado=True)
-                    ano = "trancou"
+                alunos_list = alunos.filter(trancado=True)
+                ano = "trancou"
 
-                # Rotina para contar quantidade de alunos
-                ano_tmp = 2018
-                semestre_tmp = 2
-                while True:
-                    alunos_semestre = alunos_list\
-                        .filter(alocacao__projeto__ano=ano_tmp,
-                                alocacao__projeto__semestre=semestre_tmp)\
-                        .distinct()
+            # Rotina para contar quantidade de alunos
+            ano_tmp = 2018
+            semestre_tmp = 2
+            while True:
+                alunos_semestre = alunos_list\
+                    .filter(alocacao__projeto__ano=ano_tmp,
+                            alocacao__projeto__semestre=semestre_tmp)\
+                    .distinct()
 
-                    if ano_tmp > configuracao.ano + 6:
-                        break
+                if ano_tmp > configuracao.ano + 6:
+                    break
 
-                    if not alunos_semestre:
-                        if semestre_tmp == 1:
-                            semestre_tmp = 2
-                        else:
-                            ano_tmp += 1
-                            semestre_tmp = 1
-                        continue
-
-                    if ano_tmp not in tabela_alunos:
-                        tabela_alunos[ano_tmp] = {}
-                    if semestre_tmp not in tabela_alunos[ano_tmp]:
-                        tabela_alunos[ano_tmp][semestre_tmp] = {}
-
-                    tabela_alunos[ano_tmp][semestre_tmp]["total"] = 0
-                    for curso in Curso.objects.all().order_by("id"):
-                        count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
-                        if count_estud > 0:
-                            if curso not in cursos:
-                                cursos.append(curso)
-                            tabela_alunos[ano_tmp][semestre_tmp][curso.sigla] = count_estud
-                            if curso.sigla in totais:
-                                totais[curso.sigla] += count_estud
-                            else:
-                                totais[curso.sigla] = count_estud
-                            tabela_alunos[ano_tmp][semestre_tmp]["total"] += count_estud
-                            totais["total"] += count_estud
-
+                if not alunos_semestre:
                     if semestre_tmp == 1:
                         semestre_tmp = 2
                     else:
                         ano_tmp += 1
                         semestre_tmp = 1
+                    continue
+
+                if ano_tmp not in tabela_alunos:
+                    tabela_alunos[ano_tmp] = {}
+                if semestre_tmp not in tabela_alunos[ano_tmp]:
+                    tabela_alunos[ano_tmp][semestre_tmp] = {}
+
+                tabela_alunos[ano_tmp][semestre_tmp]["total"] = 0
+                for curso in Curso.objects.all().order_by("id"):
+                    count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                    if count_estud > 0:
+                        if curso not in cursos:
+                            cursos.append(curso)
+                        tabela_alunos[ano_tmp][semestre_tmp][curso.sigla] = count_estud
+                        if curso.sigla in totais:
+                            totais[curso.sigla] += count_estud
+                        else:
+                            totais[curso.sigla] = count_estud
+                        tabela_alunos[ano_tmp][semestre_tmp]["total"] += count_estud
+                        totais["total"] += count_estud
+
+                if semestre_tmp == 1:
+                    semestre_tmp = 2
+                else:
+                    ano_tmp += 1
+                    semestre_tmp = 1
 
 
-            total_estudantes = alunos_list.count()
-            num_estudantes = {}
-            for curso in Curso.objects.all().order_by("id"):
-                count_estud = alunos_list.filter(curso2__sigla__exact=curso.sigla).count()
-                if count_estud > 0:
-                    num_estudantes[curso] = count_estud
+        total_estudantes = alunos_list.count()
+        num_estudantes = {}
+        for curso in Curso.objects.all().order_by("id"):
+            count_estud = alunos_list.filter(curso2__sigla=curso.sigla).count()
+            if count_estud > 0:
+                num_estudantes[curso] = count_estud
 
-            # Estudantes por genero
-            num_alunos_masculino = alunos_list.filter(user__genero='M').count()
-            num_alunos_feminino = alunos_list.filter(user__genero='F').count()
+        num_alunos = {  # Estudantes por genero
+            'M': alunos_list.filter(user__genero='M').count(),
+            'F': alunos_list.filter(user__genero='F').count(),
+        }
 
-            cabecalhos = [{"pt": "Nome", "en": "Name"},
-                          {"pt": "Matrícula", "en": "Enrollment"},
-                          {"pt": "e-mail", "en": "e-mail"},
-                          {"pt": "Curso", "en": "Program"},
-                          {"pt": "Período", "en": "Period"},
-                          {"pt": "Projeto", "en": "Project"},
-                          {"pt": "Linkedin", "en": "Linkedin"},
-                          {"pt": "Celular", "en": "Cellphone"},
-                          ]
-            
-            context = {
-                "alunos_list": alunos_list,
-                "total_estudantes": total_estudantes,
-                "num_estudantes": num_estudantes,
-                "num_alunos_masculino": num_alunos_masculino,
-                "num_alunos_feminino": num_alunos_feminino,
-                "configuracao": configuracao,
-                "cursos": cursos,
-                "tabela_alunos": tabela_alunos,
-                "totais": totais,
-                "ano": ano,
-                "semestre": semestre,
-                "cabecalhos": cabecalhos,
-                "curso_sel": curso_sel,
-            }
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                        {"pt": "Matrícula", "en": "Enrollment"},
+                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "Curso", "en": "Program"},
+                        {"pt": "Período", "en": "Period"},
+                        {"pt": "Projeto", "en": "Project"},
+                        {"pt": "Linkedin", "en": "Linkedin"},
+                        {"pt": "Celular", "en": "Cellphone"},
+                        ]
+        
+        context = {
+            "alunos_list": alunos_list,
+            "total_estudantes": total_estudantes,
+            "num_estudantes": num_estudantes,
+            "num_alunos": num_alunos,
+            "configuracao": configuracao,
+            "cursos": cursos,
+            "tabela_alunos": tabela_alunos,
+            "totais": totais,
+            "ano": ano,
+            "semestre": semestre,
+            "cabecalhos": cabecalhos,
+            "curso_sel": curso_sel,
+        }
 
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
     else:
 
         context = {
@@ -266,68 +257,64 @@ def estudantes_notas(request, professor=None):
     """Gera lista com todos os alunos já registrados."""
 
     if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
-
-            alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
-            alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
-
-            if professor is not None:
-                user = get_object_or_404(PFEUser, pk=request.user.pk)
-                if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-                    mensagem = "Você não está cadastrado como professor!"
-                    context = {
-                        "area_principal": True,
-                        "mensagem": mensagem,
-                    }
-                    return render(request, "generic.html", context=context)
-                
-                # Incluindo também se coorientação
-                coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
-                projetos = Projeto.objects.filter(orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes)
-                alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
-
-            # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
-            alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-
-            # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
-            alunos_list = alunos_semestre |\
-                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
-
-            cabecalhos = [{"pt": "Nome", "en": "Name"},
-                            {"pt": "e-mail", "en": "e-mail"},
-                            {"pt": "Curso", "en": "Program"},
-                            {"pt": "Projeto", "en": "Project"},
-                            {"pt": "Notas", "en": "Grades"},
-                            {"pt": "Indi.", "en": "Indi."},
-                            {"pt": "Média", "en": "Average"},
-                        ]
-
-            captions = [
-                {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
-                {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
-                {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
-                {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
-                {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
-                {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
-            ]
-
-            context = {
-                "alunos_list": alunos_list,
-                "ano": ano,
-                "semestre": semestre,
-                "ano_semestre": str(ano)+"."+str(semestre),
-                "cabecalhos": cabecalhos,
-                "captions": captions,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
-    else:
-        informacoes = [
-            (".pesos_aval", "Pesos", "Weights", False),
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+
+        alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
+        alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
+
+        if professor is not None:
+            user = get_object_or_404(PFEUser, pk=request.user.pk)
+            if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+                mensagem = "Você não está cadastrado como professor!"
+                context = {
+                    "area_principal": True,
+                    "mensagem": mensagem,
+                }
+                return render(request, "generic.html", context=context)
+            
+            # Incluindo também se coorientação
+            coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
+            projetos = Projeto.objects.filter(orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes)
+            alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
+
+        # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
+        alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
+
+        # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
+        alunos_list = alunos_semestre |\
+            alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "Curso", "en": "Program"},
+                        {"pt": "Projeto", "en": "Project"},
+                        {"pt": "Notas", "en": "Grades"},
+                        {"pt": "Indi.", "en": "Indi."},
+                        {"pt": "Média", "en": "Average"},
+                    ]
+
+        captions = [
+            {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
+            {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
+            {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
+            {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
+            {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
+            {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
         ]
-        
+
+        context = {
+            "alunos_list": alunos_list,
+            "ano": ano,
+            "semestre": semestre,
+            "ano_semestre": str(ano)+"."+str(semestre),
+            "cabecalhos": cabecalhos,
+            "captions": captions,
+        }
+
+    else:
+        informacoes = [(".pesos_aval", "Pesos", "Weights", False),]
         context = {
             "titulo": {"pt": "Avaliações por Estudante", "en": "Assessments by Student"},
             "edicoes": get_edicoes(Aluno)[0],
@@ -436,58 +423,56 @@ def blackboard_notas(request, anosemestre):
 def estudantes_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
     if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
-            alocacaoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-
-            # Filtra os Objetivos de Aprendizagem do semestre (Todos: individuais e juntando com os de grupo)
-            objetivos_t = get_objetivos_atuais(ano, semestre)
-
-            ### ISSO ESTA DESATUALIZADO E PRECISA USAR UM ESQUEMA MAIS ATUAL USANDO OS EXAMES
-            objetivos_i = objetivos_t.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
-            
-            
-
-            cabecalhos = [{"pt": "Nome", "en": "Name"},
-                          {"pt": "e-mail", "en": "e-mail"},
-                          {"pt": "Curso", "en": "Program"},
-                          {"pt": "Projeto", "en": "Project"},
-                          ]
-            
-            individual = True
-            for objetivo in objetivos_i:
-                cabecalhos.append({
-                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
-                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
-                    "individual": True,
-                })
-
-            individual = False
-            for objetivo in objetivos_t:
-                cabecalhos.append({
-                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
-                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
-                    "todas": True,
-                })
-
-            captions = []
-            for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
-                captions.append({
-                    "sigla": curso.sigla_curta,
-                    "pt": curso.nome,
-                    "en": curso.nome_en,
-                })
-
-            context = {
-                "alocacaoes": alocacaoes,
-                "objetivos_i": objetivos_i,
-                "objetivos_t": objetivos_t,
-                "cabecalhos": cabecalhos,
-                "captions": captions,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+        alocacaoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+
+        # Filtra os Objetivos de Aprendizagem do semestre (Todos: individuais e juntando com os de grupo)
+        objetivos_t = get_objetivos_atuais(ano, semestre)
+
+        ### ISSO ESTA DESATUALIZADO E PRECISA USAR UM ESQUEMA MAIS ATUAL USANDO OS EXAMES
+        objetivos_i = objetivos_t.filter(avaliacao_aluno=True) # Somentes objetivos de avaliação individual
+
+        cabecalhos = [{"pt": "Nome", "en": "Name"},
+                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "Curso", "en": "Program"},
+                        {"pt": "Projeto", "en": "Project"},
+                        ]
+        
+        individual = True
+        for objetivo in objetivos_i:
+            cabecalhos.append({
+                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                "individual": True,
+            })
+
+        individual = False
+        for objetivo in objetivos_t:
+            cabecalhos.append({
+                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(grp+ind)"),
+                "todas": True,
+            })
+
+        captions = []
+        for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
+            captions.append({
+                "sigla": curso.sigla_curta,
+                "pt": curso.nome,
+                "en": curso.nome_en,
+            })
+
+        context = {
+            "alocacaoes": alocacaoes,
+            "objetivos_i": objetivos_i,
+            "objetivos_t": objetivos_t,
+            "cabecalhos": cabecalhos,
+            "captions": captions,
+        }
+
     else:
         context = {
             "titulo": {"pt": "Objetivos de Aprendizagem por Estudante", "en": "Learning Goals by Student"},
@@ -501,39 +486,39 @@ def estudantes_objetivos(request):
 def projetos_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
     if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
-            projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-            # Filtra os Objetivos de Aprendizagem do semestre
-            objetivos = get_objetivos_atuais(ano, semestre)
-            
-            individual = False
-
-            cabecalhos = [{"pt": "Projeto", "en": "Project"},]
-            for objetivo in objetivos:
-                cabecalhos.append({
-                    "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)"),
-                    "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)"),
-                })
-
-            captions = []
-            for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
-                captions.append({
-                    "sigla": curso.sigla_curta,
-                    "pt": curso.nome,
-                    "en": curso.nome_en,
-                })
-
-            context = {
-                "projetos": projetos,
-                "objetivos": objetivos,
-                "cabecalhos": cabecalhos,
-                "captions": captions,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+        projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        # Filtra os Objetivos de Aprendizagem do semestre
+        objetivos = get_objetivos_atuais(ano, semestre)
+        
+        individual = False
+
+        cabecalhos = [{"pt": "Projeto", "en": "Project"},]
+        for objetivo in objetivos:
+            cabecalhos.append({
+                "pt": objetivo.titulo + ("<br>(individual)" if individual else "<br>(grupo)"),
+                "en": objetivo.titulo_en + ("<br>(individual)" if individual else "<br>(group)"),
+            })
+
+        captions = []
+        for curso in Curso.objects.filter(curso_do_insper=True).order_by("id"):
+            captions.append({
+                "sigla": curso.sigla_curta,
+                "pt": curso.nome,
+                "en": curso.nome_en,
+            })
+
+        context = {
+            "projetos": projetos,
+            "objetivos": objetivos,
+            "cabecalhos": cabecalhos,
+            "captions": captions,
+        }
+
     else:
         context = {
             "titulo": {"pt": "Objetivos de Aprendizagem por Projeto", "en": "Learning Goals by Project"},
@@ -542,90 +527,88 @@ def projetos_objetivos(request):
     return render(request, "users/projetos_objetivos.html", context=context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_inscritos(request):
     """Mostra todos os estudantes que estão se inscrevendo em projetos."""
+    configuracao = get_object_or_404(Configuracao)
+    
     if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
-            alunos = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
-
-            # Conta estudantes de cada curso
-            cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
-            num_estudantes_curso = {}
-            for curso in cursos:
-                qtd = alunos.filter(curso2__sigla__exact=curso.sigla).count()
-                if qtd:
-                    num_estudantes_curso[curso] = qtd
-
-            inscritos = 0
-            inscritos_emails = []
-            ninscritos = 0
-            ninscritos_emails = []
-            tmpinscritos = 0
-            tmpinscritos_emails = []
-            opcoes = []
-            opcoestemp = []
-            
-            for aluno in alunos:
-                opcao = Opcao.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
-                opcoes.append(opcao)
-                opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
-                opcoestemp.append(opcaotmp)
-                if opcao.count() >= 5:
-                    inscritos += 1
-                    inscritos_emails.append(aluno.user.email)
-                elif opcaotmp.count() >= 5:
-                    tmpinscritos += 1
-                    tmpinscritos_emails.append(aluno.user.email)
-                else:
-                    ninscritos += 1
-                    ninscritos_emails.append(aluno.user.email)
-            alunos_list = zip(alunos, opcoes, opcoestemp)
-
-            rano, rsemestre = retrocede_semestre(ano, semestre)
-
-            evento = Evento.get_evento(nome="Indicação de interesse nas propostas pelos estudante", ano=rano, semestre=rsemestre)
-
-            cabecalhos = [
-                {"pt": "C", "en": "C"},
-                {"pt": "Estudante", "en": "Student"},
-                {"pt": "Curso", "en": "Program"},
-                {"pt": "e-mail", "en": "e-mail"},
-                {"pt": "CR", "en": "CR/GPA", "tipo": "numeral"},
-            ]
-
-            context = {
-                "alunos_list": alunos_list,
-                "num_alunos": alunos.count(),  # Conta soh alunos,
-                "inscritos": inscritos,
-                "ninscritos": ninscritos,
-                "tmpinscritos": tmpinscritos,
-                "inscritos_emails": inscritos_emails,
-                "ninscritos_emails": ninscritos_emails,
-                "tmpinscritos_emails": tmpinscritos_emails,
-                "cursos": cursos,
-                "num_estudantes_curso": num_estudantes_curso,
-                "cabecalhos": cabecalhos,
-                "prazo_vencido": evento.endDate < datetime.date.today() if evento and evento.endDate else True,
-                "ano": ano,
-                "semestre": semestre,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+        alunos = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+
+        # Conta estudantes de cada curso
+        cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
+        num_estudantes_curso = {}
+        for curso in cursos:
+            qtd = alunos.filter(curso2__sigla__exact=curso.sigla).count()
+            if qtd:
+                num_estudantes_curso[curso] = qtd
+
+        inscritos = 0
+        inscritos_emails = []
+        ninscritos = 0
+        ninscritos_emails = []
+        tmpinscritos = 0
+        tmpinscritos_emails = []
+        opcoes = []
+        opcoestemp = []
+
+        min_props = configuracao.min_props
+        for aluno in alunos:
+            opcao = Opcao.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
+            opcoes.append(opcao)
+            opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
+            opcoestemp.append(opcaotmp)
+            if opcao.count() >= min_props:
+                inscritos += 1
+                inscritos_emails.append(aluno.user.email)
+            elif opcaotmp.count() >= min_props:
+                tmpinscritos += 1
+                tmpinscritos_emails.append(aluno.user.email)
+            else:
+                ninscritos += 1
+                ninscritos_emails.append(aluno.user.email)
+        alunos_list = zip(alunos, opcoes, opcoestemp)
+
+        rano, rsemestre = retrocede_semestre(ano, semestre)
+
+        evento = Evento.get_evento(nome="Indicação de interesse nas propostas pelos estudante", ano=rano, semestre=rsemestre)
+
+        cabecalhos = [
+            {"pt": "C", "en": "C"},
+            {"pt": "Estudante", "en": "Student"},
+            {"pt": "Curso", "en": "Program"},
+            {"pt": "e-mail", "en": "e-mail"},
+            {"pt": "CR", "en": "CR/GPA", "tipo": "numeral"},
+        ]
+
+        context = {
+            "alunos_list": alunos_list,
+            "num_alunos": alunos.count(),  # Conta soh alunos,
+            "inscritos": inscritos,
+            "ninscritos": ninscritos,
+            "tmpinscritos": tmpinscritos,
+            "inscritos_emails": inscritos_emails,
+            "ninscritos_emails": ninscritos_emails,
+            "tmpinscritos_emails": tmpinscritos_emails,
+            "cursos": cursos,
+            "num_estudantes_curso": num_estudantes_curso,
+            "cabecalhos": cabecalhos,
+            "prazo_vencido": evento.endDate < datetime.date.today() if evento and evento.endDate else True,
+            "ano": ano,
+            "semestre": semestre,
+        }
+
     else:
-
-        configuracao = get_object_or_404(Configuracao)
+        
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-        selecionada = str(ano) + "." + str(semestre)
-
         context = {
             "titulo": {"pt": "Estudantes Inscritos", "en": "Enrolled Students"},
             "edicoes": get_edicoes(Aluno)[0],
-            "selecionada": selecionada,
+            "selecionada": f"{ano}.{semestre}",
         }
 
     return render(request, "users/estudantes_inscritos.html", context=context)
@@ -635,16 +618,16 @@ def estudantes_inscritos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def converte_opcoes(request, ano, semestre):
     """Mostra todos os estudantes que estão se inscrevendo em projetos."""
+    min_props = get_object_or_404(Configuracao).min_props
     for estudante in Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre):
-        opcao = Opcao.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
-        opcaotmp = OpcaoTemporaria.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
-        if opcao.count() >= 5:
-            pass
-        elif opcaotmp.count() >= 5:
-            for otmp in opcaotmp:
-                if otmp.prioridade > 0:  # Caso seja zero, era para ser removido e deve ser ignorado    
-                    opcao_final = Opcao.objects.create(aluno=estudante, proposta=otmp.proposta, prioridade=otmp.prioridade)
-                    opcao_final.save()
+        opcoes = Opcao.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
+        if opcoes.count() >= min_props:
+            continue
+        opcoes_tmp = OpcaoTemporaria.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
+        if opcoes_tmp.count() >= min_props:
+            for otmp in opcoes_tmp:
+                if otmp.prioridade > 0:  # Caso seja zero, era para ser removido e deve ser ignorado
+                    Opcao.objects.create(aluno=estudante, proposta=otmp.proposta, prioridade=otmp.prioridade)
     return redirect("estudantes_inscritos")
 
 
@@ -666,20 +649,11 @@ def edita_notas(request, primarykey):
 
     # Reprovação
     falha = Reprovacao.objects.filter(alocacao=alocacao)
-    if falha:
-        reprovacao = falha.last().nota
-    else:
-        reprovacao = None
+    reprovacao = falha.last().nota if falha else None
 
     if request.method == "POST":
 
-        if request.user and request.user.tipo_de_usuario != 4:  # não é admin
-            mensagem = "Você não tem autorização de modificar notas!"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
+        usuario_sem_acesso(request, (4,)) # Soh Admin
 
         aval_id = str(alocacao.projeto.orientador.user.id)
 
@@ -800,27 +774,25 @@ def estudante_detail(request, primarykey=None):
     """Mostra detalhes sobre o estudante."""
     if primarykey:
         estudante = Aluno.objects.filter(pk=primarykey).first()
+    elif request.user.eh_estud:
+        estudante = request.user.aluno
     else:
-        if request.user.tipo_de_usuario == 1:
-            estudante = request.user.aluno
-        else:
-            return HttpResponse("Estudante não encontrado.", status=401)
-
-    if request.user.tipo_de_usuario == 1 and request.user.aluno != estudante:
-        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
-    if request.user.tipo_de_usuario == 3:   # (3, "parceiro")
-        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
-
-    if not estudante:
         return HttpResponse("Estudante não encontrado.", status=401)
-    alocacoes = Alocacao.objects.filter(aluno=estudante)
 
+    if request.user.eh_estud and request.user.aluno != estudante:
+        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
+    if request.user.eh_parc:
+        return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
+
+    alocacoes = Alocacao.objects.filter(aluno=estudante)
     context = calcula_objetivos(alocacoes)
-    context["titulo"] = {"pt": "Estudante", "en": "Student"}
-    context["aluno"] = estudante
-    context["alocacoes"] = alocacoes
-    context["certificados"] = Certificado.objects.filter(usuario=estudante.user)
-    context["areast"] = Area.objects.filter(ativa=True)
+    context.update({
+        "titulo": {"pt": "Estudante", "en": "Student"},
+        "aluno": estudante,
+        "alocacoes": alocacoes,
+        "certificados": Certificado.objects.filter(usuario=estudante.user),
+        "areast": Area.objects.filter(ativa=True),
+    })
 
     configuracao = get_object_or_404(Configuracao)
 
@@ -892,20 +864,19 @@ def contas_senhas(request, edicao=None):
     usuario_sem_acesso(request, (4,)) # Soh Adm
 
     if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            estudantes = Aluno.objects.all()
-            if edicao != "todas":
-                ano, semestre = edicao.split('.')
-                estudantes = estudantes.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
-            context = {
+        if "edicao" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
+        edicao = request.POST["edicao"]
+        estudantes = Aluno.objects.all()
+        if edicao != "todas":
+            ano, semestre = edicao.split('.')
+            estudantes = estudantes.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
+        context = {
                 "estudantes": estudantes,
                 "template": Carta.objects.filter(template="Envio de Conta para Estudantes").last(),
                 "Carta": Carta,
-                }
-        else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-        
+            }
+
     else:
         
         context = {
@@ -986,31 +957,27 @@ def envia_contas_senhas(request):
 def projeto_user(request):
     """Retorna o projeto id associado ao usuário mais recentemente."""
     
-    if not request.is_ajax():
+    if not request.is_ajax() or "user_id" not in request.POST:
         return HttpResponse("Algum erro não identificado.", status=401)
     
-    if "user_id" in request.POST:
+    user_id = request.POST["user_id"]
+    user = get_object_or_404(PFEUser, pk=user_id)
 
-        user_id = request.POST["user_id"]
-
-        user = get_object_or_404(PFEUser, pk=user_id)
-
-        projeto_id = 0
-        if user.tipo_de_usuario == 1: # (1, "estudante"),
-            alocacao = Alocacao.objects.filter(aluno=user.aluno).last()
-            if alocacao:
-                projeto_id = alocacao.projeto.id
-        elif user.tipo_de_usuario in [2, 4]: # (2, "professor"),
-            projeto = Projeto.objects.filter(orientador=user.professor).last()
-            if projeto:
-                projeto_id = projeto.id
-        elif user.tipo_de_usuario == 3: # (3, "parceiro"),
-            conexao = Conexao.objects.filter(parceiro=user.parceiro).last()
-            if conexao:
-                projeto_id = conexao.projeto.id
-        else: 
-            return HttpResponse("Algum erro não identificado.", status=401)
+    projeto_id = 0
+    if user.eh_estud:
+        alocacao = Alocacao.objects.filter(aluno=user.aluno).last()
+        if alocacao:
+            projeto_id = alocacao.projeto.id
+    elif user.eh_prof_a:
+        projeto = Projeto.objects.filter(orientador=user.professor).last()
+        if projeto:
+            projeto_id = projeto.id
+    elif user.eh_parc:
+        conexao = Conexao.objects.filter(parceiro=user.parceiro).last()
+        if conexao:
+            projeto_id = conexao.projeto.id
     else: 
         return HttpResponse("Algum erro não identificado.", status=401)
     
     return JsonResponse({"projeto_id": projeto_id,})
+

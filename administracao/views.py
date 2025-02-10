@@ -337,16 +337,16 @@ def edita_usuario(request, primarykey):
         "Estudante": Aluno,
     }
 
-    if user.tipo_de_usuario == 1:
+    if user.eh_estud:
         context["tipo"] = "estudante"
-    elif user.tipo_de_usuario == 2:
+    elif user.eh_prof:
         context["tipo"] = "professor"
-    elif user.tipo_de_usuario == 3:
+    elif user.eh_parc:
         context["tipo"] = "parceiro"
         if user.parceiro.organizacao:
             context["organizacao_selecionada"] = user.parceiro.organizacao
-    elif user.tipo_de_usuario == 4:
-        if request.user.tipo_de_usuario != 4:
+    elif user.eh_admin:
+        if not request.user.eh_admin:
             return HttpResponse("Edição de administrador bloqueada", status=401)
         else:
             context["tipo"] = "professor"  # a principio supondo que seja professor
@@ -490,10 +490,9 @@ def configurar(request):
 @permission_required("users.view_administrador", raise_exception=True)
 def desbloquear_usuarios(request):
     """Desbloqueia todos os usuários."""
-    if request.user.tipo_de_usuario == 4:
-        axes.utils.reset()
-        return redirect("/administracao/bloqueados/")
-    return HttpResponse("Você não tem privilégios")
+    usuario_sem_acesso(request, (4,)) # Soh Admin
+    axes.utils.reset()
+    return redirect("/administracao/bloqueados/")
 
 
 @login_required
@@ -501,7 +500,7 @@ def desbloquear_usuarios(request):
 def exportar(request):
     """Exporta dados."""
 
-    if request.method == "POST" and request.user.tipo_de_usuario == 4:  # admin
+    if request.method == "POST" and request.user.eh_admin:
         if "edicao" in request.POST and "dados" in request.POST and "formato" in request.POST:
             ano, semestre = map(int, request.POST["edicao"].split('.'))
         else:
@@ -682,7 +681,7 @@ def propor(request):
 
         user = request.user
         if otimizar:  # Quer dizer que é um POST
-            if user.tipo_de_usuario != 4:  # admin
+            if not user.eh_admin:  # admin
                 return HttpResponse("Usuário sem privilégios de administrador.", status=403)
 
             ordem_propostas = {}

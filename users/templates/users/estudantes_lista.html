@@ -16,9 +16,9 @@
   {% comment %} Melhor não usar números absolutos de gênero visto que os estudantes não foram consultados sobre isso. {% endcomment %}
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
-  <style>
+  {% comment %} <style>
     th {padding: 1px 4px 1px 4px;}
-  </style>
+  </style> {% endcomment %}
 
 {% endblock %}
 
@@ -50,7 +50,7 @@
           {% if aluno.curso2 %}
             <td style="color:#{{ aluno.curso2.cor }};">{{ aluno.curso2 }}</td>
           {% else %}
-            <td>Indefinido</td>
+            <td>{% lng "Indefinido" "Undefined" %}</td>
           {% endif %}
           {% with alocacoes=aluno.alocacao_set.all %}
             <td>
@@ -67,7 +67,7 @@
                 {% if aluno.anoPFE and aluno.semestrePFE %}
                   {{aluno.anoPFE}}.{{aluno.semestrePFE}}
                 {% else %}
-                  Indefinido
+                  {% lng "Indefinido" "Undefined" %}
                 {% endif %}
               {% endfor %}
             </td>
@@ -130,40 +130,40 @@
           </tr>
         </thead>
         <tbody>
-        {% for ano,tabela_ano in tabela_alunos.items %}
-          {% for semestre,tabela_semetre in tabela_ano.items %}
+          {% for ano,tabela_ano in tabela_alunos.items %}
+            {% for semestre,tabela_semetre in tabela_ano.items %}
+              <tr class="item">
+                  <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+                  {% for curso in cursos %}
+                    <td class="text-center">
+                      {% with qtd=tabela_semetre|dict_key:curso.sigla %}
+                        {% if qtd %}{{qtd}}{% else %}0{% endif %}
+                      {% endwith %}
+                    </td>
+                  {% endfor %}
+                  {% if curso_sel == 'T' %}
+                    <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+                  {% endif %}
+              </tr>
+            {% endfor %}
+          {% endfor %}
+          {% if ano == 0 or semestre == 0 %}
             <tr class="item">
-                <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+              <td class="text-center" style="border-right: solid 3px; border-top: double;">
+                {% lng "Totais" "Totals" %}
+              </td>
                 {% for curso in cursos %}
-                  <td class="text-center">
-                    {% with qtd=tabela_semetre|dict_key:curso.sigla %}
+                  <td class="text-center" style="border-top: double;">
+                    {% with qtd=totais|dict_key:curso.sigla %}
                       {% if qtd %}{{qtd}}{% else %}0{% endif %}
                     {% endwith %}
                   </td>
                 {% endfor %}
-                {% if curso_sel == 'T' %}
-                  <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
-                {% endif %}
+              {% if curso_sel == 'T' %}
+                <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+              {% endif %}
             </tr>
-          {% endfor %}
-        {% endfor %}
-        {% if ano == 0 or semestre == 0 %}
-          <tr class="item">
-            <td class="text-center" style="border-right: solid 3px; border-top: double;">
-              {% lng "Totais" "Totals" %}
-            </td>
-              {% for curso in cursos %}
-                <td class="text-center" style="border-top: double;">
-                  {% with qtd=totais|dict_key:curso.sigla %}
-                    {% if qtd %}{{qtd}}{% else %}0{% endif %}
-                  {% endwith %}
-                </td>
-              {% endfor %}
-            {% if curso_sel == 'T' %}
-              <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
-            {% endif %}
-          </tr>
-        {% endif %}
+          {% endif %}
         </tbody>
       </table>
       {% if ano == 0 or semestre == 0 %}
@@ -192,15 +192,13 @@
     </div>
     {% endif %}
 
-
     <script>
       var config_programas = {
         type: "pie",
         data: {
           datasets: [{
             data: [{% for num in num_estudantes.values %}{{num}},{% endfor %}],
-            backgroundColor: [{% for curso, num in num_estudantes.items %}"#{{curso.cor}}",{% endfor %}],
-            label: "Proporção de cursos entre estudantes"
+            backgroundColor: [{% for curso, num in num_estudantes.items %}"#{{curso.cor}}",{% endfor %}]
           }],
           labels: [{% for curso, num in num_estudantes.items %}"{{curso.nome}} [{% widthratio num total_estudantes 100 %}%]",{% endfor %}]
         },
@@ -219,24 +217,16 @@
         }
       };
 
-
       var config_generos = {
         type: "pie",
         data: {
           datasets: [{
-            data: [
-              {{ num_alunos_masculino }},
-              {{ num_alunos_feminino }},
-            ],
-            backgroundColor: [
-              "rgb(93, 173, 226)",
-              "rgb(175, 122, 197)",
-            ],
-            label: "Proporção de cursos entre estudantes"
+            data: [{{ num_alunos.M }}, {{ num_alunos.F }}],
+            backgroundColor: ["#5DACE2", "#AF7AC5"]
           }],
           labels: [
-            "Masculino [{% widthratio num_alunos_masculino total_estudantes 100 %}%]",
-            "Feminino [{% widthratio num_alunos_feminino total_estudantes 100 %}%]",
+            "Masculino [{% widthratio num_alunos.M total_estudantes 100 %}%]",
+            "Feminino [{% widthratio num_alunos.F total_estudantes 100 %}%]"
           ]
         },
         options: {
@@ -275,15 +265,11 @@
         type: "bar",
         data: {
           labels: labels,
-          datasets: [
-            {% for curso in cursos %}
-              {
+          datasets: [{% for curso in cursos %}{
                 data: est["{{curso.sigla}}"],
                 backgroundColor: "#{{curso.cor}}",
                 label: "{{curso.sigla}}"
-              },
-            {% endfor %}
-          ],
+              },{% endfor %}],
         },
         options: {
           responsive: true,
@@ -303,12 +289,8 @@
 					},
 					responsive: true,
 					scales: {
-						xAxes: [{
-							stacked: true,
-						}],
-						yAxes: [{
-							stacked: true
-						}]
+						xAxes: [{stacked: true}],
+						yAxes: [{stacked: true}]
 					}
         }
       }; 

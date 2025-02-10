@@ -463,10 +463,10 @@ class Configuracao(models.Model):
                                            help_text="Separar lista por ponto e virgula")
 
     min_props = models.PositiveIntegerField("Mínimo de Propostas para Estudantes Selecionarem", default=5,
-        help_text="Quantidade mínima de propostas a serem selecionas pelos estudantes")
+                                            help_text="Quantidade mínima de propostas a serem selecionas pelos estudantes")
     
     maxMB_filesize = models.PositiveIntegerField("Tamanho máximo de arquivo", default=2000,
-        help_text="Tamanho máximo de arquivo em MB")
+                                                 help_text="Tamanho máximo de arquivo em MB")
 
     coordenacao = models.ForeignKey("users.Administrador", null=True, blank=True, on_delete=models.SET_NULL,
                                     related_name="coordenacao",

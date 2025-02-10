@@ -82,7 +82,7 @@ def filtra_entregas(composicoes, projeto, user=None):
 
         else:
 
-            if user and user.tipo_de_usuario == 1 : # Para o próprio estudante 
+            if user and user.eh_estud: # Para o próprio estudante 
                 alocacao = Alocacao.objects.get(projeto=projeto, aluno=user.aluno)
                 documentos = Documento.objects.filter(tipo_documento=composicao.tipo_documento,
                                                       projeto=projeto,
