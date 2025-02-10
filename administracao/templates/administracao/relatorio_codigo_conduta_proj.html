@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 9 de Fevereiro de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load addhttp %}
+
+  <style>
+    @page {
+      size: a4 portrait; /*landscape*/
+      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <h3>Códigos de Conduta de Projetos {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+
+  {% for respostas_conduta in respostas_condutas %} 
+    <p style="page-break-before: always"></p>
+    <h4>Projeto: {{respostas_conduta.projeto}}</h4><br>
+    {% include "estudantes/includes/tabela_conduta.html" with ver=True %}<br>
+  {% empty %}
+    <p>Não existem projetos disponíveis.</p>
+  {% endfor %}
+
+{% endblock %}

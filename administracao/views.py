@@ -6,6 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
+import json
 import re
 import tablib
 import axes.utils
@@ -17,7 +18,9 @@ from celery import Celery
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
@@ -30,6 +33,8 @@ from axes.models import AccessAttempt, AccessLog
 from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
 from .support2 import create_backup, get_resource, get_queryset
+
+from academica.models import CodigoConduta
 
 from documentos.support import render_to_pdf
 
@@ -577,6 +582,7 @@ def relatorios(request):
         ("Estudantes", "estudantes"),
         ("Feedbacks", "feedbacks"),
         ("Avaliação de Pares", "pares"),
+        ("Códigos Conduta Projetos", "codigo_conduta_proj"),
     ]
 
     context = {
@@ -1120,6 +1126,7 @@ def backup(request, formato):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
+    configuracao = get_object_or_404(Configuracao)
     context = {"titulo": {"pt": "Relatório", "en": "Report"},}
 
     edicao = request.GET.get("edicao", None)
@@ -1176,6 +1183,17 @@ def relatorio(request, modelo, formato):
         context["iniciativas"] = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
         context["comunicacoes"] = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
         arquivo = "administracao/relatorio_pares.html"
+
+    elif modelo == "codigo_conduta_proj":
+        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
+        codigo_condutas = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(Projeto))
+        respostas_condutas = []
+        for codigo_conduta in codigo_condutas:
+            r = json.loads(codigo_conduta.codigo_conduta)
+            r["projeto"] = Projeto.objects.get(id=codigo_conduta.object_id)
+            respostas_condutas.append(r)
+        context["respostas_condutas"] = respostas_condutas
+        arquivo = "administracao/relatorio_codigo_conduta_proj.html"
 
     else:
         context = {
