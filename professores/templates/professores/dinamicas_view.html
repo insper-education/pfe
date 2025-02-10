@@ -36,190 +36,202 @@
   
     <div id="modal-body" class="modal-body">
 
-    {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
-    <div class="container">   
-        <label for="inicio" style="margin-right: 2rem;">
-        <span style="display:inline-block; width:5.5ex; text-align:right;">
-          {% lng "Inicio" "Start" %}:
-        </span>
-        <input id="inicio"  type="datetime-local" name="inicio"
-        {% if encontro %}
-          value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
-        {% elif data %}
-          value="{{data}}T00:00"
+      {% comment %} Se livrar do datetime-local, ele não funciona bem {% endcomment %}
+      <div class="container">
+
+        {% if not todas %}
+
+          <label for="inicio" style="margin-right: 2rem;">
+            <span style="display:inline-block; width:5.5ex; text-align:right;">
+              {% lng "Inicio" "Start" %}:
+            </span>
+            <input id="inicio"  type="datetime-local" name="inicio"
+            {% if encontro %}
+              value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
+            {% elif data %}
+              value="{{data}}T00:00"
+            {% endif %}
+            required>
+          </label>
+        
+          <label for="fim" style="margin-right: 2rem;">
+            <span style="display:inline-block; width:5.5ex; text-align:right">
+              {% lng "Fim" "End" %}:
+            </span>
+            <input id="fim"  type="datetime-local" name="fim"
+            {% if encontro %}
+              value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}"
+            {% elif data %}
+              value="{{data}}T00:00"
+            {% endif %} 
+            required>
+          </label>
+
+          {% if not encontro %}
+            <label for="vezes" style="margin-right: 2rem;">
+              <span style="display:inline-block; width:5.5ex; text-align:right">
+                {% lng "Vezes" "Times" %}:
+              </span>
+              <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
+            </label>
+          {% endif %} 
+        
+          <script>
+            // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
+            Date.prototype.toDatetimeLocal =
+              function toDatetimeLocal() {
+                var
+                  date = this,
+                  ten = function (i) {
+                    return (i < 10 ? '0' : '') + i;
+                  },
+                  YYYY = date.getFullYear(),
+                  MM = ten(date.getMonth() + 1),
+                  DD = ten(date.getDate()),
+                  HH = ten(date.getHours()),
+                  II = ten(date.getMinutes()),
+                  SS = ten(date.getSeconds())
+                ;
+                return YYYY + '-' + MM + '-' + DD + 'T' +
+                        HH + ':' + II + ':' + SS;
+              };
+
+            var minutos = 20;
+
+            $("#inicio").change(function() {
+              var data = new Date($(this).val());
+              data.setMinutes(data.getMinutes() + minutos);
+              $("#fim").val(data.toDatetimeLocal());
+            });
+
+          </script>
+          <br><br>
+
         {% endif %}
-        required>
+        
+        <label for="local">
+          {% lng "Local" "Location" %} / {% lng "Vídeo-conferência" "Video-conference" %}:
+          <input id="local" name="local" type="text" size="36" style="width: 100%;" maxlength="280"
+          {% if encontro %}
+            value="{{encontro.location}}"
+          {% endif %} 
+          />
         </label>
-      
-        <label for="fim" style="margin-right: 2rem;">
-        <span style="display:inline-block; width:5.5ex; text-align:right">
-          {% lng "Fim" "End" %}:
-        </span>
-        <input id="fim"  type="datetime-local" name="fim"
-        {% if encontro %}
-          value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}"
-        {% elif data %}
-          value="{{data}}T00:00"
-        {% endif %} 
-        required>
-        </label>
+        <br>
 
-        {% if not encontro %}
-        <label for="vezes" style="margin-right: 2rem;">
-          <span style="display:inline-block; width:5.5ex; text-align:right">
-            {% lng "Vezes" "Times" %}:
-          </span>
-          <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
-        </label>
-        {% endif %} 
-      
-    <script>
-      // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
-      Date.prototype.toDatetimeLocal =
-        function toDatetimeLocal() {
-          var
-            date = this,
-            ten = function (i) {
-              return (i < 10 ? '0' : '') + i;
-            },
-            YYYY = date.getFullYear(),
-            MM = ten(date.getMonth() + 1),
-            DD = ten(date.getDate()),
-            HH = ten(date.getHours()),
-            II = ten(date.getMinutes()),
-            SS = ten(date.getSeconds())
-          ;
-          return YYYY + '-' + MM + '-' + DD + 'T' +
-                  HH + ':' + II + ':' + SS;
-        };
+        <br>
+        {% lng "Facilitador" "Facilitator" %}:<br>
+        <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
+          data-live-search="true" data-width="90%" data-size="10">
+            <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
+            <optgroup label="Professores">
+              {% for pessoa in professores %}
+                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label="Falconi">
+              {% for pessoa in falconis %}
+                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+              {% endfor %}
+            </optgroup>
+            {% comment %} <optgroup label="Outros">
+              {% for pessoa in pessoas %}
+                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+              {% endfor %}
+            </optgroup> {% endcomment %}
+        </select>
 
-      var minutos = 20;
-
-      $("#inicio").change(function() {
-        var data = new Date($(this).val());
-        data.setMinutes(data.getMinutes() + minutos);
-        $("#fim").val(data.toDatetimeLocal());
-      });
-
-    </script>
-
-    <br><br>
-    <label for="local">
-      {% lng "Local" "Location" %} / {% lng "Vídeo-conferência" "Video-conference" %}:
-      <input id="local" name="local" type="text" size="36" style="width: 100%;" maxlength="280"
-      {% if encontro %}
-        value="{{encontro.location}}"
-      {% endif %} 
-      />
-    </label>
-    <br>
-
-    <br>
-    {% lng "Facilitador" "Facilitator" %}:<br>
-    <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
-      data-live-search="true" data-width="90%" data-size="10">
-        <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
-        <optgroup label="Professores">
-          {% for pessoa in professores %}
-            <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-          {% endfor %}
-        </optgroup>
-        <optgroup label="Falconi">
-          {% for pessoa in falconis %}
-            <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-          {% endfor %}
-        </optgroup>
-        {% comment %} <optgroup label="Outros">
-          {% for pessoa in pessoas %}
-            <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-          {% endfor %}
-        </optgroup> {% endcomment %}
-    </select>
-
-  </div>
-  
-  <div class="container">
-    
-    <br><hr><br>
-
-    <label for="projeto">{% lng "Projeto" "Project" %}:</label>
-    <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-      data-live-search="true" data-width="75%" data-size="10">
-      <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
-      {% for projeto in projetos %}
-        <option value="{{projeto.id}}"
-        style="font-size: 0.75em;"
-        data-titulo="{{projeto.get_titulo}}"
-        data-organizacao="{{projeto.organizacao}}"
-        data-orientador="{{projeto.orientador}}"
-        {% if projeto.id == encontro.projeto.id %} selected {% endif %}
-        data-subtext="{{projeto.orientador}}"
-        >
-          {{projeto.ano}}.{{projeto.semestre}}
-          ({{projeto.organizacao}})
-          {{projeto.get_titulo}}
-        </option>  
-      {% endfor %}
-    </select><br><br>
-
-    {% lng "Título" "Title" %}:
-    <label id="titulo" name="titulo">
-      {% if encontro and encontro.projeto %}
-        {{encontro.projeto.get_titulo}}
-      {% else %}
-        {% lng "Título de Projeto não definido" "Project Title not defined" %}
-      {% endif %}
-    </label><br>
-
-    {% lng "Organização" "Organization" %}:
-    <label id="organizacao" name="organizacao">
-      {% if encontro and encontro.projeto and encontro.projeto.organizacao %}
-        {{encontro.projeto.organizacao}}
-      {% else %}
-        {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
-      {% endif %}
-    </label><br>
-    
-    {% lng "Orientador(a)" "Advisor" %}:
-    <label id="orientador" name="orientador">
-      {% if encontro and encontro.projeto and encontro.projeto.orientador %}
-        {{encontro.projeto.orientador}}
-      {% else %}
-        {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
-      {% endif %}
-    </label><br>
+      </div>
 
     </div>
+  
+    {% if not todas %}
 
-    <br><br>
-    <span id="mensagem"></span>
+      <div class="container">
+        
+        <hr>
 
-  </div>
+        <label for="projeto">{% lng "Projeto" "Project" %}:</label>
+        <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
+          data-live-search="true" data-width="75%" data-size="10">
+          <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
+          {% for projeto in projetos %}
+            <option value="{{projeto.id}}"
+            style="font-size: 0.75em;"
+            data-titulo="{{projeto.get_titulo}}"
+            data-organizacao="{{projeto.organizacao}}"
+            data-orientador="{{projeto.orientador}}"
+            {% if projeto.id == encontro.projeto.id %} selected {% endif %}
+            data-subtext="{{projeto.orientador}}"
+            >
+              {{projeto.ano}}.{{projeto.semestre}}
+              ({{projeto.organizacao}})
+              {{projeto.get_titulo}}
+            </option>  
+          {% endfor %}
+        </select><br><br>
 
-  <div class="modal-footer">
-    <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
-      {% lng "Fechar" "Close" %}
-    </button>
+        {% lng "Título" "Title" %}:
+        <label id="titulo" name="titulo">
+          {% if encontro and encontro.projeto %}
+            {{encontro.projeto.get_titulo}}
+          {% else %}
+            {% lng "Título de Projeto não definido" "Project Title not defined" %}
+          {% endif %}
+        </label><br>
 
-    <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
-      {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
-      {% if encontro %}
-        {% lng "Atualizar" "Update" %}
-      {% else %}
-        {% lng "Criar" "Create" %}
-      {% endif %}
-    </button>
-    {% if encontro %}
-      <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" onclick="operacao = 'excluir';">
-        {% lng "Excluir Mentoria" "Delete Mentoring" %}
-      </button>
+        {% lng "Organização" "Organization" %}:
+        <label id="organizacao" name="organizacao">
+          {% if encontro and encontro.projeto and encontro.projeto.organizacao %}
+            {{encontro.projeto.organizacao}}
+          {% else %}
+            {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
+          {% endif %}
+        </label><br>
+        
+        {% lng "Orientador(a)" "Advisor" %}:
+        <label id="orientador" name="orientador">
+          {% if encontro and encontro.projeto and encontro.projeto.orientador %}
+            {{encontro.projeto.orientador}}
+          {% else %}
+            {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
+          {% endif %}
+        </label><br>
+
+        </div>
+
+        <br><br>
+        <span id="mensagem"></span>
+
+      </div>
+
     {% endif %}
-  </div>
+
+    <div class="modal-footer">
+      <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
+        {% lng "Fechar" "Close" %}
+      </button>
+
+      <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
+        {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
+        {% if encontro %}
+          {% lng "Atualizar" "Update" %}
+        {% elif todas %}
+          {% lng "Atualizar Todas" "Update All" %}
+        {% else %}
+          {% lng "Criar" "Create" %}
+        {% endif %}
+      </button>
+      {% if encontro %}
+        <button id="excluir" class="btn btn-primary mb-1" type="submit" name="excluir" onclick="operacao = 'excluir';">
+          {% lng "Excluir Mentoria" "Delete Mentoring" %}
+        </button>
+      {% endif %}
+    </div>
 
   </form>
 
 <script>
-
 
   $(document).ready(function () {     
     $("#projeto").change(function(){
@@ -246,17 +258,19 @@
 $("form#dinamicasform").submit(function(e){
   e.preventDefault();
 
-  if($("#inicio").val() == $("#fim").val()) {
-    alert("Datas e horários de início e fim são iguais!");
-    return false;
-  }
+  {% if not todas %}
+    if($("#inicio").val() == $("#fim").val()) {
+      alert("Datas e horários de início e fim são iguais!");
+      return false;
+    }
 
-  d_inicio = new Date($("#inicio").val());
-  d_fim = new Date($("#fim").val());
-  if(d_inicio > d_fim) {
-    alert("Data de início depois da data final!");
-    return false;
-  }
+    d_inicio = new Date($("#inicio").val());
+    d_fim = new Date($("#fim").val());
+    if(d_inicio > d_fim) {
+      alert("Data de início depois da data final!");
+      return false;
+    }
+  {% endif %}
 
   $.ajaxSetup({
     headers: { "X-CSRFToken": "{{csrf_token}}" }

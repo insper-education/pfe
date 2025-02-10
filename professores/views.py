@@ -926,6 +926,23 @@ def bancas_index(request, prof_id=None):
     return render(request, "professores/bancas_index.html", context)
 
 
+def puxa_encontros(edicao):
+    encontros = Encontro.objects.all().order_by("startDate")
+    if edicao == "todas":
+        pass  # segue com encontros
+    elif edicao == "proximas":
+        hoje = datetime.date.today()
+        encontros = encontros.filter(startDate__gt=hoje)
+    else:
+        ano, semestre = map(int, edicao.split('.'))
+
+        encontros = encontros.filter(startDate__year=ano)
+        if semestre == 1:
+            encontros = encontros.filter(startDate__month__lt=8)
+        else:
+            encontros = encontros.filter(startDate__month__gt=7)
+    return encontros
+    
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_lista(request, edicao=None):
@@ -933,22 +950,8 @@ def dinamicas_lista(request, edicao=None):
 
     if request.is_ajax() and "edicao" in request.POST:
 
-        encontros = Encontro.objects.all().order_by("startDate")
-
         edicao = request.POST["edicao"]
-        if edicao == "todas":
-            pass  # segue com encontros
-        elif edicao == "proximas":
-            hoje = datetime.date.today()
-            encontros = encontros.filter(startDate__gt=hoje)
-        else:
-            ano, semestre = map(int, edicao.split('.'))
-
-            encontros = encontros.filter(startDate__year=ano)
-            if semestre == 1:
-                encontros = encontros.filter(startDate__month__lt=8)
-            else:
-                encontros = encontros.filter(startDate__month__gt=7)
+        encontros = puxa_encontros(edicao)
 
         # checando se projetos atuais tem banca marcada
         configuracao = get_object_or_404(Configuracao)
@@ -961,6 +964,7 @@ def dinamicas_lista(request, edicao=None):
         context = {
             "sem_dinamicas": sem_dinamicas,
             "encontros": encontros,
+            "edicao": edicao,
         }
 
     else:
@@ -1614,6 +1618,33 @@ def dinamicas_criar(request, data=None):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
+def dinamicas_editar_edicao(request, edicao):
+    """Edita vários encontros."""
+    
+    if request.is_ajax() and request.method == "POST":
+        encontros = puxa_encontros(edicao)
+        for encontro in encontros:
+            encontro.location = request.POST.get("local")
+            facilitador_id = request.POST.get("facilitador")
+            if facilitador_id:
+                encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
+            encontro.save()
+
+        context = {"atualizado": True,}
+        return JsonResponse(context)
+    
+    context = {
+        "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
+        "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "todas": True,
+        "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
+    }
+    return render(request, "professores/dinamicas_view.html", context)
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_editar(request, primarykey=None):
     """Edita um encontro."""
 
@@ -1636,25 +1667,14 @@ def dinamicas_editar(request, primarykey=None):
                 except (ValueError, OverflowError):
                     return HttpResponse("Erro com data da Dinâmica!", status=401)
 
-                local = request.POST.get("local", None)
-                if local:
-                    encontro.location = local
+                encontro.location = request.POST.get("local")
 
-                projeto = request.POST.get("projeto", None)
-                if projeto:
-                    projeto = int(projeto)
-                    if projeto != 0:
-                        encontro.projeto = get_object_or_404(Projeto, id=projeto)
-                    else:
-                        encontro.projeto = None
-
-                facilitador = request.POST.get("facilitador", None)
-                if facilitador:
-                    facilitador = int(facilitador)
-                    if facilitador != 0:
-                        encontro.facilitador = get_object_or_404(PFEUser, id=facilitador)
-                    else:
-                        encontro.facilitador = None
+                projeto_id = request.POST.get("projeto")
+                if projeto_id:
+                    encontro.projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id != '0' else None
+                facilitador_id = request.POST.get("facilitador")
+                if facilitador_id:
+                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
 
                 encontro.save()
 
@@ -1675,23 +1695,10 @@ def dinamicas_editar(request, primarykey=None):
         }
         return JsonResponse(context)
 
-    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-
-    # Buscando pessoas para lista de Facilitadores
-    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # 'professor'
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # 'administr'
-    professores = (professores_tmp | administradores).order_by(Lower("first_name"),
-                                                               Lower("last_name"))
-
-    parceiros = PFEUser.objects.filter(tipo_de_usuario=3)
-    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
-    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"),
-                                                                            Lower("last_name"))
-
     context = {
-        "projetos": projetos,
-        "professores": professores,
-        "falconis": falconis,
+        "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
+        "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
+        "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
         "encontro": encontro,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),

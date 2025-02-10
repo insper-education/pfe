@@ -182,6 +182,10 @@ urlpatterns = [
         views.dinamicas_editar,
         name="dinamicas_editar"),
 
+    path("dinamicas_editar_edicao/<str:edicao>",
+        views.dinamicas_editar_edicao,
+        name="dinamicas_editar_edicao"),
+
     path("dinamicas_lista/",
         views.dinamicas_lista,
         name="dinamicas_lista"),

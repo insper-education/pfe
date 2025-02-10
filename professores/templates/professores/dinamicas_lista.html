@@ -47,13 +47,9 @@
               {% if e.location %}
                 <div class="local" style="margin: 4px 0px 4px 0px;">
                   <b>Local/Link:</b>
-                  {% if e.url_location %}
-                    <a href="{{e.location}}">
-                  {% endif %}
+                  {% if e.url_location %}<a href="{{e.location}}">{% endif %}
                   {{e.location}}
-                  {% if e.url_location %}
-                    </a>
-                  {% endif %}
+                  {% if e.url_location %}</a>{% endif %}
                 </div>
               {% endif %}
 
@@ -84,6 +80,13 @@
           </tr>
         {% endfor %}
       </tbody></table>
+      {% if request.user.eh_admin %}
+        <span class="editar esconder" style="float: right;">
+          <a class="open-modal" data-url="{% url 'dinamicas_editar_edicao' edicao %}" href="{% url 'dinamicas_editar_edicao' edicao %}"> 
+            <button class="btn btn-secondary">{% lng "Editar Todas" "Edit All" %}</button>
+          </a>
+        </span>
+      {% endif %}
       <p>&nbsp;</p>
     {% else %}
       <p>{% lng "Não existem encontros." "There are no meetings." %}</p>
