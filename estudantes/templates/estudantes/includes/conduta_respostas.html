@@ -9,7 +9,11 @@
 
 {% if perguntas_codigo_conduta and respostas_conduta %}
   <h4>
-    {% lng "Código de Conduta Individual" "Individual Code of Conduct" %}
+    {% if individual%}
+      {% lng "Código de Conduta Individual" "Individual Code of Conduct" %}
+    {% else %}
+      {% lng "Código de Conduta do Grupo" "Group Code of Conduct" %}
+    {% endif %}
     <span id="conduta_com" class="seta-baixo"></span>
   </h4>
 

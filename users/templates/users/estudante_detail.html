@@ -228,7 +228,7 @@
 
   {% include "estudantes/includes/estilos_respostas.html" %}
   {% include "estudantes/includes/funcionalidade_respostas.html" %}
-  {% include "estudantes/includes/conduta_respostas.html" %}
+  {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
 
   {% if user.admin %}
     <a href="{% url 'edita_usuario' aluno.user.id %}">
