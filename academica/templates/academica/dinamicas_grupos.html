@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 11 de Fevereiro de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% comment %} {% load relatos %} {% endcomment %}
+  {% comment %} {% load l10n %} {% endcomment %}
+  {% comment %} {% load dictionary %} {% endcomment %}
+  {% load linguas %}
+  {% include "tabelas_includes.html" %}
+  {% include "reload.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "edicoes.html" %}
+
+  <div id="atualizar">
+    {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
+      {% for alocacao, quinzenais_realizados, quinzenais_adequados, pares in informacoes %} 
+        <tr class="item">
+          <th scope="row" data-order="{{alocacao.aluno.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+              {{alocacao.aluno.user.get_full_name}}
+              {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+            </a>
+          </th>
+
+          <td>
+            <a href="mailto:{{alocacao.aluno.user.email}}">{{alocacao.aluno.user.email}}</a>
+          </td>
+
+          <td>
+            {% if alocacao.aluno.curso2 %}
+              <span style="color:#{{ alocacao.aluno.curso2.cor }};">
+                <span class="texto-longo">{{ alocacao.aluno.curso2 }}</span>
+                <span class="texto-curto">{{ alocacao.aluno.curso2.sigla_curta }}</span>
+              </span>
+            {% else %}
+              {% lng "Indefinido" "Undefined" %}
+            {% endif %}
+          </td>
+
+          <td>
+            {% if alocacao.projeto and alocacao.projeto.organizacao %}
+              <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
+                [{{alocacao.projeto.organizacao}}]
+              </a>
+            {% else %}
+              [{% lng "SEM ORGANIZAÇÃO" "NO ORGANIZATION" %}]
+            {% endif %}
+            <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+              {{alocacao.projeto.get_titulo}}
+            </a>
+            {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+          </td>
+
+          <td class="text-right">{{quinzenais_realizados}}</td>
+          <td class="text-right">{{quinzenais_adequados}}</td>
+          <td class="text-right">{{pares.i.entrega}}</td>
+          <td class="text-right">{{pares.i.iniciativa}}</td>
+          <td class="text-right">{{pares.i.comunicacao}}</td>
+          <td class="text-right">{{pares.f.entrega}}</td>
+          <td class="text-right">{{pares.f.iniciativa}}</td>
+          <td class="text-right">{{pares.f.comunicacao}}</td>
+
+        </tr>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+    
+    <br>
+    <h5>{% lng "Pares Entrega" "Pairs Delivery" %}</h5>
+    {% for n, t_pt, t_en in Pares.TIPO_ENTREGA %}
+      {{n}} - {% lng t_pt t_en %}<br>
+    {% endfor %}
+    <br><br>
+
+    <h5>{% lng "Pares Iniciativa" "Pairs Initiative" %}</h5>
+    {% for n, t_pt, t_en in Pares.TIPO_INICIATIVA %}
+      {{n}} - {% lng t_pt t_en %}<br>
+    {% endfor %}
+    <br><br>
+
+    <h5>{% lng "Pares Comunicação" "Pairs Communication" %}</h5>
+    {% for n, t_pt, t_en in Pares.TIPO_COMUNICACAO %}
+      {{n}} - {% lng t_pt t_en %}<br>
+    {% endfor %}
+    <br><br>
+    
+
+    <script>
+
+      var table = null;
+  
+      function carrega_pagina() {
+        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+          table = $("#EstudantesTable").dataTable();
+          if(table) {
+            table.fnSetColumnVis( 3, false );
+          }
+        }
+      }
+      
+      function carrega_site() {
+        {% include "edicao_puxar_local_ou_versao.js" %}
+        carrega_pagina();
+      };
+      window.onload = carrega_site
+    </script>
+
+  </div>
+
+  {% include "edicoes_ajax.html" with tabela="Estudantes" %}
+  
+{% endblock %}

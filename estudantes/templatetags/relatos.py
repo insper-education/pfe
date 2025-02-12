@@ -23,7 +23,7 @@ def get_relatos(alocacao):
     relatos = []
     for index in range(len(eventos)):
         if not index: # index == 0:
-            relato = Relato.objects.filter(alocacao=alocacao, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by('momento').last()
+            relato = Relato.objects.filter(alocacao=alocacao, momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).order_by("momento").last()
         else:
             relato = Relato.objects.filter(alocacao=alocacao, momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).order_by("momento").last()
         relatos.append(relato)

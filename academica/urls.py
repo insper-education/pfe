@@ -16,10 +16,14 @@ urlpatterns = [
     # pagina inicial
     path("",
         views.index_academica,
-        name='index_academica'),
+        name="index_academica"),
 
     path("academica",
         views.index_academica,
-        name='academica'),
+        name="academica"),
+
+    path("dinamicas_grupos",
+         views.dinamicas_grupos,
+         name="dinamicas_grupos"),
 
 ]

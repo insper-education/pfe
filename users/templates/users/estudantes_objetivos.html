@@ -30,7 +30,7 @@
 
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
-      {% for alocacao in alocacaoes %} 
+      {% for alocacao in alocacoes %} 
         <tr class="item">
           <th scope="row" data-order="{{alocacao.aluno.user.get_full_name}}">
             <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
@@ -39,9 +39,7 @@
             </a>
           </th>
 
-          <td>
-            <a href="mailto:{{alocacao.aluno.user.email}}"> &lt;{{alocacao.aluno.user.email}}&gt;</a><br>
-          </td>
+          <td><a href="mailto:{{alocacao.aluno.user.email}}">{{alocacao.aluno.user.email}}</a></td>
 
           <td>
             {% if alocacao.aluno.curso2 %}

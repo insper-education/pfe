@@ -1083,7 +1083,7 @@ class Documento(models.Model):
     link = models.URLField("link", max_length=320, null=True, blank=True,
                            help_text="Link do documento na internets")
     
-    anotacao = models.CharField(null=True, blank=True, max_length=64,
+    anotacao = models.CharField(null=True, blank=True, max_length=128,
                                 help_text="Qualquer anotação sobre o documento em questão")
     
     data = models.DateTimeField(null=True, blank=True,

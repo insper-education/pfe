@@ -427,7 +427,7 @@ def estudantes_objetivos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
         
         ano, semestre = map(int, request.POST["edicao"].split('.'))
-        alocacaoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
         # Filtra os Objetivos de Aprendizagem do semestre (Todos: individuais e juntando com os de grupo)
         objetivos_t = get_objetivos_atuais(ano, semestre)
@@ -466,7 +466,7 @@ def estudantes_objetivos(request):
             })
 
         context = {
-            "alocacaoes": alocacaoes,
+            "alocacoes": alocacoes,
             "objetivos_i": objetivos_i,
             "objetivos_t": objetivos_t,
             "cabecalhos": cabecalhos,
