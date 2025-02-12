@@ -75,7 +75,13 @@
         <tbody>
           <tr>
             {% comment %} Rubricas Intermediária de Grupo {% endcomment %}
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Intermediária" "Intermediate" %}</td>
+            {% comment %} Tive de fazer isso pois no Safari não funciona {% endcomment %}
+            {% comment %} <th scope="row" style="padding-top: 1em; transform: rotate(270deg); white-space: nowrap; text-orientation: mixed; text-align: center;">{% lng "Final" "Final" %}</td> {% endcomment %}
+            <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+              <div style="transform: rotate(270deg); width: 1.2em;">
+              {% lng "Intermediária" "Intermediate" %}
+              </div>
+            </th>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C}}</label></td>
@@ -85,7 +91,11 @@
 
           {% comment %} Rubricas Final de Grupo {% endcomment %}
           <tr>
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Final" "Final" %}</td>
+            <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+              <div style="transform: rotate(270deg); width: 1.2em;">
+              {% lng "Final" "Final" %}
+              </div>
+            </th>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C}}</label></td>
@@ -123,7 +133,11 @@
         <tbody>
           {% comment %} Rubricas Intermediárias de Grupo {% endcomment %}
           <tr>
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Intermediária" "Intermediate" %}</td>
+            <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+              <div style="transform: rotate(270deg); width: 1.2em;">
+              {% lng "Intermediária" "Intermediate" %}
+              </div>
+            </th>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_I_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_D_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_C_en}}</label></td>
@@ -133,7 +147,11 @@
 
           {% comment %} Rubricas Finais de Grupo {% endcomment %}
           <tr>
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Final" "Final" %}</td>
+            <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+              <div style="transform: rotate(270deg); width: 1.2em;">
+              {% lng "Final" "Final" %}
+              </div>
+            </th>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_I_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_D_en}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_C_en}}</label></td>
@@ -180,7 +198,11 @@
           {% comment %} INTERMEDIARIA Rubricas Individuais {% endcomment %}
           
           <tr>
-            <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Intermediária" "Intermediate" %}</td>
+            <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+              <div style="transform: rotate(270deg); width: 1.2em;">
+              {% lng "Intermediária" "Intermediate" %}
+              </div>
+            </th>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_intermediaria_individual_I}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_intermediaria_individual_D}}</label></td>
             <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_intermediaria_individual_C}}</label></td>
@@ -190,7 +212,11 @@
           
           <tr>
               {% comment %} FINAL Rubricas Individuais {% endcomment %}
-              <th scope="row" style="writing-mode: vertical-lr;text-orientation: mixed; transform:scale(-1); text-align: center;">{% lng "Final" "Final" %}</td>
+              <th scope="row" style="vertical-align: bottom; overflow: hidden; background-color:rgb(226, 243, 245);">
+                <div style="transform: rotate(270deg); width: 1.2em;">
+                {% lng "Final" "Final" %}
+                </div>
+              </th>
               <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}I" ><label for="objetivo{{objetivo.id}}I">{{objetivo.rubrica_final_individual_I}}</label></td>
               <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}D" ><label for="objetivo{{objetivo.id}}D">{{objetivo.rubrica_final_individual_D}}</label></td>
               <td class="tabela{{objetivo.id}} objetivo{{objetivo.id}}C objetivo{{objetivo.id}}CX" ><label for="objetivo{{objetivo.id}}C">{{objetivo.rubrica_final_individual_C}}</label></td>
