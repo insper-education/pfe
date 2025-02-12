@@ -393,12 +393,12 @@ def estilo_comunicacao(request):
 def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     configuracao = get_object_or_404(Configuracao)
-
-    if request.is_ajax():    
+    
+    if request.is_ajax():
         if not request.user.funcionalidade_grupo:
             request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
             request.user.save()
-
+        
         questao = request.POST.get("questao", None)
         if questao:
             valor = request.POST.get("valor", None)
