@@ -10,6 +10,7 @@ import os
 import datetime
 import dateutil.parser
 import logging
+import json
 
 from urllib.parse import unquote
 
@@ -413,7 +414,7 @@ def banca_avaliar(request, slug, documento_id=None):
 
     objetivos = banca.composicao.pesos.all()
     pesos = Peso.objects.filter(composicao=banca.composicao)
-
+    
     if request.method == "POST":
         if "avaliador" in request.POST:
 
@@ -449,14 +450,8 @@ def banca_avaliar(request, slug, documento_id=None):
                 else:
                     julgamento[i].na = False
                     julgamento[i].nota = converte_conceito(conceito)
-                    if exame.titulo == "Banca Intermediária":    
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_intermediaria
-                    elif exame.titulo == "Banca Final":
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_final
-                    elif exame.titulo == "Falconi":
-                        julgamento[i].peso = julgamento[i].objetivo.peso_banca_falconi
-                    elif exame.titulo == "Probation":
-                        julgamento[i].peso = 0.0
+                    if exame.titulo == "Banca Intermediária" or exame.titulo == "Banca Final":
+                        julgamento[i].peso = pesos.get(objetivo=julgamento[i].objetivo).peso
                     else:
                         julgamento[i].peso = 0.0 
 
@@ -549,6 +544,8 @@ def banca_avaliar(request, slug, documento_id=None):
         if tipo_documento:
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
+        niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
@@ -556,7 +553,6 @@ def banca_avaliar(request, slug, documento_id=None):
             "individual": True if banca.alocacao else False,
             "pessoas": pessoas,
             "membros": membros,
-            #"objetivos": objetivos,
             "pesos": pesos,
             "banca": banca,
             "composicao": composicao,
@@ -566,9 +562,13 @@ def banca_avaliar(request, slug, documento_id=None):
             "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
             "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
             "today": datetime.datetime.now(),
-            "mensagem_aviso": {"pt": mensagem, "en": mensagem},
             "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
+            "niveis_objetivos": niveis_objetivos,
         }
+
+        if mensagem:
+            context["mensagem_aviso"] = {"pt": mensagem, "en": mensagem}
+
         return render(request, "professores/banca_avaliar.html", context=context)
 
 
@@ -1260,7 +1260,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     editor = request.user == projeto.orientador.user
     
     if request.method == "POST":
-
+        print(request.POST)
         objetivos_possiveis = 0
         
         if objetivos:
@@ -1268,7 +1268,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento = [None]*objetivos_possiveis
             
             avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-
+            print(avaliacoes)
             nova_avaliacao = True
             for i, aval in enumerate(avaliacoes):
 
@@ -1438,6 +1438,9 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
         atrasado = documentos.first().data.date() > evento.endDate  # primeiro é o último entregue por data
         
+        configuracao = get_object_or_404(Configuracao)
+        niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Entrega", "en": "Delivery Evaluation Form"},
             "projeto": projeto,
@@ -1453,8 +1456,9 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "editor": editor,
             "avaliacao": avaliacao,
             "atrasado": atrasado,
+            "niveis_objetivos": niveis_objetivos,
         }
-
+    
         return render(request, "professores/entrega_avaliar.html", context=context)
 
 
@@ -2149,9 +2153,14 @@ def objetivo_editar(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
+
+    configuracao = get_object_or_404(Configuracao)
+    niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
+
     context = {
         "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
-        "objetivos": get_objetivos_atuais(), 
+        "objetivos": get_objetivos_atuais(),
+        "niveis_objetivos": niveis_objetivos,
     }
     return render(request, "professores/objetivos_rubricas.html", context)
 

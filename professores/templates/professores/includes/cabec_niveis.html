@@ -1,0 +1,18 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Fevereiro de 2025
+{% endcomment %}
+
+{% load linguas %}
+<thead class="table-info">
+  <tr>
+    <th scope="col" style="width:1%;"></th>
+    {% for nivel in niveis_objetivos %}
+      <th scope="col" style="text-align: center; width:18%;"
+       class="tabela{{objetivo.id}} {% for s in nivel.siglas %}objetivo{{objetivo.id}}{{s.escape}} {% endfor %}">
+        <label for="objetivo{{objetivo.id}}{{nivel.siglas.0.escape}}">{% lng nivel.pt nivel.en %} ({% for s in nivel.siglas %}{{s.letra}}{% if not forloop.last %}/{% endif %}{% endfor %})</label>
+      </th>
+    {% endfor %}
+  </tr>
+</thead>

@@ -22,168 +22,102 @@
 </style>
 
 {% if pesos %}
-  <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5><br>
-  {% for peso in pesos %}
-    <b lang="pt">{{peso.objetivo.titulo}}</b><b lang="en">{{peso.objetivo.titulo_en}}</b>:
-     <span lang="pt">{{peso.objetivo.objetivo}}</span><span lang="en">{{peso.objetivo.objetivo_en}}</span>
-    
-    <div class="table-responsive">
-    <table style="width:100%;" class="tab_avaliacao">
-      <tr>
 
-        {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-          <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" style="width:18%">
-            <div class="nav-side">
-            <label class="labels" for="objetivo{{peso.objetivo.id}}I">
-              <span class="nivel">
-                <span lang="pt">Insatisfatório&nbsp;</span><span class="nivel" lang="en">Unsatisfactory&nbsp;</span>
-              </span>(I)
-              <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I inputOA" 
-                id="objetivo{{peso.objetivo.id}}I" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.I" 
-                required {% if not editor %}disabled {% endif %}/>
-            </label>
-          </div>
-          </th>
-        {% endif %}
+  {% with exame_sigla=banca.composicao.exame.sigla %}
+    <br><h5 lang="pt">Objetivos de Aprendizagem</h5><h5 lang="en">Learning Goals</h5><br>
+    {% for peso in pesos %}
+      <b lang="pt">{{peso.objetivo.titulo}}</b><b lang="en">{{peso.objetivo.titulo_en}}</b>:
+      <span lang="pt">{{peso.objetivo.objetivo}}</span><span lang="en">{{peso.objetivo.objetivo_en}}</span>
+      
+      <div class="table-responsive">
+      <table style="width:100%;" class="tab_avaliacao">
 
-        <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D {% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_forte{% endif %}"
-         style="width:18%">
-          <div class="nav-side">
-          <label class="labels" for="objetivo{{peso.objetivo.id}}D">
-            <span class="nivel">
-              <span lang="pt">Em Desenvolvimento&nbsp;</span><span class="nivel" lang="en">under Development&nbsp;</span>
-            </span>(D)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D inputOA" 
-              id="objetivo{{peso.objetivo.id}}D" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.D " 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 2 %}disabled{% endif %}/>
-          </label>
-        </div>
-        </th>
-        
-        <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX {% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_forte{% endif %}"
-         style="width:18%">
-          <div class="nav-side">
-          <label class="labels" for="objetivo{{peso.objetivo.id}}C">
-            <span class="nivel">
-              <span lang="pt">Essencial&nbsp;</span><span class="nivel" lang="en">Fundamental&nbsp;</span>
-            </span>(C)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C inputOA" 
-              id="objetivo{{peso.objetivo.id}}C" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.C" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 5 %}disabled{% endif %}/>
-          </label>
-          {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-          <label class="labels" for="objetivo{{peso.objetivo.id}}CX">
-            (C+)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX inputOA" 
-              id="objetivo{{peso.objetivo.id}}CX" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.C+" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 5 %}disabled{% endif %}/>
-          </label>
-          {% endif %}
-        </div>
-        </th>
-
-        {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-        <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX {% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_forte{% endif %}"
-         style="width:18%">
-          <div class="nav-side">
-          <label class="labels" for="objetivo{{peso.objetivo.id}}B">
-            <span class="nivel">
-              <span lang="pt">Proficiente&nbsp;</span><span class="nivel" lang="en">Proficient&nbsp;</span>
-            </span>(B)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B inputOA" 
-              id="objetivo{{peso.objetivo.id}}B" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.B" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 7 %}disabled{% endif %}/>
-          </label>
-          <label class="labels" for="objetivo{{peso.objetivo.id}}BX">
-            (B+)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX inputOA" 
-              id="objetivo{{peso.objetivo.id}}BX" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.B+" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 7 %}disabled{% endif %}/>
-          </label>
-        </div>
-        </th>
-        <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX {% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_forte{% endif %}"
-         style="width:18%;">
-          <div class="nav-side">
-          <label class="labels" for="objetivo{{peso.objetivo.id}}A">
-            <span class="nivel">
-              <span lang="pt">Avançado&nbsp;</span><span class="nivel" lang="en">Advanced&nbsp;</span>
-            </span>(A)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A inputOA" 
-              id="objetivo{{peso.objetivo.id}}A" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.A" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 9 %}disabled{% endif %}/>
-          </label>
-          <label class="labels" for="objetivo{{peso.objetivo.id}}AX">
-            (A+)
-            <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX inputOA" 
-              id="objetivo{{peso.objetivo.id}}AX" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.A+" 
-              required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < 9 %}disabled{% endif %}/>
-          </label>
-        </div>
-        </th>
-        {% endif %}
-      </tr>
-      <tr>
-        {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
-
-          {% if individual %}
-            <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
-          {% else %}
-            <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_intermediaria_I_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_intermediaria_D_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_intermediaria_C_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_intermediaria_B_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_intermediaria_A_en}}</label></td>
-          {% endif %}
-
-        {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
-
-          {% if individual %}
-            {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-              <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_final_individual_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_final_individual_I_en}}</label></td>
+        <tr>
+          {% for nivel in niveis_objetivos %}
+            {% if exame_sigla != nivel.esconde %}  {% comment %} Esconde em certas avaliações {% endcomment %}
+              <th class="nav-side-wrapper th_objetivos tabela{{peso.objetivo.id}} {% for s in nivel.siglas %}objetivo{{peso.objetivo.id}}{{s.escape}} {% endfor %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %} vermelho_forte{% endif %}" 
+              style="width:18%">
+                <div class="nav-side">
+                  {% for s in nivel.siglas %}
+                    {% if forloop.first or exame_sigla != "P" %}
+                      <label class="labels" for="objetivo{{peso.objetivo.id}}{{s.escape}}">
+                        {% if forloop.first %}<span class="nivel">{% lng nivel.pt nivel.en %}&nbsp;</span>{% endif %}
+                        ({{s.letra}})
+                        <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}{{s.escape}} inputOA" 
+                          id="objetivo{{peso.objetivo.id}}{{s.escape}}" name="objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.{{s.letra}}" 
+                          required {% if not editor %}disabled {% endif %} {% if atrasado and peso.bloqueio_atraso < nivel.nota %}disabled{% endif %}/>
+                      </label>
+                      {% comment %} Não sei exatamento por que, mas o segundo conenceito (com +) também tinha a classe do objetivo sem o +, mas tirei no momento.
+                      <input type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX inputOA"  {% endcomment %}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </th>
             {% endif %}
-            <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_final_individual_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_final_individual_D_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_final_individual_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_final_individual_C_en}}</label></td>
-            {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
-              <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_final_individual_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_final_individual_B_en}}</label></td>
-              <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_final_individual_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_final_individual_A_en}}</label></td>
+          {% endfor %}        
+        </tr>
+
+        <tr>
+          {% if periodo_para_rubricas == 1 %} {% comment %} Rubricas Intermediárias {% endcomment %}
+
+            {% if individual %}
+              <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_I_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_D_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_C_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_B_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_intermediaria_individual_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_intermediaria_individual_A_en}}</label></td>
+            {% else %}
+              <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_intermediaria_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_intermediaria_I_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_intermediaria_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_intermediaria_D_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_intermediaria_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_intermediaria_C_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_intermediaria_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_intermediaria_B_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_intermediaria_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_intermediaria_A_en}}</label></td>
             {% endif %}
+
+          {% elif periodo_para_rubricas == 2 %} {% comment %} Rubricas Finais {% endcomment %}
+
+            {% if individual %}
+              {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
+                <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_final_individual_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_final_individual_I_en}}</label></td>
+              {% endif %}
+              <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_final_individual_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_final_individual_D_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_final_individual_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_final_individual_C_en}}</label></td>
+              {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
+                <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_final_individual_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_final_individual_B_en}}</label></td>
+                <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_final_individual_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_final_individual_A_en}}</label></td>
+              {% endif %}
+            {% else %}
+              <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_final_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_final_I_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_final_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_final_D_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_final_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_final_C_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_final_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_final_B_en}}</label></td>
+              <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_final_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_final_A_en}}</label></td>
+            {% endif %}
+
           {% else %}
-            <td class="td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}I" ><label for="objetivo{{peso.objetivo.id}}I" lang="pt">{{peso.objetivo.rubrica_final_I}}</label><label for="objetivo{{peso.objetivo.id}}I" lang="en">{{peso.objetivo.rubrica_final_I_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 2 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}D" ><label for="objetivo{{peso.objetivo.id}}D" lang="pt">{{peso.objetivo.rubrica_final_D}}</label><label for="objetivo{{peso.objetivo.id}}D" lang="en">{{peso.objetivo.rubrica_final_D_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 5 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}C objetivo{{peso.objetivo.id}}CX" ><label for="objetivo{{peso.objetivo.id}}C" lang="pt">{{peso.objetivo.rubrica_final_C}}</label><label for="objetivo{{peso.objetivo.id}}C" lang="en">{{peso.objetivo.rubrica_final_C_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 7 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}B objetivo{{peso.objetivo.id}}BX" ><label for="objetivo{{peso.objetivo.id}}B" lang="pt">{{peso.objetivo.rubrica_final_B}}</label><label for="objetivo{{peso.objetivo.id}}B" lang="en">{{peso.objetivo.rubrica_final_B_en}}</label></td>
-            <td class="{% if atrasado and peso.bloqueio_atraso < 9 %} vermelho_medio{% endif %} td_objetivos tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}A objetivo{{peso.objetivo.id}}AX" ><label for="objetivo{{peso.objetivo.id}}A" lang="pt">{{peso.objetivo.rubrica_final_A}}</label><label for="objetivo{{peso.objetivo.id}}A" lang="en">{{peso.objetivo.rubrica_final_A_en}}</label></td>
+            <td colspan="6">ERRO</td>
           {% endif %}
-
-        {% else %}
-          <td colspan="6">ERRO</td>
-        {% endif %}
-      </tr>
-    </table>
-
-    {% if not sem_NA %}
-      <table style="width:100%;">
-        <tr style="width:100%;">
-          <td class="nav-side-wrapper th_na tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA" 
-            colspan="{% if banca.composicao.exame.sigla != "P" %}6{% else %}5{% endif %}">
-              <label style="margin-left: 8px;" for="objetivo{{peso.objetivo.id}}NA">
-                <input style="padding-bottom:2px;" type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA inputNA" id="objetivo{{peso.objetivo.id}}NA" name="peso.objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.NA" required {% if not editor %}disabled {% endif %}/> 
-                <span lang="pt">Prefiro não avaliar este objetivo de aprendizagem</span>
-                <span lang="en">I prefer not to evaluate this learning goal</span>
-              </label>
-          </td>
         </tr>
       </table>
-    {% endif %}
 
-    </div>
-    <br>
-  {% endfor %}
+      {% if not sem_NA %}
+        <table style="width:100%;">
+          <tr style="width:100%;">
+            <td class="nav-side-wrapper th_na tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA" 
+              colspan="{% if banca.composicao.exame.sigla != "P" %}6{% else %}5{% endif %}">
+                <label style="margin-left: 8px;" for="objetivo{{peso.objetivo.id}}NA">
+                  <input style="padding-bottom:2px;" type="radio" class="tabela{{peso.objetivo.id}} objetivo{{peso.objetivo.id}}NA inputNA" id="objetivo{{peso.objetivo.id}}NA" name="objetivo.{{peso.objetivo.id}}" value="{{peso.objetivo.id}}.NA" required {% if not editor %}disabled {% endif %}/> 
+                  {% lng "Prefiro não avaliar este objetivo de aprendizagem" "I prefer not to evaluate this learning goal" %}
+                </label>
+            </td>
+          </tr>
+        </table>
+      {% endif %}
+
+      </div>
+      <br>
+    {% endfor %}
+  {% endwith %}
 
 {% else %}
   <span class="red-bold">

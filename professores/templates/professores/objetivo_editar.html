@@ -104,16 +104,6 @@
                 {% lng "Avaliado por" "Evaluated by" %}
               </b>
             </th>
-            {% comment %} <th scope="col" style="text-align:center;">
-              <b>
-                {% lng "Peso Intermediário" "Intermediate Weight" %}
-              </b>
-            </th>
-            <th scope="col" style="text-align:center;">
-              <b>
-                {% lng "Peso Final" "Final Weight" %}
-              </b>
-            </th> {% endcomment %}
           </tr>
         </thead>
         <tbody>
@@ -126,18 +116,6 @@
                 </label>
               </div>
             </td>
-            {% comment %} <td style="text-align:center;">
-              <input id="peso_intermediario_individual" name="peso_intermediario_individual" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_intermediario_individual|stringformat:".2f"|unlocalize}}"
-              {% endif %} />      
-            </td>
-            <td style="text-align:center;">
-              <input id="peso_final_individual" name="peso_final_individual" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_final_individual|stringformat:".2f"|unlocalize}}"
-              {% endif %} />
-            </td> {% endcomment %}
           </tr>
 
           <tr>
@@ -149,18 +127,7 @@
                 </label>
               </div>
             </td>
-            {% comment %} <td style="text-align:center;">
-              <input id="peso_banca_intermediaria" name="peso_banca_intermediaria" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_banca_intermediaria|stringformat:".2f"|unlocalize}}"
-              {% endif %} />      
-            </td>
-            <td style="text-align:center;">
-              <input id="peso_banca_final" name="peso_banca_final" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_banca_final|stringformat:".2f"|unlocalize}}"
-              {% endif %} />
-            </td> {% endcomment %}
+            
           </tr>
 
           <tr>
@@ -172,18 +139,6 @@
                 </label>
               </div>
             </td>
-            {% comment %} <td style="text-align:center;">
-              <input id="peso_intermediario_grupo" name="peso_intermediario_grupo" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_intermediario_grupo|stringformat:".2f"|unlocalize}}"
-              {% endif %} />      
-            </td>
-            <td style="text-align:center;">
-              <input id="peso_final_grupo" name="peso_final_grupo" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_final_grupo|stringformat:".2f"|unlocalize}}"
-              {% endif %} />
-            </td> {% endcomment %}
           </tr>
 
           <tr>
@@ -197,12 +152,6 @@
             </td>
             <td style="text-align:center;"> 
             </td>
-            {% comment %} <td style="text-align:center;">
-              <input id="peso_banca_falconi" name="peso_banca_falconi" type="number" step='0.01' style="width: 5em;text-align: right;"
-              {% if objetivo %}
-                value="{{objetivo.peso_banca_falconi|stringformat:".2f"|unlocalize}}"
-              {% endif %} />
-            </td> {% endcomment %}
           </tr>
 
         </tbody>
@@ -272,10 +221,5 @@
       {% lng "Erro ao recuperar objetivo de aprendizagem." "Error retrieving learning goal." %}
     </p>
   {% endif %}
-
-  {% comment %} <script>
-    function carrega_pagina(){}
-    window.onload = carrega_pagina
-  </script> {% endcomment %}
 
 {% endblock %}

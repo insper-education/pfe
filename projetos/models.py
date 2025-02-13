@@ -499,6 +499,10 @@ class Configuracao(models.Model):
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
                                    help_text="Documentos a serem mostrados no Index Documentos")
     
+
+    niveis_objetivos = models.TextField("Níveis de Objetivos", max_length=1024, null=True, blank=True,
+                                        help_text="Níveis de Avaliação dos Objetivos de Aprendizagem")
+
     horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
                                    help_text="Horários de Trabalho Semanais dos Estudantes")
 
@@ -509,6 +513,8 @@ class Configuracao(models.Model):
                                    help_text="Código de Conduta do Capstone")
     codigo_conduta_projeto = models.TextField("Código de Conduta do Grupo", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
+    
+
     ###-----------------------------------------------------###
     
 
