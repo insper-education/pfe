@@ -1260,7 +1260,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
     editor = request.user == projeto.orientador.user
     
     if request.method == "POST":
-        print(request.POST)
+
         objetivos_possiveis = 0
         
         if objetivos:
@@ -1268,7 +1268,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento = [None]*objetivos_possiveis
             
             avaliacoes = dict(filter(lambda elem: elem[0][:9] == "objetivo.", request.POST.items()))
-            print(avaliacoes)
+
             nova_avaliacao = True
             for i, aval in enumerate(avaliacoes):
 
