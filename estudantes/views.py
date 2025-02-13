@@ -487,7 +487,7 @@ def codigo_conduta_projeto(request):
     context = {
         "titulo": {"pt": "Código de Conduta para o Projeto", "en": "Code of Conduct for the Project"},
         "perguntas_codigo_conduta": perguntas_codigo_conduta_projeto,
-        "respostas": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
+        "respostas_conduta": json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None,
     }
     return render(request, "estudantes/codigo_conduta.html", context)
 
