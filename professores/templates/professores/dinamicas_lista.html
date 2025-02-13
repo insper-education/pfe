@@ -101,7 +101,7 @@
         <br>
         <h5>
           {% lng "Projetos ativos sem mentorias agendadas" "Active projects without scheduled mentoring" %}:
-          <a href="mailto:{% for projeto in sem_dinamicas %}{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper&body=Grupo{% if sem_dinamicas|length > 1 %}s{% endif %}%20do%20Capstone,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+          <a class="esconder" href="mailto:{% for projeto in sem_dinamicas %}{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper&body=Grupo{% if sem_dinamicas|length > 1 %}s{% endif %}%20do%20Capstone,%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </h5>
