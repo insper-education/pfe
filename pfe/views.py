@@ -51,7 +51,7 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 from projetos.models import Configuracao
-from administracao.models import Estrutura
+from administracao.models import Estrutura, Carta
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -91,6 +91,11 @@ def migracao(request):
     codigo_conduta_projeto.descricao = "Código de Conduta do Grupo"
     codigo_conduta_projeto.json = configuracao.codigo_conduta_projeto
     codigo_conduta_projeto.save()
+
+    carta_informacao = Carta.objects.get_or_create(template="Mensagem Avaliação de Pares", sigla="MAP")[0]
+    carta_informacao.texto = configuracao.msg_aval_pares
+    carta_informacao.texto_en = "Fill out this peer feedback form for each member of your team. The messages for your group members, if used, will be compiled anonymously along with those from all other team members. Write your messages using anonymous language if you do not wish your feedback to identify you. This process aims to help someone learn, grow, or change. The focus is on helping the person improve, whether it involves a skill, an idea, knowledge, a specific practice, professional presentation, or their soft skills."
+    carta_informacao.save()
 
     return HttpResponse(message)
 

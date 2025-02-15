@@ -477,7 +477,7 @@ class Configuracao(models.Model):
                                  help_text="responsável pela operação do Capstone")
     
     lingua = models.CharField(max_length=2, blank=True, default="pt",
-                              help_text="Língua do sistema")
+                              help_text="Língua deafult do sistema")
 
     prazo_avaliar = models.PositiveIntegerField("Prazo para avaliar", default=10,
                                            help_text="Prazo máximo para orientadores avaliarem entregas")
@@ -491,7 +491,6 @@ class Configuracao(models.Model):
     estudates_por_grupo = models.PositiveIntegerField("Estudantes por Grupo", default=4,
                                            help_text="Quantidade padrão de estudantes por grupo de projeto")
 
-    #LIMITE_DE_SALAS_P_BANCAS
     limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,
                                            help_text="Limite de Salas para Bancas Simultâneas")
 
@@ -508,17 +507,15 @@ class Configuracao(models.Model):
                                    help_text="Código de Conduta do Capstone")
     codigo_conduta_projeto = models.TextField("Código de Conduta do Grupo", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
+    msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
+                                   help_text="Mensagem que descreve como será a Avaliação de Pares")
     ###-----------------------------------------------------###
     
 
     ###----------------------Mensagens----------------------###
-    msg_aval_pares = models.TextField("Mensagem Avaliação de Pares", max_length=1000, null=True, blank=True,
-                                   help_text="Mensagem que descreve como será a Avaliação de Pares")
-
     msg_email_automatico = models.TextField("Mensagem de Envio Automático", max_length=1000, null=True, blank=True,
                                    help_text="Mensagem de Envio Automático de e-mail")
     ###-----------------------------------------------------###
-
 
 
     class Meta:

@@ -620,6 +620,8 @@ def avaliacao_pares(request, momento):
     context["TIPO_INICIATIVA"] = Pares.TIPO_INICIATIVA
     context["TIPO_COMUNICACAO"] = Pares.TIPO_COMUNICACAO
 
+    context["msg_aval_pares"] = get_object_or_404(Carta, sigla="MAP")
+
     return render(request, "estudantes/avaliacao_pares.html", context)
 
 

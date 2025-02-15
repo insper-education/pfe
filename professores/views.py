@@ -35,7 +35,7 @@ from academica.support import filtra_composicoes, filtra_entregas
 
 from academica.support_notas import converte_letra, converte_conceito
 
-from administracao.models import Estrutura
+from administracao.models import Estrutura, Carta
 from administracao.support import usuario_sem_acesso
 
 from documentos.models import TipoDocumento
@@ -2294,7 +2294,7 @@ def ver_pares_projeto(request, projeto_id, momento):
         "colegas": colegas,
         "momento": momento,
         "projeto": projeto,
-        "msg_aval_pares": get_object_or_404(Configuracao).msg_aval_pares,
+        "msg_aval_pares": get_object_or_404(Carta, sigla="MAP"),
         "entregas": entregas,
         "iniciativas": iniciativas,
         "comunicacoes": comunicacoes,

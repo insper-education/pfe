@@ -45,7 +45,7 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <div class="bloco">{{configuracao.msg_aval_pares}}</div>
+    <div class="bloco">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
     <hr>
     
     {% for colega, par in colegas %}
