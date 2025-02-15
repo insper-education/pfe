@@ -52,3 +52,10 @@ class DespesaAdmin(admin.ModelAdmin):
     list_filter = ["data"]
 
 
+@admin.register(Estrutura)
+class EstruturaAdmin(admin.ModelAdmin):
+    """Definição do que aparece no sistema de administração do Django."""   
+    list_display = ("nome", "sigla",)
+    ordering = ("nome",)
+    search_fields = ["nome", "sigla", "descricao", "json",]
+    

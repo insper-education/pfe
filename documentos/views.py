@@ -8,7 +8,7 @@ Data: 15 de Dezembro de 2020
 
 import os
 import re
-import json
+# import json
 import zipfile
 import tempfile
 import random
@@ -26,7 +26,7 @@ from .support import atualiza_certificado, generate_unique_arcname, checa_docume
 
 from academica.models import Exame, ExibeNota
 
-from administracao.models import TipoCertificado, GrupoCertificado
+from administracao.models import TipoCertificado, GrupoCertificado, Estrutura
 
 from documentos.models import TipoDocumento
 
@@ -42,11 +42,10 @@ from users.support import get_edicoes
 #@login_required
 def index_documentos(request):
     """Lista os documentos armazenados no servidor."""
-    configuracao = get_object_or_404(Configuracao)
     context = {
         "titulo": {"pt": "Documentações", "en": "Documentation"},
         "documentos": Documento.objects.all(),
-        "areas": json.loads(configuracao.index_documentos) if configuracao.index_documentos else None,
+        "areas": Estrutura.loads(nome="Index Documentos"),
     }
 
     if "/documentos/documentos" in request.path:

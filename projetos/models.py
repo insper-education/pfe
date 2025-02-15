@@ -495,26 +495,19 @@ class Configuracao(models.Model):
     limite_salas_bancas = models.PositiveIntegerField("Limite de Salas para Bancas", default=2,
                                            help_text="Limite de Salas para Bancas Simultâneas")
 
-    ###---------------------- JSON -------------------------###
+    ###---------------------- REMOVER TUDO -------------------------###
     index_documentos = models.TextField("Index Documentos", max_length=4096, null=True, blank=True,
                                    help_text="Documentos a serem mostrados no Index Documentos")
-    
-
     niveis_objetivos = models.TextField("Níveis de Objetivos", max_length=1024, null=True, blank=True,
                                         help_text="Níveis de Avaliação dos Objetivos de Aprendizagem")
-
     horarios_semanais = models.TextField("Horarios Semanais", max_length=512, null=True, blank=True,
                                    help_text="Horários de Trabalho Semanais dos Estudantes")
-
     questoes_funcionalidade = models.TextField("Questões de Funcionalidade", max_length=4096, null=True, blank=True,
                                    help_text="Questões de Funcionalidade do Capstone")
-    
     codigo_conduta = models.TextField("Código de Conduta Individual", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
     codigo_conduta_projeto = models.TextField("Código de Conduta do Grupo", max_length=4096, null=True, blank=True,
                                    help_text="Código de Conduta do Capstone")
-    
-
     ###-----------------------------------------------------###
     
 

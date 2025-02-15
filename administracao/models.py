@@ -6,6 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 16 de Junho de 2023
 """
 
+import json
 from django.db import models
 
 
@@ -123,6 +124,7 @@ class TipoEvento(models.Model):
         verbose_name = "Tipo de Evento"
         verbose_name_plural = "Tipos de Eventos"
 
+
 class Despesa(models.Model):
     """Despesa realiza."""
 
@@ -148,3 +150,33 @@ class Despesa(models.Model):
         ordering = ["projeto", "data",]
         verbose_name = "Despesa"
         verbose_name_plural = "Despesas"
+
+
+class Estrutura(models.Model):
+    """Estrutura de dados usadas em diversas partes."""
+    
+    nome = models.CharField("Nome", max_length=128, null=True, blank=True,
+                            help_text="Nome da estrutura")
+    
+    sigla = models.CharField("Sigla", max_length=5, null=True, blank=True, unique=True,
+                            help_text="Sigla da estrutura")
+    
+    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+                                help_text="Descrição da estrutura")
+    
+    json = models.TextField("JSON", max_length=32000, null=True, blank=True,
+                            help_text="JSON com a estrutura")
+
+    def __str__(self):
+        return self.nome
+    
+    @staticmethod
+    def loads(nome):
+        """Carrega o JSON."""
+        estrutura = Estrutura.objects.get(nome=nome)
+        return json.loads(estrutura.json) if estrutura.json else None
+
+    class Meta:
+        verbose_name = "Estrutura"
+        verbose_name_plural = "Estruturas"
+        ordering = ["nome",]

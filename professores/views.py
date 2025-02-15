@@ -35,6 +35,7 @@ from academica.support import filtra_composicoes, filtra_entregas
 
 from academica.support_notas import converte_letra, converte_conceito
 
+from administracao.models import Estrutura
 from administracao.support import usuario_sem_acesso
 
 from documentos.models import TipoDocumento
@@ -544,7 +545,7 @@ def banca_avaliar(request, slug, documento_id=None):
         if tipo_documento:
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
-        niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
+        niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
@@ -1438,8 +1439,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
         atrasado = documentos.first().data.date() > evento.endDate  # primeiro é o último entregue por data
         
-        configuracao = get_object_or_404(Configuracao)
-        niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
+        niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Entrega", "en": "Delivery Evaluation Form"},
@@ -2153,14 +2153,10 @@ def objetivo_editar(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
-
-    configuracao = get_object_or_404(Configuracao)
-    niveis_objetivos = json.loads(configuracao.niveis_objetivos) if configuracao.niveis_objetivos else None
-
     context = {
         "titulo": {"pt": "Objetivos de Aprendizagem e Rubricas", "en": "Learning Goals and Rubrics"},
         "objetivos": get_objetivos_atuais(),
-        "niveis_objetivos": niveis_objetivos,
+        "niveis_objetivos": Estrutura.loads(nome="Níveis de Objetivos"),
     }
     return render(request, "professores/objetivos_rubricas.html", context)
 

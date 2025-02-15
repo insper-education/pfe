@@ -27,7 +27,7 @@ from .support2 import estudante_feedback_geral
 from academica.models import Composicao, CodigoConduta
 from academica.support import filtra_composicoes, filtra_entregas, get_respostas_estilos
 
-from administracao.models import Carta, TipoEvento
+from administracao.models import Carta, TipoEvento, Estrutura
 from administracao.support import propostas_liberadas
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
@@ -147,12 +147,10 @@ def alocacao_semanal(request):
         }
         return render(request, "generic.html", context=context)
     
-    horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
-    
     context = {
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
         "projeto": projeto,
-        "horarios": horarios,
+        "horarios": Estrutura.loads(nome="Horarios Semanais"),
     }
     return render(request, "estudantes/alocacao_semanal.html", context)
 
@@ -411,7 +409,7 @@ def funcionalidade_grupo(request):
 
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
-        "questoes_funcionalidade": json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None,
+        "questoes_funcionalidade": Estrutura.loads(nome="Questões de Funcionalidade"),
         "funcionalidade_grupo": request.user.funcionalidade_grupo,
     }
 
@@ -421,9 +419,7 @@ def funcionalidade_grupo(request):
 @login_required
 def codigo_conduta(request):
     """Discutir código de conduta dos estudantes."""
-    configuracao = get_object_or_404(Configuracao)
-    perguntas_codigo_conduta = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
-
+    perguntas_codigo_conduta = Estrutura.loads(nome="Código de Conduta Individual")
     codigo_conduta, _ = CodigoConduta.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(request.user),
             object_id=request.user.id)
@@ -454,8 +450,7 @@ def codigo_conduta(request):
 def codigo_conduta_projeto(request):
     """Discutir código de conduta dos estudantes."""
     configuracao = get_object_or_404(Configuracao)
-    perguntas_codigo_conduta_projeto = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
-
+    perguntas_codigo_conduta_projeto = Estrutura.loads(nome="Código de Conduta do Grupo")
     if request.user.eh_estud:
         projeto = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last().projeto
         codigo_conduta, _ = CodigoConduta.objects.get_or_create(

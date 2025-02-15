@@ -40,6 +40,7 @@ from academica.models import Exame, CodigoConduta
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
+from administracao.models import Estrutura
 from administracao.support import usuario_sem_acesso
 
 from operacional.models import Curso
@@ -137,8 +138,7 @@ def projeto_completo(request, primarykey):
     titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
 
     configuracao = get_object_or_404(Configuracao)
-    horarios = json.loads(configuracao.horarios_semanais) if configuracao.horarios_semanais else None
-
+    
     context = {
         "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
         "projeto": projeto,
@@ -149,13 +149,13 @@ def projeto_completo(request, primarykey):
         "documentos": Documento.objects.filter(projeto=projeto),
         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
-        "horarios": horarios,
+        "horarios": Estrutura.loads(nome="Horarios Semanais"),
     }
 
     # Código de Conduta do Grupo
     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
     if codigo_conduta:
-        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
+        context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
         context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
 
     return render(request, "projetos/projeto_completo.html", context=context)

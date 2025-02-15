@@ -50,10 +50,47 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
+from projetos.models import Configuracao
+from administracao.models import Estrutura
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+    message = "Feito"
+    
+    configuracao = get_object_or_404(Configuracao)
+
+    index_documentos = Estrutura.objects.get_or_create(nome="Index Documentos", sigla="IDOC")[0]
+    index_documentos.descricao = "Documentos a serem mostrados no Index Documentos"
+    index_documentos.json = configuracao.index_documentos
+    index_documentos.save()
+
+    niveis_objetivos = Estrutura.objects.get_or_create(nome="Níveis de Objetivos", sigla="NOBJ")[0]
+    niveis_objetivos.descricao = "Níveis de Avaliação dos Objetivos de Aprendizagem"
+    niveis_objetivos.json = configuracao.niveis_objetivos
+    niveis_objetivos.save()
+
+    horarios_semanais = Estrutura.objects.get_or_create(nome="Horarios Semanais", sigla="HSEM")[0]
+    horarios_semanais.descricao = "Horários de Trabalho Semanais dos Estudantes"
+    horarios_semanais.json = configuracao.horarios_semanais
+    horarios_semanais.save()
+
+    questoes_funcionalidade = Estrutura.objects.get_or_create(nome="Questões de Funcionalidade", sigla="QFUNC")[0]
+    questoes_funcionalidade.descricao = "Questões de Funcionalidade"
+    questoes_funcionalidade.json = configuracao.questoes_funcionalidade
+    questoes_funcionalidade.save()
+
+    codigo_conduta = Estrutura.objects.get_or_create(nome="Código de Conduta Individual", sigla="CCIND")[0]
+    codigo_conduta.descricao = "Código de Conduta Individual"
+    codigo_conduta.json = configuracao.codigo_conduta
+    codigo_conduta.save()
+
+    codigo_conduta_projeto = Estrutura.objects.get_or_create(nome="Código de Conduta do Grupo", sigla="CCGRP")[0]
+    codigo_conduta_projeto.descricao = "Código de Conduta do Grupo"
+    codigo_conduta_projeto.json = configuracao.codigo_conduta_projeto
+    codigo_conduta_projeto.save()
+
     return HttpResponse(message)
 

@@ -33,7 +33,7 @@ from academica.models import Composicao, CodigoColuna, Exame, CodigoConduta
 from academica.support import filtra_composicoes, get_respostas_estilos
 from academica.support3 import get_media_alocacao_i
 
-from administracao.models import Carta
+from administracao.models import Carta, Estrutura
 from administracao.support import get_limite_propostas, usuario_sem_acesso
 
 from estudantes.models import EstiloComunicacao
@@ -805,13 +805,13 @@ def estudante_detail(request, primarykey=None):
     # Funcionalidade do Grupo
     funcionalidade_grupo = estudante.user.funcionalidade_grupo
     if funcionalidade_grupo:
-        context["questoes_funcionalidade"] = json.loads(configuracao.questoes_funcionalidade) if configuracao.questoes_funcionalidade else None
+        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade"),
         context["funcionalidade_grupo"] = funcionalidade_grupo
 
     # Código de Conduta Individual
     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(estudante.user), object_id=estudante.user.id).last()
     if codigo_conduta:
-        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta) if configuracao.codigo_conduta else None
+        context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta Individual")
         context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
 
     return render(request, "users/estudante_detail.html", context=context)

@@ -36,6 +36,8 @@ from .support2 import create_backup, get_resource, get_queryset
 
 from academica.models import CodigoConduta
 
+from administracao.models import Estrutura
+
 from documentos.support import render_to_pdf
 
 from estudantes.models import Pares
@@ -1185,7 +1187,7 @@ def relatorio(request, modelo, formato):
         arquivo = "administracao/relatorio_pares.html"
 
     elif modelo == "codigo_conduta_proj":
-        context["perguntas_codigo_conduta"] = json.loads(configuracao.codigo_conduta_projeto) if configuracao.codigo_conduta_projeto else None
+        context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
         codigo_condutas = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(Projeto))
         respostas_condutas = []
         for codigo_conduta in codigo_condutas:
