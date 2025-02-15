@@ -5,6 +5,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 22 de Abril de 2020
 """
 
+import json
+
 from django import template
 register = template.Library()
 
@@ -20,16 +22,17 @@ def get_texto_conceito(objetivo, conceito):
     """Permite buscar o texto de uma rubrica."""
     if (not conceito) or (not objetivo):
         return ""
+    r = json.loads(objetivo.rubrica)["intermediaria"]["grupo"]
     if conceito == "A " or conceito == "A+":
-        return objetivo.rubrica_intermediaria_A
+        return r["A"]["pt"]
     if conceito == "B " or conceito == "B+":
-        return objetivo.rubrica_intermediaria_B
+        return r["B"]["pt"]
     if conceito == "C " or conceito == "C+":
-        return objetivo.rubrica_intermediaria_C
+        return r["C"]["pt"]
     if conceito == "D ":
-        return objetivo.rubrica_intermediaria_D
+        return r["D"]["pt"]
     if conceito == "I ":
-        return objetivo.rubrica_intermediaria_I
+        return r["I"]["pt"]
     return "Erro"
 
 @register.filter
@@ -37,16 +40,17 @@ def get_texto_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
     if (not nota) or (not objetivo):
         return ""
+    r = json.loads(objetivo.rubrica)["final"]["grupo"]
     if nota >= 9:
-        return objetivo.rubrica_intermediaria_A
+        return r["A"]["pt"]
     if nota >= 7:
-        return objetivo.rubrica_intermediaria_B
+        return r["B"]["pt"]
     if nota >= 5:
-        return objetivo.rubrica_intermediaria_C
+        return r["C"]["pt"]
     if nota >= 4:
-        return objetivo.rubrica_intermediaria_D
+        return r["D"]["pt"]
     if nota >= 0:
-        return objetivo.rubrica_intermediaria_I
+        return r["I"]["pt"]
     return "Erro"
 
 @register.filter
@@ -54,16 +58,17 @@ def get_texto_intermediaria_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
     if (not nota) or (not objetivo):
         return ""
+    r = json.loads(objetivo.rubrica)["intermediaria"]["grupo"]
     if nota >= 9:
-        return objetivo.rubrica_intermediaria_A
+        return r["A"]["pt"]
     if nota >= 7:
-        return objetivo.rubrica_intermediaria_B
+        return r["B"]["pt"]
     if nota >= 5:
-        return objetivo.rubrica_intermediaria_C
+        return r["C"]["pt"]
     if nota >= 4:
-        return objetivo.rubrica_intermediaria_D
+        return r["D"]["pt"]
     if nota >= 0:
-        return objetivo.rubrica_intermediaria_I
+        return r["I"]["pt"]
     return "Erro"
 
 @register.filter
@@ -71,14 +76,15 @@ def get_texto_final_nota(objetivo, nota):
     """Permite buscar o texto de uma rubrica."""
     if (not nota) or (not objetivo):
         return ""
+    r = json.loads(objetivo.rubrica)["final"]["grupo"]
     if nota >= 9:
-        return objetivo.rubrica_final_A
+        return r["A"]["pt"]
     if nota >= 7:
-        return objetivo.rubrica_final_B
+        return r["B"]["pt"]
     if nota >= 5:
-        return objetivo.rubrica_final_C
+        return r["C"]["pt"]
     if nota >= 4:
-        return objetivo.rubrica_final_D
+        return r["D"]["pt"]
     if nota >= 0:
-        return objetivo.rubrica_final_I
+        return r["I"]["pt"]
     return "Erro"

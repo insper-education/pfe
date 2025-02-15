@@ -11,6 +11,7 @@ import datetime
 import string
 import random
 import re
+import json
 
 from django.db import models
 from django.conf import settings
@@ -1407,23 +1408,24 @@ class Coorientador(models.Model):
 class ObjetivosDeAprendizagem(models.Model):
     """Objetidos de Aprendizagem do curso."""
 
+    sigla = models.CharField("sigla", max_length=3, null=True, blank=True,
+                             help_text="Sigla do objetivo de aprendizagem")
+
     titulo = models.TextField("Título", max_length=128, null=True, blank=True,
                               help_text="Título do objetivo de aprendizagem")
 
     titulo_en = models.TextField("Título Inglês", max_length=128, null=True, blank=True,
                                  help_text="Título do objetivo de aprendizagem em inglês")
 
-    sigla = models.CharField("sigla", max_length=3, null=True, blank=True,
-                             help_text="Sigla do objetivo de aprendizagem")
-    
-    sigla_en = models.CharField("sigla", max_length=3, null=True, blank=True,
-                                help_text="Sigla do objetivo de aprendizagem em inglês")
-
     objetivo = models.TextField(max_length=256, null=True, blank=True,
                                 help_text="Descrição do objetivo de aprendizagem")
 
     objetivo_en = models.TextField(max_length=256, null=True, blank=True,
                                    help_text="Descrição do objetivo de aprendizagem")
+
+    rubrica = models.TextField(max_length=64000, null=True, blank=True,
+                                help_text="Rubrica de avaliação do objetivo de aprendizagem")
+    
 
 
     # Rubricas de Grupo Intermediárias e Finais
@@ -1519,10 +1521,20 @@ class ObjetivosDeAprendizagem(models.Model):
                                                          help_text="Rubrica intermediária do conceito A")
     rubrica_final_individual_A_en = models.TextField(max_length=1024, null=True, blank=True,
                                                  help_text="Rubrica final do conceito A")
+    #### ˆˆˆˆˆˆˆˆˆˆ #####
+    
+    
+    data_inicial = models.DateField("Data Inicial", null=True, blank=True,
+                                    help_text="Data Inicial de Uso")
+
+    data_final = models.DateField("Data Final", null=True, blank=True,
+                                  help_text="Data Final de Uso")
+
+    ordem = models.PositiveSmallIntegerField(help_text="ordem para aparecer nas listas")
 
 
 
-
+    ## ISSO ABAIXO PRECISA SER REMOVIDO MAS AINDA ESTÁ EM USO
     avaliacao_aluno = models.BooleanField("Avaliação do Aluno", default=False,
                                           help_text="Avaliação do Aluno (AA)")
 
@@ -1534,14 +1546,7 @@ class ObjetivosDeAprendizagem(models.Model):
 
     avaliacao_falconi = models.BooleanField("Avaliação Falconi", default=False,
                                             help_text="Avaliação Falconi (AF)")
-
-    data_inicial = models.DateField("Data Inicial", null=True, blank=True,
-                                    help_text="Data Inicial de Uso")
-
-    data_final = models.DateField("Data Final", null=True, blank=True,
-                                  help_text="Data Final de Uso")
-
-    ordem = models.PositiveSmallIntegerField(help_text="ordem para aparecer nas listas")
+    #### ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ^####
 
 
     def __str__(self):
@@ -1549,6 +1554,8 @@ class ObjetivosDeAprendizagem(models.Model):
         data_final = str(self.data_final) if self.data_final else "hoje"
         return f"{self.titulo}  [ {data_inicial} -> {data_final} ]"
 
+    def get_rubrica(self):
+        return json.loads(self.rubrica)
 
     class Meta:
         verbose_name = "ObjetivosDeAprendizagem"
