@@ -62,7 +62,12 @@
       <div id="{{alocacao.id}}" class="div_arredondado" style="width: 1222px;">
 
         <b>{% lng "Estudante" "Student" %}:</b>
-        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a><br>
+        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
+        <a href="mailto:{{alocacao.aluno.user.email}}?subject=Capstone%20Insper%20-%20Relato%20Quinzenal&body={{alocacao.aluno}},%0D%0A%0D%0A">
+          <span class="texto-longo emails">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+          <span class="texto-curto emails"><i class="far fa-envelope"></i></span>
+        </a>
+        <br>
         
         <b>{% lng "Data do Preenchimento" "Filling Date" %}:</b>
         {% if relato %}
