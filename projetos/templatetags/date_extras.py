@@ -13,7 +13,7 @@ from django import template
 register = template.Library()
 
 @register.filter
-def plus_days(value, days):
+def dias(value, days):
     """Permite adicionar uma quantidade de dias em uma data nos arquivos de template."""
     if value:
         return value + datetime.timedelta(days=days)

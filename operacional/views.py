@@ -223,10 +223,15 @@ def edita_aviso(request, primarykey=None):
             },
     }
 
+    filtros = {
+        "dias": { "pt": "Adiciona/subtrai dias a uma data", "en": "Adds/subtracts days to a date" },
+    }
+
     context = {
         "aviso": aviso,
         "eventos": TipoEvento.objects.all(),
         "variaveis": variaveis,
+        "filtros": filtros,
     }
 
     return render(request, "operacional/edita_aviso.html", context)

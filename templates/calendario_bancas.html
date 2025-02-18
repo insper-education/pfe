@@ -201,7 +201,7 @@
                 {% with start=dias.startDate %}
                   start: '{{start.year}}-{{start.month|stringformat:"02d"}}-{{start.day|stringformat:"02d"}}',
                 {% endwith %}
-                {% with end=dias.endDate|plus_days:1 %}
+                {% with end=dias.endDate|dias:1 %}
                   end: '{{end.year}}-{{end.month|stringformat:"02d"}}-{{end.day|stringformat:"02d"}}',
                 {% endwith %}
                 rendering: "background",

@@ -1,6 +1,7 @@
 #Instalar postgres (Mac)
 brew install postgresql@11
 Se necessário:  initdb --locale=C -E UTF-8 /usr/local/var/postgres
+# NO MAC TIVE DE MUDAR PARA O 14 -> brew services start postgresql@14
 
 #Instalar postgres (Windows)
 https://www.postgresql.org/download/windows/

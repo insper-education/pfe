@@ -86,7 +86,8 @@ def avisos_do_dia():
         else:
             message = "Mensagem não definida."
 
-        mensagem_como_template = Template(message)
+        filtros = "{% load static %}{% load date_extras %}"
+        mensagem_como_template = Template(filtros+message)
 
         context = {
                 "hoje": datetime.date.today(),
@@ -100,7 +101,7 @@ def avisos_do_dia():
         recipient_list = []
 
         mensagem_final = mensagem_como_template.render(Context(context))
-        
+
         if aviso.coordenacao:
             email_coordenacoes = []
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))

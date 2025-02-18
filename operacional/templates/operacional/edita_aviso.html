@@ -121,6 +121,11 @@
         <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
       {% endif %}
     {% endfor %}
+    <br>
+    <b>{% lng "Filtros" "Filters" %}</b>:<br>
+    {% for chave, valor in filtros.items %}
+      |{{chave}}: - {% lng valor.pt valor.en %}<br>
+    {% endfor %}
   </div>
 
 {% endblock %}
