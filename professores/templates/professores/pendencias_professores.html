@@ -20,17 +20,15 @@
       <thead class="table-info">
         <tr>
           <th onclick="sort('#ProfessoresTable', '.item', 'td:nth-child(1)')">{% lng "Professor" "Professor" %}</th>
-          {% for tipo in tipos %}
-            <th class="text-center" style="width: 80px">{{tipo.0}}</th>
-          {% endfor %}
+          <th onclick="sort('#ProfessoresTable', '.item', 'td:nth-child(2)')">e-mail</th>
+          {% for tipo in tipos %}<th class="text-center" style="width: 80px">{{tipo.0}}</th>{% endfor %}
         </tr>
       </thead>
       <tbody>
         {% for professor, pendencias in professores.items %}
           <tr class="item">
-            <td>
-              <a href="{% url 'professor_detail' professor.id %}">{{professor}}</a>
-            </td>
+            <td><a href="{% url 'professor_detail' professor.id %}">{{professor}}</a></td>
+            <td><a href="mailto:{{professor.user.email}}?cc={{coordenacao.user.email}}&subject=Capstone&body=Professor{% if professor.user.genero == "F" %}a{% endif %}%20{{professor.user.get_full_name}},%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";">{{professor.user.email}}</a></td>
             {% for tipo in tipos %}
               <td class="text-center">
                 <a href="{% url tipo.1 professor.id %}">

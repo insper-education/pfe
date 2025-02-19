@@ -1920,6 +1920,7 @@ def pendencias_professores(request):
         "titulo": {"pt": "Pendências dos Professores", "en": "Professors Pending Tasks"},
         "professores": professores,
         "tipos": tipos,
+        "coordenacao": configuracao.coordenacao,
         }
     
     return render(request, "professores/pendencias_professores.html", context=context)
