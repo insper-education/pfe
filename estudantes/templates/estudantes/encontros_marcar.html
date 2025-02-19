@@ -76,6 +76,7 @@
             <input id="din{{e.id}}" type="radio" name="selection" value="{{e.id}}" 
             {% if e.projeto == projeto %}checked{% endif %}
             {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
+            {% if e.startDate.date == hoje %}disabled{% endif %}
             ></div>
               {% if e.projeto and e.projeto != projeto %}
                 <div class="tag_intern" style="color:lightgrey;">
@@ -83,6 +84,8 @@
               {% elif e.projeto and e.projeto == projeto %}
                 <div class="tag_intern" style="color:Red;">
                 <label title="Horário selecionado por seu grupo!"
+              {% elif e.startDate.date == hoje %}
+                <label title="Opção de horário vencida!"
               {% else %}
                 <div class="tag_intern" style="color:Green;">
                 <label title="Horário livre!"

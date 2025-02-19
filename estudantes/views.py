@@ -194,13 +194,11 @@ def encontros_marcar(request):
     aviso = None  # Mensagem de aviso caso algum problema
 
     hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gt=hoje).order_by("startDate")
+    encontros = Encontro.objects.filter(startDate__gte=hoje).order_by("startDate")
 
-    if request.user.tipo_de_usuario == 1:  # Estudante
+    if request.user.eh_estud:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=ano, semestre=semestre).last()
-
-    # caso Professor ou Administrador
-    elif request.user.tipo_de_usuario in (2, 4):
+    elif request.user.eh_prof_a: # caso Professor ou Administrador
         projeto = None
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
@@ -218,7 +216,10 @@ def encontros_marcar(request):
             for encontro in encontros:
                 if str(encontro.id) == check_values[0]:
                     
-                    if encontro.projeto is None or encontro.projeto == projeto:
+                    if encontro.startDate.date() <= hoje:
+                        aviso = "Horário já vencido."
+
+                    elif encontro.projeto is None or encontro.projeto == projeto:
                         # Se projeto estava sem seleção ainda, selecionar
                         encontro.projeto = projeto
                         encontro.save()
@@ -268,6 +269,7 @@ def encontros_marcar(request):
         "projeto": projeto,
         "aviso": aviso,
         "agendado": agendado,
+        "hoje": hoje,
     }
     return render(request, "estudantes/encontros_marcar.html", context)
 
