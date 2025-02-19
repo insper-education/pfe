@@ -20,7 +20,7 @@ from django.db import transaction
 from django.db.models import Case, When, Value, F, Func, FloatField
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 
@@ -28,7 +28,7 @@ from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
-from .support3 import resultado_projetos_intern
+from .support3 import resultado_projetos_intern, puxa_encontros
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
@@ -373,6 +373,26 @@ def banca(request, slug):
     }
 
     return render(request, "professores/banca_ver.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def encontro_feedback(request, pk):
+    """Cria uma tela para preencher feedbacks das mentorias."""
+    encontro = get_object_or_404(Encontro, pk=pk)
+
+    if request.method == "POST":
+        encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
+        encontro.observacoes_estudantes = request.POST.get("observacoes_estudantes")
+        encontro.save()
+        return redirect("dinamicas_lista")
+
+    context = {
+            "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
+            "encontro": encontro,
+        }
+
+    return render(request, "professores/encontro_feedback.html", context=context)
 
 
 @transaction.atomic
@@ -927,23 +947,6 @@ def bancas_index(request, prof_id=None):
     return render(request, "professores/bancas_index.html", context)
 
 
-def puxa_encontros(edicao):
-    encontros = Encontro.objects.all().order_by("startDate")
-    if edicao == "todas":
-        pass  # segue com encontros
-    elif edicao == "proximas":
-        hoje = datetime.date.today()
-        encontros = encontros.filter(startDate__gt=hoje)
-    else:
-        ano, semestre = map(int, edicao.split('.'))
-
-        encontros = encontros.filter(startDate__year=ano)
-        if semestre == 1:
-            encontros = encontros.filter(startDate__month__lt=8)
-        else:
-            encontros = encontros.filter(startDate__month__gt=7)
-    return encontros
-    
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_lista(request, edicao=None):

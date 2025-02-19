@@ -130,6 +130,10 @@ urlpatterns = [
         views.banca_avaliar,
         name="banca_avaliar"),
 
+    path("encontro_feedback/<int:pk>",
+        views.encontro_feedback,
+        name="encontro_feedback"),
+
     path("entrega_avaliar/<int:composicao_id>/<int:projeto_id>",
         views.entrega_avaliar,
         name="entrega_avaliar"),

@@ -70,6 +70,15 @@
                 {% if dinamica.facilitador %}|
                   {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
                   {{dinamica.facilitador.get_full_name}}
+                  {% if dinamica.observacoes_estudantes %}
+                    <ul>
+                      <li>
+                        <strong>{% lng "Observações" "Observations" %}:</strong>
+                        {{dinamica.observacoes_estudantes|safe|linebreaks}}
+                      </li>
+                    </ul>
+                  {% endif %}
+
                 {% endif %}
               </li>
             {% endfor %}

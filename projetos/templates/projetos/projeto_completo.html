@@ -450,6 +450,63 @@
                         </a>
                       </li>
                     {% endif %}
+                    {% if dinamica.observacoes_orientador or dinamica.observacoes_estudantes %}
+                        <ul>
+                          {% if dinamica.observacoes_estudantes %}
+                            <li>
+                              <strong>{% lng "Observações para Estudantes" "Observations for Students" %}:</strong>
+                              {{dinamica.observacoes_estudantes|safe|linebreaks}}
+                            </li>
+                          {% endif %}
+                          {% if dinamica.observacoes_orientador %}
+                            <li>
+                              <strong>{% lng "Observações para Orientador" "Observations for Advisor" %}:</strong>
+                              {{dinamica.observacoes_orientador|safe|linebreaks}}
+                            </li>
+                          {% endif %}
+                        </ul>
+                    {% endif %}
+                    {% if dinamica.documento %}
+                      <li>
+                        <strong>{% lng "Documento" "Document" %}:</strong>
+                        <a href="{{dinamica.documento.url}}">{{dinamica.documento}}</a>
+                      </li>
+                    {% endif %}
+                    {% if dinamica.link %}
+                      <li>
+                        <strong>{% lng "Link" "Link" %}:</strong>
+                        <a href="{{dinamica.link}}">{{dinamica.link}}</a>
+                      </li>
+                    {% endif %}
+                    {% if dinamica.feedback %}
+                      <li>
+                        <strong>{% lng "Feedback" "Feedback" %}:</strong>
+                        {{dinamica.feedback}}
+                      </li>
+                    {% endif %}
+                    {% if dinamica.feedback_estudantes %}
+                      <li>
+                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
+                        {{dinamica.feedback_estudantes}}
+                      </li>
+                    {% endif %}
+                    {% if dinamica.feedback_orientador %}
+                      <li>
+                        <strong>{% lng "Feedback do Orientador" "Advisor Feedback" %}:</strong>
+                        {{dinamica.feedback_orientador}}
+                      </li>
+                    {% endif %}
+                    {% if dinamica.feedback_estudantes %}
+                      <li>
+                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
+                        {{dinamica.feedback_estudantes}}
+                      </li>
+                    {% endif %}
+                    {% if dinamica.feedback_estudantes %}
+                      <li>
+                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback
+                      
+                    {% endif %}
                   </ul>
               </li>
           {% endfor %}

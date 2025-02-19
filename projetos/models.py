@@ -980,6 +980,12 @@ class Encontro(models.Model):
     facilitador = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                     on_delete=models.SET_NULL, related_name="facilitador",
                                     help_text="facilitador da dinâmica")
+    
+    observacoes_orientador = models.TextField(max_length=5000, null=True, blank=True,
+                                   help_text="Observações a serem compartilhadas somente com o orientador do projeto")
+
+    observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
+                                   help_text="Observações a serem compartilhadas com os estudantes do projeto")
 
     def hora_fim(self):
         """Mostra só a hora final do encontro."""

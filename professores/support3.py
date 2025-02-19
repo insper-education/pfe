@@ -11,7 +11,7 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from projetos.models import Banca
+from projetos.models import Banca, Encontro
 
 from academica.support_notas import converte_letra
 
@@ -261,3 +261,22 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         }
 
     return render(request, "professores/resultado_projetos.html", context)
+
+
+def puxa_encontros(edicao):
+    encontros = Encontro.objects.all().order_by("startDate")
+    if edicao == "todas":
+        pass  # segue com encontros
+    elif edicao == "proximas":
+        hoje = datetime.date.today()
+        encontros = encontros.filter(startDate__gt=hoje)
+    else:
+        ano, semestre = map(int, edicao.split('.'))
+
+        encontros = encontros.filter(startDate__year=ano)
+        if semestre == 1:
+            encontros = encontros.filter(startDate__month__lt=8)
+        else:
+            encontros = encontros.filter(startDate__month__gt=7)
+    return encontros
+

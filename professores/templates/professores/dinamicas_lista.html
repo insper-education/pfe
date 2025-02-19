@@ -66,9 +66,16 @@
                     {% endfor %}
                   </ol>
                 </div>
+
+                <br>
+                <b>&#9733; {% lng "Formulário de feedback" "Feedback form" %}</b>:
+                <div style="overflow: auto;"><a href="{% url 'encontro_feedback' e.id %}">https://{{ request.get_host }}{% url 'encontro_feedback' e.id %}</a></div><br>
+
               {% else %}
                 {% lng "Horário Livre" "Available Time" %}<br><br>
               {% endif %}
+
+
 
               <span class="editar esconder" style="float: right;">
                 <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
