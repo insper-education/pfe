@@ -35,7 +35,7 @@ from estudantes.models import FuncionalidadeGrupo
 
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
-from projetos.messages import email, message_agendamento, create_message, message_cancelamento
+from projetos.messages import email, message_agendamento_dinamica, create_message, message_cancelamento
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 from users.models import UsuarioEstiloComunicacao
@@ -247,7 +247,7 @@ def encontros_marcar(request):
             # coordenadoção
             recipient_list.append(str(configuracao.coordenacao.user.email))
 
-            message = message_agendamento(agendado, cancelado)
+            message = message_agendamento_dinamica(agendado, cancelado)
             email(subject, recipient_list, message)
             horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
             mensagem = "Dinâmica agendada: " + horario

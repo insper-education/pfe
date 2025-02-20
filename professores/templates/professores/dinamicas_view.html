@@ -207,7 +207,17 @@
 
     {% endif %}
 
-    <div class="modal-footer">
+    <div id="div_botao" class="modal-footer" style="display: flex; justify-content: space-between; gap: 20px;">
+
+      <div id="mensagens" style="font-size: small; flex: 1;">
+        <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
+        {% comment %} {% if not user.eh_admin %}checked{% endif %} {% endcomment %}
+        >
+        <label for="enviar_mensagem">
+          {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
+        </label>
+      </div>
+
       <button id="fecha_modal" type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
         {% lng "Fechar" "Close" %}
       </button>

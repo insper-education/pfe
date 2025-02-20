@@ -97,7 +97,7 @@ def message_reembolso(usuario, projeto, reembolso, cpf):
     }
     return render_message("Mensagem de Reembolso", context_carta)
 
-def message_agendamento(encontro, cancelado):
+def message_agendamento_dinamica(encontro, cancelado):
     """Emite menssagem de agendamento de dinâmica."""
     context_carta = {
         "encontro": encontro,

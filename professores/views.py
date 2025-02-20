@@ -47,7 +47,7 @@ from projetos.models import Banca, Evento, Encontro, Documento, Certificado
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support3 import get_objetivos_atuais
 from projetos.support2 import get_alocacoes, get_pares_colegas
-from projetos.messages import email, render_message, htmlizar
+from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica
 from projetos.arquivos import le_arquivo
 
 from users.models import PFEUser, Professor, Alocacao
@@ -1538,7 +1538,7 @@ def resultado_bancas(request):
 def dinamicas_criar(request, data=None):
     """Cria um encontro."""
     configuracao = get_object_or_404(Configuracao)
-
+    
     if request.is_ajax() and request.method == "POST":
         
         if ("inicio" in request.POST) and ("fim" in request.POST):
@@ -1583,6 +1583,20 @@ def dinamicas_criar(request, data=None):
                     encontro.facilitador = facilitador
 
                 encontro.save()
+
+                if "enviar_mensagem" in request.POST:
+                    if encontro.projeto or encontro.facilitador:
+                        subject = "Capstone | Dinâmica agendada"
+                        recipient_list = []
+                        if encontro.projeto:
+                            alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                            for alocacao in alocacoes:
+                                recipient_list.append(alocacao.aluno.user.email)
+                        if encontro.facilitador:
+                            recipient_list.append(encontro.facilitador.email)
+                        recipient_list.append(str(configuracao.coordenacao.user.email))
+                        message = message_agendamento_dinamica(encontro, False) # Atualizada
+                        email(subject, recipient_list, message)
 
             if vezes > 1:
                 mensagem = "Dinâmicas criadas."
@@ -1668,22 +1682,63 @@ def dinamicas_editar(request, primarykey=None):
             
             if ("inicio" in request.POST) and ("fim" in request.POST):
 
-                try:
-                    encontro.startDate = dateutil.parser.parse(request.POST['inicio'])
-                    encontro.endDate = dateutil.parser.parse(request.POST['fim'])
-                except (ValueError, OverflowError):
-                    return HttpResponse("Erro com data da Dinâmica!", status=401)
-
-                encontro.location = request.POST.get("local")
-
+                projeto_antigo = None
+                facilitador_antigo = None
                 projeto_id = request.POST.get("projeto")
                 if projeto_id:
-                    encontro.projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id != '0' else None
+                    projeto_novo = get_object_or_404(Projeto, id=projeto_id) if projeto_id != '0' else None
+                    if encontro.projeto and projeto_novo != encontro.projeto:
+                        projeto_antigo = encontro.projeto
+                    encontro.projeto = projeto_novo
                 facilitador_id = request.POST.get("facilitador")
                 if facilitador_id:
-                    encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
-
+                    facilitador_novo = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
+                    if encontro.facilitador and facilitador_novo != encontro.facilitador:
+                        facilitador_antigo = encontro.facilitador
+                    encontro.facilitador = facilitador_novo
                 encontro.save()
+
+                if "enviar_mensagem" in request.POST:
+                    if projeto_antigo or facilitador_antigo:
+                        subject = "Capstone | Dinâmica cancelada"
+                        recipient_list = []
+                        if projeto_antigo:
+                            alocacoes = Alocacao.objects.filter(projeto=projeto_antigo)
+                            for alocacao in alocacoes:
+                                recipient_list.append(alocacao.aluno.user.email)
+                        if facilitador_antigo:
+                            recipient_list.append(facilitador_antigo.email)
+                        recipient_list.append(str(configuracao.coordenacao.user.email))
+                        message = message_agendamento_dinamica(encontro, encontro.startDate)
+                        email(subject, recipient_list, message)
+
+                cancelado = None
+                try:
+                    startDate_novo = datetime.datetime.strptime(request.POST["inicio"], "%Y-%m-%dT%H:%M")
+                    endDate_novo = datetime.datetime.strptime(request.POST["fim"], "%Y-%m-%dT%H:%M")
+                    if encontro.startDate != startDate_novo or encontro.endDate != endDate_novo:
+                        cancelado = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
+                    encontro.startDate = startDate_novo
+                    encontro.endDate = endDate_novo
+
+                    encontro.location = request.POST.get("local")
+                except (ValueError, OverflowError):
+                    return HttpResponse("Erro com data da Dinâmica!", status=401)
+                encontro.save()
+
+                if "enviar_mensagem" in request.POST:
+                    if encontro.projeto or encontro.facilitador:
+                        subject = "Capstone | Dinâmica agendada"
+                        recipient_list = []
+                        if encontro.projeto:
+                            alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                            for alocacao in alocacoes:
+                                recipient_list.append(alocacao.aluno.user.email)
+                        if encontro.facilitador:
+                            recipient_list.append(encontro.facilitador.email)
+                        recipient_list.append(str(configuracao.coordenacao.user.email))
+                        message = message_agendamento_dinamica(encontro, cancelado) # Atualizada
+                        email(subject, recipient_list, message)
 
                 mensagem = "Dinâmica atualizada."
                 
@@ -1692,6 +1747,20 @@ def dinamicas_editar(request, primarykey=None):
 
         elif "excluir" in request.POST:
             mensagem = "Mentoria excluída!"
+
+            if "enviar_mensagem" in request.POST:
+                subject = "Capstone | Dinâmica cancelada"
+                recipient_list = []
+                if encontro.projeto:
+                    alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                    for alocacao in alocacoes:
+                        recipient_list.append(alocacao.aluno.user.email)
+                if encontro.facilitador:
+                    recipient_list.append(encontro.facilitador.email)
+                recipient_list.append(str(configuracao.coordenacao.user.email))
+                message = message_agendamento_dinamica(encontro, encontro.startDate) # Cancelada
+                email(subject, recipient_list, message)
+
             encontro.delete()
         else:
             return HttpResponse("Atualização não realizada.", status=401)
