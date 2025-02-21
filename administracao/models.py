@@ -130,10 +130,10 @@ class Despesa(models.Model):
 
     TIPO_DE_DESPESA = (
         (0, "outros"),
-        (1, "projeto (equipamentos, aws, etc)"),
-        (2, "evento (de encerramento)"),
-        (3, "banca (coffebreak, etc)"),
-        (4, "reunião (comitê, etc)"),
+        (1, "projeto"), #(equipamentos, aws, etc)
+        (2, "evento"), #(de encerramento)
+        (3, "banca"), #(coffebreak, etc)
+        (4, "reunião"), #(comitê, etc)
     )
 
     tipo_de_despesa = \
