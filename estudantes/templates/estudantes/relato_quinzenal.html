@@ -278,11 +278,12 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data.response_data);
         const tableHTML = generateTable(data.response_data.tarefas);
-        document.getElementById("feedback-validator-message").innerHTML = tableHTML;
+        const feedback = $("#feedback-validator-message");
+        feedback.hide().html(tableHTML).slideDown("slow");
         document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
         document.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
+
       })
       .catch(error => {
         document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
