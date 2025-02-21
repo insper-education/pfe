@@ -128,6 +128,18 @@ class TipoEvento(models.Model):
 class Despesa(models.Model):
     """Despesa realiza."""
 
+    TIPO_DE_DESPESA = (
+        (0, "outros"),
+        (1, "projeto (equipamentos, aws, etc)"),
+        (2, "evento (de encerramento)"),
+        (3, "banca (coffebreak, etc)"),
+        (4, "reunião (comitê, etc)"),
+    )
+
+    tipo_de_despesa = \
+        models.PositiveSmallIntegerField(choices=TIPO_DE_DESPESA, default=0,
+                                         help_text="Tipo de despesa")
+
     projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE,
                                 help_text="Projeto")
     

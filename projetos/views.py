@@ -40,7 +40,7 @@ from academica.models import Exame, CodigoConduta
 from academica.support3 import get_media_alocacao_i
 from academica.support4 import get_banca_estudante
 
-from administracao.models import Estrutura
+from administracao.models import Estrutura, Despesa
 from administracao.support import usuario_sem_acesso
 
 from operacional.models import Curso
@@ -679,6 +679,22 @@ def comite(request):
             "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
     return render(request, "projetos/comite_pfe.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def despesas(request):
+    """Exibe as despesas do Capstone."""
+    context = {
+            "despesas": Despesa.objects.all(),
+            "cabecalhos": [{"pt": "Tipo", "en": "Type"},
+                           {"pt": "Data", "en": "Date"},
+                           {"pt": "Valor", "en": "Value"},
+                           {"pt": "Descrição", "en": "Description"},
+                           {"pt": "Projeto", "en": "Project"}, ],
+            "titulo": {"pt": "Despesas", "en": "Expenses"},
+        }
+    return render(request, "projetos/despesas.html", context)
 
 
 @login_required

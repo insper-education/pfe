@@ -45,6 +45,10 @@ urlpatterns = [
         views.comite,
         name="comite"),
 
+    path("despesas/",
+        views.despesas,
+        name="despesas"),
+
 #   path("completo/<int:primarykey>",
 #       views.projeto_completo,
 #       name="completo"),  # REMOVER
