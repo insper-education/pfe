@@ -157,7 +157,8 @@ class Despesa(models.Model):
                                 help_text="Valor da despessa em dólares")
     
     def __str__(self):
-        return f"{self.projeto} - {self.descricao}"
+        #return f"{self.projeto} - {self.descricao}"
+        return f"{self.get_tipo_de_despesa_display()} - {self.descricao}"
     
     class Meta:
         ordering = ["projeto", "data",]
