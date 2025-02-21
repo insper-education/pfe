@@ -134,6 +134,7 @@ class Despesa(models.Model):
         (2, "evento"), #(de encerramento)
         (3, "banca"), #(coffebreak, etc)
         (4, "reunião"), #(comitê, etc)
+        (5, "infraestrutura"), #(aws servidor, etc)
     )
 
     tipo_de_despesa = \
