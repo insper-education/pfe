@@ -141,7 +141,7 @@ class Despesa(models.Model):
         models.PositiveSmallIntegerField(choices=TIPO_DE_DESPESA, default=0,
                                          help_text="Tipo de despesa")
 
-    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE,
+    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE, null=True, blank=True,
                                 help_text="Projeto")
     
     data = models.DateField("Data", null=True, blank=True,
