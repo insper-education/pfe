@@ -15,7 +15,7 @@
 
   <style>
 
-    table {
+    .relatos_antigos {
       border-collapse: separate;
       border-spacing: 0;
       border: 2px solid black;
@@ -23,19 +23,19 @@
       width: 85em;
     }
 
-    td, th {
+    .relatos_antigos td, .relatos_antigos th {
         border-width: 1px 0px 1px 0px;
         padding: 4px;
         background-color: #F0F0F0;
     }
 
-    th:first-child {
+    .relatos_antigos th:first-child {
       border-width: 0px;
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
     }
     
-    td:last-child {
+    .relatos_antigos td:last-child {
       border-bottom-width: 0px;
       border-bottom-left-radius: 10px;
       border-bottom-right-radius: 10px;
@@ -47,7 +47,54 @@
       padding: 4px;
     }
 
+    .feedback-validator {
+      position: absolute;
+      right: 0; 
+      top: -3px;
+      margin: 0;
+      border-radius: 7px;
+      background-color: #f8f97a;
+      color: #000;
+      font-size: 0.7em;
+    }
+
+    .author-name {
+      font-family: "Pacifico", cursive;
+      font-weight: bold;
+      color: #007BFF;
+    }
+
   </style>
+
+  <style>
+    .styled-table {
+      border-collapse: collapse;
+      margin: 28px 0 0 0;
+      font-size: 0.9em;
+      min-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+  
+    .styled-table thead tr {
+      background-color:rgb(43, 131, 204);
+      color: #ffffff;
+      text-align: center;
+    }
+  
+    .styled-table th,
+    .styled-table td {
+      padding: 6px 4px;
+    }
+  
+    .styled-table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+  
+    .bverde {background-color: #e3ffe3;}
+    .bvermelho {background-color: #ffe3e3;}
+
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -59,18 +106,18 @@
         {% lng "Fora do período para a submissão de relatos." "Out of the period for submitting reports." %}
         <br>
         {% lng "Próxima entrega será entre" "Next delivery will be between" %}
-        <b style='color:green;'>
+        <b style="color:green;">
           <span class="texto-longo">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{inicio_periodo|date:"d/m/y" }}</span>
         </b>
         {% lng "e" "and" %}
-        <b style='color:green;'>
+        <b style="color:green;">
           <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
       {% else %}
         {% lng "Prazo para a submissão do relato:" "Deadline for submitting the report:" %}
-        <b style='color:red;'>
+        <b style="color:red;">
           <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
           <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
         </b>
@@ -86,13 +133,20 @@
       {% max_length Relato "texto" %}
       {% lng "caracteres)" "characters)" %}
     </label><br>
-    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
-              placeholder="{{msg_relato_quinzenal}}"
+    <textarea id="relato" name="relato" rows="14" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
+              placeholder="{{msg_relato_quinzenal}}" 
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
-    <br><br>
-
-    <button {% if fora_periodo or not prazo %}disabled{% endif %} class="btn btn-primary mb-1" type="submit">
+    <div style="position: relative;">
+      <button type="button" id="feedback-validator" class="feedback-validator">
+        <i class="fas fa-check-circle" style="display: none;"></i>
+        <i class="fas fa-hourglass fa-spin" style="display: none;"></i>
+        Feedback Validator by <span class="author-name">Tiago Tavares</span>
+      </button>
+    </div>
+    <div id="feedback-validator-message"></div>
+      
+    <button {% if fora_periodo or not prazo %}disabled{% endif %} {% if not user.eh_estud %}disabled{% endif %} class="btn btn-primary mb-1 mt-4" type="submit">
       {% lng "Enviar" "Send" %}
     </button>
 
@@ -110,7 +164,7 @@
         {% ifchanged prazo %}
           {% if not forloop.first %}</tbody></table><br>{% endif %}
 
-        <table>
+        <table class="relatos_antigos">
           <thead><tr><th>
             {% if prazo %}
               {{prazo}} -
@@ -169,6 +223,55 @@
   </script>
 
   <script>
+    function generateTable(data) {
+      let table = "<table class="styled-table"><thead><tr>";
+      table += "<th>Tarefa</th><th>Evidência</th>";
+      table += "</tr></thead><tbody>";
+      data.forEach(row => {
+        let rowClass = "";
+        if (row["Status"] === "OK") {
+          rowClass = "bverde";
+        } else if (row["Status"] === "ERRO") {
+          rowClass = "bvermelho";
+        }
+        table += `<tr class="${rowClass}">`;
+        table += `<td>${row["Tarefa"]}</td>`;
+        table += `<td>${row["Evidencia"]}</td>`;
+        table += "</tr>";
+      });
+      table += "</tbody></table>";
+      return table;
+    }
+
+    document.getElementById("feedback-validator").addEventListener("click", function() {
+      const relatoText = document.getElementById("relato").value;
+      document.getElementsByClassName("fa-check-circle")[0].style.display = "none";
+      document.getElementsByClassName("fa-hourglass")[0].style.display = "inline-block";
+      fetch("{% url 'validate_feedback' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ 
+          "texto": relatoText,
+          "email": "{{ user.email }}",
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.response_data);
+        const tableHTML = generateTable(data.response_data.tarefas);
+        document.getElementById("feedback-validator-message").innerHTML = tableHTML;
+        document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+        document.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
+      })
+      .catch(error => {
+        document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+        console.error("Error:", error);
+      });
+    });
+
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 

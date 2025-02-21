@@ -106,5 +106,8 @@ urlpatterns = [
          views.opcao_temporaria,
          name="opcao_temporaria"),
 
+    path("validate_feedback/",
+         views.validate_feedback,
+         name="validate_feedback"),
 
 ]

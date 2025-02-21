@@ -8,6 +8,8 @@ Data: 14 de Dezembro de 2020
 import datetime
 import logging
 import json
+import urllib.request
+import urllib.parse
 
 from hashids import Hashids
 
@@ -19,6 +21,7 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante
@@ -1013,6 +1016,7 @@ def selecao_propostas(request):
 
     return render(request, "estudantes/selecao_propostas.html", context)
 
+
 @login_required
 @transaction.atomic
 def opcao_temporaria(request):
@@ -1035,3 +1039,32 @@ def opcao_temporaria(request):
         reg.save()
 
     return JsonResponse({"atualizado": True,})
+
+
+@login_required
+@csrf_exempt
+def validate_feedback(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        texto = data.get("texto", '')
+        email = data.get("email", '')
+        if not texto or not email:
+            return JsonResponse({"message": "Invalid request data."}, status=400)
+        
+        url = "https://textgrader.vercel.app/"
+        post_data = {
+            "user": email,
+            "text": texto,
+            "response_type": "json"
+        }
+
+        post_data = json.dumps(post_data).encode("utf-8")
+        headers = {"Content-Type": "application/json"}
+
+        req = urllib.request.Request(url, data=post_data, headers=headers)
+        with urllib.request.urlopen(req) as response:
+            response_txt = response.read().decode("utf-8")
+            response_data = json.loads(response_txt)
+            
+        return JsonResponse({"message": "request received", "response_data": response_data})
+    return JsonResponse({"message": 'Invalid request method.'}, status=400)
