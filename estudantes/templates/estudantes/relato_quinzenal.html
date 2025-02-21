@@ -75,7 +75,7 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
   
-    .styled-table thead tr {
+    .styled-table thead tr th {
       background-color:rgb(43, 131, 204);
       color: #ffffff;
       text-align: center;
@@ -224,9 +224,17 @@
 
   <script>
     function generateTable(data) {
-      let table = "<table class="styled-table"><thead><tr>";
-      table += "<th>Tarefa</th><th>Evidência</th>";
-      table += "</tr></thead><tbody>";
+      let explic = `
+      Esta é a informação que entendi sobre seu texto.<br>
+      &bull; As tarefas sem evidêcias foram marcadas como "Não foi possível identificar evidências".<br> 
+      &bull; As tarefas difusas foram marcadas como "Tarefa difusa".<br>
+      &bull; As tarefas sem autoria própria ("ajudei a", "participei em", etc) foram marcadas como "Tarefa sem autoria".<br>
+      Se estiver de acordo, por favor, envie o texto. Se achar que precisa de ajustes, reescreva e tente novamente.<br>
+      `;
+      let table = "<table class='styled-table'><thead>";
+      table += "<tr><td colspan='2'>" + explic + "</td></tr>";
+      table += "<tr><th>Tarefa</th><th>Evidência</th></tr>";
+      table += "</thead><tbody>";
       data.forEach(row => {
         let rowClass = "";
         if (row["Status"] === "OK") {
