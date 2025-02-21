@@ -137,7 +137,17 @@
               placeholder="{{msg_relato_quinzenal}}" 
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
-    <div style="position: relative;">
+    <div style="position: relative;"
+      data-toggle="tooltip" data-html="true" animation="true"
+      title="
+        Este é um sistema de feedback de texto baseado em IA e NLP.
+        O objetivo dele é encontrar falhas na clareza do texto.
+        O sistema de IA tentará encontrar as tarefas que form descritas e as suas respectivas evidências.
+        Veja: se a IA não for capaz de encontrar a informação correta no seu texto, possivelmente um humano teria algum trabalho para encontrá-la.
+        Escrever de forma que a IA consiga entender pode ser uma boa referência para verificar se o seu texto está claro.
+        A IA não substitui o feedback humano, mas é capaz de encontrar alguns erros comuns que podem ser corrigidos antes de você enviar seu texto para a avaliação.
+        O uso do sistema é de responsabilidade do próprio usuário, e o sistema não se responsabiliza por eventuais erros que possam ocorrer.
+       ">
       <button type="button" id="feedback-validator" class="feedback-validator">
         <i class="fas fa-check-circle" style="display: none;"></i>
         <i class="fas fa-hourglass fa-spin" style="display: none;"></i>
