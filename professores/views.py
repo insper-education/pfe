@@ -76,33 +76,36 @@ def index_professor(request):
 def avaliacoes_pares(request, prof_id=None, proj_id=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
     context = {"titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},}
-    context["administracao"] = request.user.tipo_de_usuario == 4  # Administrador
+    context["proj_id"] = proj_id
 
     if request.is_ajax():
-        if "edicao" in request.POST:
-            projetos = Projeto.objects.filter(ano__gte=2023)  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
-            
-            if prof_id is not None:
-                if prof_id == "todos":
-                    if request.user.tipo_de_usuario != 4:
-                        return HttpResponse("Acesso negado.", status=401)
-                else:
-                    orientador = get_object_or_404(Professor, pk=prof_id)
-                    if (orientador != request.user.professor) and request.user.tipo_de_usuario != 4:  # Orientador ou Administrador
-                        return HttpResponse("Acesso negado.", status=401)
-                    projetos = projetos.filter(orientador=orientador)
-                    if proj_id is not None:
-                        projetos = projetos.filter(id=proj_id)
+        
+        projetos = Projeto.objects.filter(ano__gte=2023)  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
+        
+        if prof_id is not None:
+            if prof_id == "todos" and (not request.user.eh_admin):
+                return HttpResponse("Acesso negado.", status=401)
             else:
-                projetos = projetos.filter(orientador=request.user.professor)
-                
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-            context["projetos"] = projetos
+                orientador = get_object_or_404(Professor, pk=prof_id)
+                if (orientador != request.user.professor) and (not request.user.eh_admin):  # Orientador ou Administrador
+                    return HttpResponse("Acesso negado.", status=401)
+                projetos = projetos.filter(orientador=orientador)
+                if proj_id is not None:
+                    projetos = projetos.filter(id=proj_id)
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
+            projetos = projetos.filter(orientador=request.user.professor)
+
+        if proj_id is None:
+            if "edicao" in request.POST:
+                edicao = request.POST["edicao"]
+                if edicao != "todas":
+                    ano, semestre = map(int, edicao.split('.'))
+                    projetos = projetos.filter(ano=ano, semestre=semestre)
+            else:
+                return HttpResponse("Algum erro não identificado.", status=401)
+            
+        context["projetos"] = projetos
+        
     else:
         configuracao = get_object_or_404(Configuracao)
         context["edicoes"] = get_edicoes(Pares)[0]

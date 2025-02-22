@@ -1042,7 +1042,6 @@ def opcao_temporaria(request):
 
 
 @login_required
-@csrf_exempt
 def validate_feedback(request):
     if request.method == "POST":
         data = json.loads(request.body)

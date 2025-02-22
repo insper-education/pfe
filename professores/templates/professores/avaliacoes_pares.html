@@ -15,7 +15,9 @@
 
 {% block content %}
 
-  {% include "edicoes.html" %}
+  {% if not proj_id %}
+    {% include "edicoes.html" %}
+  {% endif %}
 
   <div id="atualizar">
 

@@ -35,38 +35,37 @@
       <b>{% lng "Semestre" "Semester" %}:</b>
       {{projeto.ano}}.{{projeto.semestre}}<br>
     {% endif %}
-    
-    {% comment %} {% if request.user != projeto.orientador.user or administracao %} {% endcomment %}
-      {% if projeto.orientador %}
-        {% if banca.projeto.proposta.intercambio %}
-          <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
-        {% else %}
-          <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
-        {% endif %}
-        <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
-        {% if not sem_email %}
-          <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-          <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-        {% endif %}
-      {% else %}
-        {% lng "Orientador: Não definido" "Advisor: Not defined" %}
-      {% endif %}
-      <br>
 
-      {% with coorientadores=banca.get_projeto.coorientador_set.all %}
-        {% if coorientadores %}
-          <b>{% lng "Coorientação" "Co-advisoring" %}:</b>
-          {% for coorientador in coorientadores %}
-            <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-              {{coorientador.usuario.get_full_name}} 
-            </a>
-            <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
-            {% if not forloop.last %}; {% endif %}
-          {% endfor %}
-          <br>
-        {% endif %}
-      {% endwith %}
-    {% comment %} {% endif %} {% endcomment %}
+    {% if projeto.orientador %}
+      {% if banca.projeto.proposta.intercambio %}
+        <b>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</b>
+      {% else %}
+        <b>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</b>
+      {% endif %}
+      <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador.user.get_full_name }}</a>
+      {% if not sem_email %}
+        <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+      {% endif %}
+    {% else %}
+      {% lng "Orientador: Não definido" "Advisor: Not defined" %}
+    {% endif %}
+    <br>
+
+    {% with coorientadores=banca.get_projeto.coorientador_set.all %}
+      {% if coorientadores %}
+        <b>{% lng "Coorientação" "Co-advisoring" %}:</b>
+        {% for coorientador in coorientadores %}
+          <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+            {{coorientador.usuario.get_full_name}} 
+          </a>
+          <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
+          {% if not forloop.last %}; {% endif %}
+        {% endfor %}
+        <br>
+      {% endif %}
+    {% endwith %}
+  
 
     {% if com_grupo %}
       <span style="display: inline-block; margin-top: 2px;">
