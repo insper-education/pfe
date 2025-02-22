@@ -805,8 +805,8 @@ def estudante_detail(request, primarykey=None):
     # Funcionalidade do Grupo
     funcionalidade_grupo = estudante.user.funcionalidade_grupo
     if funcionalidade_grupo:
-        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade"),
-        context["funcionalidade_grupo"] = funcionalidade_grupo
+        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
+        context["funcionalidade_grupo"] = [funcionalidade_grupo]
 
     # Código de Conduta Individual
     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(estudante.user), object_id=estudante.user.id).last()

@@ -121,8 +121,6 @@ def projeto_completo(request, primarykey):
     if alocacoes:
         alocacao = alocacoes.first()
 
-        # PUXEI A FUNÇÃO PARA CÁ
-        #medias_oo = alocacao.get_medias_oo()
         alocacoes_oo = Alocacao.objects.filter(id=alocacao.id)
         medias_oo = calcula_objetivos(alocacoes_oo)
 
@@ -137,8 +135,6 @@ def projeto_completo(request, primarykey):
     titulo += " " + projeto.get_titulo()
     titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
 
-    configuracao = get_object_or_404(Configuracao)
-    
     context = {
         "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
         "projeto": projeto,
@@ -157,6 +153,14 @@ def projeto_completo(request, primarykey):
     if codigo_conduta:
         context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
         context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
+
+    # Funcionalidade do Grupo
+    funcionalidade_grupo = []
+    for alocacao in alocacoes:
+        funcionalidade_grupo.append(alocacao.aluno.user.funcionalidade_grupo)
+    if funcionalidade_grupo:
+        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
+        context["funcionalidade_grupo"] = funcionalidade_grupo
 
     return render(request, "projetos/projeto_completo.html", context=context)
 
