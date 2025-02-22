@@ -1,0 +1,48 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load aval_pares %}
+
+<style>
+  .tabela-padrao th, .tabela-padrao td {
+    padding: 2px 4px;
+  }
+</style>
+
+<table class="tabela-padrao table-striped table-hover table-responsive mb-4">
+  <thead>
+    <tr>
+      <th rowspan="2">{% lng "Estudante" "Student" %}</th>
+      <th colspan="2">{% lng "Entregas" "Deliveries" %}</th>
+      <th colspan="2">{% lng "Iniciativa" "Initiative" %}</th>
+      <th colspan="2">{% lng "Comunicação" "Communication" %}</th>
+    </tr>
+    <tr>
+      <th>{% lng "Desfavorabilidade" "Favorabilidade" %}</th>
+      <th>{% lng "Favorabilidade" "Desfavorabilidade" %}</th>
+      <th>{% lng "Desfavorabilidade" "Favorabilidade" %}</th>
+      <th>{% lng "Favorabilidade" "Desfavorabilidade" %}</th>
+      <th>{% lng "Desfavorabilidade" "Favorabilidade" %}</th>
+      <th>{% lng "Favorabilidade" "Desfavorabilidade" %}</th>
+  </thead>
+  <tbody>
+    {% for alocacao in alocacoes %}
+      <tr>
+        <td>{{ alocacao.aluno }}</td>
+        {% with pares=alocacao|puxa_pares %}
+          <td class="text-center">{{ pares.entrega.d }}</td>
+          <td class="text-center">{{ pares.entrega.f }}</td>
+          <td class="text-center">{{ pares.iniciativa.d }}</td>
+          <td class="text-center">{{ pares.iniciativa.f }}</td>
+          <td class="text-center">{{ pares.comunicacao.d }}</td>
+          <td class="text-center">{{ pares.comunicacao.f }}</td>
+        {% endwith %}   
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

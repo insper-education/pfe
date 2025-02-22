@@ -1,0 +1,26 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% comment %} {% if questoes_pares %} {% endcomment %}
+  <h4>
+    {% lng "Ponderação de Pares" "Peer Weighting" %}
+    <span id="pares_com" class="seta-baixo"></span>
+  </h4>
+
+  <div id="bloco_pares" style="display: none;">
+    {% include "estudantes/includes/tabela_pares.html" %}<br>
+  </div>
+  <script>
+    $("#pares_com").on("click", function() {
+      $("#bloco_pares").toggle(200);
+      $(this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
+
+{% comment %} {% endif %} {% endcomment %}

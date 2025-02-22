@@ -53,12 +53,12 @@
     </tbody>
   </table>
 
-  <h5>Disfunções de Equipe</h5>
+  <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}</h5>
   <table id="disfuncoes" class="table-hover table-condensed table-responsive">
     <tbody>
       {% for disfuncao in questoes_funcionalidade.disfuncoes %}
         <tr id="r{{ forloop.counter0 }}">
-          <td>Disfunção {{ forloop.counter }} - {{ disfuncao }}</td>
+          <td>{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {{ disfuncao }}</td>
           <td><span id="d{{ forloop.counter0 }}" class="badge badge-secondary">0</span></td>
           <td><span id="o{{ forloop.counter0 }}"></span></td>
         </tr>
