@@ -1,0 +1,117 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load aval_pares %}
+
+<style>
+  .styled-table {
+    border-collapse: collapse;
+    margin: 2px 0 4px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .styled-table thead tr th {
+    background-color:rgb(43, 131, 204);
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 6px 4px;
+  }
+
+  .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .bverde {background-color: #e3ffe3;}
+  .bvermelho {background-color: #ffe3e3;}
+
+</style>
+
+<script>
+  function generateTable(data) {
+    let explic = `
+    Esta é a informação que entendi sobre o texto.<br>
+    &bull; As tarefas sem evidêcias foram marcadas como "Não foi possível identificar evidências".<br> 
+    &bull; As tarefas difusas foram marcadas como "Tarefa difusa".<br>
+    &bull; As tarefas sem autoria própria ("ajudei a", "participei em", etc) foram marcadas como "Tarefa sem autoria".<br>
+    `;
+    let table = "<table class='styled-table'><thead>";
+    table += "<tr><td colspan='2'>" + explic + "</td></tr>";
+    table += "<tr><th>Tarefa</th><th>Evidência</th></tr>";
+    table += "</thead><tbody>";
+    data.forEach(row => {
+      let rowClass = "";
+      if (row["Status"] === "OK") {
+        rowClass = "bverde";
+      } else if (row["Status"] === "ERRO") {
+        rowClass = "bvermelho";
+      }
+      table += `<tr class="${rowClass}">`;
+      table += `<td>${row["Tarefa"]}</td>`;
+      table += `<td>${row["Evidencia"]}</td>`;
+      table += "</tr>";
+    });
+    table += "</tbody></table>";
+    return table;
+  }
+
+  document.querySelectorAll(".feedback-validator").forEach(function(element) {
+    element.addEventListener("click", function() {
+      var relato_id = $(this).attr("id").split('_')[1];
+
+      {% if multi %}
+        const relatoText = document.getElementById("relato_" + relato_id).value;
+      {% else %}
+        const relatoText = document.getElementById("relato").value;
+      {% endif %}
+
+      if (relatoText.length === 0) {
+        alert("Nada foi escrito para se pedir feedback.");
+        return;
+      }
+
+      element.getElementsByClassName("fa-check-circle")[0].style.display = "none";
+      element.getElementsByClassName("fa-hourglass")[0].style.display = "inline-block";
+
+      fetch("{% url 'validate_feedback' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ 
+          "texto": relatoText,
+          "email": "{{ user.email }}",
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const tableHTML = generateTable(data.response_data.tarefas);
+        {% if multi %}
+          const feedback = $("#feedback-validator-message_" + relato_id);
+        {% else %}
+          const feedback = $("#feedback-validator-message");
+        {% endif %}
+        feedback.hide().html(tableHTML).slideDown("slow");
+        element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+        element.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
+
+      })
+      .catch(error => {
+        element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+        console.error("Error:", error);
+      });
+    });
+  });
+
+</script>

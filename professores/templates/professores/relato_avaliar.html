@@ -23,6 +23,29 @@
     textarea:disabled {
       background-color: #F9F9F9;
     }
+
+    .feedback-validator {
+      border-radius: 5px;
+      background-color: #f8f97a;
+      border: 1px solid #b8892a;
+      color: #000;
+      font-size: 0.9em;
+      line-height: 0.95em;
+      padding: 3px 8px;
+      margin-right: 5px;
+    }
+
+    .by-name {
+      font-size: 0.7em;
+    }
+
+    .author-name {
+      font-family: "Pacifico", cursive;
+      font-weight: bold;
+      font-size: 0.7em;
+      color: #007BFF;
+    }
+    
   </style>
 
 {% endblock %}
@@ -61,24 +84,50 @@
 
       <div id="{{alocacao.id}}" class="div_arredondado" style="width: 1222px;">
 
-        <b>{% lng "Estudante" "Student" %}:</b>
-        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
-        <a href="mailto:{{alocacao.aluno.user.email}}?subject=Capstone%20Insper%20-%20Relato%20Quinzenal&body={{alocacao.aluno}},%0D%0A%0D%0A">
-          <span class="texto-longo emails">&lt;{{alocacao.aluno.user.email}}&gt;</span>
-          <span class="texto-curto emails"><i class="far fa-envelope"></i></span>
-        </a>
-        <br>
-        
-        <b>{% lng "Data do Preenchimento" "Filling Date" %}:</b>
-        {% if relato %}
-          {% lng_dl relato.momento %}
-        {% else %}
-          {% lng "Não entregue" "Not delivered" %}
-        {% endif %}  
-        <br>
-        <textarea id="relato" name="relato" rows="10" cols="160" disabled>{{relato.texto}}</textarea>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
 
+          <div>
+            <b>{% lng "Estudante" "Student" %}:</b>
+            <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
+            <a href="mailto:{{alocacao.aluno.user.email}}?subject=Capstone%20Insper%20-%20Relato%20Quinzenal&body={{alocacao.aluno}},%0D%0A%0D%0A">
+              <span class="texto-longo emails">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+              <span class="texto-curto emails"><i class="far fa-envelope"></i></span>
+            </a>
+            <br>
+            <b>{% lng "Data do Preenchimento" "Filling Date" %}:</b>
+            {% if relato %}
+              {% lng_dl relato.momento %}
+            {% else %}
+              {% lng "Não entregue" "Not delivered" %}
+            {% endif %}  
+          </div>
+
+          <div class="custom-control custom-radio custom-control-inline"
+            data-toggle="tooltip" data-html="true" animation="true"
+            title="
+              Este é um sistema de feedback de texto baseado em IA e NLP.
+              O objetivo dele é encontrar falhas na clareza do texto.
+              O sistema de IA tentará encontrar as tarefas que form descritas e as suas respectivas evidências.
+              Veja: se a IA não for capaz de encontrar a informação correta no seu texto, possivelmente um humano teria algum trabalho para encontrá-la.
+              Escrever de forma que a IA consiga entender pode ser uma boa referência para verificar se o seu texto está claro.
+              A IA não substitui o feedback humano, mas é capaz de encontrar alguns erros comuns que podem ser corrigidos antes de você enviar seu texto para a avaliação.
+              O uso do sistema é de responsabilidade do próprio usuário, e o sistema não se responsabiliza por eventuais erros que possam ocorrer.
+            ">
+            <button type="button" id="feedback-validator_{{relato.id}}" class="feedback-validator btn mb-1 mt-1">
+              <i class="fas fa-check-circle" style="display: none;"></i>
+              <i class="fas fa-hourglass fa-spin" style="display: none;"></i>
+              {% lng "verificar conteúdo" "check content" %}!<br>
+              <span class="by-name">{% lng "IA por" "AI by" %}</span>
+              <span class="author-name">Tiago Tavares</span>
+            </button>
+          </div>
+
+        </div>
+        
+        <textarea id="relato_{{relato.id}}" name="relato" rows="10" cols="160" disabled>{{relato.texto}}</textarea>
+        <div id="feedback-validator-message_{{relato.id}}"></div>
         <div style="width: 98%; display: block; margin-left: 8px; margin-right: 8px; " {% if not relato %}data-toggle="tooltip" data-html="true" animation="true" title="Estudante não entregou relato"{% endif %}>
+          
           <label>
             {% lng "Desempenho" "Performance" %}
           </label>:
@@ -96,19 +145,20 @@
               {% lng "Inadequado" "Inadequate" %}
             </label>
           </div>
+ 
           {% if relato %}
-          <div style="width: 100%; display: inline; margin-left: 8px;">
-            <label class="feedbacks" for="customFeedback{{relato.id}}">
-              Feedback ({% lng "opcional" "optional" %})
-              {% if relato.feedback %}<span class="seta seta-baixo">{% else %}<span class="seta seta-cima">{% endif %}</span></label>
-            <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
-              <label for="feedback{{relato.id}}">Feedback:</label>
-              <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
-              {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
+            <div style="width: 100%; display: inline; margin-left: 8px;">
+              <label class="feedbacks" for="customFeedback{{relato.id}}">
+                Feedback ({% lng "opcional" "optional" %})
+                {% if relato.feedback %}<span class="seta seta-baixo">{% else %}<span class="seta seta-cima">{% endif %}</span></label>
+              <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
+                <label for="feedback{{relato.id}}">Feedback:</label>
+                <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
+                {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
+              </div>
             </div>
-          </div>
           {% endif %}
-          
+
         </div>
       </div>
       <br>
@@ -158,5 +208,7 @@
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
+
+  {% include "estudantes/includes/ia_feedback.html" with multi=True %}
 
 {% endblock %}

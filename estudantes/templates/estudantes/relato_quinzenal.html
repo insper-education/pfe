@@ -48,52 +48,29 @@
     }
 
     .feedback-validator {
-      position: absolute;
-      right: 0; 
-      top: -3px;
-      margin: 0;
-      border-radius: 7px;
+      border-radius: 5px;
       background-color: #f8f97a;
+      border: 1px solid #b8892a;
       color: #000;
+      font-size: 0.9em;
+      line-height: 0.95em;
+      padding: 3px 8px;
+      margin-right: 5px;
+    }
+
+    .by-name {
       font-size: 0.7em;
     }
 
     .author-name {
       font-family: "Pacifico", cursive;
       font-weight: bold;
+      font-size: 0.7em;
       color: #007BFF;
     }
 
   </style>
 
-  <style>
-    .styled-table {
-      border-collapse: collapse;
-      margin: 28px 0 0 0;
-      font-size: 0.9em;
-      min-width: 400px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
-  
-    .styled-table thead tr th {
-      background-color:rgb(43, 131, 204);
-      color: #ffffff;
-      text-align: center;
-    }
-  
-    .styled-table th,
-    .styled-table td {
-      padding: 6px 4px;
-    }
-  
-    .styled-table tbody tr {
-      border-bottom: 1px solid #dddddd;
-    }
-  
-    .bverde {background-color: #e3ffe3;}
-    .bvermelho {background-color: #ffe3e3;}
-
-  </style>
 
 {% endblock %}
 
@@ -133,11 +110,13 @@
       {% max_length Relato "texto" %}
       {% lng "caracteres)" "characters)" %}
     </label><br>
-    <textarea id="relato" name="relato" rows="14" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
-              placeholder="{{msg_relato_quinzenal}}" 
+    <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
+              placeholder="{{msg_relato_quinzenal}}" class="mb-3"
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
-    <div style="position: relative;"
+    <div id="feedback-validator-message"></div>
+
+    <div style="display: inline-block;"
       data-toggle="tooltip" data-html="true" animation="true"
       title="
         Este é um sistema de feedback de texto baseado em IA e NLP.
@@ -148,14 +127,15 @@
         A IA não substitui o feedback humano, mas é capaz de encontrar alguns erros comuns que podem ser corrigidos antes de você enviar seu texto para a avaliação.
         O uso do sistema é de responsabilidade do próprio usuário, e o sistema não se responsabiliza por eventuais erros que possam ocorrer.
        ">
-      <button type="button" id="feedback-validator" class="feedback-validator">
+      <button type="button" id="feedback-validator" class="feedback-validator btn mb-1 mt-4">
         <i class="fas fa-check-circle" style="display: none;"></i>
         <i class="fas fa-hourglass fa-spin" style="display: none;"></i>
-        Fortnightly Validator by <span class="author-name">Tiago Tavares</span>
+        {% lng "como estou escrevendo" "how am I writing" %}?<br>
+        <span class="by-name">{% lng "IA por" "AI by" %}</span>
+        <span class="author-name">Tiago Tavares</span>
       </button>
     </div>
-    <div id="feedback-validator-message"></div>
-      
+
     <button {% if fora_periodo or not prazo %}disabled{% endif %} {% if not user.eh_estud %}disabled{% endif %} class="btn btn-primary mb-1 mt-4" type="submit">
       {% lng "Enviar" "Send" %}
     </button>
@@ -233,65 +213,9 @@
   </script>
 
   <script>
-    function generateTable(data) {
-      let explic = `
-      Esta é a informação que entendi sobre seu texto.<br>
-      &bull; As tarefas sem evidêcias foram marcadas como "Não foi possível identificar evidências".<br> 
-      &bull; As tarefas difusas foram marcadas como "Tarefa difusa".<br>
-      &bull; As tarefas sem autoria própria ("ajudei a", "participei em", etc) foram marcadas como "Tarefa sem autoria".<br>
-      Se estiver de acordo, por favor, envie o texto. Se achar que precisa de ajustes, reescreva e tente novamente.<br>
-      `;
-      let table = "<table class='styled-table'><thead>";
-      table += "<tr><td colspan='2'>" + explic + "</td></tr>";
-      table += "<tr><th>Tarefa</th><th>Evidência</th></tr>";
-      table += "</thead><tbody>";
-      data.forEach(row => {
-        let rowClass = "";
-        if (row["Status"] === "OK") {
-          rowClass = "bverde";
-        } else if (row["Status"] === "ERRO") {
-          rowClass = "bvermelho";
-        }
-        table += `<tr class="${rowClass}">`;
-        table += `<td>${row["Tarefa"]}</td>`;
-        table += `<td>${row["Evidencia"]}</td>`;
-        table += "</tr>";
-      });
-      table += "</tbody></table>";
-      return table;
-    }
-
-    document.getElementById("feedback-validator").addEventListener("click", function() {
-      const relatoText = document.getElementById("relato").value;
-      document.getElementsByClassName("fa-check-circle")[0].style.display = "none";
-      document.getElementsByClassName("fa-hourglass")[0].style.display = "inline-block";
-      fetch("{% url 'validate_feedback' %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({ 
-          "texto": relatoText,
-          "email": "{{ user.email }}",
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        const tableHTML = generateTable(data.response_data.tarefas);
-        const feedback = $("#feedback-validator-message");
-        feedback.hide().html(tableHTML).slideDown("slow");
-        document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
-        document.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
-
-      })
-      .catch(error => {
-        document.getElementsByClassName("fa-hourglass")[0].style.display = "none";
-        console.error("Error:", error);
-      });
-    });
-
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
+
+  {% include "estudantes/includes/ia_feedback.html" %}
 
 {% endblock %}
