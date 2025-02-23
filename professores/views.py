@@ -75,37 +75,38 @@ def index_professor(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliacoes_pares(request, prof_id=None, proj_id=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
-    context = {"titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"},}
-    context["proj_id"] = proj_id
+    context = {"titulo": {"pt": "Avaliações de Pares", "en": "Peer Evaluations"}}
 
-    if request.is_ajax():
+    if prof_id and prof_id != "todos":
+        orientador = get_object_or_404(Professor, pk=prof_id)
+        if (orientador != request.user.professor) and (not request.user.eh_admin):  # Orientador ou Administrador
+            return HttpResponse("Acesso negado.", status=401)
+
+    if proj_id:
+        context["projetos"] = Projeto.objects.filter(id=proj_id, orientador=orientador)
+        
+    elif request.is_ajax():
         
         projetos = Projeto.objects.filter(ano__gte=2023)  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
         
-        if prof_id is not None:
-            if prof_id == "todos" and (not request.user.eh_admin):
-                return HttpResponse("Acesso negado.", status=401)
-            else:
-                orientador = get_object_or_404(Professor, pk=prof_id)
-                if (orientador != request.user.professor) and (not request.user.eh_admin):  # Orientador ou Administrador
+        if prof_id:
+            if prof_id == "todos":
+                if not request.user.eh_admin:
                     return HttpResponse("Acesso negado.", status=401)
+            else:
                 projetos = projetos.filter(orientador=orientador)
-                if proj_id is not None:
-                    projetos = projetos.filter(id=proj_id)
         else:
             projetos = projetos.filter(orientador=request.user.professor)
 
-        if proj_id is None:
-            if "edicao" in request.POST:
-                edicao = request.POST["edicao"]
-                if edicao != "todas":
-                    ano, semestre = map(int, edicao.split('.'))
-                    projetos = projetos.filter(ano=ano, semestre=semestre)
-            else:
-                return HttpResponse("Algum erro não identificado.", status=401)
+        edicao = request.POST.get("edicao")
+        if edicao and edicao != "todas":
+            ano, semestre = edicao.split('.')
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+        elif not edicao:
+            return HttpResponse("Algum erro não identificado.", status=401)
             
         context["projetos"] = projetos
-        
+
     else:
         configuracao = get_object_or_404(Configuracao)
         context["edicoes"] = get_edicoes(Pares)[0]

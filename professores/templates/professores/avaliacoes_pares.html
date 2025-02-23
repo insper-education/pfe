@@ -14,37 +14,33 @@
 {% endblock %}
 
 {% block content %}
-
-  {% if not proj_id %}
-    {% include "edicoes.html" %}
-  {% endif %}
+  
+  {% include "edicoes.html" %}
 
   <div id="atualizar">
 
-    {% if not edicoes %}
-      {% for projeto in projetos %}
+    {% for projeto in projetos %}
 
-        <div class="div_arredondado">
+      <div class="div_arredondado">
 
-          {% include "cabecalho_projeto.html" %}
+        {% include "cabecalho_projeto.html" %}
 
-          <div style="margin-top: 18px;">
-            <strong>{% lng "Avaliações de Pares Intermediárias" "Intermediate Peer Evaluations" %}:</strong><br>
-            {% include "pares.html" with tipo_avaliacao="intermediaria" %}
-          </div>
-
-          <div style="margin-top: 18px;">
-            <strong>{% lng "Avaliações de Pares Finais" "Final Peer Evaluations" %}:</strong><br>
-            {% include "pares.html" with tipo_avaliacao="final" %}
-          </div>
-
+        <div style="margin-top: 18px;">
+          <strong>{% lng "Avaliações de Pares Intermediárias" "Intermediate Peer Evaluations" %}:</strong><br>
+          {% include "pares.html" with tipo_avaliacao="intermediaria" %}
         </div>
 
-      {% empty %}
-        {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
-      {% endfor %}
-    {% endif %}
+        <div style="margin-top: 18px;">
+          <strong>{% lng "Avaliações de Pares Finais" "Final Peer Evaluations" %}:</strong><br>
+          {% include "pares.html" with tipo_avaliacao="final" %}
+        </div>
 
+      </div>
+
+    {% empty %}
+      {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
+    {% endfor %}
+    
   </div> 
 
   <script>
