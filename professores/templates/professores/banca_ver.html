@@ -64,15 +64,7 @@
   <div style="overflow: auto;"><a href="{% url 'banca_avaliar' banca.slug %}">https://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}</a></div><br>
 
   {% include "ver_documentos.html" %}
-
-  {% with site=banca.get_projeto.get_site %}
-  {% if site %}
-    <b>Site:</b><br>
-    <div style="padding-left: 22px;">
-      &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-    </div><br>
-  {% endif %}
-  {% endwith %}
+  {% include "professores/includes/ver_site.html" with projeto=banca.get_projeto %}
 
   <b>{% lng "Membros da Banca" "Examination Board Members" %}</b>
   <ol>

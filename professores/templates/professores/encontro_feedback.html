@@ -31,52 +31,18 @@
 {% block content %}
 
   {% if encontro.projeto %}
-    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-      {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}
+      {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}<br>
 
-      <br>
       <b>{% lng "Data da Mentoria" "Mentoring Date" %}:</b>
+      {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}<br>
 
-      {% if encontro.startDate %}
-        <span class="texto-longo">
-          {{encontro.startDate.date}}
-          <span lang="pt" >{% language "pt-br" %}
-            ({{encontro.startDate|date:"l"}})
-            das{% endlanguage %}
-          </span>
-          <span lang="en" style="display: none;">{% language "en" %}
-            ({{encontro.startDate|date:"l"}})
-            from{% endlanguage %}
-          </span>
-          {{encontro.startDate.time}}
-        </span>
-        <span class="texto-curto">
-          {{ encontro.startDate|date:"d/m/y" }}
-          <span lang="pt" >{% language "pt-br" %}
-            ({{encontro.startDate|date:"l"}})
-            das{% endlanguage %}
-          </span>
-          <span lang="en" style="display: none;">{% language "en" %}
-            ({{encontro.startDate|date:"l"}})
-            from{% endlanguage %}
-          </span>
-          {{ encontro.startDate|date:"H:i" }}
-        </span>
-      {% endif %}
-      {% if encontro.endDate %}
-        {% lng "às" "to" %}
-        {{encontro.endDate.time}}
-      {% endif %}
-
-      <br>
       {% if encontro.location %}
         <b>{% lng "Local" "Location" %}:</b> {{encontro.location}}<br>
       {% endif %}  
       {% if encontro.link %}
-        <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link}}</a>
-        <br>
+        <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link}}</a><br>
       {% endif %}
       
       <b>{% lng "Facilitação" "Facilitation" %}:</b>
@@ -91,31 +57,10 @@
       {% endif %}
       <br>
 
-      
       <br>
       {% include "ver_documentos.html" %}
-
-      {% with site=projeto.get_site %}
-        {% if site %}
-          <b>Site:</b><br>
-          <div style="padding-left: 22px;">
-            &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-          </div><br>
-        {% endif %}
-      {% endwith %}
-      
-      {% comment %} {% if orientacoes %}
-        <div class="borientacoes">
-          <h5 style="margin-bottom: 12px;">
-            {% lng "Orientações Gerais" "Guidelines" %}
-          </h5>
-          <p class="texto-alinhado">
-            {% lng orientacoes|safe orientacoes_en|safe %}
-          </p>
-        </div>
-      {% endif %} {% endcomment %}
-
-      
+      {% include "professores/includes/ver_site.html" %}
+  
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
       <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
             title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
@@ -136,17 +81,14 @@
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
           <span class="red-bold">
             {% lng "Você está acessado o formulário antes da data agendada da mentoria." "You have accessed the form before the scheduled mentoring date." %}
-          </span>
-          <br>
+          </span><br>
           <span class="red-bold">
             {% lng "Tem certeza que deseja enviar os feedbacks agora!!" "Are you sure you want to submit your feedbacks now!!" %}
-          </span>
-          <br>
+          </span><br>
         </div><br>
       {% endif %}
 
       <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
-      <p>&nbsp;</p>
 
     </form>
   {% else %}

@@ -52,12 +52,9 @@
 
 {% block content %}
 
-  <form method="post" id="avaliacaoform" enctype="multipart/form-data">
-    {% csrf_token %}
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-    <b>
-      {% lng "Projeto" "Project" %}
-    </b>:
+    <b>{% lng "Projeto" "Project" %}</b>:
     [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
     <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a><br>
     {% if projeto.orientador %}
@@ -72,9 +69,7 @@
       {{projeto.orientador}}
       </a>
     {% else %}
-      <b>
-        {% lng "Orientador não definido" "Advisor not defined" %}
-      </b>
+      <b>{% lng "Orientador não definido" "Advisor not defined" %}</b>
     {% endif %}<br>
     <b>{% lng "Data limite do relato" "Report deadline" %}:</b> {% lng_dl evento.endDate %}
     <br>

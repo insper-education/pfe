@@ -1,0 +1,18 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Fevereiro de 2025
+{% endcomment %}
+
+{% load linguas %}
+{% load bleach %}
+
+{% if projeto.pastas_do_projeto %}
+  <div class="mt-1">
+    <b>{% lng "Pastas do projeto" "Project repositories" %}:</b>
+    <div style="display: flex; align-items: flex-start;">
+      <div>&#128193;&nbsp;</div>
+      <div>{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>
+    </div>
+  </div>
+{% endif %}

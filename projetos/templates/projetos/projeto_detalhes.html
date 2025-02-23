@@ -16,9 +16,7 @@
 
 {% block content %}
   
-  <strong>
-    {% lng "Título:" "Title:" %}
-  </strong>
+  <strong>{% lng "Título:" "Title:" %}</strong>
   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
     {{projeto.titulo_final}}<br>
     <small style="display: inline-block; padding-left: 0.7em;">
@@ -28,58 +26,34 @@
     {{projeto.get_titulo}}
   {% endif %}<br>
 
-  <strong>
-    {% lng "Semestre:" "Semester:" %}
-  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  <b>{% lng "Semestre:" "Semester:" %}</b>
+  {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
   {% if projeto.resumo %}
     <br><div class="resumo" style="margin-top: 8px;">
-      <strong>Resumo do Projeto:</strong>
+      <b>{% lng "Resumo do Projeto" "Project Abstract in Portuguese" %}:</b>
       {{ projeto.resumo|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.abstract %}
     <br><div class="abstract" style="margin-top: 8px;">
-      <strong>
-        {% lng "Resumo em Inglês do Projeto:" "Project Abstract:" %}
-      </strong>
+      <b>{% lng "Resumo em Inglês do Projeto" "Project Abstract" %}:</b>
       {{ projeto.abstract|linebreaks }}
     </div>
   {% endif %}
 
   {% if projeto.palavras_chave %}
     <br><div class="palavras_chave" style="margin-top: 8px;">
-      <strong>
-        {% lng "Palavras-chave:" "Keywords:" %}
-      </strong>
+      <b>{% lng "Palavras-chave" "Keywords" %}:</b>
       {{ projeto.palavras_chave|linebreaks }}
     </div>
   {% endif %}
 
-  {% with site=projeto.get_site %}
-  {% if site %}
-    <br><br>
-    <h4>Site:</h4>
-    &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-  {% endif %}
-  {% endwith %}
-  
-  {% if projeto.pastas_do_projeto %}
-    <br><br>
-    <h4>
-      {% lng "Pastas do projeto:" "Project repositories:" %}
-    </h4>
-    <div style="display: flex; align-items: flex-start;">
-      <div>&#128193;&nbsp;</div>
-      <div>
-        {{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}
-      </div>
-    </div>
-  {% endif %}
-
+  {% include "professores/includes/ver_site.html" %}
+  {% include "professores/includes/ver_pastas_projeto.html" %}
   <hr>
 
   {% if projeto.organizacao.logotipo %}
@@ -102,17 +76,17 @@
   
   <p>
     {% if projeto.organizacao and projeto.organizacao.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço da matriz da organização parceira.">
+      <b data-toggle="tooltip" data-html="true" animation="true" title="Endereço da matriz da organização parceira.">
         {% lng "Endereço Matriz:" "Headquarters Address:" %}
-      </strong>
+      </b>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.organizacao.endereco}}">
         {{projeto.organizacao.endereco|linebreaks}}
       </a>
     {% elif projeto.proposta.endereco %}
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="Endereço para desenvolver o projeto.">
+      <b data-toggle="tooltip" data-html="true" animation="true" title="Endereço para desenvolver o projeto.">
         {% lng "Endereço Local:" "Local Address:" %}
-      </strong>
+      </b>
       <a style="display: inline-block; padding-left: 0.7em;" 
          href="http://maps.google.com/maps?q={{proposta.endereco}}">
         {{projeto.proposta.endereco|linebreaks}}
@@ -124,11 +98,8 @@
   </p>
 
   <p>
-    <strong data-toggle="tooltip" data-html="true" animation="true" title="
-     Site da organização e/ou projeto.
-    ">
-    website:
-    </strong>
+    <b data-toggle="tooltip" data-html="true" animation="true"
+     title="Site da organização e/ou projeto.">website:</b>
     {% if projeto.organizacao and projeto.organizacao.website %}
       <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
     {% elif projeto.proposta and projeto.proposta.website %}
@@ -141,28 +112,28 @@
 
   {% if projeto.proposta.descricao %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
+      <b data-toggle="tooltip" data-html="true" animation="true" title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
         {% lng "Descrição da proposta:" "Proposal Description:" %}
-      </strong>
+      </b>
       {{projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
     </p>
   {% else %}
-    <p><u>Campo de descrição ausente.<u><br></p>
+    <p><u>Campo de descrição ausente.<u></p>
     <!-- Campo deveria ser obrigatório -->
   {% endif %}
 
   {% if projeto.proposta.expectativas %}
     <p>
-      <strong data-toggle="tooltip" data-html="true" animation="true" title="
+      <b data-toggle="tooltip" data-html="true" animation="true" title="
       Exemplos de resultados ou entregas esperadas.
       Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
       Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios no Capstone.">
         {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
-      </strong>
+      </b>
       {{projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
     <p>
   {% else %}
-    <p><u>Campo de expectativas ausente.<u><br></p>
+    <p><u>Campo de expectativas ausente.<u></p>
     <!-- Campo deveria ser obrigatório -->
   {% endif %}
 
@@ -189,26 +160,22 @@
 
   {% if projeto.proposta.anexo %}
     <p>
-      <strong>
-        {% lng "Anexo:" "Attachment:" %}
-      </strong>
+      <b>{% lng "Anexo:" "Attachment:" %}</b>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
     </p><br>
   {% endif %}
 
   <!-- Campo opcional -->
   {% if projeto.organizacao and projeto.organizacao.informacoes %}
-    <p><strong>
-      {% lng "Informações sobre a empresa:" "Information about the company:" %}
-    </strong>
-    {{projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
-    <br></p>
+    <p>
+      <b>{% lng "Informações sobre a empresa:" "Information about the company:" %}</b>
+      {{projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
+    </p>
   {% elif projeto.proposta and projeto.proposta.descricao_organizacao %}
-    <p><strong>
-      {% lng "Informações sobre a empresa:" "Information about the company:" %}
-    </strong>
-    {{projeto.proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
-    <br></p>
+    <p>
+      <b>{% lng "Informações sobre a empresa:" "Information about the company:" %}</b>
+      {{projeto.proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
+    </p>
   {% endif %}
 
   <!-- Campo opcional -->

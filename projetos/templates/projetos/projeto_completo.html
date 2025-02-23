@@ -42,9 +42,8 @@
     {% endif %}
   </h4>
 
-  <strong>
-    {% lng "Semestre" "Semester" %}
-  </strong> {{projeto.ano}}.{{projeto.semestre}}<br>
+  <b>{% lng "Semestre" "Semester" %}</b>
+  {{projeto.ano}}.{{projeto.semestre}}<br>
 
   {% include "tipo_projeto.html" with com_tipo=True %}
 
@@ -372,24 +371,7 @@
   {% endif %}
 
   <hr>
-
-  {% with site=projeto.get_site %}
-  {% if site %}
-    <h4>Site:</h4>
-    &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-    <br><br>
-  {% endif %}
-  {% endwith %}
   
-  {% if projeto.pastas_do_projeto %}
-    <h4>{% lng "Pastas do projeto" "Project Folders" %}:</h4>
-    <div style="display: flex; align-items: flex-start;">
-      <div>&#128193;&nbsp;</div>
-      <div>{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>
-    </div>
-    <br>
-  {% endif %}
-
   <h4>
     {% lng "Documentos" "Documents" %}:
     {% if user.prof_a %}
@@ -403,6 +385,9 @@
   <div class="caixa_rolante">
     {% include "documentos.html" %}
   </div>
+
+  {% include "professores/includes/ver_site.html" %}
+  {% include "professores/includes/ver_pastas_projeto.html" %}
 
   {% if user.prof_a %}
     <hr>
@@ -431,16 +416,12 @@
                     {% if dinamica.location %}
                       <li>
                         {% lng "Local" "Location" %}:
-                      {% if dinamica.url_location %}
-                        <a href="{{dinamica.location}}">
-                          {% lng "link vídeo-conferência" "video-conference link" %}
-                        </a>
-                      {% else %}
-                        <span style="word-break: break-all;">
-                          {{dinamica.location}}
-                        </span>
-                      {% endif %}
-                      
+                        {% if dinamica.url_location %}
+                          <a href="{{dinamica.location}}">{% lng "link vídeo-conferência" "video-conference link" %}</a>
+                        {% else %}
+                          <span style="word-break: break-all;">{{dinamica.location}}</span>
+                        {% endif %}
+                      </li>
                     {% endif %}
                     {% if dinamica.facilitador %}
                       <li>
@@ -495,17 +476,6 @@
                         <strong>{% lng "Feedback do Orientador" "Advisor Feedback" %}:</strong>
                         {{dinamica.feedback_orientador}}
                       </li>
-                    {% endif %}
-                    {% if dinamica.feedback_estudantes %}
-                      <li>
-                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
-                        {{dinamica.feedback_estudantes}}
-                      </li>
-                    {% endif %}
-                    {% if dinamica.feedback_estudantes %}
-                      <li>
-                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback
-                      
                     {% endif %}
                   </ul>
               </li>

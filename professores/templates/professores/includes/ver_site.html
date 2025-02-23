@@ -1,0 +1,18 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Fevereiro de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+{% with site=projeto.get_site %}
+  {% if site %}
+    <div class="mt-1">
+      <b>Site:</b><br>
+      <div style="padding-left: 22px;">
+        &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}

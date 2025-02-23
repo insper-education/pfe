@@ -1,0 +1,39 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Fevereiro de 2025
+{% endcomment %}
+
+{% load linguas %}
+{% load i18n %}
+
+{% if evento_p_data.startDate %}
+<span class="texto-longo">
+  {{evento_p_data.startDate.date}}
+  <span lang="pt" >{% language "pt-br" %}
+    ({{evento_p_data.startDate|date:"l"}})
+    das{% endlanguage %}
+  </span>
+  <span lang="en" style="display: none;">{% language "en" %}
+    ({{evento_p_data.startDate|date:"l"}})
+    from{% endlanguage %}
+  </span>
+  {{evento_p_data.startDate.time}}
+</span>
+<span class="texto-curto">
+  {{ evento_p_data.startDate|date:"d/m/y" }}
+  <span lang="pt" >{% language "pt-br" %}
+    ({{evento_p_data.startDate|date:"l"}})
+    das{% endlanguage %}
+  </span>
+  <span lang="en" style="display: none;">{% language "en" %}
+    ({{evento_p_data.startDate|date:"l"}})
+    from{% endlanguage %}
+  </span>
+  {{ evento_p_data.startDate|date:"H:i" }}
+</span>
+{% endif %}
+{% if evento_p_data.endDate %}
+{% lng "às" "to" %}
+{{evento_p_data.endDate.time}}
+{% endif %}

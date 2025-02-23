@@ -7,10 +7,7 @@
 
 {% block head %}
   {% load static %}
-  {% load i18n %}
-  {% load tz %}
   {% load linguas %}
-  {% comment %} {% load banca_tipo %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
@@ -31,8 +28,7 @@
 {% block content %}
 
   {% if banca %}
-    <form method="post" id="avaliacaoform" enctype="multipart/form-data">
-      {% csrf_token %}
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
       {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
@@ -50,45 +46,14 @@
 
       <br>
       <b>{% lng "Data da Banca" "Date of Presentation" %}:</b>
-      {% comment %} {{banca.startDate|date:"DATE_FORMAT"}} das {{banca.startDate|date:"H:i"}} às {{banca.endDate|date:"H:i"}} {% endcomment %}
-      {% if banca.startDate %}
-        <span class="texto-longo">
-          {{banca.startDate.date}}
-          <span lang="pt" >{% language "pt-br" %}
-            ({{banca.startDate|date:"l"}})
-            das{% endlanguage %}
-          </span>
-          <span lang="en" style="display: none;">{% language "en" %}
-            ({{banca.startDate|date:"l"}})
-            from{% endlanguage %}
-          </span>
-          {{banca.startDate.time}}
-        </span>
-        <span class="texto-curto">
-          {{ banca.startDate|date:"d/m/y" }}
-          <span lang="pt" >{% language "pt-br" %}
-            ({{banca.startDate|date:"l"}})
-            das{% endlanguage %}
-          </span>
-          <span lang="en" style="display: none;">{% language "en" %}
-            ({{banca.startDate|date:"l"}})
-            from{% endlanguage %}
-          </span>
-          {{ banca.startDate|date:"H:i" }}
-        </span>
-      {% endif %}
-      {% if banca.endDate %}
-        {% lng "às" "to" %}
-        {{banca.endDate.time}}
-      {% endif %}
+      {% include "professores/includes/ver_datas_evento.html" with evento_p_data=banca %}
 
       <br>
       {% if banca.location %}
         <b>{% lng "Local" "Location" %}:</b> {{banca.location}}<br>
       {% endif %}  
       {% if banca.link %}
-        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a>
-        <br>
+        <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a><br>
       {% endif %}
       
       <br><b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b>
@@ -119,16 +84,8 @@
 
       <br>
       {% include "ver_documentos.html" %}
+      {% include "professores/includes/ver_site.html" %}
 
-      {% with site=projeto.get_site %}
-        {% if site %}
-          <b>Site:</b><br>
-          <div style="padding-left: 22px;">
-            &#127760; <a href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-          </div><br>
-        {% endif %}
-      {% endwith %}
-      
       {% if composicao.orientacoes %}
         <div class="borientacoes">
           <h5 style="margin-bottom: 12px;">
@@ -165,17 +122,14 @@
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
           <span class="red-bold">
             {% lng "Você está acessado o formulário antes da data agendada da banca." "You have accessed the form before the scheduled evaluation date." %}
-          </span>
-          <br>
+          </span><br>
           <span class="red-bold">
             {% lng "Tem certeza que deseja enviar a avaliação agora!!" "Are you sure you want to submit your evaluation now!!" %}
-          </span>
-          <br>
+          </span><br>
         </div><br>
       {% endif %}
 
       <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Avaliação" "Submit Evaluation" %}</button>
-      <p>&nbsp;</p>
 
     </form>
   {% else %}
