@@ -18,11 +18,12 @@
     <table id="UsuariosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(1)')">Usuário</th>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(2)')">Tipo</th>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(3)')">Autenticado</th>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(4)')">Conectado desde</th>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(5)')">Permissões</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(1)')">{% lng "Usuário" "User" %}</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(2)')">{% lng "Tipo" "Type" %}</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(3)')">{% lng "Autenticado" "Authenticated" %}</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(4)')">{% lng "Conectado desde" "Connected since" %}</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(5)')">{% lng "Vencimento" "Expiration" %}</th>
+          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(6)')">{% lng "Permissões" "Permissions" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -32,10 +33,11 @@
             <td>{{ usuario.usuario.get_tipo_de_usuario_display }}</td>
             <td>{{ usuario.autenticado }}</td>
             <td>{{ usuario.desde }}</td>
+            <td>{{ usuario.expire_date }}</td>
             <td>{{ usuario.permissoes }}</td>
           </tr>
         {% empty %}
-          <tr><td colspan="5">Nenhum usuário conectado</td></tr>
+          <tr><td colspan="5">{% lng "Nenhum usuário conectado" "No user connected" %}</td></tr>
         {% endfor %}
       </tbody>
     </table>

@@ -1261,28 +1261,40 @@ def cancela_tarefa(request, task_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def conexoes_estabelecidas(request):
     """Mostra usuários conectados."""
-    usuario_sem_acesso(request, (4,)) # Soh Adm
+    usuario_sem_acesso(request, (4,))  # Soh Adm
     
     mensagem = ""
     sessions = Session.objects.filter(expire_date__gte=timezone.now())
     usuarios = []
     for session in sessions:
         data = session.get_decoded()
+        # print(session.expire_date)
+        # print(session.session_key)
+        # print(session.session_data)
+        # print(session.get_decoded().get("_auth_user_backend", None))
+        # print(session.get_decoded().get("_auth_user_hash", None))
+
         user_id = data.get("_auth_user_id", None)
-        try:
-            user = PFEUser.objects.get(id=user_id)
-            usuario = {}
-            usuario["usuario"] = user
-            usuario["autenticado"] = user.is_authenticated
-            usuario["desde"] = user.last_login
-            usuario["permissoes"] = str(user.get_all_permissions())[:120]
-            usuarios.append(usuario)
-        except PFEUser.DoesNotExist:
-            mensagem += "User ID não identificado = " + str(user_id) + "<br>\n"
-            # mensagem += "; Data = " + str(data) + "<br>\n"
+        if user_id:
+            try:
+                user = PFEUser.objects.get(id=user_id)
+                usuario = {
+                    "usuario": user,
+                    "autenticado": user.is_authenticated,
+                    "desde": user.last_login,
+                    "expire_date": session.expire_date,
+                    "permissoes": str(user.get_all_permissions())[:120],
+                }
+                usuarios.append(usuario)
+            except PFEUser.DoesNotExist:
+                mensagem += f"User ID {user_id} não identificado.<br>\n"
+            except Exception as e:
+                mensagem += f"Erro ao processar User ID {user_id}: {str(e)}<br>\n"
+        else:
+            mensagem += "Sessão sem User ID.<br>\n"
 
     context = {
-        "titulo": { "pt": "Conexões Estabelecidas", "en": "Established Connections" },
+        "titulo": {"pt": "Conexões Estabelecidas", "en": "Established Connections"},
         "mensagem_aviso": {"pt": mensagem, "en": mensagem},
         "usuarios": usuarios,
     }
