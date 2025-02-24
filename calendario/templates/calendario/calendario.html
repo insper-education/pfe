@@ -469,7 +469,7 @@
                           <span
                         {% endif %}
                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
-                         XXX {{aula.atividade}}
+                          {{aula.atividade}}
                           {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
                         </span>
                         {% for documento in aula.documentos %}
