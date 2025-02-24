@@ -32,7 +32,7 @@
             <a href="{% url 'organizacao_completo' despesa.projeto.organizacao.id %}">
               [{{despesa.projeto.organizacao}}]
             </a>
-            <a href="{% url 'projeto_completo' despesa.projeto.id %}">
+            <a href="{% url 'projeto_infos' despesa.projeto.id %}">
               {{despesa.projeto.get_titulo}}
             </a>
           {% endif %}

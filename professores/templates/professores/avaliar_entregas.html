@@ -39,7 +39,7 @@
           <div class="div_arredondado">
             <div>
               <strong>{% lng "Projeto" "Project" %}:</strong>
-              <a href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+              <a href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a>
               {% include "tipo_projeto.html" with com_tipo=False %}
             </div>
             <strong>{% lng "Organização" "Organization" %}:</strong>

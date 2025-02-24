@@ -62,7 +62,7 @@
               {% for conexao in conexoes %}
                 {% if edicao == "todas" %}
                   {% if conexao.projeto %}
-                    <a href="{% url 'projeto_completo' conexao.projeto.id %}">
+                    <a href="{% url 'projeto_infos' conexao.projeto.id %}">
                       {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}]
                     </a>
                   {% endif %}

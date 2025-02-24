@@ -49,10 +49,6 @@ urlpatterns = [
         views.despesas,
         name="despesas"),
 
-#   path("completo/<int:primarykey>",
-#       views.projeto_completo,
-#       name="completo"),  # REMOVER
-
     path("distribuicao_areas/",
         views.distribuicao_areas,
         name="distribuicao_areas"),
@@ -129,24 +125,27 @@ urlpatterns = [
         views.nomes,
         name="nomes"),
 
-    path("projeto/<int:primarykey>",
-        views.projeto,
-        name="projeto"),
+    path("projeto_infos/<int:primarykey>",
+        views.projeto_infos,
+        name="projeto_infos"),
 
     path("projeto_avancado/<int:primarykey>",
         views.projeto_avancado,
         name="projeto_avancado"),
 
+    # NAO USAR
     path("projeto_completo/<int:primarykey>",
-        views.projeto_completo,
+        views.projeto_infos,
         name="projeto_completo"),
 
+    # NAO USAR
     path("projeto_detalhes/<int:primarykey>",
-        views.projeto_detalhes,
+        views.projeto_infos,
         name="projeto_detalhes"),
 
+    # NAO USAR
     path("projeto_organizacao/<int:primarykey>",
-        views.projeto_organizacao,
+        views.projeto_infos,
         name="projeto_organizacao"),
 
     path("projetos_fechados/",
@@ -181,6 +180,5 @@ urlpatterns = [
     path("grupos_formados/",
         views.grupos_formados,
         name="grupos_formados"),
-
 
 ]

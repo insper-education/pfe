@@ -53,7 +53,7 @@
             {% else %}
               [{% lng "SEM ORGANIZAÇÃO" "NO ORGANIZATION" %}]
             {% endif %}
-            <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+            <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
               {{alocacao.projeto.get_titulo}}
             </a>
             {% include "tipo_projeto.html" with projeto=alocacao.projeto %}

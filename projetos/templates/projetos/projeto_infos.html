@@ -2,13 +2,8 @@
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 15 de Maio de 2019
+  Data: 23 de Fevereiro de 2025
 {% endcomment %}
-
-{% comment %} NAO USAR NAO USAR {% endcomment %}
-{% comment %} NAO USAR NAO USAR {% endcomment %}
-{% comment %} NAO USAR NAO USAR {% endcomment %}
-{% comment %} NAO USAR NAO USAR {% endcomment %}
 
 {% block head %}
   {% load static %}
@@ -16,6 +11,7 @@
   {% load l10n %}
   {% load alocacoes %}
   {% load relatos %}
+  {% load addhttp %}
   {% load linguas %}
   
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
@@ -116,13 +112,16 @@
     <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
   </div>
   
-  {% if projeto.organizacao.website %}
+  {% if projeto.organizacao.website or projeto.proposta.website %}
     <div class="website mt-3">
       <strong>website:</strong>
-      <a href="{{ projeto.organizacao.website }}">{{ projeto.organizacao.website }}</a>
+      {% if projeto.organizacao and projeto.organizacao.website %}
+        <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
+      {% elif projeto.proposta and projeto.proposta.website %}
+        <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
+      {% endif %}
     </div>
   {% endif %}
-
   <br>
 
   {% if projeto.proposta.descricao %}
@@ -130,6 +129,9 @@
       <strong>{% lng "Descrição da Proposta do Projeto (escrito por parceiro)" "Description of the Project Proposal (written by partner)" %}:</strong>
       {{ projeto.proposta.descricao|linebreaks|bleach_urlize|safe }}
     </div>
+  {% else %}
+    <p><u>Campo de descrição ausente.<u></p>
+    <!-- Campo deveria ser obrigatório -->
   {% endif %}
 
   {% if projeto.proposta.expectativas %}
@@ -137,12 +139,22 @@
       <strong>{% lng "Expectativas de resultados/entregas (escrito por parceiro)" "Expectations of results/deliverables (written by partner)" %}</strong>
       {{ projeto.proposta.expectativas|linebreaks|bleach_urlize|safe }}
     </div>
+  {% else %}
+    <p><u>Campo de expectativas ausente.<u></p>
+    <!-- Campo deveria ser obrigatório -->
   {% endif %}
 
   {% if projeto.proposta.recursos %}
     <div class="recusos mt-3">
       <strong>{% lng "Recursos a serem disponibilizados aos estudantes (escrito por parceiro)" "Resources to be made available to students (written by partner)" %}</strong>
       {{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
+    </div><br>
+  {% endif %}
+
+  {% if projeto.proposta.observacoes %}
+    <div class="observacoes mt-3">
+      <strong>{% lng "Outras Observações (escrito por parceiro)" "Other Observations (written by partner)" %}</strong>
+      {{ projeto.proposta.observacoes|linebreaks|bleach_urlize|safe }}
     </div><br>
   {% endif %}
 
@@ -375,21 +387,22 @@
     {% endif %}
   {% endif %}
 
-  <hr>
-  
-  <h4>
-    {% lng "Documentos" "Documents" %}:
-    {% if user.prof_a %}
-      {% if projeto and projeto.organizacao %}
-        <small class="esconder">
-          <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
-        </small>
+  {% if documentos or user.prof_a %}
+    <hr>
+    <h4>
+      {% lng "Documentos" "Documents" %}:
+      {% if user.prof_a %}
+        {% if projeto and projeto.organizacao %}
+          <small class="esconder">
+            <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+          </small>
+        {% endif %}
       {% endif %}
-    {% endif %}
-  </h4>
-  <div class="caixa_rolante">
-    {% include "documentos.html" %}
-  </div>
+    </h4>
+    <div class="caixa_rolante">
+      {% include "documentos.html" %}
+    </div>
+  {% endif %}
 
   {% include "professores/includes/ver_site.html" %}
   {% include "professores/includes/ver_pastas_projeto.html" %}

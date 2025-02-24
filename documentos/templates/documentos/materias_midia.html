@@ -39,7 +39,7 @@
               <td>
                 {% if relatorio.projeto %}
                   {% if user.prof_a %}
-                    <a href="{% url 'projeto_completo' relatorio.projeto.id %}">
+                    <a href="{% url 'projeto_infos' relatorio.projeto.id %}">
                   {% endif %}
                   {{relatorio.projeto.organizacao}}, {{relatorio.projeto.get_titulo}}
                   {% include "tipo_projeto.html" with projeto=relatorio.projeto %}

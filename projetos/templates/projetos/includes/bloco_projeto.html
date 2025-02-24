@@ -8,11 +8,7 @@
 {% load linguas %}
 
 {% if projeto %}
-  {% if user.prof_a %}
-    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-  {% elif user.estud %}
-    <a class="imprimir" href="{% url 'projeto_detalhes' projeto.id %}">
-  {% endif %}
+  <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
   {% if tit_proposta and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
     {{projeto.titulo_final}}
     {% if user.prof_a or user.estud %}
@@ -21,11 +17,7 @@
     <span class="tit_ori"><br>
       <small>
         {% lng "Título original da proposta" "Original title of the proposal" %}:
-        {% if user.prof_a %}
-          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
-        {% elif user.estud %}
-          <a class="imprimir" href="{% url 'projeto_detalhes' projeto.id %}">
-        {% endif %}
+        <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
         {{projeto.proposta.titulo}}
       </small>
     </span>

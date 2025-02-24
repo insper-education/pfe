@@ -107,7 +107,7 @@
           <span for="projeto">Projeto:</span>
           <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-            <a href="{% url 'projeto_completo' projeto.id %}">
+            <a href="{% url 'projeto_infos' projeto.id %}">
           {% endif %}
           {{projeto.get_titulo}} ({{projeto.get_edicao}})
           {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}

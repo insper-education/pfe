@@ -60,7 +60,7 @@
                 [<i>Organização não definida</i>]
               {% endif %}
               {% if banca.alocacao %}
-                <a href="{% url 'projeto_completo' banca.alocacao.projeto.id %}">
+                <a href="{% url 'projeto_infos' banca.alocacao.projeto.id %}">
                   {{banca.alocacao.projeto.get_titulo}}{% include "tipo_projeto.html" with projeto=banca.alocacao.projeto %}
                 </a><br>
               {% endif %}
@@ -88,7 +88,7 @@
                 [<i>Organização não definida</i>]
               {% endif %}
               {% if banca.projeto %}
-                <a href="{% url 'projeto_completo' banca.projeto.id %}">
+                <a href="{% url 'projeto_infos' banca.projeto.id %}">
                   {{banca.projeto.get_titulo}}{% include "tipo_projeto.html" %}
                 </a><br>
               {% else %}

@@ -118,7 +118,7 @@
               {% if projeto.organizacao %}
                 [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
               {% endif %}
-              <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.get_titulo}}</a>
+              <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a>
               {% include "tipo_projeto.html" %}
             </li>
           {% endfor %}

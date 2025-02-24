@@ -23,7 +23,7 @@
   {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos tabela_simples=True %}
     {% for projeto in projetos %} 
       <tr class="item">
-        <td><a href="{% url 'projeto_organizacao' projeto.id %}">{{projeto.get_titulo}}</a><br></td>
+        <td><a href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a><br></td>
         <td class="text-center">{{projeto.get_edicao}}</td>
       </tr>
     {% empty %}

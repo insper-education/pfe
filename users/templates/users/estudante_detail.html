@@ -152,7 +152,7 @@
       <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
       {% for alocado in alocacoes %}
         <b>{% lng "Projeto" "Project" %}:</b>
-        <a href="{% url 'projeto_completo' alocado.projeto.id %}">
+        <a href="{% url 'projeto_infos' alocado.projeto.id %}">
           [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
           ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
           {% include "tipo_projeto.html" with projeto=alocado.projeto %}

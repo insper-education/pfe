@@ -80,7 +80,7 @@
             <option value="{{projeto.id}}"
             style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
             data-titulo="{{projeto.get_titulo}}"
-            data-titulo_link="{% url 'projeto_completo' projeto.id %}"
+            data-titulo_link="{% url 'projeto_infos' projeto.id %}"
             data-organizacao="{{projeto.organizacao}}"
             data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
             data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
@@ -121,7 +121,7 @@
             <option value="{{alocacao.id}}"
             style="font-size: 0.75em;{% comment %} {% if alocacao.id in alocacaos_agendados %}color: lightgrey;{% endif %} {% endcomment %}"
             data-titulo="{{alocacao.projeto.get_titulo}}"
-            data-titulo_link="{% url 'projeto_completo' alocacao.projeto.id %}"
+            data-titulo_link="{% url 'projeto_infos' alocacao.projeto.id %}"
             data-organizacao="{{alocacao.projeto.organizacao}}"
             data-organizacao_link="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}"
             data-orientador="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
@@ -151,7 +151,7 @@
     {% endif %}
 
     {% lng "Título:" "Title:" %}
-    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_completo' banca.get_projeto.id %}"{% endif %}>
+    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_infos' banca.get_projeto.id %}"{% endif %}>
       <span id="titulo" name="titulo">
         {% if banca and banca.get_projeto %}
           {{banca.get_projeto.get_titulo}}

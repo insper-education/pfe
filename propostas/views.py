@@ -1083,4 +1083,4 @@ def projeto_criar(request, proposta_id):
         semestre=proposta.semestre
     )
 
-    return redirect("projeto_completo", primarykey=projeto.id)
+    return redirect("projeto_infos", primarykey=projeto.id)

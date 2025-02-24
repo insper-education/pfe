@@ -31,7 +31,7 @@
             {% lng "ERRO: PROJETO SEM ESTUDANTES" "ERROR: PROJECT WITHOUT STUDENTS" %}
           {% endif %}
           <b style="margin-right: 1px;">#{{ forloop.revcounter }}.</b>
-          <a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
+          <a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
             {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}
             [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
             { {{ n_alocacoes }} {% lng_n n_alocacoes "estudante" "estudantes" "student" "students" %} }

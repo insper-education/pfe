@@ -9,8 +9,9 @@ Data: 8 de Janeiro de 2025
 import datetime
 import re
 
-from .models import Avaliacao2, ObjetivosDeAprendizagem
+from django.shortcuts import get_object_or_404
 
+from .models import Avaliacao2, ObjetivosDeAprendizagem, Configuracao
 from academica.models import Exame
 from academica.support2 import get_objetivos
 from academica.support4 import get_notas_estudante
@@ -251,3 +252,26 @@ def divide57(notas_lista):
             else:
                 valores[1] += 1
     return valores
+
+
+def is_projeto_liberado(projeto):
+    configuracao = get_object_or_404(Configuracao)
+    liberado = True
+    if configuracao.semestre == 1:
+        liberado1 = projeto.ano < configuracao.ano
+        liberado2 = (projeto.ano == configuracao.ano) and (projeto.semestre == configuracao.semestre)
+        liberado = liberado1 or liberado2
+    else:
+        liberado = projeto.ano <= configuracao.ano
+    return liberado
+
+
+def get_medias_oa(alocacoes):
+    medias_oa = None
+    if alocacoes:
+        medias_oa = calcula_objetivos([alocacoes.first()])
+        if (medias_oa is None) or \
+          ("medias_apg" not in medias_oa or "medias_afg" not in medias_oa or "medias_rig" not in medias_oa or "medias_bi" not in medias_oa or "medias_rfg" not in medias_oa or "medias_bf" not in medias_oa) or \
+          (not (medias_oa["medias_apg"] or medias_oa["medias_afg"] or medias_oa["medias_rig"] or medias_oa["medias_bi"] or medias_oa["medias_rfg"] or medias_oa["medias_bf"])):
+            medias_oa = None
+    return medias_oa

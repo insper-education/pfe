@@ -124,7 +124,7 @@
                 ">
                   <td>
                     [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
                       {{projeto.get_titulo}}
                       {% include "tipo_projeto.html" %}<br>
                     </a>
@@ -180,7 +180,7 @@
 
                   {% comment %} Relatório Preliminar {% endcomment %}
                   {% comment %} <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}"
                       {% if relatorio_preliminar.nota > 0 %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_preliminar.conceito|safe }}">
                       {{ relatorio_preliminar.nota_texto|safe }}
@@ -192,7 +192,7 @@
 
                   {% comment %} Relatório Intermediário {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}"
                       {% if relatorio_intermediario.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="background-color: darkgrey; font-weight: bold;"
                       {% elif relatorio_intermediario.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
@@ -214,7 +214,7 @@
 
                 {% comment %} Relatório Final {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}"
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}"
                       {% if relatorio_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="background-color: darkgrey; font-weight: bold;"
                       {% elif relatorio_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}

@@ -66,7 +66,7 @@
             {% if banca.projeto.organizacao %}
               [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
             {% endif %}
-            <a href="{% url 'projeto_completo' banca.projeto.id %}">
+            <a href="{% url 'projeto_infos' banca.projeto.id %}">
               {{banca.projeto.get_titulo}}
             </a>
           </div>
@@ -78,7 +78,7 @@
           {% if banca.alocacao.projeto.organizacao %}
             [<a href="{% url 'organizacao_completo' banca.alocacao.projeto.organizacao.id %}">{{ banca.alocacao.projeto.organizacao.nome }}</a>]
           {% endif %}
-          <a href="{% url 'projeto_completo' banca.alocacao.projeto.id %}">
+          <a href="{% url 'projeto_infos' banca.alocacao.projeto.id %}">
             {{banca.alocacao.projeto.get_titulo}}</a>
             </div>
         {% endif %}

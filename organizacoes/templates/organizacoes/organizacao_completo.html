@@ -180,7 +180,7 @@
     <ol reversed>
       {% for projeto in projetos reversed %}
         {% if projeto.alocacao_set.count %}
-          <a href="{% url 'projeto_completo' projeto.id %}">
+          <a href="{% url 'projeto_infos' projeto.id %}">
             <li>
               {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})
               {% include "tipo_projeto.html" %}

@@ -54,7 +54,7 @@
   <div id="modal-body" class="modal-body" style="padding-bottom: 2px;">
 
     Título: 
-    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if relatorio and relatorio.projeto %}href="{% url 'projeto_completo' relatorio.projeto.id %}"{% endif %}>
+    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if relatorio and relatorio.projeto %}href="{% url 'projeto_infos' relatorio.projeto.id %}"{% endif %}>
       <span id="titulo" name="titulo">
         {% if relatorio and relatorio.projeto %}
           {{relatorio.projeto.get_titulo}}

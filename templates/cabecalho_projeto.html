@@ -18,12 +18,12 @@
     {% endif %}<br>
     
     <b>{% lng "Projeto" "Project" %}:</b>
-    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
       {% if com_tit_original and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
         {{projeto.titulo_final}}</a><br>
         <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">
           {% lng "Título original da proposta" "Original title of the proposal" %}:
-          <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}
+          <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">{{projeto.proposta.titulo}}
         </div>
       {% else %}
         {{projeto.get_titulo}}{% include "tipo_projeto.html" %}<br>
@@ -96,12 +96,12 @@
 
     <b>{% lng "Projeto" "Project" %}:</b>
     {% if user.is_authenticated and user.tipo_de_usuario == 1 %}
-      <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+      <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
         {% if com_tit_original and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
           {{projeto.titulo_final}}</a><br>
           <div style="font-size: 12px; line-height:1.0; margin-bottom: 6px;">
             {% lng "Título original da proposta" "Original title of the proposal" %}:
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">{{projeto.proposta.titulo}}
+            <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">{{projeto.proposta.titulo}}
           </div>
         {% else %}
           {{projeto.get_titulo}}{% include "tipo_projeto.html" %}<br>

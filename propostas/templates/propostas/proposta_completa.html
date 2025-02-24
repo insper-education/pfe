@@ -183,7 +183,7 @@
       </a>
       
       {% for projeto in projetos %}
-        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_completo' projeto.id %}">
+        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_infos' projeto.id %}">
           {% lng "Projeto" "Project" %}
           {{projeto.ano}}.{{projeto.semestre}}
         </a>

@@ -32,7 +32,7 @@
     <ol>
     {% for projeto in projetos %}
       {% if projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_completo' projeto.id %}">
+        <li><a href="{% url 'projeto_infos' projeto.id %}">
         {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
         {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
         </a>
@@ -58,7 +58,7 @@
     <ol>
     {% for coorientacao in coorientacoes %}
       {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_completo' coorientacao.projeto.id %}">
+        <li><a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
           {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
           {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
           </a>
@@ -91,7 +91,7 @@
             {% if banca.get_projeto.organizacao %}
               [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
             {% endif %}
-            <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
+            <a href="{% url 'projeto_infos' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
           {% endif %}
           {% with certificado=banca|certificado_banca:professor.user %}
             {% if certificado %}
@@ -117,7 +117,7 @@
             {% if mentoria.projeto.organizacao %}
               [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
             {% endif %}
-            <a href="{% url 'projeto_completo' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
+            <a href="{% url 'projeto_infos' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
           {% endif %}
           {% with certificado=mentoria|certificado_mentoria:professor.user %}
             {% if certificado %}

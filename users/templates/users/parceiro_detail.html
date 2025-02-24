@@ -48,7 +48,7 @@
     <ol>
       {% for conexao in conexoes %}
         {% if conexao.projeto %}
-          <li><a href="{% url 'projeto_completo' conexao.projeto.id %}">
+          <li><a href="{% url 'projeto_infos' conexao.projeto.id %}">
           {{conexao.projeto.get_titulo}}
           ({{conexao.projeto.ano}}.{{conexao.projeto.semestre}}) &#x2192;
           {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
@@ -98,7 +98,7 @@
           {% endif %}
           </a>
           {% if banca.get_projeto %}
-            <a href="{% url 'projeto_completo' banca.get_projeto.id %}">{{banca.get_projeto.get_titulo}}</a>,
+            <a href="{% url 'projeto_infos' banca.get_projeto.id %}">{{banca.get_projeto.get_titulo}}</a>,
           {% endif %}
           {% if banca.get_projeto.organizacao %}
             <a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">

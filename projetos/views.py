@@ -18,6 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .messages import email, message_reembolso
@@ -30,9 +31,10 @@ from .models import Banco, Reembolso, Aviso, Conexao
 from .models import Area, AreaDeInteresse, Banca
 
 from .support import simple_upload
+from .support2 import get_areas_propostas, get_areas_estudantes
 from .support3 import calcula_objetivos, cap_name, media
 from .support3 import divide57, get_notas_alocacao
-from .support2 import get_areas_propostas, get_areas_estudantes
+from .support3 import get_medias_oa, is_projeto_liberado
 
 from .tasks import avisos_do_dia, eventos_do_dia
 
@@ -63,134 +65,174 @@ def index_projetos(request):
     else:
         return render(request, "projetos/index_projetos.html", context=context)
 
-
 @login_required
-def projeto_detalhes(request, primarykey):
-    """Exibe proposta de projeto com seus detalhes para estudantes."""
-    projeto = get_object_or_404(Projeto, pk=primarykey)
-
-    if request.user and request.user.tipo_de_usuario not in [2, 4]:  # Se usuário não for Professor nem Admin
-        configuracao = get_object_or_404(Configuracao)
-        alocacoes = Alocacao.objects.filter(aluno=request.user.aluno, projeto=projeto)
-        
-        liberado = True
-        if configuracao.semestre == 1:
-            liberado1 = projeto.ano < configuracao.ano
-            liberado2 = (projeto.ano == configuracao.ano) and (projeto.semestre == configuracao.semestre)
-            liberado = liberado1 or liberado2
-        else:
-            liberado = projeto.ano <= configuracao.ano
-
-        if (not alocacoes) or (not liberado):
-            mensagem = "Você não tem autorização para visualizar projeto"
-            context = {
-                "area_principal": True,
-                "mensagem": mensagem,
-            }
-            return render(request, "generic.html", context=context)
-
-    context = {
-            "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
-            "projeto": projeto,
-        }
-
-    return render(request, "projetos/projeto_detalhes.html", context=context)
-
-
-@login_required
-def projeto(request, primarykey):
-    """Mostra um projeto conforme usuário."""
-    if request.user.tipo_de_usuario == 1:
-        return redirect("meuprojeto", primarykey=primarykey)
-    elif request.user.tipo_de_usuario in (2, 4):
-        return redirect("projeto_completo", primarykey=primarykey)
-    elif request.user.tipo_de_usuario == 3:
-        return redirect("projeto_organizacao", primarykey=primarykey)
-    else:
-        return HttpResponse("Erro não identificado.", status=401)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def projeto_completo(request, primarykey):
-    """Mostra um projeto por completo."""
+def projeto_infos(request, primarykey):
+    """Mostra um projeto com detalhes conforme tipo de usuário."""    
     projeto = get_object_or_404(Projeto, pk=primarykey)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
 
-    medias_oo = None
-    if alocacoes:
-        alocacao = alocacoes.first()
-
-        alocacoes_oo = Alocacao.objects.filter(id=alocacao.id)
-        medias_oo = calcula_objetivos(alocacoes_oo)
-
-        if (medias_oo is None) or \
-           ("medias_apg" not in medias_oo or "medias_afg" not in medias_oo or "medias_rig" not in medias_oo or "medias_bi" not in medias_oo or "medias_rfg" not in medias_oo or "medias_bf" not in medias_oo) or \
-           (not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"])):
-            medias_oo = None
-
-    titulo = ""
-    if projeto.proposta.organizacao:
-        titulo += "[" + projeto.proposta.organizacao.sigla + "]"
-    titulo += " " + projeto.get_titulo()
-    titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
-
     context = {
-        "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
+        "titulo": { "pt": "Informações sobre Projeto", "en": "Project Information"},
         "projeto": projeto,
-        "alocacoes": alocacoes,
-        "medias_oo": medias_oo,
-        "conexoes": Conexao.objects.filter(projeto=projeto),
-        "coorientadores": Coorientador.objects.filter(projeto=projeto),
-        "documentos": Documento.objects.filter(projeto=projeto),
-        "projetos_avancados": Projeto.objects.filter(avancado=projeto),
-        "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
-        "horarios": Estrutura.loads(nome="Horarios Semanais"),
+        "alocacoes": alocacoes
     }
 
-    # Código de Conduta do Grupo
-    codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
-    if codigo_conduta:
-        context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
-        context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
+    if request.user.eh_estud:  # Se usuário é estudante
+        alocado = any(alocacao.aluno == request.user.aluno for alocacao in alocacoes)  # Só libera a visualização se estudante estiver alocado no projeto
+        liberado = is_projeto_liberado(projeto)
+        if (not alocado) or (not liberado):
+            return HttpResponseForbidden("Você não tem autorização para visualizar projeto")
+        tipos_docs = ["RPR", "RFG", "RIG", "APG", "AFG", "RFR", "ABF", "ABI", "B", "RPU", "VP"]
+        context["documentos"] = Documento.objects.filter(projeto=projeto, tipo_documento__sigla__in=tipos_docs)
 
-    # Funcionalidade do Grupo
-    funcionalidade_grupo = []
-    for alocacao in alocacoes:
-        funcionalidade_grupo.append(alocacao.aluno.user.funcionalidade_grupo)
-    if funcionalidade_grupo:
-        context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
-        context["funcionalidade_grupo"] = funcionalidade_grupo
+    if request.user.eh_parc:  # Se usuário é parceiro
+        organizacao = getattr(request.user.parceiro, "organizacao", None)
+        if organizacao is None or projeto.proposta.organizacao != organizacao:
+            return HttpResponseForbidden("Você não tem autorização para visualizar projeto")
+        tipos_docs = ["RFR", "ABF", "B", "RPU", "VP", "COP", "CC", "COE", "APE"]
+        context["documentos"] = Documento.objects.filter(projeto=projeto, tipo_documento__sigla__in=tipos_docs)
 
-    return render(request, "projetos/projeto_completo.html", context=context)
+    if request.user.eh_prof_a:  # Se usuário é professor ou administrador
+        context["documentos"] = Documento.objects.filter(projeto=projeto)
+        context["medias_oo"] = get_medias_oa(alocacoes)
+        context["horarios"] = Estrutura.loads(nome="Horarios Semanais")
 
+        # Código de Conduta do Grupo
+        codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
+        if codigo_conduta:
+            context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
+            context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
 
-@login_required
-@permission_required("projetos.add_proposta", raise_exception=True)
-def projeto_organizacao(request, primarykey):
-    """Mostra um projeto por completo."""
+        # Funcionalidade do Grupo
+        funcionalidade_grupo = []
+        for alocacao in alocacoes:
+            funcionalidade_grupo.append(alocacao.aluno.user.funcionalidade_grupo)
+        if funcionalidade_grupo:
+            context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
+            context["funcionalidade_grupo"] = funcionalidade_grupo
+
+    context["conexoes"] = Conexao.objects.filter(projeto=projeto)
+    context["coorientadores"] = Coorientador.objects.filter(projeto=projeto)
+    context["projetos_avancados"] = Projeto.objects.filter(avancado=projeto)
+    context["cooperacoes"] = Conexao.objects.filter(projeto=projeto, colaboracao=True)
     
-    usuario_sem_acesso(request, (3, 4,)) # Soh Parc Adm
+    return render(request, "projetos/projeto_infos.html", context=context)
 
-    projeto = get_object_or_404(Projeto, pk=primarykey)
+##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
+# @login_required
+# def projeto_detalhes(request, primarykey):
+#     """Exibe proposta de projeto com seus detalhes para estudantes."""
+#     projeto = get_object_or_404(Projeto, pk=primarykey)
+
+#     if request.user and request.user.tipo_de_usuario not in [2, 4]:  # Se usuário não for Professor nem Admin
+#         configuracao = get_object_or_404(Configuracao)
+#         alocacoes = Alocacao.objects.filter(aluno=request.user.aluno, projeto=projeto)
+        
+#         liberado = True
+#         if configuracao.semestre == 1:
+#             liberado1 = projeto.ano < configuracao.ano
+#             liberado2 = (projeto.ano == configuracao.ano) and (projeto.semestre == configuracao.semestre)
+#             liberado = liberado1 or liberado2
+#         else:
+#             liberado = projeto.ano <= configuracao.ano
+
+#         if (not alocacoes) or (not liberado):
+#             mensagem = "Você não tem autorização para visualizar projeto"
+#             context = {
+#                 "area_principal": True,
+#                 "mensagem": mensagem,
+#             }
+#             return render(request, "generic.html", context=context)
+
+#     context = {
+#             "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
+#             "projeto": projeto,
+#         }
+
+#     return render(request, "projetos/projeto_detalhes.html", context=context)
+
+##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
+# @login_required
+# @permission_required("users.altera_professor", raise_exception=True)
+# def projeto_completo(request, primarykey):
+#     """Mostra um projeto por completo (para professores verem)."""
+#     projeto = get_object_or_404(Projeto, pk=primarykey)
+#     alocacoes = Alocacao.objects.filter(projeto=projeto)
+
+#     medias_oo = None
+#     if alocacoes:
+#         alocacao = alocacoes.first()
+
+#         alocacoes_oo = Alocacao.objects.filter(id=alocacao.id)
+#         medias_oo = calcula_objetivos(alocacoes_oo)
+
+#         if (medias_oo is None) or \
+#            ("medias_apg" not in medias_oo or "medias_afg" not in medias_oo or "medias_rig" not in medias_oo or "medias_bi" not in medias_oo or "medias_rfg" not in medias_oo or "medias_bf" not in medias_oo) or \
+#            (not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"])):
+#             medias_oo = None
+
+#     # titulo = ""
+#     # if projeto.proposta.organizacao:
+#     #     titulo += "[" + projeto.proposta.organizacao.sigla + "]"
+#     # titulo += " " + projeto.get_titulo()
+#     # titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
+
+#     context = {
+#         "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
+#         "projeto": projeto,
+#         "alocacoes": alocacoes,
+#         "medias_oo": medias_oo,
+#         "conexoes": Conexao.objects.filter(projeto=projeto),
+#         "coorientadores": Coorientador.objects.filter(projeto=projeto),
+#         "documentos": Documento.objects.filter(projeto=projeto),
+#         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
+#         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
+#         "horarios": Estrutura.loads(nome="Horarios Semanais"),
+#     }
+
+#     # Código de Conduta do Grupo
+#     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
+#     if codigo_conduta:
+#         context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
+#         context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
+
+#     # Funcionalidade do Grupo
+#     funcionalidade_grupo = []
+#     for alocacao in alocacoes:
+#         funcionalidade_grupo.append(alocacao.aluno.user.funcionalidade_grupo)
+#     if funcionalidade_grupo:
+#         context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
+#         context["funcionalidade_grupo"] = funcionalidade_grupo
+
+#     return render(request, "projetos/projeto_completo.html", context=context)
+
+##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
+# @login_required
+# @permission_required("projetos.add_proposta", raise_exception=True)
+# def projeto_organizacao(request, primarykey):
+#     """Mostra um projeto por completo (para organizações verem)."""
     
-    organizacao = None
-    if hasattr(request.user, "parceiro"):
-        organizacao = request.user.parceiro.organizacao
+#     usuario_sem_acesso(request, (3, 4,)) # Soh Parc Adm
 
-    if projeto.proposta.organizacao != organizacao and request.user.tipo_de_usuario != 4:
-        return HttpResponse("Algum erro não identificado.", status=401)
+#     projeto = get_object_or_404(Projeto, pk=primarykey)
+    
+#     organizacao = None
+#     if hasattr(request.user, "parceiro"):
+#         organizacao = request.user.parceiro.organizacao
 
-    context = {
-        "projeto": projeto,
-        "alocacoes": Alocacao.objects.filter(projeto=projeto),
-        "conexoes": Conexao.objects.filter(projeto=projeto),
-        "coorientadores": Coorientador.objects.filter(projeto=projeto),
-        "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False),
-        "projetos_avancados": Projeto.objects.filter(avancado=projeto),
-        "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
-    }
-    return render(request, "projetos/projeto_completo.html", context=context)
+#     if projeto.proposta.organizacao != organizacao and request.user.tipo_de_usuario != 4:
+#         return HttpResponse("Algum erro não identificado.", status=401)
+
+#     context = {
+#         "projeto": projeto,
+#         "alocacoes": Alocacao.objects.filter(projeto=projeto),
+#         "conexoes": Conexao.objects.filter(projeto=projeto),
+#         "coorientadores": Coorientador.objects.filter(projeto=projeto),
+#         "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False),
+#         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
+#         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
+#     }
+#     return render(request, "projetos/projeto_completo.html", context=context)
 
 
 @login_required
@@ -583,7 +625,7 @@ def projeto_avancado(request, primarykey):
 
         novo_projeto.save()
 
-    return redirect("projeto_completo", primarykey=novo_projeto.id)
+    return redirect("projeto_infos", primarykey=novo_projeto.id)
 
 
 @login_required
@@ -1793,7 +1835,7 @@ def editar_projeto(request, primarykey):
 
         projeto.save()
 
-        return redirect("projeto_completo", primarykey=primarykey)
+        return redirect("projeto_infos", primarykey=primarykey)
 
     context = {
         "titulo": {"pt": "Editar Projeto", "en": "Edit Project"},

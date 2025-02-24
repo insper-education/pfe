@@ -25,7 +25,7 @@
         <tr class="item">
           <th scope="row">
             [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
-            <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+            <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
               {{projeto.get_titulo}}
               {% include "tipo_projeto.html" %}<br>
             </a>

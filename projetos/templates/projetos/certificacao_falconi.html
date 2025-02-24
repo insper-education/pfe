@@ -277,7 +277,7 @@
 
                 {% if avaliadores_falconi %}
                   <h6>
-                    <a class="imprimir" href="{% url 'projeto_completo' projeto.id %}">
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
                       {{projeto}}
                     </a><br>
                     {% for banca in projeto.banca_set.all %}

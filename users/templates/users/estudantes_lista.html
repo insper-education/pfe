@@ -56,7 +56,7 @@
             <td>
               {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
-                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                  <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
                     {% if alocacao.projeto.avancado %}<u>{% endif %}
                     {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
                     {% if alocacao.projeto.avancado %}</u>{% endif %}
@@ -79,7 +79,7 @@
                       ({{alocacao.projeto.organizacao}})
                     </a>
                   {% endif %}
-                  <a href="{% url 'projeto_completo' alocacao.projeto.id %}">
+                  <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
                     {{alocacao.projeto.get_titulo}}
                   </a>
                   {% include "tipo_projeto.html" with projeto=alocacao.projeto %}<br>

@@ -39,7 +39,7 @@
       <strong>Projetos Selecionados</strong>
       {% for opcao in aluno.opcao_set.all %}
         {% if opcao.projeto.ano == opcao.aluno.anoPFE and opcao.projeto.semestre == opcao.aluno.semestrePFE %}
-            <a href="{% url 'projeto_completo' opcao.projeto.id %}">
+            <a href="{% url 'projeto_infos' opcao.projeto.id %}">
                 <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
                     {{opcao.projeto.organizacao.nome}}, {{opcao.projeto.get_titulo}} 
                 </p>

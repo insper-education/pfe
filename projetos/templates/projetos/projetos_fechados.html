@@ -53,12 +53,12 @@
               <div>
                 <p>
                   <b>{% lng "Projeto:" "Project:" %}</b>
-                  <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> 
+                  <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> 
                   {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
                     {{projeto.titulo_final}}</a>
                     <small class="titulo_original">
                       <br>Título original da proposta: 
-                      <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_completo' projeto.id %}"> {{projeto.proposta.titulo}}</a>
+                      <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> {{projeto.proposta.titulo}}</a>
                     </small>
                   {% else %}
                     {{projeto.get_titulo}}</a>
