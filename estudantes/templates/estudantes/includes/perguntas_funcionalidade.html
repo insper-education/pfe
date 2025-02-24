@@ -11,18 +11,23 @@
 {% if questoes_funcionalidade  %}
 
   <style>
-    table#disfuncoes td {
-      padding: 2px 5px;
-    }
+    table#disfuncoes td {padding: 2px 5px;}
   </style>
 
-  <table class="tabela-padrao table-striped table-hover table-responsive mb-4" {% if esconde_perg %}style="display: none;"{% endif %}>
+  <table class="tabela-padrao table-striped table-hover table-responsive mb-4">
     <thead>
       <tr>
-        <th class="hide-on-narrow">#</th>
-        <th>{% lng "Questão" "Question" %}</th>
+        <th class="hide-on-narrow" {% if mostra_estudante %}rowspan="2"{% endif %}>#</th>
+        <th {% if mostra_estudante %}rowspan="2"{% endif %}>{% lng "Questão" "Question" %}</th>
         <th colspan="{{ funcionalidade_grupo|length }}">{% lng "Frequência" "Frequency" %}</th>
       </tr>
+      {% if mostra_estudante %}
+        <tr>
+          {% for estudante, funcionalidade in funcionalidade_grupo.items %}
+            <th><small>{{ estudante.first_name }}</small></th>
+          {% endfor %}
+        </tr>
+      {% endif %}
     </thead>
     <tbody>
       {% for questao in questoes_funcionalidade.questoes %}
@@ -31,7 +36,7 @@
             <td class="hide-on-narrow" style="text-align:center">{{ q }}</td>
             <td>{{ questao }}</td>
             {% with question_key="question_"|concat:q|stringformat:"s" %}
-              {% for funcionalidade in funcionalidade_grupo %}
+              {% for estudante, funcionalidade in funcionalidade_grupo.items %}
                 <td>
                   {% with f=funcionalidade|get_attr:question_key %}
                     {% if ver %}
@@ -88,8 +93,9 @@
 
       
       for (var key = 0; key < scores.length; key++) {
-        $('#d' + key).text(scores[key]);
+        
         {% if funcionalidade_grupo|length <= 1 %}
+          $('#d' + key).text(scores[key]);
           var message = "";
           var color = "";
           if (scores[key] > 2 && scores[key] < 6) {
@@ -107,6 +113,11 @@
           }
           $("#o" + key).text(message);
           $("#r" + key).css("background-color", color);
+        {% else %}
+          var max = 9 * {{ funcionalidade_grupo|length }};
+          var min = 3 * {{ funcionalidade_grupo|length }};
+          var res = ((scores[key] - min) / (max - min)) * 100;
+          $('#d' + key).text(res.toFixed(0) + "%");
         {% endif %}
       }
 

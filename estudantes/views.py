@@ -415,7 +415,7 @@ def funcionalidade_grupo(request):
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
         "questoes_funcionalidade": Estrutura.loads(nome="Questões de Funcionalidade"),
-        "funcionalidade_grupo": [request.user.funcionalidade_grupo],
+        "funcionalidade_grupo": {request.user: request.user.funcionalidade_grupo},
     }
 
     return render(request, "estudantes/funcionalidade_grupo.html", context)

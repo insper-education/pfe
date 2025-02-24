@@ -794,8 +794,6 @@ def estudante_detail(request, primarykey=None):
         "areast": Area.objects.filter(ativa=True),
     })
 
-    configuracao = get_object_or_404(Configuracao)
-
     # Estilos de Comunicação
     estilos_respostas = get_respostas_estilos(estudante.user)
     if estilos_respostas:
@@ -806,7 +804,7 @@ def estudante_detail(request, primarykey=None):
     funcionalidade_grupo = estudante.user.funcionalidade_grupo
     if funcionalidade_grupo:
         context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
-        context["funcionalidade_grupo"] = [funcionalidade_grupo]
+        context["funcionalidade_grupo"] = {estudante.user: funcionalidade_grupo}
 
     # Código de Conduta Individual
     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(estudante.user), object_id=estudante.user.id).last()
