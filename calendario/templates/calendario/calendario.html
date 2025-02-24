@@ -358,7 +358,7 @@
                 {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}
                   <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
                       {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
-                      <th class="colu" scope="row">
+                      <th class="colu text-center" scope="row">
                         {% if user.admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                         {% else %}
@@ -446,7 +446,7 @@
               <tbody>
                 {% for aula in eventos_academicos.mentorias|dictsort:"endDate" %}
                   <tr id="ev{{aula.id}}" class="lin_mentorias ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}">
-                      <th class="colu" scope="row">
+                      <th class="colu text-center" scope="row">
                         {% if user.admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                         {% else %}
