@@ -81,6 +81,7 @@
       }
 
       element.getElementsByClassName("fa-check-circle")[0].style.display = "none";
+      element.getElementsByClassName("fa-exclamation-triangle")[0].style.display = "none";
       element.getElementsByClassName("fa-hourglass")[0].style.display = "inline-block";
 
       fetch("{% url 'validate_feedback' %}", {
@@ -96,19 +97,24 @@
       })
       .then(response => response.json())
       .then(data => {
-        const tableHTML = generateTable(data.response_data.tarefas);
-        {% if multi %}
-          const feedback = $("#feedback-validator-message_" + relato_id);
-        {% else %}
-          const feedback = $("#feedback-validator-message");
-        {% endif %}
-        feedback.hide().html(tableHTML).slideDown("slow");
-        element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
-        element.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
-
+        if(data.message != "failed") {
+          const tableHTML = generateTable(data.response_data.tarefas);
+          {% if multi %}
+            const feedback = $("#feedback-validator-message_" + relato_id);
+          {% else %}
+            const feedback = $("#feedback-validator-message");
+          {% endif %}
+          feedback.hide().html(tableHTML).slideDown("slow");
+          element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+          element.getElementsByClassName("fa-check-circle")[0].style.display = "inline-block";
+        } else {
+          element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+          element.getElementsByClassName("fa-exclamation-triangle")[0].style.display = "inline-block";  
+        }
       })
       .catch(error => {
         element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
+        element.getElementsByClassName("fa-exclamation-triangle")[0].style.display = "inline-block";
         console.error("Error:", error);
       });
     });

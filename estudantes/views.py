@@ -1061,9 +1061,12 @@ def validate_feedback(request):
         headers = {"Content-Type": "application/json"}
 
         req = urllib.request.Request(url, data=post_data, headers=headers)
-        with urllib.request.urlopen(req) as response:
-            response_txt = response.read().decode("utf-8")
-            response_data = json.loads(response_txt)
-            
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                response_txt = response.read().decode("utf-8")
+                response_data = json.loads(response_txt)
+        except Exception as e:
+            return JsonResponse({"message": "failed"}, status=400)
+           
         return JsonResponse({"message": "request received", "response_data": response_data})
     return JsonResponse({"message": 'Invalid request method.'}, status=400)

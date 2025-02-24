@@ -1268,12 +1268,6 @@ def conexoes_estabelecidas(request):
     usuarios = []
     for session in sessions:
         data = session.get_decoded()
-        # print(session.expire_date)
-        # print(session.session_key)
-        # print(session.session_data)
-        # print(session.get_decoded().get("_auth_user_backend", None))
-        # print(session.get_decoded().get("_auth_user_hash", None))
-
         user_id = data.get("_auth_user_id", None)
         if user_id:
             try:
