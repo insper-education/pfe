@@ -115,9 +115,13 @@ function showElements(els) {
     if (el.classList.contains("lin_aulas")) {
       el.style.display = "table-row";
       if (!el.classList.contains('ano' + currentYear)) el.style.display = "none";
+    } else if (el.classList.contains("lin_mentorias")) {
+        el.style.display = "table-row";
+        if (!el.classList.contains('ano' + currentYear)) el.style.display = "none";
     } else {
       el.style.display = "inline";
     }
+
     if (el.parentNode.classList.contains("ano" + currentYear)) {
       if (el.classList.contains("lab")) $("#linha_lab").show();
       if (el.classList.contains("prova")) $("#linha_provas").show();
@@ -200,7 +204,7 @@ $(document).ready(function() {
         }
     );
 
-    document.querySelector('#calendar').addEventListener("yearChanged", function(e) {
+    document.querySelector("#calendar").addEventListener("yearChanged", function(e) {
       currentYear = e.currentYear;
     
       // Esconde todos os elementos por ano

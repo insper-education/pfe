@@ -344,7 +344,7 @@
           {% lng "Aulas" "Classes" %}
         </div>
 
-        <span id="lista_aulas" class="lista_aulas">
+        <div id="lista_aulas" class="lista_aulas" style="margin-bottom: 18px;">
 
           {% if eventos_academicos.aulas %}
             {% nospaces %}
@@ -426,9 +426,92 @@
             {% endnospaces %}
           {% endif %}
 
-        </span>
+        </div>
+
+
+        <div class="tit_agenda" id="titulo_mentorias">
+          {% lng "Mentorias" "Mentorship" %}
+        </div>
+
+        <div id="lista_mentorias" class="lista_mentorias">
+
+          {% if eventos_academicos.mentorias %}
+            {% nospaces %}
+            <table class="tab_pfe">
+              <thead><tr>
+                <th scope="col" class="cabec">{% lng "Período" "Period" %}</th>
+                <th scope="col" class="cabec header_mentoria">{% lng "Mentoria" "Mentorship" %}</th>
+                {% comment %} <th scope="col" class="cabec header_local_m">Local</th> {% endcomment %}
+              </tr></thead>
+              <tbody>
+                {% for aula in eventos_academicos.mentorias|dictsort:"endDate" %}
+                  <tr id="ev{{aula.id}}" class="lin_mentorias ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}">
+                      <th class="colu" scope="row">
+                        {% if user.admin %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
+                        {% else %}
+                          <span>
+                        {% endif %}
+
+                        {% if aula.startDate == aula.endDate %} 
+                          {{ aula.endDate.day }}/{{ aula.endDate.month }}
+                        {% else %}
+                          {{ aula.startDate.day }}/{{ aula.startDate.month }} à {{ aula.endDate.day }}/{{ aula.endDate.month }}
+                        {% endif %}
+
+                        </span>
+                      </th>
+                      
+                      <td class="colu" style="cursor:pointer;">
+                        {% if user.admin %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
+                        {% else %}
+                          <span
+                        {% endif %}
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                         XXX {{aula.atividade}}
+                          {% if aula.responsavel %}({{aula.responsavel.get_full_name}}){% endif %}
+                        </span>
+                        {% for documento in aula.documentos %}
+                          {% comment %} Só mostra se data do documento for no passado {% endcomment %}
+                          {% if documento and documento.data|dif_agora < 0 %}
+                            {% if documento.documento %}
+                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                                &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
+                              </a>
+                            {% endif %}  
+                            {% if documento.link %}
+                              <a class="esconder" href="{{documento.link|add_http}}" target="_blank" rel="noopener noreferrer">
+                                &nbsp;<i class="fa fa-link"></i>
+                              </a>
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                      </td>
+
+
+
+                      {% comment %} <td class="colu local" style="cursor: pointer;">
+                        {% if aula.location %}
+                          <a style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/">{{aula.location}}</a>
+                        {% endif %}
+                      </td> {% endcomment %}
+                  </tr>
+                {% endfor %}
+
+                  {% comment %} <tr id="barra_inferior_m" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                    <a id="barra_local_m" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                  </td></tr>
+                   {% endcomment %}
+              </tbody>
+            </table>
+            {% endnospaces %}
+          {% endif %}
+
+          </div>
 
       </div> <!--id="bloco_aulas"-->
+
     </div> <!-- class="row" -->
   </div> <!--id="info_semestre"-->
   <br>
