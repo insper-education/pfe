@@ -72,7 +72,7 @@
     {% if completo %}
       <span class="esconder">
         <a data-proposta='{{proposta.id}}'
-         class="link-organizacao"
+         class="open-modal"
          href="{% url 'link_organizacao' proposta.id %}"
          data-url="{% url 'link_organizacao' proposta.id %}">
            <small>&#128279;</small>
@@ -160,12 +160,8 @@
     {{proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
   {% endif %}
 
-  {% include "organizacao-modal.html" %}
+  {% include "base-modal.html" %}
 
 {% else %}
-
-    <strong>
-      {% lng "Não foi possível carregar dados da Organização Parceira!" "It was not possible to load data from the Partner Organization!" %}
-    </strong>
-
+    <b>{% lng "Não foi possível carregar dados da Organização Parceira!" "It was not possible to load data from the Partner Organization!" %}</b>
 {% endif %}

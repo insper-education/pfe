@@ -4,6 +4,8 @@
   Data: 8 de Abril de 2021
 {% endcomment %}
 
+
+{% comment %} 
 <script>
 
   var proposta;
@@ -20,12 +22,10 @@
     });
   });
 
-</script>
-
-{% comment %} {% include "janela_modal.html" with nome="popup_organizacao" %} {% endcomment %}
+</script> {% endcomment %}
 
 <script>
-
+{% comment %} 
   function atualiza_organizacao(e) {
     
     if (!$("form")[0].checkValidity()) {
@@ -63,5 +63,5 @@
 
     {% include "ajax_default_function.js" %}
 
-  }
+  } {% endcomment %}
 </script> 

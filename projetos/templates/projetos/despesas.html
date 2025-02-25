@@ -6,10 +6,23 @@
 {% endcomment %}
 
 {% block head %}
+  {% load linguas %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
+
+  {% if user.admin %}
+    <span class="esconder">
+      <a href="#"
+      class="open-modal" style="cursor:pointer;"
+      data-url="{% url 'adiciona_documento' %}">
+        <i class="fas fa-plus"></i> 
+        {% lng "Cadastrar Nova Despesa" "Register New Expense" %}
+      </a>
+    </span>
+    {% include "base-modal.html" %}
+  {% endif %}
 
   {% include "tabelas_top_ml.html" with tabela="Despesas" cabecalhos=cabecalhos %}
     {% for despesa in despesas %} 

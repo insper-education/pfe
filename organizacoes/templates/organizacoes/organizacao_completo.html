@@ -126,7 +126,7 @@
   <h3>
     {% lng "Documentos" "Documents" %}
     <small class="esconder">
-      <a class="open-documento" style="cursor:pointer;"
+      <a class="open-modal" style="cursor:pointer;"
          data-url="{% url 'adiciona_documento' organizacao.id %}"
       >&#10133;</a>
     </small>
@@ -234,7 +234,7 @@
     </a>
   {% endif %}
 
-  {% include "documento-modal.html" %}
+  {% include "base-modal.html" %}
   {% include "annotation-modal2.html" %} {% comment %} Esse é para projeto e organizacao completo {% endcomment %}
 
 {% endblock %}

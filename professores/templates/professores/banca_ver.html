@@ -107,10 +107,10 @@
     </a>
   
     {% if banca.alocacao %}
-      <a href="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}" class="btn btn-primary mb-1 open-documento" data-url="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}">
+      <a href="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'adiciona_documento' banca.alocacao.projeto.organizacao.id banca.alocacao.projeto.id 'RPP' %}">
         {% lng "Adicionar Relatório para Probation" "Add Probation Report" %}
       </a>
-      {% include "documento-modal.html" %}
+      {% include "base-modal.html" %}
     {% endif %}
 
     <a href="{% url 'bancas_editar' banca.pk %}" class="btn btn-primary mb-1 open-modal" data-url="{% url 'bancas_editar' %}{{banca.pk}}">
@@ -119,7 +119,7 @@
   
   {% endif %}
 
-  {% include "janelas-modal.html" %}
+  {% include "base-modal.html" %}
 
   <script>
     $("#popup").on("hidden.bs.modal", function (e) {location.reload();})

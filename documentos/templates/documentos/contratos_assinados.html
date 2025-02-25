@@ -32,7 +32,7 @@
             <small class="esconder" style="position:absolute; top:0; left:0; cursor:pointer;">
               {% if projeto and projeto.organizacao %}
                 <a
-                  class="open-documento"
+                  class="open-modal"
                   data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'COP' %}"
                   >&#10133;</a>
               {% else %}
@@ -113,7 +113,7 @@
 
   </script>
   
-  {% include "documento-modal.html" %}
+  {% include "base-modal.html" %}
   {% include "edicoes_ajax.html" with tabela="Contratos" %}
   
 {% endblock %}

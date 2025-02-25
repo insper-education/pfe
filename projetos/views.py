@@ -1916,6 +1916,7 @@ def acompanhamento_view(request):
     context = {
         "parceiros": Parceiro.objects.all(),
         "data_hora": datetime.datetime.now(),
+        "url": request.get_full_path(),
     }
 
     return render(request,

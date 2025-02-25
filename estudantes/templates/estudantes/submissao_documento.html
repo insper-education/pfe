@@ -40,7 +40,7 @@
         {% endif %}
         {% if item.composicao.tipo_documento %}
           <a id="adiciona"
-            class="open-documento {% if dias_ate > dias %}lightgrey{% endif %}"
+            class="open-modal {% if dias_ate > dias %}lightgrey{% endif %}"
             data-toggle="tooltip" data-html="true" animation="true"
             {% if item.documentos.last %}
               title="Substitui documento"
@@ -117,7 +117,7 @@
     {% endwith %}
   {% endfor %} 
 
-  {% include "documento-modal.html" %}
+  {% include "base-modal.html" %}
 
   <script>
     function check_prazo(prazo) {

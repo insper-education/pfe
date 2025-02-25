@@ -36,5 +36,41 @@
 </form>
 
 <script>
-  $('#atualiza').on('click', atualiza);
+
+  function atualiza(e) {
+    
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
+        return false;
+    }
+
+    var disciplina_id = $("#disciplina").val();
+    
+    $.ajax({
+        type: "POST",
+        url: "{{ url }}",
+        data: {
+            "disciplina_id": disciplina_id,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+        },
+        success: function(response){
+            if (response.atualizado) {
+              nova_disc = '<tr id="disciplina'+response.disciplina_id+'"><td>'
+              nova_disc += response.disciplina
+              nova_disc += '<div class="esconder" style="float:right;">&nbsp;'
+              nova_disc += '<a onclick="event.preventDefault(); remove_disciplina($(this));" data-disciplina="'+response.disciplina_id+'" data-proposta="'+response.proposta_id+'">'
+              nova_disc += '<i class="far fa-trash-alt"></i>'
+              nova_disc += '</a></div></tr></td>'
+
+              $("#disciplinas_recomendadas > tbody:last-child").append(nova_disc);
+            } else {
+              console.log("Erro: Valor não atualizado.");
+            }
+        },
+        {% include "ajax_error_function.js" %}
+    });
+
+  }
+
+  $("#atualiza").on("click", atualiza);
 </script>

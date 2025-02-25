@@ -33,7 +33,7 @@
             <small class="esconder">
               <a
                 data-proposta='{{proposta.id}}'
-                class="link-disciplina"
+                class="open-modal"
                 href="{% url 'link_disciplina' proposta.id %}"
                 data-url="{% url 'link_disciplina' proposta.id %}"
                 >&#10133;</a>
@@ -65,7 +65,7 @@
     </table>
 
     {% if editavel %}
-      {% include "disciplina-modal.html" %}
+      {% include "base-modal.html" %}
     {% endif %}
 
   {% endif %}

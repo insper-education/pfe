@@ -38,13 +38,13 @@
               {% if documento.documento and documento.link %}
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-                 class="open-documento"
+                 class="open-modal"
                  data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                   <font size="6"><i class="fas fa-file-alt"></i></font>
                 </a>
                 <a style="color:green"
                  data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-                 class="open-documento"
+                 class="open-modal"
                  data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                   <font size="6"><i class="fas fa-link"></i></font>
                 </a>
@@ -52,7 +52,7 @@
                 {% if documento.documento %}
                   <a style="color:green"
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-                   class="open-documento"
+                   class="open-modal"
                    data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                     <font size="6"><i class="fas fa-file-alt"></i></font>
                   </a>
@@ -60,7 +60,7 @@
                 {% if documento.link %}
                   <a style="color:green"
                    data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
-                   class="open-documento"
+                   class="open-modal"
                    data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}">
                     <font size="6"><i class="fas fa-link"></i></font>
                   </a>
@@ -75,7 +75,7 @@
 
               <a style="color:red"
                data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
-               class="open-documento"
+               class="open-modal"
                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}">
                 <font size="6"><i class="far fa-file"></i></font>
               </a>
@@ -126,7 +126,7 @@
     window.onload = carrega_site
   </script>
 
-  {% include "documento-modal.html" %}
+  {% include "base-modal.html" %}
   {% include "edicoes_ajax.html" %}
 
 {% endblock %}

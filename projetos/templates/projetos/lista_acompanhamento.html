@@ -14,7 +14,7 @@
 {% block content %}
 
   <span class="esconder">
-    <a href="{% url 'acompanhamento_view'%}" class="open-acompanhamento" style="cursor:pointer;"
+    <a href="{% url 'acompanhamento_view'%}" class="open-modal" style="cursor:pointer;"
     data-url="{% url 'acompanhamento_view' %}">
       <i class="fas fa-plus"></i>
       {% lng "Adicionar Acompanhamento" "Add Follow-up" %}
@@ -59,6 +59,6 @@
     </table>
   </div>
 
-  {% include "acompanhamento-modal.html" %}
+  {% include "base-modal.html" %}
 
 {% endblock %}

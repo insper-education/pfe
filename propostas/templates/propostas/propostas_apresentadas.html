@@ -167,7 +167,7 @@
                   {% include "organizacoes/includes/bloco_organizacao.html" with organizacao=proposta.organizacao %}
                 </div>
                 <div class="esconder" style="float:right;">
-                  <a data-proposta="{{proposta.id}}" class="link-organizacao"
+                  <a data-proposta="{{proposta.id}}" class="open-modal"
                     href="{% url 'link_organizacao' proposta.id %}"
                     data-url="{% url 'link_organizacao' proposta.id %}"
                     ><small>&#128279;</small></a>
@@ -325,7 +325,7 @@
       </script>
 
     {% include "plot_barras.html" %}
-    {% include "organizacao-modal.html" %}
+    {% include "base-modal.html" %}
 
     <script>
       function carrega_pagina() {

@@ -42,7 +42,7 @@
             {% if projeto.periodo.pt == "Anteriores" %}
               href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
             {% else %}
-              class="open-documento"
+              class="open-modal"
               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}"
             {% endif %}
             ><b><i class="fas fa-file-alt"></i>
@@ -50,7 +50,7 @@
           <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
             data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
             {% if projeto.periodo.pt != "Anteriores" %}
-              class="open-documento"
+              class="open-modal"
               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}"
             {% endif %}
             ><b><i class="far fa-file"></i>
@@ -63,7 +63,7 @@
     {% endfor %}
   </tbody></table>
 
-  {% include "documento-modal.html" %}
+  {% include "base-modal.html" %}
   {% include "toggle_anteriores.html" %}
 
 {% endblock %}

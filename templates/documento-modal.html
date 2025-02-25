@@ -4,24 +4,27 @@
   Data: 1 de Junho de 2021
 {% endcomment %}
 
+
+{% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}
+
 <script>
-  var documento;
+  {% comment %} var documento; {% endcomment %}
   var url;
   
   $(document).on("click", ".open-documento", function (e) {
     e.preventDefault();
     var $popup = $("#popup");
-    documento = $(this).data("documento");
+    //documento = $(this).data("documento");
     url = $(this).data("url");
 
     var address = url
-    if(documento) {
-        address += '/'+documento+'/';
-    }
+    //if(documento) {
+    //    address += '/'+documento+'/';
+    //}
 
     $(".modal-content", $popup).load(address, function(response, status, xhr) {
       if(status == "error") {
-        alert("Erro ao tentar abrir a janela de arquivos: " + xhr.status + " " + xhr.statusText );
+        alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
       } else {
         $popup.modal("show");
       }
@@ -29,3 +32,5 @@
   });
 
 </script>
+
+{% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}

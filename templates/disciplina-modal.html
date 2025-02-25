@@ -4,9 +4,15 @@
   Data: 17 de Maio de 2021
 {% endcomment %}
 
+
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+
 <script>
 
-  var proposta;
+  {% comment %} var proposta;
   var url;
 
   $(document).on("click", ".link-disciplina", function (e) {
@@ -18,29 +24,27 @@
     $(".modal-content", $popup).load(url, function () {
       $popup.modal("show");
     });
-  });
+  }); {% endcomment %}
 
 </script>
 
-{% comment %} {% include "janela_modal.html" with nome="popup_disciplina" %} {% endcomment %}
-
 <script>
 
-  function atualiza(e) {
+  {% comment %} function atualiza(e) {
     
-    if (!$('form')[0].checkValidity()) {
-        $('form').find('input[type="submit"]').click();
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
         return false;
     }
 
-    var disciplina_id = $('#disciplina').val();
+    var disciplina_id = $("#disciplina").val();
     
     $.ajax({
         type: "POST",
         url: url,
         data: {
-            'disciplina_id': disciplina_id,
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            "disciplina_id": disciplina_id,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
             if (response.atualizado) {
@@ -59,5 +63,11 @@
         {% include "ajax_error_function.js" %}
     });
 
-  }
+  } {% endcomment %}
 </script> 
+
+
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}
+{% comment %} NÃO USAR REMOVER TUDO {% endcomment %}

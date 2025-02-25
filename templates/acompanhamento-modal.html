@@ -4,7 +4,12 @@
   Data: 7 de Abril de 2021
 {% endcomment %}
 
-<script>
+
+{% comment %} NAO USAR NAO USAR {% endcomment %}
+{% comment %} NAO USAR NAO USAR {% endcomment %}
+
+
+{% comment %} <script>
   var acompanhamento;
   var url;
   
@@ -27,12 +32,13 @@
 
   });
 
-</script>
+</script> {% endcomment %}
 
-{% comment %} {% include "janela_modal.html" with nome="popup_acompanhamento" %} {% endcomment %}
+
 
 <script>
 
+{% comment %}   
   function atualiza(e) {
     
     if (!$("form")[0].checkValidity()) {
@@ -70,7 +76,12 @@
             }
         },
         {% include "ajax_error_function.js" %}
-    });
+    }); 
 
-  }
+  }{% endcomment %}
 </script> 
+
+
+{% comment %} NAO USAR NAO USAR {% endcomment %}
+{% comment %} NAO USAR NAO USAR {% endcomment %}
+{% comment %} NAO USAR NAO USAR {% endcomment %}

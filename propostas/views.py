@@ -1006,6 +1006,7 @@ def link_organizacao(request, proposta_id):
     context = {
         "organizacoes": Organizacao.objects.all().order_by(Lower("sigla")),
         "proposta": proposta,
+        "url": request.get_full_path(),
     }
     return render(request, "propostas/organizacao_view.html", context=context)
 
@@ -1043,8 +1044,9 @@ def link_disciplina(request, proposta_id):
     context = {
         "disciplinas": Disciplina.objects.all().order_by("nome"),
         "proposta": proposta,
+        "url": request.get_full_path(),
     }
-
+ 
     return render(request, "propostas/disciplina_view.html", context=context)
 
 

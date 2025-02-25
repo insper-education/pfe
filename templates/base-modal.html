@@ -1,28 +1,26 @@
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 14 de Dezembro de 2023
+  Data: 25 de Fevereiro de 2025
 {% endcomment %}
 
-
-{% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}
-
 <script>
-
-  var data;
-  var url;
-
+  
   function abrir_modal(e) {
 
     if (e != null) e.preventDefault();
     var $popup = $("#popup");
-    data = $(this).data("data");
-    url = $(this).data("url");
+    var url = $(this).data("url");
 
-    var address = url
-    if(data) {address += data}
+    //documento = $(this).data("documento");
+    //if(documento) {
+    //    address += '/'+documento+'/';
+    //}
 
-    $(".modal-content", $popup).load(address, function(response, status, xhr) {
+    //data = $(this).data("data");
+    //if(data) {url += data}
+
+    $(".modal-content", $popup).load(url, function(response, status, xhr) {
       if(status == "error") {
         alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
       } else {
@@ -34,7 +32,8 @@
       }
     });
   }
- 
+
+   
   $(document).ready(function() {
     if (!$(document).data('modal-event-registered')) {  // Check if the event handler is already registered
       $(document).on("click", ".open-modal", abrir_modal);  // Register the event handler if it is not already registered      
@@ -43,5 +42,3 @@
   });
 
 </script>
-
-{% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}

@@ -382,7 +382,7 @@
     {% if user.prof_a %}
       {% if projeto and projeto.organizacao %}
         <small class="esconder">
-          <a class="open-documento" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+          <a class="open-modal" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
         </small>
       {% endif %}
     {% endif %}
@@ -604,7 +604,7 @@
       </script>
     {% endif %}
 
-    {% include "documento-modal.html" %}
+    {% include "base-modal.html" %}
 
   {% endif %}
 

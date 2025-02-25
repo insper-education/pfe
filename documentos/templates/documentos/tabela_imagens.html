@@ -17,13 +17,13 @@
 
   {% if user.admin %}
     <span class="esconder">
-      <a href="#" class="open-documento" style="cursor:pointer;"
+      <a href="#" class="open-modal" style="cursor:pointer;"
       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}"
       ><i class="fas fa-plus"></i>
         {% lng "Adicionar novo documento" "Add new document" %}
       </a>
     </span>
-    {% include "documento-modal.html" %}
+    {% include "base-modal.html" %}
   {% endif %}
 
   <div class="table-responsive">

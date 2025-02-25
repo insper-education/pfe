@@ -55,7 +55,7 @@
       </div>
       
       {% if user and user.admin %}
-        <a class="open-documento" data-url="{% url 'edita_documento' documento.id %}">&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>
+        <a class="open-modal" data-url="{% url 'edita_documento' documento.id %}">&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>
       {% endif %}
 
     </div>

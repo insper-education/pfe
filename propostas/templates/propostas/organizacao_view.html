@@ -4,6 +4,8 @@
   Data: 8 de Abril de 2021
 {% endcomment %}
 
+{% load linguas %}
+
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
@@ -15,7 +17,7 @@
 
   <div class="modal-body">
 
-    <label for="organizacao">Organização:</label>
+    <label for="organizacao">{% lng "Organização" "Organization" %}:</label>
     <select id="organizacao" name="organizacao" class="form-control" required>
       {% if organizacoes %}
         {% for organizacao in organizacoes %}
@@ -32,16 +34,58 @@
     <input type="submit" style="display:none;"/>
   </div>
   <div class="modal-footer">
-    <small><a href="{% url 'cadastrar_organizacao' proposta.id %}">Cadastrar Nova Organização</a></small>
+    <small><a href="{% url 'cadastrar_organizacao' proposta.id %}">
+      {% lng "Cadastrar Nova Organização" "Register New Organization" %}
+    </a></small>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
-    <button id="atualiza" type="button" class="btn btn-primary mb-1" data-dismiss="modal">Atualizar</button>
+    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">{% lng "Fechar" "Close" %}</button>
+    <button id="atualiza" type="button" class="btn btn-primary mb-1" data-dismiss="modal">{% lng "Atualizar" "Update" %}</button>
   </div>
-  
-  
 
 </form>
 
 <script>
-  $('#atualiza').on('click', atualiza_organizacao);
+
+  function atualiza_organizacao(e) {
+    
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
+        return false;
+    }
+
+    data = {"organizacao_id": $("#organizacao").val()};
+
+    function success(response){
+      if (response.atualizado) {
+
+        $("#organizacao_nome").html(response.organizacao);  // Para organizacao completo
+
+        href = "../../organizacoes/organizacao_completo/"+response.organizacao_id;
+        novo = "<a href='"+href+"'>"+response.organizacao+"</a>";
+        $("#proposta"+response.proposta).html(novo);  // Só para tabela
+        $("#organizacao_link").html(response.organizacao);  // Para organizacao completo
+        $("#organizacao_link").attr("href", href); // Para organizacao completo
+        $("#organizacao_endereco").html(response.organizacao_endereco);  // Para organizacao completo
+
+        $("#organizacao_website").html(response.organizacao_website); // Para organizacao completo
+        $("#organizacao_website").attr("href", response.organizacao_website); // Para organizacao completo
+
+        $("#logotipo").attr("src", response.organizacao_logotipo_url);
+        $("#logotipo").attr("alt", response.organizacao_sigla);
+
+        $(".pulsar").css("animation-play-state", "paused"); // Stop pulsar animation
+
+      }
+      else {
+        console.log("Erro: Valor não atualizado.");
+      }
+    };
+
+    var url = "{{ url }}";
+    {% include "ajax_default_function.js" %}
+
+  }
+
+  $("#atualiza").on("click", atualiza_organizacao);
+
 </script>
