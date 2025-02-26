@@ -20,6 +20,7 @@ from django.db.models import Prefetch
 
 from organizacoes.support import cria_documento
 
+from administracao.models import Despesa
 from administracao.support import usuario_sem_acesso
 
 from users.support import adianta_semestre, get_edicoes
@@ -102,6 +103,121 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     }
 
     return render(request, "organizacoes/anotacao_view.html", context=context)
+
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def adiciona_despesa(request):
+    """Adiciona uma Despesa na base de dados."""
+
+    if request.is_ajax() and request.method == "POST":
+        if "despesa_id" in request.POST:
+            despesa = get_object_or_404(Despesa, id=request.POST["despesa_id"])
+        else:
+            despesa = Despesa()
+
+        if "data" in request.POST:
+            try:
+                despesa.data = dateutil.parser.parse(request.POST["data"])
+            except (ValueError, OverflowError):
+                despesa.data = datetime.datetime.now()
+
+        
+        despesa.tipo_de_despesa = request.POST.get("tipo_despesa", None)
+        valor = request.POST.get("valor", None)
+        moeda = request.POST.get("moeda", None)
+        if valor and moeda:
+            if moeda == "BRL":
+                despesa.valor_r = float(valor)
+            elif moeda == "USD":
+                despesa.valor_d = float(valor)
+        despesa.descricao = request.POST.get("descricao", None)
+        
+        if "projeto" in request.POST and request.POST["projeto"]:
+            print("projeto", request.POST["projeto"])
+            despesa.projeto = Projeto.objects.get(id=request.POST["projeto"])
+        else:
+            despesa.projeto = None
+
+        despesa.save()
+
+        
+        return JsonResponse({"atualizado": True,})
+
+    context = {
+        "tipo_despesas": Despesa.TIPO_DE_DESPESA,
+        "Despesa": Despesa,
+        "projetos": Projeto.objects.all(),
+    }
+    
+    return render(request, "organizacoes/despesa_view.html", context=context)
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=None, documento_id=None, adiciona=None):
+    """Cria um documento."""
+
+    # Recupera o documento se existir e define o autor para o documento
+    documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
+    usuario = documento.usuario if documento else request.user
+
+    if request.is_ajax() and request.method == "POST":
+        erro = cria_documento(request, usuario=usuario)
+        if erro:
+           return HttpResponseBadRequest(erro)
+        return JsonResponse({"atualizado": True,})
+
+    organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
+    projeto = get_object_or_404(Projeto, id=projeto_id) if projeto_id else None
+    projetos = Projeto.objects.filter(proposta__organizacao=organizacao) if organizacao else Projeto.objects.all()
+
+    tipo = None
+    if tipo_nome and tipo_nome != "ANY":
+        tipo = TipoDocumento.objects.get(sigla=tipo_nome)
+
+    if documento:
+        tipo = documento.tipo_documento
+
+    if tipo and request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+            return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
+   
+    lingua = 0
+    if documento:
+        data = documento.data
+        confidencial = documento.confidencial
+        anotacao = documento.anotacao
+        lingua = documento.lingua_do_documento
+    else:
+        data = datetime.datetime.now()
+        confidencial = None
+        anotacao = None
+        
+    if adiciona is None:
+        adiciona = "adiciona_documento"
+
+    context = {
+        "organizacao": organizacao,
+        "tipos_documentos": TipoDocumento.objects.all(),
+        "data": data,
+        "Documento": Documento,
+        "projetos": projetos,
+        "projeto": projeto,
+        "tipo": tipo,
+        "organizacoes": Organizacao.objects.all(),
+        "documento": documento,
+        "documento_id": documento_id,
+        "configuracao": get_object_or_404(Configuracao),
+        "travado": False,
+        "adiciona": adiciona,
+        "confidencial": confidencial,
+        "anotacao": anotacao,
+        "lingua": lingua,
+    }
+    
+    return render(request, "organizacoes/documento_view.html", context=context)
 
 
 @login_required

@@ -1,0 +1,188 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 1 de Junho de 2021
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load get_field %}
+
+
+<style>
+
+  .col1 {
+    -ms-flex: 0 0 5.2em;
+    flex: 0 0 5.2em;
+    max-width: 5.2em;
+    position: relative;
+    width: 100%;
+    padding-right: 6px;
+    padding-left: 15px; 
+    display: inline-block;
+  }
+
+  .col2 {
+    -ms-flex: 0 0 calc(100% - 5.2em);
+    flex: 0 0 calc(100% - 5.2em);
+    max-width: calc(100% - 5.2em);
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 6px;
+    display: inline-block;
+  }
+
+
+</style>
+
+<form id="meuForm" method="post" enctype="multipart/form-data">
+
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 id="documentacao" class="modal-title">
+      {% if despesa %}{% lng "Editar" "Edit" %}{% else %}{% lng "Adicionar" "Add" %}{% endif %} {% lng "Despesa" "Expense" %}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="mb-3 row text-truncate">
+      <label for="valor" class="col1 col-form-label">{% lng "Valor" "Value" %}</label>
+      <div class="col2">
+        <input class="form-control" type="text" style="display: block;" size="73" 
+                id="valor" name="valor" placeholder="R$ / US$" 
+                {% if despesa.valor_r %}value="{{despesa.valor_r}}"{% elif despesa.valor_d %}value="{{despesa.valor_d}}"{% endif %}>
+      </div>
+    </div>
+
+    <div class="mb-3 row text-truncate">
+      <label for="moeda" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Moeda</label>
+      <div class="col2">
+        <select id="moeda" name="moeda" class="form-control" required="required" >
+          <option value="BRL" {% if moeda == "BRL" %}selected="selected"{% endif %}>Real</option>
+          <option value="USD" {% if moeda == "USD" %}selected="selected"{% endif %}>Dollar</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3 row text-truncate">
+      {% if travado %}
+        <div class="col-sm form-label">
+          <label>{% lng "Data" "Date" %}:</label> <span id="datetime"></span>
+        </div>
+      {% else %}
+        <label for="data" class="col1 col-form-label">{% lng "Data" "Date" %}</label>
+        <div class="col2">
+          <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
+        </div>
+      {% endif %}
+    </div>
+
+
+    <div class="mb-3 row text-truncate">
+      {% if tipo %}
+        <div class="col-sm form-label">
+          <span for="tipo_despesa">{% lng "Tipo" "Type" %}:</span>
+          <input type="hidden" id="tipo_despesa" name="tipo_despesa" value="{{tipo.id}}"/>
+          {{tipo.nome}}
+        </div>
+      {% else %}
+        <label for="tipo_despesa" class="col1 col-form-label">{% lng "Tipo" "Type" %}</label>
+        <div class="col2">
+        <select id="tipo_despesa" name="tipo_despesa" class="form-control" required="required" >
+          <option disabled selected value> -- selecione tipo de despesa -- </option>
+          {% for retorno in tipo_despesas %}
+            <option value="{{retorno.0}}" {% if retorno.0 == tipo.id %}selected="selected"{% endif %}>
+              {{retorno.1}}
+            </option>
+          {% endfor %}
+        </select>
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3 row text-truncate">
+      <label for="descricao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">Descri.</label>
+      <div class="col2">
+        <input class="form-control" type="text" style="display: block;" size="73" 
+                maxlength="{% max_length Despesa "descricao" %}" id="descricao" name="descricao"
+                {% if descricao %}value="{{descricao}}"{% endif %}
+                >
+      </div>
+    </div>
+  
+    <div class="mb-3 row text-nowrap text-truncate">
+      {% if projeto %}
+        <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+          <span for="projeto">{% lng "Projeto" "Project" %}:</span>
+          <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
+          {% if user.eh_prof_a %}<a href="{% url 'projeto_infos' projeto.id %}">{% endif %}
+          {{projeto.get_titulo}} ({{projeto.get_edicao}})
+          {% if user.eh_prof_a %}</a>{% endif %}
+        </div>
+      {% else %}
+        <label for="projeto" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Projeto</label>
+        <div class="col2 d-inline-block">
+          <select id="projeto" name="projeto" class="form-control d-inline-block">
+            <option selected value> -- selecione um projeto -- </option>
+            {% for proj in projetos %}
+              <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+                {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
+                {% include "tipo_projeto.html" with projeto=proj sem_cor=True %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <div class="modal-footer">    
+    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
+    <button id="atualiza" type="submit" class="btn btn-primary mb-1">Enviar</button>
+  </div>
+
+</form>
+
+<script>
+  
+  $("form#meuForm").submit(function(e){
+      e.preventDefault();
+    
+      $.ajaxSetup({
+        headers: { "X-CSRFToken": "{{csrf_token}}" }
+      });
+
+      var form = $("form#meuForm").closest("form");
+      var data = new FormData(form[0]);
+
+      $.ajax({
+        type: "POST",
+        data: data,
+        url: "{% url 'adiciona_despesa' %}",
+        processData: false,
+        contentType: false,   // verificar se isso é assim mesmo
+        success: function(response){
+          $("#popup").modal("hide");
+          location.reload();
+        },
+        error: function (request, status, error) {
+          $("#popup").modal("hide");
+          {% if user.tipo_de_usuario == 4 %} 
+            alert(request.responseText);
+            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+            console.log("error"+request.responseText);
+          {% else %}
+            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+          {% endif %}
+        }
+    });
+    return false;
+  });
+</script> 
