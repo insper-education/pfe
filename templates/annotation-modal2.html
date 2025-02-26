@@ -6,8 +6,13 @@
 
 {% comment %} Esse é para organizacao completo só {% endcomment %}
 
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+
 <script>
-  var anotacao;
+  {% comment %} var anotacao;
   var url;
   
   $(document).on("click", ".open-annotation", function (e) {
@@ -24,13 +29,13 @@
     $(".modal-content", $popup).load(address, function () {
       $popup.modal("show");
     });
-  });
+  }); {% endcomment %}
 
 </script>
 
 <script>
 
-  function atualiza(e) {
+  {% comment %} function atualiza(e) {
     
     if (!$("form")[0].checkValidity()) {
         $("form").find('input[type="submit"]').click();
@@ -72,5 +77,10 @@
         {% include "ajax_error_function.js" with com_alerta=True %}
     });
 
-  }
+  } {% endcomment %}
 </script> 
+
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}

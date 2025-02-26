@@ -70,7 +70,7 @@
   <span class="esconder">
     <a 
     href="{% url 'anotacao' %}"
-    class="create-annotation" style="cursor:pointer;"
+    class="open-modal" style="cursor:pointer;"
     data-url={% url 'anotacao' %}
     ><i class="fas fa-plus"></i>
       {% lng "Cadastrar Nova Anotação" "Register New Note" %}
@@ -167,16 +167,15 @@
               {% if not contato %}
                 <div style="float:left; width: 92%;">
                   <span id="contato_autor{{organizacao.id}}">---:</span>
-                  <a id='organizacao{{organizacao.id}}'
-                     data-organizacao='{{organizacao.id}}'
-                     class="edit-annotation imprimir"
+                  <a id="organizacao{{organizacao.id}}"
+                    data-confirmar="true"
+                    class="open-modal imprimir"
                     >---------</a>
                 </div>
                 <div class="esconder" style="float:right;">
                   {% if organizacao %}
                     <a style="font-size: 0.5em; vertical-align: super;"
-                       data-organizacao='{{organizacao.id}}'
-                       class="create-annotation"
+                       class="open-modal"
                        href="{% url 'anotacao' organizacao.id %}"
                        data-url="{% url 'anotacao' organizacao.id %}"
                       >&#10133;</a>
@@ -188,18 +187,15 @@
                 <div style="float:left; width: 92%; line-height: 1.1;">
                   <span id="contato_autor{{organizacao.id}}">{{contato.autor.first_name}}:</span>
                   <a id="organizacao{{organizacao.id}}"
-                      data-organizacao="{{organizacao.id}}"
-                      class="edit-annotation imprimir"
-                      href="{% url 'anotacao' organizacao.id %}"
-                      data-url="{% url 'anotacao' organizacao.id %}"
-                      data-anotacao="{{contato.id}}"
-                    >{{contato.texto}}</a
-                  >
+                      data-confirmar="true"
+                      class="open-modal imprimir"
+                      href="{% url 'anotacao' organizacao.id contato.id %}"
+                      data-url="{% url 'anotacao' organizacao.id contato.id %}"
+                    >{{contato.texto}}</a>
                 </div>
                 <div class="esconder" style="float:right;">
                   <a style="font-size: 0.5em; vertical-align: super;"
-                      data-organizacao="{{organizacao.id}}"
-                      class="create-annotation"
+                      class="open-modal"
                       href="{% url 'anotacao' organizacao.id %}"
                       data-url="{% url 'anotacao' organizacao.id %}"
                     >&#10133;</a
@@ -382,7 +378,8 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}cursos_projetos["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0"
+          stack: "Stack 0",
+          categoryPercentage: 0.4
         },
         {
           label: "Interessados",
@@ -392,7 +389,8 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}interessados["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0"
+          stack: "Stack 0",
+          categoryPercentage: 0.4
         },
         {
           label: "Sondados",
@@ -402,7 +400,8 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}sondados["{{curso.sigla_curta}}"], {% endfor %}],
           xAxisID: "bar-x-projetos",
-          stack: "Stack 0"
+          stack: "Stack 0",
+          categoryPercentage: 0.4
         },
         {
           label: "Necessários",
@@ -410,7 +409,8 @@
           borderWidth: 1,
           data: [{% for curso in cursos %}{{necessarios|get_value:curso|unlocalize}}, {% endfor %}],
           xAxisID: "bar-x-necessario",
-          stack: "Stack 1"
+          stack: "Stack 1",
+          categoryPercentage: 0.7
         }
       ]
 
@@ -431,15 +431,13 @@
         scales: {
           xAxes: [{
               stacked: true,
-              id: "bar-x-projetos",
-              categoryPercentage: 0.4
+              id: "bar-x-projetos"
             }, {
               display: false,
               id: "bar-x-necessario",
               type: "category",
               gridLines: {offsetGridLines: true},
-              offset: true,
-              categoryPercentage: 0.7
+              offset: true
             }
           ],
           yAxes: [{
@@ -479,14 +477,9 @@
       });
     </script>
 
-    {% comment %} <script>
-      // Call numberRows after sorting the table
-      $("th").click(function() {numberRows();});
-    </script> {% endcomment %}
-
   </div>
 
-  {% include "annotation-modal.html" %} {% comment %} Esse é para organização prospectada só {% endcomment %}
+  {% include "base-modal.html" %}
 
   <script>
 
@@ -495,7 +488,6 @@
         $(this).find('td:first').text(index + 1);
       });
     }    
-    {% comment %} numberRows(); {% endcomment %}
 
     function estrelas(id, pos) {
       for (let i = 1; i <= 5; i++) {

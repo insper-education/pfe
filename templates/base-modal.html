@@ -4,22 +4,33 @@
   Data: 25 de Fevereiro de 2025
 {% endcomment %}
 
+{% load linguas %}
+
+{% comment %} Para confirmações {% endcomment %}
+<div class="modal fade" id="confirm" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% lng "Editar Seleção" "Edit Selection" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% lng "Tem certeza que deseja editar a seleção?" "Are you sure you want to edit the selection?" %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal" >{% lng "Não" "No" %}</button>
+        <button type="button" class="btn btn-primary mb-1" id="sim">{% lng "Sim" "Yes" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   
-  function abrir_modal(e) {
-
-    if (e != null) e.preventDefault();
+  function envia_modal(url) {
     var $popup = $("#popup");
-    var url = $(this).data("url");
-
-    //documento = $(this).data("documento");
-    //if(documento) {
-    //    address += '/'+documento+'/';
-    //}
-
-    //data = $(this).data("data");
-    //if(data) {url += data}
-
     $(".modal-content", $popup).load(url, function(response, status, xhr) {
       if(status == "error") {
         alert("Erro ao tentar abrir a janela: " + xhr.status + " " + xhr.statusText );
@@ -33,6 +44,28 @@
     });
   }
 
+  function abrir_modal(e) {
+
+    if (e != null) e.preventDefault();
+    var url = $(this).data("url");
+    if (!url) {return;}
+
+    var confirmar = $(this).data("confirmar");
+    if (confirmar) {
+      $("#confirm").modal({
+        backdrop: "static",
+        keyboard: false
+      }) 
+      .on("click", "#sim", function(e) {
+        e.preventDefault();
+        $("#confirm").modal("hide");
+        envia_modal(url);
+      });
+    } else {
+      envia_modal(url);
+    }    
+  }
+
    
   $(document).ready(function() {
     if (!$(document).data('modal-event-registered')) {  // Check if the event handler is already registered
@@ -42,3 +75,4 @@
   });
 
 </script>
+

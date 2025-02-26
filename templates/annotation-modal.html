@@ -8,91 +8,85 @@
 
 {% load linguas %}
 
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+
 <script>
-
-  var anotacao;
-  var url;
-  var organizacao;
-
-  $(document).on("click", ".edit-annotation", function (e) {
-    e.preventDefault();
-
+{% comment %} 
+  function envia_modal(url) {
     var $popup = $("#popup");
-    anotacao = $(this).data("anotacao");
-    organizacao = $(this).data("organizacao");
-    url = $(this).data("url");
-    
-    $("#confirm").modal({
-        backdrop: "static",
-        keyboard: false
-    })
-
-    .on("click", "#sim", function(e) {
-      
-      e.preventDefault();
-      $("#confirm").modal("hide");
-
-      var address = url
-      if(anotacao) {
-          address += '/'+anotacao+'/'
-      }
-
-      $(".modal-content", $popup).load(address, function () {
-        if ($(".selectpicker").length) {
-          $(".selectpicker").selectpicker();
-        }
-        $popup.modal("show");
-      });
-    
-    });
-
-  });
-
-  $(document).on("click", ".create-annotation", function (e) {
-    e.preventDefault();
-    var $popup = $("#popup");
-    anotacao = $(this).data("anotacao");
-    organizacao = $(this).data("organizacao"); //pode não existir
-    url = $(this).data("url");
-
-    var address = url
-    if(anotacao) {
-        address += '/'+anotacao+'/'
-    }
-
-    $(".modal-content", $popup).load(address, function () {
+    $(".modal-content", $popup).load(url, function () {
       if ($(".selectpicker").length) {
         $(".selectpicker").selectpicker();
       }
       $popup.modal("show");
     });
-  });
+  }
+
+  $(document).on("click", ".open-modal", function (e) {
+    e.preventDefault();
+    var url = $(this).data("url");
+    if (!url) {return;}
+    
+    var confirmar = $(this).data("confirmar");
+    if (confirmar) {
+      $("#confirm").modal({
+        backdrop: "static",
+        keyboard: false
+      }) 
+      .on("click", "#sim", function(e) {
+        e.preventDefault();
+        $("#confirm").modal("hide");
+        envia_modal(url);
+      });
+    } else {
+      envia_modal(url);
+    }
+
+  }); {% endcomment %}
+
+  {% comment %} $(document).on("click", ".create-annotation", function (e) {
+    e.preventDefault();
+    var $popup = $("#popup");
+
+    var url = $(this).data("url");
+    if (!url) {return;}
+
+    $(".modal-content", $popup).load(url, function () {
+      if ($(".selectpicker").length) {
+        $(".selectpicker").selectpicker();
+      }
+      $popup.modal("show");
+    });
+  }); {% endcomment %}
 
 </script>
-
+{% comment %} 
 <div class="modal fade" id="confirm" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{% lng "Editar Anotação" "Edit Annotation" %}</h5>
+        <h5 class="modal-title">{% lng "Editar Seleção" "Edit Selection" %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        {% lng "Tem certeza que deseja editar a anotação?" "Are you sure you want to edit the annotation?" %}
+        {% lng "Tem certeza que deseja editar a seleção?" "Are you sure you want to edit the selection?" %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal" >Não</button>
-        <button type="button" class="btn btn-primary mb-1" id="sim">Sim</button>
+        <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal" >{% lng "Não" "No" %}</button>
+        <button type="button" class="btn btn-primary mb-1" id="sim">{% lng "Sim" "Yes" %}</button>
       </div>
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 
 <script>
 
-  function atualiza(e) {
+  {% comment %} function atualiza(e) {
     
     if (!$("form")[0].checkValidity()) {
         $("form").find('input[type="submit"]').click();
@@ -105,14 +99,9 @@
 
     var organizacao_id = $("#organizacao_id").val();
 
-    var address = url
-    if(anotacao) {
-        address += '/'+anotacao+'/'
-    }
-
     $.ajax({
         type: "POST",
-        url: address,
+        url: "{{ url }}",
         data: {
             "texto": texto,
             "data_hora": data_hora,
@@ -122,15 +111,16 @@
         },
         success: function(response){
             if (response.atualizado) {
-              if (organizacao=== undefined) { // Faz um refresh na página
+              if (organizacao_id === undefined) { // Faz um refresh na página
                 setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
               }
-              $("#data"+organizacao).text(response.data);
-              $("#contato_autor"+organizacao).text(response.autor_nome+": ");
-              $("#organizacao"+organizacao).data("anotacao", response.anotacao_id);
-              $("#organizacao"+organizacao).text(texto);
+              
+              $("#data"+organizacao_id).text(response.data);
+              $("#contato_autor"+organizacao_id).text(response.autor_nome+": ");
+              $("#organizacao"+organizacao_id).data("anotacao", response.anotacao_id);
+              $("#organizacao"+organizacao_id).text(texto);
               {% for t in tipo_retorno %}
-                if(tipo_retorno == {{t.id}}) $("#tr"+organizacao).css("background-color", "#{{t.cor}}");
+                if(tipo_retorno == {{t.id}}) $("#tr"+organizacao_id).css("background-color", "#{{t.cor}}");
               {% endfor %}
             } else {
               console.log("Erro: Valor não atualizado.");
@@ -140,5 +130,11 @@
         {% include "ajax_error_function.js" %}
     });
 
-  }
+  } {% endcomment %}
 </script> 
+
+
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+{% comment %} NÃO USAR MAIS {% endcomment %}
+

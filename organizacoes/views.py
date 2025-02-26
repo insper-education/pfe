@@ -81,6 +81,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
             "autor_nome": anotacao_obj.autor.first_name,
             "autor_sobrenome": anotacao_obj.autor.last_name,
             "anotacao_id": anotacao_obj.id,
+            "novo": False if anotacao_id else True,
             "atualizado": True,
         }
 
@@ -88,12 +89,16 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 
     anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id) if anotacao_id else None
 
+    lista = request.GET.get("lista", None)
+
     context = {
         "organizacao": organizacao,
         "tipo_retorno": TipoRetorno.objects.all(),
         "anotacao": anotacao_obj,
         "data_hora": anotacao_obj.momento if anotacao_obj else datetime.datetime.now(),
         "organizacoes": Organizacao.objects.all(),
+        "url": request.get_full_path(),
+        "organiza_em_lista": True if lista else False,
     }
 
     return render(request, "organizacoes/anotacao_view.html", context=context)

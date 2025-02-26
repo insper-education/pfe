@@ -199,9 +199,9 @@
   <h3>
     {% lng "Anotações" "Annotations" %}
     <small class="esconder">
-    <a class="open-annotation"
-      href="{% url 'anotacao' organizacao.id %}"
-      data-url="{% url 'anotacao' organizacao.id %}"
+    <a class="open-modal"
+      href="{% url 'anotacao' organizacao.id %}?lista=true"
+      data-url="{% url 'anotacao' organizacao.id %}?lista=true"
       >&#10133;</a>
     </small>
   </h3>
@@ -210,11 +210,13 @@
     <ul id="lista_anotacoes" style="padding-left: 18px;">
       {% for anotacao in organizacao.anotacao_set.all|dictsortreversed:"momento" %}
         <li>
-          <a class="open-annotation"
-             href="{% url 'anotacao' organizacao.id %}"
-             data-url="{% url 'anotacao' organizacao.id %}"
-             data-anotacao="{{anotacao.id}}">
-               {{anotacao.autor.get_full_name}} [<span id='data{{anotacao.id}}'>{{anotacao.momento.date|date:"d/m/Y"}}</span>] : <span id='anotacao{{anotacao.id}}'>{{anotacao.texto}}</span>
+          <a class="open-modal" id="anotacao{{anotacao.id}}"
+             data-confirmar="true"
+             href="{% url 'anotacao' organizacao.id anotacao.id %}?lista=true"
+             data-url="{% url 'anotacao' organizacao.id anotacao.id %}?lista=true">
+               {{anotacao.autor.get_full_name}}
+               [<span id="data_anot{{anotacao.id}}">{{anotacao.momento.date|date:"d/m/Y"}}</span>]:
+               <span id="texto_anot{{anotacao.id}}">{{anotacao.texto}}</span>
           </a>
         </li>
       {% endfor %}
@@ -235,6 +237,5 @@
   {% endif %}
 
   {% include "base-modal.html" %}
-  {% include "annotation-modal2.html" %} {% comment %} Esse é para projeto e organizacao completo {% endcomment %}
 
 {% endblock %}

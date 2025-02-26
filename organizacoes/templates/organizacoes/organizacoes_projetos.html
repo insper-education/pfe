@@ -115,16 +115,15 @@
                       ---:
                     </span>
                     <a id='organizacao{{organizacao.id}}'
-                       data-organizacao='{{organizacao.id}}'
-                       class="edit-annotation imprimir"
+                      data-confirmar="true"
+                      class="open-modal imprimir"
                       >---------</a
                     >
                   </div>
                   <div class="esconder" style="float:right;">
                     {% if organizacao %}
                       <a style="font-size: 0.5em; vertical-align: super;"
-                         data-organizacao='{{organizacao.id}}'
-                         class="create-annotation"
+                         class="open-modal"
                          href="{% url 'anotacao' organizacao.id %}"
                          data-url="{% url 'anotacao' organizacao.id %}"
                         >&#10133;</a
@@ -138,18 +137,16 @@
                     <div style="float:left;width: 92%;">
                       <span id="contato_autor{{organizacao.id}}">{{contato.autor.first_name}}:</span>
                       <a id='organizacao{{organizacao.id}}'
-                         data-organizacao='{{organizacao.id}}'
-                         class="edit-annotation imprimir"
-                         href="{% url 'anotacao' organizacao.id %}"
-                         data-url="{% url 'anotacao' organizacao.id %}"
-                         data-anotacao="{{contato.id}}"
+                         class="open-modal imprimir"
+                         href="{% url 'anotacao' organizacao.id contato.id %}"
+                         data-url="{% url 'anotacao' organizacao.id contato.id %}"
+                         data-confirmar="true"
                         >{{contato.texto}}</a
                       >
                     </div>
                     <div class="esconder" style="float:right;">
                       <a style="font-size: 0.5em; vertical-align: super;"
-                         data-organizacao='{{organizacao.id}}'
-                         class="create-annotation"
+                         class="open-modal"
                          href="{% url 'anotacao' organizacao.id %}"
                          data-url="{% url 'anotacao' organizacao.id %}"
                         >&#10133;</a
@@ -302,7 +299,7 @@
 
   </script>
 
-  {% include "annotation-modal.html" %}
+  {% include "base-modal.html" %}
   {% include "edicoes_ajax.html" %}
 
 {% endblock %}

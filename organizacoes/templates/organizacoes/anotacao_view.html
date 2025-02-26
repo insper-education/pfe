@@ -41,6 +41,8 @@
         {% endfor %}
       </select>
       <br><br>
+    {% else %}  
+      <input type="hidden" id="organizacao_id" name="organizacao_id" value="{{organizacao.id}}">
     {% endif %}
 
     <label for="data_hora">{% lng "Data e Hora" "Date and Time" %}:</label>
@@ -74,5 +76,70 @@
 </form>
 
 <script>
+  function atualiza(e) {
+    
+    if (!$("form")[0].checkValidity()) {
+        $("form").find('input[type="submit"]').click();
+        return false;
+    }
+
+    var texto = $("#texto").val();
+    var data_hora = $("#data_hora").val();
+    var tipo_retorno = $("#tipo_retorno").val();
+
+    var organizacao_id = $("#organizacao_id").val();
+
+    $.ajax({
+        type: "POST",
+        url: "{{ url }}",
+        data: {
+            "texto": texto,
+            "data_hora": data_hora,
+            "tipo_retorno": tipo_retorno,
+            "organizacao_id": organizacao_id,
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+        },
+        success: function(response){
+            if (response.atualizado) {
+
+              {% if organiza_em_lista %}
+                var url = "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id;
+                if(response.novo) {
+                  $("#lista_anotacoes").prepend("<li><a class='open-modal' id='anotacao"+response.anotacao_id+"' data-confirmar='true' href='"+url+"?lista=true' data-url='"+url+"?lista=true'>"+response.autor_nome+" "+response.autor_sobrenome+" [<span id='data_anot"+response.anotacao_id+"'>"+response.data_full+"</span>]: <span id='texto_anot"+response.anotacao_id+"'>"+texto+'</span></a></li>');
+                } else {
+                  $("#anotacao"+response.anotacao_id).attr("data-url", url);
+                  $("#anotacao"+response.anotacao_id).attr("href", url);
+                  $("#texto_anot"+response.anotacao_id).text(texto);
+                  $("#data_anot"+response.anotacao_id).text(response.data_full);
+                }
+                $("#sem_anotacoes").hide();
+
+              {% else %}
+
+                if (organizacao_id === undefined) { // Faz um refresh na página
+                  setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
+                }
+                $("#data"+organizacao_id).text(response.data);
+                $("#contato_autor"+organizacao_id).text(response.autor_nome+": ");
+                $("#organizacao"+organizacao_id).attr("data-url", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
+                $("#organizacao"+organizacao_id).attr("href", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
+                $("#organizacao"+organizacao_id).text(texto);
+                {% for t in tipo_retorno %}
+                  if(tipo_retorno == {{t.id}}) $("#tr"+organizacao_id).css("background-color", "#{{t.cor}}");
+                {% endfor %}
+              
+              {% endif %}
+
+
+            } else {
+              console.log("Erro: Valor não atualizado.");
+              alert("Erro: Alguma falha no sistema não permitiu atualizar os dados. entrar em contato com: lpsoares@insper.edu.br");
+            }
+        },
+        {% include "ajax_error_function.js" %}
+    });
+
+  }
+
   $("#atualiza").on("click", atualiza);
 </script>
