@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
 from django.http.response import StreamingHttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from users.models import PFEUser, Alocacao, Administrador
 from documentos.models import TipoDocumento
@@ -224,12 +224,19 @@ def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usu
         raise Http404
     return le_arquivo(request, local_path, path)
 
+
+# DEVERIA ESTAR NUMA VIEW ?????????
 def doc(request, tipo):
     """Acessa arquivos do servidor pelo tipo dele se for publico."""
     tipo_documento = get_object_or_404(TipoDocumento, sigla=tipo)
     documento = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False).order_by("data").last()
     if documento is None:
         raise Http404
-    path = str(documento.documento).split('/')[-1]
-    local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
-    return le_arquivo(request, local_path, path)
+    if documento.documento:
+        path = str(documento.documento).split('/')[-1]
+        local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
+        return le_arquivo(request, local_path, path)
+    elif documento.link:
+        return redirect(documento.link)
+
+    raise Http404
