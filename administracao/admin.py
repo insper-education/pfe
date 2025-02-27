@@ -43,12 +43,13 @@ class TipoEventoAdmin(admin.ModelAdmin):
     ordering = ("nome",)
     search_fields = ["nome", "sigla"]
 
+
 @admin.register(Despesa)
 class DespesaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""   
-    list_display = ("projeto", "data", "descricao", "valor_r", "valor_d")
-    ordering = ("projeto",)
-    search_fields = ["projeto", "descricao"]
+    list_display = ("descricao", "data", "valor_r", "valor_d")
+    ordering = ("data",)
+    search_fields = ["descricao", "fornecedor", "projeto"]
     list_filter = ["data"]
 
 
