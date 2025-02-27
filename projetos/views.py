@@ -731,8 +731,21 @@ def comite(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def despesas(request):
     """Exibe as despesas do Capstone."""
+    configuracao = get_object_or_404(Configuracao)
+
+    despesa_por_tipo = {}
+    for despesa in Despesa.objects.all():
+        if despesa.get_tipo_de_despesa_display() not in despesa_por_tipo:
+            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] = 0
+        if despesa.valor_r:
+            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] += despesa.valor_r
+        elif despesa.valor_d:
+            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] += despesa.valor_d * configuracao.cotacao_dolar
+    
     context = {
             "despesas": Despesa.objects.all(),
+            "configuracao": configuracao,
+            "despesa_por_tipo": despesa_por_tipo,
             "cabecalhos": [{"pt": "Tipo", "en": "Type"},
                            {"pt": "Data", "en": "Date"},
                            {"pt": "Valor", "en": "Value"},
