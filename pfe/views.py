@@ -50,10 +50,51 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
+import os
+import requests
+from git import Repo
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+
+    # pip install requests gitpython urllib3 idna certifi charset_normalizer gitdb smmap --no-deps
+
+    # print(settings.GITHUB_USERNAME)
+    # print(settings.GITHUB_TOKEN)
+
+    # # Directory where you want to save the backups
+    BACKUP_DIR = "teste"
+
+    # # GitHub API URL to list repositories
+    REPOS_URL = f'https://api.github.com//orgs/pfeinsper/repos'
+
+    headers = {
+        "Authorization": f"token {settings.GITHUB_TOKEN}"
+    }
+    response = requests.get(REPOS_URL, headers=headers)
+    repos = response.json()
+
+    # print(repos)
+
+    #     if not os.path.exists(BACKUP_DIR):
+    #         os.makedirs(BACKUP_DIR)
+
+    #     for repo in repos:
+    #         repo_name = repo['name']
+    #         clone_url = repo['clone_url']
+    #         repo_dir = os.path.join(BACKUP_DIR, repo_name)
+
+    #         if os.path.exists(repo_dir):
+    #             print(f'Updating repository: {repo_name}')
+    #             repo = Repo(repo_dir)
+    #             repo.remotes.origin.pull()
+    #         else:
+    #             print(f'Cloning repository: {repo_name}')
+    #             Repo.clone_from(clone_url, repo_dir)
+
+
+    message = "Feito"
     return HttpResponse(message)
