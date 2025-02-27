@@ -50,9 +50,9 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-import os
-import requests
-from git import Repo
+# import os
+# import requests
+# from git import Repo
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -74,8 +74,8 @@ def migracao(request):
     headers = {
         "Authorization": f"token {settings.GITHUB_TOKEN}"
     }
-    response = requests.get(REPOS_URL, headers=headers)
-    repos = response.json()
+    # response = requests.get(REPOS_URL, headers=headers)
+    # repos = response.json()
 
     # print(repos)
 
