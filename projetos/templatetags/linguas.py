@@ -39,7 +39,10 @@ def lng_dl(date, pt_text="", en_text=""):
 # Para números com duas casas decimais
 @register.simple_tag
 def lng_2(numero):
-    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+    try:
+        locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
+    except locale.Error:  
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     pt_text = locale.format_string("%.2f", numero, grouping=True)
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
     en_text = locale.format_string("%.2f", numero, grouping=True)
