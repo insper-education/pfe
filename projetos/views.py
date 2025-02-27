@@ -733,27 +733,48 @@ def despesas(request):
     """Exibe as despesas do Capstone."""
     configuracao = get_object_or_404(Configuracao)
 
-    despesa_por_tipo = {}
-    for despesa in Despesa.objects.all():
-        if despesa.get_tipo_de_despesa_display() not in despesa_por_tipo:
-            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] = 0
-        if despesa.valor_r:
-            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] += despesa.valor_r
-        elif despesa.valor_d:
-            despesa_por_tipo[despesa.get_tipo_de_despesa_display()] += despesa.valor_d * configuracao.cotacao_dolar
-    
-    context = {
-            "despesas": Despesa.objects.all(),
-            "configuracao": configuracao,
-            "despesa_por_tipo": despesa_por_tipo,
-            "cabecalhos": [{"pt": "Tipo", "en": "Type"},
-                           {"pt": "Data", "en": "Date"},
-                           {"pt": "Valor", "en": "Value"},
-                           {"pt": "Descrição", "en": "Description"},
-                           {"pt": "Fornecedor", "en": "Supplier"},
-                           {"pt": "Projeto", "en": "Project"}, ],
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                despesas = Despesa.objects.all()
+            else:
+                ano, semestre = edicao.split('.')
+                if semestre == "1/2":
+                    despesas = Despesa.objects.filter(data__year=ano)
+                elif semestre == "1":
+                    despesas = Despesa.objects.filter(data__year=ano, data__month__lte=6)
+                else:  # semestre == '2':
+                    despesas = Despesa.objects.filter(data__year=ano, data__month__gte=7)
+
+        despesa_por_tipo = {}
+        for despesa in despesas:
+            tipo = despesa.get_tipo_de_despesa_display()
+            if tipo not in despesa_por_tipo:
+                despesa_por_tipo[tipo] = 0
+            if despesa.valor_r:
+                despesa_por_tipo[tipo] += despesa.valor_r
+            elif despesa.valor_d:
+                despesa_por_tipo[tipo] += despesa.valor_d * configuracao.cotacao_dolar
+        
+        context = {
+                "despesas": despesas,
+                "cotacao_dolar": configuracao.cotacao_dolar,
+                "despesa_por_tipo": despesa_por_tipo,
+                "cabecalhos": [ {"pt": "Data", "en": "Date"},
+                                {"pt": "Tipo", "en": "Type"},
+                                {"pt": "Valor", "en": "Value"},
+                                {"pt": "Descrição", "en": "Description"},
+                                {"pt": "Fornecedor", "en": "Supplier"},
+                                {"pt": "Projeto", "en": "Project"}, ],
+            }
+    else:
+
+        context = {
             "titulo": {"pt": "Despesas", "en": "Expenses"},
+            "edicoes": get_edicoes(Projeto, anual=True)[0],
         }
+    
     return render(request, "projetos/despesas.html", context)
 
 
@@ -761,7 +782,7 @@ def despesas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_feedback(request):
     """Lista todos os feedback das Organizações Parceiras."""
-    edicoes, _, _ = get_edicoes(Projeto)
+    edicoes = get_edicoes(Projeto)[0]
     
     # primeiro ano foi diferente (edição anual em 2018.2)
     num_projetos = [Projeto.objects.filter(ano=2018, semestre=2).count()]

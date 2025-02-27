@@ -1223,7 +1223,7 @@ def mentorias_tabela(request):
             }
 
     else:
-        edicoes, _, _ = get_edicoes(Projeto, anual=True)
+        edicoes = get_edicoes(Projeto, anual=True)[0]
         context = {
             "titulo": { "pt": "Alocação em Mentorias", "en": "Mentoring Allocation" },
             "edicoes": edicoes,

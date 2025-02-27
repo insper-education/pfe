@@ -12,93 +12,101 @@
 
 {% block content %}
 
-  {% if user.admin %}
-    <span class="esconder">
-      <a href="#"
-      class="open-modal" style="cursor:pointer;"
-      data-url="{% url 'adiciona_despesa' %}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Cadastrar Nova Despesa" "Register New Expense" %}
-      </a>
-    </span>
-    {% include "base-modal.html" %}
-  {% endif %}
+  {% include "edicoes.html" %}
 
-  {% include "tabelas_top_ml.html" with tabela="Despesas" cabecalhos=cabecalhos %}
-    {% for despesa in despesas %} 
-      <tr class="item">
-        <th scope="row" data-sort="{{despesa.tipo_de_despesa}}">
-          {{despesa.get_tipo_de_despesa_display}}
-        </th>
-        <td data-sort="{{despesa.data|date:"Y-m-d"}}">
-          {{despesa.data|date:"d/m/Y"}}
-        </td>
-        <td style="white-space: nowrap;">
-          {% if despesa.valor_r %}R$ {% lng_2 despesa.valor_r %}{% endif %}
-          {% if despesa.valor_d %}US$ {% lng_2 despesa.valor_d %}{% endif %}
-        </td>
-        <td>{% if despesa.descricao %}{{despesa.descricao}} {% endif %}</td>
-        <td>{% if despesa.fornecedor %}{{despesa.fornecedor}} {% endif %}</td>
-        <td>
-          {% if despesa.projeto %}
-            <a href="{% url 'organizacao_completo' despesa.projeto.organizacao.id %}">
-              [{{despesa.projeto.organizacao}}]
-            </a>
-            <a href="{% url 'projeto_infos' despesa.projeto.id %}">
-              {{despesa.projeto.get_titulo}}
-            </a>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  {% include "tabelas_bottom.html" %}
+  <div id="atualizar">
 
-  {% comment %} Exibir cotação do dollar usada como referência {% endcomment %}
-  {% if configuracao.cotacao_dolar %}
-    <div class="alert alert-info" role="alert" style="display: inline-block;">
-      <strong>{% lng "Cotação do Dólar" "Dollar Exchange Rate" %}:</strong>
-      1 US$ = R$ {% lng_2 configuracao.cotacao_dolar %}
-    </div><br>
-  {% endif %}
+    {% if user.admin %}
+      <span class="esconder">
+        <a href="#"
+        class="open-modal" style="cursor:pointer;"
+        data-url="{% url 'adiciona_despesa' %}">
+          <i class="fas fa-plus"></i> 
+          {% lng "Cadastrar Nova Despesa" "Register New Expense" %}
+        </a>
+      </span>
+      {% include "base-modal.html" %}
+    {% endif %}
 
-  {% comment %} Mostra uma tabela com a somatória dos valores das despesas agrupadas por tipo de despesa. {% endcomment %}
-  {% if user.admin %}
-    <div class="card" style="display: inline-block;">
-      <div class="card-header">
-        <h5 class="card-title mb-0">
-          {% lng "Despesas por Tipo" "Expenses by Type" %}
-        </h5>
-      </div>
-      <div class="card-body">
-        <table class="table table-striped table-hover table-sm">
-          <thead>
-            <tr>
-              <th>{% lng "Tipo de Despesa" "Expense Type" %}</th>
-              <th>{% lng "Total" "Total" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for tipo, valor_r in despesa_por_tipo.items %}
+    {% include "tabelas_top_ml.html" with tabela="Despesas" cabecalhos=cabecalhos %}
+      {% for despesa in despesas %} 
+        <tr class="item">
+          <td data-sort="{{despesa.data|date:"Y-m-d"}}">
+            {{despesa.data|date:"d/m/Y"}}
+          </td>
+          <th scope="row" data-sort="{{despesa.tipo_de_despesa}}">
+            {{despesa.get_tipo_de_despesa_display}}
+          </th>
+          <td style="white-space: nowrap;">
+            {% if despesa.valor_r %}R$ {% lng_2 despesa.valor_r %}{% endif %}
+            {% if despesa.valor_d %}US$ {% lng_2 despesa.valor_d %}{% endif %}
+          </td>
+          <td>{% if despesa.descricao %}{{despesa.descricao}} {% endif %}</td>
+          <td>{% if despesa.fornecedor %}{{despesa.fornecedor}} {% endif %}</td>
+          <td>
+            {% if despesa.projeto %}
+              <a href="{% url 'organizacao_completo' despesa.projeto.organizacao.id %}">
+                [{{despesa.projeto.organizacao}}]
+              </a>
+              <a href="{% url 'projeto_infos' despesa.projeto.id %}">
+                {{despesa.projeto.get_titulo}}
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+
+    {% comment %} Exibir cotação do dollar usada como referência {% endcomment %}
+    {% if cotacao_dolar %}
+      <div class="alert alert-info" role="alert" style="display: inline-block;">
+        <strong>{% lng "Cotação do Dólar" "Dollar Exchange Rate" %}:</strong>
+        1 US$ = R$ {% lng_2 cotacao_dolar %}
+      </div><br>
+    {% endif %}
+
+    {% comment %} Mostra uma tabela com a somatória dos valores das despesas agrupadas por tipo de despesa. {% endcomment %}
+    {% if user.admin %}
+      <div class="card" style="display: inline-block;">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            {% lng "Despesas por Tipo" "Expenses by Type" %}
+          </h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover table-sm">
+            <thead>
               <tr>
-                <td>{{tipo}}</td>
-                <td style="white-space: nowrap; text-align: right;"
-                    data-sort="{{valor_r}}">
-                    R$ {% lng_2 valor_r %}
-                </td>
+                <th>{% lng "Tipo de Despesa" "Expense Type" %}</th>
+                <th>{% lng "Total" "Total" %}</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% for tipo, valor_r in despesa_por_tipo.items %}
+                <tr>
+                  <td>{{tipo}}</td>
+                  <td style="white-space: nowrap; text-align: right;"
+                      data-sort="{{valor_r}}">
+                      R$ {% lng_2 valor_r %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
 
+    <script>
+      function carrega_site() {
+        {% include "edicao_puxar_local_ou_versao.js" %}      
+      };
+      window.onload = carrega_site
+    </script>
 
-  <script>
-    function carrega_pagina(){
-      {% include "tabelas_scripts.html" with tabela="Despesas" %}
-    }
-    window.onload = carrega_pagina
-  </script>
+  </div>
+
+  {% include "edicoes_ajax.html" with tabela="Despesas" %}
 
 {% endblock %}
