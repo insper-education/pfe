@@ -737,6 +737,7 @@ def despesas(request):
                            {"pt": "Data", "en": "Date"},
                            {"pt": "Valor", "en": "Value"},
                            {"pt": "Descrição", "en": "Description"},
+                           {"pt": "Fornecedor", "en": "Supplier"},
                            {"pt": "Projeto", "en": "Project"}, ],
             "titulo": {"pt": "Despesas", "en": "Expenses"},
         }

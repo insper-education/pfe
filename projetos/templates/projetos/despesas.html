@@ -37,9 +37,8 @@
           {% if despesa.valor_r %}R$ {{despesa.valor_r|floatformat:2}}{% endif %}
           {% if despesa.valor_d %}US$ {{despesa.valor_d|floatformat:2}}{% endif %}
         </td>
-        <td>
-          {% if despesa.descricao %}{{despesa.descricao}} {% endif %}
-        </td>
+        <td>{% if despesa.descricao %}{{despesa.descricao}} {% endif %}</td>
+        <td>{% if despesa.fornecedor %}{{despesa.fornecedor}} {% endif %}</td>
         <td>
           {% if despesa.projeto %}
             <a href="{% url 'organizacao_completo' despesa.projeto.organizacao.id %}">

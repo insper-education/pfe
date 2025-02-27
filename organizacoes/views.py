@@ -124,7 +124,6 @@ def adiciona_despesa(request):
             except (ValueError, OverflowError):
                 despesa.data = datetime.datetime.now()
 
-        
         despesa.tipo_de_despesa = request.POST.get("tipo_despesa", None)
         valor = request.POST.get("valor", None)
         moeda = request.POST.get("moeda", None)
@@ -133,7 +132,9 @@ def adiciona_despesa(request):
                 despesa.valor_r = float(valor)
             elif moeda == "USD":
                 despesa.valor_d = float(valor)
+
         despesa.descricao = request.POST.get("descricao", None)
+        despesa.fornecedor = request.POST.get("fornecedor", None)
         
         if "projeto" in request.POST and request.POST["projeto"]:
             print("projeto", request.POST["projeto"])
@@ -143,7 +144,6 @@ def adiciona_despesa(request):
 
         despesa.save()
 
-        
         return JsonResponse({"atualizado": True,})
 
     context = {

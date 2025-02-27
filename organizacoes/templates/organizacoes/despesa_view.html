@@ -8,7 +8,6 @@
 {% load linguas %}
 {% load get_field %}
 
-
 <style>
 
   .col1 {
@@ -32,7 +31,6 @@
     padding-left: 6px;
     display: inline-block;
   }
-
 
 </style>
 
@@ -61,7 +59,9 @@
     </div>
 
     <div class="mb-3 row text-truncate">
-      <label for="moeda" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">Moeda</label>
+      <label for="moeda" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">
+        {% lng "Moeda" "Currency" %}
+      </label>
       <div class="col2">
         <select id="moeda" name="moeda" class="form-control" required="required" >
           <option value="BRL" {% if moeda == "BRL" %}selected="selected"{% endif %}>Real</option>
@@ -82,7 +82,6 @@
         </div>
       {% endif %}
     </div>
-
 
     <div class="mb-3 row text-truncate">
       {% if tipo %}
@@ -107,15 +106,27 @@
     </div>
     
     <div class="mb-3 row text-truncate">
-      <label for="descricao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">Descri.</label>
+      <label for="descricao" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">
+        {% lng "Descrição" "Description" %}  
+      </label>
       <div class="col2">
         <input class="form-control" type="text" style="display: block;" size="73" 
                 maxlength="{% max_length Despesa "descricao" %}" id="descricao" name="descricao"
-                {% if descricao %}value="{{descricao}}"{% endif %}
-                >
+                {% if descricao %}value="{{descricao}}"{% endif %}>
       </div>
     </div>
   
+    <div class="mb-3 row text-truncate">
+      <label for="fornecedor" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.0em;">
+        {% lng "Fornecedor" "Supplier" %}
+      </label>
+      <div class="col2">
+        <input class="form-control" type="text" style="display: block;" size="73" 
+                maxlength="{% max_length Despesa "fornecedor" %}" id="fornecedor" name="fornecedor"
+                {% if fornecedor %}value="{{fornecedor}}"{% endif %}>
+      </div>
+    </div>
+
     <div class="mb-3 row text-nowrap text-truncate">
       {% if projeto %}
         <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
@@ -126,7 +137,9 @@
           {% if user.eh_prof_a %}</a>{% endif %}
         </div>
       {% else %}
-        <label for="projeto" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">Projeto</label>
+        <label for="projeto" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.1em;">
+          {% lng "Projeto" "Project" %}
+        </label>
         <div class="col2 d-inline-block">
           <select id="projeto" name="projeto" class="form-control d-inline-block">
             <option selected value> -- selecione um projeto -- </option>
@@ -144,8 +157,12 @@
   </div>
 
   <div class="modal-footer">    
-    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">Fechar</button>
-    <button id="atualiza" type="submit" class="btn btn-primary mb-1">Enviar</button>
+    <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
+      {% lng "Fechar" "Close" %}
+    </button>
+    <button id="atualiza" type="submit" class="btn btn-primary mb-1">
+      {% lng "Enviar" "Send" %}
+    </button>
   </div>
 
 </form>
@@ -174,7 +191,7 @@
         },
         error: function (request, status, error) {
           $("#popup").modal("hide");
-          {% if user.tipo_de_usuario == 4 %} 
+          {% if user.eh_admin %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
             console.log("error"+request.responseText);

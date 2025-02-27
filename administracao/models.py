@@ -147,8 +147,11 @@ class Despesa(models.Model):
     data = models.DateField("Data", null=True, blank=True,
                             help_text="Data da despesa")
     
-    descricao = models.CharField("Descrição", max_length=256, null=True, blank=True,
+    descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
                                 help_text="Descrição da despesa")
+    
+    fornecedor = models.CharField("Fornecedor", max_length=512, null=True, blank=True,
+                                help_text="Fornecedor (com contato se possível)")
     
     valor_r = models.DecimalField("Valor R$", max_digits=12, decimal_places=2, null=True, blank=True,
                                 help_text="Valor da despesa em reais")
