@@ -789,10 +789,7 @@ def propor(request):
                     #"ESTOUROU"
                     break
 
-        data = {
-            "atualizado": True,
-        }
-        return JsonResponse(data)
+        return JsonResponse({"atualizado": True,})
 
     return HttpResponseNotFound("Requisição errada")
 
@@ -1254,7 +1251,6 @@ def tarefas_agendadas(request):
 
 def github_backup(projeto):
     """Simple pull from GitHub."""    
-    projeto = Projeto.objects.get(id=217)
 
     pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
 
