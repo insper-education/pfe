@@ -125,7 +125,7 @@ class Projeto(models.Model):
     time_misto = models.BooleanField("Time Misto", default=False,
                                      help_text="Caso o projeto conte com membros externos a instituição")
 
-    site = models.URLField("site", max_length=300, null=True, blank=True,
+    site = models.CharField("site", max_length=300, null=True, blank=True,
                            help_text="site do projeto desenvolvido pelos estudantes")
     
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,

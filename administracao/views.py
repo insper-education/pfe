@@ -1252,24 +1252,40 @@ def tarefas_agendadas(request):
     return render(request, "administracao/tarefas_agendadas.html", context)
 
 
+def github_backup(projeto):
+    """Simple pull from GitHub."""    
+    projeto = Projeto.objects.get(id=217)
+
+    pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
+
+    for pasta in pastas_do_projeto:
+        if "https://github.com/pfeinsper/" == pasta[:29] or "git@github.com:pfeinsper/" == pasta[:25]:
+            repo_url = pasta
+
+            path = get_upload_path(projeto, "")
+            full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
+            
+            if not os.path.exists(full_path):
+                os.makedirs(full_path)
+
+            repo_name = repo_url.split('/')[-1].replace('.git', '')
+            repo_dir = os.path.join(full_path, repo_name)
+
+            if os.path.exists(repo_dir):
+                print(f'Updating repository: {repo_name}')
+                repo = Repo(repo_dir)
+                repo.remotes.origin.pull()
+            else:
+                print(f'Cloning repository: {repo_name}')
+                Repo.clone_from(repo_url, repo_dir)
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_github(request):
     """Lista todos os repositórios do GitHub na conta do PFE/Capstone."""
-
-    # pip install requests==2.18.4 gitpython urllib3==1.22 idna certifi chardet==3.0.4 charset_normalizer==3.0.1 gitdb smmap --no-deps
-
-    # print(settings.GITHUB_USERNAME)
-    
-    # # Directory where you want to save the backups
-    BACKUP_DIR = "teste"
-
-    # # GitHub API URL to list repositories
-    REPOS_URL = f'https://api.github.com/orgs/pfeinsper/repos'
-
-    headers = {
-        "Authorization": f"token {settings.GITHUB_TOKEN}"
-    }
+    REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
+    headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
     response = requests.get(REPOS_URL, headers=headers)
     repos = response.json()
 
@@ -1298,31 +1314,14 @@ def lista_github(request):
             repo_dict[campo] = repo.get(campo)
         repositorios.append(repo_dict)
 
-        
+    github_backup(Projeto.objects.get(id=217))
     
-    #     if not os.path.exists(BACKUP_DIR):
-    #         os.makedirs(BACKUP_DIR)
-
-    #     for repo in repos:
-    #         repo_name = repo['name']
-    #         clone_url = repo['clone_url']
-    #         repo_dir = os.path.join(BACKUP_DIR, repo_name)
-
-    #         if os.path.exists(repo_dir):
-    #             print(f'Updating repository: {repo_name}')
-    #             repo = Repo(repo_dir)
-    #             repo.remotes.origin.pull()
-    #         else:
-    #             print(f'Cloning repository: {repo_name}')
-    #             Repo.clone_from(clone_url, repo_dir)
-
     context = {
         "titulo": { "pt": "Lista Repositórios do GitHub", "en": "GitHub Repositories List" },
         "repositorios": repositorios,
     }
     
     return render(request, "administracao/lista_github.html", context)
-
 
 
 @login_required
