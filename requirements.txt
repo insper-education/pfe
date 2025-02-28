@@ -26,3 +26,12 @@ six==1.13.0
 webencodings==0.5.1
 packaging==21.3
 pyparsing==3.1.4
+requests==2.18.4
+GitPython==3.1.18
+urllib3==1.22
+idna==2.6
+certifi==2018.1.18
+chardet==3.0.4
+charset_normalizer==3.0.1
+gitdb==4.0.9
+smmap==5.0.0

@@ -6,13 +6,16 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
+import os
 import json
 import re
 import tablib
 import axes.utils
 import datetime
 import logging
+import requests
 
+from git import Repo
 from celery import Celery
 
 from django.conf import settings
@@ -1247,6 +1250,79 @@ def tarefas_agendadas(request):
         "scheduled_tasks": scheduled_tasks,
     }
     return render(request, "administracao/tarefas_agendadas.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def lista_github(request):
+    """Lista todos os repositórios do GitHub na conta do PFE/Capstone."""
+
+    # pip install requests==2.18.4 gitpython urllib3==1.22 idna certifi chardet==3.0.4 charset_normalizer==3.0.1 gitdb smmap --no-deps
+
+    # print(settings.GITHUB_USERNAME)
+    
+    # # Directory where you want to save the backups
+    BACKUP_DIR = "teste"
+
+    # # GitHub API URL to list repositories
+    REPOS_URL = f'https://api.github.com/orgs/pfeinsper/repos'
+
+    headers = {
+        "Authorization": f"token {settings.GITHUB_TOKEN}"
+    }
+    response = requests.get(REPOS_URL, headers=headers)
+    repos = response.json()
+
+    campos = ["id", "node_id", "name", "full_name", "private", "owner", "gists_url", 
+              "starred_url", "subscriptions_url", "organizations_url", "repos_url",
+              "events_url", "received_events_url", "type", "user_view_type", 
+              "site_admin", "html_url", "description", "fork", "url", "forks_url",
+              "keys_url", "collaborators_url", "teams_url", "hooks_url", "issue_events_url",
+              "events_url", "assignees_url", "branches_url", "tags_url", "blobs_url",
+              "git_tags_url", "git_refs_url", "trees_url", "statuses_url", "languages_url", 
+              "stargazers_url", "contributors_url", "subscribers_url", "subscription_url",
+              "commits_url", "git_commits_url", "comments_url", "issue_comment_url", "contents_url",
+              "compare_url", "merges_url", "archive_url", "downloads_url", "issues_url",
+              "pulls_url", "milestones_url", "notifications_url" ,"labels_url",
+              "releases_url", "deployments_url", "created_at", "updated_at", "pushed_at",
+              "git_url", "ssh_url", "clone_url", "svn_url", "homepage", "size",
+              "stargazers_count", "watchers_count", "language", "has_issues",
+              "has_projects", "has_downloads", "has_wiki", "has_pages", "forks_count",
+              "mirror_url", "archived", "disabled", "open_issues_count",
+              "license", "allow_forking", "is_template", "web_commit_signoff_required",
+              "topics", "visibility", "forks", "open_issues", "watchers", "default_branch", "permissions"]
+    repositorios = []
+    for repo in repos:
+        repo_dict = {}
+        for campo in campos:
+            repo_dict[campo] = repo.get(campo)
+        repositorios.append(repo_dict)
+
+        
+    
+    #     if not os.path.exists(BACKUP_DIR):
+    #         os.makedirs(BACKUP_DIR)
+
+    #     for repo in repos:
+    #         repo_name = repo['name']
+    #         clone_url = repo['clone_url']
+    #         repo_dir = os.path.join(BACKUP_DIR, repo_name)
+
+    #         if os.path.exists(repo_dir):
+    #             print(f'Updating repository: {repo_name}')
+    #             repo = Repo(repo_dir)
+    #             repo.remotes.origin.pull()
+    #         else:
+    #             print(f'Cloning repository: {repo_name}')
+    #             Repo.clone_from(clone_url, repo_dir)
+
+    context = {
+        "titulo": { "pt": "Lista Repositórios do GitHub", "en": "GitHub Repositories List" },
+        "repositorios": repositorios,
+    }
+    
+    return render(request, "administracao/lista_github.html", context)
+
 
 
 @login_required

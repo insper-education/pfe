@@ -130,6 +130,10 @@ urlpatterns = [
         views.tarefas_agendadas,
         name="tarefas_agendadas"),
 
+    path("lista_github/",
+        views.lista_github,
+        name="lista_github"),
+
     path("cancela_tarefa/<str:task_id>/",
         views.cancela_tarefa,
         name="cancela_tarefa"),
