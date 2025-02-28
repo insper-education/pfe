@@ -7,6 +7,10 @@
   width: 10em;
 }
 
+.tabela_horarios thead tr th {
+  border: 2px solid black;
+}
+
 .tabela_horarios td,
 .tabela_horarios th {
   border: 1px solid black;
@@ -17,7 +21,6 @@
 
 .tabela_horarios th {
   background-color: #BEE5EB;
-  border-right: 2px solid black;
 }
 
 .highlight {

@@ -17,6 +17,9 @@
   .aexterno {
     background-color: rgba(0, 0, 255, 0.1);
   }
+  .tabela_horarios thead tr th {
+    border: 2px solid black;
+  }
 </style>
 {% comment %} REMOVER ^^^^^^^ {% endcomment %}
 
@@ -43,7 +46,9 @@
     <table class="tabela_horarios"> 
       <thead>
         <tr>
-          <th></th>
+          <th class="horario" rowspan="2">
+            {% lng "Horário" "Time" %}
+          </th>
           <th colspan="{{alocacoes|length}}">
             {% lng "Segunda" "Monday" %}
           </th>
@@ -61,9 +66,6 @@
           </th>
         </tr>
         <tr>
-          <th class="horario">
-            {% lng "Horário" "Time" %}
-          </th>
           {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
             {% for alocacao in alocacoes %}
               <th {% if forloop.last %}{% endif %} class="estud">E{{ forloop.counter }}</th>
