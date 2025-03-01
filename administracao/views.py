@@ -1339,14 +1339,14 @@ def versoes_sistema(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT version();")
         versoes["Postgres"] = cursor.fetchone()[0]
-    
-    pacotes = {}
-    for dist in pkg_resources.working_set:
-        pacotes[dist.project_name] = dist.version
+
+    pacotes = {dist.project_name: dist.version for dist in pkg_resources.working_set}
+    pacotes = dict(sorted(pacotes.items()))
+
 
     # show the environment that the server is running on
     versoes["Usuário"] = os.environ.get("USER", "Não definido")
-    versoes["Diretório"] = os.environ.get("PWD", "Não definido")
+    versoes["Diretório base"] = os.environ.get("PWD", "Não definido")
     
     # Get the virtual environment name
     venv_path = sys.prefix

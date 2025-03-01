@@ -16,6 +16,7 @@ RabbitMQ==0.2.0  # broker para Celery
 psycopg2-binary==2.9.10  # driver de banco de dados para PostgreSQL
 psycopg2-pool==1.2  # pool de conexões para PostgreSQL
 postgres==3.0.0  # banco de dados PostgreSQL
+#pgadmin4==4.30  # interface gráfica para PostgreSQL (se necessário "Appache" e "Wsgi")
 
 # PDF
 PyPDF2==2.10.6  # manipulação de arquivos PDF
