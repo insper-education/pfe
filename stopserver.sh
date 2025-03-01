@@ -8,12 +8,11 @@
 echo "Parando o Celery..."
 sudo pkill -9 -f 'celery worker'
 sudo pkill -9 -f 'celery beat'
-while pgrep -f 'celery worker' > /dev/null || pgrep -f 'celery beat' > /dev/null; do
+while pgrep -f 'celery' > /dev/null; do
     echo "Esperando os processos do Celery terminarem..."
     sleep 1
 done
-
-#sudo kill -9 $(pgrep -f celery)  # Alternativa
+sudo kill -9 $(pgrep -f celery)  # Supostamente já foram mortos, mas por garantia
 
 #echo "Parando Django..."
 #sudo pkill -f 'manage.py runserver'

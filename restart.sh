@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Puxando últimas atualizações do Git..."
-git pull
+GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git pull
 
 if [ $? -ne 0 ]; then
     echo "Erro ao atualizar."
