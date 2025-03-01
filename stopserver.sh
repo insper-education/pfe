@@ -21,7 +21,8 @@ while pgrep -f 'celery' > /dev/null; do
     sleep $interval
     elapsed=$((elapsed + interval))
 done
-sudo kill -9 $(pgrep -f celery)  # Supostamente já foram mortos, mas por garantia
+# Supostamente já foram mortos, mas por garantia
+sudo kill -9 $(pgrep -f celery)
 
 #echo "Parando Django..."
 #sudo pkill -f 'manage.py runserver'
