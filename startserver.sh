@@ -18,8 +18,8 @@ sudo chown ubuntu.ubuntu pfe.log
 sudo chmod a+w pfe.log
 
 echo "Iniciando o Celery..."
-celery -A pfe worker -l info &
-celery -A pfe beat -l info &
+celery worker -A pfe -l info &
+celery beat -A pfe -l info &
 #rabbitmqctl purge_queue celery
 
 echo "Preparando o Django..."

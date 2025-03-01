@@ -8,9 +8,18 @@
 echo "Parando o Celery..."
 sudo pkill -9 -f 'celery worker'
 sudo pkill -9 -f 'celery beat'
+
+timeout=30
+elapsed=0
+interval=1
 while pgrep -f 'celery' > /dev/null; do
+    if [ $elapsed -ge $timeout ]; then
+        echo "Timeout para terminar os processos do Celery."
+        break
+    fi
     echo "Esperando os processos do Celery terminarem..."
-    sleep 1
+    sleep $interval
+    elapsed=$((elapsed + interval))
 done
 sudo kill -9 $(pgrep -f celery)  # Supostamente já foram mortos, mas por garantia
 
