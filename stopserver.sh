@@ -6,8 +6,8 @@
 
 
 echo "Parando o Celery..."
-sudo pkill -9 -f 'celery worker' > /dev/null 2>&1
-sudo pkill -9 -f 'celery beat' > /dev/null 2>&1
+sudo pkill -9 -f 'celery worker'
+sudo pkill -9 -f 'celery beat'
 
 timeout=30
 elapsed=0
@@ -24,7 +24,7 @@ done
 # Supostamente já foram mortos, mas por garantia
 pids=$(pgrep -f 'celery')
 if [ -n "$pids" ]; then
-    sudo kill -9 $pids > /dev/null 2>&1
+    sudo kill -9 $pids
 fi
 
 #echo "Parando Django..."
