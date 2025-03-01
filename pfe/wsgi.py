@@ -15,10 +15,6 @@ PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if PATH not in sys.path:
     sys.path.append(PATH)
 
-venv_path = '/home/ubuntu/pfe/env310/lib/python3.10/site-packages'
-if venv_path not in sys.path:
-    sys.path.append(venv_path)
-
 os.chdir(PATH)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'pfe.settings'

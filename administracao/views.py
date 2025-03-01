@@ -1343,7 +1343,6 @@ def versoes_sistema(request):
     pacotes = {dist.project_name: dist.version for dist in pkg_resources.working_set}
     pacotes = dict(sorted(pacotes.items()))
 
-
     # show the environment that the server is running on
     versoes["Usuário"] = os.environ.get("USER", "Não definido")
     versoes["Diretório base"] = os.environ.get("PWD", "Não definido")
