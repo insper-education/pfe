@@ -1,4 +1,4 @@
-source ~/pfe/env/bin/activate
+source ~/pfe/env310/bin/activate
 #sudo systemctl start postgresql.service
 #sudo systemctl enable postgresql.service
 touch pfe.log

@@ -1319,6 +1319,38 @@ def lista_github(request):
     
     return render(request, "administracao/lista_github.html", context)
 
+import sys
+import django
+import celery
+from django.db import connection
+import pkg_resources
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def versoes_sistema(request):
+    """Mostra versões do sistema."""
+
+    versoes = {}
+    versoes["Python"] = sys.version  # Retrieve Python version
+    versoes["Django"] = django.get_version()  # Retrieve Django version
+    versoes["Celery"] = celery.__version__  # Retrieve Celery version
+    
+    # Retrieve PostgreSQL version
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT version();")
+        versoes["Postgres"] = cursor.fetchone()[0]
+    
+    pacotes = {}
+    for dist in pkg_resources.working_set:
+        pacotes[dist.project_name] = dist.version
+
+
+    context = {
+        "titulo": { "pt": "Versões do Sistema", "en": "System Versions" },
+        "versoes": versoes,
+        "pacotes": pacotes,
+    }
+    return render(request, "administracao/versoes_sistema.html", context)
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)

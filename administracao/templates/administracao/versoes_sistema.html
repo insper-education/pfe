@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 1 de Março de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load linguas %}
+{% endblock %}
+
+{% block content %}
+    {% for tipo, versao in versoes.items %}
+        <b>{{ tipo }}</b>: {{ versao }}<br>
+    {% endfor %}
+    <br><br>
+    <b>{% lng "Pacotes" "Packages" %}</b><br>
+    {% for pacote, versao in pacotes.items %}
+        {{ pacote }}: {{ versao }}<br>
+    {% endfor %}
+{% endblock %}

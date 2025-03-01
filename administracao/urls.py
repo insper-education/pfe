@@ -134,6 +134,10 @@ urlpatterns = [
         views.lista_github,
         name="lista_github"),
 
+    path("versoes_sistema/",
+        views.versoes_sistema,
+        name="versoes_sistema"),
+
     path("cancela_tarefa/<str:task_id>/",
         views.cancela_tarefa,
         name="cancela_tarefa"),
