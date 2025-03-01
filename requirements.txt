@@ -1,37 +1,57 @@
-Django==2.2.28
-celery==5.2.2
-# vine==1.3.0 creio que não estou usando mais
-# psycopg2==2.8.5 # aparentemente não é necessário
-psycopg2-binary==2.8.6 # se necessario --no-cache-dir
-psycopg2-pool==1.1
-django-import-export==1.2.0
-django-debug-toolbar==2.2.1
-icalendar==4.0.4
-xhtml2pdf==0.2.5
-django-dbbackup==3.3.0
-RabbitMQ==0.2.0
-postgres==3.0.0
-python-dateutil==2.8.1
-PyPDF2==1.27.12
-hashids==1.3.1
-reportlab==3.6.6  # usar no maximo python3.10
-#django-ipware==3.0.7  # Aparentemente para Mac preciso dessa versão
-django-ipware==4.0.2  # Para detectar os IPs no Axes
-django-axes==5.13.1 # Sistem que bloqueia usuário e IP após N tentativas invalidas de login 
-tablib==3.1.0 # Para exportar arquivos em excel
-openpyxl==3.1.3 # Para exportar arquivos em excel
-et_xmlfile==1.1.0 # Para exportar arquivos em excel
-bleach==4.1.0 # Para limpar o HTML
-six==1.13.0 
-webencodings==0.5.1
-packaging==21.3
-pyparsing==3.1.4
-#requests==2.32.0  atualizar
-#GitPython==3.1.18  atualizar
-#urllib3==1.22  atualizar
-idna==2.6
-#certifi==2018.1.18  atualizar
-charset_normalizer==3.0.1
-gitdb==4.0.9
-smmap==5.0.0
-typing_extensions==4.1.1
+# Para Python 3.10.12
+
+# Django
+Django==2.2.28  # sistema principal de gestão do sistema
+django-axes==5.27.0  # Sistema que bloqueia usuário e IP após N tentativas invalidas de login 
+django-dbbackup==3.3.0  # backup de banco de dados
+django-debug-toolbar==2.2.1  # ferramenta de debug para Django
+django-import-export==1.2.0  # importação e exportação de dados em arquivos excel
+django-ipware==4.0.2  # identificação de IP
+
+# Celery
+celery==5.2.2  # execução assíncrona e distribuída de tarefas em background
+RabbitMQ==0.2.0  # broker para Celery
+
+# Database
+psycopg2-binary==2.9.10  # driver de banco de dados para PostgreSQL
+psycopg2-pool==1.2  # pool de conexões para PostgreSQL
+postgres==3.0.0  # banco de dados PostgreSQL
+
+# PDF
+PyPDF2==2.10.6  # manipulação de arquivos PDF
+reportlab==3.6.6  # geração de PDF
+xhtml2pdf==0.2.5  # geração de PDF a partir de HTML
+
+# Excel
+et_xmlfile==1.1.0  # Para exportar arquivos em excel
+openpyxl==3.1.3  # Para exportar arquivos em excel
+tablib==3.1.0  # Para exportar arquivos em excel
+
+# Datas
+python-dateutil==2.8.1  # manipulação de datas
+
+# Git
+GitPython==3.1.44  # manipulação de repositórios Git
+gitdb==4.0.9  # manipulação de repositórios Git
+smmap==5.0.0  # para mapear arquivos grandes na memória
+
+# HTTP e web
+requests==2.32.3  # requisições HTTP
+urllib3==2.3.0  # manipulação de URLs
+
+# Character encoding
+charset_normalizer==3.4.1  # normalização de caracteres
+idna==3.7  # conversão entre nomes de domínio internacionalizados e ASCII
+webencodings==0.5.1  # algoritmos de codificação de caracteres
+
+# Segurança
+certifi==2025.1.31  # certificados SSL
+
+# Outros
+bleach==4.1.0  # Para limpar o HTML
+hashids==1.3.1  # geração de hashids
+icalendar==4.0.4  # manipulação de arquivos icalendar
+packaging==21.3  # manipulação de pacotes
+pyparsing==3.1.4  # manipulação de expressões regulares
+six==1.13.0  # compatibilidade com Python 2
+typing_extensions==4.1.1  # extensões para o módulo typing

@@ -72,9 +72,9 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
 
 /* Para adaptar o conteúdo conforme tamanho da tela */
 .texto-curto { display: none; white-space: nowrap; }
-.texto-longo { display: inline-block; white-space: nowrap; }
+.texto-longo { display: initial; white-space: nowrap; }
 @media (max-width: 800px) {
-  .texto-curto { display: inline-block; }
+  .texto-curto { display: initial; }
   .texto-longo { display: none; }
 }
 @media (max-width: 480px) {

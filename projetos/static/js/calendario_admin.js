@@ -71,6 +71,12 @@ $("#titulo_aulas").click(function() {
     });
 });
 
+$("#titulo_mentorias").click(function() {
+    $(".lista_mentorias").toggle( "slide" , function(){
+        atualiza_visualizacao();
+    });
+});
+
 $(document).ready(function() {
     //let calendar = null;
 

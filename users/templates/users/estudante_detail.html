@@ -173,7 +173,8 @@
                     {{ordem|add:1}}&ordm; - 
                     <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
                     <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                    Preenchido <span class="texto-longo">pelo estudante em</span>
+                    {% lng "Preenchido" "Filled out" %}
+                    <span class="texto-longo">{% lng "pelo estudante em" "by the student on" %}</span>
                     <span class="texto-longo">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
                     <span class="texto-curto">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
                   </a>

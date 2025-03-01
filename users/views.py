@@ -43,7 +43,7 @@ from operacional.models import Curso
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro, Evento
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.messages import email
-from projetos.support3 import calcula_objetivos, get_objetivos_atuais
+from projetos.support3 import calcula_objetivos, get_objetivos_atuais, get_notas_alocacao
 
 
 # Get an instance of a logger
@@ -367,7 +367,7 @@ def blackboard_notas(request, anosemestre):
         tipo = request.POST["tipo"]
         
         for alocacao in alocacoes:
-            notas = alocacao._alocacao(checa_banca=False)
+            notas = get_notas_alocacao(alocacao, checa_banca=False)
             linha = [alocacao.aluno.user.first_name]
             linha += [alocacao.aluno.user.last_name]
             linha += [alocacao.aluno.user.username]

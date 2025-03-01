@@ -15,6 +15,9 @@ function mudaVisibilidadeBarras(visibilidade) {
     if ($(".lista_aulas").is(":hidden")) {
       $("#titulo_aulas")[action]();
     }
+    if ($(".lista_mentorias").is(":hidden")) {
+      $("#titulo_mentorias")[action]();
+    }
 }
   
 function ajusta() {
