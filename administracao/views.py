@@ -14,6 +14,10 @@ import axes.utils
 import datetime
 import logging
 import requests
+import sys
+import django
+import celery
+import pkg_resources
 
 from git import Repo
 from celery import Celery
@@ -25,6 +29,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db import connection
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1319,11 +1324,6 @@ def lista_github(request):
     
     return render(request, "administracao/lista_github.html", context)
 
-import sys
-import django
-import celery
-from django.db import connection
-import pkg_resources
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -1344,6 +1344,20 @@ def versoes_sistema(request):
     for dist in pkg_resources.working_set:
         pacotes[dist.project_name] = dist.version
 
+    # show the environment that the server is running on
+    versoes["Usuário"] = os.environ.get("USER", "Não definido")
+    versoes["Diretório"] = os.environ.get("PWD", "Não definido")
+    
+    # Get the virtual environment name
+    venv_path = sys.prefix
+    venv_name = os.path.basename(venv_path)
+    versoes["Virtual Environment"] = venv_name
+
+    if os.environ.get('RUN_MAIN') == 'true':
+        versoes["Execution Context"] = "Django Development Server (manage.py runserver)"
+    elif os.environ.get('mod_wsgi.process_group'):
+        versoes["Execution Context"] = "Apache with mod_wsgi"
+    
 
     context = {
         "titulo": { "pt": "Versões do Sistema", "en": "System Versions" },
