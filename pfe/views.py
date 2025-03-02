@@ -55,7 +55,7 @@ def reiniciar_sistema(request):
         return HttpResponse("Acesso Negado", status=403)
     if request.method == "POST":
         try:
-            result = subprocess.run(["./restart.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            result = subprocess.run(["./restart.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             if result.returncode == 0:
                 logger.info("Sistema reiniciado com sucesso.")
                 logger.info(f"Output: {result.stdout}")
