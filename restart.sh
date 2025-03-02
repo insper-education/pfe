@@ -11,7 +11,7 @@ if [ -z "$USER" ]; then
 fi
 
 echo "Parando todo os serviços..."
-sudo stopserver.sh
+sudo ./stopserver.sh
 
 if [ $? -ne 0 ]; then
     echo "Erro ao parar serviços."
@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Iniciando os serviços..."
-sudo startserver.sh
+sudo ./startserver.sh
 
 if [ $? -ne 0 ]; then
     echo "Erro ao iniciar serviços."
