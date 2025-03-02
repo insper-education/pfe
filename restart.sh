@@ -3,6 +3,12 @@
 # Script para reiniciar o servidor.
 # Este script irá parar o serviços, baixar o código mais recente do Git e iniciar os serviços novamente.
 
+if [ -z "$USER" ]; then
+    if [ "$1" != "$(cat chave.txt)" ]; then
+        echo "Chave inválida."
+        exit 1
+    fi
+fi
 
 echo "Parando todo os serviços..."
 ./stopserver.sh
