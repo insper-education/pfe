@@ -198,7 +198,10 @@ class Projeto(models.Model):
         return str(self.ano)+"."+str(self.semestre)
     
     def get_site(self):
-        return "/sites/"+str(self.id)+"/" if os.path.exists(settings.SITE_ROOT + "/projeto"+str(self.id)) else None
+        site_root = settings.MEDIA_ROOT + "/" + get_upload_path(self, "") + "pagina/"
+        if os.path.exists(site_root):
+            return "/sites/"+str(self.id)+"/"
+        return None
     
     # Retorna os coorientadores do projeto
     @property

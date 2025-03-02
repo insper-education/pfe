@@ -18,12 +18,15 @@ from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUpload
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from users.models import Alocacao
-from projetos.models import Projeto, Configuracao
 
+from .models import Projeto, Configuracao
+from .support import get_upload_path
+
+from users.models import Alocacao
 
 def sites(request, projeto_id, path):
     """Redireciona para páginas de desenvolvimento dos projetos."""
+    
     if not request.user.is_authenticated:
         raise Http404
     
@@ -39,9 +42,16 @@ def sites(request, projeto_id, path):
     elif request.user.tipo_de_usuario != 4: # Administrador
         raise Http404
     
-    site_root = settings.SITE_ROOT + "/projeto" + str(projeto.id)
-
-    # If path is empty, try to serve index.html or index.htm
+    site_root = settings.MEDIA_ROOT + "/" + get_upload_path(projeto, "") + "pagina/"
+    if not os.path.exists(site_root):
+        raise Http404
+    
+    # Mais um mecanismo de segurança
+    normalized_path = os.path.normpath(site_root+path)
+    if not normalized_path.startswith(os.path.normpath(site_root)):
+        raise Http404
+    
+    # Se o path está vazio, tentar index.html ou index.htm
     if not path:
         for index_file in ["index.html", "index.htm"]:
             try:
@@ -69,7 +79,7 @@ def upload_site_e_pastas(request, projeto_id):
                     total_size = sum((file.file_size for file in zip_ref.infolist()))
                     if total_size > MAX_SIZE and request.user.tipo_de_usuario != 4:
                         return HttpResponse("Arquivo descomprimido maior que o limite: " + str(configuracao.maxMB_filesize) + "MB.")
-                    site_root = settings.SITE_ROOT + "/projeto"+str(projeto.id)
+                    site_root = settings.MEDIA_ROOT + "/" + get_upload_path(projeto, "") + "pagina/"
                     if os.path.exists(site_root):
                         os.system("rm -rf " + site_root)
                     zip_ref.extractall(site_root)  # extract the zip file to the project path
@@ -79,7 +89,7 @@ def upload_site_e_pastas(request, projeto_id):
                 return HttpResponse("Não é arquivo.")
         
         if "Remover" in request.POST:
-            site_root = settings.SITE_ROOT + "/projeto"+str(projeto.id)
+            site_root = settings.MEDIA_ROOT + "/" + get_upload_path(projeto, "") + "pagina/"
             if os.path.exists(site_root):
                 os.system("rm -rf " + site_root)
             projeto.site = None
