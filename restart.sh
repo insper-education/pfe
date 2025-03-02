@@ -3,6 +3,8 @@
 # Script para reiniciar o servidor.
 # Este script irá parar o serviços, baixar o código mais recente do Git e iniciar os serviços novamente.
 
+source ~/pfe/env/bin/activate
+
 if [ -z "$USER" ]; then
     if [ "$1" != "$(cat chave.txt)" ]; then
         echo "Chave inválida."
@@ -10,8 +12,27 @@ if [ -z "$USER" ]; then
     fi
 fi
 
-echo "Parando todo os serviços..."
-sudo ./stopserver.sh
+echo "Parando o Celery..."
+pkill -9 -f 'celery worker'
+pkill -9 -f 'celery beat'
+
+timeout=10
+elapsed=0
+interval=1
+while pgrep -f 'celery' > /dev/null; do
+    if [ $elapsed -ge $timeout ]; then
+        echo "Timeout para terminar os processos do Celery."
+        break
+    fi
+    echo "Esperando os processos do Celery terminarem..."
+    sleep $interval
+    elapsed=$((elapsed + interval))
+done
+# Supostamente já foram mortos, mas por garantia
+pids=$(pgrep -f 'celery')
+if [ -n "$pids" ]; then
+    kill -9 $pids
+fi
 
 if [ $? -ne 0 ]; then
     echo "Erro ao parar serviços."
@@ -30,7 +51,23 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Iniciando os serviços..."
-sudo ./startserver.sh
+echo "Preparando o arquivo de log..."
+touch pfe.log
+chown ubuntu.ubuntu pfe.log
+chmod a+w pfe.log
+
+echo "Iniciando o Celery..."
+celery worker -A pfe -l info &
+celery beat -A pfe -l info &
+
+echo "Preparando o Django..."
+python3 manage.py axes_reset
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py collectstatic --no-input
+
+echo "Reiniciando o servidor Apache..."
+systemctl restart apache2
 
 if [ $? -ne 0 ]; then
     echo "Erro ao iniciar serviços."
