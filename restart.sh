@@ -11,16 +11,12 @@ if [ -z "$USER" ]; then
 fi
 
 echo "Parando todo os serviços..."
-./stopserver.sh
+sudo stopserver.sh
 
 if [ $? -ne 0 ]; then
     echo "Erro ao parar serviços."
     exit 1
 fi
-
-echo $PWD
-pwd
-cd /home/ubuntu/pfe
 
 echo "Configurando diretório seguro para o Git..."
 git config --add safe.directory /home/ubuntu/pfe
@@ -34,7 +30,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Iniciando os serviços..."
-./startserver.sh
+sudo startserver.sh
 
 if [ $? -ne 0 ]; then
     echo "Erro ao iniciar serviços."

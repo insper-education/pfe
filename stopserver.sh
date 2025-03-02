@@ -6,10 +6,10 @@
 
 
 echo "Parando o Celery..."
-sudo pkill -9 -f 'celery worker'
-sudo pkill -9 -f 'celery beat'
+pkill -9 -f 'celery worker'
+pkill -9 -f 'celery beat'
 
-timeout=30
+timeout=10
 elapsed=0
 interval=1
 while pgrep -f 'celery' > /dev/null; do
@@ -24,18 +24,18 @@ done
 # Supostamente já foram mortos, mas por garantia
 pids=$(pgrep -f 'celery')
 if [ -n "$pids" ]; then
-    sudo kill -9 $pids
+    kill -9 $pids
 fi
 
 #echo "Parando Django..."
-#sudo pkill -f 'manage.py runserver'
-#sudo kill -9 $(pgrep -f manage.py)  # Alternativa
+#pkill -f 'manage.py runserver'
+#kill -9 $(pgrep -f manage.py)  # Alternativa
 
 echo "Stopping Apache server..."
-sudo systemctl stop apache2
+systemctl stop apache2
 
 # Descomente se precisar parar o PostgreSQL
 # echo "Parando PostgreSQL..."
-# sudo systemctl stop postgresql.service
+# systemctl stop postgresql.service
 
 echo "Todos os serviços parados."
