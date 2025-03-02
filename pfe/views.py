@@ -71,25 +71,10 @@ def reiniciar_sistema(request):
                 return HttpResponse(page)
             else:
                 logger.error(f"Erro ao reiniciar o sistema:\n output: {result.stdout}\n error: {result.stderr}")
-                logger.error(f"Teste: {result}")
                 return HttpResponse(f"Erro ao reiniciar o sistema:<br> output: {result.stdout}<br> error: {result.stderr}", status=500)
         except Exception as e:
             logger.error(f"Erro ao executar o comando: {str(e)}")
-            return HttpResponse(f"Erro: {str(e)}", status=500)
-        
-        # try:
-        #     os.system("./restart.sh")
-        #     page = f"""
-        #     <html><head><title>Reiniciar Sistema</title>
-        #     <meta http-equiv="refresh" content="15;url=/"></head>
-        #     <body><h1>Reiniciar Sistema</h1>
-        #     <p>Sistema está reiniciando...</p>
-        #     <p><a href="/">Voltar para a página principal</a></p>
-        #     </body></html>
-        #     """
-        #     return HttpResponse(page)
-        # except Exception as e:
-        #     return HttpResponse(f"Erro: {str(e)}", status=500)    
+            return HttpResponse(f"Erro: {str(e)}", status=500)  
     page = f"""
     <html><head><title>Reiniciar Sistema</title></head>
     <body><h1>Reiniciar Sistema</h1><form method="post">
