@@ -20,12 +20,6 @@ from administracao.models import Carta
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
-@login_required
-def index_old(request):
-    """Antiga Página principal do sistema."""
-    return render(request, "index_old.html")
-
-#@login_required
 def index(request):
     """Página principal do sistema."""
     if request.user.is_authenticated:
@@ -51,7 +45,6 @@ def custom_400(request, exception):
     #t = loader.get_template("400.html")
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)

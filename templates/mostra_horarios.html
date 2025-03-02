@@ -46,24 +46,12 @@
     <table class="tabela_horarios"> 
       <thead>
         <tr>
-          <th class="horario" rowspan="2">
-            {% lng "Horário" "Time" %}
-          </th>
-          <th colspan="{{alocacoes|length}}">
-            {% lng "Segunda" "Monday" %}
-          </th>
-          <th colspan="{{alocacoes|length}}">
-            {% lng "Terça" "Tuesday" %}
-          </th>
-          <th colspan="{{alocacoes|length}}">
-            {% lng "Quarta" "Wednesday" %}
-          </th>
-          <th colspan="{{alocacoes|length}}">
-            {% lng "Quinta" "Thursday" %}
-          </th>
-          <th colspan="{{alocacoes|length}}">
-            {% lng "Sexta" "Friday" %}
-          </th>
+          <th class="horario" rowspan="2">{% lng "Horário" "Time" %}</th>
+          <th colspan="{{alocacoes|length}}">{% lng "Segunda" "Monday" %}</th>
+          <th colspan="{{alocacoes|length}}">{% lng "Terça" "Tuesday" %}</th>
+          <th colspan="{{alocacoes|length}}">{% lng "Quarta" "Wednesday" %}</th>
+          <th colspan="{{alocacoes|length}}">{% lng "Quinta" "Thursday" %}</th>
+          <th colspan="{{alocacoes|length}}">{% lng "Sexta" "Friday" %}</th>
         </tr>
         <tr>
           {% for i in "01234" %} {% comment %} Segunda a Sexta {% endcomment %}
@@ -90,14 +78,14 @@
                   {% if request.user == alocacao.aluno.user %}
                     <td id="h_{{i}}_{{hora}}" 
                         class="h_{{i}}_{{hora}}{% if alocacao.aluno.externo %}_e aexterno{% endif %} meu {% if dark %}overlay{% endif %}"
-                    {% comment %} {% if forloop.last %}{% endif %} {% endcomment %}
                     ></td>
                   {% else %}
                     <td id="h_{{i}}_{{hora}}_{{alocacao.id}}"
                         class="h_{{i}}_{{hora}}{% if alocacao.aluno.externo %}_e aexterno{% endif %} {% if dark %}overlay{% endif %}"
-                    {% comment %} {% if forloop.last %}{% endif %} {% endcomment %}
                     ></td>
                   {% endif %}
+                {% empty %}
+                  <td></td>
                 {% endfor %}
               {% endif %}
             {% endfor %}
@@ -171,13 +159,15 @@
           }
         }
       }
-      contador--; // descontando aula regular
-      document.getElementById("horas_juntos").innerText = contador*2 + " horas";
-      if(contador < 4) {
-        document.getElementById("horas_juntos").style.color = "red";
-      } else {
-        document.getElementById("horas_juntos").style.color = "green";
-      }
+      {% if alocacoes %}
+        contador--; // descontando aula regular
+        document.getElementById("horas_juntos").innerText = contador*2 + " horas";
+        if(contador < 4) {
+          document.getElementById("horas_juntos").style.color = "red";
+        } else {
+          document.getElementById("horas_juntos").style.color = "green";
+        }
+      {% endif %}
     }
 
     {% if request.user.estud %}

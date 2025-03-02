@@ -504,13 +504,13 @@
   {% endif %}
   {% endif %}
 
-  {% if projeto.ano >= 2024 %} {% comment %} Só começamos a fazer a partir de 2024 {% endcomment %}
-    {% if user.prof_a %}
-      <hr>
-      <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
-      {% include "mostra_horarios.html" %}
-    {% endif %}
+  
+  {% if user.prof_a %}
+    <hr>
+    <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
+    {% include "mostra_horarios.html" %}
   {% endif %}
+
 
   {% if user.prof_a %}
     {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}

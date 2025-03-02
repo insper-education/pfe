@@ -11,6 +11,7 @@ import csv
 import dateutil.parser
 import json
 import logging
+import copy
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -48,7 +49,7 @@ from administracao.support import usuario_sem_acesso
 from operacional.models import Curso
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
-from users.support import adianta_semestre, get_edicoes
+from users.support import adianta_semestre, get_edicoes, adianta_semestre_conf
 
 
 # Get an instance of a logger
@@ -117,122 +118,6 @@ def projeto_infos(request, primarykey):
     context["cooperacoes"] = Conexao.objects.filter(projeto=projeto, colaboracao=True)
     
     return render(request, "projetos/projeto_infos.html", context=context)
-
-##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
-# @login_required
-# def projeto_detalhes(request, primarykey):
-#     """Exibe proposta de projeto com seus detalhes para estudantes."""
-#     projeto = get_object_or_404(Projeto, pk=primarykey)
-
-#     if request.user and request.user.tipo_de_usuario not in [2, 4]:  # Se usuário não for Professor nem Admin
-#         configuracao = get_object_or_404(Configuracao)
-#         alocacoes = Alocacao.objects.filter(aluno=request.user.aluno, projeto=projeto)
-        
-#         liberado = True
-#         if configuracao.semestre == 1:
-#             liberado1 = projeto.ano < configuracao.ano
-#             liberado2 = (projeto.ano == configuracao.ano) and (projeto.semestre == configuracao.semestre)
-#             liberado = liberado1 or liberado2
-#         else:
-#             liberado = projeto.ano <= configuracao.ano
-
-#         if (not alocacoes) or (not liberado):
-#             mensagem = "Você não tem autorização para visualizar projeto"
-#             context = {
-#                 "area_principal": True,
-#                 "mensagem": mensagem,
-#             }
-#             return render(request, "generic.html", context=context)
-
-#     context = {
-#             "titulo": { "pt": "Detalhes do Projeto", "en": "Project Details"},
-#             "projeto": projeto,
-#         }
-
-#     return render(request, "projetos/projeto_detalhes.html", context=context)
-
-##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
-# @login_required
-# @permission_required("users.altera_professor", raise_exception=True)
-# def projeto_completo(request, primarykey):
-#     """Mostra um projeto por completo (para professores verem)."""
-#     projeto = get_object_or_404(Projeto, pk=primarykey)
-#     alocacoes = Alocacao.objects.filter(projeto=projeto)
-
-#     medias_oo = None
-#     if alocacoes:
-#         alocacao = alocacoes.first()
-
-#         alocacoes_oo = Alocacao.objects.filter(id=alocacao.id)
-#         medias_oo = calcula_objetivos(alocacoes_oo)
-
-#         if (medias_oo is None) or \
-#            ("medias_apg" not in medias_oo or "medias_afg" not in medias_oo or "medias_rig" not in medias_oo or "medias_bi" not in medias_oo or "medias_rfg" not in medias_oo or "medias_bf" not in medias_oo) or \
-#            (not (medias_oo["medias_apg"] or medias_oo["medias_afg"] or medias_oo["medias_rig"] or medias_oo["medias_bi"] or medias_oo["medias_rfg"] or medias_oo["medias_bf"])):
-#             medias_oo = None
-
-#     # titulo = ""
-#     # if projeto.proposta.organizacao:
-#     #     titulo += "[" + projeto.proposta.organizacao.sigla + "]"
-#     # titulo += " " + projeto.get_titulo()
-#     # titulo += " " + str(projeto.ano) + '.' + str(projeto.semestre)
-
-#     context = {
-#         "titulo": { "pt": "Projeto Completo", "en": "Complete Project"},
-#         "projeto": projeto,
-#         "alocacoes": alocacoes,
-#         "medias_oo": medias_oo,
-#         "conexoes": Conexao.objects.filter(projeto=projeto),
-#         "coorientadores": Coorientador.objects.filter(projeto=projeto),
-#         "documentos": Documento.objects.filter(projeto=projeto),
-#         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
-#         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
-#         "horarios": Estrutura.loads(nome="Horarios Semanais"),
-#     }
-
-#     # Código de Conduta do Grupo
-#     codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
-#     if codigo_conduta:
-#         context["perguntas_codigo_conduta"] = Estrutura.loads(nome="Código de Conduta do Grupo")
-#         context["respostas_conduta"] = json.loads(codigo_conduta.codigo_conduta) if codigo_conduta.codigo_conduta else None
-
-#     # Funcionalidade do Grupo
-#     funcionalidade_grupo = []
-#     for alocacao in alocacoes:
-#         funcionalidade_grupo.append(alocacao.aluno.user.funcionalidade_grupo)
-#     if funcionalidade_grupo:
-#         context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
-#         context["funcionalidade_grupo"] = funcionalidade_grupo
-
-#     return render(request, "projetos/projeto_completo.html", context=context)
-
-##### NAO USAR MAIS USAR SOMENTE PROJETO_INFOS() #####
-# @login_required
-# @permission_required("projetos.add_proposta", raise_exception=True)
-# def projeto_organizacao(request, primarykey):
-#     """Mostra um projeto por completo (para organizações verem)."""
-    
-#     usuario_sem_acesso(request, (3, 4,)) # Soh Parc Adm
-
-#     projeto = get_object_or_404(Projeto, pk=primarykey)
-    
-#     organizacao = None
-#     if hasattr(request.user, "parceiro"):
-#         organizacao = request.user.parceiro.organizacao
-
-#     if projeto.proposta.organizacao != organizacao and request.user.tipo_de_usuario != 4:
-#         return HttpResponse("Algum erro não identificado.", status=401)
-
-#     context = {
-#         "projeto": projeto,
-#         "alocacoes": Alocacao.objects.filter(projeto=projeto),
-#         "conexoes": Conexao.objects.filter(projeto=projeto),
-#         "coorientadores": Coorientador.objects.filter(projeto=projeto),
-#         "documentos": Documento.objects.filter(projeto=projeto, tipo_documento__projeto=True, tipo_documento__individual=False),
-#         "projetos_avancados": Projeto.objects.filter(avancado=projeto),
-#         "cooperacoes": Conexao.objects.filter(projeto=projeto, colaboracao=True),
-#     }
-#     return render(request, "projetos/projeto_completo.html", context=context)
 
 
 @login_required
@@ -482,7 +367,6 @@ def projetos_fechados(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_lista(request):
     """Lista todos os projetos."""
-    edicoes = []
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -603,29 +487,15 @@ def meuprojeto(request, primarykey=None):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def projeto_avancado(request, primarykey):
-    """cria projeto avançado e avança para ele."""
-    projeto = Projeto.objects.get(id=primarykey)
-
-    projetos_avancados = Projeto.objects.filter(avancado=projeto)
-    if projetos_avancados:
-        novo_projeto = projetos_avancados.last()  # só retorna o último
-    else:
-        novo_projeto = Projeto.objects.get(id=primarykey)
-        novo_projeto.pk = None  # Duplica objeto
-
-        configuracao = get_object_or_404(Configuracao)
-        ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
-
-        if projeto.titulo_final:
-            novo_projeto.titulo_final = projeto.titulo_final
-
-        novo_projeto.avancado = projeto
-        novo_projeto.ano = ano
-        novo_projeto.semestre = semestre
-
-        novo_projeto.save()
-
-    return redirect("projeto_infos", primarykey=novo_projeto.id)
+    """cria projeto avançado e exibe ele."""
+    projeto = get_object_or_404(Projeto, id=primarykey)
+    if not Projeto.objects.filter(avancado=projeto).exists():  # Checa se já existe um projeto avançado
+        np = copy.copy(projeto)
+        np.pk = None  # Para duplicar objeto na base de dados
+        np.ano, np.semestre = adianta_semestre_conf(get_object_or_404(Configuracao))
+        np.avancado = projeto
+        np.save()
+    return redirect("projeto_infos", primarykey=np.id)
 
 
 @login_required
