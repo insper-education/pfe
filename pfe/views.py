@@ -47,44 +47,6 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
-@permission_required("users.view_administrador", raise_exception=True)
-def reiniciar_sistema(request):
-    """Reinicia o sistema do Capstone pela interface web."""
-    if not request.user.eh_admin:
-        return HttpResponse("Acesso Negado", status=403)
-    if request.method == "POST":
-        try:
-            with open("chave.txt", "r") as file:
-                chave = file.read().strip()
-            result = subprocess.run(["./restart.sh", chave], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-            if result.returncode == 0:
-                logger.info(f"Saída do restart: {result.stdout}")
-                logger.error(f"Erros do restart: {result.stderr}")
-                page = f"""
-                <html><head><title>Reiniciar Sistema</title>
-                <meta http-equiv="refresh" content="15;url=/"></head>
-                <body><h1>Reiniciar Sistema</h1>
-                <p>Sistema está reiniciando...</p>
-                <p><a href="/">Voltar para a página principal</a></p>
-                </body></html>
-                """
-                return HttpResponse(page)
-            else:
-                logger.error(f"Erro ao reiniciar o sistema:\n output: {result.stdout}\n error: {result.stderr}")
-                return HttpResponse(f"Erro ao reiniciar o sistema:<br> output: {result.stdout}<br> error: {result.stderr}", status=500)
-        except Exception as e:
-            logger.error(f"Erro ao executar o comando: {str(e)}")
-            return HttpResponse(f"Erro: {str(e)}", status=500)  
-    page = f"""
-    <html><head><title>Reiniciar Sistema</title></head>
-    <body><h1>Reiniciar Sistema</h1><form method="post">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{get_token(request)}">
-    <input type="submit"></form></body></html>
-    """
-    return HttpResponse(page)
-
-@login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
