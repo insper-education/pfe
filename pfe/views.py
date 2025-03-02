@@ -57,8 +57,9 @@ def reiniciar_sistema(request):
         try:
             result = subprocess.run(["./restart.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             if result.returncode == 0:
-                logger.info("Sistema reiniciado com sucesso.")
-                logger.info(f"Output: {result.stdout}")
+                logger.info(f"Comando executado: ./restart.sh")
+                logger.info(f"Saída do comando: {result.stdout}")
+                logger.error(f"Erros do comando: {result.stderr}")
                 page = f"""
                 <html><head><title>Reiniciar Sistema</title>
                 <meta http-equiv="refresh" content="15;url=/"></head>
@@ -70,6 +71,7 @@ def reiniciar_sistema(request):
                 return HttpResponse(page)
             else:
                 logger.error(f"Erro ao reiniciar o sistema:\n output: {result.stdout}\n error: {result.stderr}")
+                logger.error(f"Teste: {result}")
                 return HttpResponse(f"Erro ao reiniciar o sistema:<br> output: {result.stdout}<br> error: {result.stderr}", status=500)
         except Exception as e:
             logger.error(f"Erro ao executar o comando: {str(e)}")
