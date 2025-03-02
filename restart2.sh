@@ -13,10 +13,10 @@ if [ "$CHAVE" != "$CHAVE_FILE" ]; then
 fi
 
 USERNAME=$(whoami)
-echo "Current user: $USERNAME"
+echo "Current user: $USERNAME" >> lixo.txt
 
 USERNAME=$USER
-echo "Current user2: $USERNAME"
+echo "Current user2: $USERNAME" >> lixo.txt
 
 echo "Parando todo os serviços..." >> lixo.txt
 echo "parametros: $1" >> lixo.txt
