@@ -6,7 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Junho de 2023
 """
 
-import os
+import subprocess
 import logging
 
 from django.conf import settings
@@ -55,18 +55,39 @@ def reiniciar_sistema(request):
         return HttpResponse("Acesso Negado", status=403)
     if request.method == "POST":
         try:
-            os.system("./restart.sh")
-            page = f"""
-            <html><head><title>Reiniciar Sistema</title>
-            <meta http-equiv="refresh" content="15;url=/"></head>
-            <body><h1>Reiniciar Sistema</h1>
-            <p>Sistema está reiniciando...</p>
-            <p><a href="/">Voltar para a página principal</a></p>
-            </body></html>
-            """
-            return HttpResponse(page)
+            result = subprocess.run(["./restart.sh"], capture_output=True, text=True)
+            if result.returncode == 0:
+                logger.info("Sistema reiniciado com sucesso.")
+                logger.info(f"Output: {result.stdout}")
+                page = f"""
+                <html><head><title>Reiniciar Sistema</title>
+                <meta http-equiv="refresh" content="15;url=/"></head>
+                <body><h1>Reiniciar Sistema</h1>
+                <p>Sistema está reiniciando...</p>
+                <p><a href="/">Voltar para a página principal</a></p>
+                </body></html>
+                """
+                return HttpResponse(page)
+            else:
+                logger.error(f"Erro ao reiniciar o sistema: {result.stderr}")
+                return HttpResponse(f"Erro ao reiniciar o sistema: {result.stderr}", status=500)
         except Exception as e:
-            return HttpResponse(f"Erro: {str(e)}", status=500)    
+            logger.error(f"Erro ao executar o comando: {str(e)}")
+            return HttpResponse(f"Erro: {str(e)}", status=500)
+        
+        # try:
+        #     os.system("./restart.sh")
+        #     page = f"""
+        #     <html><head><title>Reiniciar Sistema</title>
+        #     <meta http-equiv="refresh" content="15;url=/"></head>
+        #     <body><h1>Reiniciar Sistema</h1>
+        #     <p>Sistema está reiniciando...</p>
+        #     <p><a href="/">Voltar para a página principal</a></p>
+        #     </body></html>
+        #     """
+        #     return HttpResponse(page)
+        # except Exception as e:
+        #     return HttpResponse(f"Erro: {str(e)}", status=500)    
     page = f"""
     <html><head><title>Reiniciar Sistema</title></head>
     <body><h1>Reiniciar Sistema</h1><form method="post">
