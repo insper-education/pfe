@@ -22,7 +22,7 @@ echo "Configurando diretório seguro para o Git..."
 git config --add safe.directory /home/ubuntu/pfe
 
 echo "Puxando últimas atualizações do Git..."
-GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git pull
+GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git pull https://github.com/insper-education/pfe.git
 
 if [ $? -ne 0 ]; then
     echo "Erro ao atualizar."
