@@ -503,7 +503,7 @@ def projeto_avancado(request, primarykey):
 @permission_required("users.altera_professor", raise_exception=True)
 def carrega_bancos(request):
     """Rotina que carrega arquivo CSV de bancos para base de dados do servidor."""
-    with open("projetos/bancos.csv") as csv_file:
+    with open("bancos.csv") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
@@ -1168,7 +1168,7 @@ from collections import defaultdict
 @permission_required("users.altera_professor", raise_exception=True)
 def evolucao_notas(request):
     """Mostra graficos das evoluções das notas."""
-    edicoes, _, _ = get_edicoes(Avaliacao2)
+    edicoes = get_edicoes(Avaliacao2)[0]
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
     if request.is_ajax():
@@ -1256,7 +1256,7 @@ def evolucao_notas(request):
 def evolucao_objetivos(request):
     """Mostra graficos das evoluções por objetivo de aprendizagem."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, _, semestre = get_edicoes(Avaliacao2)
+    edicoes = get_edicoes(Avaliacao2)[0]
 
     if request.is_ajax():
 

@@ -12,18 +12,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-
-    # pagina inicial
-    path("",
-        views.index_academica,
-        name="index_academica"),
-
-    path("academica",
-        views.index_academica,
-        name="academica"),
-
-    path("dinamicas_grupos",
-         views.dinamicas_grupos,
-         name="dinamicas_grupos"),
-
+    path("", views.index_academica, name="index_academica"),  # pagina inicial
+    path("academica", views.index_academica, name="academica"),
+    path("dinamicas_grupos", views.dinamicas_grupos, name="dinamicas_grupos"),
 ]
