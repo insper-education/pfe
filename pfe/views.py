@@ -6,10 +6,12 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Junho de 2023
 """
 
+import os
 import logging
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
@@ -50,6 +52,35 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+@permission_required("users.view_administrador", raise_exception=True)
+def reiniciar_sistema(request):
+    """Reinicia o sistema do Capstone pela interface web."""
+    if not request.user.eh_admin:
+        return HttpResponse("Acesso Negado", status=403)
+    if request.method == "POST":
+        try:
+            os.system("./restart.sh")
+            page = f"""
+            <html><head><title>Reiniciar Sistema</title>
+            <meta http-equiv="refresh" content="15;url=/"></head>
+            <body><h1>Reiniciar Sistema</h1>
+            <p>Sistema está reiniciando...</p>
+            <p><a href="/">Voltar para a página principal</a></p>
+            </body></html>
+            """
+            return HttpResponse(page)
+        except Exception as e:
+            return HttpResponse(f"Erro: {str(e)}", status=500)    
+    page = f"""
+    <html><head><title>Reiniciar Sistema</title></head>
+    <body><h1>Reiniciar Sistema</h1><form method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{get_token(request)}">
+    <input type="submit"></form></body></html>
+    """
+    return HttpResponse(page)
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
