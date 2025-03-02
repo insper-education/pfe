@@ -69,8 +69,8 @@ def reiniciar_sistema(request):
                 """
                 return HttpResponse(page)
             else:
-                logger.error(f"Erro ao reiniciar o sistema: {result.stderr}")
-                return HttpResponse(f"Erro ao reiniciar o sistema: {result.stderr}", status=500)
+                logger.error(f"Erro ao reiniciar o sistema:\n output: {result.stdout}\n error: {result.stderr}")
+                return HttpResponse(f"Erro ao reiniciar o sistema:<br> output: {result.stdout}<br> error: {result.stderr}", status=500)
         except Exception as e:
             logger.error(f"Erro ao executar o comando: {str(e)}")
             return HttpResponse(f"Erro: {str(e)}", status=500)

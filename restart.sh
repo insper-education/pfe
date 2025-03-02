@@ -12,6 +12,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+echo $PWD
+pwd
+cd /home/ubuntu/pfe
+
 echo "Configurando diretório seguro para o Git..."
 git config --add safe.directory /home/ubuntu/pfe
 
