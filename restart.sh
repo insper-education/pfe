@@ -12,6 +12,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+echo "Configurando diretório seguro para o Git..."
+git config --global --add safe.directory /home/ubuntu/pfe
+
 echo "Puxando últimas atualizações do Git..."
 GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git pull
 
