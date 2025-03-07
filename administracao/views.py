@@ -33,8 +33,10 @@ from django.db import connection
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
+
 
 from axes.models import AccessAttempt, AccessLog
 
@@ -427,6 +429,9 @@ def carrega_arquivo(request, dado):
             string_html = "Importado ({0} registros): <br>".format(len(dataset))
             for row_values in dataset:
                 string_html += str(row_values) + "<br>"
+        
+        acerta_nomes = reverse("nomes")
+        string_html += f"<br><br>Para acertar Maiúsculas e Mínúsculas <a href='{acerta_nomes}'>clique aqui</a>"
 
         context = {
             "area_principal": True,
