@@ -26,6 +26,7 @@
   .styled-table th,
   .styled-table td {
     padding: 6px 4px;
+    border: 1px solid #dddddd;
   }
 
   .styled-table tbody tr {
@@ -34,31 +35,30 @@
 
   .bverde {background-color: #e3ffe3;}
   .bvermelho {background-color: #ffe3e3;}
+  .bamarelo {background-color:rgb(254, 249, 211);}
 
 </style>
 
 <script>
   function generateTable(data) {
-    let explic = `
-    Esta é a informação que entendi sobre o texto.<br>
-    &bull; As tarefas sem evidêcias foram marcadas como "Não foi possível identificar evidências".<br> 
-    &bull; As tarefas difusas foram marcadas como "Tarefa difusa".<br>
-    &bull; As tarefas sem autoria própria ("ajudei a", "participei em", etc) foram marcadas como "Tarefa sem autoria".<br>
-    `;
+    let explic = `{% for exp in ia_feedback.explicacao %}{{exp|safe}}<br>{% endfor %}`;
     let table = "<table class='styled-table'><thead>";
-    table += "<tr><td colspan='2'>" + explic + "</td></tr>";
-    table += "<tr><th>Tarefa</th><th>Evidência</th></tr>";
+    table += "<tr><td colspan='{{ia_feedback.campos|length}}'>" + explic + "</td></tr>";
+    table += `<tr>{% for col in ia_feedback.campos %}<th>{% lng col.pt col.en %}</th>{% endfor %}</tr>`;
     table += "</thead><tbody>";
     data.forEach(row => {
       let rowClass = "";
       if (row["Status"] === "OK") {
         rowClass = "bverde";
+      } else if (row["Status"] === "ANDAMENTO") {
+        rowClass = "bamarelo";
       } else if (row["Status"] === "ERRO") {
         rowClass = "bvermelho";
       }
       table += `<tr class="${rowClass}">`;
-      table += `<td>${row["Tarefa"]}</td>`;
-      table += `<td>${row["Evidencia"]}</td>`;
+      {% for col in ia_feedback.campos %}
+        table += `<td>${row["{{col.campo}}"]}</td>`;
+      {% endfor %}
       table += "</tr>";
     });
     table += "</tbody></table>";
@@ -111,6 +111,7 @@
           element.getElementsByClassName("fa-hourglass")[0].style.display = "none";
           element.getElementsByClassName("fa-exclamation-triangle")[0].style.display = "inline-block";  
         }
+        {% include "linguas_ajax.html" %}
       })
       .catch(error => {
         element.getElementsByClassName("fa-hourglass")[0].style.display = "none";

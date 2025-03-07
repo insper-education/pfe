@@ -2187,7 +2187,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                                         momento__lte=evento.endDate + datetime.timedelta(days=1),
                                         exame=exame).last()  # (200, "Relato Quinzenal"),
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
-
+        
         context = {
             "titulo": { "pt": "Avaliar Relato Quinzenal", "en": "Evaluate Biweekly Report" },
             "editor": editor,
@@ -2197,7 +2197,7 @@ def relato_avaliar(request, projeto_id, evento_id):
             "evento": evento,
             "Observacao": Observacao,
             "Relato": Relato,
-
+            "ia_feedback": Estrutura.loads(nome="IA Feedback"),
         }
         return render(request, "professores/relato_avaliar.html", context=context)
 

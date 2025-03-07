@@ -1050,7 +1050,7 @@ def validate_feedback(request):
         if not texto or not email:
             return JsonResponse({"message": "Invalid request data."}, status=400)
         
-        url = "https://textgrader.vercel.app/"
+        url = Estrutura.loads(nome="IA Feedback")["servidor"]
         post_data = {
             "user": email,
             "text": texto,
