@@ -256,7 +256,7 @@ class Aluno(models.Model):
                                                      MaxValueValidator(3018)],
                                          help_text="Ano que cursará o Capstone")
 
-    semestrePFE = models.PositiveIntegerField(null=True, blank=True,
+    semestre = models.PositiveIntegerField(null=True, blank=True,
                                               validators=[MinValueValidator(1),
                                                           MaxValueValidator(2)],
                                               help_text="Semestre que cursará o Capstone")
