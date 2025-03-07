@@ -95,7 +95,7 @@
 {% block content %}
 
   {% if not vencido %}
-    {% if ano != user.aluno.anoPFE or semestre != user.aluno.semestrePFE %}
+    {% if ano != user.aluno.ano or semestre != user.aluno.semestre %}
       <h2 class="red-bold">
         {% lng "Você não está registrado para o Capstone em {{ano}}.{{semestre}}" "You are not registered for the Capstone in {{ano}}.{{semestre}}" %}
       </h2>

@@ -19,7 +19,7 @@
     {% if user.estud %} {% comment %} estudante {% endcomment %}
       {% lng "Estudante" "Student" %}<br>
       <b>{% lng "Curso" "Program" %}:</b> {{ user.aluno.curso2 }}<br>
-      <b>{% lng "Ano e Semestre do Capstone" "Capstone Year and Semester" %}:</b> {{ user.aluno.anoPFE }}.{{ user.aluno.semestrePFE }}
+      <b>{% lng "Ano e Semestre do Capstone" "Capstone Year and Semester" %}:</b> {{ user.aluno.ano }}.{{ user.aluno.semestre }}
       <small>{% lng "(ou posterior)" "(or later)" %}</small><br>
     {% elif user.admin %} {% comment %} administrador {% endcomment %}
       {% lng "Administrador" "Administrator" %}<br>

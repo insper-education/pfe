@@ -41,7 +41,7 @@
     {% lng "Selecionar Propostas de Projetos" "Select Project Proposals" %}
   </a>
 </div>
-{% if ano == user.aluno.anoPFE and semestre == user.aluno.semestrePFE %}
+{% if ano == user.aluno.ano and semestre == user.aluno.semestre %}
   <div style="color: red;">
     {% if liberadas_propostas and limite_propostas %}
       {% lng "Prazo para a seleção das propostas" "Deadline for selecting proposals" %}

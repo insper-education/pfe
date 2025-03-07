@@ -50,14 +50,6 @@ class PFEUserAdmin(admin.ModelAdmin):
     """Usuário geral ."""
     list_display = ("first_name", "last_name", "username", "email", "genero", "tipo_de_usuario",)
     list_filter = ("tipo_de_usuario", FirstLetterFilter)
-    # fieldsets = (
-    #     (None, {"fields": ("username", "first_name", "last_name", "pronome_tratamento", "nome_social", "email", "tipo_de_usuario",)}),
-    #     ("Personal info",
-    #      {"fields": ("groups", "user_permissions", "telefone", "celular", "instant_messaging",
-    #                  "linkedin", "membro_comite", "genero", "tipo_lingua", "observacoes")}),
-    #     ("Permissions",
-    #      {"fields": ("is_active", "is_staff", "is_superuser",)}),
-    # )
     ordering = ("first_name", "last_name")
     search_fields = ["first_name", "last_name", ]
 
@@ -65,23 +57,10 @@ class PFEUserAdmin(admin.ModelAdmin):
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     """Definição de usuário Estudante."""
-    list_display = ("user", "curso2", "anoPFE", "semestrePFE")
+    list_display = ("user", "curso2", "ano", "semestrePFE")
     ordering = ("user__first_name", "user__last_name", )
     list_filter = ("curso2", FirstLetterFilter, )
     search_fields = ["user__first_name", "user__last_name", ]
-    # fieldsets = \
-    #     ((None,
-    #       {"fields":
-    #        ("user",)
-    #       }),
-    #      ("Pessoais", {
-    #          "fields": ("matricula", "curso2", 
-    #                     #"opcoes", 
-    #                     "email_pessoal", "anoPFE", 
-    #                     "semestrePFE", "trancado", "cr", "pre_alocacao", 
-    #                     "trabalhou", "social", "entidade", "familia", "externo",)
-    #      }),
-    #     )
 
 
 @admin.register(Alocacao)
@@ -92,12 +71,14 @@ class AlocacaoAdmin(admin.ModelAdmin):
     search_fields = ["aluno__user__first_name", "aluno__user__last_name", "projeto__titulo_final", "projeto__proposta__titulo", ]
     list_filter = ("projeto__ano", "projeto__semestre", )
 
+
 @admin.register(UsuarioEstiloComunicacao)
 class UsuarioEstiloComunicacaoAdmin(admin.ModelAdmin):
     """Definição de Estilo de Comunicação."""
     list_display = ("usuario", "estilo_comunicacao")
     ordering = ("usuario", )
     search_fields = ["usuario__first_name", "usuario__last_name", ]
+
 
 @admin.register(Parceiro)
 class ParceiroAdmin(admin.ModelAdmin):
@@ -106,12 +87,6 @@ class ParceiroAdmin(admin.ModelAdmin):
     ordering = ("user__first_name", "user__last_name")
     list_filter = (FirstLetterFilter, )
     search_fields = ["user__first_name", "user__last_name", ]
-
-    # def get_full_name(self, obj):
-    #     """Retorna o nome completo do usuário"""
-    #     return obj.user.first_name+' '+obj.user.last_name
-    # get_full_name.short_description = "Nome Completo"
-    # get_full_name.admin_order_field = "user__first_name"
 
     def get_sigla(self, obj):
         """Retorna a silga da organização"""

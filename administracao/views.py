@@ -619,7 +619,7 @@ def propor(request):
         propostas = ordena_propostas(otimizar, ano, semestre)
 
         alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-            filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\
+            filter(ano=ano, semestre=semestre, trancado=False).\
             order_by(Lower("user__first_name"), Lower("user__last_name"))
         
         # Calcula média dos CRs
@@ -774,10 +774,7 @@ def propor(request):
                             reduz = 1 # Volta a busca do começo sempre que há alguma troca
                             break
 
-                alunos = Aluno.objects.filter(user__tipo_de_usuario=1).\
-                    filter(anoPFE=ano).\
-                    filter(semestrePFE=semestre).\
-                    filter(trancado=False).\
+                alunos = Aluno.objects.filter(ano=ano, semestre=semestre, trancado=False).\
                     order_by(Lower("user__first_name"), Lower("user__last_name"))
 
                 opcoes = pega_opcoes(alunos, propostas)
@@ -812,7 +809,7 @@ def montar_grupos(request):
 
     propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
 
-    estudantes = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre).\
+    estudantes = Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre).\
         order_by(Lower("user__first_name"), Lower("user__last_name"))
 
     opcoes = []
@@ -1165,7 +1162,7 @@ def relatorio(request, modelo, formato):
 
     elif modelo == "estudantes" or modelo == "alunos":
         if edicao:
-            context["alunos"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
+            context["alunos"] = Aluno.objects.filter(ano=ano, semestre=semestre)
         else:
             context["alunos"] = Aluno.objects.all()
         arquivo = "administracao/relatorio_alunos.html"

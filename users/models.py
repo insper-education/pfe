@@ -167,8 +167,8 @@ class PFEUser(AbstractUser):
         texto = self.get_full_name()
         if self.tipo_de_usuario == 1 and hasattr(self, "aluno"):  # (1, "aluno"),
             texto += " (estudante"
-            if self.aluno.anoPFE and self.aluno.semestrePFE:
-                texto += " : " + str(self.aluno.anoPFE) + "." + str(self.aluno.semestrePFE)
+            if self.aluno.ano and self.aluno.semestre:
+                texto += " : " + str(self.aluno.ano) + "." + str(self.aluno.semestre)
         elif self.tipo_de_usuario == 2 and hasattr(self, "professor"):  # (2, "professor"),
             texto += " (professor"
             if self.professor.dedicacao:
@@ -251,7 +251,7 @@ class Aluno(models.Model):
     email_pessoal = models.EmailField(null=True, blank=True,
                                       help_text="e-mail pessoal")
 
-    anoPFE = models.PositiveIntegerField(null=True, blank=True,
+    ano = models.PositiveIntegerField(null=True, blank=True,
                                          validators=[MinValueValidator(2018),
                                                      MaxValueValidator(3018)],
                                          help_text="Ano que cursará o Capstone")

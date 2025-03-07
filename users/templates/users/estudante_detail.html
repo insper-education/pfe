@@ -41,8 +41,8 @@
   <b>{% lng "Curso" "Program" %}:</b> {{aluno.curso2}}<br>
 
   <b>{% lng "Periodo do Capstone" "Capstone Semester" %}:</b> 
-  {% if aluno.anoPFE and aluno.semestrePFE %}
-    {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+  {% if aluno.ano and aluno.semestre %}
+    {{aluno.ano}}.{{aluno.semestre}}
   {% else %}
     {% lng "Período não definido" "Not defined" %}
   {% endif %}<br>
@@ -92,7 +92,7 @@
       <h4>{% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
       <div id="regular"> 
         {% for opcao in aluno.opcao_set.all %}
-          {% if opcao.proposta.ano == opcao.aluno.anoPFE and opcao.proposta.semestre == opcao.aluno.semestrePFE %}
+          {% if opcao.proposta.ano == opcao.aluno.ano and opcao.proposta.semestre == opcao.aluno.semestre %}
             <a href="{% url 'proposta_completa' opcao.proposta.id %}">
               <div><b>{{opcao.prioridade}}</b> - 
                 {{opcao.proposta.titulo}}
@@ -113,7 +113,7 @@
           --------------------------------------------------------------------------------------
       </p>
       {% for opcao in aluno.opcao_set.all %}
-        {% if opcao.proposta.ano != opcao.aluno.anoPFE or opcao.proposta.semestre != opcao.aluno.semestrePFE %}
+        {% if opcao.proposta.ano != opcao.aluno.ano or opcao.proposta.semestre != opcao.aluno.semestre %}
           <script>
             $("#quebra").show();
           </script>

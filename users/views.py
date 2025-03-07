@@ -145,7 +145,7 @@ def estudantes_lista(request):
             tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
             
             alunos_list = alunos_semestre |\
-                alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+                alunos_list.filter(ano=ano, semestre=semestre).distinct()
 
         else:
             
@@ -284,7 +284,7 @@ def estudantes_notas(request, professor=None):
 
         # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
         alunos_list = alunos_semestre |\
-            alunos_list.filter(anoPFE=ano, semestrePFE=semestre).distinct()
+            alunos_list.filter(ano=ano, semestre=semestre).distinct()
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
                         {"pt": "e-mail", "en": "e-mail"},
@@ -537,7 +537,7 @@ def estudantes_inscritos(request):
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         ano, semestre = map(int, request.POST["edicao"].split('.'))
-        alunos = Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+        alunos = Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre)
 
         # Conta estudantes de cada curso
         cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
@@ -619,7 +619,7 @@ def estudantes_inscritos(request):
 def converte_opcoes(request, ano, semestre):
     """Mostra todos os estudantes que estão se inscrevendo em projetos."""
     min_props = get_object_or_404(Configuracao).min_props
-    for estudante in Aluno.objects.filter(trancado=False, anoPFE=ano, semestrePFE=semestre):
+    for estudante in Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre):
         opcoes = Opcao.objects.filter(aluno=estudante, proposta__ano=ano, proposta__semestre=semestre)
         if opcoes.count() >= min_props:
             continue
@@ -868,7 +868,7 @@ def contas_senhas(request, edicao=None):
         estudantes = Aluno.objects.all()
         if edicao != "todas":
             ano, semestre = edicao.split('.')
-            estudantes = estudantes.filter(anoPFE=ano, semestrePFE=semestre, trancado=False)
+            estudantes = estudantes.filter(ano=ano, semestre=semestre, trancado=False)
         context = {
                 "estudantes": estudantes,
                 "template": Carta.objects.filter(template="Envio de Conta para Estudantes").last(),

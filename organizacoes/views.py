@@ -485,7 +485,7 @@ def organizacoes_prospect(request):
 
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
     necessarios = {}
-    estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre)
+    estudantes = Aluno.objects.filter(ano=ano, semestre=semestre)
     for curso in cursos:
         necessarios[curso] = estudantes.filter(curso2=curso).count()/configuracao.estudates_por_grupo  # grupos de 4 estudantes
 

@@ -71,13 +71,13 @@ def index_estudantes(request):
         context["projeto"] = projeto
 
         # Estudantes de processos passados sempre terrão seleção vencida
-        if request.user.aluno.anoPFE and request.user.aluno.semestrePFE:
+        if request.user.aluno.ano and request.user.aluno.semestre:
             if semestre == 1:
-                context["vencido"] |= request.user.aluno.anoPFE < ano
-                context["vencido"] |= request.user.aluno.anoPFE == ano and \
-                    request.user.aluno.semestrePFE == 1
+                context["vencido"] |= request.user.aluno.ano < ano
+                context["vencido"] |= request.user.aluno.ano == ano and \
+                    request.user.aluno.semestre == 1
             else:
-                context["vencido"] |= (request.user.aluno.anoPFE <= ano)
+                context["vencido"] |= (request.user.aluno.ano <= ano)
         else:
             context["vencido"] = True
 
@@ -92,7 +92,7 @@ def index_estudantes(request):
         context["fora_fase_feedback_final"], _, _ = configuracao_pares_vencida(request.user.aluno, "APF") # Avaliação de Pares Final
 
         # Só verifica se está no semestre corrente
-        if request.user.aluno.anoPFE == configuracao.ano and request.user.aluno.semestrePFE == configuracao.semestre:
+        if request.user.aluno.ano == configuracao.ano and request.user.aluno.semestre == configuracao.semestre:
             context_pend = ver_pendencias_estudante(request.user, configuracao.ano, configuracao.semestre)
             context.update(context_pend)
 
@@ -695,9 +695,9 @@ def minhas_bancas(request):
     configuracao = Configuracao.objects.get()
     context = {"titulo": {"pt": "Minhas Bancas", "en": "My Examining Boards"},}
     if request.user.tipo_de_usuario == 1:
-        if (request.user.aluno.anoPFE > configuracao.ano) or\
-            (request.user.aluno.anoPFE == configuracao.ano and
-            request.user.aluno.semestrePFE > configuracao.semestre):
+        if (request.user.aluno.ano > configuracao.ano) or\
+            (request.user.aluno.ano == configuracao.ano and
+            request.user.aluno.semestre > configuracao.semestre):
             mensagem = "Fora do período de avaliação de bancas."
             context = {
                 "area_principal": True,
@@ -917,10 +917,10 @@ def selecao_propostas(request):
         aluno = request.user.aluno
 
         if configuracao.semestre == 1:
-            vencido |= aluno.anoPFE < configuracao.ano
-            vencido |= aluno.anoPFE == configuracao.ano and aluno.semestrePFE == 1
+            vencido |= aluno.ano < configuracao.ano
+            vencido |= aluno.ano == configuracao.ano and aluno.semestre == 1
         else:
-            vencido |= aluno.anoPFE <= configuracao.ano
+            vencido |= aluno.ano <= configuracao.ano
 
         if vencido:
             mensagem = "Prazo vencido para seleção de propostas de projetos!"

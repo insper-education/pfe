@@ -164,7 +164,7 @@ def distribuicao_areas(request):
                     alunos = alunos.filter(curso2__in=cursos_insper)
 
             if not todas:
-                alunos = alunos.filter(anoPFE=ano, semestrePFE=semestre)
+                alunos = alunos.filter(ano=ano, semestre=semestre)
             total_preenchido = 0
             for aluno in alunos:
                 if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
@@ -529,8 +529,8 @@ def reembolso_pedir(request):
     if request.user.tipo_de_usuario == 1:
         aluno = get_object_or_404(Aluno, pk=request.user.aluno.pk)
 
-        if aluno.anoPFE > configuracao.ano or\
-            (aluno.anoPFE == configuracao.ano and aluno.semestrePFE > configuracao.semestre):
+        if aluno.ano > configuracao.ano or\
+            (aluno.ano == configuracao.ano and aluno.semestre > configuracao.semestre):
             mensagem = "Projetos ainda não disponíveis para o seu período do Capstone."
             context = {
                 "area_principal": True,
@@ -692,7 +692,7 @@ def lista_feedback_estudantes(request):
 
         for ano, semestre in [edicao.split('.') for edicao in edicoes]:
             
-            estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre).count()
+            estudantes = Aluno.objects.filter(ano=ano, semestre=semestre).count()
             num_estudantes.append(estudantes)
 
             numb_feedb = todos_feedbacks.filter(projeto__ano=ano, projeto__semestre=semestre).\
@@ -705,7 +705,7 @@ def lista_feedback_estudantes(request):
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = edicao.split('.')
-                estudantes = estudantes.filter(trancado=False, anoPFE=ano, semestrePFE=semestre)
+                estudantes = estudantes.filter(trancado=False, ano=ano, semestre=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -1371,7 +1371,7 @@ def evolucao_objetivos(request):
             alunos = Aluno.objects.filter(curso2__sigla_curta=curso)
         for edicao in edicoes:
             periodo = edicao.split('.')
-            students.append(alunos.filter(anoPFE=periodo[0], semestrePFE=periodo[1]).count())
+            students.append(alunos.filter(ano=periodo[0], semestre=periodo[1]).count())
 
         context = {
             "medias": medias,

@@ -115,7 +115,7 @@ def ordena_propostas(disponivel=True, ano=0, semestre=0):
     propostas = propostas.annotate(
         opcoes_count=Count(
             "opcao",
-            filter=Q(opcao__aluno__anoPFE=ano, opcao__aluno__semestrePFE=semestre, opcao__prioridade__lte=5)
+            filter=Q(opcao__aluno__ano=ano, opcao__aluno__semestre=semestre, opcao__prioridade__lte=5)
         )
     )
     
@@ -141,8 +141,8 @@ def ordena_propostas_novo(disponivel=True, ano=2018, semestre=2, curso='T'):
 
     # Só opções para estudantes nesse ano e semester
     opcoes = Opcao.objects.filter(aluno__user__tipo_de_usuario=1,
-                                  aluno__anoPFE=ano,
-                                  aluno__semestrePFE=semestre)
+                                  aluno__ano=ano,
+                                  aluno__semestre=semestre)
 
     if curso != 'T':
             opcoes = opcoes.filter(aluno__curso2__sigla_curta=curso)

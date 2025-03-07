@@ -182,11 +182,11 @@ def registro_usuario(request, user=None):
         estudante.matricula = request.POST.get("matricula", None)
         estudante.curso2 = Curso.objects.filter(sigla=request.POST.get("curso", None)).last()
         try:
-            estudante.anoPFE = int(request.POST["ano"])
-            estudante.semestrePFE = int(request.POST["semestre"])
+            estudante.ano = int(request.POST["ano"])
+            estudante.semestre = int(request.POST["semestre"])
         except (ValueError, OverflowError, MultiValueDictKeyError):
-            estudante.anoPFE = None
-            estudante.semestrePFE = None
+            estudante.ano = None
+            estudante.semestre = None
             mensagem += "Erro na identificação do ano e semestre.<br>"
         try:
             estudante.cr = float(request.POST["cr"])

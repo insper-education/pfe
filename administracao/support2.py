@@ -99,7 +99,7 @@ def get_queryset(resource, dado, ano, semestre):
     if dado == "projetos":
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
     elif dado == "estudantes":
-        queryset = resource._meta.model.objects.filter(anoPFE=ano, semestrePFE=semestre)
+        queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
     elif dado == "alocacoes":
         queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
     elif dado == "pares":

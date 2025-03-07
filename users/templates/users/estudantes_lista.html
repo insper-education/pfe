@@ -64,14 +64,14 @@
                   </a>
                 {% endif %}
               {% empty %}
-                {% if aluno.anoPFE and aluno.semestrePFE %}
-                  {{aluno.anoPFE}}.{{aluno.semestrePFE}}
+                {% if aluno.ano and aluno.semestre %}
+                  {{aluno.ano}}.{{aluno.semestre}}
                 {% else %}
                   {% lng "Indefinido" "Undefined" %}
                 {% endif %}
               {% endfor %}
             </td>
-            <td class="{% if configuracao.ano == aluno.anoPFE and configuracao.semestre == aluno.semestrePFE %}text-success{% endif %}">
+            <td class="{% if configuracao.ano == aluno.ano and configuracao.semestre == aluno.semestre %}text-success{% endif %}">
               {% for alocacao in alocacoes %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   {% if alocacao.projeto and alocacao.projeto.organizacao %}

@@ -58,21 +58,21 @@ def configuracao_estudante_vencida(estudante):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    if estudante.anoPFE is None or estudante.semestrePFE is None:
+    if estudante.ano is None or estudante.semestre is None:
         return True
     
-    if estudante.anoPFE < ano:
+    if estudante.ano < ano:
         return True
     
-    if estudante.anoPFE == ano and semestre == 1:
-        if estudante.semestrePFE == 2:
+    if estudante.ano == ano and semestre == 1:
+        if estudante.semestre == 2:
             return timezone.now().date() > get_limite_propostas(configuracao)
     
-    if estudante.anoPFE == ano and semestre == 2:
+    if estudante.ano == ano and semestre == 2:
         return True
 
-    if estudante.anoPFE == ano+1:
-        if estudante.semestrePFE == 1:
+    if estudante.ano == ano+1:
+        if estudante.semestre == 1:
             return timezone.now().date() > get_limite_propostas(configuracao)
 
     return False
@@ -85,10 +85,10 @@ def configuracao_pares_vencida(estudante, sigla, prazo=10):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    if estudante is not None and estudante.anoPFE is not None and estudante.semestrePFE is not None:
-        if estudante.anoPFE < ano:
+    if estudante is not None and estudante.ano is not None and estudante.semestre is not None:
+        if estudante.ano < ano:
             return True, None, None
-        elif estudante.anoPFE == ano and semestre == 2 and estudante.semestrePFE == 1:
+        elif estudante.ano == ano and semestre == 2 and estudante.semestre == 1:
             return True, None, None
     
     hoje = datetime.date.today()
@@ -117,7 +117,7 @@ def get_edicoes(tipo, anual=False):
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
                 existe = True
         elif tipo == Aluno:
-            if tipo.objects.filter(anoPFE=ano_tmp, semestrePFE=semestre_tmp).exists():
+            if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
                 existe = True
         elif tipo == Avaliacao2:
             if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():

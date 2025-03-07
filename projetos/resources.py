@@ -377,8 +377,8 @@ class EstudantesResource(resources.ModelResource):
         "curso [GRENGCOMP|GRENGMECAT|GRENGMECA|GRCIECOMP]",
         "matrícula (número)",
         "cr (ponto como separador decimal)",
-        "anoPFE (ano em que o estudante cursará no Capstone)",
-        "semestrePFE (semestre em que o estudante cursará no Capstone)",
+        "ano (ano em que o estudante cursará no Capstone)",
+        "semestre (semestre em que o estudante cursará no Capstone)",
         "usuário (desnecessário, pois é pego pelo e-mail)",
         "nome_social (opcional, mas quando usado será usado sempre que se referir ao estudante)",
         "pronome_tratamento (opcional, por exemplo Dr. ou Dra.)",
@@ -445,8 +445,8 @@ class EstudantesResource(resources.ModelResource):
 
             atualizar_campo(aluno, "matricula", row.get("matrícula"))
             atualizar_campo(aluno, "cr", row.get("cr"))
-            atualizar_campo(aluno, "anoPFE", row.get("anoPFE"))
-            atualizar_campo(aluno, "semestrePFE", row.get("semestrePFE"))
+            atualizar_campo(aluno, "ano", row.get("ano"))
+            atualizar_campo(aluno, "semestre", row.get("semestre"))
 
             if "familia" in row:
                 aluno.familia = row["familia"]

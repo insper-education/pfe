@@ -72,7 +72,7 @@ def mapeamento_estudantes_propostas(request):
 
         propostas = ordena_propostas(False, ano, semestre)
 
-        alunos = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False).\
+        alunos = Aluno.objects.filter(ano=ano, semestre=semestre, trancado=False).\
             order_by(Lower("user__first_name"), Lower("user__last_name"))
         projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
 
@@ -175,11 +175,10 @@ def procura_propostas(request):
         estudantes = [[item[i+NIVEIS_OPCOES+1] for item in propostas_ordenadas] for i in range(NIVEIS_OPCOES)]
 
         # Para procurar as áreas mais procuradas nos projetos
-        opcoes = Opcao.objects.filter(aluno__trancado=False,
-                                    prioridade=1)
+        opcoes = Opcao.objects.filter(aluno__trancado=False, prioridade=1)
 
         if ano > 0:  # Ou seja não são todos os anos e semestres
-            opcoes = opcoes.filter(aluno__anoPFE=ano, aluno__semestrePFE=semestre,
+            opcoes = opcoes.filter(aluno__ano=ano, aluno__semestre=semestre,
                                 proposta__ano=ano, proposta__semestre=semestre)
 
         # Caso não se deseje todos os cursos, se filtra qual se deseja
@@ -243,13 +242,13 @@ def procura_propostas(request):
                 "cor": cores_propostas[i],
             })
 
-        qtd_estudantes = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2__in=cursos_insper).count()
+        qtd_estudantes = Aluno.objects.filter(ano=ano, semestre=semestre, trancado=False, curso2__in=cursos_insper).count()
         qtd_estudantes_opc = len(opcoes.values("aluno").distinct())
 
         qtd_estudantes_curso = {}
         for curso in cursos_insper:
             qtd_estudantes_curso[curso] = {}
-            qtd_estudantes_curso[curso]["qtd"] = Aluno.objects.filter(anoPFE=ano, semestrePFE=semestre, trancado=False, curso2=curso).count()
+            qtd_estudantes_curso[curso]["qtd"] = Aluno.objects.filter(ano=ano, semestre=semestre, trancado=False, curso2=curso).count()
             qtd_estudantes_curso[curso]["opc"] = len(opcoes.filter(aluno__curso2=curso).values("aluno").distinct())
 
         context = {
@@ -313,7 +312,7 @@ def propostas_apresentadas(request):
 
             for curso in cursos:
                 if ano and semestre:
-                    estudantes = alunos.filter(curso2=curso, anoPFE=ano, semestrePFE=semestre).count()
+                    estudantes = alunos.filter(curso2=curso, ano=ano, semestre=semestre).count()
                 else:
                     estudantes = alunos.filter(curso2=curso).count()
                 disponivel_propostas[curso] = [0, 0]
@@ -616,8 +615,8 @@ def proposta_detalhes(request, primarykey):
     proposta = get_object_or_404(Proposta, pk=primarykey)
     
     if request.user.eh_estud:  # estudante
-        if not (request.user.aluno.anoPFE == proposta.ano and
-                request.user.aluno.semestrePFE == proposta.semestre):
+        if not (request.user.aluno.ano == proposta.ano and
+                request.user.aluno.semestre == proposta.semestre):
             return HttpResponse("Usuário não tem permissão de acesso.",
                                 status=401)
         if not proposta.disponivel:

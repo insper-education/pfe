@@ -104,11 +104,11 @@
       <br>
       <label for="ano">
         {% lng "Ano Capstone:" "Capstone Year:" %}
-        <input type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.anoPFE %}value="{{usuario.aluno.anoPFE}}"{% endif %}>
+        <input type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.ano %}value="{{usuario.aluno.ano}}"{% endif %}>
       </label> &nbsp;&nbsp;&nbsp;
       <label for="semestre">
         {% lng "Semestre Capstone:" "Capstone Semester:" %}
-        <input type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestrePFE %}value="{{usuario.aluno.semestrePFE}}"{% endif %}>
+        <input type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestre %}value="{{usuario.aluno.semestre}}"{% endif %}>
       </label>
       
       <br>
