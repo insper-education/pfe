@@ -757,6 +757,7 @@ def relato_quinzenal(request):
         "Relato": Relato,
         "fora_periodo": fora_periodo,
         "inicio_periodo": inicio_periodo,
+        "ia_feedback": Estrutura.loads(nome="IA Feedback"),
     }
 
     if request.user.estud():  # Estudante
