@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load get_field %}
+  {% load linguas %}
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
@@ -65,10 +66,18 @@
     <textarea id="familia" name="familia" rows="4" cols="80" maxlength="{% max_length Aluno 'familia' %}" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
     <br><br>
 
-    <label for="linkedin">Caso desejar, você pode informar seu LinkedIn: (opcional)</label><br>
-    <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}><br>
+    <label for="linkedin">
+      {% lng "Caso desejar, você pode informar seu LinkedIn: (opcional)" "If you wish, you can inform your LinkedIn: (optional)" %}
+    </label><br>
+    <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}>
+    <br><br>
     
-    <br>
+    <label for="conta_github">
+      {% lng "Informe seu usuário GitHub: (pode ser informado posteriormente para uso do GitHub)" "Inform your GitHub user: (can be informed later for GitHub use)" %}
+    </label><br>
+    <input type="text" size="38" id="conta_github" name="conta_github" maxlength="{% max_length PFEUser 'conta_github' %}" {% if estudante.user.conta_github %}value="{{estudante.user.conta_github}}"{% endif %} {% if vencido %}disabled{% endif %}>
+    <br><br>
+
     <label for="celular">
       Caso desejar, você pode informar seu telefone celular: (opcional)<br>
     </label><br>

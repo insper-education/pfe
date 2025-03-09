@@ -665,6 +665,7 @@ def informacoes_adicionais(request):
             request.user.linkedin = link
 
             request.user.celular = request.POST.get("celular", None)
+            request.user.conta_github = request.POST.get("conta_github", None)
 
             request.user.save()
             request.user.aluno.save()
