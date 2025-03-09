@@ -337,6 +337,8 @@ def puxa_github(projeto):
     for pasta in pastas_do_projeto:
         pasta = pasta.strip()
         if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
+            if pasta[-1] == '/':
+                pasta = pasta[:-1]
             repositorios.append(pasta)
     return repositorios
 
@@ -360,11 +362,15 @@ def backup_github(projeto):
 
         repo_url_with_token = repo_url.replace("https://", f"https://{token}@")
 
-        if os.path.exists(repo_dir):
-            # Updating repository
-            repo = Repo(repo_dir)
-            repo.remotes.origin.set_url(repo_url_with_token)
-            repo.remotes.origin.pull()
-        else:
-            # Cloning repository
-            Repo.clone_from(repo_url_with_token, repo_dir)
+        try:
+            if os.path.exists(repo_dir):
+                # Updating repository
+                repo = Repo(repo_dir)
+                repo.remotes.origin.set_url(repo_url_with_token)
+                repo.remotes.origin.pull()
+            else:
+                # Cloning repository
+                Repo.clone_from(repo_url_with_token, repo_dir)
+        except Exception as e:
+            # Erro ao clonar repositório
+            pass
