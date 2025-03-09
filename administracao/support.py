@@ -350,14 +350,18 @@ def backup_github(projeto):
     if not os.path.exists(full_path):
         os.makedirs(full_path)
 
+    token = settings.GITHUB_TOKEN
     for repo_url in repositorios:
         repo_name = repo_url.split('/')[-1].replace('.git', '')
         repo_dir = os.path.join(full_path, repo_name)
 
+        repo_url_with_token = repo_url.replace("https://", f"https://{token}@")
+
         if os.path.exists(repo_dir):
             # Updating repository
             repo = Repo(repo_dir)
+            repo.remotes.origin.set_url(repo_url_with_token)
             repo.remotes.origin.pull()
         else:
             # Cloning repository
-            Repo.clone_from(repo_url, repo_dir)
+            Repo.clone_from(repo_url_with_token, repo_dir)
