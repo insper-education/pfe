@@ -20,7 +20,7 @@ def git_usuario(usuario):
     """Puxa informações do usuário no GitHub."""
     try:
         return PFEUser.objects.get(conta_github=usuario)
-    except PFEUser.DoesNotExist:
+    except Exception:
         return None
 
 
@@ -35,7 +35,8 @@ def contributor(url):
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
-        raise Exception(f"Erro ao acessar a API do GitHub: {response.status_code}")
+        return [ (None, f"Erro: {response.status_code}") ]
+        #raise Exception(f"Erro ao acessar a API do GitHub: {response.status_code}")
     
     data = response.json()
 
