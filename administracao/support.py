@@ -6,6 +6,7 @@ Data: 13 de Junho de 2023
 """
 
 import os
+import re
 import datetime
 import dateutil.parser
 import string
@@ -329,10 +330,12 @@ def puxa_github(projeto):
 
     if not projeto.pastas_do_projeto:
         return []
-    
-    pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
+
+    pastas_do_projeto = re.split(r'[ ,;\n\t]+', projeto.pastas_do_projeto)
+
     repositorios = []
     for pasta in pastas_do_projeto:
+        pasta = pasta.strip()
         if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
             repositorios.append(pasta)
     return repositorios
@@ -344,7 +347,7 @@ def backup_github(projeto):
     repositorios = puxa_github(projeto)
     if not repositorios:
         return
-    
+
     path = get_upload_path(projeto, "")
     full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
     if not os.path.exists(full_path):
