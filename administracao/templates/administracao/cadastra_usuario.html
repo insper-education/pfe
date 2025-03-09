@@ -30,7 +30,8 @@
       {% lng "Nome do Usuário" "User Name" %}
     </label><br>
     <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
-      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required><br>
+      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required>
+    <br>
     
     <div style="margin: 6px 4px 6px 24px;">
       <label for="pronome_tratamento" style="margin-top: 6px;">
@@ -43,9 +44,10 @@
       </label>
       <input type="text" size="57" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
     </div>
-
     <br>
-    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required><br><br>
+
+    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required>
+    <br><br>
     
     <label style="width: 4rem;" for="telefone">
       {% lng "telefone:" "phone:" %}
@@ -53,8 +55,8 @@
     <label style="width: 4rem;" for="celular">
       {% lng "celular:" "mobile:" %}
     </label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
-    <label style="width: 4rem;" for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}><br>
-    <br>
+    <label style="width: 4rem;" for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}>
+    <br><br>
 
     <label for="masculino"><input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}>
       {% lng "Masculino" "Male" %}
@@ -64,9 +66,10 @@
     </label>
     <br><br>
     
-    <label for="linkedin">LinkedIn:</label> <input type="text" size="68" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/"><br>
+    <label for="linkedin">LinkedIn:</label> <input type="text" size="68" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/">
+    <br><br>
 
-    <br><label for="lingua">
+    <label for="lingua">
       {% lng "Língua:" "Language:" %}
     </label>
     <select name="lingua" id="lingua" title="Linguagem">
@@ -75,12 +78,16 @@
     </select>
     <br><br>
 
+    <label for="conta_github">
+      {% lng "Conta GitHub:" "GitHub Account:" %}
+    </label> <input type="text" size="40" maxlength="{% max_length PFEUser "conta_github" %}" id="conta_github" name="conta_github" {% if usuario.conta_github %}value="{{usuario.conta_github}}"{% endif %}>
+    <br><br>
+    
     <label for="observacao">
       {% lng "Observações:" "Observations:" %}
     </label><br>
-    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea><br>
-
-    <br>
+    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea>
+    <br><br>
 
     {% comment %} Estudante {% endcomment %}
     <div style="display: block; padding-left: 32px" class="row_tipo" data-type="estudante">

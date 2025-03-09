@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Agosto de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load linguas %}
+  {% load github %}
+{% endblock %}
+
+{% block content %}
+
+  <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+    <thead>
+      <tr>
+        <th>{% lng "Projeto" "Project" %}</th>
+        <th>{% lng "Repositório" "Repository" %}</th>
+        <th>{% lng "Visibilidade" "Visibility" %}</th>
+        <th>{% lng "Criado" "Created" %}</th>
+        <th>{% lng "Atualizado" "Updated" %}</th>
+        <th>{% lng "Tamanho" "Size" %}&nbsp;(KB)</th>
+        <th>{% lng "Estrelas" "Stars" %}</th>
+        <th>{% lng "Linguagem" "Language" %}</th>
+        {% comment %} <th>contributors_url</th> {% endcomment %}
+        <th>{% lng "Contribuições" "Contributions" %}</th>
+        {% comment %} <th>commits_url</th> {% endcomment %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for projeto, repositorio in repositorios.items %}
+        <tr>
+          <td>
+            [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.sigla }}</a>]
+            <a href="{% url 'projeto_infos' projeto.id %}">{{projeto.get_titulo}}</a>
+          </td>
+          <td><a href="{{ repositorio.html_url }}" target="_blank">{{ repositorio.name }}</a></td>
+          {% comment %} <td>{{ repositorio.private }}</td> {% endcomment %}
+          <td>{{ repositorio.visibility }}</td>
+          <td>{{ repositorio.created_at|date:"d/m/Y H:i:s" }}</td>
+          <td>{{ repositorio.updated_at|date:"d/m/Y H:i:s" }}</td>
+          <td class="text-right">{% lng_0 repositorio.size %}</td>
+          <td class="text-right">{{ repositorio.stargazers_count }}</td>
+          <td>{% if repositorio.language %}{{ repositorio.language }}{% else %}N/A{% endif %}</td>
+          {% comment %} <td><a href="{{ repositorio.contributors_url }}" target="_blank">{{ repositorio.contributors_url }}</a></td> {% endcomment %}
+          {% comment %} {% if forloop.first %} {% endcomment %}
+            <td>
+              {% for usuario, dados in repositorio.contributors_url|contributor %}
+                &bull;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;{{dados.contributions}}&nbsp;commits<br>
+              {% endfor %}
+            </td>
+          {% comment %} {% endif %} {% endcomment %}
+          {% comment %} <td><a href="{{ repositorio.commits_url }}" target="_blank">{{ repositorio.commits_url }}</a></td> {% endcomment %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p>{% lng "Quantidade de repositórios" "Number of repositories" %}: {{ repositorios|length }}</p>
+
+{% endblock %}

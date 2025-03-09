@@ -1256,75 +1256,69 @@ def tarefas_agendadas(request):
     return render(request, "administracao/tarefas_agendadas.html", context)
 
 
-def github_backup(projeto):
-    """Simple pull from GitHub."""    
+def puxa_github(projeto):
+    """Detecta repositorios github no projeto."""    
 
+    if not projeto.pastas_do_projeto:
+        return []
+    
     pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
-
+    repositorios = []
     for pasta in pastas_do_projeto:
-        if "https://github.com/pfeinsper/" == pasta[:29] or "git@github.com:pfeinsper/" == pasta[:25]:
-            repo_url = pasta
+        if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
+            repositorios.append(pasta)
 
-            path = get_upload_path(projeto, "")
-            full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
+            # repo_url = pasta
+
+            # path = get_upload_path(projeto, "")
+            # full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
             
-            if not os.path.exists(full_path):
-                os.makedirs(full_path)
+            # if not os.path.exists(full_path):
+            #     os.makedirs(full_path)
 
-            repo_name = repo_url.split('/')[-1].replace('.git', '')
-            repo_dir = os.path.join(full_path, repo_name)
+            # repo_name = repo_url.split('/')[-1].replace('.git', '')
+            # repo_dir = os.path.join(full_path, repo_name)
 
-            if os.path.exists(repo_dir):
-                print(f'Updating repository: {repo_name}')
-                repo = Repo(repo_dir)
-                repo.remotes.origin.pull()
-            else:
-                print(f'Cloning repository: {repo_name}')
-                Repo.clone_from(repo_url, repo_dir)
+            # if os.path.exists(repo_dir):
+            #     print(f'Updating repository: {repo_name}')
+            #     repo = Repo(repo_dir)
+            #     repo.remotes.origin.pull()
+            # else:
+            #     print(f'Cloning repository: {repo_name}')
+            #     Repo.clone_from(repo_url, repo_dir)
+    return repositorios
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def lista_github(request):
+def lista_git(request):
     """Lista todos os repositórios do GitHub na conta do PFE/Capstone."""
-    REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
+    #REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
     headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
-    response = requests.get(REPOS_URL, headers=headers)
-    repos = response.json()
+    repositorios = {}
+    for projeto in Projeto.objects.all():
+        gits = puxa_github(projeto)
+        for git_url in gits:
+            repo_name = git_url.split('/')[-1].replace(".git", "")
+            repo_owner = git_url.split('/')[-2]
+            if repo_owner and repo_name:
+                repo_api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+                response = requests.get(repo_api_url, headers=headers)
+                repos = response.json()
+                repo_dict = {}
+                for chave, valor in repos.items():
+                    if chave == "created_at" or chave == "updated_at" or chave == "pushed_at":
+                        repo_dict[chave] = datetime.datetime.strptime(valor, "%Y-%m-%dT%H:%M:%SZ")
+                    else:
+                        repo_dict[chave] = valor
+                repositorios[projeto] = repo_dict
 
-    campos = ["id", "node_id", "name", "full_name", "private", "owner", "gists_url", 
-              "starred_url", "subscriptions_url", "organizations_url", "repos_url",
-              "events_url", "received_events_url", "type", "user_view_type", 
-              "site_admin", "html_url", "description", "fork", "url", "forks_url",
-              "keys_url", "collaborators_url", "teams_url", "hooks_url", "issue_events_url",
-              "events_url", "assignees_url", "branches_url", "tags_url", "blobs_url",
-              "git_tags_url", "git_refs_url", "trees_url", "statuses_url", "languages_url", 
-              "stargazers_url", "contributors_url", "subscribers_url", "subscription_url",
-              "commits_url", "git_commits_url", "comments_url", "issue_comment_url", "contents_url",
-              "compare_url", "merges_url", "archive_url", "downloads_url", "issues_url",
-              "pulls_url", "milestones_url", "notifications_url" ,"labels_url",
-              "releases_url", "deployments_url", "created_at", "updated_at", "pushed_at",
-              "git_url", "ssh_url", "clone_url", "svn_url", "homepage", "size",
-              "stargazers_count", "watchers_count", "language", "has_issues",
-              "has_projects", "has_downloads", "has_wiki", "has_pages", "forks_count",
-              "mirror_url", "archived", "disabled", "open_issues_count",
-              "license", "allow_forking", "is_template", "web_commit_signoff_required",
-              "topics", "visibility", "forks", "open_issues", "watchers", "default_branch", "permissions"]
-    repositorios = []
-    for repo in repos:
-        repo_dict = {}
-        for campo in campos:
-            repo_dict[campo] = repo.get(campo)
-        repositorios.append(repo_dict)
-
-    github_backup(Projeto.objects.get(id=217))
-    
     context = {
         "titulo": { "pt": "Lista Repositórios do GitHub", "en": "GitHub Repositories List" },
         "repositorios": repositorios,
     }
     
-    return render(request, "administracao/lista_github.html", context)
+    return render(request, "administracao/lista_git.html", context)
 
 
 @login_required

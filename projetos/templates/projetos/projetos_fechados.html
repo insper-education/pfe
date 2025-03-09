@@ -35,7 +35,7 @@
               {% if projeto.organizacao %}
                 <div class="logo">
                   <p>
-                    <a href="{% url 'organizacao_completo' projeto.organizacao.id %}"> 
+                    <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                       <img class="logotipo" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
                     </a>
                     {% for conexao in cooperacoes %}

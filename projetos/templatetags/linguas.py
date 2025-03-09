@@ -40,6 +40,10 @@ def lng_dl(date, pt_text="", en_text=""):
 @register.simple_tag
 def lng_2(numero):
     try:
+        numero = float(numero)
+    except (ValueError, TypeError):
+        return thtml(numero, numero)
+    try:
         locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
     except locale.Error:  
         locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
@@ -52,6 +56,10 @@ def lng_2(numero):
 # Para números com zero casas decimais
 @register.simple_tag
 def lng_0(numero):
+    try:
+        numero = float(numero)
+    except (ValueError, TypeError):
+        return thtml(numero, numero)
     try:
         locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
     except locale.Error:  

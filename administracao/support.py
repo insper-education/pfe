@@ -158,6 +158,7 @@ def registro_usuario(request, user=None):
     usuario.instant_messaging = limpa_texto(request.POST.get("instant_messaging", None))
     usuario.linkedin = limpa_texto(request.POST.get("linkedin", None))
     usuario.tipo_lingua = limpa_texto(request.POST.get("lingua", None))
+    usuario.conta_github = limpa_texto(request.POST.get("conta_github", None))
     usuario.observacoes = limpa_texto(request.POST.get("observacao", None))
 
     if "ativo" in request.POST:

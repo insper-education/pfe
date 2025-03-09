@@ -162,7 +162,7 @@ class ProjetoAdmin(admin.ModelAdmin):
     list_display = ("organizacao", "ano", "semestre", "orientador", "get_titulo",)
     list_filter = (FechadoFilter, "ano", "semestre",)
     actions = [dup_projeto]
-    search_fields = ["titulo_final", "proposta__organizacao__sigla", ]
+    search_fields = ["titulo_final", "proposta__organizacao__sigla", "orientador__user__first_name" ]
 
 
 @admin.register(Proposta)
