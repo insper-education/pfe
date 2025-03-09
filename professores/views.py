@@ -10,7 +10,7 @@ import os
 import datetime
 import dateutil.parser
 import logging
-import json
+import requests
 
 from urllib.parse import unquote
 
@@ -36,7 +36,7 @@ from academica.support import filtra_composicoes, filtra_entregas
 from academica.support_notas import converte_letra, converte_conceito
 
 from administracao.models import Estrutura, Carta
-from administracao.support import usuario_sem_acesso
+from administracao.support import usuario_sem_acesso, puxa_github
 
 from documentos.models import TipoDocumento
 
@@ -2188,6 +2188,25 @@ def relato_avaliar(request, projeto_id, evento_id):
                                         exame=exame).last()  # (200, "Relato Quinzenal"),
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
         
+        ## Para puxer o respositório informado
+        headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
+        repositorios = []
+        gits = puxa_github(projeto)
+        for git_url in gits:
+            repo_name = git_url.split('/')[-1].replace(".git", "")
+            repo_owner = git_url.split('/')[-2]
+            if repo_owner and repo_name:
+                repo_api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}"
+                response = requests.get(repo_api_url, headers=headers)
+                repos = response.json()
+                repo_dict = {}
+                for chave, valor in repos.items():
+                    if chave == "created_at" or chave == "updated_at" or chave == "pushed_at":
+                        repo_dict[chave] = datetime.datetime.strptime(valor, "%Y-%m-%dT%H:%M:%SZ")
+                    else:
+                        repo_dict[chave] = valor
+                repositorios.append( (projeto, repo_dict) )
+
         context = {
             "titulo": { "pt": "Avaliar Relato Quinzenal", "en": "Evaluate Biweekly Report" },
             "editor": editor,
@@ -2198,6 +2217,7 @@ def relato_avaliar(request, projeto_id, evento_id):
             "Observacao": Observacao,
             "Relato": Relato,
             "ia_feedback": Estrutura.loads(nome="IA Feedback"),
+            "repositorios": repositorios,
         }
         return render(request, "professores/relato_avaliar.html", context=context)
 

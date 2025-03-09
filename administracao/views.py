@@ -1272,7 +1272,7 @@ def lista_git(request):
 
     #REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
     headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
-    repositorios = {}
+    repositorios = []
     for projeto in Projeto.objects.all():
         gits = puxa_github(projeto)
         for git_url in gits:
@@ -1288,7 +1288,7 @@ def lista_git(request):
                         repo_dict[chave] = datetime.datetime.strptime(valor, "%Y-%m-%dT%H:%M:%SZ")
                     else:
                         repo_dict[chave] = valor
-                repositorios[projeto] = repo_dict
+                repositorios.append( (projeto, repo_dict) )
 
     context = {
         "titulo": { "pt": "Lista Repositórios do GitHub", "en": "GitHub Repositories List" },

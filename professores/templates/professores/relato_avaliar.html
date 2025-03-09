@@ -10,6 +10,7 @@
   {% load i18n %}
   {% load get_field %}
   {% load linguas %}
+  {% load github %}
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
@@ -74,6 +75,22 @@
     <b>{% lng "Data limite do relato" "Report deadline" %}:</b> {% lng_dl evento.endDate %}
     <br>
     
+    {% if repositorios %}
+      <div>
+        {% for projeto, repositorio in repositorios %}
+          <b>Repositório Git:</b>
+          {% if repositorio.message %}
+            {{ repositorio.message }}<br>
+          {% else %}
+            <a href="{{ repositorio.html_url }}" target="_blank">{{ repositorio.name }}</a><br>
+            {% for usuario, dados in repositorio.contributors_url|contributor %}
+              &nbsp;&bull;&nbsp;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;<a href="{{repositorio.html_url}}/graphs/contributors" target="_blank">{{dados.contributions}}&nbsp;commits</a><br>
+            {% endfor %}
+          {% endif %}<br>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <br>
     {% for alocacao, relato in alocacoes_relatos %}
 

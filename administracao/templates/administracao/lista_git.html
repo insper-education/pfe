@@ -29,7 +29,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for projeto, repositorio in repositorios.items %}
+      {% for projeto, repositorio in repositorios %}
         <tr>
           <td>
             [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.sigla }}</a>]
@@ -50,7 +50,7 @@
             {% comment %} {% if forloop.first %} {% endcomment %}
               <td>
                 {% for usuario, dados in repositorio.contributors_url|contributor %}
-                  &bull;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;{{dados.contributions}}&nbsp;commits<br>
+                  &bull;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;<a href="{{repositorio.html_url}}/graphs/contributors" target="_blank">{{dados.contributions}}&nbsp;commits</a><br>
                 {% endfor %}
               </td>
             {% comment %} {% endif %} {% endcomment %}
