@@ -1261,11 +1261,8 @@ def tarefas_agendadas(request):
 def lista_git(request):
     """Lista todos os repositórios do GitHub na conta do PFE/Capstone."""
     if request.method == "POST":
-        # for projeto in Projeto.objects.all():
-        #     print("Fazendo backup do projeto", projeto)
-        #     backup_github(projeto)
-        projeto = Projeto.objects.get(id=205)
-        backup_github(projeto)
+        for projeto in Projeto.objects.all():
+            backup_github(projeto)
         context = {
             "voltar": True,
             "area_principal": True,
