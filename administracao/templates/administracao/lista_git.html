@@ -12,7 +12,7 @@
 
 {% block content %}
 
-  <table class="table table-striped table-bordered table-hover table-condensed table-responsive">
+  <table class="tabela-padrao table table-striped table-bordered table-hover table-condensed table-responsive">
     <thead>
       <tr>
         <th>{% lng "Projeto" "Project" %}</th>
@@ -58,5 +58,9 @@
   </table>
 
   <p>{% lng "Quantidade de repositórios" "Number of repositories" %}: {{ repositorios|length }}</p>
+
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    <button type="submit" class="btn btn-primary">{% lng "Atualizar todos os repositórios" "Update all repositories" %}</button>
+  </form>
 
 {% endblock %}

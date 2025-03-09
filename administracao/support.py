@@ -5,10 +5,13 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 13 de Junho de 2023
 """
 
+import os
 import datetime
 import dateutil.parser
 import string
 import random
+
+from git import Repo
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, Group
@@ -319,3 +322,42 @@ def envia_senha_mensagem(user):
     codigo = 200
     
     return mensagem, codigo
+
+
+def puxa_github(projeto):
+    """Detecta repositorios github no projeto."""    
+
+    if not projeto.pastas_do_projeto:
+        return []
+    
+    pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
+    repositorios = []
+    for pasta in pastas_do_projeto:
+        if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
+            repositorios.append(pasta)
+    return repositorios
+
+
+def backup_github(projeto):
+    """Faz backup dos repositórios github no projeto."""
+
+    repositorios = puxa_github(projeto)
+    if not repositorios:
+        return
+    
+    path = get_upload_path(projeto, "")
+    full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
+    if not os.path.exists(full_path):
+        os.makedirs(full_path)
+
+    for repo_url in repositorios:
+        repo_name = repo_url.split('/')[-1].replace('.git', '')
+        repo_dir = os.path.join(full_path, repo_name)
+
+        if os.path.exists(repo_dir):
+            # Updating repository
+            repo = Repo(repo_dir)
+            repo.remotes.origin.pull()
+        else:
+            # Cloning repository
+            Repo.clone_from(repo_url, repo_dir)

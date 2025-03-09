@@ -19,7 +19,6 @@ import django
 import celery
 import pkg_resources
 
-from git import Repo
 from celery import Celery
 
 from django.conf import settings
@@ -42,6 +41,7 @@ from axes.models import AccessAttempt, AccessLog
 
 from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
+from .support import puxa_github, backup_github
 from .support2 import create_backup, get_resource, get_queryset
 
 from academica.models import CodigoConduta
@@ -1256,43 +1256,21 @@ def tarefas_agendadas(request):
     return render(request, "administracao/tarefas_agendadas.html", context)
 
 
-def puxa_github(projeto):
-    """Detecta repositorios github no projeto."""    
-
-    if not projeto.pastas_do_projeto:
-        return []
-    
-    pastas_do_projeto = projeto.pastas_do_projeto.split(" ")
-    repositorios = []
-    for pasta in pastas_do_projeto:
-        if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
-            repositorios.append(pasta)
-
-            # repo_url = pasta
-
-            # path = get_upload_path(projeto, "")
-            # full_path = os.path.join(settings.MEDIA_ROOT, path, "git")
-            
-            # if not os.path.exists(full_path):
-            #     os.makedirs(full_path)
-
-            # repo_name = repo_url.split('/')[-1].replace('.git', '')
-            # repo_dir = os.path.join(full_path, repo_name)
-
-            # if os.path.exists(repo_dir):
-            #     print(f'Updating repository: {repo_name}')
-            #     repo = Repo(repo_dir)
-            #     repo.remotes.origin.pull()
-            # else:
-            #     print(f'Cloning repository: {repo_name}')
-            #     Repo.clone_from(repo_url, repo_dir)
-    return repositorios
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def lista_git(request):
     """Lista todos os repositórios do GitHub na conta do PFE/Capstone."""
+    if request.method == "POST":
+        for projeto in Projeto.objects.all():
+            print("Fazendo backup do projeto", projeto)
+            backup_github(projeto)
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": "<h3 style='color:red'>Backup realizado.<h3>",
+        }
+        return render(request, "generic.html", context=context)
+
     #REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
     headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
     repositorios = {}
