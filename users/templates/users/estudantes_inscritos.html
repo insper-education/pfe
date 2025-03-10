@@ -110,7 +110,7 @@
       {{ num_alunos }}<br>
     {% endif %}
 
-    <div id="canvas-holder" class="chart-container">
+    <div id="canvas-holder" class="chart-container mt-2">
       <canvas style="height:330px; max-width:380px" id="chart-area"></canvas>
     </div>
 
@@ -120,20 +120,17 @@
         data: {
           datasets: [{
             data: [{% for qtd in num_estudantes_curso.values %}{{qtd}},{% endfor %}],
-            backgroundColor: [{% for curso in num_estudantes_curso %}"#{{curso.cor}}",{% endfor %}],
-            label: "Proporção entre estudantes"
+            backgroundColor: [{% for curso in num_estudantes_curso %}"#{{curso.cor}}",{% endfor %}]
           }],
-          labels: [
-            {% for course, qtd in num_estudantes_curso.items %}
-              "{{course}} [{% widthratio qtd num_alunos 100 %}%]",
-            {% endfor %}
-          ]
+          labels_pt: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome}} [{% widthratio qtd num_alunos 100 %}%]",{% endfor %}],
+          labels_en: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome_en}} [{% widthratio qtd num_alunos 100 %}%]",{% endfor %}]
         },
         options: {
           responsive: true,
           title: {
                 display: true,
-                text: "Proporção entre estudantes",
+                text_pt: "Proporção entre estudantes",
+                text_en: "Proportion among students",
                 position: "top"
             },
           legend: {
@@ -146,7 +143,7 @@
           },
           plugins: {
             datalabels: {
-              color: "#000",
+              color: "#000"
             }
           },
         }
@@ -155,8 +152,22 @@
       function carrega_graficos() {
         var ctx = document.getElementById("chart-area").getContext("2d");
         window.myPie = new Chart(ctx, config);
+
+        function lingua_grafico() {
+          if(localStorage.getItem("lingua") == "pt") {
+            window.myPie.options.title.text = window.myPie.options.title.text_pt;
+            window.myPie.data.labels = window.myPie.data.labels_pt;
+          } else {
+            window.myPie.options.title.text = window.myPie.options.title.text_en;
+            window.myPie.data.labels = window.myPie.data.labels_en;
+          }
+          window.myPie.update();
+        }
+        lingua_grafico();
+        document.addEventListener("languageChanged", lingua_grafico);
+
       }
-    
+
       function carrega_pagina() {
         if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
           table = $("#EstudantesTable").dataTable();

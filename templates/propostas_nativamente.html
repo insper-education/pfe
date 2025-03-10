@@ -18,7 +18,7 @@
 {% for key, value in disponivel_propostas.items %} {% if value.1 > 0 %}
   <span style="margin-left: 10px;">
     {% lng "nativamente de " "natively in " %}
-    {{key.nome}}: {{value.0}}
+    {% lng key.nome key.nome_en %}: {{value.0}}
     {% if nao_disponivel %}
     <a data-toggle="tooltip" data-html="true" animation="true" title="Contando propostas que a organização desistiua após pubicação ou que não foram aprovados pelo comitê do Capstone.">
       ({{value.1}})

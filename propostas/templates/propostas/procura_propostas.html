@@ -35,7 +35,8 @@
         labels: [{% for proposta in propostas %}"[{{proposta.organizacao.sigla|escapejs}}] {{proposta.titulo}}", {% endfor %}],
         datasets:
         [{% for escolha in escolhas %} {
-              label: "Opção #{{ forloop.counter }}",
+              label_pt: "Opção #{{ forloop.counter }}",
+              label_en: "Option #{{ forloop.counter }}",
               barPercentage: 0.5,
               backgroundColor: "{{escolha.cor}}",
               data: [{% for prioridade in escolha.prioridades %}{{prioridade}}, {% endfor %}],
@@ -118,10 +119,10 @@
         type: "horizontalBar",
           data: barChartData,
           options: {
-            title: {
+            {% comment %} title: {
               display: false,
               text: "Procura de Propostas de Projetos"
-            },
+            }, {% endcomment %}
             layout: {
               padding: {
                 top: 6,
@@ -225,7 +226,22 @@
         var ctx = canvasP.getContext("2d");
         
         {% if tamanho > 0 %}
-          var histograma = new Chart(ctx, config);
+          window.histograma = new Chart(ctx, config);
+        
+          function lingua_grafico() {
+            if(localStorage.getItem("lingua") == "pt") {
+              window.histograma.data.datasets.forEach((dataset) => {
+                dataset.label = dataset.label_pt;
+              });
+            } else {
+              window.histograma.data.datasets.forEach((dataset) => {
+                dataset.label = dataset.label_en;
+              });
+            }
+            window.histograma.update();
+          }
+          lingua_grafico();
+          document.addEventListener("languageChanged", lingua_grafico);
         {% endif %}
 
         canvasP.onclick = function(e) {
@@ -243,7 +259,7 @@
           })
 
           if (label == "") {
-            var slice = histograma.getElementAtEvent(e);
+            var slice = window.histograma.getElementAtEvent(e);
             if (!slice.length) return;
             label = slice[0]._model.label;
           }
@@ -274,7 +290,7 @@
     <ul>
       {% for curso, qtds in qtd_estudantes_curso.items %}
         {% if qtds.qtd > 0 %}
-          <li>{{curso.nome}}: {{qtds.opc}}/{{qtds.qtd}} ({% widthratio qtds.opc qtds.qtd 100 %}%)</li>
+          <li>{% lng curso.nome curso.nome_en %}: {{qtds.opc}}/{{qtds.qtd}} ({% widthratio qtds.opc qtds.qtd 100 %}%)</li>
         {% endif %}
       {% endfor %}
     </ul>
@@ -286,7 +302,7 @@
     </span><br>
     {% for key, value in aplicando_opcoes.items %} {% if value > 0 %}
       <span style="margin-left: 10px;">
-        <b>{% lng "nativamente de " "natively in " %}</b>        {{key.nome}}: {{value}}
+        <b>{% lng "nativamente de " "natively in " %}</b> {% lng key.nome key.nome_en %}: {{value}}
       </span><br>
     {% endif %} {% endfor %} 
     <br>

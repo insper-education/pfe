@@ -22,7 +22,6 @@
     <b>{% lng "Total de Projetos" "Total of Projects" %}</b> = {{ projetos.count }}<br>
     <br>
 
-    {% comment %} <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;"> {% endcomment %}
     <div class="chart-container" style="position: relative; max-width: 1240px; height: 360px;">
       <canvas id="bar-interesses"></canvas>
     </div>
@@ -32,7 +31,9 @@
       var config_interesses = {
           type: "horizontalBar",
           data: {
-            labels: [{% for _, tipo_pt, tipo_en in tipo_interesse %}"{{tipo_pt}}",{% endfor %}],
+            labels_pt: [{% for _, tipo_pt, _ in tipo_interesse %}"{{tipo_pt}}",{% endfor %}],
+            labels_en: [{% for _, _, tipo_en in tipo_interesse %}"{{tipo_en}}",{% endfor %}],
+            {% comment %} labels: null, {% endcomment %}
             datasets: [
               {
                   backgroundColor: "#aefef2",
@@ -49,8 +50,8 @@
           },
           options: {
             maintainAspectRatio: false,
-            legend: { display: false },
-            title: {display: false,},
+            legend: {display: false},
+            title: {display: false},
             scales: {
               xAxes: [{
                   ticks: {
@@ -59,7 +60,8 @@
                   },
                   scaleLabel: {
                       display: true,
-                      labelString: "Número de Propostas"
+                      labelString_pt: "Número de Propostas",
+                      labelString_en: "Number of Proposals"
                   }
               }],
               yAxes: [{
@@ -81,6 +83,19 @@
 
       var bar_interesses = document.getElementById("bar-interesses").getContext("2d");
       window.interesses = new Chart(bar_interesses, config_interesses);
+
+      function lingua_grafico() {
+        if(localStorage.getItem("lingua") == "pt") {
+          window.interesses.data.labels = window.interesses.data.labels_pt;
+          window.interesses.options.scales.xAxes[0].scaleLabel.labelString = window.interesses.options.scales.xAxes[0].scaleLabel.labelString_pt;
+        } else {
+          window.interesses.data.labels = window.interesses.data.labels_en;
+          window.interesses.options.scales.xAxes[0].scaleLabel.labelString = window.interesses.options.scales.xAxes[0].scaleLabel.labelString_en;
+        }
+        window.interesses.update();
+      }
+      lingua_grafico();
+      document.addEventListener("languageChanged", lingua_grafico);
 
     </script>
 

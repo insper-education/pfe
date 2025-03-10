@@ -323,7 +323,7 @@
     {% lng "Médias" "Averages" %}:
     {% for key, value in medias_oo.media_grupo.items %}
       {% if value.media >= 0 %}
-        <span style="white-space: nowrap;">{{key.titulo}}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
+        <span style="white-space: nowrap;">{% lng key.titulo_pt key.titulo_en %}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
       {% endif %}
     {% endfor %}
 
@@ -337,9 +337,8 @@
       var config_radial_grupo = {
         type: "radar",
         data: {
-            labels: [{% for key, value in medias_oo.media_grupo.items %}
-                    {% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}
-                {% endfor %}],
+            labels_pt: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}{% endfor %}],
+            labels_en: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo_en}}",{% else %}"",{% endif %}{% endfor %}],
             datasets: [{
                 label: "Objetivos de Aprendizagem",
                 pointBackgroundColor: [{% for key, value in medias_oo.media_grupo.items %}"{{value.cor}}",{% endfor %}],
@@ -356,7 +355,8 @@
             legend: { display: false },
             title: {
                 display: true,
-                text: "Avaliação Grupo"
+                text_pt: "Avaliação Grupo",
+                text_en: "Group Evaluation",
             },
             scale: {
                 responsive: true,
@@ -373,7 +373,20 @@
       }
 
       var radial_grupo = document.getElementById("radial-grupo").getContext("2d");
-      new Chart(radial_grupo, config_radial_grupo);
+      window.medias = new Chart(radial_grupo, config_radial_grupo);
+
+      function lingua_grafico() {
+        if(localStorage.getItem("lingua") == "pt") {
+          window.medias.options.title.text = window.medias.options.title.text_pt;
+          window.medias.data.labels = window.medias.data.labels_pt;
+        } else {
+          window.medias.options.title.text = window.medias.options.title.text_en;
+          window.medias.data.labels = window.medias.data.labels_en;
+        }
+        window.medias.update();
+      }
+      lingua_grafico();
+      document.addEventListener("languageChanged", lingua_grafico);
 
     </script>
 
