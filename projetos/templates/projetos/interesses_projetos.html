@@ -32,7 +32,7 @@
       var config_interesses = {
           type: "horizontalBar",
           data: {
-            labels: [{% for _, tipo in tipo_interesse %}"{{tipo}}",{% endfor %}],
+            labels: [{% for _, tipo_pt, tipo_en in tipo_interesse %}"{{tipo_pt}}",{% endfor %}],
             datasets: [
               {
                   backgroundColor: "#aefef2",
