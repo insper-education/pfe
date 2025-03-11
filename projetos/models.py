@@ -1211,7 +1211,7 @@ class Aviso(models.Model):
         models.BooleanField(default=True, help_text="Para coordenação do Capstone")
     operacional = \
         models.BooleanField(default=False, help_text="Para equipe operacional do Capstone")
-    comite_pfe = \
+    comite = \
         models.BooleanField(default=False, help_text="Para os membros do comitê do Capstone")
     todos_alunos = \
         models.BooleanField(default=False, help_text="Para todos os estudantes do semestre")

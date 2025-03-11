@@ -102,23 +102,39 @@ def avisos_do_dia():
 
         mensagem_final = mensagem_como_template.render(Context(context))
 
+        mensagem_enviados = "Aviso enviado para: "
+        if aviso.coordenacao:
+            mensagem_enviados += "Coordenação, "
+        if aviso.operacional:
+            mensagem_enviados += "Operacional, "
+        if aviso.comite:
+            mensagem_enviados += "Comitê, "
+        if aviso.todos_alunos:
+            mensagem_enviados += "Estudantes, "
+        if aviso.todos_orientadores:
+            mensagem_enviados += "Orientadores, "
+        if aviso.contatos_nas_organizacoes:
+            mensagem_enviados += "Contatos nas Organizações, "
+        mensagem_enviados = mensagem_enviados[:-2] + "<br><hr><br>"
+
+
         if aviso.coordenacao:
             email_coordenacoes = []
             email_coordenacoes.append(str(configuracao.coordenacao.user.email))
-            email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_final))
+            email(subject, recipient_list + email_coordenacoes, htmlizar(mensagem_enviados + mensagem_final))
             
         if aviso.operacional:
             email_operacional = []
             email_operacional.append(str(configuracao.operacao.email))
-            email(subject, recipient_list + email_operacional, htmlizar(mensagem_final))
+            email(subject, recipient_list + email_operacional, htmlizar(mensagem_enviados + mensagem_final))
                 
-        if aviso.comite_pfe:
+        if aviso.comite:
             comite = PFEUser.objects.filter(membro_comite=True)
             lista_comite = [obj.email for obj in comite]
             email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
                 
         if aviso.todos_alunos:
-            estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre)
+            estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre, aluno__externo__isnull=True)
             lista_estudantes = [obj.user.email for obj in estudantes]
             email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
 

@@ -23,7 +23,7 @@ def trata_aviso(aviso, request):
 
         aviso.coordenacao = "coordenacao" in request.POST
         aviso.operacional = "operacional" in request.POST
-        aviso.comite_pfe = "comite_pfe" in request.POST
+        aviso.comite = "comite" in request.POST
         aviso.todos_alunos = "todos_alunos" in request.POST
         aviso.todos_orientadores = "todos_orientadores" in request.POST
         aviso.contatos_nas_organizacoes = "contatos_nas_organizacoes" in request.POST

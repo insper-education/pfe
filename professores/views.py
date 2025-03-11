@@ -841,7 +841,6 @@ def bancas_editar(request, primarykey=None):
     return render(request, "professores/bancas_view.html", context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela_alocacao(request):
@@ -856,7 +855,7 @@ def bancas_tabela_alocacao(request):
                 if semestre == "1/2":
                     bancas = Banca.objects.filter(projeto__ano=ano)
                 else:
-                    bancas = Banca.objects.filter(projeto__ano=ano).filter(projeto__semestre=semestre)
+                    bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
 
             membros = dict()
             
