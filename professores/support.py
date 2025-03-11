@@ -499,8 +499,7 @@ def ver_pendencias_professor(user, ano, semestre):
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
-    subject = "Capstone | Banca - "
-    subject += banca.composicao.exame.titulo + " "
+    subject = "Capstone | Banca - " + banca.composicao.exame.titulo + " "
     if excluida:
         subject += " - Cancelada"
     else:
@@ -511,8 +510,6 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         subject += " - Estudante: " + banca.alocacao.aluno.user.get_full_name()
     subject += " [" + projeto.organizacao.nome + "] " + projeto.get_titulo()
 
-    mensagem = ''
-    
     BLOQUEAR = True
     configuracao = get_object_or_404(Configuracao)
     interseccao = False
@@ -522,9 +519,7 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
             if BLOQUEAR:
                 return "Mais de duas bancas agendadas para o mesmo horário! Agendamento não realizado."
 
-    configuracao = get_object_or_404(Configuracao)
     recipient_list = []
-    orientador = projeto.orientador
     membros = banca.membros()
 
     recipient_list.extend(membro.email for membro in membros)
@@ -545,12 +540,12 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         "projeto": projeto,
         "link": settings.SERVER + "/projetos/projeto/" + str(projeto.id),
         "interseccao": interseccao,
-        "orientador": orientador,
+        "orientador": projeto.orientador,
         "membros": membros
     }
 
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
-
+    
     if enviar:
         email(subject, recipient_list, mensagem)
 
