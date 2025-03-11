@@ -33,7 +33,11 @@
   <tbody>
     {% for alocacao in alocacoes %}
       <tr>
-        <td>{{ alocacao.aluno }}</td>
+        <td>{{ alocacao.aluno }}
+          {% if alocacao.aluno.externo %}
+            <span class="badge badge-warning">{% lng "Externo" "External" %}</span>
+          {% endif %}
+        </td>
         {% with pares=alocacao|puxa_pares %}
           <td class="text-center">{{ pares.entrega.d }}</td>
           <td class="text-center">{{ pares.entrega.f }}</td>

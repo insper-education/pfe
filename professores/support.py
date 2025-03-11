@@ -321,7 +321,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                 if relatos:
                     if avaliados and relatos_quinzenais not in ['r', 'y']:
                         relatos_quinzenais = 'g'
-                    elif datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
+                    elif (not avaliados) and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
                         relatos_quinzenais = 'r'
                     elif relatos_quinzenais != 'r':
                         relatos_quinzenais = 'y'
@@ -453,9 +453,6 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     
     bancas = bancas_0_1 | bancas_2 | bancas_3
 
-    if bancas.exists():
-        avaliar_bancas = 'g'
-
     exame_titles = {
         "BF": "Banca Final",
         "BI": "Banca Intermediária",
@@ -475,15 +472,18 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
             avaliacoes = None
 
         if not avaliacoes:
-            if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > 2:
+            if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > PRAZO:
                 avaliar_bancas = 'r'
-            else:
-                avaliar_bancas = 'y'         
+            elif banca.endDate and (datetime.date.today() - banca.endDate.date()).days >= 0 and avaliar_bancas != 'r':
+                avaliar_bancas = 'y'
+        elif avaliar_bancas not in ['r', 'y']:
+                avaliar_bancas = 'g'
     return {"avaliar_bancas": (avaliar_bancas, None)}
 
 
 def ver_pendencias_professor(user, ano, semestre):
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
+    PRAZO_BANCA = 2
     context = {}
     if user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
         projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
@@ -493,7 +493,7 @@ def ver_pendencias_professor(user, ano, semestre):
             context.update(check_avaliar_entregas(projetos, ano, semestre, PRAZO))
             context.update(check_bancas_index(projetos, ano, semestre, PRAZO))
             context.update(check_avaliacoes_pares(projetos, ano, semestre, PRAZO))
-        context.update(check_avaliar_bancas(user, ano, semestre, PRAZO))
+        context.update(check_avaliar_bancas(user, ano, semestre, PRAZO_BANCA))
     return context
 
 

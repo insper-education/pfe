@@ -7,20 +7,17 @@
 {% load static %}
 {% load linguas %}
 
-{% comment %} {% if questoes_pares %} {% endcomment %}
-  <h4>
-    {% lng "Ponderação de Pares" "Peer Weighting" %}
-    <span id="pares_com" class="seta-baixo"></span>
-  </h4>
+<h4>
+  {% lng "Ponderação de Pares" "Peer Weighting" %}
+  <span id="pares_com" class="seta-baixo"></span>
+</h4>
 
-  <div id="bloco_pares" style="display: none;">
-    {% include "estudantes/includes/tabela_pares.html" %}<br>
-  </div>
-  <script>
-    $("#pares_com").on("click", function() {
-      $("#bloco_pares").toggle(200);
-      $(this).toggleClass("seta-baixo seta-cima");
-    });
-  </script>
-
-{% comment %} {% endif %} {% endcomment %}
+<div id="bloco_pares" style="display: none;">
+  {% include "estudantes/includes/tabela_pares.html" %}<br>
+</div>
+<script>
+  $("#pares_com").on("click", function() {
+    $("#bloco_pares").toggle(200);
+    $(this).toggleClass("seta-baixo seta-cima");
+  });
+</script>

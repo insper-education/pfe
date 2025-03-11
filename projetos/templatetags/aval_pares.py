@@ -36,28 +36,31 @@ def puxa_pares(alocacao, momento=None):
         "comunicacao": {"f": 0, "d": 0},
     }
     for par in pares:
-        entrega = par.entrega + 1
+        if par.entrega:
+            entrega = par.entrega + 1
+            if entrega > 3:
+                resultado["entrega"]["f"] += entrega
+            elif entrega < 3:
+                resultado["entrega"]["d"] += entrega
         
-        iniciativa = par.iniciativa + 1
-        if iniciativa==5:
-            iniciativa=3
-        elif iniciativa==3:
-            iniciativa=4
-        elif iniciativa==4:
-            iniciativa=5
+        if par.iniciativa:
+            iniciativa = par.iniciativa + 1
+            if iniciativa==5:
+                iniciativa=3
+            elif iniciativa==3:
+                iniciativa=4
+            elif iniciativa==4:
+                iniciativa=5
+            if iniciativa > 3:
+                resultado["iniciativa"]["f"] += iniciativa
+            elif iniciativa < 3:
+                resultado["iniciativa"]["d"] += iniciativa
 
-        comunicacao = par.comunicacao + 1
+        if par.comunicacao:
+            comunicacao = par.comunicacao + 1
+            if comunicacao > 3:
+                resultado["comunicacao"]["f"] += comunicacao
+            elif comunicacao < 3:
+                resultado["comunicacao"]["d"] += comunicacao
 
-        if entrega > 3:
-            resultado["entrega"]["f"] += entrega
-        elif entrega < 3:
-            resultado["entrega"]["d"] += entrega
-        if iniciativa > 3:
-            resultado["iniciativa"]["f"] += iniciativa
-        elif iniciativa < 3:
-            resultado["iniciativa"]["d"] += iniciativa
-        if comunicacao > 3:
-            resultado["comunicacao"]["f"] += comunicacao
-        elif comunicacao < 3:
-            resultado["comunicacao"]["d"] += comunicacao
     return resultado
