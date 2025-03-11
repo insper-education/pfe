@@ -244,7 +244,7 @@
         $(".tipo_banca").change(function(){
             var tipo = $(this).val();
             if(tipo == "F") {  // Banca Falconi
-              {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+              {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
                 document.getElementById("fim").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -252,7 +252,7 @@
               {% endif %}
               minutos=30;
             } else if(tipo == "P") {  // Banca Probation
-              {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+              {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
                 document.getElementById("fim").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -260,7 +260,7 @@
               {% endif %}
               minutos=60;
             } else if(tipo == "BI") {  // Banca Intermediária
-              {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+              {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
                 document.getElementById("fim").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -268,7 +268,7 @@
               {% endif %}
               minutos=120;
             } else {  // Banca Final
-              {% if user.tipo_de_usuario != 4 %} // Coordenador pode alocar fora dos horários
+              {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
                 document.getElementById("inicio").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
                 document.getElementById("inicio").max = "{{bancas_finais.last.endDate|date:'Y-m-d'}}T23:59:59";
                 document.getElementById("fim").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
@@ -384,13 +384,13 @@
       <tr>
         <td>
           <label for="membro1">
-            <span lang="pt">Membro&nbsp;1 <span class="texto-longo"> da Banca</span>:</span>
+            <span lang="pt">Membro&nbsp;1<span class="texto-longo"> da Banca</span>:</span>
             <span lang="en"><span class="texto-longo">Board </span> Member&nbsp;1:</span>
           </label>
         </td>
         <td>
           <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
-            {% if user.tipo_de_usuario != 4 %}required{% endif %}
+            {% if not user.eh_admin %}required{% endif %}
             {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
             oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
             oninput="this.setCustomValidity('')"
@@ -402,7 +402,7 @@
       <tr>
         <td>
           <label for="membro2">
-            <span lang="pt">Membro&nbsp;2 <span class="texto-longo"> da Banca</span>:</span>
+            <span lang="pt">Membro&nbsp;2<span class="texto-longo"> da Banca</span>:</span>
             <span lang="en" style="display: none;"><span class="texto-longo">Board </span> Member&nbsp;2:</span>
           </label>
         </td>
@@ -420,7 +420,7 @@
       <tr>
         <td>
           <label for="membro3">
-            <span lang="pt">Membro&nbsp;3 <span class="texto-longo"> da Banca</span>:</span>
+            <span lang="pt">Membro&nbsp;3<span class="texto-longo"> da Banca</span>:</span>
             <span lang="en" style="display: none;"><span class="texto-longo">Board </span> Member&nbsp;3:</span>
           </label>
         </td>
@@ -538,7 +538,7 @@
   });
 
   function recupera_selecao() {
-    {% for membro in banca.membros %}
+    {% for membro in banca.membros_partic %}
       $("#membro{{forloop.counter}} option[value={{membro.id}}]").attr("selected","selected");
     {% endfor %}
   }

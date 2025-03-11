@@ -733,7 +733,7 @@ def bancas_criar(request, data=None):
     projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
 
     eventos = Evento.get_eventos(configuracao=configuracao)
-    tipos_banca = Composicao.get_composicoes(configuracao.ano, configuracao.semestre).filter(exame__banca=True)  #.order_by("exame__id")
+    tipos_banca = Composicao.get_composicoes(configuracao.ano, configuracao.semestre).filter(exame__banca=True).order_by("exame__id")  # Ordena por ID para manter a ordem de BI, BF, F, P
 
     bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
     bancas_finais = eventos.filter(tipo_evento__sigla="BF")
@@ -816,7 +816,7 @@ def bancas_editar(request, primarykey=None):
     professores, falconis = coleta_membros_banca()
 
     eventos = Evento.get_eventos(configuracao=configuracao)
-    tipos_banca = Composicao.get_composicoes(ano, semestre).filter(exame__banca=True)  #.order_by("exame__id")
+    tipos_banca = Composicao.get_composicoes(ano, semestre).filter(exame__banca=True).order_by("exame__id")  # Ordena por ID para manter a ordem de BI, BF, F, P
 
     bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI").order_by("startDate")
     bancas_finais = eventos.filter(tipo_evento__sigla="BF").order_by("startDate")
@@ -837,7 +837,6 @@ def bancas_editar(request, primarykey=None):
         "bancas_falconi": bancas_falconi,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
-
     }
     return render(request, "professores/bancas_view.html", context)
 
