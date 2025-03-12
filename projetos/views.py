@@ -1686,17 +1686,6 @@ def editar_projeto(request, primarykey):
     projeto = Projeto.objects.get(id=primarykey)
 
     if request.method == "POST":
-
-        # Atualiza título
-        titulo = request.POST.get("titulo", None)
-        if titulo and ( projeto.titulo_final or projeto.titulo_final != titulo):
-            projeto.titulo_final = titulo
-        else:
-            projeto.titulo_final = None
-            
-        projeto.resumo = request.POST.get("resumo", None)
-        projeto.abstract = request.POST.get("abstract", None)
-        projeto.palavras_chave = request.POST.get("palavras_chave", None)
         
         # Realoca orientador
         orientador_id = request.POST.get("orientador", None)
@@ -1853,7 +1842,9 @@ def upload_estudantes_projeto(request, projeto_id):
 
         projeto.save()
 
-    return redirect("/projetos/meuprojeto")
+    if request.user.eh_estud:
+        return redirect("/projetos/meuprojeto")
+    return redirect("/projetos/projeto_infos/"+str(projeto_id))
 
 
 def grupos_formados(request):

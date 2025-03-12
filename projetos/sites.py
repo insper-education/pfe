@@ -110,5 +110,7 @@ def upload_site_e_pastas(request, projeto_id):
                 else:
                     projeto.site = None
             projeto.save()
-        
-    return redirect("/projetos/meuprojeto")
+    
+    if request.user.eh_estud:
+        return redirect("/projetos/meuprojeto")
+    return redirect("/projetos/projeto_infos/"+str(projeto_id))

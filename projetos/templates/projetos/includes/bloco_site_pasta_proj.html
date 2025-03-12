@@ -1,0 +1,77 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Março de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load get_field %}
+
+<div>
+  <form {% if projeto %}action="{% url 'upload_site_e_pastas' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+    <label for="site"><b>
+      {% lng "Site do projeto (opcional)" "Project site (optional)" %}
+    </b></label>
+    {% with site=projeto.get_site %}
+    <div class="row">
+      <div class="col-md-6">
+        {% if site %}
+          <i>{% lng "site estático:" "static site:" %}</i>
+          <a style="background-color: #FFFFFF; padding: 4px;"
+             href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
+          <br>
+        {% else %}
+          <input type="text" size="73" maxlength="{% max_length Projeto "site" %}" 
+                 {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+                 style="max-width: 95%;" id="site" name="site" {% if projeto.site %}
+                 value="{{projeto.site}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
+          <div style="font-size: 12px; line-height:1.0;">site do projeto em repositório externo</div>
+          <br>
+        {% endif %}
+      </div>
+      <div class="col-md-6">
+        <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+        <input class="btn btn-info btn-sm" type="submit" id="Carregar" name="Carregar" value="Carregar" disabled>
+        {% if projeto %}
+          <script>
+            document.getElementById("zipsite").addEventListener("change", function() {
+              if (this.value) {
+                  document.getElementById("Carregar").disabled = false;
+              } else {
+                  document.getElementById("Carregar").disabled = true;
+              }
+            });
+          </script>
+        {% endif %}
+        {% if site %}
+          <input class="btn btn-danger btn-sm" type="submit" name="Remover" value="Remover" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+        {% endif %}
+        <br>
+        <div style="font-size: 12px; line-height:1.0;">
+          {% lng "carrega um arquivo .zip com um site estático para o projeto" "uploads a .zip file with a static site for the project" %}
+        </div>
+        <br>
+      </div>
+    </div>
+    {% endwith %}
+
+    <label for="pastas_do_projeto"><b>
+      {% lng "Pastas do projeto (opcional)" "Project folders (optional)" %}
+    </b></label><br>
+    <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
+    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    >{% if projeto.pastas_do_projeto %}{{projeto.pastas_do_projeto}}{% endif %}</textarea>
+    <div style="font-size: 12px; line-height:1.0;">
+      {% lng "Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado se não tiver autorização da organização parceira para deixar público)" "Links to repositories with project data/code (for advisor access / keep private if you do not have authorization from the partner organization to make it public)" %}
+    </div>
+
+    <div class="text-right">
+      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+        {% lng "Salvar" "Save" %}
+      </button>
+    </div>
+  </form>
+</div>
