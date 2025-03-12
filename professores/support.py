@@ -13,8 +13,9 @@ import logging
 from django.conf import settings
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
 
@@ -538,14 +539,14 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
         "excluida": excluida,
         "enviar": enviar,
         "projeto": projeto,
-        "link": settings.SERVER + "/projetos/projeto/" + str(projeto.id),
+        "link": settings.SERVER + reverse("projeto_infos", args=[projeto.id]),
         "interseccao": interseccao,
         "orientador": projeto.orientador,
         "membros": membros
     }
 
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
-    
+
     if enviar:
         email(subject, recipient_list, mensagem)
 
