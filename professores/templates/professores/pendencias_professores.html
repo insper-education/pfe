@@ -31,9 +31,13 @@
             <td><a href="mailto:{{professor.user.email}}?cc={{coordenacao.user.email}}&subject=Capstone&body=Professor{% if professor.user.genero == "F" %}a{% endif %}%20{{professor.user.get_full_name}},%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";">{{professor.user.email}}</a></td>
             {% for tipo in tipos %}
               <td class="text-center">
-                <a href="{% url tipo.1 professor.id %}">
-                  <span class="circulo">{% include "circulo_estados.html" with estado=pendencias|get_value:tipo.1 %}</span>
-                </a>
+                {% with estado=pendencias|get_value:tipo.1 %}
+                  {% if estado %}
+                    <a href="{% url tipo.1 professor.id %}">
+                      <span class="circulo">{% include "circulo_estados.html" with estado=estado %}</span>
+                    </a>
+                  {% endif %}
+                {% endwith %}
               </td>
             {% endfor %}
           </tr>
