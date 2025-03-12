@@ -484,11 +484,13 @@ def banca_avaliar(request, slug, documento_id=None):
 
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
-               ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != ""):
+               ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != "") or \
+               ("destaque" in request.POST):
                 julgamento_observacoes = Observacao.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
                 julgamento_observacoes.alocacao = banca.alocacao  # Caso Probation
                 julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
-                julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
+                julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")                
+                julgamento_observacoes.destaque = True if request.POST.get("destaque") == "true" else False
                 julgamento_observacoes.save()
 
             subject = "Capstone | Avaliação de Banca - "
@@ -2332,6 +2334,82 @@ def resultado_projetos(request):
 def resultado_meus_projetos(request):
     """Mostra os resultados das avaliações somente do professor (Bancas)."""
     return resultado_projetos_intern(request, professor=request.user.professor)
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def resultado_p_certificacao(request):
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            projetos = Projeto.objects.all()
+            if edicao != "todas":
+                ano, semestre = edicao.split('.')
+                projetos = projetos.filter(ano=ano, semestre=semestre)
+
+            recomendacoes = {nome: [] for nome in ["Banca Final", "Banca Intermediária", "Falconi"]}
+
+            for projeto in projetos:
+                sbi, tbi = "", False
+                bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
+                if bi:
+                    observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BI")
+                    tbi = len(bi.membros()) != len(observacoes)
+                    sbi = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
+                recomendacoes["Banca Intermediária"].append({"destaque_texto": sbi, "destaque_incompleta": tbi,})
+
+                sbf, tbf = "", False
+                bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
+                if bf:
+                    observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BF")
+                    tbf = len(bf.membros()) != len(observacoes)
+                    sbf = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
+                recomendacoes["Banca Final"].append({"destaque_texto": sbf, "destaque_incompleta": tbf,})
+            
+                recomendacoes["Falconi"].append(("&nbsp;-&nbsp;", None, 0))
+                
+            tabela = zip(projetos,
+                         recomendacoes["Banca Intermediária"],
+                         recomendacoes["Banca Final"],
+                         recomendacoes["Falconi"],
+                         )
+
+            context = {
+                    "tabela": tabela,
+                    "edicao": edicao,
+                }
+
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+    else:
+        edicoes = get_edicoes(Projeto)[0]
+
+        configuracao = get_object_or_404(Configuracao)
+        selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
+
+        # informacoes = [
+        #     ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
+        #     ("#ProjetosTable tr > *:nth-child(3)", "Orientador", "Advisor"),
+        #     ("""#ProjetosTable tr > *:nth-child(4),
+        #         #ProjetosTable tr > *:nth-child(5),
+        #         #ProjetosTable tr > *:nth-child(6),
+        #         #ProjetosTable tr > *:nth-child(7),
+        #         #ProjetosTable tr > *:nth-child(8)""", "Notas", "Grades"),
+        #     (".grupo", "Grupo", "Group"),
+        #     (".email", "e-mail", "e-mail", "grupo"),
+        #     (".curso", "curso", "program", "grupo"),
+        # ]
+
+        context = {
+            "titulo": {"pt": "Resultado dos Projetos", "en": "Projects Results"},
+            "edicoes": edicoes,
+            "selecionada": selecionada,
+            # "informacoes": informacoes,
+        }
+
+    return render(request, "professores/resultado_p_certificacao.html", context)
+
 
 
 @login_required

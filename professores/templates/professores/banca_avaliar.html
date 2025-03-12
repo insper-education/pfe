@@ -118,6 +118,32 @@
       <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
       <br><br>
       
+      {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
+        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px;">
+          <label for="destaque">
+            <b>{% lng "Projeto Destaque" "Highlight Project" %}:</b>&nbsp;
+            <input type="radio" name="destaque" value="true" required>
+            {% lng "Sim" "Yes" %}
+            &nbsp;
+            <input type="radio" name="destaque" value="false" required>
+            {% lng "Não" "No" %}
+          </label>
+          <br>
+          <span lang="pt" style="font-size: 0.9em;">
+            Na sua percepção, o grupo demonstrou profissionalismo na condução e desenvolvimento do projeto, 
+            evidenciando domínio técnico, cuidados com a apresentação e organização do material, além de 
+            apresentar competências que indicam um nível de excelência na execução.
+          </span>
+          <span lang="en" style="font-size: 0.9em;">
+            In your perception, did the group demonstrate professionalism in the conduct and development of the project, 
+            showing technical mastery, care with the presentation and organization of the material, in addition to 
+            presenting competencies that indicate a level of excellence in execution.
+          </span>
+        </div>
+        <br>
+      {% endif %}
+
+
       {% if banca.startDate.date > today.date %}
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
           <span class="red-bold">

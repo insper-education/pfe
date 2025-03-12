@@ -73,6 +73,7 @@ urlpatterns = [
     path("resultado_meus_projetos/", views.resultado_meus_projetos, name="resultado_meus_projetos"),
     path("resultado_projetos/", views.resultado_projetos, name="resultado_projetos"),
     path("resultado_projetos/<str:edicao>", views.resultado_projetos_edicao, name="resultado_projetos_edicao"),
+    path("resultado_p_certificacao/", views.resultado_p_certificacao, name="resultado_p_certificacao"),
     path("todos_professores/", views.todos_professores, name="todos_professores"),
     path("ver_pares_projeto/<int:projeto_id>/<str:momento>", views.ver_pares_projeto, name="ver_pares_projeto"),
 

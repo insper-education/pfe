@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Julho de 2020
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load linguas %}
+  <script src="{% static 'js/sort.js' %}"></script>
+  <style>
+    .certificacao_excelencia {background-color:lightgreen !important;}
+    .certificacao_destaque {background-color:lemonchiffon !important;}
+  </style>
+
+  {% comment %} PARA O PAINEL DE FILTRO DE NOTAS DE BANCAS{% endcomment %}
+  <style>
+    .panel {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .slider-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slider {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 8px;
+      height: 100px;
+      margin: 10px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+
+
+{% endblock %}
+
+{% block content %}
+
+  {% include "edicoes.html" %}
+  {% include "informacoes_ml.html" %}
+
+  <div id="atualizar">
+
+    <div class="table-responsive">
+      <table id="ProjetosTable" class="projetos tabela-padrao table-striped">
+
+        {% if tabela %}
+          <thead>
+            <tr>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">{% lng "Projeto" "Project" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Período" "Semester" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
+            </tr>      
+          </thead>
+
+          <tbody>
+            {% for projeto, banca_intermediaria, banca_final, banca_falconi in tabela %} 
+              <tr class="item
+                {% if banca_falconi.certificacao == "E" %}
+                  certificacao_excelencia
+                {% elif banca_falconi.certificacao == "D" %}
+                  certificacao_destaque
+                {% endif %}
+                ">
+                  <td>
+                    [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
+                      {{projeto.get_titulo}}
+                      {% include "tipo_projeto.html" %}<br>
+                    </a>
+                  </td>
+
+                  <td style="text-align: center;"> {{projeto.ano}}.{{projeto.semestre}}</td>
+
+                  <td>  {% comment %} Orientador {% endcomment %}
+                    {% if projeto.orientador %}
+                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
+                    {% else %}{% lng "Orientador não definido" "Advisor not defined" %}{% endif %}
+                  </td>
+
+                {% comment %} Banca Intermediária {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
+                      {% if banca_intermediaria.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="background-color: darkgrey; font-weight: bold;"
+                      {% elif banca_intermediaria.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="background-color: orange; font-weight: bold;"
+                      {% elif banca_intermediaria.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="background-color: pink; font-weight: bold;"
+                      {% endif %}
+
+                      >{{ banca_intermediaria.destaque_texto|safe }}
+                      {% if banca_intermediaria.destaque_incompleta %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                      {% endif %}
+                    </a>
+                  </td>
+
+                  {% comment %} Banca Final {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
+                      {% if banca_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="background-color: darkgrey; font-weight: bold;"
+                      {% elif banca_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="background-color: orange; font-weight: bold;"
+                      {% elif banca_final.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="background-color: pink; font-weight: bold;"
+                      {% endif %}
+
+                      >{{ banca_final.destaque_texto|safe }}
+                      {% if banca_final.destaque_incompleta %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                      {% endif %}
+                    </a>
+                  </td>
+
+                  {% comment %} Banca Falconi {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
+                      {% if banca_falconi.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                        style="background-color: darkgrey; font-weight: bold;"
+                      {% elif banca_falconi.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                        style="background-color: orange; font-weight: bold;"
+                      {% elif banca_falconi.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                        style="background-color: pink; font-weight: bold;"
+                      {% endif %}
+
+                      {% if banca_falconi.nota_texto %}
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
+                        {{ banca_falconi.nota_texto|safe }}
+                      {% else %}
+                        >
+                          {% if banca_falconi.nota_incompleta > 0 %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                          {% endif %}
+                      {% endif %}
+                    
+                    </a>
+                  </td>
+
+              </tr>
+
+            {% empty %}
+              <tr><td colspan="9">
+                {% lng "Não existem projetos disponíveis." "There are no projects available." %}
+              </td></tr>
+            {% endfor %}
+          </tbody>
+
+        {% endif %}
+
+      </table>
+      
+      <br>
+      <span id="todos_projetos" style="cursor:pointer;">
+        &nbsp;<b>{% lng "Total de Projetos" "Total of Projects" %}:</b>
+        <span id="total_projetos"></span>
+        <span id="filtrados" style="display:none;">
+          &nbsp;|&nbsp;
+          {% lng "Filtrados (visíveis)" "Filtered (visible)" %}:
+          <span id="visibleRowsCount">0</span>
+        </span>
+      </span>
+      <br>
+
+      <span id="certificacoes" style="cursor:pointer;">
+        &nbsp;<b>{% lng "Certificações" "Certifications" %}:</b>
+      </span><br>
+      <span id="certificacao_excelencia_label" style="cursor:pointer;">
+        &nbsp;<span style="background-color:lightgreen">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        {% lng "Certificação Excelência FALCONI-INSPER" "FALCONI-INSPER Excellence Certification" %}
+        (<span id="certificacao_excelencia"></span>)
+      </span>
+      <br>
+
+      <span id="certificacao_destaque_label" style="cursor:pointer;">
+        &nbsp;<span style="background-color:lemonchiffon">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        {% lng "Certificação Destaque FALCONI-INSPER" "FALCONI-INSPER Highlight Certification" %}
+        (<span id="certificacao_destaque"></span>)
+      </span>
+      <br>
+    
+      <script>
+        $("#total_projetos").html($(".item").length);
+        $("#certificacao_excelencia").html($(".certificacao_excelencia").length);
+        $("#certificacao_destaque").html($(".certificacao_destaque").length);
+
+        document.getElementById("todos_projetos").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          items.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("certificacoes").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var certificacoes = document.querySelectorAll(".certificacao_excelencia , .certificacao_destaque");
+          items.forEach(function(item) {item.style.display = "none";});
+          certificacoes.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("certificacao_excelencia_label").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var excelenciaItems = document.querySelectorAll(".certificacao_excelencia");
+          items.forEach(function(item) {item.style.display = "none";});
+          excelenciaItems.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+        document.getElementById("certificacao_destaque_label").addEventListener("click", function() {
+          var items = document.querySelectorAll(".item");
+          var excelenciaItems = document.querySelectorAll(".certificacao_destaque");
+          items.forEach(function(item) {item.style.display = "none";});
+          excelenciaItems.forEach(function(item) {item.style.display = "";});
+          updateVisibleRowsCount();
+        });
+
+
+      </script>
+
+    </div>
+
+    <script>
+      {% if edicao != "todas" %}
+        $("#ProjetosTable tr > *:nth-child(2)").hide();
+        $("#info_"+"Período").prop("checked", false);
+      {% else %}
+        $("#info_"+"Período").prop("checked", true);
+      {% endif %}
+    </script>
+
+    <script>
+
+      function updateVisibleRowsCount() {
+        var rows = document.querySelectorAll("#ProjetosTable .item");
+        var visibleCount = 0;
+    
+        rows.forEach(function(row) {
+            if (row.style.display !== "none") {
+                visibleCount++;
+            }
+        });
+    
+        document.getElementById("filtrados").style.display = "inline";
+        document.getElementById("visibleRowsCount").textContent = visibleCount;
+      }
+
+    </script>
+
+  </div>
+
+  {% include "edicoes_ajax.html" %}
+
+{% endblock %}

@@ -1735,6 +1735,9 @@ class Observacao(models.Model):
 
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
+    
+    destaque = models.BooleanField("Destaque", default=False,
+                                   help_text="Caso o resultado da avaliação demonstre destaque")
 
     def __str__(self):
         return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes_orientador)[:6] + "..."
