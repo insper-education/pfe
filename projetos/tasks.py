@@ -104,17 +104,17 @@ def avisos_do_dia():
 
         mensagem_enviados = "Aviso enviado para: "
         if aviso.coordenacao:
-            mensagem_enviados += "Coordenação, "
+            mensagem_enviados += "[<b>Coordenação</b>], "
         if aviso.operacional:
-            mensagem_enviados += "Operacional, "
+            mensagem_enviados += "[<b>Operacional</b>], "
         if aviso.comite:
-            mensagem_enviados += "Comitê, "
+            mensagem_enviados += "[<b>Comitê</b>], "
         if aviso.todos_alunos:
-            mensagem_enviados += "Estudantes, "
+            mensagem_enviados += "[<b>Estudantes</b>], "
         if aviso.todos_orientadores:
-            mensagem_enviados += "Orientadores, "
+            mensagem_enviados += "[<b>Orientadores</b>], "
         if aviso.contatos_nas_organizacoes:
-            mensagem_enviados += "Contatos nas Organizações, "
+            mensagem_enviados += "[<b>Contatos nas Organizações</b>], "
         mensagem_enviados = mensagem_enviados[:-2] + "<br><hr><br>"
 
 
