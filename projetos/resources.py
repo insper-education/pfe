@@ -23,6 +23,8 @@ from academica.support_notas import converte_conceito
 
 from academica.models import Exame
 
+from estudantes.models import Relato
+
 class ProjetosResource(resources.ModelResource):
     """Model Resource para tratar dados de Projetos."""
 
@@ -594,3 +596,19 @@ class AlocacoesResource(resources.ModelResource):
         """Meta do Opções."""
 
         model = Alocacao
+
+class RelatosResource(resources.ModelResource):
+    """Model Resource para tratar dados de Relatos."""
+
+    class Meta:
+        """Meta do Relatos."""
+
+        model = Relato
+
+class ObjetivosDeAprendizagemResource(resources.ModelResource):
+    """Model Resource para tratar dados de Objetivos de Aprendizagem."""
+
+    class Meta:
+        """Meta do Objetivos de Aprendizagem."""
+
+        model = ObjetivosDeAprendizagem

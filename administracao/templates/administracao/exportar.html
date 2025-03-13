@@ -13,12 +13,11 @@
   <form method="post"> {% csrf_token %}
 
     {% include "edicoes.html" %}
-    <br>
 
-    <table><tbody>
+    <table class="table-striped mt-3"><tbody>
       {% for nome, dado in dados %}
         <tr>
-          <td>{{ nome }}</td>
+          <td style="padding-right: 8px;">{{ nome }}</td>
           <td><input type="checkbox" name="dados" value="{{dado}}"></td>
         </tr>
       {% endfor %}

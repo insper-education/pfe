@@ -7,103 +7,76 @@ Data: 23 de Janeiro de 2025
 
 import tablib
 
-from projetos.resources import DisciplinasResource
-from projetos.resources import Avaliacoes2Resource
-from projetos.resources import ProjetosResource
-from projetos.resources import OrganizacoesResource
-from projetos.resources import OpcoesResource
-from projetos.resources import ProfessoresResource
-from projetos.resources import EstudantesResource
-from projetos.resources import ParceirosResource
-from projetos.resources import ConfiguracaoResource
-from projetos.resources import FeedbacksResource
-from projetos.resources import UsuariosResource
-from projetos.resources import ParesResource
-from projetos.resources import AlocacoesResource
+from projetos.resources import *
 
 
+# Essa é uma função que cria um backup de todos os dados do sistema
+# Ela é pesada e deve ser evitada
 def create_backup():
     """Rotina para criar um backup."""
     databook = tablib.Databook()
 
-    data_projetos = ProjetosResource().export()
-    data_projetos.title = "Projetos"
-    databook.add_sheet(data_projetos)
+    resources = {
+        "Projetos": ProjetosResource,
+        "Organizacoes": OrganizacoesResource,
+        "Opcoes": OpcoesResource,
+        "Avaliações": Avaliacoes2Resource,
+        "Usuarios": UsuariosResource,
+        "Alunos": EstudantesResource,
+        "Professores": ProfessoresResource,
+        "Configuracao": ConfiguracaoResource,
+    }
 
-    data_organizacoes = OrganizacoesResource().export()
-    data_organizacoes.title = "Organizacoes"
-    databook.add_sheet(data_organizacoes)
-
-    data_opcoes = OpcoesResource().export()
-    data_opcoes.title = "Opcoes"
-    databook.add_sheet(data_opcoes)
-
-    data_avaliacoes = Avaliacoes2Resource().export()
-    data_avaliacoes.title = "Avaliações"
-    databook.add_sheet(data_avaliacoes)
-
-    data_usuarios = UsuariosResource().export()
-    data_usuarios.title = "Usuarios"
-    databook.add_sheet(data_usuarios)
-
-    data_alunos = EstudantesResource().export()
-    data_alunos.title = "Alunos"
-    databook.add_sheet(data_alunos)
-
-    data_professores = ProfessoresResource().export()
-    data_professores.title = "Professores"
-    databook.add_sheet(data_professores)
-
-    data_configuracao = ConfiguracaoResource().export()
-    data_configuracao.title = "Configuracao"
-    databook.add_sheet(data_configuracao)
-
-    return databook
-
+    for title, resource in resources.items():
+        data = resource().export()
+        data.title = title
+        databook.add_sheet(data)
 
 def get_resource(dado):
-    if dado == "disciplinas":
-        resource = DisciplinasResource()
-    elif dado == "estudantes":
-        resource = EstudantesResource()
-    elif dado == "avaliacoes":
-        resource = Avaliacoes2Resource()
-    elif dado == "projetos":
-        resource = ProjetosResource()
-    elif dado == "organizacoes":
-        resource = OrganizacoesResource()
-    elif dado == "opcoes":
-        resource = OpcoesResource()
-    elif dado == "usuarios":
-        resource = UsuariosResource()
-    elif dado == "professores":
-        resource = ProfessoresResource()
-    elif dado == "parceiros":
-        resource = ParceirosResource()
-    elif dado == "configuracao":
-        resource = ConfiguracaoResource()
-    elif dado == "feedbacks":
-        resource = FeedbacksResource()
-    elif dado == "alocacoes":
-        resource = AlocacoesResource()
-    elif dado == "pares":
-        resource = ParesResource()
-    else:
-        resource = None
-    return resource
+    resource_map = {
+        "disciplinas": DisciplinasResource,
+        "estudantes": EstudantesResource,
+        "avaliacoes": Avaliacoes2Resource,
+        "projetos": ProjetosResource,
+        "organizacoes": OrganizacoesResource,
+        "opcoes": OpcoesResource,
+        "usuarios": UsuariosResource,
+        "professores": ProfessoresResource,
+        "parceiros": ParceirosResource,
+        "configuracao": ConfiguracaoResource,
+        "feedbacks": FeedbacksResource,
+        "alocacoes": AlocacoesResource,
+        "pares": ParesResource,
+        "objetivos": ObjetivosDeAprendizagemResource,
+        "relatos": RelatosResource,
+    }
+    return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
 
 
 def get_queryset(resource, dado, ano, semestre):
 
+    if resource is None:
+        return None
+    
     queryset = None
     if dado == "projetos":
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
     elif dado == "estudantes":
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
-    elif dado == "alocacoes":
+    elif dado == "alocacoes" or dado == "avaliacoes":
         queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
     elif dado == "pares":
         queryset = resource._meta.model.objects.filter(alocacao_de__projeto__ano=ano, alocacao_de__projeto__semestre=semestre)
+    elif dado == "relatos":
+        queryset = resource._meta.model.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+    elif dado == "opcoes":
+        queryset = resource._meta.model.objects.filter(proposta__ano=ano, proposta__semestre=semestre)
+    elif dado == "feedbacks":
+        if semestre == '1':
+            faixa = [ano+"-01-01", ano+"-05-31"]
+        else:
+            faixa = [ano+"-06-01", ano+"-12-31"]
+        queryset = resource._meta.model.objects.filter(data__range=faixa)
 
     if queryset is None:
         queryset = resource._meta.model.objects.all()

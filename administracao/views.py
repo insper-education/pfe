@@ -21,6 +21,8 @@ import pkg_resources
 
 from celery import Celery
 
+from decimal import Decimal
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
@@ -520,61 +522,90 @@ def desbloquear_usuarios(request):
 def exportar(request):
     """Exporta dados."""
 
-    if request.method == "POST" and request.user.eh_admin:
+    if request.method == "POST":
+        if not request.user.eh_admin:
+            return HttpResponse("Usuário sem privilégios de administrador.", status=403)
+
+        periodo = ""
         if "edicao" in request.POST and "dados" in request.POST and "formato" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
+            edicao = request.POST["edicao"]
+            if edicao != "todas":
+                ano, semestre = map(int, edicao.split('.'))
+                periodo = f"_{ano}_{semestre}"
         else:
             return HttpResponse("Erro")
 
         formato = request.POST["formato"].lower()
-        databook = tablib.Databook()
+
+        if formato == "json":
+            livro = {}
+        else:
+            databook = tablib.Databook()
+
         modelo = None
-        for dado in request.POST.getlist("dados"):
+        dados = request.POST.getlist("dados")
+        for dado in dados:
             if modelo is None:
                 modelo = dado
             else:
                 modelo += "_" + dado
 
             resource = get_resource(dado)
-            queryset = get_queryset(resource, dado, ano, semestre)
-
-            if resource is None or queryset is None:
+            if resource is None:
                 mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
                 context = {
                     "area_principal": True,
                     "mensagem": mensagem,
                 }
                 return render(request, "generic.html", context=context)
+        
+            if edicao != "todas":
+                queryset = get_queryset(resource, dado, ano, semestre)
+                dataset = resource.export(queryset)
+            else:
+                dataset = resource.export()
+                
+            if formato == "json":
+                if len(dados) > 1:
+                    livro[dado] = dataset.dict
+                else:
+                    livro = dataset.dict
+            else:
+                dataset.title = dado
+                databook.add_sheet(dataset)
 
-            dataset = resource.export(queryset)
-            dataset.title = dado
-            databook.add_sheet(dataset)
+        def data_default(obj):
+            if isinstance(obj, Decimal):
+                return float(obj)
+            raise TypeError
         
         if formato in ("xls", "xlsx"):
             formato = "xlsx"
             response = HttpResponse(databook.export("xlsx"), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         elif formato == "json":
-            response = HttpResponse(dataset.export("json"), content_type="application/json")
+            response = HttpResponse(json.dumps(livro, default=data_default), content_type="application/json")
         elif formato == "csv":
             response = HttpResponse(dataset.export("csv"), content_type="text/csv")
         else:
             return HttpResponse("Erro")
-        response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
+        response["Content-Disposition"] = 'attachment; filename="'+modelo+periodo+'.'+formato+'"'
         return response
 
     dados = [
-        ("Projetos", "projetos" ),
-        ("Organizações", "organizacoes"),
-        ("Opções", "opcoes"),
-        ("Avaliações", "avaliacoes"),
-        ("Usuários", "usuarios"),
-        ("Estudantes", "estudantes"),
-        ("Professores", "professores"),
-        ("Parceiros", "parceiros"),
-        ("Configuração", "configuracao"),
-        ("Feedbacks", "feedbacks"),
         ("Alocações", "alocacoes"),
         ("Avaliação de Pares", "pares"),
+        ("Avaliações", "avaliacoes"),
+        ("Configuração", "configuracao"),
+        ("Estudantes", "estudantes"),
+        ("Feedbacks", "feedbacks"),
+        ("Organizações", "organizacoes"),
+        ("Objetivos de Aprendizagem", "objetivos"),
+        ("Opções", "opcoes"),        
+        ("Parceiros", "parceiros"),
+        ("Professores", "professores"),
+        ("Projetos", "projetos" ),
+        ("Relatos Quinzenais", "relatos"),
+        ("Usuários", "usuarios"),
     ]
 
     context = {
