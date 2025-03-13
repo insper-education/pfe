@@ -137,7 +137,6 @@ def adiciona_despesa(request):
         despesa.fornecedor = request.POST.get("fornecedor", None)
         
         if "projeto" in request.POST and request.POST["projeto"]:
-            print("projeto", request.POST["projeto"])
             despesa.projeto = Projeto.objects.get(id=request.POST["projeto"])
         else:
             despesa.projeto = None
