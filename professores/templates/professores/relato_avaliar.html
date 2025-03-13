@@ -78,13 +78,14 @@
     {% if repositorios %}
       <div>
         {% for projeto, repositorio in repositorios %}
-          <b>Repositório Git:</b>
+          <b>{% lng "Repositório Git" "Git Repository" %}:</b>
           {% if repositorio.message %}
             {{ repositorio.message }}<br>
           {% else %}
             <a href="{{ repositorio.html_url }}" target="_blank">{{ repositorio.name }}</a><br>
-            {% for usuario, dados in repositorio.contributors_url|contributor %}
-              &nbsp;&bull;&nbsp;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;<a href="{{repositorio.html_url}}/graphs/contributors" target="_blank">{{dados.contributions}}&nbsp;commits</a><br>
+            <a href="{{repositorio.html_url}}/graphs/contributors?from={{evento_anterior.endDate.month}}%2F{{evento_anterior.endDate.day}}%2F{{evento_anterior.endDate.year}}&amp;to={{evento.endDate.month}}%2F{{evento.endDate.day}}%2F{{evento.endDate.year}}" target="_blank"><b>VER CONTRIBUIÇÕES NO PERÍODO</b></a><br>
+            {% for usuario, dados in repositorio|contributor %}
+              &nbsp;&bull;&nbsp;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;{{dados.contributions}} commits total<br>
             {% endfor %}
           {% endif %}<br>
         {% endfor %}

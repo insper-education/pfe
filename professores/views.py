@@ -2188,7 +2188,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                                         exame=exame).last()  # (200, "Relato Quinzenal"),
                                         # O datetime.timedelta(days=1) é necessário pois temos de checar passadas 24 horas, senão vale começo do dia
         
-        ## Para puxer o respositório informado
+        ## Para puxar o respositório informado
         headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}
         repositorios = []
         gits = puxa_github(projeto)
@@ -2214,6 +2214,7 @@ def relato_avaliar(request, projeto_id, evento_id):
             "observacoes": obs.observacoes_orientador if obs else None,
             "alocacoes_relatos": zip(alocacoes, relatos),
             "evento": evento,
+            "evento_anterior": evento_anterior,
             "Observacao": Observacao,
             "Relato": Relato,
             "ia_feedback": Estrutura.loads(nome="IA Feedback"),

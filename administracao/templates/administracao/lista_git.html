@@ -49,7 +49,7 @@
             {% comment %} <td><a href="{{ repositorio.contributors_url }}" target="_blank">{{ repositorio.contributors_url }}</a></td> {% endcomment %}
             {% comment %} {% if forloop.first %} {% endcomment %}
               <td>
-                {% for usuario, dados in repositorio.contributors_url|contributor %}
+                {% for usuario, dados, _ in repositorio|contributor %}
                   &bull;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;<a href="{{repositorio.html_url}}/graphs/contributors" target="_blank">{{dados.contributions}}&nbsp;commits</a><br>
                 {% endfor %}
               </td>
