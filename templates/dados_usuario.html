@@ -25,6 +25,10 @@
 
 <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
 
+{% if user.conta_github %}
+  <strong>GitHub:</strong> <a href="https://github.com/{{user.conta_github}}">{{user.conta_github}}</a><br>
+{% endif %}
+
 {% if user.telefone or user.celular or user.instant_messaging %}
 
   <strong>
