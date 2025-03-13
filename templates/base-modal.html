@@ -4,10 +4,18 @@
   Data: 25 de Fevereiro de 2025
 {% endcomment %}
 
+
+{% comment %} APARENTEMENTE NÃO MAIS SENDO USADO {% endcomment %}
+{% comment %} APARENTEMENTE NÃO MAIS SENDO USADO {% endcomment %}
+{% comment %} APARENTEMENTE NÃO MAIS SENDO USADO {% endcomment %}
+{% comment %} APARENTEMENTE NÃO MAIS SENDO USADO {% endcomment %}
+{% comment %} APARENTEMENTE NÃO MAIS SENDO USADO {% endcomment %}
+
+
 {% load linguas %}
 
 {% comment %} Para confirmações {% endcomment %}
-<div class="modal fade" id="confirm" tabindex="-1" role="dialog">
+{% comment %} <div class="modal fade" id="confirm" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -25,7 +33,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 
 <script>
   
@@ -50,6 +58,10 @@
     var url = $(this).data("url");
     if (!url) {return;}
 
+    // Campo opcional em alguns casos (dia/mes/ano)
+    var data = $(this).data("data");
+    if(data) {url += data}
+
     var confirmar = $(this).data("confirmar");
     if (confirmar) {
       $("#confirm").modal({
@@ -66,11 +78,10 @@
     }    
   }
 
-   
   $(document).ready(function() {
-    if (!$(document).data('modal-event-registered')) {  // Check if the event handler is already registered
+    if (!$(document).data("modal-event-registered")) {  // Check if the event handler is already registered
       $(document).on("click", ".open-modal", abrir_modal);  // Register the event handler if it is not already registered      
-      $(document).data('modal-event-registered', true);  // Set the flag to indicate that the event handler has been registered
+      $(document).data("modal-event-registered", true);  // Set the flag to indicate that the event handler has been registered
     }
   });
 

@@ -73,7 +73,7 @@
       <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
       data-width="75%" data-size="5"
       {% comment %} required {% endcomment %}
-      {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
+      {% if request.user.eh_admin %}data-live-search="true"{% endif %}
       >
         {% for projeto in projetos %}
           {% if projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
@@ -96,7 +96,7 @@
             >
               {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
               ({{projeto.organizacao}}) {{projeto.get_titulo}}
-              {% include "tipo_projeto.html" %}
+              {% include "tipo_projeto.html" with sem_cor="True" %}
             </option>
           {% endif %}
         {% endfor %}
@@ -114,7 +114,7 @@
       <select class="selectpicker" name="alocacao" id="alocacao" title="Selecione a alocação"
       data-width="75%" data-size="5" 
       {% comment %} required {% endcomment %}
-      {% if request.user.tipo_de_usuario == 4 %}data-live-search="true"{% endif %}
+      {% if request.user.eh_admin %}data-live-search="true"{% endif %}
       >
         {% for alocacao in alocacoes %}
           {% if alocacao.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
@@ -229,7 +229,7 @@
       {% for tipo in tipos_banca %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
           <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo.exame.sigla}}" type="radio" name="tipo" value="{{tipo.exame.sigla}}"
-           {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+           {% if banca and banca.projeto.orientador.user != request.user and not request.user.eh_admin %}disabled{% endif %}
            {% if banca.composicao.exame.sigla == tipo.exame.sigla or tipo.exame.sigla == tipob %}checked{% endif %} required>
             {% lng tipo.exame.titulo tipo.exame.titulo_en %}
             {% lng "(duração padrão" "(standard duration" %}:
