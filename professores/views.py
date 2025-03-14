@@ -710,7 +710,6 @@ def bancas_tabela_alocacao_completa(request):
 def bancas_criar(request, data=None):
     """Cria uma banca de avaliação para o projeto."""
 
-    print(data)
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax() and request.method == "POST":

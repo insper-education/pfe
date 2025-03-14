@@ -45,18 +45,23 @@ def calcula_interseccao_bancas(banca, startDate, endDate):
     intersecta = 0
 
     intersectadas = Banca.objects.filter(Q(endDate__gt=startDate) & Q(startDate__lt=endDate))
+    
     if banca is not None:                
         # Pega todas as bancas que intersectam com o período informado
         intersectadas = intersectadas.exclude(id=banca.id)
-
+    
     # Verifica entre as bancas intersectadas se elas também se intersectam
     for intersectada in intersectadas:
-        b_start = Banca.objects.filter(Q(endDate__gt=intersectada.startDate) & Q(startDate__lte=intersectada.startDate))
-        b_end = Banca.objects.filter(Q(endDate__gt=intersectada.endDate) & Q(startDate__lte=intersectada.endDate))
+
+        b_start = intersectadas.filter(Q(endDate__gt=intersectada.startDate) & Q(startDate__lte=intersectada.startDate)).exclude(id=intersectada.id)
+        b_end = intersectadas.filter(Q(endDate__gt=intersectada.endDate) & Q(startDate__lte=intersectada.endDate)).exclude(id=intersectada.id)
         if banca:
             b_start = b_start.exclude(id=banca.id)
             b_end = b_end.exclude(id=banca.id)
-        intersecta = max(intersecta, b_start.count(), b_end.count())
+        c_start = b_start.count() + 1  # Pelo menos coincide com a banca sendo agendada/reagendada
+        c_end = b_end.count() + 1  # Pelo menos coincide com a banca sendo agendada/reagendada
+        
+        intersecta = max(intersecta, c_start, c_end)
 
     return intersecta >= configuracao.limite_salas_bancas
 
@@ -64,7 +69,7 @@ def calcula_interseccao_bancas(banca, startDate, endDate):
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
 
-    if request.user.tipo_de_usuario != 4:  # Caso não Administrador
+    if not request.user.eh_admin:  # Caso não Administrador
         # Verifica se a banca não intersecta com outras bancas
         if "inicio" in request.POST and "fim" in request.POST:
             startDate = dateutil.parser.parse(request.POST["inicio"])
