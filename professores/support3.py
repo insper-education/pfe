@@ -84,9 +84,6 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             nomes_bancas = [ ("Banca Final", "BF"), ("Banca Intermediária", "BI")]
             for nome in nomes_bancas:
                 notas[nome[0]] = []
-            nomes_f = [ ("Falconi", "F")]
-            for nome in nomes_f:
-                notas[nome[0]] = []
 
             for projeto in projetos:
 
@@ -184,43 +181,13 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                                                     "certificacao": "",
                                                     "nota_incompleta": nota_incompleta})
 
-                    
-                for titulo_aval in nomes_f:
-                    exame = Exame.objects.get(titulo=titulo_aval[0])
-                    aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-                    nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)                    
-                    nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
-
-                    if peso is not None:
-                        nomes = ""
-                        for nome in avaliadores:
-                            nomes += "&#8226; "+str(nome)+"<br>"
-
-                        certificacao = ""
-                        if nota_b >= 8:
-                            certificacao = "E"  # Excelencia FALCONI-INSPER
-                        elif nota_b >= 6:
-                            certificacao = "D"  # Destaque FALCONI-INSPER
-
-                        notas[titulo_aval[0]].append({"avaliadores": "{0}".format(nomes),
-                                            "nota_texto": "{0:5.2f}".format(nota_b),
-                                            "nota": nota_b,
-                                            "certificacao": certificacao,
-                                            "nota_incompleta": nota_incompleta})
-                        
-                    else:
-                        notas[titulo_aval[0]].append({"avaliadores": "&nbsp;-&nbsp;",
-                                            "nota_texto": "",
-                                            "nota": 0,
-                                            "certificacao": "",
-                                            "nota_incompleta": nota_incompleta})
-
             tabela = zip(projetos,
                          notas["Relatório Intermediário"],
                          notas["Relatório Final"],
                          notas["Banca Intermediária"],
                          notas["Banca Final"],
-                         notas["Falconi"],)
+                        #  notas["Falconi"],
+                         )
 
             context = {
                     "tabela": tabela,
@@ -246,8 +213,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
             ("""#ProjetosTable tr > *:nth-child(4),
                 #ProjetosTable tr > *:nth-child(5),
                 #ProjetosTable tr > *:nth-child(6),
-                #ProjetosTable tr > *:nth-child(7),
-                #ProjetosTable tr > *:nth-child(8)""", "Notas", "Grades"),
+                #ProjetosTable tr > *:nth-child(7)""", "Notas", "Grades"),
             (".grupo", "Grupo", "Group"),
             (".email", "e-mail", "e-mail", "grupo"),
             (".curso", "curso", "program", "grupo"),

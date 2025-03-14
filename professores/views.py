@@ -32,7 +32,7 @@ from .support3 import resultado_projetos_intern, puxa_encontros
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
-
+from academica.support4 import get_banca_estudante
 from academica.support_notas import converte_letra, converte_conceito
 
 from administracao.models import Estrutura, Carta
@@ -41,6 +41,8 @@ from administracao.support import usuario_sem_acesso, puxa_github
 from documentos.models import TipoDocumento
 
 from estudantes.models import Relato, Pares
+
+from professores.support3 import get_banca_incompleta
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, Certificado
@@ -2347,34 +2349,75 @@ def resultado_p_certificacao(request):
             edicao = request.POST["edicao"]
             projetos = Projeto.objects.all()
             if edicao != "todas":
-                ano, semestre = edicao.split('.')
+                ano, semestre = map(int, edicao.split('.'))
                 projetos = projetos.filter(ano=ano, semestre=semestre)
+            else:
+                ano, semestre = 0, 0
 
-            recomendacoes = {nome: [] for nome in ["Banca Final", "Banca Intermediária", "Falconi"]}
+            recomendacoes = {nome: [] for nome in ["Banca Final", "Banca Intermediária"]}
+            notas = {nome: [] for nome in ["Falconi"]}
 
             for projeto in projetos:
-                sbi, tbi = "", False
-                bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
-                if bi:
-                    observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BI")
-                    tbi = len(bi.membros()) != len(observacoes)
-                    sbi = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
-                recomendacoes["Banca Intermediária"].append({"destaque_texto": sbi, "destaque_incompleta": tbi,})
 
-                sbf, tbf = "", False
-                bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
-                if bf:
-                    observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BF")
-                    tbf = len(bf.membros()) != len(observacoes)
-                    sbf = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
-                recomendacoes["Banca Final"].append({"destaque_texto": sbf, "destaque_incompleta": tbf,})
+                if ano >= 2025:
+                    # Banca Intermediária
+                    sbi, tbi = "", False
+                    bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
+                    if bi:
+                        observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BI")
+                        tbi = len(bi.membros()) != len(observacoes)
+                        sbi = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
+                    recomendacoes["Banca Intermediária"].append({"destaque_texto": sbi, "destaque_incompleta": tbi,})
+
+                    # Banca Final
+                    sbf, tbf = "", False
+                    bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
+                    if bf:
+                        observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BF")
+                        tbf = len(bf.membros()) != len(observacoes)
+                        sbf = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
+                    recomendacoes["Banca Final"].append({"destaque_texto": sbf, "destaque_incompleta": tbf,})
             
-                recomendacoes["Falconi"].append(("&nbsp;-&nbsp;", None, 0))
+                elif ano >= 2023:
+                    recomendacoes["Banca Intermediária"].append({"destaque_texto": "media BI e RIG >= 8"})
+                    recomendacoes["Banca Final"].append({"destaque_texto": "media BF e RFG >= 8",})
+                else:
+                    recomendacoes["Banca Intermediária"].append({"destaque_texto": "media BI e RIG >= 7"})
+                    recomendacoes["Banca Final"].append({"destaque_texto": "media BF e RFG >= 7",})
+
+                # Banca Falconi
+                aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
+                nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)                    
+                nota_incompleta = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
+
+                if peso is not None:
+                    nomes = ""
+                    for nome in avaliadores:
+                        nomes += "&#8226; "+str(nome)+"<br>"
+
+                    certificacao = ""
+                    if nota_b >= 8:
+                        certificacao = "E"  # Excelencia FALCONI-INSPER
+                    elif nota_b >= 6:
+                        certificacao = "D"  # Destaque FALCONI-INSPER
+
+                    notas["Falconi"].append({"avaliadores": "{0}".format(nomes),
+                                        "nota_texto": "{0:5.2f}".format(nota_b),
+                                        "nota": nota_b,
+                                        "certificacao": certificacao,
+                                        "nota_incompleta": nota_incompleta})
+                    
+                else:
+                    notas["Falconi"].append({"avaliadores": "&nbsp;-&nbsp;",
+                                        "nota_texto": "",
+                                        "nota": 0,
+                                        "certificacao": "",
+                                        "nota_incompleta": nota_incompleta})
                 
             tabela = zip(projetos,
                          recomendacoes["Banca Intermediária"],
                          recomendacoes["Banca Final"],
-                         recomendacoes["Falconi"],
+                         notas["Falconi"],
                          )
 
             context = {
@@ -2391,24 +2434,21 @@ def resultado_p_certificacao(request):
         configuracao = get_object_or_404(Configuracao)
         selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
-        # informacoes = [
-        #     ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
-        #     ("#ProjetosTable tr > *:nth-child(3)", "Orientador", "Advisor"),
-        #     ("""#ProjetosTable tr > *:nth-child(4),
-        #         #ProjetosTable tr > *:nth-child(5),
-        #         #ProjetosTable tr > *:nth-child(6),
-        #         #ProjetosTable tr > *:nth-child(7),
-        #         #ProjetosTable tr > *:nth-child(8)""", "Notas", "Grades"),
-        #     (".grupo", "Grupo", "Group"),
-        #     (".email", "e-mail", "e-mail", "grupo"),
-        #     (".curso", "curso", "program", "grupo"),
-        # ]
+        informacoes = [
+            ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
+            ("#ProjetosTable tr > *:nth-child(3)", "Orientador", "Advisor"),
+            ("""#ProjetosTable tr > *:nth-child(4),
+                #ProjetosTable tr > *:nth-child(5)""", "Recomendações", "Recommendations"),
+            (".grupo", "Grupo", "Group"),
+            (".email", "e-mail", "e-mail", "grupo"),
+            (".curso", "curso", "program", "grupo"),
+        ]
 
         context = {
-            "titulo": {"pt": "Resultado dos Projetos", "en": "Projects Results"},
+            "titulo": {"pt": "Resultado para Certificação", "en": "Certification Results"},
             "edicoes": edicoes,
             "selecionada": selecionada,
-            # "informacoes": informacoes,
+            "informacoes": informacoes,
         }
 
     return render(request, "professores/resultado_p_certificacao.html", context)

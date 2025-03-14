@@ -94,7 +94,7 @@
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falc.</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falconi</th>
             </tr>      
           </thead>
 
@@ -113,6 +113,24 @@
                       {{projeto.get_titulo}}
                       {% include "tipo_projeto.html" %}<br>
                     </a>
+
+                    <ul class="grupo">
+                      {% for alocacao in projeto.alocacao_set.all %}
+                        <li>
+                          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno}}</a>
+                          <span class="curso">
+                            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+                            <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                          </span>
+                          <span class="email">
+                            <span class="texto-longo"><a href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
+                            <span class="texto-curto"><a href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                          </span>
+                          {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  
                   </td>
 
                   <td style="text-align: center;"> {{projeto.ano}}.{{projeto.semestre}}</td>
@@ -126,36 +144,37 @@
                 {% comment %} Banca Intermediária {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
-                      {% if banca_intermediaria.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                      {% if banca_intermediaria.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="background-color: darkgrey; font-weight: bold;"
-                      {% elif banca_intermediaria.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                      {% elif banca_intermediaria.destaque_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
                         style="background-color: orange; font-weight: bold;"
-                      {% elif banca_intermediaria.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                      {% elif banca_intermediaria.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
                         style="background-color: pink; font-weight: bold;"
                       {% endif %}
-
-                      >{{ banca_intermediaria.destaque_texto|safe }}
+                      >
                       {% if banca_intermediaria.destaque_incompleta %}
                         <i class="fas fa-exclamation-triangle"></i>
                       {% endif %}
+                      {{ banca_intermediaria.destaque_texto|safe }}
                     </a>
                   </td>
 
                   {% comment %} Banca Final {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
-                      {% if banca_final.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+                      {% if banca_final.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
                         style="background-color: darkgrey; font-weight: bold;"
-                      {% elif banca_final.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+                      {% elif banca_final.destaque_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
                         style="background-color: orange; font-weight: bold;"
-                      {% elif banca_final.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+                      {% elif banca_final.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
                         style="background-color: pink; font-weight: bold;"
                       {% endif %}
 
-                      >{{ banca_final.destaque_texto|safe }}
+                      >
                       {% if banca_final.destaque_incompleta %}
                         <i class="fas fa-exclamation-triangle"></i>
                       {% endif %}
+                      {{ banca_final.destaque_texto|safe }}
                     </a>
                   </td>
 
@@ -172,6 +191,9 @@
 
                       {% if banca_falconi.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
+                        {% if banca_falconi.nota_incompleta > 0 %}
+                          <i class="fas fa-exclamation-triangle"></i>
+                        {% endif %}
                         {{ banca_falconi.nota_texto|safe }}
                       {% else %}
                         >
@@ -186,7 +208,7 @@
               </tr>
 
             {% empty %}
-              <tr><td colspan="9">
+              <tr><td colspan="6">
                 {% lng "Não existem projetos disponíveis." "There are no projects available." %}
               </td></tr>
             {% endfor %}
