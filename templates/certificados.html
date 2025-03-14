@@ -4,6 +4,8 @@
   Data: 13 de Junho de 2023
 {% endcomment %}
 
+{% load linguas %}
+
 <style>
   {% comment %} Para sempre mostrar a barra de rolagem {% endcomment %}
   ::-webkit-scrollbar {
@@ -27,7 +29,7 @@
           <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
         {% endif %}
         {% if documento.documento and documento.link %}
-            <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+            <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">({% lng "documento" "document" %})</a>
             <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
         {% else %}
           {% if documento.documento %}
@@ -59,13 +61,13 @@
           <span class="texto-curto">: {{ documento.data|date:"d/m/Y" }}</span>
         {% endif %}
         {% if documento.lingua_do_documento == 1 %} {% comment %} Inglês {% endcomment %}
-          <sup>(Inglês)</sup>
+          <sup>({% lng "Inglês" "English" %})</sup>
         {% endif %}
       </div>
     </div>
 
   {% empty %}
-    Ainda não existem certificados associados.
+    {% lng "Ainda não existem certificados associados." "There are no certificates associated yet." %}
   {% endfor %}
 
 {% endif %}

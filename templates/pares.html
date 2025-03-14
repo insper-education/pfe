@@ -6,6 +6,7 @@
 
 {% load static %}
 {% load aval_pares %}
+{% load linguas %}
 
 <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
@@ -22,13 +23,22 @@
           <td>
             {% if feita %}
               {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
-                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">Avaliação de Pares Verificada</a>
+                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">
+                  {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
+                </a>
               {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
-                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">Avaliação de Pares Verificada</a>
+                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">
+                  {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
+                </a>
               {% else %}
-                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:brown">Aguardando Confirmação de Orientador</a>
+                <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:brown">
+                  {% lng "Aguardando Confirmação de Orientador" "Waiting for Advisor Confirmation" %}
+                </a>
               {% endif %}
-            {% else %} <span style="color:#DDB300">Aguardando Estudante Preencher</span>
+            {% else %}
+              <span style="color:#DDB300">
+                {% lng "Aguardando Estudante Preencher" "Waiting for Student to Fill" %}
+              </span>
             {% endif %}
           </td>
         {% endwith %}
