@@ -22,7 +22,7 @@ from projetos.models import Proposta, Configuracao
 from projetos.models import Area, AreaDeInteresse
 from projetos.messages import email
 
-from users.models import Opcao
+from users.models import Opcao, Contato
 from users.support import adianta_semestre
 
 
@@ -193,11 +193,36 @@ def preenche_proposta(request, proposta):
     proposta.website = request.POST.get("website", "").strip()
     proposta.nome_organizacao = request.POST.get("organizacao", "").strip()
     proposta.endereco = request.POST.get("endereco", "")
-    proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
-    proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
     proposta.descricao_organizacao = request.POST.get("descricao_organizacao", "")
     proposta.departamento = request.POST.get("info_departamento", "")
     proposta.titulo = request.POST.get("titulo_prop", "").strip()
+
+    # Esses são campos de texto de texto livre que não devem mais ser usados
+    proposta.contatos_tecnicos = request.POST.get("contatos_tecnicos", "")
+    proposta.contatos_administrativos = request.POST.get("contatos_adm", "")
+
+    # Puxa os contatos
+    contatos = []
+    for sigla in ["T", "A"]:
+        for i in range(6):  # Em geral são 3, mas coloquei 6 por segurança 
+            contato_nome = request.POST.get(f"contato_{sigla}_nome_{i}", "").strip()
+            contato_email = request.POST.get(f"contato_{sigla}_email_{i}", "").strip()
+            contato_tel = request.POST.get(f"contato_{sigla}_tel_{i}", "").strip()
+            contato_cargo = request.POST.get(f"contato_{sigla}_cargo_{i}", "").strip()
+
+            if contato_nome or contato_email or contato_tel or contato_cargo:
+                contato, _ = Contato.objects.get_or_create(
+                    nome=contato_nome,
+                    email=contato_email,
+                    telefone=contato_tel,
+                    cargo=contato_cargo,
+                    tipo=sigla
+                )
+                contatos.append(contato)
+
+    proposta.save()  # Senão o set não funciona	
+    proposta.contatos.set(contatos)
+
 
     proposta.descricao = request.POST.get("desc_projeto", "")
     proposta.expectativas = request.POST.get("expectativas", "")

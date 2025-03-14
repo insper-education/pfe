@@ -8,6 +8,8 @@
     
   {% load static %}
   {% load bleach %}
+  {% load propostas %}
+  {% load linguas %}
 
   <style>
     @page {
@@ -33,20 +35,40 @@
         {% include "organizacao.html" %}
       {% endwith %}
 
-      <strong>Submetido por:</strong><br>
+      <strong>{% lng "Submetido por" "Submitted by" %}:</strong><br>
       {{proposta.nome}}<br><br>
 
-      {% if proposta.contatos_tecnicos %}
-        <strong>Contatos Técnicos</strong><br>
-        {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-        <br><br>
-      {% endif %}
+      {% with c_t=proposta|contatos_tec %}
+        {% if proposta.contatos_tecnicos or c_t %}
+          <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
+          {% if proposta.contatos_tecnicos %}
+            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+            <br>
+          {% endif %}
+          {% if c_t %}
+            {% for contato in c_t %}
+              {{contato}}<br>
+            {% endfor %}
+          {% endif %}
+          <br>
+        {% endif %}
+      {% endwith %}
 
-      {% if proposta.contatos_administrativos %}
-        <strong>Contatos Administrativos</strong><br>
-        {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-        <br><br>
-      {% endif %}
+      {% with c_a=proposta|contatos_adm %}
+        {% if proposta.contatos_administrativos or c_a %}
+          <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
+          {% if proposta.contatos_administrativos %}
+            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+            <br>
+          {% endif %}
+          {% if c_a %}
+            {% for contato in c_a %}
+              {{contato}}<br>
+            {% endfor %}
+          {% endif %}
+          <br>
+        {% endif %}
+      {% endwith %}
 
       <h4>Áreas de Interesse</h4>
       {% with aa=proposta.areadeinteresse_set.all %}

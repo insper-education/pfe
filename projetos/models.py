@@ -211,6 +211,21 @@ class Projeto(models.Model):
     def get_banca_final(self):
         banca = Banca.objects.filter(projeto=self, composicao__exame__titulo="Banca Final").last()
         return banca
+
+
+class PropostaContato(models.Model):
+    """Relacionamento entre Proposta e Contato."""
+
+    proposta = models.ForeignKey("Proposta", on_delete=models.CASCADE)
+    contato = models.ForeignKey("users.Contato", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Proposta Contato"
+        verbose_name_plural = "Propostas Contatos"
+
+    def __str__(self):
+        """Retorno padrão textual."""
+        return self.proposta.titulo + " >>> " + self.contato.nome
         
         
 class Proposta(models.Model):
@@ -234,12 +249,13 @@ class Proposta(models.Model):
     endereco = models.TextField("Endereço", max_length=400, null=True, blank=True,
                                 help_text="Endereço da Instituição")
 
-    contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400,
+    # O campo contatos_tecnicos será mantido para compatibilidade com versões anteriores
+    contatos_tecnicos = models.TextField("Contatos Técnicos", max_length=400, null=True, blank=True,
                                          help_text="Contatos Técnicos")
-
-    contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400,
-                                                null=True, blank=True,
+    contatos_administrativos = models.TextField("Contatos Administrativos", max_length=400, null=True, blank=True,
                                                 help_text="Contatos Administrativos")
+
+    contatos = models.ManyToManyField("users.Contato", blank=True, help_text="Contatos associados à proposta", through="PropostaContato")
 
     descricao_organizacao = models.TextField("Descrição da Organização", max_length=3000,
                                              null=True, blank=True,
@@ -453,6 +469,8 @@ class Proposta(models.Model):
     def get_anexo(self):
         """Nome do arquivo do anexo."""
         return self.anexo.name.split('/')[-1]
+       
+
 
 class Configuracao(models.Model):
     """Armazena os dados básicos de funcionamento do sistema."""

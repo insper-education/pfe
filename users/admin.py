@@ -113,6 +113,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Administrador)
+admin.site.register(Contato)
 
 
 @admin.register(Opcao)

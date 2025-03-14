@@ -11,6 +11,7 @@
   {% load bleach %}
   {% load conexoes %}
   {% load linguas %}
+  {% load propostas %}
 
   <style>
     .projeto_sel {
@@ -115,20 +116,36 @@
       </table>
 
       <div class="contatos_apres">
-        <strong>Contatos Técnicos apresentados na Propota</strong><br>
+        <strong>
+          {% lng "Contatos Técnicos apresentados na Proposta" "Technical Contacts presented in the Proposal" %}
+        </strong><br>
         {% if projeto.proposta.contatos_tecnicos %}
           {{projeto.proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+        {% elif projeto.proposta|contatos_tec %}
+          {% for contato in projeto.proposta|contatos_tec %}
+            {{contato}}
+          {% endfor %}
         {% else %}
-          <span style="color: red;">Não forma informados contatos técnicos na proposta.</span>
+          <span style="color: red;">
+            {% lng "Não foram informados contatos técnicos na proposta." "No technical contacts were informed in the proposal." %}
+          </span>
         {% endif %}
       </div>
 
       <div class="contatos_apres">
-        <strong>Contatos Administrativos apresentados na Propota</strong><br>
+        <strong>
+          {% lng "Contatos Administrativos apresentados na Propota" "Administrative Contacts presented in the Proposal" %}
+        </strong><br>
         {% if projeto.proposta.contatos_administrativos %}
           {{projeto.proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+        {% elif projeto.proposta|contatos_adm %}
+          {% for contato in projeto.proposta|contatos_adm %}
+            {{contato}}
+          {% endfor %}
         {% else %}
-          <span style="color: red;">Não foram informados contatos administrativos na proposta.</span>
+          <span style="color: red;">
+            {% lng "Não foram informados contatos administrativos na proposta." "No administrative contacts were informed in the proposal." %}
+          </span>
         {% endif %}
       </div>
 
@@ -137,7 +154,7 @@
       <small><a style="margin-left: 16px; padding: 2px 4px 2px 4px; background: lightgreen; border: 1px solid grey; border-radius: 3px;"
         target="_blank" rel="noopener noreferrer" 
         href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&proposta={{projeto.proposta.id}}'>
-        Cadastrar novo parceiro em {{projeto.organizacao.nome}}
+        {% lng "Cadastrar novo parceiro em" "Register new partner in" %} {{projeto.organizacao.nome}}
       </a></small>
 
     </div>

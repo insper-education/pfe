@@ -532,3 +532,47 @@ class Administrador(models.Model):
         if self.nome_para_certificados:
             return quote(self.nome_para_certificados)
         return ""
+
+
+class Contato(models.Model):
+    """Classe de Contatos usados para a submissão de propostas."""
+
+    nome = models.CharField("Nome", max_length=128, null=True, blank=True,
+                            help_text="Nome do contato")
+
+    email = models.EmailField("e-mail", null=True, blank=True,
+                              help_text="e-mail do contato")
+    
+    telefone = models.CharField("Telefone", max_length=26, null=True, blank=True,
+                                help_text="Telefone de contato")
+
+    cargo = models.CharField("Cargo", max_length=90, null=True, blank=True,
+                             help_text="Cargo na Organização Parceira")
+
+    TIPO_CONTATO = (
+        ("T", "Técnico"),
+        ("A", "Administrativo"),
+        ("O", "Outro"),
+    )
+
+    tipo = models.CharField("Tipo", max_length=1, choices=TIPO_CONTATO, default="O",
+                            help_text="Tipo de contato") 
+
+    class Meta:
+        """Meta para Contato."""
+        verbose_name = "Contato"
+        verbose_name_plural = "Contatos"
+        ordering = ["id",]  # Não ordenar por nome pois muda a ordem nas propostas
+
+    def __str__(self):
+        """Retorno padrão textual do objeto."""
+        texto = ""
+        if self.nome:
+            texto += "Nome: " + self.nome
+        if self.email:
+            texto += ", e-mail: " + self.email
+        if self.telefone:
+            texto += ", Telefone: " + self.telefone
+        if self.cargo:
+            texto += ", Cargo: " + self.cargo
+        return texto

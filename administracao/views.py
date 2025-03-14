@@ -304,6 +304,10 @@ def cadastrar_usuario(request):
             mensagem += "<b>Contatos Administrativos apresentados na Propota: " + str(proposta.id) + "</b><br>"
             mensagem += proposta.contatos_administrativos
             mensagem += "<br>"
+        if proposta.contatos:
+            mensagem += "<b>Contatos apresentados na Propota: " + str(proposta.id) + "</b><br>"
+            mensagem += proposta.contatos
+            mensagem += "<br>"
 
         context["mensagem_aviso"] = {"pt": mensagem, "en": mensagem}
 

@@ -442,3 +442,4 @@ class AreaAdmin(admin.ModelAdmin):
 
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 admin.site.register(TipoRetorno)
+admin.site.register(PropostaContato)
