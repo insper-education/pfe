@@ -13,7 +13,7 @@
 
 {% block content %}
 
-  {% include "edicoes.html" %}
+  {% include "edicoes.html" with com_cursos=True %}
 
   <div id="atualizar">
 
@@ -26,9 +26,8 @@
               {{parceiro.user.get_full_name}} 
             </a>
           </th>
-          <td>
-            {{parceiro.cargo}} 
-          </td>
+          <td>{{parceiro.user.genero}}</td>
+          <td>{{parceiro.cargo}}</td>
           <td class="text-center">
             {% if parceiro.organizacao %}
             <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}"
@@ -36,14 +35,13 @@
               {{parceiro.organizacao.sigla}}
             </a>
             {% else %}
-              Organização não identificada
+              {% lng "Organização não identificada" "Organization not identified" %}
             {% endif %}
           </td>
 
           <td>
-            <a href="mailto:{{parceiro.user.email}}"
-              {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
-              &lt;{{parceiro.user.email}}&gt;
+            <a href="mailto:{{parceiro.user.email}}" {% if not parceiro.user.is_active %} style="color: LightBlue;" {% endif %}>
+              {{parceiro.user.email}}
             </a>
           </td>
           <td>
@@ -84,6 +82,27 @@
     {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}
   </button></small><br>
 
-  {% include "edicoes_ajax.html" with tabela='Parceiros' %}
+  <script>
+    var table = null;
+
+    function carrega_pagina() {
+      if($("#ParceirosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
+        table = $("#ParceirosTable").dataTable();
+        if(table) {
+          // Hide/Esconde certas colunas
+          table.fnSetColumnVis( 1, false );  // esconde Gênero
+          {% include "linguas_ajax.html" %}
+        }
+      }
+    };
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
+    }
+    window.onload = carrega_site
+  </script>
+
+  {% include "edicoes_ajax.html" with tabela="Parceiros" com_cursos=True %}
 
 {% endblock %}

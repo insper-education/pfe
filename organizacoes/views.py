@@ -735,17 +735,36 @@ def todos_parceiros(request):
     parceiros = None
     edicao = "todas"
     if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            parceiros = Parceiro.objects.all()
+        if "edicao" not in request.POST:
+            return HttpResponseNotFound("<h1>Edição não encontrada!</h1>")
+        
+        edicao = request.POST["edicao"]
+        
+        if "curso" in request.POST:
+            curso = request.POST["curso"]
+            if curso != "TE" and curso != 'T':
+                if edicao not in ("todas",):
+                    ano, semestre = map(int, edicao.split('.'))
+                    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__curso2__sigla_curta=curso)
+                else:
+                    alocacoes = Alocacao.objects.filter(aluno__curso2__sigla_curta=curso)
+                lista_projetos = alocacoes.values_list("projeto", flat=True)
+            else:
+                if edicao not in ("todas",):
+                    ano, semestre = map(int, edicao.split('.'))
+                    lista_projetos = Projeto.objects.filter(ano=ano, semestre=semestre).values_list("id", flat=True)
+                else:
+                    lista_projetos = Projeto.objects.all().values_list("id", flat=True)
+        else:
+            return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
 
-            if edicao not in ("todas",):
-                ano, semestre = map(int, edicao.split('.'))
-                conexoes = Conexao.objects.filter(projeto__ano=ano,
-                    projeto__semestre=semestre).values_list("parceiro", flat=True)
-                parceiros = parceiros.filter(id__in=conexoes)
+        conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
+        lista_conexoes = conexoes.values_list("parceiro", flat=True)
+        parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
+
 
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
+                  { "pt": "Gênero", "en": "Gender", },
                   { "pt": "Cargo", "en": "Position", }, 
                   { "pt": "Organização", "en": "Organization", }, 
                   { "pt": "e-mail", "en": "e-mail", }, 
@@ -761,9 +780,10 @@ def todos_parceiros(request):
     context = {
         "parceiros": parceiros,
         "cabecalhos": cabecalhos,
-        "titulo": { "pt": "Parceiros Profissionais", "en": "Professional Partners", },
+        "titulo": { "pt": "Parceiros Conectados a Projetos", "en": "Partners Connected to Projects", },
         "edicoes": get_edicoes(Conexao)[0],
         "edicao": edicao,
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         "captions": captions,
         }
 
