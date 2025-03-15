@@ -85,7 +85,7 @@ class ParceiroAdmin(admin.ModelAdmin):
     """Definição de Parceiro."""
     list_display = ("user", "get_sigla", "email")
     ordering = ("user__first_name", "user__last_name")
-    list_filter = (FirstLetterFilter, )
+    list_filter = (FirstLetterFilter, "user__genero", )
     search_fields = ["user__first_name", "user__last_name", ]
 
     def get_sigla(self, obj):
