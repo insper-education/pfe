@@ -8,14 +8,20 @@ Data: 2 de Outubro de 2020
 
 import datetime
 import unicodedata
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
 
-from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Projeto, Documento, Conexao
-from .models import Aluno
-from estudantes.models import Relato, Pares
+from django.db.models import F
+from django.utils import timezone
+#from django.shortcuts import get_object_or_404
+
+#from .models import Aluno
 
 from administracao.support import get_limite_propostas
+
+from estudantes.models import Relato, Pares
+
+from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Documento, Conexao
+#from projetos.models import Projeto
+
 
 
 def adianta_semestre(ano, semestre):
@@ -102,70 +108,36 @@ def configuracao_pares_vencida(estudante, sigla, prazo=10):
     fim = evento.startDate
     return False, inicio, fim
 
+
+
 def get_edicoes(tipo, anual=False):
-    """Função usada para recuperar todas as edições de 2018.2 até hoje."""
+    """Função usada para recuperar todas as edições conforme objeto desejado."""
+    
+    if tipo in [Certificado, Avaliacao2, Documento, Conexao]:
+        pares = tipo.objects.values(ano=F("projeto__ano"), semestre=F("projeto__semestre"))
+    elif tipo == Relato:
+        pares = tipo.objects.values(ano=F("alocacao__projeto__ano"), semestre=F("alocacao__projeto__semestre"))
+    elif tipo == Pares:
+        pares = tipo.objects.values(ano=F("alocacao_de__projeto__ano"), semestre=F("alocacao_de__projeto__semestre"))
+    else:
+        pares = tipo.objects.values("ano", "semestre")
+
     edicoes = []
-    semestre_tmp = 2
-    ano_tmp = 2018
+    ano, semestre = None, None
+    for pair in pares.distinct("ano", "semestre"):
+        ano = pair.get("ano")
+        semestre = pair.get("semestre")
+        if ano == None or semestre == None:
+            continue
+        if anual and semestre == 1:
+            edicoes.append(f"{ano}.1/2")
+        edicoes.append(f"{ano}.{semestre}")
 
-    configuracao = get_object_or_404(Configuracao)
-    atual = configuracao.ano
-
-    while True:
-        existe = False
-        if tipo == Certificado:
-            if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Aluno:
-            if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Avaliacao2:
-            if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Documento:
-            if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Conexao:
-            if tipo.objects.filter(projeto__ano=ano_tmp, projeto__semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Relato:  # Relato no sistema do Capstone só começaram a ser feitos em 2022.1
-            if ano_tmp < 2022:
-                ano_tmp = 2022
-                semestre_tmp = 1
-            if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
-                existe = True
-        elif tipo == Pares:  # Relato no sistema do Capstone só começaram a ser feitos em 2022.1
-            if ano_tmp < 2023:
-                ano_tmp = 2023
-                semestre_tmp = 1
-            if Projeto.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
-                existe = True
-        else:
-            if tipo.objects.filter(ano=ano_tmp, semestre=semestre_tmp).exists():
-                existe = True
-
-        if anual and semestre_tmp == 1:
-            edicoes.append(str(ano_tmp)+".1/2")
-
-        if existe:
-            ano = ano_tmp
-            semestre = semestre_tmp
-            edicoes.append(str(ano)+"."+str(semestre))
-        else:
-            if ano_tmp > atual:
-                break
-
-        if semestre_tmp == 1:
-            semestre_tmp = 2
-        else:
-            ano_tmp += 1
-            semestre_tmp = 1
-
-    return (edicoes, ano, semestre)
+    return edicoes, ano, semestre
 
 
 def normalize_string(s):
-    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('ascii')
+    return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
 
 
 def ordena_nomes(queryset):
