@@ -88,7 +88,7 @@ def gera_descricao_banca(banca, estudantes):
     return description
 
 
-def cria_material_documento(request, campo_arquivo, campo_link, confidencial=True):
+def cria_material_documento(request, campo_arquivo, campo_link, sigla="MAS", confidencial=True):
         """Cria material de aula."""
         max_length_link = Documento._meta.get_field("link").max_length
         if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
@@ -99,7 +99,7 @@ def cria_material_documento(request, campo_arquivo, campo_link, confidencial=Tru
             return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
         
         documento = Documento()  # Criando documento na base de dados
-        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla="MAS")  # Material de Aula
+        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla=sigla)
         documento.data = datetime.datetime.now()
         
         documento.lingua_do_documento = 0  # (0, "Português")

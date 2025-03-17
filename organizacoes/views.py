@@ -146,7 +146,7 @@ def adiciona_despesa(request):
 
         documentos = []
         if "arquivo_0" in request.FILES or ("link_0" in request.POST and request.POST["link_0"] != ""):
-            documento = cria_material_documento(request, "arquivo_0", "link_0")
+            documento = cria_material_documento(request, "arquivo_0", "link_0", sigla="DESP")
             documentos.append(documento)
         else:
             material = request.POST.get("anexo_0", None)
