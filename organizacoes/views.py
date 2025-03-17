@@ -23,6 +23,8 @@ from organizacoes.support import cria_documento
 from administracao.models import Despesa
 from administracao.support import usuario_sem_acesso
 
+from calendario.support import cria_material_documento
+
 from users.support import adianta_semestre, get_edicoes
 from users.models import PFEUser, Parceiro, Aluno, Alocacao
 
@@ -105,7 +107,6 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     return render(request, "organizacoes/anotacao_view.html", context=context)
 
 
-
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
@@ -142,6 +143,18 @@ def adiciona_despesa(request):
             despesa.projeto = None
 
         despesa.save()
+
+        documentos = []
+        if "arquivo_0" in request.FILES or ("link_0" in request.POST and request.POST["link_0"] != ""):
+            documento = cria_material_documento(request, "arquivo_0", "link_0")
+            documentos.append(documento)
+        else:
+            material = request.POST.get("anexo_0", None)
+            if material:
+                documento = Documento.objects.get(id=material)
+                documentos.append(documento)
+
+        despesa.documentos.set(documentos)
 
         return JsonResponse({"atualizado": True,})
 

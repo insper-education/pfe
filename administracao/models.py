@@ -137,9 +137,8 @@ class Despesa(models.Model):
         (5, "infraestrutura"), #(aws servidor, etc)
     )
 
-    tipo_de_despesa = \
-        models.PositiveSmallIntegerField(choices=TIPO_DE_DESPESA, default=0,
-                                         help_text="Tipo de despesa")
+    tipo_de_despesa = models.PositiveSmallIntegerField(choices=TIPO_DE_DESPESA, default=0,
+                                                       help_text="Tipo de despesa")
 
     projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE, null=True, blank=True,
                                 help_text="Projeto")
@@ -148,19 +147,21 @@ class Despesa(models.Model):
                             help_text="Data da despesa")
     
     descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
-                                help_text="Descrição da despesa")
+                                 help_text="Descrição da despesa")
     
     fornecedor = models.CharField("Fornecedor", max_length=512, null=True, blank=True,
-                                help_text="Fornecedor (com contato se possível)")
+                                  help_text="Fornecedor (com contato se possível)")
     
     valor_r = models.DecimalField("Valor R$", max_digits=12, decimal_places=2, null=True, blank=True,
-                                help_text="Valor da despesa em reais")
+                                  help_text="Valor da despesa em reais")
     
     valor_d = models.DecimalField("Valor US$", max_digits=12, decimal_places=2, null=True, blank=True,
-                                help_text="Valor da despessa em dólares")
+                                  help_text="Valor da despessa em dólares")
+
+    documentos = models.ManyToManyField("projetos.Documento",
+                                       help_text="Imagem ou outro documento da despesa")
     
     def __str__(self):
-        #return f"{self.projeto} - {self.descricao}"
         return f"{self.get_tipo_de_despesa_display()} - {self.descricao}"
     
     class Meta:

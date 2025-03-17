@@ -19,7 +19,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .support import get_calendario_context, adicionar_participante_em_evento
-from .support import gera_descricao_banca, cria_material_aula
+from .support import gera_descricao_banca, cria_material_documento
 
 from administracao.models import TipoEvento
 
@@ -173,14 +173,14 @@ def atualiza_evento(request):
     evento.responsavel = PFEUser.objects.get(id=responsavel) if responsavel else None
 
     if "arquivo" in request.FILES or ("link1" in request.POST and request.POST["link1"] != ""):
-        documento = cria_material_aula(request, "arquivo", "link1")
+        documento = cria_material_documento(request, "arquivo", "link1", confidencial=False)
         evento.documento = documento
     else:
         material = request.POST.get("event-material", None)
         evento.documento = Documento.objects.get(id=material) if material else None
 
     if "arquivo2" in request.FILES or ("link2" in request.POST and request.POST["link2"] != ""):
-        documento = cria_material_aula(request, "arquivo2", "link2")
+        documento = cria_material_documento(request, "arquivo2", "link2", confidencial=False)
         evento.documento2 = documento
     else:
         material = request.POST.get("event-material2", None)

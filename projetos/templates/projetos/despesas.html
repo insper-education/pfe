@@ -41,7 +41,14 @@
             {% if despesa.valor_r %}R$ {% lng_2 despesa.valor_r %}{% endif %}
             {% if despesa.valor_d %}US$ {% lng_2 despesa.valor_d %}{% endif %}
           </td>
-          <td>{% if despesa.descricao %}{{despesa.descricao}} {% endif %}</td>
+          <td>
+            {% if despesa.descricao %}{{despesa.descricao}}{% endif %}
+            {% if despesa.documentos.exists %}
+              {% for documento in despesa.documentos.all %}
+                {% include "documentos/includes/icone_documento.html" %}
+              {% endfor %}
+            {% endif %}
+          </td>
           <td>{% if despesa.fornecedor %}{{despesa.fornecedor}} {% endif %}</td>
           <td>
             {% if despesa.projeto %}

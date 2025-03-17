@@ -1,0 +1,16 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load addhttp %}
+
+{% if documento.documento %}
+  &nbsp;<a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% include "icones_extensoes.html" with extensao=documento.extensao %}</a>
+{% endif %}  
+{% if documento.link %}
+  &nbsp;<a class="esconder" href="{{documento.link|add_http}}" target="_blank" rel="noopener noreferrer"><i class="fa fa-link"></i></a>
+{% endif %}
+    

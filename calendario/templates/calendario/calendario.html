@@ -395,16 +395,7 @@
                         {% for documento in aula.documentos %}
                           {% comment %} Só mostra se data do documento for no passado {% endcomment %}
                           {% if documento and documento.data|dif_agora < 0 %}
-                            {% if documento.documento %}
-                              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
-                                &nbsp;{% include "icones_extensoes.html" with extensao=documento.extensao %}
-                              </a>
-                            {% endif %}  
-                            {% if documento.link %}
-                              <a class="esconder" href="{{documento.link|add_http}}" target="_blank" rel="noopener noreferrer">
-                                &nbsp;<i class="fa fa-link"></i>
-                              </a>
-                            {% endif %}
+                            {% include "documentos/includes/icone_documento.html" %}
                           {% endif %}
                         {% endfor %}
                       </td>

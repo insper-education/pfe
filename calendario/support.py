@@ -88,7 +88,7 @@ def gera_descricao_banca(banca, estudantes):
     return description
 
 
-def cria_material_aula(request, campo_arquivo, campo_link):
+def cria_material_documento(request, campo_arquivo, campo_link, confidencial=True):
         """Cria material de aula."""
         max_length_link = Documento._meta.get_field("link").max_length
         if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
@@ -103,7 +103,7 @@ def cria_material_aula(request, campo_arquivo, campo_link):
         documento.data = datetime.datetime.now()
         
         documento.lingua_do_documento = 0  # (0, "Português")
-        documento.confidencial = False  # Por padrão aulas não são confidenciais
+        documento.confidencial = confidencial
         documento.usuario = request.user
     
         if campo_arquivo in request.FILES:
