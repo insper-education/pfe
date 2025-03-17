@@ -7,7 +7,9 @@
 
 {% block head %}
   {% load static %}
+  {% load i18n %}
   {% load linguas %}
+  {% load relatos %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 {% endblock %}
@@ -39,9 +41,80 @@
       {% endfor %}
     {% endif %}
 
+    {% if edicao and administracao %}
+      <br>
+      <b>{% lng "Estatíscas" "Statistics" %}</b>:<br>
+      <table class="tabela-padrao table-bordered table-sm ">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% lng "Data" "Date" %}</th>
+            <th>&#x1F44D;</th>
+            <th>&#x1F44E;</th>
+            <th>&#9989;</th>
+            <th>&#10060;</th>
+            {% comment %} <th>{% lng "Avaliar" "Evaluating" %}</th>
+            <th>{% lng "Avaliado" "Evaluated" %}</th> {% endcomment %}
+        <tbody>
+        {% for evento in edicao|get_relatos_edicao %}
+          <tr style="padding-left: 18px;">
+              <td>{{ forloop.counter }}&ordm;</td>
+              <td>
+                <span lang="pt">
+                  {% language "pt-br" %}
+                    <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}</span>
+                    <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}</span>
+                  {% endlanguage %}
+                </span>
+                <span lang="en" style="display:none">
+                  {% language "en" %}
+                    <span class="texto-longo">{{ evento.endDate|date:"F d, Y" }}</span>
+                    <span class="texto-curto">{{ evento.endDate|date:"M d, Y" }}</span>
+                  {% endlanguage %}
+                </span>
+              </td>
+              <td id="bom_{{evento.id}}"></td>
+              <td id="ruim_{{evento.id}}"></td>
+              <td id="entr_{{evento.id}}"></td>
+              <td id="nao_{{evento.id}}"></td>
+              {% comment %} <td id="avaliar_{{evento.id}}"></td>
+              <td id="avaliado_{{evento.id}}"></td> {% endcomment %}
+          </tr>
+        {% endfor %}
+      </tbody></table>
+
+      <script>
+        function conta() {
+          {% for evento in edicao|get_relatos_edicao %}
+            count_x1F44D = 0;
+            count_x1F44E = 0;
+            count_9989 = 0;
+            count_10060 = 0;
+            eventos = document.querySelectorAll('.eventor_{{evento.id}}');
+            eventos.forEach(element => {
+              if (element.innerHTML.includes('👍')) count_x1F44D++; // &#x1F44D;
+              if (element.innerHTML.includes('👎')) count_x1F44E++; // &#x1F44E;
+              if (element.innerHTML.includes('✅')) count_9989++; // &#9989;
+              if (element.innerHTML.includes('❌')) count_10060++; // &#10060;
+            });
+            document.getElementById('bom_{{evento.id}}').innerText = count_x1F44D;
+            document.getElementById('ruim_{{evento.id}}').innerText = count_x1F44E;
+            document.getElementById('entr_{{evento.id}}').innerText = count_9989;
+            document.getElementById('nao_{{evento.id}}').innerText = count_10060;
+          {% endfor %}
+        }
+      </script>
+
+    {% endif %}
+
   </div> 
 
   <script>
+    
+    {% if administracao %}
+      function carrega_pagina() {conta();}
+    {% endif %}
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     };

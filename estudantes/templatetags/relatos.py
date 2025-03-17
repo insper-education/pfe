@@ -40,3 +40,17 @@ def traz_relatos(projeto):
 def has_relatos(projeto):
     """Retorna se houver algum relato quinzenal para o projeto."""            
     return Relato.objects.filter(alocacao__projeto=projeto).exists()
+
+
+@register.filter
+def get_relatos_edicao(edicao):
+    """Retorna os relatos quinzenais do semestre."""
+    
+    if edicao != "todas":
+        ano, semestre = map(int, edicao.split('.'))    
+        eventos = Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre)
+    else:
+        eventos = Evento.get_eventos(sigla="RQ")
+    
+    return eventos
+

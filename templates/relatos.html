@@ -42,7 +42,8 @@
         </a></td>
         <td>
           <div style="white-space: nowrap;">{% for alocacao in alocacoes %}<a
-          href="{% url 'relato_avaliar' projeto.id evento.id %}#{{alocacao.id}}"><small><span style="width:20em;" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
+          href="{% url 'relato_avaliar' projeto.id evento.id %}#{{alocacao.id}}"
+               ><small><span style="width:20em;" class="eventor_{{evento.id}}" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
                >{% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}</span></small></a
            >{% endfor %}</div>
         </td>

@@ -2011,7 +2011,7 @@ def pendencias_professores(request):
 def relatos_quinzenais(request, todos=None):
     """Formulários com os projetos e relatos a avaliar do professor orientador."""
 
-    if todos is not None and request.user.tipo_de_usuario != 4:  # Administrador
+    if todos is not None and not request.user.eh_admin:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
     if request.is_ajax():
