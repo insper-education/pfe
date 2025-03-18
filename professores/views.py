@@ -2064,10 +2064,10 @@ def relatos_quinzenais(request, todos=None):
 @transaction.atomic
 def relato_avaliar(request, projeto_id, evento_id):
     """Cria uma tela para preencher avaliações dos relatos quinzenais."""
-
+    configuracao = get_object_or_404(Configuracao)
     projeto = get_object_or_404(Projeto, pk=projeto_id)
     evento = get_object_or_404(Evento, pk=evento_id)
-
+    
     evento_anterior = Evento.objects.filter(tipo_evento__sigla="RQ", endDate__lt=evento.endDate).order_by("endDate").last()
     
     alocacoes = Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True)
@@ -2106,11 +2106,38 @@ def relato_avaliar(request, projeto_id, evento_id):
                     if( -0.5 < obj_nota < 0.5 ): # Para testar se zero (preciso melhorar isso)
                         avaliacao_negativa = True
                     relato.momento_avaliacao = datetime.datetime.now()
-                
+
                 feedback = request.POST.get("feedback" + str(relato.id), None)
                 if feedback and feedback != "" and feedback != relato.feedback:
                     relato.feedback = feedback
                     relato.momento_avaliacao = datetime.datetime.now()
+
+                    # Manda mensagem para estudante
+                    corpo_email = f"{relato.alocacao.aluno.user.get_full_name()},<br>\n<br>\n"
+                    corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Você teve feedbacks do seu relato quinzenal "
+                    if projeto.orientador.user.genero == "F":
+                        corpo_email += "pela sua orientadora"
+                    else:
+                        corpo_email += "pelo seu orientador"
+                    corpo_email += f" ({projeto.orientador.user.get_full_name()}).<br>\n"
+                    corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Por favor, observe com muita atenção a fim de melhor entender como você está se saindo no projeto.<br>\n<br>\n"
+                    corpo_email += "A percepção do seu desempenho no projeto é:"
+                    if relato:
+                        if relato.avaliacao > 0:
+                            corpo_email += "<b>Adequada</b>"
+                        elif relato.avaliacao < 0:
+                            pass
+                            #corpo_email += "[<small>&#8987;</small> AGUARDANDO ORIENTADOR]"
+                        else:
+                            corpo_email += "<b>Inadequada</b>"
+                    # else:
+                    #     corpo_email += "[<small>&#10060;</small> NÃO ENTREGUE POR ESTUDANTE]"
+                    corpo_email += "<br>\n<br>\n"
+                    corpo_email += "Feedback:<br>\n" 
+                    corpo_email += htmlizar(feedback) + "<br>\n"
+                    email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                    email("Feedback de Relato Quinzenal", email_dest, corpo_email)
+
                 elif feedback != relato.feedback:
                     relato.feedback = None
 
@@ -2139,9 +2166,7 @@ def relato_avaliar(request, projeto_id, evento_id):
             if avaliacao_negativa and (observacoes != ""):
 
                 email_dest = []
-                configuracao = get_object_or_404(Configuracao)
                 email_dest.append(str(configuracao.coordenacao.user.email))
-                
                 email_dest.append(str(projeto.orientador.user.email))
 
                 # Necessário refazer tabela de relatos e alocacoes para mensagens irem corretas
@@ -2172,7 +2197,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                 corpo_email += "<hr>"
                 corpo_email += "<b>Observações:</b><br>\n" 
                 corpo_email += "<div style='padding: 10px; border: 2px solid #DDDDDD;'>" + htmlizar(observacoes) + "</div><br>\n"
-                email("Observações de Anotação Quinzenal Realizada pelo professor", email_dest, corpo_email)
+                email("Observações de Anotação Quinzenal Realizada pelo orientador", email_dest, corpo_email)
 
             context = {
                 "area_principal": True,
