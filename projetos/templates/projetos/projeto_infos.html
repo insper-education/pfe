@@ -323,7 +323,7 @@
     {% lng "Médias" "Averages" %}:
     {% for key, value in medias_oo.media_grupo.items %}
       {% if value.media >= 0 %}
-        <span style="white-space: nowrap;">{% lng key.titulo_pt key.titulo_en %}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
+        <span style="white-space: nowrap;">{% lng key.titulo key.titulo_en %}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
       {% endif %}
     {% endfor %}
 
