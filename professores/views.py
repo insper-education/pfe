@@ -113,6 +113,8 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
         configuracao = get_object_or_404(Configuracao)
         context["edicoes"] = get_edicoes(Pares)[0]
         context["selecionada"] = f"{configuracao.ano}.{configuracao.semestre}"
+    
+    context["administracao"] = request.user.eh_admin
 
     return render(request, "professores/avaliacoes_pares.html", context=context)
 

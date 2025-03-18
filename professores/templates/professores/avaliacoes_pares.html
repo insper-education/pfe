@@ -41,9 +41,50 @@
       {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
     {% endfor %}
     
+    {% if administracao %}
+      {% comment %} Tabela com informações consolidadas da entregas de relatos quinzenais {% endcomment %}
+      <br>
+      <b>{% lng "Estatísticas" "Statistics" %}</b>:<br>
+      <table class="tabela-padrao table-bordered table-sm ">
+        <thead>
+          <tr>
+            <th>{% lng "Período" "Period" %}</th>
+            <th>{% lng "Entregue" "Delivered" %}</th>
+            <th>{% lng "Ausente" "Absent" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{% lng "Intermediário" "Intermediate" %}</td>
+            <td id="sim_i" style="text-align: right;"></td>
+            <td id="nao_i" style="text-align: right;"></td>
+          </tr>
+          <tr>
+            <td>{% lng "Final" "Final" %}</td>
+            <td id="sim_f" style="text-align: right;"></td>
+            <td id="nao_f" style="text-align: right;"></td>
+          </tr>
+      </tbody></table>
+
+      <script>
+        function conta() {
+          {% for tipo in "if" %}
+            document.getElementById("sim_{{tipo}}").innerText = document.querySelectorAll(".aval_entreg_{{tipo}}").length;
+            document.getElementById("nao_{{tipo}}").innerText = document.querySelectorAll(".aval_nentreg_{{tipo}}").length;
+          {% endfor %}
+        }
+      </script>
+
+    {% endif %}
+
   </div> 
 
   <script>
+    
+    {% if administracao %}
+      function carrega_pagina() {conta();}
+    {% endif %}
+    
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     }
