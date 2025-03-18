@@ -52,8 +52,8 @@
     <div class="mb-3 row text-truncate">
       <label for="valor" class="col1 col-form-label">{% lng "Valor" "Value" %}</label>
       <div class="col2">
-        <input class="form-control" type="text" style="display: block;" size="73" 
-                id="valor" name="valor" placeholder="R$ / US$" 
+        <input class="form-control" type="number" style="display: block;" size="73" 
+                id="valor" name="valor" placeholder="R$ / US$" step="0.01" min="0"
                 {% if despesa.valor_r %}value="{{despesa.valor_r}}"{% elif despesa.valor_d %}value="{{despesa.valor_d}}"{% endif %}>
       </div>
     </div>
@@ -170,7 +170,7 @@
                 <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
               {% endfor %}
             </select>
-            <input required id="arquivo_0" type="file" name="arquivo_0" class="form-control" style="border: 0px; padding-left: 0px;"
+            <input id="arquivo_0" type="file" name="arquivo_0" class="form-control" style="border: 0px; padding-left: 0px;"
               {% include "formatos_suportados.html" %}>
             <label for="link_0">link</label>
             <input type="text" size="25" maxlength="{% max_length DocumentoModel "link" %}" id="link_0" name="link_0">
