@@ -49,14 +49,14 @@
     <br><br>
 
     <label for="entidade">
-    Você já participou de alguma entidade estudantil do Insper?<br>
-    Liste as que você já participou?
+    Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc no Insper?<br>
+    Liste o que você já participou/fez?
     </label><br>
     <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="{% max_length Aluno 'entidade' %}" {% if vencido %}disabled{% endif %}>{% if estudante.entidade %}{{estudante.entidade}}{% endif %}</textarea>
-    <br>
-    <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small>
-    <!-- Pega Script para preencher entidades automaticamente -->
     <br><br>
+    {% comment %} <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small> {% endcomment %}
+    <!-- Pega Script para preencher entidades automaticamente -->
+    {% comment %} <br><br> {% endcomment %}
 
     <label for="familia">
     Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
@@ -89,7 +89,7 @@
 
   </form>
 
-  <div class="modal fade" id="lista_entidades">
+  {% comment %} <div class="modal fade" id="lista_entidades">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -103,13 +103,13 @@
             </div>
         </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 
-  <script>
+  {% comment %} <script>
     $(".ent_nome").click(function(e){
       $("#entidade").append(e.target.innerHTML+"; ");
     });
-  </script>
+  </script> {% endcomment %}
 
   <script>
     aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");

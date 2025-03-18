@@ -65,7 +65,7 @@ def index_estudantes(request):
     semestre = configuracao.semestre
 
     # Caso estudante
-    if request.user.tipo_de_usuario == 1:
+    if request.user.eh_estud:
 
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
         context["projeto"] = projeto
@@ -92,12 +92,13 @@ def index_estudantes(request):
         context["fora_fase_feedback_final"], _, _ = configuracao_pares_vencida(request.user.aluno, "APF") # Avaliação de Pares Final
 
         # Só verifica se está no semestre corrente
-        if request.user.aluno.ano == configuracao.ano and request.user.aluno.semestre == configuracao.semestre:
+        context["semestre_alocado"] = request.user.aluno.ano == configuracao.ano and request.user.aluno.semestre == configuracao.semestre
+        if context["semestre_alocado"]:
             context_pend = ver_pendencias_estudante(request.user, configuracao.ano, configuracao.semestre)
             context.update(context_pend)
 
     # Caso professor ou administrador
-    elif request.user.tipo_de_usuario in (2, 4):
+    elif request.user.eh_prof_a:
         context["fase_final"] = True
 
     else:  # Caso parceiro
@@ -394,9 +395,7 @@ def estilo_comunicacao(request):
 
 @login_required
 def funcionalidade_grupo(request):
-    """Para passar links de alinhamentos gerais de início de semestre."""
-    configuracao = get_object_or_404(Configuracao)
-    
+    """Para passar links de alinhamentos gerais de início de semestre."""   
     if request.is_ajax():
         if not request.user.funcionalidade_grupo:
             request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
@@ -457,7 +456,15 @@ def codigo_conduta_projeto(request):
     configuracao = get_object_or_404(Configuracao)
     perguntas_codigo_conduta_projeto = Estrutura.loads(nome="Código de Conduta do Grupo")
     if request.user.eh_estud:
-        projeto = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last().projeto
+        busca_projeto = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        if not busca_projeto:
+            mensagem = "Você não está alocado em um projeto esse semestre!"
+            context = {
+                "area_principal": True,
+                "mensagem": mensagem,
+            }
+            return render(request, "generic.html", context=context)
+        projeto = busca_projeto.projeto
         codigo_conduta, _ = CodigoConduta.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(projeto),
             object_id=projeto.id)
