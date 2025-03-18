@@ -43,24 +43,6 @@
           <tr class="item {{banca.composicao.exame}}">
             <td>
 
-              {% if banca.get_projeto %}
-                {% lng "Projeto" "Project" %}:
-                {% if banca.get_projeto.organizacao %}
-                  [<a class="imprimir" href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
-                {% endif %}
-                <a class="imprimir" href="{% url 'projeto_infos' banca.get_projeto.id %}">
-                  {% if banca.get_projeto.titulo_final and banca.get_projeto.titulo_final != banca.get_projeto.proposta.titulo %}
-                    {{banca.get_projeto.titulo_final}}</a><br>
-                    <small>&nbsp;&nbsp;
-                      {% lng "Título original da proposta:" "Original title of the proposal:" %}
-                      <a class="imprimir" href="{% url 'projeto_infos' banca.get_projeto.id %}">{{banca.get_projeto.proposta.titulo}}</a>
-                    </small>
-                  {% else %}
-                    {{banca.get_projeto.get_titulo}}</a>
-                  {% endif %}
-                <br>
-              {% endif %}
-
               {% if banca.startDate %}
                 <b>{% lng "Horário:" "Time:" %}</b>
                 <span class="texto-longo">{{banca.startDate.date}}</span>
@@ -84,17 +66,22 @@
                 <span class="link">
                   <b>{% lng "Link vídeo-conferência:" "Video-conference link:" %}</b>
                   <small><a target="_blank" rel="noopener noreferrer" href="{{banca.link}}"><span style="word-break: break-all;">{{banca.link}}</span></a></small>
+                  <br>
                 </span>
-                <br>
               {% endif %}
 
-              <b>{% lng "Tipo:" "Type:" %}</b>
-              {% if banca.composicao is not None %}
-                {{ banca.composicao.exame }}
-              {% else %}
-                Não definido
+              <div>
+                <b>{% lng "Tipo:" "Type:" %}</b>
+                {% if banca.composicao is not None %}
+                  {{ banca.composicao.exame }}
+                {% else %}
+                  Não definido
+                {% endif %}
+              </div>
+              
+              {% if banca.get_projeto %}
+                {% include "cabecalho_projeto.html" with projeto=banca.get_projeto %}
               {% endif %}
-              <br>
               
               {% if banca.membros %}
                 <div class="banca" style="margin-top: 8px;">
@@ -131,7 +118,7 @@
                 {% else %}
                   {% include "grupo_estudantes.html" with projeto=banca.get_projeto %}
                 {% endif %}
-              </div><br>
+              </div>
               
               <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
                 &#9733;
@@ -139,7 +126,6 @@
                 <a href="{% url 'banca_avaliar' banca.slug %}">
                   {{request.scheme}}://{{ request.get_host }}{% url 'banca_avaliar' banca.slug %}
                 </a>
-                <br>
               </div>
               
               <div class="agendamento">

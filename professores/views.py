@@ -981,12 +981,17 @@ def dinamicas_lista(request, edicao=None):
     else:
 
         informacoes = [
-            (".orientador", "orientador", "advisor"),
-            (".local", "local", "location"),
-            (".grupo", "grupo", "group"),
-            (".curso", "curso", "program"),
-            (".sem_agendamento", "sem agendamento", "no schedule"),
-        ]
+                (".local", "local", "local"),
+                (".grupo", "grupo", "group"),
+                (".orientacao", "orientação", "supervision"),
+                (".curso", "curso", "program"),
+                (".facilitador", "facilitador", "facilitator"),
+                (".avaliacao", "link avaliação", "evaluation link"),
+                (".agendamento", "agendamento", "schedule"),
+                (".email", "e-mail", "e-mail"),
+                (".editar", "editar", "edit"),
+                (".sem_agendamento", "sem agendamento", "without schedule"),
+            ]
 
         context = {
                 "titulo": {"pt": "Listagem das Mentorias", "en": "List of Mentoring"},
