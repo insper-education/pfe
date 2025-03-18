@@ -337,7 +337,9 @@ class Aluno(models.Model):
 
     class Meta:
         """Meta para Aluno."""
-        ordering = ["user"]
+        ordering = ["ano", "semestre", "user",]  # ano e semestre é usado para ordenar o get_editions, não mudar
+        verbose_name = "Estudante"
+        verbose_name_plural = "Estudantes"
         permissions = ()
 
     def __str__(self):
