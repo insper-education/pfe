@@ -2121,7 +2121,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                         corpo_email += "pelo seu orientador"
                     corpo_email += f" ({projeto.orientador.user.get_full_name()}).<br>\n"
                     corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Por favor, observe com muita atenção a fim de melhor entender como você está se saindo no projeto.<br>\n<br>\n"
-                    corpo_email += "A percepção do seu desempenho no projeto é:"
+                    corpo_email += "A percepção do seu desempenho no projeto é: "
                     if relato:
                         if relato.avaliacao > 0:
                             corpo_email += "<b>Adequada</b>"
@@ -2134,7 +2134,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                     #     corpo_email += "[<small>&#10060;</small> NÃO ENTREGUE POR ESTUDANTE]"
                     corpo_email += "<br>\n<br>\n"
                     corpo_email += "Feedback:<br>\n" 
-                    corpo_email += htmlizar(feedback) + "<br>\n"
+                    corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
                     email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
                     email("Feedback de Relato Quinzenal", email_dest, corpo_email)
 
