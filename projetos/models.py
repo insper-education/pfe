@@ -1644,7 +1644,7 @@ class Avaliacao2(models.Model):
     class Meta:
         verbose_name = "Avaliação2"
         verbose_name_plural = "Avaliações2"
-        ordering = ["momento",]
+        ordering = ["projeto__ano", "projeto__semestre", "momento"]  # Projeto ordena por ano e semestre e precisa para o get_editions
 
     def get_conceito(self):
         return converte_letra(self.nota)
