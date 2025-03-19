@@ -69,8 +69,11 @@
       <script>
         function conta() {
           {% for tipo in "if" %}
-            document.getElementById("sim_{{tipo}}").innerText = document.querySelectorAll(".aval_entreg_{{tipo}}").length;
-            document.getElementById("nao_{{tipo}}").innerText = document.querySelectorAll(".aval_nentreg_{{tipo}}").length;
+            sim = document.querySelectorAll(".aval_entreg_{{tipo}}").length;
+            nao = document.querySelectorAll(".aval_nentreg_{{tipo}}").length;
+            total = sim + nao;
+            document.getElementById("sim_{{tipo}}").innerText = sim + " (" + (100*sim/total).toFixed(1) + "%)";
+            document.getElementById("nao_{{tipo}}").innerText = nao + " (" + (100*nao/total).toFixed(1) + "%)";
           {% endfor %}
         }
       </script>
