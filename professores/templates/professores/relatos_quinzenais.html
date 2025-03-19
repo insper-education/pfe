@@ -102,10 +102,17 @@
               if (element.innerHTML.includes('❌')) count_10060++; // &#10060;
             });
             total = count_x1F44D + count_x1F44E + count_9989 + count_10060;
-            document.getElementById("bom_{{evento.id}}").innerText = count_x1F44D + " (" + (100*count_x1F44D/total).toFixed(1) + "%)";
-            document.getElementById("ruim_{{evento.id}}").innerText = count_x1F44E + " (" + (100*count_x1F44E/total).toFixed(1) + "%)";
-            document.getElementById("entr_{{evento.id}}").innerText = count_9989 + " (" + (100*count_9989/total).toFixed(1) + "%)";
-            document.getElementById("nao_{{evento.id}}").innerText = count_10060 + " (" + (100*count_10060/total).toFixed(1) + "%)";
+            if(total > 0) {
+              document.getElementById("bom_{{evento.id}}").innerText = count_x1F44D + " (" + (100*count_x1F44D/total).toFixed(1) + "%)";
+              document.getElementById("ruim_{{evento.id}}").innerText = count_x1F44E + " (" + (100*count_x1F44E/total).toFixed(1) + "%)";
+              document.getElementById("entr_{{evento.id}}").innerText = count_9989 + " (" + (100*count_9989/total).toFixed(1) + "%)";
+              document.getElementById("nao_{{evento.id}}").innerText = count_10060 + " (" + (100*count_10060/total).toFixed(1) + "%)";
+            } else {
+              document.getElementById("bom_{{evento.id}}").innerText = "-";
+              document.getElementById("ruim_{{evento.id}}").innerText = "-";
+              document.getElementById("entr_{{evento.id}}").innerText = "-";
+              document.getElementById("nao_{{evento.id}}").innerText = "-";
+            }
           {% endfor %}
         }
       </script>
