@@ -761,7 +761,7 @@ def relato_quinzenal(request):
     context = {
         "titulo": {"pt": "Formulário de Relato Quinzenal", "en": "Biweekly Report Form"},
         "prazo": prazo,
-        "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal").texto,
+        "msg_relato_quinzenal": get_object_or_404(Carta, template="Mensagem de Relato Quinzenal"),
         "Relato": Relato,
         "fora_periodo": fora_periodo,
         "inicio_periodo": inicio_periodo,

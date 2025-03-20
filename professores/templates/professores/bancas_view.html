@@ -343,9 +343,9 @@
     <label for="local">
       {% lng "Local:" "Local:" %}
     </label> 
-    <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}"
+    <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-     placeholder="alocado pela equipe de reservas"
+     placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
      {% if banca and banca.location %}
       value="{{banca.location}}"
      {% endif %}
@@ -371,9 +371,9 @@
     <label for="link">
       {% lng "Link de Vídeo-conferência:" "Video-conference Link:" %}
     </label>
-    <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" 
+    <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-     placeholder="somente se necessário"
+     placeholder="" data-pt="somente se necessário" data-en="only if necessary"
      {% if banca and banca.link %}
       value="{{banca.link}}"
      {% endif %} 

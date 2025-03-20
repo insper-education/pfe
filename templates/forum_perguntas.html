@@ -45,9 +45,9 @@
   {% lng "Para fazer uma pergunta, use a caixa de texto abaixo:" "To ask a question, use the text box below:" %}
 </b>
 <form id="pergunta_form" method="post">{% csrf_token %}
-  <textarea name="pergunta_proposta" class="form-control" 
-   required
-   rows="3" placeholder="Digite sua pergunta aqui"></textarea>
+  <textarea name="pergunta_proposta" class="form-control troca_lingua" 
+   required rows="3" data-pt="Digite sua pergunta aqui" data-en="Type your question here"
+   ></textarea>
   <button type="submit" id="enviar_pergunta" class="btn btn-primary">
     {% lng "Enviar Pergunta" "Send Question" %}
   </button>

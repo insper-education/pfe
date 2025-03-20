@@ -111,7 +111,7 @@
       {% lng "caracteres)" "characters)" %}
     </label><br>
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
-              placeholder="{{msg_relato_quinzenal}}" class="mb-3"
+              placeholder="{{msg_relato_quinzenal.texto}}" class="troca_lingua mb-3" data-pt="{{msg_relato_quinzenal.texto}}" data-en="{{msg_relato_quinzenal.texto_en}}"
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
     <div id="feedback-validator-message"></div>

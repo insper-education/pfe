@@ -15,12 +15,11 @@ if (lingua_atual == "en") {
 }
 
 $(".troca_lingua").each(function() {
-  var option = $(this);
-  var opt_pt = option.data("pt");
-  var opt_en = option.data("en");
-  if (localStorage.getItem("lingua") == "pt") {
-      option.text(opt_pt);
-  } else if (localStorage.getItem("lingua") == "en") {
-      option.text(opt_en);
+  var objeto = $(this);
+  var texto = objeto.data(lingua_atual); // pt ou en
+  if (objeto.is("option")) {
+    objeto.text(texto);
+  } else if (objeto.is("textarea") || objeto.is("input")) {
+    objeto.attr("placeholder", texto);
   }
 });
