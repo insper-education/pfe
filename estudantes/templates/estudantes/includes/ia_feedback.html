@@ -41,7 +41,7 @@
 
 <script>
   function generateTable(data) {
-    let explic = `{% for exp in ia_feedback.explicacao %}{{exp|safe}}<br>{% endfor %}`;
+    let explic = `<span lang="pt">{% for exp in ia_feedback.explicacao.pt %}{{exp|safe}}<br>{% endfor %}</span><span lang="en">{% for exp in ia_feedback.explicacao.en %}{{exp|safe}}<br>{% endfor %}</span>`;
     let table = "<table class='styled-table'><thead>";
     table += "<tr><td colspan='{{ia_feedback.campos|length}}'>" + explic + "</td></tr>";
     table += `<tr>{% for col in ia_feedback.campos %}<th>{% lng col.pt col.en %}</th>{% endfor %}</tr>`;

@@ -102,7 +102,7 @@
       {% lng "caracteres)" "characters)" %}
     </label><br>
     <textarea id="relato" name="relato" rows="18" cols="160" maxlength="{% max_length Relato "texto" %}" {% if fora_periodo or not prazo %}disabled{% endif %} 
-              placeholder="{{msg_relato_quinzenal.texto}}" class="troca_lingua mb-3" data-pt="{{msg_relato_quinzenal.texto}}" data-en="{{msg_relato_quinzenal.texto_en}}"
+              placeholder="{{msg_relato_quinzenal.texto}}" class="troca_lingua mb-1" data-pt="{{msg_relato_quinzenal.texto}}" data-en="{{msg_relato_quinzenal.texto_en}}"
       >{% if texto_relato.texto %}{{texto_relato.texto}}{% endif %}</textarea>
     
     <div id="feedback-validator-message"></div>
@@ -118,13 +118,13 @@
         A IA não substitui o feedback humano, mas é capaz de encontrar alguns erros comuns que podem ser corrigidos antes de você enviar seu texto para a avaliação.
         O uso do sistema é de responsabilidade do próprio usuário, e o sistema não se responsabiliza por eventuais erros que possam ocorrer.
        ">
-      <button type="button" id="feedback-validator" class="feedback-validator btn mb-1 mt-4">
+      <button type="button" id="feedback-validator" class="feedback-validator btn mb-1 mt-4 p-2">
         <i class="fas fa-check-circle" style="display: none; color: green;"></i>
         <i class="fas fa-exclamation-triangle" style="display: none; color: red;"></i>
         <i class="fas fa-hourglass fa-spin" style="display: none;"></i>
         {% lng "como estou escrevendo" "how am I writing" %}?<br>
-        <span class="by-name">{% lng "IA por" "AI by" %}</span>
-        <span class="author-name">Tiago Tavares</span>
+        {% comment %} <span class="by-name">{% lng "IA por" "AI by" %}</span>
+        <span class="author-name">Tiago Tavares</span> {% endcomment %}
       </button>
     </div>
 
