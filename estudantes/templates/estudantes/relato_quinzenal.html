@@ -83,21 +83,12 @@
         {% lng "Fora do período para a submissão de relatos." "Out of the period for submitting reports." %}
         <br>
         {% lng "Próxima entrega será entre" "Next delivery will be between" %}
-        <b style="color:green;">
-          <span class="texto-longo">{{inicio_periodo|date:"DATE_FORMAT" }}</span>
-          <span class="texto-curto">{{inicio_periodo|date:"d/m/y" }}</span>
-        </b>
+        <b style="color:green;">{% lng_dl inicio_periodo %}</b>
         {% lng "e" "and" %}
-        <b style="color:green;">
-          <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
-          <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
-        </b>
+        <b style="color:green;">{% lng_dl prazo.endDate %}</b>
       {% else %}
         {% lng "Prazo para a submissão do relato:" "Deadline for submitting the report:" %}
-        <b style="color:red;">
-          <span class="texto-longo">{{prazo.endDate|date:"DATE_FORMAT" }}</span>
-          <span class="texto-curto">{{prazo.endDate|date:"d/m/y" }}</span>
-        </b>
+        <b style="color:red;">{% lng_dl prazo.endDate %}</b>
       {% endif %}
     {% else %}
       {% lng "Não há datas para fazer relatos." "There are no dates to make reports." %}
