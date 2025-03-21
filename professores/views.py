@@ -1489,8 +1489,9 @@ def informe_bancas(request, sigla):
     semestre = configuracao.semestre
 
     bancas = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla=sigla)
+    administracao = request.user.eh_admin
 
-    if request.method == "POST":
+    if administracao and request.method == "POST":
 
         for banca in bancas:
             # Envio de mensagem para Orientador / Coordenação
@@ -1513,10 +1514,16 @@ def informe_bancas(request, sigla):
 
         return render(request, "generic.html", context=context)
 
+    mensagem_aviso = None
+    if not administracao:
+        mensagem_aviso = {"pt": "Apenas administradores podem enviar o informe!", "en": "Only administrators can send the report!"}
+        
     context = {
         "titulo": {"pt": "Informe de Bancas Finais" if sigla=="BF" else "Informe de Bancas Intermediárias",
                    "en": "Final Examination Boards Report" if sigla=="BF" else "Intermediate Examination Boards Report"},
         "bancas": bancas,
+        "administracao": administracao,
+        "mensagem_aviso": mensagem_aviso,
     }
     return render(request, "professores/informe_bancas.html", context=context)
 

@@ -26,8 +26,8 @@
       <tbody>
         {% for banca in bancas %}
           <tr>
-            <td>{% include "academica/includes/block_orientador.html" with orientador=banca.projeto.orientador %}</td>
-            <td>{% include "projetos/includes/td_projeto.html" with projeto=banca.projeto %}</td>
+            <td>{% include "academica/includes/bloco_orientador.html" with orientador=banca.projeto.orientador %}</td>
+            <td>{% include "projetos/includes/bloco_projeto.html" with projeto=banca.projeto %}</td>
             <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=banca.projeto.organizacao %}</td>
           </tr>
         {% empty %}
@@ -41,7 +41,8 @@
     </table>
         
     <br>
-    <button class="btn btn-primary mb-1" id="submit" type="submit">
+    <button class="btn btn-primary mb-1" id="submit" type="submit"
+    {% if not administracao %}disabled{% endif %}>
       {% lng "Enviar mensagens" "Send messages" %}
     </button>
 
