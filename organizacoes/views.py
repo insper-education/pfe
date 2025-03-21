@@ -762,19 +762,20 @@ def todos_parceiros(request):
                 else:
                     alocacoes = Alocacao.objects.filter(aluno__curso2__sigla_curta=curso)
                 lista_projetos = alocacoes.values_list("projeto", flat=True)
+                conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
+                lista_conexoes = conexoes.values_list("parceiro", flat=True)
+                parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
             else:
                 if edicao not in ("todas",):
                     ano, semestre = map(int, edicao.split('.'))
                     lista_projetos = Projeto.objects.filter(ano=ano, semestre=semestre).values_list("id", flat=True)
+                    conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
+                    lista_conexoes = conexoes.values_list("parceiro", flat=True)
+                    parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
                 else:
-                    lista_projetos = Projeto.objects.all().values_list("id", flat=True)
+                    parceiros = Parceiro.objects.all()
         else:
             return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
-
-        conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
-        lista_conexoes = conexoes.values_list("parceiro", flat=True)
-        parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
-
 
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
                   { "pt": "Gênero", "en": "Gender", },
