@@ -78,7 +78,7 @@
 
       .tab_contatos td input {
         margin-left: 60px;
-        width: calc(100% - 60px);
+        width: calc(100% - 60px) !important;
       }
 
       .tab_contatos td:before {
@@ -190,26 +190,26 @@
             <table class="tab_contatos">
               <thead>
                 <tr>
-                  <td><label class="campo_contatos" for="contato_tec_nome_0">{% lng "Nome" "Name" %}</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_email_0">e-mail</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_tel_0">{% lng "Telefone" "Phone" %}</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_cargo_0">{% lng "Cargo" "Position" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_T_nome_0">{% lng "Nome" "Name" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_T_email_0">e-mail</label></td>
+                  <td><label class="campo_contatos" for="contato_T_tel_0">{% lng "Telefone" "Phone" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_T_cargo_0">{% lng "Cargo" "Position" %}</label></td>
                 </tr>
               </thead>
               <tbody>
                 {% with tipo="T" %}
                   {% for contato in proposta|contatos_tec3 %}
                     <tr>
-                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="250" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" size="19"
+                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="250" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" style="width: 190px;"
                         value="{% if contato.nome %}{{contato.nome}}{% endif %}"  
                         {% if edicao and liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="250" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" size="18" 
+                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="250" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" style="width: 180px;"
                         value="{% if contato.email %}{{contato.email}}{% endif %}" 
                         {% if edicao and liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Telefone"><input type="tel" maxlength="250" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" size="15" 
+                      <td data-label="Telefone"><input type="tel" maxlength="250" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" style="width: 150px;"
                         value="{% if contato.telefone %}{{contato.telefone}}{% endif %}" 
                         {% if edicao and liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Cargo"><input type="text" maxlength="250" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" size="16"
+                      <td data-label="Cargo"><input type="text" maxlength="250" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" style="width: 160px;"
                         value="{% if contato.cargo %}{{contato.cargo}}{% endif %}" 
                         {% if edicao and liberadas_propostas %}disabled{% endif %}></td>
                     </tr>
@@ -231,10 +231,10 @@
             <table class="tab_contatos">
               <thead>
                 <tr>
-                  <td><label class="campo_contatos" for="contato_tec_nome_0">{% lng "Nome" "Name" %}</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_email_0">e-mail</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_tel_0">{% lng "Telefone" "Phone" %}</label></td>
-                  <td><label class="campo_contatos" for="contato_tec_cargo_0">{% lng "Cargo" "Position" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_A_nome_0">{% lng "Nome" "Name" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_A_email_0">e-mail</label></td>
+                  <td><label class="campo_contatos" for="contato_A_tel_0">{% lng "Telefone" "Phone" %}</label></td>
+                  <td><label class="campo_contatos" for="contato_A_cargo_0">{% lng "Cargo" "Position" %}</label></td>
                 </tr>
               </thead>
               <tbody>

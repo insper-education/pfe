@@ -266,8 +266,7 @@ def preenche_proposta_pdf(campos, proposta):
     proposta.website = decodificar("site", campos)
     proposta.nome_organizacao = decodificar("organizacao", campos)
     proposta.endereco = decodificar("endereco", campos)
-    proposta.contatos_tecnicos = decodificar("contatos_tecnicos", campos)
-    proposta.contatos_administrativos = decodificar("contatos_administrativos", campos)
+
     proposta.descricao_organizacao = decodificar("descricao_organizacao", campos)
     proposta.departamento = decodificar("departamento", campos)
 
@@ -277,6 +276,33 @@ def preenche_proposta_pdf(campos, proposta):
 
     proposta.recursos = decodificar("recursos", campos)
     proposta.observacoes = decodificar("observacoes", campos)
+
+    # Não usar mais os campos de texto livre para contatos
+    proposta.contatos_tecnicos = decodificar("contatos_tecnicos", campos)
+    proposta.contatos_administrativos = decodificar("contatos_administrativos", campos)
+    
+    # Puxa os contatos
+    contatos = []
+    for sigla in ["T", "A"]:
+        for i in range(6):  # Em geral são 3, mas coloquei 6 por segurança 
+            contato_nome = decodificar(f"contato_{sigla}_nome_{i}", campos)
+            contato_email = decodificar(f"contato_{sigla}_email_{i}", campos)
+            contato_tel = decodificar(f"contato_{sigla}_tel_{i}", campos)
+            contato_cargo = decodificar(f"contato_{sigla}_cargo_{i}", campos)
+
+            if contato_nome or contato_email or contato_tel or contato_cargo:
+                contato, _ = Contato.objects.get_or_create(
+                    nome=contato_nome,
+                    email=contato_email,
+                    telefone=contato_tel,
+                    cargo=contato_cargo,
+                    tipo=sigla
+                )
+                contatos.append(contato)
+
+    proposta.save()  # Senão o set não funciona	
+    proposta.contatos.set(contatos)
+    
 
     mensagem = ""
     if proposta.nome == None:
@@ -288,9 +314,9 @@ def preenche_proposta_pdf(campos, proposta):
     if proposta.descricao == None:
         proposta.descricao = "DESCRIÇÃO NÃO DEFINIDA"
         mensagem += "DESCRIÇÃO NÃO DEFINIDA<br>"
-    if proposta.contatos_tecnicos == None:
-        proposta.contatos_tecnicos = "CONTATOS TÉCNICOS NÃO DEFINIDOS"
-        mensagem += "CONTATOS TÉCNICOS NÃO DEFINIDOS<br>"
+    # if proposta.contatos_tecnicos == None:
+    #     proposta.contatos_tecnicos = "CONTATOS TÉCNICOS NÃO DEFINIDOS"
+    #     mensagem += "CONTATOS TÉCNICOS NÃO DEFINIDOS<br>"
     if proposta.expectativas == None:
         proposta.expectativas = "EXPECTATIVAS NÃO DEFINIDAS"
         mensagem += "EXPECTATIVAS NÃO DEFINIDAS<br>"
