@@ -1,0 +1,25 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Março de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+<div class="flex-item">
+  <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
+    <div class="mb-2">
+      <b>{% lng "Organizações contactadas" "Contacted organizations" %} <span id="calc_orgs"></span> ({{organizacoes|length}}):</b>
+    </div>
+    {% for tipo in tipo_retorno %}
+      <div class="acompanhamentos anot_{{tipo.id}}">
+        <div class="d-flex align-items-start">
+          <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" 
+          style="line-height: 1.2; background-color: #{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
+          <span class="text-truncate">{{tipo.nome}}</span>
+          <span id="retorno{{tipo.id}}" class="calc_aux ml-2"></span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

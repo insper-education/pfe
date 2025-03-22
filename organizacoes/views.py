@@ -447,7 +447,6 @@ def parceiro_projetos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_prospect(request):
     """Exibe as organizações prospectadas e a última comunicação."""
-    todas_organizacoes = Organizacao.objects.all()
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano              # Ano atual
     semestre = configuracao.semestre    # Semestre atual
@@ -464,16 +463,16 @@ def organizacoes_prospect(request):
     if request.is_ajax() and "periodo" in request.POST:
         periodo = int(request.POST["periodo"])*30  # periodo vem em meses
 
-    for organizacao in todas_organizacoes:
+    for organizacao in Organizacao.objects.all():
         propostas = Proposta.objects.filter(organizacao=organizacao).order_by("ano", "semestre")
-        ant = Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last()
 
-        if (periodo > 366) or \
-           (ant and (datetime.date.today() - ant.momento.date() <
-                     datetime.timedelta(days=periodo))):
+        faixa = datetime.datetime.now() - datetime.timedelta(days=periodo)
+        anotacoes = Anotacao.objects.filter(organizacao=organizacao, momento__gte=faixa).order_by("-momento")
+        
+        if (periodo > 366) or anotacoes:
 
             organizacoes.append(organizacao)
-            contato.append(ant) # None se não houver anotação
+            contato.append(anotacoes) # None se não houver anotação
             
             if configuracao.semestre == 1:
                 propostas_submetidas = propostas\
@@ -489,9 +488,8 @@ def organizacoes_prospect(request):
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 
     # No final jogo para 2 (com proposta submetida) se houver proposta submetida, mesmo que a anotação diga diferente
-    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if(x[2] > 0) else x[3].tipo_retorno.id ) ))
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if(x[2] > 0) else x[3].first().tipo_retorno.id ) ))
 
-    total_organizacoes = len(organizacoes)
     total_disponiveis = sum(disponiveis)
     total_submetidas = sum(submetidas)
 
@@ -504,7 +502,7 @@ def organizacoes_prospect(request):
     context = {
         "titulo": {"pt": "Prospecção de Organizações", "en": "Prospecting Organizations"},	
         "organizacoes_list": list(organizacoes_list),
-        "total_organizacoes": total_organizacoes,
+        "organizacoes": organizacoes,
         "total_disponiveis": total_disponiveis,
         "total_submetidas": total_submetidas,
         "ano": ano,
@@ -514,6 +512,7 @@ def organizacoes_prospect(request):
         "necessarios": necessarios,
         "tipo_retorno": TipoRetorno.objects.all(),
         "GRUPO_DE_RETORNO": TipoRetorno.GRUPO_DE_RETORNO,
+        "selecionada_acompanhamento": 1,  # (1, "Prospecção"),
         }
     return render(request, "organizacoes/organizacoes_prospectadas.html", context)
 
@@ -540,7 +539,9 @@ def organizacoes_projetos(request):
         contato = []
         for organizacao in organizacoes:
             projetos.append(projetos_periodo.filter(proposta__organizacao=organizacao))
-            contato.append(Anotacao.objects.filter(organizacao=organizacao).order_by("momento").last())
+            six_months_ago = datetime.datetime.now() - datetime.timedelta(days=6*30)
+            contatos = Anotacao.objects.filter(organizacao=organizacao, momento__gte=six_months_ago).order_by("-momento")
+            contato.append(contatos)
 
         organizacoes_list = list(zip(organizacoes, projetos, contato))
 
@@ -554,10 +555,11 @@ def organizacoes_projetos(request):
     else:
 
         context = {
-            "titulo": {"pt": "Prospecção de Organizações com Projetos", "en": "Prospecting Organizations with Projects"},
+            "titulo": {"pt": "Acompanhamento de Organizações com Projetos", "en": "Follow-up of Organizations with Projects"},
             "edicoes": get_edicoes(Projeto)[0],
             "tipo_retorno": TipoRetorno.objects.all(),
             "GRUPO_DE_RETORNO": TipoRetorno.GRUPO_DE_RETORNO,
+            "selecionada_acompanhamento": 3,  # (3, "Contratação"),
             }
     
     return render(request, "organizacoes/organizacoes_projetos.html", context)

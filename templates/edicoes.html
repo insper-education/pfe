@@ -295,7 +295,7 @@
           <select id="filterAcompanhamento" class="selectpicker custom-select w-auto form-control form-control-sm" data-tableId="OrganizacoesTable">
             <option value="todas" class="troca_lingua" data-pt="todas contactadas" data-en="all contacted">todas contactadas</option>
             {% for retorno in tipo_retorno %}
-              {% ifchanged retorno.grupo_de_retorno %}{% if retorno.grupo_de_retorno %}<option class="special_filter" value="{{retorno.get_grupo_de_retorno_display}}">&#x21a6; {{retorno.get_grupo_de_retorno_display}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
+              {% ifchanged retorno.grupo_de_retorno %}{% if retorno.grupo_de_retorno %}<option class="special_filter" value="{{retorno.get_grupo_de_retorno_display}}" {% if selecionada_acompanhamento == retorno.grupo_de_retorno %}selected{% endif %}>&#x21a6; {{retorno.get_grupo_de_retorno_display}} &#x21a4;</option>{% else %}<option disabled="disabled">-----------</option>{% endif %}{% endifchanged %}
               <option value="{{retorno.id}}">{{retorno.nome}}</option>
             {% endfor %}
           </select>

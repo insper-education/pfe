@@ -1,0 +1,57 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Março de 2025
+{% endcomment %}
+
+function filtra_data() {
+  var filterValue = $("#filterAcompanhamento").val();
+  var acompanhamentos = $(".acompanhamentos"); 
+  acompanhamentos.addClass("hidden");
+  acompanhamentos.removeClass("visible");
+  var acompanhamentos_tr = $(".acompanhamentos_tr");
+  acompanhamentos_tr.hide();
+  var tipoRetornoMapping = {
+    {% for g in GRUPO_DE_RETORNO %}
+      "{{ g.1 }}": [
+        {% for tipo in tipo_retorno %}{% if tipo.grupo_de_retorno ==  g.0 %}
+          "{{ tipo.id }}"{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}
+      ]{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  };
+  acompanhamentos.each(function(i, el) {
+    if( filterValue == "todas" || $(el).hasClass("anot_" + filterValue) ) {
+        $(el).removeClass("hidden");
+        $(el).addClass("visible");
+    }
+    else if (filterValue in tipoRetornoMapping) {
+      var tipoIds = tipoRetornoMapping[filterValue];
+      for (var i = 0; i < tipoIds.length; i++) {
+        if ($(el).hasClass("anot_" + tipoIds[i])) {
+          $(el).removeClass("hidden");
+          $(el).addClass("visible");
+          break;
+        }
+      }
+    }
+  });
+  acompanhamentos_tr.each(function(i, el) {
+    if( filterValue == "todas" || $(el).hasClass("anot_" + filterValue) ) {
+        $(el).show();
+    }
+    else if (filterValue in tipoRetornoMapping) {
+      var tipoIds = tipoRetornoMapping[filterValue];
+      for (var i = 0; i < tipoIds.length; i++) {
+        if ($(el).hasClass("anot_" + tipoIds[i])) {
+          $(el).show();
+          break;
+        }
+      }
+    }
+  });
+}
+
+$("#filterAcompanhamento").change(function(){
+  filtra_data();
+  atualiza_situacoes();
+});  

@@ -1,0 +1,51 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Março de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+{% if not anotacoes %}
+  <div style="float:left; width: 92%;">
+    <span id="contato_autor{{organizacao.id}}">---:</span>
+    <a id="organizacao{{organizacao.id}}"
+      data-confirmar="true"
+      class="open-modal imprimir"
+      >---------</a>
+  </div>
+  <div class="esconder" style="float:right;">
+    {% if organizacao %}
+      <a style="font-size: 0.5em; vertical-align: super;"
+          class="open-modal"
+          href="{% url 'anotacao' organizacao.id %}"
+          data-url="{% url 'anotacao' organizacao.id %}"
+        >&#10133;</a>
+    {% else %}
+      <small>{% lng "ERRO" "ERROR" %}</small>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="mostra_anot" style="float:left; width: 92%; line-height: 1.1;">
+    {% for anotacao in anotacoes %}
+      <div style="background-color:#{{anotacao.tipo_retorno.cor}}; border-radius: 6px; margin: 6px 0px; padding: 4px;"
+       class="acompanhamentos anot_{{anotacao.tipo_retorno.id}}" data-type="{{anotacao.tipo_retorno.id}}">
+        <span id="contato_autor{{organizacao.id}}">{{anotacao.autor.first_name}}:</span>
+        <a id="organizacao{{organizacao.id}}"
+            data-confirmar="true"
+            class="open-modal imprimir"
+            href="{% url 'anotacao' organizacao.id anotacao.id %}"
+            data-url="{% url 'anotacao' organizacao.id anotacao.id %}"
+          >{{anotacao.tipo_retorno.id}}{{anotacao.texto}}</a>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="esconder" style="float:right;">
+    <a style="font-size: 0.5em; vertical-align: super;"
+        class="open-modal"
+        href="{% url 'anotacao' organizacao.id %}"
+        data-url="{% url 'anotacao' organizacao.id %}"
+      >&#10133;</a
+    >
+  </div>
+{% endif %}

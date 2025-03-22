@@ -129,12 +129,13 @@
         </thead>
 
         <tbody>
-        {% for organizacao,disponiveis,submetidas,contato in organizacoes_list %} 
-          <tr id="tr{{organizacao.id}}" class="item" 
-            {% if contato %}
-              style="background-color:#{{contato.tipo_retorno.cor}};"       
-              data-type="{{contato.tipo_retorno.id}}"
-            {% endif %}>
+        {% for organizacao, disponiveis, submetidas, anotacoes in organizacoes_list %}
+          <tr id="tr{{organizacao.id}}" class="item acompanhamentos_tr {% for a in anotacoes %} anot_{{a.tipo_retorno.id}}{% endfor %}">
+          {% comment %} <tr id="tr{{organizacao.id}}" class="item" 
+            {% if anotacoes %}
+              style="background-color:#{{anotacoes.tipo_retorno.cor}};"       
+              data-type="{{anotacoes.tipo_retorno.id}}"
+            {% endif %}> {% endcomment %}
             <td style="text-align: center; font-size: 12px;"></td>
             
             <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}</td>
@@ -155,55 +156,22 @@
             </td>
 
             <td id="data{{organizacao.id}}">
-              {% if not contato %}
+              {% if not anotacoes %}
                 --------
               {% else %}
-                {{contato.momento|date:"d/m/y"}}
+                {{anotacoes.first.momento|date:"d/m/y"}}
               {% endif %}
             </td>
-
-            {% comment %} Anotação {% endcomment %}
-            <td>
-              {% if not contato %}
-                <div style="float:left; width: 92%;">
-                  <span id="contato_autor{{organizacao.id}}">---:</span>
-                  <a id="organizacao{{organizacao.id}}"
-                    data-confirmar="true"
-                    class="open-modal imprimir"
-                    >---------</a>
-                </div>
-                <div class="esconder" style="float:right;">
-                  {% if organizacao %}
-                    <a style="font-size: 0.5em; vertical-align: super;"
-                       class="open-modal"
-                       href="{% url 'anotacao' organizacao.id %}"
-                       data-url="{% url 'anotacao' organizacao.id %}"
-                      >&#10133;</a>
-                  {% else %}
-                    <small>{% lng "ERRO" "ERROR" %}</small>
-                  {% endif %}
-                </div>
+            {% comment %} <td id="data{{organizacao.id}}">
+              {% if not anotacoes %}
+                --------
               {% else %}
-                <div style="float:left; width: 92%; line-height: 1.1;">
-                  <span id="contato_autor{{organizacao.id}}">{{contato.autor.first_name}}:</span>
-                  <a id="organizacao{{organizacao.id}}"
-                      data-confirmar="true"
-                      class="open-modal imprimir"
-                      href="{% url 'anotacao' organizacao.id contato.id %}"
-                      data-url="{% url 'anotacao' organizacao.id contato.id %}"
-                    >{{contato.texto}}</a>
-                </div>
-                <div class="esconder" style="float:right;">
-                  <a style="font-size: 0.5em; vertical-align: super;"
-                      class="open-modal"
-                      href="{% url 'anotacao' organizacao.id %}"
-                      data-url="{% url 'anotacao' organizacao.id %}"
-                    >&#10133;</a
-                  >
-                </div>
+                {{anotacoes.momento|date:"d/m/y"}}
               {% endif %}
-            </td>
+            </td> {% endcomment %}
 
+            <td>{% include "operacional/includes/bloco_anotacoes_contato.html" %}</td>
+            
             <td class="text-center">{{disponiveis}}</td> {% comment %} Propostas Disponíveis {% endcomment %}
             <td class="text-center">{{submetidas}}</td> {% comment %} Propostas Enviadas {% endcomment %}
 
@@ -275,88 +243,45 @@
       <div>
 
       <div class="flex-container">
-        <div class="flex-item">
-          <div style="display: inline-block; border: 1px solid black; margin-top: 16px; padding: 10px; max-width: 100%">
-            <div class="mb-2">
-              <b>{% lng "Organizações contactadas recentemente" "Recently contacted organizations" %} ({{total_organizacoes}}):</b>
-            </div>
+        
+        {% include "operacional/includes/tabela_organizacoes_contactadas.html" %}
+
+        <script>
+
+          {% include "operacional/includes/filtra_acompanhamento_show_hide.html" %}
+
+          function preenche_cursos(tipo_retorno) {
+            mensagem = "";
+            mensagem2 = "";
+            if (cursos_organizacoes[tipo_retorno]) {
+              total=0;
+              primeiro = true;
+              for (var key in cursos_organizacoes[tipo_retorno]){
+                if(primeiro) primeiro = false; else mensagem2 += ",";
+                sigla_curso = key;
+                if(sigla_curso=="") sigla_curso="?";
+                mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
+                total += cursos_organizacoes[tipo_retorno][key];
+              }
+              mensagem += " = ";
+              mensagem += total;
+              mensagem += " [" + Math.round((total/{{organizacoes|length}})*100) + "%]";
+              mensagem += " (" + mensagem2 + " )";
+            }
+            return(mensagem);
+          }
+
+          function atualiza_situacoes() {
+            $(".calc_aux").css("font-size", "0.8em");
             {% for tipo in tipo_retorno %}
-              <div class="d-flex align-items-start">
-                <span data-type="{{tipo.id}}" data-color="#{{tipo.cor}}" data-hide="false" class="show-hide mr-2" 
-                style="line-height: 1.2; background-color: #{{tipo.cor}};">&nbsp;&nbsp;&nbsp;</span>
-                <span class="text-truncate">{{tipo.nome}}</span>
-                <span id="retorno{{tipo.id}}" class="calc_aux ml-2"></span>
-              </div>
+              document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
             {% endfor %}
-          </div>
-          <script>
+            var filtered = $(".acompanhamentos_tr:visible");
+            $("#calc_orgs").html(filtered.length);
+          }
 
-            $(".show-hide").click(function() {
-              
-              click = $(this);
-              var filterValue = click.attr("data-type");
-
-              var row = $(".item");
-              
-              row.each(function(i, el) {
-                if( (filterValue > 6) & ($(el).attr("data-type") > 6) ) {
-                  if(click.attr("data-hide") === "false") {
-                    $(el).hide();
-                  } else {
-                    $(el).show();
-                  }
-                } else {
-                  if( filterValue == $(el).attr("data-type") ) {
-                    if(click.attr("data-hide") === "false") {
-                      $(el).hide();
-                    } else {
-                      $(el).show();
-                    }
-                  }
-                }
-              });
-
-              if(click.attr("data-hide") === "false") {
-                click.attr("data-hide", "true");
-                click.css({background: "linear-gradient(to left top, transparent 47.75%, currentColor 49.5%, currentColor 50.5%, transparent 52.25%)"});
-              } else {
-                click.attr("data-hide", "false");
-                click.css({background: click.attr("data-color") });
-              }
-
-            });
-
-            function preenche_cursos(tipo_retorno) {
-              mensagem = "";
-              mensagem2 = "";
-              if (cursos_organizacoes[tipo_retorno]) {
-                total=0;
-                primeiro = true;
-                for (var key in cursos_organizacoes[tipo_retorno]){
-                  if(primeiro) primeiro = false; else mensagem2 += ",";
-                  sigla_curso = key;
-                  if(sigla_curso=="") sigla_curso="?";
-                  mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
-                  total += cursos_organizacoes[tipo_retorno][key];
-                }
-                mensagem += " = ";
-                mensagem += total;
-                mensagem += " [" + Math.round((total/{{total_organizacoes}})*100) + "%]";
-                mensagem += " (" + mensagem2 + " )";
-              }
-              return(mensagem);
-            }
-
-            function atualiza_situacoes() {
-              $(".calc_aux").css("font-size", "0.8em");
-              {% for tipo in tipo_retorno %}
-                document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
-              {% endfor %}
-            }
-
-          </script>
-        </div>
-
+        </script>
+        
         <div class="flex-item mt-2">
           <div class="table-responsive">
             <div style="position: relative; height:260px; width:590px; max-width: 100%">
@@ -565,45 +490,15 @@
       });
     }
 
-    function filtra_data() {
-      var filterValue = $("#filterAcompanhamento").val();
-      var row = $(".item"); 
-      row.hide();
-      var tipoRetornoMapping = {
-        {% for g in GRUPO_DE_RETORNO %}
-          "{{ g.1 }}": [
-            {% for tipo in tipo_retorno %}{% if tipo.grupo_de_retorno ==  g.0 %}
-              "{{ tipo.id }}"{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}
-          ]{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      };
-      row.each(function(i, el) {
-        if( filterValue == "todas" || filterValue == $(el).attr("data-type") ) {
-            $(el).show();
-        }
-        else if (filterValue in tipoRetornoMapping) {
-          var tipoIds = tipoRetornoMapping[filterValue];
-          $(".item").each(function() {
-              if (tipoIds.includes($(this).attr("data-type"))) {
-                  $(this).show();
-              }
-          });
-        }
-      });
-    }
-
-    $("#filterAcompanhamento").change(function(){
-      filtra_data();
-      atualiza_situacoes();
-    });  
+    {% include "operacional/includes/filtra_acompanhamento.html" %}
 
     function carrega_pagina() {
       numberRows();
+      filtra_data();
+      atualiza_situacoes();
     }
 
     $(document).ready(function(){
-      filtra_data();
-      atualiza_situacoes();
       carrega_pagina()
     });
 
