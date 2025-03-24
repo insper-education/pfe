@@ -780,7 +780,12 @@ def mostra_feedback(request, feedback_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def mostra_feedback_estudante(request, feedback_id):
     """Detalha os feedbacks dos Estudantes."""
-    context = {"feedback": get_object_or_404(FeedbackEstudante, id=feedback_id)}
+    feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
+    context = {
+        "feedback": feedback,
+        "projeto": feedback.projeto,
+        "organizacao": feedback.projeto.proposta.organizacao,
+        }
     return render(request, "estudantes/estudante_feedback.html", context)
 
 

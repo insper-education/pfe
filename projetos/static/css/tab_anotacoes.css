@@ -43,27 +43,28 @@ tr, td {
   height: 100%;
 }
 
+table, tbody, tr, td {
+  height: 100%;
+}
+
 .cont_anot {
   position: relative;
   height: 100%;
-  width: 14px;
+  width: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .adiciona_anot {
-  position: absolute;
-  top: 0;
-  right: 0;
+  align-self: flex-start;
+  text-align: right;
   font-size: 0.5em;
   margin-top: 3px;
 }
 
 .expande_anot {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  align-self: flex-end;
   font-size: 0.75em;
   cursor: pointer;
   margin-bottom: 3px;
@@ -94,6 +95,6 @@ tr, td {
 .quad_anot {
   border-radius: 6px;
   border: 1px solid #AAA;
-  margin: 6px 0px;
+  margin: 6px 4px 6px 1px;
   padding: 4px;
 }
