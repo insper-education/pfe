@@ -490,8 +490,8 @@ def organizacoes_prospect(request):
 
     organizacoes_list = zip(organizacoes, disponiveis, submetidas, contato)
 
-    # No final jogo para 2 (com proposta submetida) se houver proposta submetida, mesmo que a anotação diga diferente
-    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3] is None else ( 2 if(x[2] > 0) else x[3].first().tipo_retorno.id ) ))
+    # No final coloco para 2 (com proposta submetida) se houver proposta submetida, mesmo que a anotação diga diferente
+    organizacoes_list = sorted(organizacoes_list, key=lambda x: (255 if x[3].first() is None else ( 2 if(x[2] > 0) else x[3].first().tipo_retorno.id ) ))
 
     total_disponiveis = sum(disponiveis)
     total_submetidas = sum(submetidas)
