@@ -50,7 +50,8 @@ def areas_propostas(check_values, outras, proposta):
                 area.save()
         else:
             if AreaDeInteresse.objects.filter(area=area, proposta=proposta).exists():
-                AreaDeInteresse.objects.get(area=area, proposta=proposta).delete()
+                for a_dell in AreaDeInteresse.objects.filter(area=area, proposta=proposta):
+                    a_dell.delete()
 
     if outras and outras != "":
         outra, _ = AreaDeInteresse.objects.get_or_create(area=None, proposta=proposta)
@@ -58,7 +59,8 @@ def areas_propostas(check_values, outras, proposta):
         outra.save()
     else:
         if AreaDeInteresse.objects.filter(area=None, proposta=proposta).exists():
-            AreaDeInteresse.objects.get(area=None, proposta=proposta).delete()
+            for a_dell in AreaDeInteresse.objects.filter(area=None, proposta=proposta):
+                a_dell.delete()
 
 
 def cria_area_proposta(request, proposta):
@@ -300,10 +302,13 @@ def preenche_proposta_pdf(campos, proposta):
                 )
                 contatos.append(contato)
 
-    proposta.save()  # Senão o set não funciona	
-    proposta.contatos.set(contatos)
+    check_values = cria_area_proposta_pdf(campos, proposta)
+    proposta.aprimorar =  "interesse#0" in check_values
+    proposta.realizar =  "interesse#1" in check_values
+    proposta.iniciar =  "interesse#2" in check_values
+    proposta.identificar =  "interesse#3" in check_values
+    proposta.mentorar =  "interesse#4" in check_values
     
-
     mensagem = ""
     if proposta.nome == None:
         proposta.nome = "NOME NÃO DEFINIDO"
@@ -314,26 +319,18 @@ def preenche_proposta_pdf(campos, proposta):
     if proposta.descricao == None:
         proposta.descricao = "DESCRIÇÃO NÃO DEFINIDA"
         mensagem += "DESCRIÇÃO NÃO DEFINIDA<br>"
-    # if proposta.contatos_tecnicos == None:
-    #     proposta.contatos_tecnicos = "CONTATOS TÉCNICOS NÃO DEFINIDOS"
-    #     mensagem += "CONTATOS TÉCNICOS NÃO DEFINIDOS<br>"
     if proposta.expectativas == None:
         proposta.expectativas = "EXPECTATIVAS NÃO DEFINIDAS"
         mensagem += "EXPECTATIVAS NÃO DEFINIDAS<br>"
 
-    proposta.save()
-
-    check_values = cria_area_proposta_pdf(campos, proposta)
-
-    proposta.aprimorar =  "interesse#0" in check_values
-    proposta.realizar =  "interesse#1" in check_values
-    proposta.iniciar =  "interesse#2" in check_values
-    proposta.identificar =  "interesse#3" in check_values
-    proposta.mentorar =  "interesse#4" in check_values
+    if mensagem:
+        return None, mensagem
     
     proposta.save()
+    proposta.contatos.set(contatos)
 
     return proposta, mensagem
+
 
 def lista_interesses(proposta):
     message = ""

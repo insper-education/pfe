@@ -418,11 +418,22 @@ class Proposta(models.Model):
 
     def __str__(self):
         """Retorno padrão textual."""
+        org = ""
         if self.organizacao:
-            return self.organizacao.sigla+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
-        if self.nome_organizacao:
-            return self.nome_organizacao+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
-        return "ORG. NÃO DEFINIDA"+" ("+str(self.ano)+"."+str(self.semestre)+") "+self.titulo
+            org = self.organizacao.sigla
+        elif self.nome_organizacao:
+            org = self.nome_organizacao
+        else:
+            org = "ORG. NÃO DEFINIDA"
+        if self.ano and self.semestre:
+            ano, semestre = str(self.ano), str(self.semestre)
+        else:
+            ano, semestre = "ANO NÃO DEFINIDO", "SEMESTRE NÃO DEFINIDO"
+        if self.titulo:
+            titulo = self.titulo
+        else:
+            titulo = "TÍTULO NÃO DEFINIDO"
+        return org + " (" + ano + "." + semestre + ") " + titulo
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
