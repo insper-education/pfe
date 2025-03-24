@@ -55,11 +55,13 @@
           labels: [ {% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
           datasets: [
             {
-              label: "projetos",
+              label_pt: "projetos",
+              label_en: "projects",
               backgroundColor: "#AE4E82",
               data: [ {% for num in num_projetos %}{{num}}, {% endfor %}]
             },{
-              label: "feedbacks",
+              label_pt: "feedbacks",
+              label_en: "feedbacks",
               backgroundColor: "#15CECD",
               data: [ {% for num in num_feedbacks %}{{num}}, {% endfor %}]
             }, 
@@ -69,14 +71,32 @@
           legend: { display: true },
           title: {
             display: true,
-            text: "Projetos e Feedbacks"
+            text_pt: "Projetos e Feedbacks",
+            text_en: "Projects and Feedbacks"
           }
         }
     };
 
+    function lingua_grafico() {
+      if(window.projeto == undefined) {return;}
+      if(localStorage.getItem("lingua") == "pt") {
+        window.projeto.options.title.text = window.projeto.options.title.text_pt;
+        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_pt;
+        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_pt;
+      } else {
+        window.projeto.options.title.text = window.projeto.options.title.text_en;        
+        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_en;
+        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_en;
+      }
+      window.projeto.update();
+    }
+    
+    document.addEventListener("languageChanged", lingua_grafico);
+
     function carrega_grafico() {  // Chart da quantidade de projetos
       var bar_feedbacks = document.getElementById("bar-feedbacks").getContext("2d");
       window.projeto = new Chart(bar_feedbacks, config_feedbacks);
+      lingua_grafico();
     }
 
     function carrega_pagina() {carrega_grafico();}

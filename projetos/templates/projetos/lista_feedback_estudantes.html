@@ -8,19 +8,18 @@
 {% block head %}
   {% load static %} 
   {% load linguas %}
-  {% comment %} <script src="{% static 'js/sort.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-labels.js' %}"></script>
-
   {% include "tabelas_includes.html" %}
-  <style>
-    canvas {background-color: #FAFAFA;}
-  </style>
 {% endblock %}
 
 {% block content %}
 
-  <div>{% lng "Link para pesquisa" "Form link" %}: <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a></div><br>
+  <div>
+    {% lng "Link para pesquisa" "Form link" %}:
+    <a href="{% url 'estudante_feedback' %}">{{request.scheme}}://{{request.get_host}}{% url 'estudante_feedback' %}</a>
+  </div>
+  <br>
 
   {% include "edicoes.html" %}
 
@@ -45,9 +44,7 @@
           
           <td style="font-size:80%">
             {% if projeto %}
-              <a href="{% url 'projeto_infos' projeto.id %}">
-                {{projeto}}
-              </a>
+              <a href="{% url 'projeto_infos' projeto.id %}">{{projeto}}</a>
             {% endif %}
           </td>
 
@@ -81,212 +78,313 @@
           </td>
         </tr>
       {% endfor %}
+    {% include "tabelas_bottom.html" %}
+
+    <div class="container mb-4">
+      <div class="row">
+        <div class="col-lg-6 mt-4" id="chart-recomendaria"></div>
+        <div class="col-lg-6 mt-4" id="chart-primeira_opcao"></div>
+        <div class="col-lg-6 mt-4" id="chart-proposta"></div>
+        <div class="col-lg-6 mt-4" id="chart-trabalhando"></div>
+      </div>
+    </div>
+
+    <table id="ComentariosTable" class="table-striped table-bordered table-hover table-sm mb-4">
+      <thead class="bg-primary text-white"><tr><td><b>{% lng "Comentários" "Comments" %}:</b></td></tr></thead>
+      <tbody><tr></tr></tbody>
     </table>
-  </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-6 mt-4" id="chart-recomendaria"></div>
-      <div class="col-lg-6 mt-4" id="chart-primeira_opcao"></div>
-      <div class="col-lg-6 mt-4" id="chart-proposta"></div>
-      <div class="col-lg-6 mt-4" id="chart-trabalhando"></div>
+    <div class="container mb-4">
+      <div class="row">
+        <div class="col"><canvas id="bar-feedbacks"></canvas></div>
+      </div>
     </div>
-  </div>
 
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+    <script>
 
-  <table id="ComentariosTable"  style="background-color: #eee;" >
-    <tr><td>
-      <b>{% lng "Comentários" "Comments" %}:</b>
-    </td></tr>
-  </table>
+      function preenche_tabela_comentarios() {
+        if(comentarios.length) {
+          comentarios.forEach(function(texto, i) {
+            $("#ComentariosTable tbody tr:last").after("<tr><td>" + texto + "</td></tr>");
+          })
+        } else {
+          $("#ComentariosTable").remove();
+        }
+      }
 
-  <script>
-    if(comentarios.length) {
-      comentarios.forEach(function(texto, i) {
-        $("#ComentariosTable tr:last").after("<tr><td>" + texto + "</td></tr>");
-      })
-    } else {
-      $("#ComentariosTable").remove();
-    }
-  </script>
+      $(document).ready(function() {
+        preenche_tabela_comentarios();
+      });
 
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+      var plugins = {
+        labels: [ { render: "label",
+                    fontColor: "#000",
+                    fontStyle: "bold",
+                    position: "outside" },
+                  { render: "percentage" } ]
+      }
 
-  <div class="container">
-    <div class="row">
-      <div class="col"><canvas id="bar-feedbacks"></canvas></div>
-    </div>
-  </div>
+      var legend = {
+        display: false,
+        position: "bottom",
+        labels: { fontColor: "#333",
+                  fontSize: 14 }
+      }
 
-  <p>&nbsp;</p>
+      var pie_base = {
+        type: "pie",
+        options: {
+          responsive: true,
+          title: { display: true,
+                  position: "top"},
+          legend: legend,
+          plugins: plugins
+        }
+      };
 
-  <script>
+      var config_recomendaria = Object.assign({}, pie_base, {
+        data: {
+          datasets: [{
+            data: recomendaria,
+            backgroundColor: ["#e74c3c","#95a5a6","#34495e"],
+          }],
+          labels_pt: [
+            "Não recomendo",
+            "Recomendo com ressalvas",
+            "Recomendo fortemente"
+          ],
+          labels_en: [
+            "Do not recommend",
+            "Recommend with reservations",
+            "Strongly recommend"
+          ]
+        },
+        options: {title: {
+          display: true, 
+          text_pt: "Recomendaria Organização Parceira",
+          text_en: "Would Recommend Partner Organization"
+        } }
+      });
 
-    var plugins = {
-      labels: [ { render: "label",
+      var config_primeira_opcao = Object.assign({}, pie_base, {
+        data: {
+          datasets: [{
+            data: primeira_opcao,
+            backgroundColor: ["#2ecc71","#3498db","#9b59b6","#f1c40f"],
+          }],
+          labels_pt: [
+            "Sim",
+            "Não"
+          ], 
+          labels_en: [
+            "Yes",
+            "No"
+          ]
+        },
+        options: {title: {
+          display: true, 
+          text_pt: "Organização seria Primeira Opção para Trabalho",
+          text_en: "Organization would be First Option for Work"
+        } }
+      });
+
+      var config_proposta = Object.assign({}, pie_base, {
+        data: {
+          datasets: [{
+            data: proposta,
+            backgroundColor: ["#bb79d6", "#f1c40f", "#f10fc4", "#0ff1c4", "#59b69b"],
+          }],
+          labels_pt: [
+            "Recebi convite e apliquei",
+            "Não recebi convite, mas apliquei",
+            "Recebi convite, mas não apliquei",
+            "Não recebi, nem apliquei",
+            "Não haviam vagas em aberto"
+          ],
+          labels_en: [
+            "Received invitation and applied",
+            "Did not receive invitation, but applied",
+            "Received invitation, but did not apply",
+            "Did not receive, nor apply",
+            "There were no open positions"
+          ]
+        },
+        options: {title: {
+          display: true, 
+          text_pt: "Recebeu proposta de estágio",
+          text_en: "Received internship proposal"
+        } }
+      });
+
+      var config_trabalhando = Object.assign({}, pie_base, {
+        data: {
+          datasets: [{
+            data: trabalhando,
+            backgroundColor: ["#bb79d6","#f1c40f","#f10fc4","#0ff1c4"],
+          }],
+          labels_pt: [
+            "Empresa do Projeto do Capstone",
+            "Outra",
+            "Ainda não",
+            "Prefiro não responder"
+          ],
+          labels_en: [
+            "Capstone Project Company",
+            "Another",
+            "Not yet",
+            "Prefer not to answer"
+          ]
+        },
+        options: {title: {
+          display: true,
+          text_pt: "Onde está trabalhando",
+          text_en: "Where are you working"
+        } }
+      });
+
+      var config_feedbacks = {
+          type: "bar",
+          data: {
+            labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
+            datasets: [{
+                label_pt: "estudantes",
+                label_en: "students",
+                backgroundColor: "#0E7E32",
+                data: [{% for num in num_estudantes %}{{num}}, {% endfor %}]
+              }, 
+              {
+                label_pt: "feedbacks",
+                label_en: "feedbacks",
+                backgroundColor: "#15CECD",
+                data: [{% for num in num_feedbacks %} {{num}},{% endfor %} ]
+              }, 
+          ]},
+          options: {
+            legend: { display: true },
+            title: {
+                display: true,
+                text_pt: "Estudantes e Feedbacks",
+                text_en: "Students and Feedbacks"
+            },
+            plugins: {
+              labels: [{
+                  render: "value",
                   fontColor: "#000",
                   fontStyle: "bold",
-                  position: "outside" },
-                { render: "percentage" } ]
-    }
+              }]
+            }
+          }
+      };
 
-    var legend = {
-      display: false,
-      position: "bottom",
-      labels: { fontColor: "#333",
-                fontSize: 14 }
-    }
-
-    var pie_base = {
-      type: "pie",
-      options: {
-        responsive: true,
-        title: { display: true,
-                 position: "top"},
-        legend: legend,
-        plugins: plugins
-      }
-    };
-
-    var config_recomendaria = Object.assign({}, pie_base, {
-      data: {
-        datasets: [{
-          data: recomendaria,
-          backgroundColor: ["#e74c3c","#95a5a6","#34495e"],
-        }],
-        labels: [
-          "Não recomendo",
-          "Recomendo com ressalvas",
-          "Recomendo fortemente"
-        ]
-      },
-      options: {title: {display: true, text: "Recomendaria Organização Parceira"} }
-    });
-
-    var config_primeira_opcao = Object.assign({}, pie_base, {
-      data: {
-        datasets: [{
-          data: primeira_opcao,
-          backgroundColor: ["#2ecc71","#3498db","#9b59b6","#f1c40f"],
-        }],
-        labels: [
-          "Sim",
-          "Não"
-        ]
-      },
-      options: {title: {display: true, text: "Organização seria Primeira Opção para Trabalho"} }
-    });
-
-    var config_proposta = Object.assign({}, pie_base, {
-      data: {
-        datasets: [{
-          data: proposta,
-          backgroundColor: ["#bb79d6", "#f1c40f", "#f10fc4", "#0ff1c4", "#59b69b"],
-        }],
-        labels: [
-          "Recebi convite e apliquei",
-          "Não recebi convite, mas apliquei",
-          "Recebi convite, mas não apliquei",
-          "Não recebi, nem apliquei",
-          "Não haviam vagas em aberto"
-        ]
-      },
-      options: {title: {display: true, text: "Recebeu proposta de estágio"} }
-    });
-
-    var config_trabalhando = Object.assign({}, pie_base, {
-      data: {
-        datasets: [{
-          data: trabalhando,
-          backgroundColor: ["#bb79d6","#f1c40f","#f10fc4","#0ff1c4"],
-        }],
-        labels: [
-          "Empresa do Projeto do Capstone",
-          "Outra",
-          "Ainda não",
-          "Prefiro não responder"
-        ]
-      },
-      options: {title: {display: true, text: "Onde está trabalhando"} }
-    });
-
-    var config_feedbacks = {
-        type: "bar",
-        data: {
-          labels: [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}],
-          datasets: [{
-              label: "estudantes",
-              backgroundColor: "#0E7E32",
-              data: [{% for num in num_estudantes %}{{num}}, {% endfor %}]
-            }, 
-            {
-              label: "feedbacks",
-              backgroundColor: "#15CECD",
-              data: [{% for num in num_feedbacks %} {{num}},{% endfor %} ]
-            }, 
-        ]},
-        options: {
-          legend: { display: true },
-          title: {
-              display: true,
-              text: "Estudantes e Feedbacks"
-          },
-          plugins: {
-            labels: [{
-                render: "value",
-                fontColor: "#000",
-                fontStyle: "bold",
-            }]
+      
+      function lingua_grafico() {
+        if(localStorage.getItem("lingua") == "pt") {
+          if (window.projeto && window.projeto.canvas && (window.projeto.canvas instanceof HTMLCanvasElement)) {
+            window.projeto.options.title.text = window.projeto.options.title.text_pt;
+            window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_pt;
+            window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_pt;
+            window.projeto.update();
+          }
+          if (window.recomendaria && window.recomendaria.canvas && (window.recomendaria.canvas instanceof HTMLCanvasElement)) {
+            window.recomendaria.options.title.text = window.recomendaria.options.title.text_pt;
+            window.recomendaria.data.labels = window.recomendaria.data.labels_pt;
+            window.recomendaria.update();
+          }
+          if (window.primeira_opcao && window.primeira_opcao.canvas && (window.primeira_opcao.canvas instanceof HTMLCanvasElement)) {
+            window.primeira_opcao.options.title.text = window.primeira_opcao.options.title.text_pt;
+            window.primeira_opcao.data.labels = window.primeira_opcao.data.labels_pt;
+            window.primeira_opcao.update();
+          }
+          if (window.proposta && window.proposta.canvas && (window.proposta.canvas instanceof HTMLCanvasElement)) {
+            window.proposta.options.title.text = window.proposta.options.title.text_pt;
+            window.proposta.data.labels = window.proposta.data.labels_pt;
+            window.proposta.update();
+          }
+          if (window.trabalhando && window.trabalhando.canvas && (window.trabalhando.canvas instanceof HTMLCanvasElement)) {
+            window.trabalhando.options.title.text = window.trabalhando.options.title.text_pt;
+            window.trabalhando.data.labels = window.trabalhando.data.labels_pt;
+            window.trabalhando.update();
+          }
+        } else {
+          if (window.projeto && window.projeto.canvas && (window.projeto.canvas instanceof HTMLCanvasElement)) {
+            window.projeto.options.title.text = window.projeto.options.title.text_en;        
+            window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_en;
+            window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_en;
+            window.projeto.update();
+          }
+          if (window.recomendaria && window.recomendaria.canvas && (window.recomendaria.canvas instanceof HTMLCanvasElement)) {
+            window.recomendaria.options.title.text = window.recomendaria.options.title.text_en;        
+            window.recomendaria.data.labels = window.recomendaria.data.labels_en;
+            window.recomendaria.update();
+          }
+          if (window.primeira_opcao && window.primeira_opcao.canvas && (window.primeira_opcao.canvas instanceof HTMLCanvasElement)) {
+            window.primeira_opcao.options.title.text = window.primeira_opcao.options.title.text_en;        
+            window.primeira_opcao.data.labels = window.primeira_opcao.data.labels_en;
+            window.primeira_opcao.update();
+          }
+          if (window.proposta && window.proposta.canvas && (window.proposta.canvas instanceof HTMLCanvasElement)) {
+            window.proposta.options.title.text = window.proposta.options.title.text_en;        
+            window.proposta.data.labels = window.proposta.data.labels_en;
+            window.proposta.update();
+          }
+          if (window.trabalhando && window.trabalhando.canvas && (window.trabalhando.canvas instanceof HTMLCanvasElement)) {
+            window.trabalhando.options.title.text = window.trabalhando.options.title.text_en;        
+            window.trabalhando.data.labels = window.trabalhando.data.labels_en;
+            window.trabalhando.update();
           }
         }
-    };
-
-    function carrega_grafico() {  
-      // Chart da quantidade de projetos
-      window.projeto = new Chart(document.getElementById("bar-feedbacks").getContext("2d"), config_feedbacks);
-
-      if(recomendaria.some(item => item !== 0)) {
-        $("#chart-recomendaria").append($("<canvas></canvas>"));
-        var context_recomendaria = $("#chart-recomendaria canvas").get(0).getContext("2d");
-        window.myPie = new Chart(context_recomendaria, config_recomendaria);
-      } else {
-        $("#chart-recomendaria").remove();
+        
       }
+      
+      document.addEventListener("languageChanged", lingua_grafico);
 
-      if(primeira_opcao.some(item => item !== 0)) {
-        $("#chart-primeira_opcao").append($("<canvas></canvas>"));
-        var context_primeira_opcao = $("#chart-primeira_opcao canvas").get(0).getContext("2d");
-        window.myPie2 = new Chart(context_primeira_opcao, config_primeira_opcao);
-      } else {
-        $("#chart-primeira_opcao").remove();
+      function carrega_grafico() {  
+        // Chart da quantidade de projetos
+        window.projeto = new Chart(document.getElementById("bar-feedbacks").getContext("2d"), config_feedbacks);
+
+        if(recomendaria.some(item => item !== 0)) {
+          $("#chart-recomendaria").append($("<canvas></canvas>"));
+          var context_recomendaria = $("#chart-recomendaria canvas").get(0).getContext("2d");
+          window.recomendaria = new Chart(context_recomendaria, config_recomendaria);
+        } else {
+          $("#chart-recomendaria").remove();
+        }
+
+        if(primeira_opcao.some(item => item !== 0)) {
+          $("#chart-primeira_opcao").append($("<canvas></canvas>"));
+          var context_primeira_opcao = $("#chart-primeira_opcao canvas").get(0).getContext("2d");
+          window.primeira_opcao = new Chart(context_primeira_opcao, config_primeira_opcao);
+        } else {
+          $("#chart-primeira_opcao").remove();
+        }
+
+        if(proposta.some(item => item !== 0)) {
+          $("#chart-proposta").append($("<canvas></canvas>"));
+          var context_proposta = $("#chart-proposta canvas").get(0).getContext("2d");
+          window.proposta = new Chart(context_proposta, config_proposta);
+        } else {
+          $("#chart-proposta").remove();
+        }
+
+        if(trabalhando.some(item => item !== 0)) {
+          $("#chart-trabalhando").append($("<canvas></canvas>"));
+          var context_trabalhando = $("#chart-trabalhando canvas").get(0).getContext("2d");
+          window.trabalhando = new Chart(context_trabalhando, config_trabalhando);
+        } else {
+          $("#chart-trabalhando").remove();
+        }
+
+        lingua_grafico();
       }
-
-      if(proposta.some(item => item !== 0)) {
-        $("#chart-proposta").append($("<canvas></canvas>"));
-        var context_proposta = $("#chart-proposta canvas").get(0).getContext("2d");
-        window.myPie3 = new Chart(context_proposta, config_proposta);
-      } else {
-        $("#chart-proposta").remove();
-      }
-
-      if(trabalhando.some(item => item !== 0)) {
-        $("#chart-trabalhando").append($("<canvas></canvas>"));
-        var context_trabalhando = $("#chart-trabalhando canvas").get(0).getContext("2d");
-        window.myPie4 = new Chart(context_trabalhando, config_trabalhando);
-      } else {
-        $("#chart-trabalhando").remove();
-      }
-    }
-
-      function carrega_pagina() { carrega_grafico(); }
-      window.onload = carrega_pagina
 
     </script>
 
   </div>
+
+  <script>
+    function carrega_pagina() { carrega_grafico(); }
+    window.onload = carrega_pagina
+  </script>
 
   {% include "edicoes_ajax.html" with tabela="Feedbacks" %}
 
