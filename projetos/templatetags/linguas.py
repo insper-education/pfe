@@ -36,6 +36,22 @@ def lng_dl(date, pt_text="", en_text=""):
     en_text = date.strftime("%B %d, %Y") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
 
+# Para mostrar datas e horas
+@register.simple_tag
+def lng_dh(date, pt_text="", en_text=""):
+    pt_text = date.strftime("%d/%m/%y %H:%M") + ( " " + pt_text if pt_text else "" )
+    en_text = date.strftime("%b %d, %y %H:%M") + ( " " + en_text if en_text else "")
+    return thtml(pt_text, en_text)
+
+# Para mostrar datas e horas
+@register.simple_tag
+def lng_dhl(date, pt_text="", en_text=""):
+    locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+    pt_text = date.strftime("%d de %B de %Y %H:%M") + ( " " + pt_text if pt_text else "")
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    en_text = date.strftime("%B %d, %Y %H:%M") + ( " " + en_text if en_text else "")
+    return thtml(pt_text, en_text)
+
 # Para números com duas casas decimais
 @register.simple_tag
 def lng_2(numero):

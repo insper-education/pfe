@@ -278,7 +278,7 @@
         <tbody>
           {% for curso, vaga in vagas.items %}
             <tr>
-              <td>{{curso}}</td>
+              <td>{% lng curso.nome curso.nome_en %}</td>
               <td style="text-align: right;">{{vaga.count}}</td>
               <td style="text-align: right;">{{vaga.count_disp}}</td>
               <td style="text-align: right;">{{vaga.prop|floatformat:1}}</td>

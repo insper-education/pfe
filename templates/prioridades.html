@@ -28,30 +28,36 @@
   var config_horizontal = {
       type: "horizontalBar",
       data: { 
-        labels: ["Procura",],
+        labels_pt: ["Procura",],
+        labels_en: ["Demand",],
         datasets: [
           {
-            label: "Opção #1",
+            label_pt: "Opção #1",
+            label_en: "Option #1",
             backgroundColor: "rgb(0, 250, 0)",
             data: [{{procura.1}},],
           },
           {
-            label: "Opção #2",
+            label_pt: "Opção #2",
+            label_en: "Option #2",
             backgroundColor: "rgb(210, 230, 30)",
             data: [{{procura.2}},],
           },
           {
-            label: "Opção #3",
+            label_pt: "Opção #3",
+            label_en: "Option #3",
             backgroundColor: "rgb(210, 190, 35)",
             data: [{{procura.3}},],
           },
           {
-            label: "Opção #4",
+            label_pt: "Opção #4",
+            label_en: "Option #4",
             backgroundColor: "rgb(180, 180, 120)",
             data: [{{procura.4}},],
           },
           {
-            label: "Opção #5",
+            label_pt: "Opção #5",
+            label_en: "Option #5",
             backgroundColor: "rgb(180, 200, 160)",
             data: [{{procura.5}},],
           }
@@ -103,11 +109,34 @@
       }
     }
 
-    function carrega_pagina() {     
-        var horizontal = document.getElementById('horizontal').getContext('2d');
-        window.horizontal = new Chart(horizontal, config_horizontal);
+  function lingua_grafico() {
+    if(window.horizontal.data == undefined) {return;}
+    if(localStorage.getItem("lingua") == "pt") {
+      window.horizontal.data.labels = window.horizontal.data.labels_pt;
+      window.horizontal.data.datasets[0].label = window.horizontal.data.datasets[0].label_pt;
+      window.horizontal.data.datasets[1].label = window.horizontal.data.datasets[1].label_pt;
+      window.horizontal.data.datasets[2].label = window.horizontal.data.datasets[2].label_pt;
+      window.horizontal.data.datasets[3].label = window.horizontal.data.datasets[3].label_pt;
+      window.horizontal.data.datasets[4].label = window.horizontal.data.datasets[4].label_pt;
+    } else {
+      window.horizontal.data.labels = window.horizontal.data.labels_en;
+      window.horizontal.data.datasets[0].label = window.horizontal.data.datasets[0].label_en;
+      window.horizontal.data.datasets[1].label = window.horizontal.data.datasets[1].label_en;
+      window.horizontal.data.datasets[2].label = window.horizontal.data.datasets[2].label_en;
+      window.horizontal.data.datasets[3].label = window.horizontal.data.datasets[3].label_en;
+      window.horizontal.data.datasets[4].label = window.horizontal.data.datasets[4].label_en;
     }
+    window.horizontal.update();
+  }
+  
+  document.addEventListener("languageChanged", lingua_grafico);
 
-    window.onload = carrega_pagina
+  function carrega_pagina() {     
+    var horizontal = document.getElementById('horizontal').getContext('2d');
+    window.horizontal = new Chart(horizontal, config_horizontal);
+    lingua_grafico();
+  }
+
+  window.onload = carrega_pagina
 
 </script>

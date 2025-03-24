@@ -31,19 +31,22 @@
     }
   });
 
-  new Chart(document.getElementById("bar-chart-horizontal"), {
+  window.g_prop = new Chart(document.getElementById("bar-chart-horizontal"), {
     type: "horizontalBar",
-    data: {
-      labels: [{% for curso in vagas %}"{{curso}}", {% endfor %}],
+    data: {      
+      labels_pt: [{% for curso in vagas %}"{{curso.nome}}", {% endfor %}],
+      labels_en: [{% for curso in vagas %}"{{curso.nome_en}}", {% endfor %}],
       datasets: [{
-        label: "proporção de vagas disponíveis",
+        label_pt: "proporção de vagas disponíveis",
+        label_en: "proportion of available positions",
         labelColor: "#444444",
         backgroundColor: [{% for curso in vagas %}"#{{curso.cor}}", {% endfor %}],
         data: [{% for value in vagas.values %}100*({{value.prop_disp|unlocalize}}/{{value.neces}}), {% endfor %}],
         stack: "Stack 0",
         {% comment %} xAxisID: "bar-x-disponiveis", {% endcomment %}
       },{
-        label: "proporção de vagas totais (incluindo as não disponíveis)",
+        label_pt: "proporção de vagas totais (incluindo as não disponíveis)",
+        label_en: "proportion of total positions (including unavailable)",
         labelColor: "#DDDDDD",
         backgroundColor: [{% for curso in vagas %}"#{{curso.cor|clarear}}60", {% endfor %}],  // Mais brilho e transparência
         data: [{% for value in vagas.values %}100*({{value.prop|unlocalize}}/{{value.neces}}), {% endfor %}],
@@ -58,7 +61,8 @@
       },
       title: {
         display: true,
-        text: "Preenchimento de vagas (%)",
+        text_pt: "Preenchimento de vagas por curso(%)",
+        text_en: "Filling of positions by program(%)",
       },
       scales: {
         xAxes: [{
@@ -96,4 +100,22 @@
       }
     }
 });
+
+function lingua_grafico() {
+  if(localStorage.getItem("lingua") == "pt") {
+    window.g_prop.options.title.text = window.g_prop.options.title.text_pt;
+    window.g_prop.data.labels = window.g_prop.data.labels_pt;
+    window.g_prop.data.datasets[0].label = window.g_prop.data.datasets[0].label_pt;
+    window.g_prop.data.datasets[1].label = window.g_prop.data.datasets[1].label_pt;
+  } else {
+    window.g_prop.options.title.text = window.g_prop.options.title.text_en;
+    window.g_prop.data.labels = window.g_prop.data.labels_en;
+    window.g_prop.data.datasets[0].label = window.g_prop.data.datasets[0].label_en;
+    window.g_prop.data.datasets[1].label = window.g_prop.data.datasets[1].label_en;
+  }
+  window.window.g_prop.update();
+}
+lingua_grafico();
+document.addEventListener("languageChanged", lingua_grafico);
+
 </script>

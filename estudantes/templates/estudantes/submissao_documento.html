@@ -31,11 +31,11 @@
         {% if item.evento.endDate %}
           <span class="texto-longo">
             {% lng "[prazo" "[deadline" %}
-            {{ item.evento.endDate|date:"DATE_FORMAT" }}]
+            {% lng_dl item.evento.endDate %}]
           </span>
           <span class="texto-curto">
             {% lng "[prazo" "[deadline" %}
-            {{ item.evento.endDate|date:"d/m/y" }}]
+            {% lng_d item.evento.endDate %}]
           </span>
         {% endif %}
         {% if item.composicao.tipo_documento %}
@@ -60,8 +60,8 @@
             {% if forloop.first%}<b>{% endif %}<span class="fa fa-file"></span>
             {% if documento.documento and documento.link %}
               {% lng "Entregue" "Delivered" %}
-              <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-              <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
+              <span class="texto-longo">{% lng_dhl documento.data %}</span>
+              <span class="texto-curto">{% lng_dh documento.data %}</span>
               <a 
                 {% if documento.usuario %} data-toggle="tooltip" data-html="true" animation="true" title="Entregue por {{documento.usuario.get_full_name}}"{% endif %}
                 class="{% if dias_ate > dias %}lightgrey{% endif %}"
@@ -77,8 +77,8 @@
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
                   href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
                   {% lng "Entregue" "Delivered" %}
-                  <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                  <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                  <span class="texto-curto">{% lng_dh documento.data %}</span>
                 </a>
               {% endif %}
               {% if documento.link %}
@@ -87,8 +87,8 @@
                   class="{% if dias_ate > dias %}lightgrey{% endif %}"
                   href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
                   {% lng "Entregue" "Delivered" %}
-                  <span class="texto-longo">{{ documento.data|date:"DATETIME_FORMAT" }}</span>
-                  <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
+                  <span class="texto-longo">{% lng_dhl documento.data %}</span>
+                  <span class="texto-curto">{% lng_dh documento.data %}</span>
                 </a>
               {% endif %}
             {% endif %}
