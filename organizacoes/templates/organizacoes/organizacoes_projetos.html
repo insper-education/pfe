@@ -13,47 +13,13 @@
   {% load linguas %}
 
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_anotacoes.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
   <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
-  <style>
-    .cursor_pointer{cursor: pointer;}
-    .tit_peq {
-      display: block;
-      font-weight: bold;
-      line-height: 1.2 !important;
-    }
-    .show-hide {
-      cursor: pointer;
-      border: 1px solid black;
-    }
-    .special_filter {
-      font-style: italic;
-      font-weight: bold !important;
-    }
-    .flex-container {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      width: 1640px;
-      max-width: 100%;
-    }
-    .flex-item {
-      flex: 1;
-      max-width: 100%;
-    }
-    @media (max-width: 1280px) {
-      .flex-container {flex-direction: column;}
-      .flex-item {width: 100%;}
-    }  
-    .btn-light {
-      background-color: #FFFFFF;
-      border-color: #ced4da;
-    }
-  </style>
 
 {% endblock %}
 
@@ -109,7 +75,9 @@
                 {% endif %}
               </td>
 
-              <td class="anotacoes">{% include "operacional/includes/bloco_anotacoes_contato.html" %}</td>
+              <td class="anotacoes" style="padding: 0px 5px;">
+                {% include "operacional/includes/bloco_anotacoes_contato.html" %}
+              </td>
 
               {% comment %} Projetos {% endcomment %}
               <td class="text-center">
@@ -142,50 +110,19 @@
     </div>
 
     <script>
-
-      {% include "operacional/includes/filtra_acompanhamento_show_hide.html" %}
-
-      function atualiza_situacoes() {
-        $(".calc_aux").css({fontWeight: "bold", color: "darkred"});
-        {% for tipo in tipo_retorno %}
-          var filtered = $(".anotacoes div.mostra_anot");
-          var count = 0;
-          for(var i = 0; i < filtered.length; i++) {
-            for(var j = 0; j < filtered[i].children.length; j++) {
-              var el = filtered[i].children[j];
-              if ($(el).hasClass("visible")) {
-                if ($(el).attr("data-type") == "{{tipo.id}}") count++;
-                break;
-              }
-            }
-          }
-          if (count > 0) {
-            document.getElementById("retorno{{tipo.id}}").innerHTML = "(" + count + ")";
-          } else {
-            document.getElementById("retorno{{tipo.id}}").innerHTML = "";
-          }
-        {% endfor %}
-      }
-      atualiza_situacoes();
-
+      {% include "operacional/includes/esconde_anotacoes.html" %}
     </script>
 
   </div>
 
   <script>
-
-    function numberRows() {
-      $("#OrganizacoesTable tbody tr").each(function(index) {
-        $(this).find('td:first').text(index + 1);
-      });
-    }
-
     {% include "operacional/includes/filtra_acompanhamento.html" %}
 
     function carrega_pagina() {
       numberRows();
       filtra_data();
       atualiza_situacoes();
+      esconde_orgs();
     }
     
     $(document).ready(function(){

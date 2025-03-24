@@ -26,26 +26,27 @@
     {% endif %}
   </div>
 {% else %}
-  <div class="mostra_anot" style="float:left; width: 92%; line-height: 1.1;">
+<div class="container2">
+  <div id="mostra_anot_{{organizacao.id}}" class="mostra_anot">
     {% for anotacao in anotacoes %}
-      <div style="background-color:#{{anotacao.tipo_retorno.cor}}; border-radius: 6px; margin: 6px 0px; padding: 4px;"
-       class="acompanhamentos anot_{{anotacao.tipo_retorno.id}}" data-type="{{anotacao.tipo_retorno.id}}">
-        <span id="contato_autor{{organizacao.id}}">{{anotacao.autor.first_name}}:</span>
-        <a id="organizacao{{organizacao.id}}"
+      <div style="background-color:#{{anotacao.tipo_retorno.cor}};"
+       class="acompanhamentos quad_anot anot_{{anotacao.tipo_retorno.id}}" data-type="{{anotacao.tipo_retorno.id}}">
+        <span id="contato_autor_{{anotacao.id}}">{{anotacao.autor.first_name}}:</span>
+        <a id="anotacao_{{anotacao.id}}"
             data-confirmar="true"
             class="open-modal imprimir"
             href="{% url 'anotacao' organizacao.id anotacao.id %}"
             data-url="{% url 'anotacao' organizacao.id anotacao.id %}"
-          >{{anotacao.tipo_retorno.id}}{{anotacao.texto}}</a>
+          >{{anotacao.texto}}</a>
       </div>
     {% endfor %}
   </div>
-  <div class="esconder" style="float:right;">
-    <a style="font-size: 0.5em; vertical-align: super;"
-        class="open-modal"
+  <div class="esconder cont_anot">
+    <a class="adiciona_anot open-modal"
         href="{% url 'anotacao' organizacao.id %}"
         data-url="{% url 'anotacao' organizacao.id %}"
-      >&#10133;</a
-    >
+      >&#10133;</a>
+    <a class="expande_anot seta-baixo" data-org="{{organizacao.id}}"></a>
   </div>
+</div>
 {% endif %}

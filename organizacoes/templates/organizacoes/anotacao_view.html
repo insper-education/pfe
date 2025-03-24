@@ -115,24 +115,36 @@
                 $("#sem_anotacoes").hide();
 
               {% else %}
-
                 if (organizacao_id === undefined) { // Faz um refresh na página
                   setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
                 }
-                $("#data"+organizacao_id).text(response.data);
-                $("#contato_autor"+organizacao_id).text(response.autor_nome+": ");
-                $("#organizacao"+organizacao_id).attr("data-url", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
-                $("#organizacao"+organizacao_id).attr("href", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
-                $("#organizacao"+organizacao_id).text(texto);
+                if(response.novo) {
+                  console.log("#mostra_anot_"+organizacao_id);
+                  $("#mostra_anot_"+organizacao_id).prepend(
+                    '<div style="background-color:#' + response.cor + ';"' +
+                    'class="acompanhamentos quad_anot anot_' + response.tipo_retorno_id + '" data-type="' + response.tipo_retorno_id + '">' +
+                      '<span id="contato_autor_' + response.anotacao_id + '">' + response.autor_nome + ':</span>' +
+                      '<a id="anotacao_' + response.anotacao_id + '"' +
+                          'data-confirmar="true"' +
+                          'class="open-modal imprimir"' +
+                          'href="' + "{% url 'anotacao' %}" + organizacao_id + '/' + response.anotacao_id + '" ' +
+                          'data-url="' + "{% url 'anotacao' %}" + organizacao_id + '/' + response.anotacao_id + '" ' +
+                        '>' + texto + '</a>' +
+                    '</div>');
+                } else {
+                  $("#data_"+organizacao_id).text(response.data);
+                  $("#contato_autor_{{anotacao.id}}").text(response.autor_nome+": ");
+                  $("#anotacao_{{anotacao.id}}").attr("data-url", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
+                  $("#anotacao_{{anotacao.id}}").attr("href", "{% url 'anotacao' %}" + organizacao_id + "/" + response.anotacao_id);
+                  $("#anotacao_{{anotacao.id}}").text(texto);
+                }
                 {% for t in tipo_retorno %}
                   if(tipo_retorno == {{t.id}}) $("#tr"+organizacao_id).css("background-color", "#{{t.cor}}");
                 {% endfor %}
               
               {% endif %}
 
-
             } else {
-              console.log("Erro: Valor não atualizado.");
               alert("Erro: Alguma falha no sistema não permitiu atualizar os dados. entrar em contato com: lpsoares@insper.edu.br");
             }
         },

@@ -84,6 +84,9 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
             "autor_nome": anotacao_obj.autor.first_name,
             "autor_sobrenome": anotacao_obj.autor.last_name,
             "anotacao_id": anotacao_obj.id,
+            "cor": anotacao_obj.tipo_retorno.cor,
+            "tipo_retorno_id": anotacao_obj.tipo_retorno.id,
+            "organizacao_id": organizacao_id,
             "novo": False if anotacao_id else True,
             "atualizado": True,
         }

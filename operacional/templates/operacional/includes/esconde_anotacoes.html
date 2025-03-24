@@ -1,0 +1,48 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Março de 2025
+{% endcomment %}
+
+function esconde_anotacoes(org_id, esconde) {
+  c = $("#mostra_anot_"+org_id).children();
+  aplica = true;
+  if(esconde) {
+    for (i = 0; i < c.length; i++) {
+      if(aplica) {
+        if($(c[i]).hasClass("visible")) {
+          aplica = false;
+        }
+      } else {
+        if($(c[i]).hasClass("visible")) {
+          $(c[i]).show();
+        }
+      }
+    }
+  } else {
+    for (i = 0; i < c.length; i++) {
+      if(aplica) {
+        if($(c[i]).hasClass("visible")) {
+          aplica = false;
+        }
+      } else {
+        if($(c[i]).hasClass("visible")) {
+          $(c[i]).hide();
+        }
+      }
+    }
+  }
+}
+
+$(".expande_anot").on("click", function() {
+  org_id = $(this).data("org");
+  esconde = $(this).hasClass("seta-baixo")
+  esconde_anotacoes(org_id, esconde);
+  $(this).toggleClass("seta-baixo seta-cima");
+});
+
+function esconde_orgs() {
+  {% for organizacao in organizacoes %}
+    esconde_anotacoes("{{ organizacao.id }}", false);
+  {% endfor %}
+}

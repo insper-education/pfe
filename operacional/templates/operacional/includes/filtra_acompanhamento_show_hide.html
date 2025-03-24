@@ -31,3 +31,57 @@ $(".show-hide").click(function() {
   }
 
 });
+
+
+function preenche_cursos(tipo_retorno) {
+  mensagem = "";
+  mensagem2 = "";
+  if (cursos_organizacoes[tipo_retorno]) {
+    total=0;
+    primeiro = true;
+    for (var key in cursos_organizacoes[tipo_retorno]){
+      if(primeiro) primeiro = false; else mensagem2 += ",";
+      sigla_curso = key;
+      if(sigla_curso=="") sigla_curso="?";
+      mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
+      total += cursos_organizacoes[tipo_retorno][key];
+    }
+    mensagem += " = ";
+    mensagem += total;
+    mensagem += " [" + Math.round((total/{{organizacoes|length}})*100) + "%]";
+    mensagem += " (" + mensagem2 + " )";
+  }
+  return(mensagem);
+}
+
+function atualiza_situacoes_cursos() {
+  $(".calc_aux").css("font-size", "0.8em");
+  {% for tipo in tipo_retorno %}
+    document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
+  {% endfor %}
+  var filtered = $(".acompanhamentos_tr:visible");
+  $("#calc_orgs").html(filtered.length);
+}
+
+
+function atualiza_situacoes() {
+  $(".calc_aux").css({fontWeight: "bold", color: "darkred"});
+  {% for tipo in tipo_retorno %}
+    var filtered = $(".anotacoes div.mostra_anot");
+    var count = 0;
+    for(var i = 0; i < filtered.length; i++) {
+      for(var j = 0; j < filtered[i].children.length; j++) {
+        var el = filtered[i].children[j];
+        if ($(el).hasClass("visible")) {
+          if ($(el).attr("data-type") == "{{tipo.id}}") count++;
+          break;
+        }
+      }
+    }
+    if (count > 0) {
+      document.getElementById("retorno{{tipo.id}}").innerHTML = "(" + count + ")";
+    } else {
+      document.getElementById("retorno{{tipo.id}}").innerHTML = "";
+    }
+  {% endfor %}
+}

@@ -54,4 +54,11 @@ function filtra_data() {
 $("#filterAcompanhamento").change(function(){
   filtra_data();
   atualiza_situacoes();
+  esconde_orgs();
 });  
+
+function numberRows() {
+  $("#OrganizacoesTable tbody tr").each(function(index) {
+    $(this).find("td:first").text(index + 1);
+  });
+}

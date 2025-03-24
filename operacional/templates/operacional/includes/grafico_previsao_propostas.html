@@ -1,0 +1,161 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Março de 2025
+{% endcomment %}
+
+{% load l10n %}
+{% load linguas %}
+{% load dictionary %}
+
+<div class="flex-item mt-2">
+  <div class="table-responsive">
+    <div style="position: relative; height:260px; width:590px; max-width: 100%">
+      <canvas id="projetos"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  var datasets = [
+    {
+      {% comment %} label: "Confirmados", {% endcomment %}
+      label_pt: "Confirmados",
+      label_en: "Confirmed",
+      organizacoes: orgs_confirmadas,
+      backgroundColor: "lightgreen",
+      borderColor: "grey",
+      borderWidth: 1,
+      data: [{% for curso in cursos %}cursos_projetos["{{curso.sigla_curta}}"], {% endfor %}],
+      xAxisID: "bar-x-projetos",
+      stack: "Stack 0",
+      categoryPercentage: 0.4
+    },
+    {
+      {% comment %} label: "Interessados", {% endcomment %}
+      label_pt: "Interessados",
+      label_en: "Interested",
+      organizacoes: orgs_interessados,
+      backgroundColor: "lemonchiffon",
+      borderColor: "grey",
+      borderWidth: 1,
+      data: [{% for curso in cursos %}interessados["{{curso.sigla_curta}}"], {% endfor %}],
+      xAxisID: "bar-x-projetos",
+      stack: "Stack 0",
+      categoryPercentage: 0.4
+    },
+    {
+      {% comment %} label: "Sondados", {% endcomment %}
+      label_pt: "Sondados",
+      label_en: "Sounded",
+      organizacoes: org_sondados,
+      backgroundColor: "lightblue",
+      borderColor: "grey",
+      borderWidth: 1,
+      data: [{% for curso in cursos %}sondados["{{curso.sigla_curta}}"], {% endfor %}],
+      xAxisID: "bar-x-projetos",
+      stack: "Stack 0",
+      categoryPercentage: 0.4
+    },
+    {
+      {% comment %} label: "Necessários", {% endcomment %}
+      label_pt: "Necessários",
+      label_en: "Necessary",
+      backgroundColor: "rgba(216, 119, 203, 0.4)",
+      borderWidth: 1,
+      data: [{% for curso in cursos %}{{necessarios|get_value:curso|unlocalize}}, {% endfor %}],
+      xAxisID: "bar-x-necessario",
+      stack: "Stack 1",
+      categoryPercentage: 0.7
+    }
+  ]
+
+  var data = {
+    labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
+    datasets: datasets
+  };
+  
+  var options = {
+    title: {
+        display: true,
+        text_pt: "Previsão de Propostas por Curso",
+        text_en: "Proposal Forecast by Course",
+        {% comment %} text: null, {% endcomment %}
+        position: "top"
+    },
+    legend: {
+      position: "bottom"
+    },
+    scales: {
+      xAxes: [{
+          stacked: true,
+          id: "bar-x-projetos"
+        }, {
+          display: false,
+          id: "bar-x-necessario",
+          type: "category",
+          gridLines: {offsetGridLines: true},
+          offset: true
+        }
+      ],
+      yAxes: [{
+        stacked: true,
+        ticks: {beginAtZero: true},
+        scaleLabel: {
+          display: true,
+          {% comment %} labelString: "propostas", {% endcomment %}
+          labelString_pt: "propostas",
+          labelString_en: "proposals"
+        }
+      }]
+    },
+    tooltips: {
+      callbacks: {
+        label: function(tooltipItem, data) {
+          var label = data.datasets[tooltipItem.datasetIndex].label || '';
+          if (label) {label += ': ';}
+          label += Math.round(tooltipItem.yLabel * 100) / 100;
+          return label;
+        },
+        afterLabel: function(tooltipItem, data) {
+          var organizacoes = data.datasets[tooltipItem.datasetIndex].organizacoes;
+          if(organizacoes) {return organizacoes[tooltipItem.label];}
+          return "";
+        }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+
+  };
+  
+  var ctx = document.getElementById("projetos").getContext("2d");
+  window.myBarChart = new Chart(ctx, {
+    type: "bar",
+    data: data,
+    options: options
+  });
+
+  function lingua_grafico() {
+    if(localStorage.getItem("lingua") == "pt") {
+      window.myBarChart.options.title.text = window.myBarChart.options.title.text_pt;
+      window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString = window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString_pt;
+      window.myBarChart.data.datasets[0].label = window.myBarChart.data.datasets[0].label_pt;
+      window.myBarChart.data.datasets[1].label = window.myBarChart.data.datasets[1].label_pt;
+      window.myBarChart.data.datasets[2].label = window.myBarChart.data.datasets[2].label_pt;
+      window.myBarChart.data.datasets[3].label = window.myBarChart.data.datasets[3].label_pt;
+    } else {
+      window.myBarChart.options.title.text = window.myBarChart.options.title.text_en;
+      window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString = window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString_en;
+      window.myBarChart.data.datasets[0].label = window.myBarChart.data.datasets[0].label_en;
+      window.myBarChart.data.datasets[1].label = window.myBarChart.data.datasets[1].label_en;
+      window.myBarChart.data.datasets[2].label = window.myBarChart.data.datasets[2].label_en;
+      window.myBarChart.data.datasets[3].label = window.myBarChart.data.datasets[3].label_en;
+    }
+    window.myBarChart.update();
+  }
+  lingua_grafico();
+  document.addEventListener("languageChanged", lingua_grafico);
+
+</script>

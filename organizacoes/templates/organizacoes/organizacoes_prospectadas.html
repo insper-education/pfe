@@ -13,53 +13,13 @@
   {% load linguas %}
 
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_anotacoes.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
   <script src="{% static 'js/sort.js' %}"></script>
   <script src="{% static 'js/Chart.min.js' %}"></script>
   
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
-  <style>
-    .cursor_pointer{cursor: pointer;}
-    .tit_peq {
-      display: block;
-      font-weight: bold;
-      line-height: 1.2 !important;
-    }
-    .show-hide {
-      cursor: pointer;
-      border: 1px solid black;
-    }
-    .special_filter {
-      font-style: italic;
-      font-weight: bold !important;
-    }
-    .flex-container {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      width: 1640px;
-      max-width: 100%;
-    }
-    .flex-item {
-      flex: 1;
-      max-width: 100%;
-    }
-    .indicadores {
-      margin-left: 4px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    @media (max-width: 1280px) {
-      .flex-container {flex-direction: column;}
-      .flex-item {width: 100%;}
-    }  
-    .btn-light {
-      background-color: #FFFFFF;
-      border-color: #ced4da;
-    }
-  </style>
 
 {% endblock %}
 
@@ -131,11 +91,6 @@
         <tbody>
         {% for organizacao, disponiveis, submetidas, anotacoes in organizacoes_list %}
           <tr id="tr{{organizacao.id}}" class="item acompanhamentos_tr {% for a in anotacoes %} anot_{{a.tipo_retorno.id}}{% endfor %}">
-          {% comment %} <tr id="tr{{organizacao.id}}" class="item" 
-            {% if anotacoes %}
-              style="background-color:#{{anotacoes.tipo_retorno.cor}};"       
-              data-type="{{anotacoes.tipo_retorno.id}}"
-            {% endif %}> {% endcomment %}
             <td style="text-align: center; font-size: 12px;"></td>
             
             <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}</td>
@@ -155,31 +110,22 @@
               </small>
             </td>
 
-            <td id="data{{organizacao.id}}">
-              {% if not anotacoes %}
-                --------
-              {% else %}
-                {{anotacoes.first.momento|date:"d/m/y"}}
-              {% endif %}
+            <td id="data_{{organizacao.id}}">
+              {% if not anotacoes %}--------{% else %}{{anotacoes.first.momento|date:"d/m/y"}}{% endif %}
             </td>
-            {% comment %} <td id="data{{organizacao.id}}">
-              {% if not anotacoes %}
-                --------
-              {% else %}
-                {{anotacoes.momento|date:"d/m/y"}}
-              {% endif %}
-            </td> {% endcomment %}
 
-            <td>{% include "operacional/includes/bloco_anotacoes_contato.html" %}</td>
+            <td style="padding: 0px 5px;">
+              {% include "operacional/includes/bloco_anotacoes_contato.html" %}
+            </td>
             
             <td class="text-center">{{disponiveis}}</td> {% comment %} Propostas Disponíveis {% endcomment %}
             <td class="text-center">{{submetidas}}</td> {% comment %} Propostas Enviadas {% endcomment %}
 
           </tr>
-          {% if contato != "---------" %}
+          {% if anotacoes.first != "---------" %}
             {% comment %} {% if contato.momento|date:"Ymd" > meses3|date:"Ymd" %} {% endcomment %}
               <script>
-                {% with area_cursos=organizacao.area_curso.all%}
+                {% with area_cursos=organizacao.area_curso.all contato=anotacoes.first %}
                 
                   tipo = "{% for curso in area_cursos %}{% if not forloop.first %}/{% endif %}{{curso.sigla_curta}}{% endfor %}";
                   {% if submetidas > 0 %} {% comment %} Coloca como se enviou proposta de projeto {% endcomment %}
@@ -223,217 +169,31 @@
 
                 {% endwith %}
               </script>
-            {% comment %} {% endif %} {% endcomment %}
           {% endif %}
         {% empty %}
           <tr>
-            <td colspan="7" class="text-center">Nenhuma organização cadastrada.</td>
+            <td colspan="7" class="text-center">{% lng "Nenhuma organização cadastrada." "No organization registered." %}</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
-      </div>
+    </div>
 
-      <div style="margin-top: 10px;">
-        <b>{% lng "Total de Propostas Disponíveis" "Total of Proposals Available" %}(>={{ano}}.{{semestre}}):</b>
-        {{ total_disponiveis }}
-        <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
-          ({{ total_submetidas }})
-        </a>
-      <div>
+    <div style="margin-top: 10px;">
+      <b>{% lng "Total de Propostas Disponíveis" "Total of Proposals Available" %}(>={{ano}}.{{semestre}}):</b>
+      {{ total_disponiveis }}
+      <a data-toggle="tooltip" data-html="true" animation="true" title="Contando todas as propostas, incluindo as (ainda) não disponibilizadas para os estudantes.">
+        ({{ total_submetidas }})
+      </a>
+    <div>
 
-      <div class="flex-container">
-        
-        {% include "operacional/includes/tabela_organizacoes_contactadas.html" %}
-
-        <script>
-
-          {% include "operacional/includes/filtra_acompanhamento_show_hide.html" %}
-
-          function preenche_cursos(tipo_retorno) {
-            mensagem = "";
-            mensagem2 = "";
-            if (cursos_organizacoes[tipo_retorno]) {
-              total=0;
-              primeiro = true;
-              for (var key in cursos_organizacoes[tipo_retorno]){
-                if(primeiro) primeiro = false; else mensagem2 += ",";
-                sigla_curso = key;
-                if(sigla_curso=="") sigla_curso="?";
-                mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
-                total += cursos_organizacoes[tipo_retorno][key];
-              }
-              mensagem += " = ";
-              mensagem += total;
-              mensagem += " [" + Math.round((total/{{organizacoes|length}})*100) + "%]";
-              mensagem += " (" + mensagem2 + " )";
-            }
-            return(mensagem);
-          }
-
-          function atualiza_situacoes() {
-            $(".calc_aux").css("font-size", "0.8em");
-            {% for tipo in tipo_retorno %}
-              document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
-            {% endfor %}
-            var filtered = $(".acompanhamentos_tr:visible");
-            $("#calc_orgs").html(filtered.length);
-          }
-
-        </script>
-        
-        <div class="flex-item mt-2">
-          <div class="table-responsive">
-            <div style="position: relative; height:260px; width:590px; max-width: 100%">
-              <canvas id="projetos"></canvas>
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <div class="flex-container">
+      {% include "operacional/includes/tabela_organizacoes_contactadas.html" %}        
+      {% include "operacional/includes/grafico_previsao_propostas.html" %}
+    </div>
 
     <script>
-
-      var datasets = [
-        {
-          {% comment %} label: "Confirmados", {% endcomment %}
-          label_pt: "Confirmados",
-          label_en: "Confirmed",
-          organizacoes: orgs_confirmadas,
-          backgroundColor: "lightgreen",
-          borderColor: "grey",
-          borderWidth: 1,
-          data: [{% for curso in cursos %}cursos_projetos["{{curso.sigla_curta}}"], {% endfor %}],
-          xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          categoryPercentage: 0.4
-        },
-        {
-          {% comment %} label: "Interessados", {% endcomment %}
-          label_pt: "Interessados",
-          label_en: "Interested",
-          organizacoes: orgs_interessados,
-          backgroundColor: "lemonchiffon",
-          borderColor: "grey",
-          borderWidth: 1,
-          data: [{% for curso in cursos %}interessados["{{curso.sigla_curta}}"], {% endfor %}],
-          xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          categoryPercentage: 0.4
-        },
-        {
-          {% comment %} label: "Sondados", {% endcomment %}
-          label_pt: "Sondados",
-          label_en: "Sounded",
-          organizacoes: org_sondados,
-          backgroundColor: "lightblue",
-          borderColor: "grey",
-          borderWidth: 1,
-          data: [{% for curso in cursos %}sondados["{{curso.sigla_curta}}"], {% endfor %}],
-          xAxisID: "bar-x-projetos",
-          stack: "Stack 0",
-          categoryPercentage: 0.4
-        },
-        {
-          {% comment %} label: "Necessários", {% endcomment %}
-          label_pt: "Necessários",
-          label_en: "Necessary",
-          backgroundColor: "rgba(216, 119, 203, 0.4)",
-          borderWidth: 1,
-          data: [{% for curso in cursos %}{{necessarios|get_value:curso|unlocalize}}, {% endfor %}],
-          xAxisID: "bar-x-necessario",
-          stack: "Stack 1",
-          categoryPercentage: 0.7
-        }
-      ]
-
-      var data = {
-        labels: [{% for curso in cursos %}"{{curso.sigla_curta}}",{% endfor %}],
-        datasets: datasets
-      };
-      
-      var options = {
-        title: {
-            display: true,
-            text_pt: "Previsão de Propostas por Curso",
-            text_en: "Proposal Forecast by Course",
-            {% comment %} text: null, {% endcomment %}
-            position: "top"
-        },
-        legend: {
-          position: "bottom"
-        },
-        scales: {
-          xAxes: [{
-              stacked: true,
-              id: "bar-x-projetos"
-            }, {
-              display: false,
-              id: "bar-x-necessario",
-              type: "category",
-              gridLines: {offsetGridLines: true},
-              offset: true
-            }
-          ],
-          yAxes: [{
-            stacked: true,
-            ticks: {beginAtZero: true},
-            scaleLabel: {
-              display: true,
-              {% comment %} labelString: "propostas", {% endcomment %}
-              labelString_pt: "propostas",
-              labelString_en: "proposals"
-            }
-          }]
-        },
-        tooltips: {
-          callbacks: {
-            label: function(tooltipItem, data) {
-              var label = data.datasets[tooltipItem.datasetIndex].label || '';
-              if (label) {label += ': ';}
-              label += Math.round(tooltipItem.yLabel * 100) / 100;
-              return label;
-            },
-            afterLabel: function(tooltipItem, data) {
-              var organizacoes = data.datasets[tooltipItem.datasetIndex].organizacoes;
-              if(organizacoes) {return organizacoes[tooltipItem.label];}
-              return "";
-            }
-          }
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-
-      };
-      
-      var ctx = document.getElementById("projetos").getContext("2d");
-      window.myBarChart = new Chart(ctx, {
-        type: "bar",
-        data: data,
-        options: options
-      });
-
-      function lingua_grafico() {
-        if(localStorage.getItem("lingua") == "pt") {
-          window.myBarChart.options.title.text = window.myBarChart.options.title.text_pt;
-          window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString = window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString_pt;
-          window.myBarChart.data.datasets[0].label = window.myBarChart.data.datasets[0].label_pt;
-          window.myBarChart.data.datasets[1].label = window.myBarChart.data.datasets[1].label_pt;
-          window.myBarChart.data.datasets[2].label = window.myBarChart.data.datasets[2].label_pt;
-          window.myBarChart.data.datasets[3].label = window.myBarChart.data.datasets[3].label_pt;
-        } else {
-          window.myBarChart.options.title.text = window.myBarChart.options.title.text_en;
-          window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString = window.myBarChart.options.scales.yAxes[0].scaleLabel.labelString_en;
-          window.myBarChart.data.datasets[0].label = window.myBarChart.data.datasets[0].label_en;
-          window.myBarChart.data.datasets[1].label = window.myBarChart.data.datasets[1].label_en;
-          window.myBarChart.data.datasets[2].label = window.myBarChart.data.datasets[2].label_en;
-          window.myBarChart.data.datasets[3].label = window.myBarChart.data.datasets[3].label_en;
-        }
-        window.myBarChart.update();
-      }
-      lingua_grafico();
-      document.addEventListener("languageChanged", lingua_grafico);
-
+      {% include "operacional/includes/esconde_anotacoes.html" %}
     </script>
 
   </div>
@@ -441,12 +201,6 @@
   {% include "base-modal.html" %}
 
   <script>
-
-    function numberRows() {
-      $("#OrganizacoesTable tbody tr").each(function(index) {
-        $(this).find('td:first').text(index + 1);
-      });
-    }    
 
     function estrelas(id, pos) {
       for (let i = 1; i <= 5; i++) {
@@ -492,16 +246,6 @@
 
     {% include "operacional/includes/filtra_acompanhamento.html" %}
 
-    function carrega_pagina() {
-      numberRows();
-      filtra_data();
-      atualiza_situacoes();
-    }
-
-    $(document).ready(function(){
-      carrega_pagina()
-    });
-
     $(".periodo").change(function(){
       
         $("#spinner").css("visibility", "visible");
@@ -524,8 +268,20 @@
             {% include "ajax_error_function.js" %}
         });
         filtra_data();
-        atualiza_situacoes();
+        atualiza_situacoes_cursos();
     });
+    
+    function carrega_pagina() {
+      numberRows();
+      filtra_data();
+      atualiza_situacoes_cursos();
+      esconde_orgs();
+    }
+
+    $(document).ready(function(){
+      carrega_pagina()
+    });
+
   </script>
 
 {% endblock %}
