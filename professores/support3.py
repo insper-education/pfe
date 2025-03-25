@@ -52,7 +52,7 @@ def get_banca_incompleta(projeto, sigla, avaliadores):
         else:
             banca_incompleta = 1
 
-    return banca_incompleta
+    return banca_incompleta, banca
 
 
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
@@ -166,7 +166,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
                     nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
-                    nota_incompleta = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
+                    nota_incompleta, _ = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
                         notas[titulo_aval[0]].append({"conceito": "{0}".format(converte_letra(nota_b, espaco="&nbsp;")),

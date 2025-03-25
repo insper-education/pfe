@@ -92,9 +92,10 @@
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">{% lng "Projeto" "Project" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Período" "Semester" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Falconi</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Nota B. Inter.</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Nota B. Final</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">Banca Falconi</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Nota Certificado">Nota Certificado</th>
             </tr>      
           </thead>
 
@@ -105,8 +106,7 @@
                   certificacao_excelencia
                 {% elif banca_falconi.certificacao == "D" %}
                   certificacao_destaque
-                {% endif %}
-                ">
+                {% endif %}">
                   <td>
                     [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
                     <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
@@ -141,7 +141,7 @@
                     {% else %}{% lng "Orientador não definido" "Advisor not defined" %}{% endif %}
                   </td>
 
-                {% comment %} Banca Intermediária {% endcomment %}
+                  {% comment %} Banca Intermediária {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
                       {% if banca_intermediaria.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
@@ -153,7 +153,7 @@
                       {% endif %}
                       >
                       {% if banca_intermediaria.destaque_incompleta %}
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-exclamation-triangle esconder"></i>
                       {% endif %}
                       {{ banca_intermediaria.destaque_texto|safe }}
                     </a>
@@ -168,40 +168,43 @@
                         style="background-color: orange; font-weight: bold;"
                       {% elif banca_final.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
                         style="background-color: pink; font-weight: bold;"
-                      {% endif %}
-
-                      >
+                      {% endif %}>
                       {% if banca_final.destaque_incompleta %}
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-exclamation-triangle esconder"></i>
                       {% endif %}
                       {{ banca_final.destaque_texto|safe }}
                     </a>
                   </td>
 
                   {% comment %} Banca Falconi {% endcomment %}
-                  <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
-                      {% if banca_falconi.nota_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="background-color: darkgrey; font-weight: bold;"
-                      {% elif banca_falconi.nota_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="background-color: orange; font-weight: bold;"
-                      {% elif banca_falconi.nota_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="background-color: pink; font-weight: bold;"
-                      {% endif %}
+                  <td class="align-top">
+                    {% if banca_falconi.banca %}
+                      {% lng_d_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}
+                    {% endif %}
+                    <ul class="membros">
+                      {% for avaliador in banca_falconi.avaliadores %}
+                        <li>
+                          <span style="white-space: nowrap;">
+                            <a class="imprimir" href="{% url 'parceiro_detail' avaliador.id %}">{{avaliador.get_full_name}}</a>
+                          </span>
+                          <span class="email">
+                            <span class="texto-longo"><a href="mailto:{{avaliador.email}}">&lt;{{avaliador.email}}&gt;</a></span>
+                            <span class="texto-curto"><a href="mailto:{{avaliador.email}}"><i class="far fa-envelope"></i></a></span>
+                          </span>
+                        </li>
+                      {% endfor %}
+                    </ul> 
+                  </td>
 
-                      {% if banca_falconi.nota_texto %}
-                        data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_falconi.avaliadores|safe }}">
+                  {% comment %} Nota Banca Falconi {% endcomment %}
+                  <td class="text-center" style="white-space: nowrap;">
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
+                      {% if banca_falconi %}  
                         {% if banca_falconi.nota_incompleta > 0 %}
-                          <i class="fas fa-exclamation-triangle"></i>
+                          <i class="fas fa-exclamation-triangle esconder"></i>
                         {% endif %}
                         {{ banca_falconi.nota_texto|safe }}
-                      {% else %}
-                        >
-                          {% if banca_falconi.nota_incompleta > 0 %}
-                            <i class="fas fa-exclamation-triangle"></i>
-                          {% endif %}
                       {% endif %}
-                    
                     </a>
                   </td>
 

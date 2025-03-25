@@ -2477,32 +2477,33 @@ def resultado_p_certificacao(request):
 
                 # Banca Falconi
                 aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
-                nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)                    
-                nota_incompleta = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
+                nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)               
+                nota_incompleta, banca = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
 
                 if peso is not None:
-                    nomes = ""
-                    for nome in avaliadores:
-                        nomes += "&#8226; "+str(nome)+"<br>"
-
                     certificacao = ""
                     if nota_b >= 8:
                         certificacao = "E"  # Excelencia FALCONI-INSPER
                     elif nota_b >= 6:
                         certificacao = "D"  # Destaque FALCONI-INSPER
 
-                    notas["Falconi"].append({"avaliadores": "{0}".format(nomes),
+                    notas["Falconi"].append({
+                                        #"avaliadores": "{0}".format(nomes),
+                                        "avaliadores": avaliadores,
                                         "nota_texto": "{0:5.2f}".format(nota_b),
                                         "nota": nota_b,
                                         "certificacao": certificacao,
-                                        "nota_incompleta": nota_incompleta})
+                                        "nota_incompleta": nota_incompleta,
+                                        "banca": banca,
+                                        })
                     
                 else:
-                    notas["Falconi"].append({"avaliadores": "&nbsp;-&nbsp;",
+                    notas["Falconi"].append({"avaliadores": None,
                                         "nota_texto": "",
                                         "nota": 0,
                                         "certificacao": "",
-                                        "nota_incompleta": nota_incompleta})
+                                        "nota_incompleta": nota_incompleta,
+                                        "banca": banca,})
                 
             tabela = zip(projetos,
                          recomendacoes["Banca Intermediária"],
