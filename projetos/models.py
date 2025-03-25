@@ -154,12 +154,20 @@ class Projeto(models.Model):
         return self.proposta.titulo
     
     def get_titulo_org(self):
-        """Retorna o título original da proposta."""
+        """Retorna o título original da proposta com organização."""
         if self.organizacao.sigla:
             org = self.organizacao.sigla
         else:
             org = "ORG. NÃO DEFINIDA"
         return "[" + org + "] " + self.get_titulo()
+
+    def get_titulo_org_periodo(self):
+        """Retorna o título original da proposta."""
+        if self.ano and self.semestre:
+            periodo += " (" + str(self.ano) + "." + str(self.semestre) + ") "
+        else:
+            periodo += " (SEM PERÍODO DEFINIDO)"
+        return periodo + self.get_titulo_org()
 
     @property
     def organizacao(self):
@@ -168,21 +176,7 @@ class Projeto(models.Model):
 
     def __str__(self):
         """Retorno padrão textual."""
-        texto = ""
-
-        if self.proposta.organizacao and self.proposta.organizacao.sigla:
-            texto = "[" + self.proposta.organizacao.sigla + "] "
-        else:
-            texto = "[SEM ORGANIZAÇÃO DEFINIDA] "
-
-        texto += self.get_titulo()
-
-        if self.ano and self.semestre:
-            texto += " (" + str(self.ano) + "." + str(self.semestre) + ") "
-        else:
-            texto += " (SEM PERÍODO DEFINIDO)"
-
-        return texto
+        return self.get_titulo_org_periodo()
 
     def tem_relatos(self):
         """Retorna todos os possiveis relatos quinzenais para o projeto."""

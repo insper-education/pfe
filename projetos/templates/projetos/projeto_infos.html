@@ -34,8 +34,7 @@
   {% endif %}
 
   <h4>
-    {% if projeto.organizacao %}[{{ projeto.organizacao.sigla }}]{% endif %}
-    {{ projeto.get_titulo }}
+    {{ projeto.get_titulo_org }}
     {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
       <span style="font-size: small; padding-left: 0.7em; display: block;">
         <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}

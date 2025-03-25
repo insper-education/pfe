@@ -126,7 +126,7 @@
                 {% if encontro.facilitador %}+ `Facilitador{% if encontro.facilitador.genero == "F" %}a{% endif %}: {{encontro.facilitador}}\n`{% endif %}
                 {% if encontro.location %}+ `Local/Link: {{encontro.location}}\n`{% endif %}
                 {% if encontro.projeto %}
-                  + `Projeto: [{{encontro.projeto.organizacao.sigla}}] {{encontro.projeto.get_titulo}}` +
+                  + `Projeto: {{encontro.projeto.get_titulo_org}}` +
                   `{% if encontro.projeto.orientador %}\nOrientador: {{encontro.projeto.orientador}}{% endif %}`
                 {% endif %},
                 projeto: {% if encontro.projeto %}`{{encontro.projeto.get_titulo}}`{% else %}null{% endif %},

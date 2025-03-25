@@ -138,9 +138,9 @@ def ajax_bancas(request):
             membros = banca.membros()
             editable = request.user.tipo_de_usuario == 4 or (projeto and projeto.orientador == request.user.professor)
 
-            title = f"[{organizacao_sigla}] {projeto.get_titulo()}" if projeto else "Projeto ou alocação não identificados"
+            title = f"{projeto.get_titulo_org()}" if projeto else "Projeto ou alocação não identificados"
             if banca.alocacao:
-                title = f"Estudante: {estudante} - [{organizacao_sigla}] {projeto.get_titulo()}"
+                title = f"Estudante: {estudante} - {projeto.get_titulo_org()}"
             if banca.location:
                 title += f"\n<br>Local: {banca.location}"
             title += "\n<br>Banca:"
@@ -524,8 +524,8 @@ def banca_avaliar(request, slug, documento_id=None):
 
             subject = "Capstone | Avaliação de Banca - " + banca.composicao.exame.titulo + " "
             if banca.composicao.exame.sigla == "P":
-                subject += banca.alocacao.aluno.user.get_full_name()
-            subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+                subject += banca.alocacao.aluno.user.get_full_name() + " "
+            subject += projeto.get_titulo_org()
 
             # Envio de mensagem para Avaliador
             context_carta = {
@@ -1392,7 +1392,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
         envia = "envia" in request.POST
         if envia:
-            subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+            subject = "Capstone | Resultado da Avaliação (" + composicao.exame.titulo + ") " + projeto.get_titulo_org()
             
             # Mensagem preparada para os estudantes
             context_carta = {

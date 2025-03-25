@@ -594,14 +594,14 @@ def avaliacao_pares(request, momento):
             if count_pares == tot_est*(tot_est-1):
                 if projeto and projeto.organizacao and projeto.orientador:
                     subject = "Capstone | Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final")
-                    subject += " - [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
+                    subject += " - " + projeto.get_titulo_org()
                     
                     recipient_list = [projeto.orientador.user.email]
                     
                     message = "Caro Orientador(a),<br><br>"
                     message += "Todas as avaliações de pares " + ("intermediárias" if momento=="intermediaria" else "finais")
                     message += " do projeto que você está orientando<br>"
-                    message += "<b>[" + projeto.organizacao.sigla + "] " + projeto.get_titulo() + "</b><br>"
+                    message += "<b>" + projeto.get_titulo_org() + "</b><br>"
                     message += "foram realizadas.<br><br>"
                     message += "Acesse o sistema para visualizar as avaliações.<br>"
                     message += "<a href='https://pfe.insper.edu.br/professores/avaliacoes_pares/'>https://pfe.insper.edu.br/professores/avaliacoes_pares/</a><br><br>"
