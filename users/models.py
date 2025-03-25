@@ -274,8 +274,8 @@ class Aluno(models.Model):
                                  help_text="Trabalhou/trabalha ou estagio/estagia em alguma empresa de tecnologia?")
 
     # Campo sendo eliminado
-    social = models.TextField(max_length=1000, null=True, blank=True,
-                              help_text="Já participou de atividade sociais?")
+    # social = models.TextField(max_length=1000, null=True, blank=True,
+    #                           help_text="Já participou de atividade sociais?")
 
     # Campo compreende atividades sociais e acadêmicas (será renomeado)
     entidade = models.TextField(max_length=1000, null=True, blank=True,  # ENTIDADE NÃO MAIS UM NOME BOM, JÁ QUE INCLUÍMOS IC/IT/NINJA

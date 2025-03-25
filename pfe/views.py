@@ -52,11 +52,5 @@ from users.models import Aluno
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-    message = "Feito"
-
-    for aluno in Aluno.objects.all():
-        if aluno.social and aluno.social != "":
-            aluno.entidade += "\nJá participou de atividade sociais?: " + aluno.social
-            aluno.save()
 
     return HttpResponse(message)
