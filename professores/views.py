@@ -891,9 +891,6 @@ def bancas_tabela_alocacao(request):
             membros = dict()
             
             for banca in bancas:
-                if banca.projeto and banca.projeto.orientador:
-                    if banca.composicao and banca.composicao.exame and banca.composicao.exame.sigla in ["BI", "BF"]:  # Nao eh Falconi ou Probation
-                        membros.setdefault(banca.projeto.orientador.user, []).append(banca)
                 for membro in banca.membros():
                     membros.setdefault(membro, []).append(banca)
     
