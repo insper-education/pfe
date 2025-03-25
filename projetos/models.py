@@ -699,17 +699,18 @@ class Evento(models.Model):
     
     def data_inicio_aval(self):
         """Data para avaliação de relatórios de bancas é especial. (para professores avaliarem)"""
-        # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
-        # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
-        # (14, "Bancas Intermediárias", "#EE82EE"),
-        # (15, "Bancas Finais", "#FFFF00"),
-        if self.tipo_evento.sigla in ["ERI", "ERF"]:
-            if self.tipo_evento.sigla == "ERI":
-                evento = Evento.objects.filter(tipo_evento__sigla="BI", startDate__gt=self.endDate).order_by("startDate").first()
-                return evento.startDate if evento else None
-            else: # 23
-                evento = Evento.objects.filter(tipo_evento__sigla="BF", startDate__gt=self.endDate).order_by("startDate").first()
-                return evento.startDate if evento else None
+        # NÃO SEI SE FOI UMA BOA IDEIA ESPERAR COMEÇAR A BANCA PARA AVALIAR O RELATÓRIO
+        # # (22, "Entrega do Relatório Intermediário (Grupo e Individual)", "#008080"),
+        # # (23, "Entrega do Relatório Final (Grupo e Individual)", "#00FFFF"),
+        # # (14, "Bancas Intermediárias", "#EE82EE"),
+        # # (15, "Bancas Finais", "#FFFF00"),
+        # if self.tipo_evento.sigla in ["ERI", "ERF"]:
+        #     if self.tipo_evento.sigla == "ERI":
+        #         evento = Evento.objects.filter(tipo_evento__sigla="BI", startDate__gt=self.endDate).order_by("startDate").first()
+        #         return evento.startDate if evento else None
+        #     else: # 23
+        #         evento = Evento.objects.filter(tipo_evento__sigla="BF", startDate__gt=self.endDate).order_by("startDate").first()
+        #         return evento.startDate if evento else None
         return self.startDate
 
     def data_aval(self):
