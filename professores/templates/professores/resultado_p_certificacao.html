@@ -179,7 +179,10 @@
                   {% comment %} Banca Falconi {% endcomment %}
                   <td class="align-top">
                     {% if banca_falconi.banca %}
-                      {% lng_d_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}
+                      <span style="white-space: nowrap;">
+                        <span class="texto-longo">{% lng_dl_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}</span>
+                        <span class="texto-curto">{% lng_d_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}</span>
+                      </span>
                     {% endif %}
                     <ul class="membros">
                       {% for avaliador in banca_falconi.avaliadores %}

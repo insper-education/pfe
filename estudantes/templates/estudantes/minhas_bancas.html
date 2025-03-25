@@ -18,7 +18,7 @@
     {% for banca in bancas.reverse %} 
       <div class="div_arredondado">
         {% if banca.startDate %}
-          <b>{% lng "Horário:" "Time:" %}</b> {% lng_dl_de_ate banca.startDate banca.endDate %}
+          <b>{% lng "Horário:" "Time:" %}</b> {% lng_dll_de_ate banca.startDate banca.endDate %}
         {% endif %}
         <div>
           <b>{% lng "Tipo:" "Type:" %}</b> 
