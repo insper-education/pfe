@@ -1041,6 +1041,9 @@ def bancas_lista(request, edicao=None):
 
     context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
+    print("edicao", edicao)
+    print("request.POST", request.POST)
+    print("request.is_ajax()", request.is_ajax())
     if request.is_ajax() and "edicao" in request.POST:
         
         edicao = request.POST["edicao"]
@@ -1095,8 +1098,7 @@ def bancas_lista(request, edicao=None):
             if '.' in edicao:
                 context["selecionada"] = edicao
             elif edicao != "proximas" and edicao != "todas":
-                projeto = get_object_or_404(Projeto, id=edicao)
-                context["projeto"] = projeto
+                context["projeto"] = get_object_or_404(Projeto, id=edicao)
 
     return render(request, "professores/bancas_lista.html", context)
 

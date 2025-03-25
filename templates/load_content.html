@@ -8,10 +8,20 @@ function loadContent(target, url, selector) {
   if (typeof calendar !== "undefined" && calendar !== null) {
     calendarView = calendar.view.type;
     calendarDate = calendar.getDate();
+    sel_edicao = $("#filterEdicao option:selected");
+    if(sel_edicao) {
+      edicao = sel_edicao.attr("value");
+    } else {
+      edicao = null;
+    }
     $(target).fadeOut("fast", function() {
       $.ajax({
         url: url,
-        type: "GET",
+        type: "POST",
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "edicao": edicao
+        },
         success: function(data,status,jqXHR) {
             $(target).html($(data).find(selector).addBack(selector).children()).fadeIn("fast");
             montar_calendario(calendarView, calendarDate);
