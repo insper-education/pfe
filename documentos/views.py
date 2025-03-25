@@ -183,7 +183,7 @@ def materias_midia(request):
                 ]
 
     context = {
-        "titulo": {"pt": "Matérias na Mídia", "en": "Media Coverage"},
+        "titulo": {"pt": "Matérias na Mídia e Publicações Acadêmicas", "en": "Media Coverage and Academic Publications"},
         "documentos": documentos,
         "tipo": tipo_documento,
         "cabecalhos": cabecalhos,
