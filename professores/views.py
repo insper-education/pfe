@@ -1033,6 +1033,7 @@ def dinamicas_lista(request, edicao=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, edicao=None):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
+    configuracao = get_object_or_404(Configuracao)
     context = {"titulo": {"pt": "Listagem das Bancas", "en": "List of Examination Boards"},}
     
     # Usando para #atualizar a página raiz no edit da banca
@@ -1041,9 +1042,6 @@ def bancas_lista(request, edicao=None):
 
     context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
-    print("edicao", edicao)
-    print("request.POST", request.POST)
-    print("request.is_ajax()", request.is_ajax())
     if request.is_ajax() and "edicao" in request.POST:
         
         edicao = request.POST["edicao"]
@@ -1055,7 +1053,6 @@ def bancas_lista(request, edicao=None):
             bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
 
             # checando se projetos atuais tem banca marcada
-            configuracao = get_object_or_404(Configuracao)
             projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
             for banca in bancas:
                 if banca.projeto:
@@ -1077,6 +1074,38 @@ def bancas_lista(request, edicao=None):
             bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
 
         context["bancas"] = bancas
+
+    elif request.method == "POST":
+
+        aviso = ""
+        # pega todas as bancas marcadas
+        dados = request.POST.getlist("banca")
+        for d in dados:
+            banca = get_object_or_404(Banca, pk=d)
+            projeto = banca.get_projeto()
+            recipient_list = []
+            for membro in banca.membros():
+                recipient_list.append(membro.email)
+            recipient_list.append(configuracao.coordenacao.user.email)
+            if banca and banca.alocacao:
+                assunto = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " " + banca.alocacao.projeto.get_titulo_org()
+            else:
+                assunto = "Capstone | Banca: " + projeto.get_titulo_org()
+            context_carta = {
+                "request": request,
+                "projeto": projeto,
+                "banca": banca,
+            }
+            mensagem = render_message("Mensagem Banca", context_carta)
+            email(assunto, recipient_list, mensagem)
+            aviso += "Banca de " + projeto.get_titulo_org() + " enviada para: " + str(recipient_list) + "<br>"
+
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": "Mensagens de Avaliação de Bancas enviadas.<br><br>" + aviso,
+        }
+        return render(request, "generic.html", context=context)
 
     else:
         context["informacoes"] = [
@@ -1144,9 +1173,9 @@ def mensagem_email(request, tipo=None, primarykey=None):
                 para += membro.get_full_name() + " <" + membro.email + ">; "
                 
         if banca and banca.alocacao:
-            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " " + banca.alocacao.projeto.get_titulo_org()
         else:
-            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+            subject = "Capstone | Banca: " + projeto.get_titulo_org()
         
         context_carta = {
             "request": request,
