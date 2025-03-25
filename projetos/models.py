@@ -164,9 +164,9 @@ class Projeto(models.Model):
     def get_titulo_org_periodo(self):
         """Retorna o título original da proposta."""
         if self.ano and self.semestre:
-            periodo += " (" + str(self.ano) + "." + str(self.semestre) + ") "
+            periodo = " (" + str(self.ano) + "." + str(self.semestre) + ") "
         else:
-            periodo += " (SEM PERÍODO DEFINIDO)"
+            periodo = " (SEM PERÍODO DEFINIDO)"
         return periodo + self.get_titulo_org()
 
     @property
