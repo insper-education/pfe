@@ -41,16 +41,16 @@
     <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="{% max_length Aluno 'trabalhou' %}" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
     <br><br>
 
-    <label for="social">
+    {% comment %} <label for="social">
     Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.<br>
     Se sim, qual/quais? <small>[Esse campo é importante se você está aplicando para um projeto de Inovação Social]</small>
     </label><br>
     <textarea id="social" name="social" rows="4" cols="80" maxlength="{% max_length Aluno 'social' %}" {% if vencido %}disabled{% endif %}>{% if estudante.social %}{{estudante.social}}{% endif %}</textarea>
-    <br><br>
+    <br><br> {% endcomment %}
 
     <label for="entidade">
-    Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc no Insper?<br>
-    Liste o que você já participou/fez?
+    Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?<br>
+    Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?
     </label><br>
     <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="{% max_length Aluno 'entidade' %}" {% if vencido %}disabled{% endif %}>{% if estudante.entidade %}{{estudante.entidade}}{% endif %}</textarea>
     <br><br>

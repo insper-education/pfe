@@ -65,13 +65,13 @@
     <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
   {% endif %}
 
-  {% if aluno.social %}
+  {% comment %} {% if aluno.social %}
     <b>{{aluno.get_social_help_text }}</b> {{ aluno.social|linebreaks }}<br>
-  {% endif %}  
+  {% endif %}   {% endcomment %}
 
   {% if aluno.entidade %}
     <b>{{aluno.get_entidade_help_text }}</b> {{ aluno.entidade|linebreaks }}<br>
-  {% endif %}  
+  {% endif %}
 
   {% if aluno.familia %}
     <b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}<br>

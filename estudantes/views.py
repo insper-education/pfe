@@ -640,7 +640,7 @@ def avaliacao_pares(request, momento):
 @login_required
 @transaction.atomic
 def informacoes_adicionais(request):
-    """Perguntas aos estudantes de áreas de interesse, trabalho/entidades/social/familia, telefone."""
+    """Perguntas aos estudantes de áreas de interesse, trabalho/atividades/familia, telefone."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     
     if request.user.tipo_de_usuario == 1:
@@ -654,7 +654,7 @@ def informacoes_adicionais(request):
             cria_area_estudante(request, request.user.aluno)
 
             request.user.aluno.trabalhou = request.POST.get("trabalhou", None)
-            request.user.aluno.social = request.POST.get("social", None)
+            #request.user.aluno.social = request.POST.get("social", None)
             request.user.aluno.entidade = request.POST.get("entidade", None)
             request.user.aluno.familia = request.POST.get("familia", None)
 
@@ -740,7 +740,7 @@ def minhas_bancas(request):
 @login_required
 @transaction.atomic
 def relato_quinzenal(request):
-    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
+    """Formulário para estudantes preencherem os relatos quinzenais."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
     hoje = datetime.date.today()
@@ -831,7 +831,7 @@ def relato_quinzenal(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def relato_visualizar(request, id):
-    """Perguntas aos estudantes de trabalho/entidades/social/familia."""
+    """Página para visualizar os relatos quinzenais."""
     context = {
         "titulo": {"pt": "Visualização de Relato Quinzenal", "en": "Biweekly Report Visualization"},
         "relato": get_object_or_404(Relato, pk=id),

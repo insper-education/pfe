@@ -415,11 +415,8 @@
         {% if estudante.trabalhou %}
         <b>Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?</b><br>
         {{estudante.trabalhou|linebreaks}}<br>{% endif %}
-        {% if estudante.social %}
-        <b>Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.</b><br>
-        {{estudante.social|linebreaks}}<br>{% endif %}
         {% if estudante.entidade %}
-        <b>Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc no Insper?</b><br>
+        <b>Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?</b><br>
         {{estudante.entidade|linebreaks}}<br>{% endif %}
         {% if estudante.familia %}
         <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>

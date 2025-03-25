@@ -6,7 +6,6 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Junho de 2023
 """
 
-import subprocess
 import logging
 
 from django.conf import settings
@@ -46,14 +45,18 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-
-from projetos.models import Avaliacao2, Observacao, Banca, Projeto
-from users.models import Aluno, Professor
+from users.models import Aluno
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+    message = "Feito"
+
+    for aluno in Aluno.objects.all():
+        if aluno.social and aluno.social != "":
+            aluno.entidade += "\nJá participou de atividade sociais?: " + aluno.social
+            aluno.save()
 
     return HttpResponse(message)
