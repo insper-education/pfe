@@ -655,7 +655,7 @@ def informacoes_adicionais(request):
 
             request.user.aluno.trabalhou = request.POST.get("trabalhou", None)
             #request.user.aluno.social = request.POST.get("social", None)
-            request.user.aluno.entidade = request.POST.get("entidade", None)
+            request.user.aluno.atividades = request.POST.get("atividades", None)
             request.user.aluno.familia = request.POST.get("familia", None)
 
             link = request.POST.get("linkedin", "").strip()

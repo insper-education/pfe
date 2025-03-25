@@ -277,8 +277,7 @@ class Aluno(models.Model):
     # social = models.TextField(max_length=1000, null=True, blank=True,
     #                           help_text="Já participou de atividade sociais?")
 
-    # Campo compreende atividades sociais e acadêmicas (será renomeado)
-    entidade = models.TextField(max_length=1000, null=True, blank=True,  # ENTIDADE NÃO MAIS UM NOME BOM, JÁ QUE INCLUÍMOS IC/IT/NINJA
+    atividades = models.TextField(max_length=1000, null=True, blank=True,
                                 help_text="Já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?")
 
     familia = models.TextField(max_length=1000, null=True, blank=True,\

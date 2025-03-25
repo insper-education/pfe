@@ -48,11 +48,11 @@
     <textarea id="social" name="social" rows="4" cols="80" maxlength="{% max_length Aluno 'social' %}" {% if vencido %}disabled{% endif %}>{% if estudante.social %}{{estudante.social}}{% endif %}</textarea>
     <br><br> {% endcomment %}
 
-    <label for="entidade">
+    <label for="atividades">
     Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?<br>
     Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?
     </label><br>
-    <textarea id="entidade" name="entidade" rows="4" cols="80" maxlength="{% max_length Aluno 'entidade' %}" {% if vencido %}disabled{% endif %}>{% if estudante.entidade %}{{estudante.entidade}}{% endif %}</textarea>
+    <textarea id="atividades" name="atividades" rows="4" cols="80" maxlength="{% max_length Aluno 'atividades' %}" {% if vencido %}disabled{% endif %}>{% if estudante.atividades %}{{estudante.atividades}}{% endif %}</textarea>
     <br><br>
     {% comment %} <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small> {% endcomment %}
     <!-- Pega Script para preencher entidades automaticamente -->
