@@ -114,7 +114,7 @@
           <option value='0'> ---- </option>
           {% for pessoa in comite %}
             <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
-              {{pessoa}}
+              {{ pessoa.get_full_name }}
             </option>
           {% endfor %}
       </select>
