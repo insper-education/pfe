@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+  {% comment %} {% load get_field %} {% endcomment %}
 
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
@@ -56,33 +57,34 @@
         <b>Link:</b> <a href="{{banca.link}}">{{banca.link}}</a><br>
       {% endif %}
       
-      <br><b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b>
-      <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
-        oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
-        oninput="this.setCustomValidity('')">
-          
-          <option disabled selected value id="selecione_avaliador"> -- selecione um avaliador -- </option>
-
-          <optgroup id="MembBanca" label="Membros da Banca">
-            {% for pessoa in membros %}
-              <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
-                {{pessoa.get_full_name}}
-              </option>
-            {% endfor %}
-          </optgroup>
-
-          <optgroup id="ListaComp" label="Lista Completa">
-            {% for pessoa in pessoas %}
-              <option value="{{pessoa.id}}">
-                {{pessoa.get_full_name}}
-              </option>
-            {% endfor %}
-          </optgroup>
-
-      </select>
       <br>
+      <div class="mb-4">
+        <b><label style="margin: 0px;" for="avaliador">{% lng "Avaliador(a)" "Evaluator" %}:</label></b>
+        <select name="avaliador" id="avaliador" title="Selecione avaliador da banca" required
+          oninvalid="this.setCustomValidity('Selecione seu nome para o controle das avaliações')"
+          oninput="this.setCustomValidity('')">
+            
+            <option disabled selected value id="selecione_avaliador"> -- selecione um avaliador -- </option>
 
-      <br>
+            <optgroup id="MembBanca" label="Membros da Banca">
+              {% for pessoa in membros %}
+                <option value="{{pessoa.id}}" {% if pessoa.id == avaliador %}selected{% endif %}>
+                  {{pessoa.get_full_name}}
+                </option>
+              {% endfor %}
+            </optgroup>
+
+            <optgroup id="ListaComp" label="Lista Completa">
+              {% for pessoa in pessoas %}
+                <option value="{{pessoa.id}}">
+                  {{pessoa.get_full_name}}
+                </option>
+              {% endfor %}
+            </optgroup>
+
+        </select>
+      </div>
+
       {% include "ver_documentos.html" %}
       {% include "professores/includes/ver_site.html" %}
 
@@ -102,21 +104,28 @@
 
       {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-        <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
-              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-          {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
-        </b></label><br>
-        <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
-        <br><br>
+        <div class="mb-3">
+          <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+                title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+            {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
+          </b></label><br>
+          <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
+
+          <label for="arquivo">
+            {% lng "Envio de relatório com anotações do membro da banca para revisão do grupo (opcional e será enviada automaticamente para o grupo)" "Submission of report with notes from the board member for group review (optional and will be automatically sent to the group)" %}
+          </label>
+          <input required id="arquivo" type="file" name="arquivo" {% include "formatos_suportados.html" %}>
+        </div>
       {% endif %}
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
-             title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
-      </b></label><br>
-      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
-      <br><br>
+      <div class="mb-3">
+        <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
+              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+          {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
+        </b></label><br>
+        <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
+      </div>
       
       {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
         <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px;">

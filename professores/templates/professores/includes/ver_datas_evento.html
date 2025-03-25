@@ -34,6 +34,10 @@
 </span>
 {% endif %}
 {% if evento_p_data.endDate %}
-{% lng "às" "to" %}
-{{evento_p_data.endDate.time}}
+  <span class="texto-curto">
+    - {{evento_p_data.endDate.time}}
+  </span>
+  <span class="texto-longo">
+    {% lng "às" "to" %} {{ evento_p_data.endDate.time }}
+  </span>
 {% endif %}

@@ -88,15 +88,15 @@ def gera_descricao_banca(banca, estudantes):
     return description
 
 
-def cria_material_documento(request, campo_arquivo, campo_link, sigla="MAS", confidencial=True):
-        """Cria material de aula."""
+def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS", confidencial=True, projeto=None, prefix=""):
+        """Cria documento."""
         max_length_link = Documento._meta.get_field("link").max_length
         if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
-            return "<h1>Erro: Link maior que " + str(max_length_link) + " caracteres.</h1>"
+            raise ValueError("Erro: Link maior que " + str(max_length_link) + " caracteres.")
 
         max_length_doc = Documento._meta.get_field("documento").max_length
         if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
-            return "<h1>Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.</h1>"
+            raise ValueError("Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.")
         
         documento = Documento()  # Criando documento na base de dados
         documento.tipo_documento = get_object_or_404(TipoDocumento, sigla=sigla)
@@ -105,13 +105,15 @@ def cria_material_documento(request, campo_arquivo, campo_link, sigla="MAS", con
         documento.lingua_do_documento = 0  # (0, "Português")
         documento.confidencial = confidencial
         documento.usuario = request.user
+        documento.projeto = projeto
     
-        if campo_arquivo in request.FILES:
+        if campo_arquivo and campo_arquivo in request.FILES:
             arquivo = simple_upload(request.FILES[campo_arquivo],
-                                    path=get_upload_path(documento, ""))
+                                    path=get_upload_path(documento, ""),
+                                    prefix=prefix)
             documento.documento = arquivo[len(settings.MEDIA_URL):]
 
-        if campo_link in request.POST:
+        if campo_link and campo_link in request.POST:
             link = request.POST.get(campo_link, "")
             documento.link = link
 

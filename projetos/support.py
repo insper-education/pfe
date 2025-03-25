@@ -21,6 +21,8 @@ def get_upload_path(instance, filename):
         if instance.organizacao:
             caminho += slugify(instance.organizacao.sigla_limpa()) + "/"
         if instance.projeto:
+            if (not instance.organizacao) and instance.projeto.organizacao:
+                caminho += slugify(instance.projeto.organizacao.sigla_limpa()) + '/'
             caminho += "projeto" + str(instance.projeto.pk) + '/'
         if instance.usuario:
             caminho += slugify(instance.usuario.username) + '/'

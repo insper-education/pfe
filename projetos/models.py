@@ -152,6 +152,14 @@ class Projeto(models.Model):
         if not self.proposta.titulo:
             return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DO PROJETO"
         return self.proposta.titulo
+    
+    def get_titulo_org(self):
+        """Retorna o título original da proposta."""
+        if self.organizacao.sigla:
+            org = self.organizacao.sigla
+        else:
+            org = "ORG. NÃO DEFINIDA"
+        return "[" + org + "] " + self.get_titulo()
 
     @property
     def organizacao(self):

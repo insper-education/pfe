@@ -38,6 +38,8 @@ from academica.support_notas import converte_letra, converte_conceito
 from administracao.models import Estrutura, Carta
 from administracao.support import usuario_sem_acesso, puxa_github
 
+from calendario.support import cria_material_documento
+
 from documentos.models import TipoDocumento
 
 from estudantes.models import Relato, Pares
@@ -497,8 +499,30 @@ def banca_avaliar(request, slug, documento_id=None):
                 julgamento_observacoes.destaque = True if request.POST.get("destaque") == "true" else False
                 julgamento_observacoes.save()
 
-            subject = "Capstone | Avaliação de Banca - "
-            subject += banca.composicao.exame.titulo + " "
+            if "arquivo" in request.FILES:
+                # Envia documento com anotações para os envolvidos intantanemente
+                documento = cria_material_documento(request, "arquivo", sigla="RAMB", confidencial=False,
+                                                    projeto=projeto, prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
+                if documento:
+                    documento.anotacao = banca.composicao.exame.titulo
+                    documento.save()
+                    subject = "Capstone | Documento com anotações - " + banca.composicao.exame.titulo + " "
+                    subject += projeto.get_titulo_org()
+                    mensagem_anot = "Anotações em Relatório de Banca<br>\n<br>\n"
+                    mensagem_anot += "Anotações realizadas por: " + avaliador.get_full_name() + "<br>\n"
+                    mensagem_anot += "Banca: " + banca.composicao.exame.titulo + "<br>\n"
+                    mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
+                    mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
+                    mensagem_anot += "Documento com Anotações: "
+                    mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
+                    mensagem_anot += documento.documento.url + "</a><br>\n<br>\n<br>\n"
+                    recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
+                    recipient_list.append(avaliador.email)
+                    recipient_list.append(projeto.orientador.user.email)
+                    recipient_list.append(configuracao.coordenacao.user.email)
+                    email(subject, recipient_list, mensagem_anot)
+
+            subject = "Capstone | Avaliação de Banca - " + banca.composicao.exame.titulo + " "
             if banca.composicao.exame.sigla == "P":
                 subject += banca.alocacao.aluno.user.get_full_name()
             subject += " [" + projeto.organizacao.sigla + "] " + projeto.get_titulo()
