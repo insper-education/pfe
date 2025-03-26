@@ -197,14 +197,17 @@ def relatorios_publicos(request, edicao=None):
 
     relatorios = Documento.objects.filter(tipo_documento__sigla="RPU", confidencial=False)\
                     .order_by("projeto__ano", "projeto__semestre")  # Relatório Publicado
-                                
+    
+    
     if request.is_ajax():
         
+        #projetos = Projeto.objects.all()
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
                 relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
+                #projetos = projetos.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
         
@@ -230,6 +233,9 @@ def relatorios_publicos(request, edicao=None):
 
     else:
 
+        # if request.user.eh_admin:
+        #     edicoes = get_edicoes(Projeto)[0]  # Administradores podem ver todas as edições
+        # else:
         relatorios = relatorios.values_list("projeto__ano", "projeto__semestre").distinct()
         edicoes = [f"{ano}.{semestre}" for ano, semestre in relatorios]
 
