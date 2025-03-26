@@ -172,7 +172,7 @@ def gerar_certificados(request):
 # @login_required
 def materias_midia(request):
     """Exibe Matérias que houveram na mídia."""
-    tipo_documento = TipoDocumento.objects.get(nome="Matéria na Mídia")
+    tipo_documento = TipoDocumento.objects.get(sigla="MMPA")  # Matéria na Mídia e Publicação Acadêmica
     documentos = Documento.objects.filter(tipo_documento=tipo_documento)
 
     cabecalhos = [{"pt": "Data", "en": "Date"},
