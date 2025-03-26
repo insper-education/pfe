@@ -77,7 +77,7 @@
   </a>
 </div>
 <div class="item_lista"><span class="circulo">&#9899;</span>
-  <a {% if not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
+  <a {% if not user.eh_prof_a and not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
     {% lng "Informações das Bancas" "Information of the Examination Boards" %}
   </a>
 </div>
