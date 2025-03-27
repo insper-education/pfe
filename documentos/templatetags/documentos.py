@@ -22,16 +22,13 @@ def get_planos_de_orientacao(projeto):
 @register.filter()
 def get_documentos_publicos(self):
     """Retorna certos documentos publicos do projeto."""
-            
-    tipos_documento = TipoDocumento.objects.filter(
-        nome__in=["Vídeo do Projeto", "Banner", "Apresentação da Banca Final"]
-    )
     
-    documentos = []
-    for tipo in tipos_documento:
-        documento = Documento.objects.filter(confidencial=False, tipo_documento=tipo, projeto=self).last()
-        if documento:
-            documentos.append(documento)
+    nome = ["RPU", "VP", "B", "ABF"]
+    
+    documentos = {}
+    for tipo in nome:
+        documento = Documento.objects.filter(confidencial=False, tipo_documento__sigla=tipo, projeto=self).last()
+        documentos[tipo] = documento
 
     return documentos
 

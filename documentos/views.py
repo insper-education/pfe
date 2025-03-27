@@ -195,19 +195,16 @@ def materias_midia(request):
 def relatorios_publicos(request, edicao=None):
     """Exibe relatórios públicos."""
 
-    relatorios = Documento.objects.filter(tipo_documento__sigla="RPU", confidencial=False)\
-                    .order_by("projeto__ano", "projeto__semestre")  # Relatório Publicado
-    
     
     if request.is_ajax():
         
-        #projetos = Projeto.objects.all()
+        projetos = Projeto.objects.all()
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = request.POST["edicao"].split('.')
-                relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
-                #projetos = projetos.filter(ano=ano, semestre=semestre)
+                #relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
+                projetos = projetos.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
         
@@ -225,7 +222,8 @@ def relatorios_publicos(request, edicao=None):
         ]
 
         context = {
-            "relatorios": relatorios,
+            #"relatorios": relatorios,
+            "projetos": projetos,
             "edicao": edicao,
             "cabecalhos": cabecalhos,
             "captions": captions,
@@ -233,11 +231,14 @@ def relatorios_publicos(request, edicao=None):
 
     else:
 
-        # if request.user.eh_admin:
-        #     edicoes = get_edicoes(Projeto)[0]  # Administradores podem ver todas as edições
-        # else:
-        relatorios = relatorios.values_list("projeto__ano", "projeto__semestre").distinct()
-        edicoes = [f"{ano}.{semestre}" for ano, semestre in relatorios]
+        # Se estiver logado, exibe todos os relatórios públicos e for administrador
+        if request.user.is_authenticated and request.user.eh_admin:
+            edicoes = get_edicoes(Projeto)[0]  # Administradores podem ver todas as edições
+        else:
+            relatorios = Documento.objects.filter(tipo_documento__sigla="RPU", confidencial=False)\
+                    .order_by("projeto__ano", "projeto__semestre")  # Relatório Publicado
+            relatorios = relatorios.values_list("projeto__ano", "projeto__semestre").distinct()
+            edicoes = [f"{ano}.{semestre}" for ano, semestre in relatorios]
 
         context = {
             "titulo": {"pt": "Documentos Públicos", "en": "Public Documents"},

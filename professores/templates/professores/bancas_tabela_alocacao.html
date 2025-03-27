@@ -63,22 +63,10 @@
     {% include "tabelas_bottom.html" %}
   </div>
 
-  {% include "edicoes_ajax.html" with tabela="Bancas" %}
-
   <script>
-    $("#avaliador").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $("#BancasTable").DataTable();
-      $.fn.dataTable.ext.search.push(
-        function(settings, data, dataIndex) {
-          if(table) {
-            {% comment %} Somente mostra elemento selecionado {% endcomment %}
-            var val = $("#avaliador").selectpicker("val");
-            return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
-          }
-        }
-     );
-     table.draw();
-    });
+    {% include "seleciona_linha_tabelas.html" with select="avaliador" tabela="Bancas" data="user" %}
   </script>
+
+  {% include "edicoes_ajax.html" with tabela="Bancas" %}
 
 {% endblock %}

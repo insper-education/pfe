@@ -1166,6 +1166,16 @@ class Documento(models.Model):
     
     def extensao(self):
         return os.path.splitext(self.filename())[1][1:].upper()
+    
+    # Nome da língua do documento
+    def lingua(self):
+        return self.LINGUA_DO_DOCUMENTO[self.lingua_do_documento][1]
+    
+    # Somente a sigla da língua
+    def lng(self):
+        if self.lingua_do_documento == 1:
+            return "en"
+        return "pt"
 
     # Remove o arquivo apontado pelo documento se o documento for deletado
     def delete(self, using=None, keep_parents=False):

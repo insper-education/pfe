@@ -317,6 +317,19 @@
         </div>
       {% endif %}
 
+      {% if com_linguas %}
+        <div class="input-group input-group-sm mt-1 mr-4">
+            <div class="input-group-prepend">
+              <label class="to_label input-group-text" for="filterLingua" onClick="recarregar_pagina()"><span class="to_hide">{% lng "Línguas" "Languages" %}</span></label>
+            </div>
+            <select id="filterLingua" class="selectpicker form-control form-control-sm" data-style="mr-sm border" data-width="10em"
+                    title="Nada selecionado" multiple>
+              <option class="troca_lingua" selected="selected" value="pt" data-pt="Português" data-en="Portuguese">Português</option>
+              <option class="troca_lingua" selected="selected" value="en" data-pt="Inglês" data-en="English">Inglês</option>
+            </select>
+        </div>
+      {% endif %}
+
       {% if grupos_certificados %}
         <div class="input-group input-group-sm mt-1 flex-nowrap">
             <div class="input-group-prepend">

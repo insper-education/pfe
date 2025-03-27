@@ -1,0 +1,25 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 26 de Março de 2025
+{% endcomment %}
+
+$(document).ready(function () {
+  // Somente mostra elemento selecionado
+  $("#{{select}}").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+    table = $("#{{tabela}}Table").DataTable();
+    $.fn.dataTable.ext.search.push(
+      function(settings, data, dataIndex) {
+        var val = $("#{{select}}").selectpicker("val");
+        if(!val || val.length === 0) {return false;}
+        if(table && typeof table.row === "function") {
+          const rowUser = $(table.row(dataIndex).node()).attr("data-{{data}}");
+          return val.includes(rowUser);
+        }
+        return true;
+      }
+    );
+    table.draw();
+  });
+});
+

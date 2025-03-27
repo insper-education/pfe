@@ -11,9 +11,6 @@
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
   {% include "tabelas_includes.html" %}
-  <style>
-    table {table-layout: auto;}
-  </style>
 {% endblock %}
 
 {% block content %}
@@ -25,14 +22,11 @@
       <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="tipob">
-              <span class="to_hide">
-                {% lng "Tipo" "Type" %}
-              </span>
+              <span class="to_hide">{% lng "Tipo" "Type" %}</span>
             </label>
           </div>
           <select id="tipob" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="19em"
-                  title="Nada selecionado"
-                  multiple>
+                  title="Nada selecionado" multiple>
                   {% for tipo in tipos_bancas %}
                     <option selected="selected" value="{{tipo.sigla}}"  title="{{tipo.sigla}}"
                      class="troca_lingua" data-pt="{{tipo.titulo}}" data-en="{{tipo.titulo_en}}">{{tipo.titulo}}</option>
@@ -45,105 +39,69 @@
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
       {% for banca in bancas %}
-        <tr class="item" data-user="{{banca.get_sigla}}">
-          <td>{{banca.composicao.exame}}</td>
-          {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
-          <td><span class="texto-longo">De: {{banca.startDate}}<br>A: {{banca.endDate}}</span>
-              <span class="texto-curto">De: {{banca.startDate|date:"d/m/y H:i"}}<br>A: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
-          <td data-order="{{banca.projeto.get_titulo}}" style="width: 48%;">
+        {% with projeto=banca.get_projeto %}
+          <tr class="item" data-user="{{banca.get_sigla}}">
+            <td>{{banca.composicao.exame}}</td>
+            {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
+            <td><span class="texto-longo">{% lng "De" "From" %}:{{banca.startDate}}<br>{% lng "A" "To" %}: {{banca.endDate}}</span>
+                <span class="texto-curto">{% lng "De" "From" %}: {{banca.startDate|date:"d/m/y H:i"}}<br>{% lng "A" "To" %}: {{banca.endDate|date:"d/m/y H:i"}}</span></td>
+            <td data-order="{{projeto.get_titulo}}" style="width: 48%;">
+              {% lng "Projeto" "Project" %}:
+              {% if projeto.organizacao %}
+                [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
+              {% else %}
+                [<i>Organização não definida</i>]
+              {% endif %}
+              {% if projeto %}
+                <a href="{% url 'projeto_infos' projeto.id %}">
+                  {{projeto.get_titulo}}{% include "tipo_projeto.html" with projeto=projeto %}
+                </a><br>
+              {% endif %}
+              {% lng "Orientador" "Advisor" %}:
+              {% if projeto.orientador %}
+                <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
+                <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+              {% else %}
+                <i>Orientador não definido</i>
+              {% endif %}
+            <br>
             {% comment %} Probation {% endcomment %}
             {% if banca.alocacao %}
-              Projeto: 
-              {% if banca.alocacao.projeto.organizacao %}
-                [<a href="{% url 'organizacao_completo' banca.alocacao.projeto.organizacao.id %}">{{ banca.alocacao.projeto.organizacao.nome }}</a>]
-              {% else %}
-                [<i>Organização não definida</i>]
+              {% lng "Estudante" "Student" %}:
+              <ul><li>
+                  <a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno.user.get_full_name }}</a>
+                  <a href="mailto:{{banca.alocacao.aluno.user.email}}"> &lt;{{banca.alocacao.aluno.user.email}}&gt;</a>
+              </li></ul>
+            {% else %} 
+              {% lng "Grupo" "Group" %}:
+                <ul>
+                {% for estudante in projeto.alocacao_set.all %}
+                  <li>
+                  <a href="{% url 'estudante_detail' estudante.aluno.id %}">{{ estudante.aluno.user.get_full_name }}</a>
+                  <a href="mailto:{{estudante.aluno.user.email}}"> &lt;{{estudante.aluno.user.email}}&gt;</a>
+                  </li>
+                {% endfor %}
+                </ul>
               {% endif %}
-              {% if banca.alocacao %}
-                <a href="{% url 'projeto_infos' banca.alocacao.projeto.id %}">
-                  {{banca.alocacao.projeto.get_titulo}}{% include "tipo_projeto.html" with projeto=banca.alocacao.projeto %}
-                </a><br>
-              {% endif %}
-              Orientador: 
-              {% if banca.alocacao.projeto.orientador %}
-                <a href="{% url 'professor_detail' banca.alocacao.projeto.orientador.id %}">{{ banca.alocacao.projeto.orientador }}</a>
-                <a href="mailto:{{banca.alocacao.projeto.orientador.user.email}}"> &lt;{{banca.alocacao.projeto.orientador.user.email}}&gt;</a>
-              {% else %}
-                <i>Orientador não definido</i>
-              {% endif %}
-              
-            <br>Estudante:
-            <ul>
-              <li>
-                <a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno.user.get_full_name }}</a>
-                <a href="mailto:{{banca.alocacao.aluno.user.email}}"> &lt;{{banca.alocacao.aluno.user.email}}&gt;</a>
-              </li>
-            </ul>
-
-            {% else %}
-              Projeto: 
-              {% if banca.projeto.organizacao %}
-                [<a href="{% url 'organizacao_completo' banca.projeto.organizacao.id %}">{{ banca.projeto.organizacao.nome }}</a>]
-              {% else %}
-                [<i>Organização não definida</i>]
-              {% endif %}
-              {% if banca.projeto %}
-                <a href="{% url 'projeto_infos' banca.projeto.id %}">
-                  {{banca.projeto.get_titulo}}{% include "tipo_projeto.html" %}
-                </a><br>
-              {% else %}
-                <i>Projeto não definido | Probation</i>
-              {% endif %}
-              Orientador: 
-              {% if banca.projeto.orientador %}
-                <a href="{% url 'professor_detail' banca.projeto.orientador.id %}">{{ banca.projeto.orientador }}</a>
-                <a href="mailto:{{banca.projeto.orientador.user.email}}"> &lt;{{banca.projeto.orientador.user.email}}&gt;</a>
-              {% else %}
-                <i>Orientador não definido</i>
-              {% endif %}
-
-              <br>Grupo:
+            </td>
+            <td>
               <ul>
-              {% for estudante in banca.projeto.alocacao_set.all %}
-                <li>
-                <a href="{% url 'estudante_detail' estudante.aluno.id %}">{{ estudante.aluno.user.get_full_name }}</a>
-                <a href="mailto:{{estudante.aluno.user.email}}"> &lt;{{estudante.aluno.user.email}}&gt;</a>
-                </li>
-              {% endfor %}
+                {% for membro in banca.membros %}
+                  <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a>
+                    <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
+                    {% if projeto.orientador.user == membro %}[{% lng_g projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
+                  </li>
+                {% endfor %}
               </ul>
-            {% endif %}
-          </td>
-          <td>
-            <ul>
-              {% for membro in banca.membros %}
-                <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a>
-                  <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
-                  {% if banca.projeto.orientador.user == membro %}[{% lng_g banca.get_projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
-                </li>
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        {% endwith %}
       {% endfor %}
     {% include "tabelas_bottom.html" %}
   </div>
-  
-  {% include "edicoes_ajax.html" with tabela="Bancas" %}
 
   <script>
-    $("#tipob").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
-      table = $("#BancasTable").DataTable();
-      $.fn.dataTable.ext.search.push(
-        function(settings, data, dataIndex) {
-          if(table) {
-            {% comment %} Somente mostra elemento selecionado {% endcomment %}
-            var val = $("#tipob").selectpicker("val");
-            return(val.includes($(table.row(dataIndex).node()).attr("data-user")));
-          }
-        }
-     );
-     table.draw();
-    });
+    {% include "seleciona_linha_tabelas.html" with select="tipob" tabela="Bancas" data="user" %}
 
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
@@ -151,5 +109,7 @@
     window.onload = carrega_site
   
   </script>
+
+  {% include "edicoes_ajax.html" with tabela="Bancas" %}
 
 {% endblock %}

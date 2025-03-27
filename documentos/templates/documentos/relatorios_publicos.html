@@ -16,95 +16,90 @@
 
 {% block content %}
 
-  {% include "edicoes.html" %}
-  
-  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-            <label class="to_label input-group-text" for="filterLingua" onClick="recarregar_pagina()"><span class="to_hide">{% lng "Línguas" "Languages" %}</span></label>
-          </div>
-          <select id="filterLingua" class="selectpicker form-control form-control-sm" data-style="mr-sm border" data-width="10em"
-                  title="Nada selecionado"
-                  multiple>
-            <option selected="selected" title="portugues" value="portugues">Português</option>
-            <option selected="selected" title="ingles" value="ingles">Inglês</option>
-          </select>
-      </div>
-    </div>
-  </div>
+  {% include "edicoes.html" with com_linguas=True %}
   
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Relatorios" cabecalhos=cabecalhos %}
-      {% for relatorio in relatorios %}
-        {% if relatorio.link or relatorio.documento and relatorio.projeto %}
-          <tr class="item" data-lingua="{% if relatorio.lingua_do_documento == 0 %}portugues{% elif relatorio.lingua_do_documento == 1 %}ingles{% endif %}">
-            <td>
-              {% include "projetos/includes/bloco_projeto.html" with projeto=relatorio.projeto %}
-              {% if relatorio.lingua_do_documento == 0 %}<small>{% lng "" "(portuguese)" %}</small>{% elif relatorio.lingua_do_documento == 1 %}<small>{% lng "(inglês)" "" %}</small>{% endif %}
-            </td>
-            <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=relatorio.projeto.alocacao_set.all pequeno=True %}</td>
-            <td>{% include "academica/includes/bloco_orientador.html" with orientador=relatorio.projeto.orientador %}</td>
-            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=relatorio.projeto.organizacao %}</td>
-            <td>{% include "academica/includes/bloco_banca.html" with membros=relatorio.projeto.get_banca_final.membros projeto=relatorio.projeto pequeno=True %}</td>
-            <td style="text-align:center">{{relatorio.projeto.get_edicao}}</td>
+      {% for projeto in projetos %}
+        {% with publicos=projeto|get_documentos_publicos%}
+          {% if publicos.RPU or user.eh_admin %}
+            <tr class="item" data-lingua="{{ publicos.RPU.lng }}">
+              <td>
+                {% include "projetos/includes/bloco_projeto.html" with projeto=projeto %}
+                <small>{% if publicos.first.lng == "pt" %}{% lng "" "(portuguese)" %}{% elif publicos.first.lng ==  "en" %}{% lng "(inglês)" "" %}{% endif %}</small>
+              </td>
+              <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=projeto.alocacao_set.all pequeno=True %}</td>
+              <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
+              <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
+              <td>{% include "academica/includes/bloco_banca.html" with membros=projeto.get_banca_final.membros projeto=projeto pequeno=True %}</td>
+              <td style="text-align:center">{{projeto.get_edicao}}</td>
 
-            <td style="text-align:center"> {% comment %} Documento {% endcomment %}
-              <span id="p{{relatorio.pk}}">
-                {% if relatorio.link %}
-                  <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
-                    href="{{relatorio.link}}" target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>B</sup></span>
-                    <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(DSpace)</span>
-                    {% if user.admin %}
-                      <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}">
-                        <i class="fas fa-pencil-alt"></i>
-                    </span>
+              <td style="text-align:center"> {% comment %} Documento {% endcomment %}
+                <span id="p{{relatorio.pk}}">
+                  {% for tipo, documento in publicos.items %}
+                    {% if tipo == "RPU" %}
+                      {% if user.eh_admin and not documento %}
+                        <a href="#"
+                        class="btn btn-warning btn-outline-dark btn-sm open-modal mt-1"
+                        data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'RPU' %}">
+                          <span class="texto-curto" style="width: 6em;">+&nbsp;Servidor</span>
+                          <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;doc&nbsp;Servidor</span>
+                        </a><br>
+                      {% endif %}
+                      {% if documento.documento %}
+                        <a class="btn btn-light btn-outline-info btn-sm mt-1"
+                          href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                          <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>S</sup></span>
+                          <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(Servidor)</span>
+                        </a><br>
+                      {% comment %} {% elif user.eh_admin and not documento.documento %} {% endcomment %}
+                      {% endif %}
+                      {% if documento.link %}
+                        <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
+                          href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+                          <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>B</sup></span>
+                          <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(DSpace)</span>
+                          {% if user.admin %}
+                            <span class="open-modal" data-url="{% url 'biblioteca_link' %}{{documento.pk}}">
+                              <i class="fas fa-pencil-alt"></i>
+                            </span>
+                          {% endif %}
+                        </a><br>
+                      {% elif user.eh_admin and documento and not documento.link %}
+                        <a id="c{{documento.pk}}"
+                          class="btn btn-warning btn-outline-dark btn-sm open-modal mt-1"
+                          href="{% url 'biblioteca_link' documento.pk %}"
+                          data-url="{% url 'biblioteca_link' %}{{documento.pk}}"
+                          target="_blank" rel="noopener noreferrer">
+                          <span class="texto-curto" style="width: 6em;">+&nbsp;DSpace</span>
+                          <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
+                        </a><br>
+                      {% endif %}
+                    {% elif documento.documento %}
+                      <a class="btn btn-light btn-outline-info btn-sm mt-1"
+                        href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">
+                        <span class="texto-curto" style="width: 6em;">{{documento.tipo_documento.primeiro_nome}}</span>
+                        <span class="texto-longo" style="width: 13em;">{{documento.tipo_documento}}</span>
+                      </a><br>
+                    {% elif documento.link %}
+                      <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
+                        href="{{documento.link}}" target="_blank" rel="noopener noreferrer">
+                        <span class="texto-curto" style="width: 6em;">{{documento.tipo_documento.primeiro_nome}}</span>
+                        <span class="texto-longo" style="width: 13em;">{{documento.tipo_documento}}</span>
+                      </a><br>
                     {% endif %}
-                  </a><br>
-                {% endif %}
-              </span>
-              {% if relatorio.documento %}
-                <a class="btn btn-light btn-outline-info btn-sm mt-1"
-                  href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  <span class="texto-curto" style="width: 6em;">{% lng "Relatório" "Report" %}<sup>S</sup></span>
-                  <span class="texto-longo" style="width: 13em;">{% lng "Relatório" "Report" %}&nbsp;(Servidor)</span>
-                </a><br>
-                {% if user.tipo_de_usuario == 4 and not relatorio.link %}
-                  <a id="c{{relatorio.pk}}"
-                    class="btn btn-warning btn-outline-dark btn-sm open-modal mt-1"
-                    href="{% url 'biblioteca_link' relatorio.pk %}"
-                    data-url="{% url 'biblioteca_link' %}{{relatorio.pk}}"
-                    target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">+&nbsp;DSpace</span>
-                    <span class="texto-longo" style="width: 13em;">Adicionar&nbsp;link&nbsp;Biblioteca</span>
-                  </a><br>
-                {% endif %}
-              {% endif %}
-
-              {% for publico in relatorio.projeto|get_documentos_publicos %}
-                {% if publico.documento %}
-                  <a class="btn btn-light btn-outline-info btn-sm mt-1"
-                    href="{{request.scheme}}://{{request.get_host}}{{publico.documento.url}}" target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                    <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
-                  </a><br>
-                {% elif publico.link %}
-                  <a class="btn btn-light btn-outline-info btn-sm mt-1" style="margin-bottom: 5px;; white-space: nowrap;"
-                    href="{{publico.link}}" target="_blank" rel="noopener noreferrer">
-                    <span class="texto-curto" style="width: 6em;">{{publico.tipo_documento.primeiro_nome}}</span>
-                    <span class="texto-longo" style="width: 13em;">{{publico.tipo_documento}}</span>
-                  </a><br>
-                {% endif %}
-              {% endfor %}
-            </td>
-          </tr>
+                  {% endfor %}
+                </span>
+              </td>
+            </tr>
           {% endif %}
+        {% endwith %}
       {% endfor %}
     {% include "tabelas_bottom.html" %}
   </div>
 
   <script>
+    {% include "seleciona_linha_tabelas.html" with select="filterLingua" tabela="Relatorios" data="lingua" %}
 
     function carrega_pagina() {
       if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
