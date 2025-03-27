@@ -15,6 +15,14 @@
 
   {% include "edicoes.html" with com_cursos=True %}
 
+  {% if user.eh_prof_a %}
+    <span class="esconder">
+      <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}">
+        <i class="fas fa-plus"></i> 
+        {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}</a>
+    </span><br>
+  {% endif %}
+
   <div id="atualizar">
 
     {% include "tabelas_top_ml.html" with tabela="Parceiros" cabecalhos=cabecalhos %}
@@ -76,11 +84,6 @@
       {% endfor %}
     {% include "tabelas_bottom.html" %}
   </div>
-
-  <br>
-  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}?tipo=parceiro'" type="button" style="float: right;">
-    {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}
-  </button></small><br>
 
   <script>
     var table = null;

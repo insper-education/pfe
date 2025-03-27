@@ -45,7 +45,7 @@
   function deleteEvent(event) {
       
     $.ajax({
-      url: "{% url "remove_evento" %}",
+      url: "{% url 'remove_evento' %}",
       type: "POST",
       data: { 
         id : event.id,

@@ -28,6 +28,14 @@
   </div>
   <br>
 
+  {% if user.eh_prof_a %}
+    <span class="esconder">
+      <a href="{% url 'cadastrar_usuario' %}">
+        <i class="fas fa-plus"></i> 
+        {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}</a>
+    </span><br>
+  {% endif %}
+  
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Usuarios" cabecalhos=cabecalhos %}
       {% for usuario in usuarios %}
@@ -44,11 +52,6 @@
       {% endfor %}
     {% include "tabelas_bottom.html" %}
   </div>
-
-  <br>
-  <small><button class="btn btn-light btn-sm esconder" onclick="location.href='{% url 'cadastrar_usuario' %}'" type="button" style="float: right;">
-    {% lng "Cadastrar Novo Usuário" "Register New User" %}
-  </button></small><br>
 
   {% include "selecao_ajax.html" with tabela="Usuarios" %}
 
