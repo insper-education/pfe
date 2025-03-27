@@ -15,7 +15,7 @@
   
   <form method="POST" id="exportForm">{% csrf_token %}
 
-    {% include "edicoes.html" with com_cursos=True n_todas=True  %}
+    {% include "edicoes.html" with com_cursos=True %}
     {% include "tipos_de_documentos.html" with titulo_lista="Documentos" com_borda=True %}
 
     <br>
