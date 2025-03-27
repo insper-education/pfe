@@ -221,8 +221,8 @@
       <label for="lingua_do_documento" class="col1 col-form-label" style="overflow: clip; overflow-clip-margin: 0.2em;">{% lng "Língua" "Language" %}</label>
       <div class="col2">
         <select id="lingua_do_documento" name="lingua_do_documento" class="form-control" required="required" >
-          <option value="portugues" {% if lingua == 0 %}selected="selected"{% endif %}>{% lng "Português" "Portuguese" %}</option>
-          <option value="ingles" {% if lingua == 1 %}selected="selected"{% endif %}>{% lng "Inglês" "English" %}</option>
+          <option class="troca_lingua" {% if lingua == 0 %}selected="selected"{% endif %} value="portugues" data-pt="Português" data-en="Portuguese">Português</option>
+          <option class="troca_lingua" {% if lingua == 1 %}selected="selected"{% endif %} value="ingles" data-pt="Inglês" data-en="English">Inglês</option>
         </select>
       </div>
     </div>
