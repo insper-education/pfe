@@ -32,38 +32,30 @@ $(".show-hide").click(function() {
 
 });
 
-
-function preenche_cursos(tipo_retorno) {
-  mensagem = "";
-  mensagem2 = "";
-  if (cursos_organizacoes[tipo_retorno]) {
-    total=0;
-    primeiro = true;
-    for (var key in cursos_organizacoes[tipo_retorno]){
-      if(primeiro) primeiro = false; else mensagem2 += ",";
-      sigla_curso = key;
-      if(sigla_curso=="") sigla_curso="?";
-      mensagem2 += " "+sigla_curso+":"+cursos_organizacoes[tipo_retorno][key];
-      total += cursos_organizacoes[tipo_retorno][key];
-    }
-    mensagem += " = ";
-    mensagem += total;
-    mensagem += " [" + Math.round((total/{{organizacoes|length}})*100) + "%]";
-    mensagem += " (" + mensagem2 + " )";
-  }
-  return(mensagem);
+function preenche_cursos(tipo_retorno, filtradas) {
+  if (!cursos_organizacoes[tipo_retorno]) return "";
+  let total = 0;
+  let mensagem = Object.entries(cursos_organizacoes[tipo_retorno])
+    .map(([sigla_curso, count]) => {
+      sigla_curso = sigla_curso || "?"; // Se não tiver curso, coloca "?"
+      total += count;
+      return `${sigla_curso}:${count}`;
+    }).join(", ");
+  let percentage = Math.round((total / filtradas) * 100);
+  return ` = ${total} [${percentage}%] (${mensagem})`;
 }
 
+{% comment %} Usado em Organizacoes_Prospectadas {% endcomment %}
 function atualiza_situacoes_cursos() {
+  var filtradas = $(".acompanhamentos_tr:visible").length;
+  $("#calc_orgs").html(filtradas);
   $(".calc_aux").css("font-size", "0.8em");
   {% for tipo in tipo_retorno %}
-    document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}});
+    document.getElementById("retorno{{tipo.id}}").innerHTML = preenche_cursos({{tipo.id}}, filtradas);
   {% endfor %}
-  var filtered = $(".acompanhamentos_tr:visible");
-  $("#calc_orgs").html(filtered.length);
 }
 
-
+{% comment %} Usado em Organizacoes_Projetos {% endcomment %}
 function atualiza_situacoes() {
   $(".calc_aux").css({fontWeight: "bold", color: "darkred"});
   {% for tipo in tipo_retorno %}

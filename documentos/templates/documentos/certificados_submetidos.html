@@ -120,7 +120,6 @@
     function esconde_mostra_opcoes() {
       $("#tipos").find("option").each(function(index, element){
         if($(element).is(":selected")){
-          {% comment %} console.log(element.value); {% endcomment %}
           {% for tipo in grupos_certificados %}
             if(element.value == "{{tipo.sigla}}"){$(".certificado{{tipo.sigla}}").show();}
           {% endfor %}
