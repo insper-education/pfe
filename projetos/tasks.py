@@ -134,7 +134,9 @@ def avisos_do_dia():
             email(subject, recipient_list + lista_comite, htmlizar(mensagem_final))
                 
         if aviso.todos_alunos:
-            estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, alocacao__projeto__semestre=configuracao.semestre, aluno__externo__isnull=True)
+            estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano, 
+                                              alocacao__projeto__semestre=configuracao.semestre, 
+                                              externo__isnull=True)
             lista_estudantes = [obj.user.email for obj in estudantes]
             email(subject, recipient_list + lista_estudantes, htmlizar(mensagem_final))
 
