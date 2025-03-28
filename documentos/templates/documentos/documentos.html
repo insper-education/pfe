@@ -6,6 +6,7 @@
 
 {% load static %}
 {% load tipo_documento %}
+{% load linguas %}
 
 <style>
   .return {margin-left: 0.4em;}
@@ -14,17 +15,16 @@
 {% for area in areas %}
   {% comment %} Área 0 significa que todos os usuários podem acessar a área. {% endcomment %}
   {% if 0 in area.permissao or user.tipo_de_usuario in area.permissao %}
-    {% if not forloop.first %}<br>{% endif %}
-    <h5>Área {{area.titulo}}</h5>
-
+    <div class="mb-4">
+      <h5>{% lng area.titulo.pt area.titulo.en %}</h5>
       {% for documento in area.documentos %}
         {% if documento.0 == "D" %}
           {% include "documento.html" with documento=documentos|tipo_documento:documento.1 nivel=documento.2 %}
         {% elif documento.0 == "L" %}
-          <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url documento.2 %}">{{documento.1}}</a></div>
+          <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url documento.2 %}">{% lng documento.1.pt documento.1.en %}</a></div>
         {% endif %}
       {% endfor %}
-
+    </div>
   {% endif %}
 {% endfor %}
 

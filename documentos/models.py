@@ -14,6 +14,9 @@ class TipoDocumento(models.Model):
 
     nome = models.CharField("Nome", max_length=128, null=True, blank=True, unique=True,
                               help_text="Nome do Tipo de Documento")
+    
+    nome_en = models.CharField("Nome (Inglês)", max_length=128, null=True, blank=True,
+                              help_text="Nome do Tipo de Documento em Inglês")
 
     sigla = models.CharField("Sigla", max_length=8, null=True, blank=True, unique=True,
                               help_text="Sigla para Tipo de Documento")

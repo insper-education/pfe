@@ -14,7 +14,14 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 def thtml(pt_text, en_text):
-    return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
+    if pt_text is not None and en_text is not None:
+        return mark_safe(f'''<span lang="pt">{pt_text}</span><span lang="en" style="display:none">{en_text}</span>''')
+    elif pt_text:
+        return mark_safe(f'''<span>{pt_text}</span>''')
+    elif en_text:
+        return mark_safe(f'''<span>{en_text}</span>''')
+    else:
+        return ""
 
 @register.simple_tag
 def lng(pt_text, en_text):
