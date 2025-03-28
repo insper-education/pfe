@@ -232,7 +232,7 @@ def cadastrar_usuario(request):
                     "voltar": True,
                     "usuario": usr_ja_existe.last(),
                     "area_principal": True,
-                    "mensagem": "<h3 style='color:red'>Conflito: Usuário já cadastrada!</h3>",
+                    "mensagem_erro": {"pt": "Conflito: Usuário já cadastrado!", "en": "Conflict: User already registered!"},
                 }
 
             else:
@@ -240,7 +240,8 @@ def cadastrar_usuario(request):
 
                 if user is not None and "envia" in request.POST:
                     mensagem_email, codigo_email = envia_senha_mensagem(user)
-                    mensagem += mensagem_email
+                    mensagem["pt"] += mensagem_email
+                    mensagem["en"] += mensagem_email
                     if codigo_email != 200:
                         return HttpResponse(mensagem, status=codigo_email)
 
@@ -257,10 +258,10 @@ def cadastrar_usuario(request):
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.</h3>",
+                "mensagem_erro": {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."},
             }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "organizacoes": Organizacao.objects.all().order_by(Lower("nome")),
@@ -325,6 +326,12 @@ def edita_usuario(request, primarykey):
 
     if request.method == "POST":
 
+        context = {
+            "voltar": True,
+            "cadastrar_usuario": True,
+            "area_principal": True,
+        }
+
         if "email" in request.POST:
             mensagem, codigo, _ = registro_usuario(request, user)
 
@@ -336,18 +343,12 @@ def edita_usuario(request, primarykey):
 
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
+            context["mensagem"] = mensagem
 
         else:
-            mensagem = "<h3 style='color:red'>Falha na inserção na base da dados.<h3>"
+            context["mensagem_erro"] = {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."}
 
-        context = {
-            "voltar": True,
-            "cadastrar_usuario": True,
-            "area_principal": True,
-            "mensagem": mensagem,
-        }
-
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
 
     context = {

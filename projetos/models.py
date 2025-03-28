@@ -167,7 +167,7 @@ class Projeto(models.Model):
             periodo = " (" + str(self.ano) + "." + str(self.semestre) + ") "
         else:
             periodo = " (SEM PERÍODO DEFINIDO)"
-        return periodo + self.get_titulo_org()
+        return self.get_titulo_org() + periodo
 
     @property
     def organizacao(self):

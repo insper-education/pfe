@@ -121,7 +121,7 @@ def registro_usuario(request, user=None):
             usuario.tipo_de_usuario = 2  # (2, "professor") / funcionario
         else:
             # usuario.tipo_de_usuario = 4  # (4, "administrador")
-            return ("Erro na identificação do tipo de usuário.", 401, None)
+            return ({"pt": "Erro na identificação do tipo de usuário.", "en": "Error identifying user type."}, 401, None)
 
     # se for um usuário novo
     if not user:
@@ -131,12 +131,13 @@ def registro_usuario(request, user=None):
             username = request.POST["email"].split('@')[0] + '.' + \
                 request.POST["email"].split('@')[1].split('.')[0]
         else:
-            return ("Erro na recuperação do e-mail.", 401, None)
+            #return ("Erro na recuperação do e-mail.", 401, None)
+            return ({"pt": "Erro na recuperação do e-mail.", "en": "Error retrieving email."}, 401, None)
     
         #if PFEUser.objects.exclude(pk=usuario.pk).filter(username=username).exists():
         already_exist = PFEUser.objects.filter(username__iexact=username)
         if already_exist.exists():
-            return ('Username "%s" já está sendo usado.' % already_exist.last().username, 401, None)
+            return ({"pt": 'Username "%s" já está sendo usado.' % already_exist.last().username, "en": 'Username "%s" is already in use.' % already_exist.last().username}, 401, None)
 
         usuario.username = username
 
@@ -144,7 +145,7 @@ def registro_usuario(request, user=None):
         usuario.first_name = limpa_texto(request.POST["nome"].split()[0])
         usuario.last_name = limpa_texto(' '.join(request.POST["nome"].split()[1:]))
     else:
-        return ("Erro: Não inserido nome completo no formulário.", 401, None)
+        return ({"pt": "Erro: Não inserido nome completo no formulário.", "en": "Error: Full name not entered in the form."}, 401, None)
 
     usuario.pronome_tratamento = limpa_texto(request.POST.get("pronome_tratamento", None))
     usuario.nome_social = limpa_texto(request.POST.get("nome_social", None))
@@ -180,7 +181,7 @@ def registro_usuario(request, user=None):
     usuario.save()
 
     # Agora que o usuario foi criado, criar o tipo para não gerar inconsistências
-    mensagem = ""
+    mensagem = {"pt": "", "en": ""}
 
     if tipo_de_usuario == "estudante":  # estudante
         estudante, _ = Aluno.objects.get_or_create(user=usuario)
@@ -192,7 +193,8 @@ def registro_usuario(request, user=None):
         except (ValueError, OverflowError, MultiValueDictKeyError):
             estudante.ano = None
             estudante.semestre = None
-            mensagem += "Erro na identificação do ano e semestre.<br>"
+            mensagem["pt"] += "Erro na identificação do ano e semestre.<br>"
+            mensagem["en"] += "Error identifying year and semester.<br>"
         try:
             estudante.cr = float(request.POST["cr"])
         except (ValueError, OverflowError, MultiValueDictKeyError):
@@ -226,7 +228,8 @@ def registro_usuario(request, user=None):
                 professor.dedicacao = dedicacao
             else:
                 professor.dedicacao = None
-                mensagem += "Erro na identificação de tipo de dedicação do professor.<br>"
+                mensagem["pt"] += "Erro na identificação de tipo de dedicação do professor.<br>"
+                mensagem["en"] += "Error identifying type of professor dedication.<br>"
 
             professor.areas = limpa_texto(request.POST.get("areas", None))
             professor.website = limpa_texto(request.POST.get("website", None))
@@ -268,7 +271,8 @@ def registro_usuario(request, user=None):
             parceiro.organizacao = Organizacao.objects.get(pk=tmp_pk)
         except (ValueError, OverflowError, Organizacao.DoesNotExist):
             parceiro.organizacao = None
-            mensagem += "Organização não encontrada.<br>"
+            mensagem["pt"] += "Erro na identificação da organização.<br>"
+            mensagem["en"] += "Error identifying organization.<br>"
 
         parceiro.principal_contato = "principal_contato" in request.POST
 
@@ -289,12 +293,12 @@ def registro_usuario(request, user=None):
     # elif usuario.tipo_de_usuario == 4:  # Administrador
         # user.groups.add(Group.objects.get(name="Administrador"))  # Grupo de permissões
 
-    if mensagem != "":
+    if mensagem["pt"] != "":
         return (mensagem, 401, None)
     elif user:
-        return ("Usuário atualizado na base de dados.", 200, usuario)
+        return ({"pt": "Usuário atualizado na base de dados.", "en": "User updated in the database."}, 200, usuario)
     else:
-        return ("Usuário inserido na base de dados.", 200, usuario)
+        return ({"pt": "Usuário inserido na base de dados.", "en": "User inserted in the database."}, 200, usuario)
     
 
 def envia_senha_mensagem(user):
