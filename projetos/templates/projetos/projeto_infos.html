@@ -85,7 +85,7 @@
   <h5>
     {% lng "Organização" "Organization" %}:
     {% if projeto.organizacao %}
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
       {% else %}
         {{ projeto.organizacao.nome }}
@@ -179,7 +179,7 @@
   
   <div class="conexoes" style="margin-top: 8px;">
     <strong>{% lng "Conexões" "Connections" %}:</strong>
-    {% if user.prof_a %}
+    {% if user.eh_prof_a %}
       <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
     {% endif %}<br>
     {% if conexoes %}
@@ -188,7 +188,7 @@
         {% if conexao.parceiro.user.is_active %}
           <li>
             {% if conexao.parceiro %}
-              {% if user.prof_a %}
+              {% if user.eh_prof_a %}
                 <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
               {% else %}
                 {{ conexao.parceiro.user.get_full_name }}
@@ -247,7 +247,7 @@
     {% endif %}
     <div class="ml-1">
       &#8614;
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
       {% else %}
         {{projeto.orientador.user.get_full_name}}
@@ -297,7 +297,7 @@
   <ul>
   {% for alocacao in alocacoes %}
     <li>
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
       {% else %}
         {{alocacao.aluno.user.get_full_name}}
@@ -391,7 +391,7 @@
 
   {% endif %}
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     {% if projeto|has_relatos %}  
       <hr>
       <h4>{% lng "Relatos Quinzenais" "Biweekly Reports" %}:</h4>
@@ -399,11 +399,11 @@
     {% endif %}
   {% endif %}
 
-  {% if documentos or user.prof_a %}
+  {% if documentos or user.eh_prof_a %}
     <hr>
     <h4>
       {% lng "Documentos" "Documents" %}:
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         {% if projeto and projeto.organizacao %}
           <small class="esconder">
             <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
@@ -421,11 +421,11 @@
     {% include "professores/includes/ver_pastas_projeto.html" %}
   </div>
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     <hr>
     <h4>
       {% lng "Certificados" "Certificates" %}:
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         <small class="esconder">
           <a href="{% url 'carregar_certificado' %}">&#10133;</a>
         </small>
@@ -436,7 +436,7 @@
     </div>
   {% endif %}
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
   {% if projeto.encontro_set.all %}
       <hr>
       <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
@@ -517,20 +517,20 @@
   {% endif %}
 
   
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     <hr>
     <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
     {% include "mostra_horarios.html" %}
   {% endif %}
 
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}
     {% include "estudantes/includes/funcionalidade_respostas.html" with mostra_estudante=True %}
     {% include "estudantes/includes/pares_respostas.html" %}
   {% endif %}
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     {% with despesas=projeto.despesa_set.all %}
       {% if despesas %}
         <hr>
@@ -550,7 +550,7 @@
     {% endwith %}
   {% endif %}
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
 
     <hr>
     <div style="max-width: 95em; text-align: center;">
@@ -620,7 +620,7 @@
     {% if not projetos_avancados %}
       <script>
         function cria_avancado() {
-          {% if user.admin %} 
+          {% if user.eh_admin %} 
             if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
               window.open("{% url 'projeto_avancado' projeto.id %}");
             }

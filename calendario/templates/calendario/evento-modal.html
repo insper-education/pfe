@@ -29,7 +29,7 @@
   }
 </style>
 
-{% if user.prof_a %}
+{% if user.eh_prof_a %}
   <script src="{% static 'js/calendario_admin.js' %}"></script>
 {% endif %}
 
@@ -221,7 +221,7 @@
       },
       error: function (request, status, error) {
         $("#carregando_arquivo").hide();
-        {% if user.admin %} 
+        {% if user.eh_admin %} 
           console.log("error"+request.responseText);  
           alert(request.responseText);
           jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
@@ -248,7 +248,7 @@
             {% lng "Evento" "Event" %}
           </h5>
 
-          {% if not user.admin %}
+          {% if not user.eh_admin %}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span id="permissao" style="color:red; text-decoration: underline solid red">
               {% lng "Alterações Restritas ao Administrador" "Restricted changes to the Administrator" %}

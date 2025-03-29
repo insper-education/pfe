@@ -13,7 +13,7 @@
 
 {% block content %}
 
-  {% if user.admin %}
+  {% if user.eh_admin %}
     <span class="esconder">
       <a href="#"
       class="open-modal" style="cursor:pointer;"
@@ -29,7 +29,7 @@
     {% include "tabelas_top_ml.html" with tabela="Materias" cabecalhos=cabecalhos %}
       {% for relatorio in documentos %}
         {% if relatorio.link or relatorio.documento %}
-          {% if user.admin or not relatorio.confidencial %}
+          {% if user.eh_admin or not relatorio.confidencial %}
             <tr class="item">
               <td data-order="{{relatorio.data|date:"Ymd"}}">
                 {% if relatorio.data %}{{relatorio.data|date:"d/m/Y"}}{% endif %}
@@ -38,14 +38,14 @@
               <td>{% if relatorio.anotacao %}{{relatorio.anotacao}}{% endif %}</td>
               <td>
                 {% if relatorio.projeto %}
-                  {% if user.prof_a %}<a href="{% url 'projeto_infos' relatorio.projeto.id %}">{% endif %}
+                  {% if user.eh_prof_a %}<a href="{% url 'projeto_infos' relatorio.projeto.id %}">{% endif %}
                     {{relatorio.projeto.get_titulo_org}}
                     {% include "tipo_projeto.html" with projeto=relatorio.projeto %}
-                  {% if user.prof_a %}</a>{% endif %}
+                  {% if user.eh_prof_a %}</a>{% endif %}
                 {% elif relatorio.organizacao %}
-                  {% if user.prof_a %}<a href="{% url 'organizacao_completo' relatorio.organizacao.id %}">{% endif %}
+                  {% if user.eh_prof_a %}<a href="{% url 'organizacao_completo' relatorio.organizacao.id %}">{% endif %}
                     {{relatorio.organizacao}}
-                  {% if user.prof_a %}</a>{% endif %}
+                  {% if user.eh_prof_a %}</a>{% endif %}
                 {% endif %}
               </td>
               <td class="text-center">

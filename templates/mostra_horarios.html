@@ -34,7 +34,7 @@
       {{ alocacao.aluno.user.get_full_name }}
       {% if alocacao.aluno.externo %}[{{alocacao.aluno.externo}}]{% endif %}
     </span>
-    {% if not request.user.estud %}
+    {% if not request.user.eh_estud %}
       (<span id="a{{alocacao.id}}" data-toggle="tooltip" data-placement="bottom" title="( horário em blocos diurnos de aulas / horário total )">&#8709;</span> 
       {% lng "horas" "hours" %})
     {% endif %}
@@ -99,7 +99,7 @@
     
 
   </div>
-  {% if request.user.estud %}
+  {% if request.user.eh_estud %}
     <br>
     {% lng "Instruções" "Instructions" %}:<br>
     {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class)." %}
@@ -119,7 +119,7 @@
   <script>
 
     function set_horas(horas_comerciais, horas_outras) {
-      {% if request.user.estud %}
+      {% if request.user.eh_estud %}
         document.getElementById("horas_alocadas").innerText = horas_comerciais*2 + " horas (total = " + (horas_comerciais+horas_outras)*2 + " horas)";
         if(horas_comerciais < 22/2) {
           document.getElementById("horas_alocadas").style.color = "red";
@@ -170,7 +170,7 @@
       {% endif %}
     }
 
-    {% if request.user.estud %}
+    {% if request.user.eh_estud %}
       document.addEventListener("DOMContentLoaded", (event) => {
         let isMouseDown = false;
 
@@ -333,7 +333,7 @@
     }
 
     // Verifica atualizações continuamente
-    setInterval(refresh_horas, {% if request.user.estud %}8000{% else %}60000{% endif %} );
+    setInterval(refresh_horas, {% if request.user.eh_estud %}8000{% else %}60000{% endif %} );
     refresh_horas();
 
   </script>

@@ -8,11 +8,11 @@
 {% load linguas %}
 
 {% if organizacao %}
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     <a class="imprimir" href="{% url 'organizacao_completo' organizacao.id %}" target="_blank">
   {% endif %}
   {{ organizacao.nome }}
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     </a>
   {% endif %}
 {% else %}

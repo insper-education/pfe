@@ -54,7 +54,7 @@
     {% lng "Regular" "Regular" %}
   {% endif %}<br>
 
-  {% if not user.estud %}
+  {% if not user.eh_estud %}
     {% if aluno.cr %}
       <b>{% lng "CR" "GPA" %}:</b> {{aluno.cr}}<br>
     {% endif %}
@@ -85,7 +85,7 @@
   {% endwith %}
   <br>
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
 
     {% if aluno.opcao_set.all %}
       <hr>
@@ -231,7 +231,7 @@
   {% include "estudantes/includes/funcionalidade_respostas.html" %}
   {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
 
-  {% if user.admin %}
+  {% if user.eh_admin %}
     <a href="{% url 'edita_usuario' aluno.user.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">
         {% lng "Editar" "Edit" %}

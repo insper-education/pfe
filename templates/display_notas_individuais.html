@@ -19,7 +19,7 @@
   var peso = 0.0;
 </script>
 
-{% if user.admin %}
+{% if user.eh_admin %}
   <a style="color:black" href="{% url 'edita_notas' alocado.id %}">
 {% endif %}
 {% if notas %}
@@ -74,7 +74,7 @@
 
 {% endif %}
 
-{% if user.admin %}
+{% if user.eh_admin %}
   </a>
 {% endif %}
 

@@ -61,9 +61,9 @@
               </b><br>
               <b>{% lng "Nome" "Name" %}</b>:
               {% if certificado.usuario %}
-                {% if certificado.usuario.estud %}
+                {% if certificado.usuario.eh_estud %}
                   <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
-                {% elif certificado.usuario.prof_a %}
+                {% elif certificado.usuario.eh_prof_a %}
                   <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
                 {% else %}
                   {{certificado.usuario.get_full_name}}<br>

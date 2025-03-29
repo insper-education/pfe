@@ -70,7 +70,7 @@
                               name="a{{composicao.exame.id}}_peso_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
                               min="0" max="100" step="any" style="width: 5em;"
                               value="{% if objetivo.peso %}{{objetivo.peso}}{% else %}{{peso.peso}}{% endif %}"
-                              {% if not user.admin %}disabled{% endif %}
+                              {% if not user.eh_admin %}disabled{% endif %}
                               {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
                       </div>
                       <div class="bloco_avali">
@@ -79,14 +79,14 @@
                               name="a{{composicao.exame.id}}_nota_{{peso.objetivo.id}}_p{{aval_id}}" type="number"
                               min="0" max="10" step="any" style="width: 4em;"
                               {% if objetivo.nota != None %}value="{{objetivo.nota}}"{% endif %}
-                              {% if not user.admin %}disabled{% endif %}
+                              {% if not user.eh_admin %}disabled{% endif %}
                               {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}/>
                       </div>
                       <div class="bloco_avali">
                         {% lng "conceito" "letter grade" %}:
                         <select class="conc" id="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
                                 name="a{{composicao.exame.id}}_conc_{{peso.objetivo.id}}_p{{aval_id}}"
-                                {% if not user.admin %}disabled{% endif %}
+                                {% if not user.eh_admin %}disabled{% endif %}
                                 {% if aval_id != alocacao.projeto.orientador.user.id %}disabled{% endif %}>
                               {% with "A+ A B+ B C+ C D+ D D- I" as conceitos %}{% for x in conceitos.split %}
                                 <option value="{{x}}">{{x}}</option>
@@ -119,14 +119,14 @@
               </div>
               <textarea id="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}" 
                         name="a{{composicao.exame.id}}_obs_estudantes_p{{aval_id}}"
-                        class="obs" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+                        class="obs" rows="4" cols="80" {% if not user.eh_admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_estudantes %}{{observacoes.last.observacoes_estudantes}}{% endif %}</textarea>
               <div style="margin-top: 6px; margin-left: 10px;">
                 {% lng "Observações para Orientador" "Observations for Advisor" %}:
               </div>
               <textarea id="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}" 
                         name="a{{composicao.exame.id}}_obs_orientador_p{{aval_id}}"
-                        class="obs" rows="4" cols="80" {% if not user.admin %}disabled{% endif %}
+                        class="obs" rows="4" cols="80" {% if not user.eh_admin %}disabled{% endif %}
                 >{% if observacoes.last.observacoes_orientador %}{{observacoes.last.observacoes_orientador}}{% endif %}</textarea>
               <br>
             {% endwith %}
@@ -145,13 +145,13 @@
         {% lng "Nota" "Grade" %}:
         <input class="nota" id="reprovacao" name="reprovacao" type="number" min="0" max="10" step="0.001" 
         {% if reprovacao != None %}value="{{reprovacao}}"{% endif %}
-        {% if not user.admin %}disabled{% endif %}/>
+        {% if not user.eh_admin %}disabled{% endif %}/>
     </li></ul>
     <br>
 
     <br><br>
     <button class="btn btn-primary mb-1" type="submit"
-            {% if not user.admin %}disabled{% endif %}>
+            {% if not user.eh_admin %}disabled{% endif %}>
       {% lng "Atualiza Notas" "Update Grades" %}
     </button>
     

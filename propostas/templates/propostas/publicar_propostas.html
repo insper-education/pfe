@@ -61,7 +61,7 @@
     {% lng "Número mínimo de propostas para estudantes selecionarem:" "Minimum number of proposals for students to select:" %}
   </label>
   <input class="liberar" id="min_props" name="min_props" type="number" min="0" max="99" step="1" style="text-align:right;"
-         {% if not user.admin %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
+         {% if not user.eh_admin %}disabled data-toggle="tooltip" data-placement="bottom" title="Somente coordenadores podem alterar valor!"{% endif %}
          value="{{min_props}}"/>
   <span id="mess_atual" style="display: None;">
     {% lng "atualizado!" "updated!" %}

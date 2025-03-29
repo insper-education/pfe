@@ -16,7 +16,7 @@
 
   <div id="atualizar">
 
-    {% if user.admin %}
+    {% if user.eh_admin %}
       <span class="esconder">
         <a href="#"
         class="open-modal" style="cursor:pointer;"
@@ -74,7 +74,7 @@
     {% endif %}
 
     {% comment %} Mostra uma tabela com a somatória dos valores das despesas agrupadas por tipo de despesa. {% endcomment %}
-    {% if user.admin %}
+    {% if user.eh_admin %}
       <div class="card" style="display: inline-block;">
         <div class="card-header">
           <h5 class="card-title mb-0">

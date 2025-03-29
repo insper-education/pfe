@@ -54,7 +54,7 @@
     ];
 
     var dataEventosOrganizacao = [
-      {% if user.prof_a %}
+      {% if user.eh_prof_a %}
         {% for evento in coordenacao %} 
           {
               id: {{evento.id}},
@@ -196,7 +196,7 @@
           }
         },
 
-        {% if user.prof_a %}
+        {% if user.eh_prof_a %}
           enableRangeSelection: true,
           enableContextMenu: true,  // botão da direita sobre o dia
           contextMenuItems: [
@@ -252,7 +252,7 @@
     <div class="row justify-content-around">
       <div id="bloco_eventos" class="col-xl-auto ">
 
-        {% if user.prof_a %}
+        {% if user.eh_prof_a %}
           <div class="tit_agenda" id="titulo_operacao" data-toggle="tooltip" data-html="true" animation="true"
           title="O semestre da coordenação vai de Fevereiro* à Julho e de Agosto* a Janeiro">
             {% lng "Operação" "Operation" %}
@@ -282,7 +282,7 @@
         {% endif %}
         
         <div class="tit_agenda" id="titulo_academico">
-          {% if user.prof_a %}
+          {% if user.eh_prof_a %}
             {% lng "Acadêmico" "Academic" %}
           {% else %}
             {% lng "Eventos" "Events" %}
@@ -359,7 +359,7 @@
                   <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
                       {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
                       <th class="colu text-center" scope="row">
-                        {% if user.admin %}
+                        {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                         {% else %}
                           <span>
@@ -383,7 +383,7 @@
                       </th>
                       
                       <td class="colu" style="cursor:pointer;">
-                        {% if user.admin %}
+                        {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
                         {% else %}
                           <span
@@ -438,7 +438,7 @@
                 {% for aula in eventos_academicos.mentorias|dictsort:"endDate" %}
                   <tr id="ev{{aula.id}}" class="lin_mentorias ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}">
                       <th class="colu text-center" scope="row">
-                        {% if user.admin %}
+                        {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                         {% else %}
                           <span>
@@ -454,7 +454,7 @@
                       </th>
                       
                       <td class="colu" style="cursor:pointer;">
-                        {% if user.admin %}
+                        {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
                         {% else %}
                           <span
@@ -508,7 +508,7 @@
   <br>
   <br>
 
-  {% if user.prof_a %}
+  {% if user.eh_prof_a %}
     {% include "calendario/evento-modal.html" %}
   {% endif %}
 

@@ -20,10 +20,10 @@
       {% for aula in aulas %}
         {% if aula.responsavel %}
           <tr class="item" 
-           {% if aula.responsavel.prof_a %}
+           {% if aula.responsavel.eh_prof_a %}
             data-user="Insper">
               <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' aula.responsavel.professor.id %}">{{aula.responsavel.get_full_name}}</a>
-           {% elif aula.responsavel.parc %}
+           {% elif aula.responsavel.eh_parc %}
             data-user="Externo">
               <td data-sort="{{aula.responsavel.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' aula.responsavel.parceiro.id %}">{{aula.responsavel.get_full_name}}</a>
            {% else %}

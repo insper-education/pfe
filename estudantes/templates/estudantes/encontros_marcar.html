@@ -45,14 +45,8 @@
 {% block content %}
 
   <form method="post"> {% csrf_token %}
-    {% if user.estud %}
-      <h4>Projeto: 
-        {% if projeto %}
-          [{{projeto.organizacao}}] {{projeto.get_titulo}}
-        {% else %}
-          {% lng "&lt; PROJETO NÃO ENCONTRADO &gt;" "&lt; PROJECT NOT FOUND &gt;" %}
-        {% endif %}
-      </h4>
+    {% if user.eh_estud %}
+      <h4>{% lng "Projeto" "Project" %}: {{projeto.get_titulo_org}}</h4>
     {% else %}
       <h4>{% lng "Somente visualização das opções de encontros (você não está registrado como estudante)" "Only viewing the meeting options (you are not registered as a student)" %}</h4>
     {% endif %}

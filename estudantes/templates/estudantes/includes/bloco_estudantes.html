@@ -14,11 +14,11 @@
         {% if pequeno %}
           <small>
         {% endif %}
-        {% if user.prof_a %}
+        {% if user.eh_prof_a %}
           <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">  {% comment %} target="_blank" {% endcomment %}
         {% endif %}
         {{alocacao.aluno.user.get_full_name}}
-        {% if user.prof_a %}
+        {% if user.eh_prof_a %}
           </a>
         {% endif %}
         <span class="curso">

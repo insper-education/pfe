@@ -15,7 +15,7 @@
 
 {% block content %}
 
-  {% if user.admin %}
+  {% if user.eh_admin %}
     <span class="esconder">
       <a href="#"
        class="open-modal"
@@ -77,7 +77,7 @@
     </table>
   </div>
 
-  {% if user.admin %}
+  {% if user.eh_admin %}
     {% include "base-modal.html" %}
   {% endif %}
 

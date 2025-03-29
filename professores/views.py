@@ -320,7 +320,7 @@ def avaliar_bancas(request, prof_id=None):
 
         if "edicao" in request.POST:
 
-            if prof_id and request.user.admin:  # Administrador
+            if prof_id and request.user.eh_admin:  # Administrador
                 professor = get_object_or_404(Professor, pk=prof_id)
             else:
                 professor = request.user.professor

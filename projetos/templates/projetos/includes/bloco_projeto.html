@@ -11,7 +11,7 @@
   <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
   {% if tit_proposta and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
     {{projeto.titulo_final}}
-    {% if user.prof_a or user.estud %}
+    {% if user.eh_prof_a or user.eh_estud %}
       </a>
     {% endif %}
     <span class="tit_ori"><br>
@@ -24,7 +24,7 @@
   {% else %}
     {{projeto.get_titulo}}
   {% endif %}
-  {% if user.prof_a or user.estud %}
+  {% if user.eh_prof_a or user.eh_estud %}
     </a>
   {% endif %}
   {% include "tipo_projeto.html" with projeto=projeto %}

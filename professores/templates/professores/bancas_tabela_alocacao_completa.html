@@ -33,16 +33,12 @@
           {% for membro, bancas in membros.items %}
             <tr class="item">
               <td>
-                {% if membro.prof %}
+                {% if membro.eh_prof_a %}
                   <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
                     {{membro.get_full_name}}
                   </a>
-                {% elif membro.parc %}
+                {% elif membro.eh_parc %}
                   <a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">
-                    {{membro.get_full_name}}
-                  </a>
-                {% elif membro.admin %}
-                  <a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">
                     {{membro.get_full_name}}
                   </a>
                 {% endif %}  

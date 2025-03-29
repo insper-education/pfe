@@ -227,7 +227,7 @@
     {% lng "Ainda não existem anotações para essa organização." "There are no annotations for this organization yet." %}
   </span>
   
-  {% if user.admin %}
+  {% if user.eh_admin %}
     <br>
     <a href="{% url 'edita_organizacao' organizacao.id %}">
       <button class="btn btn-primary mb-1" style="float: right;">

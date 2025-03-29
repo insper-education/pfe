@@ -16,11 +16,11 @@
           {% if pequeno %}
             <small>
           {% endif %}
-          {% if user.prof_a %}
+          {% if user.eh_prof_a %}
             <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">  {% comment %} target="_blank" {% endcomment %}
           {% endif %}
           {{ conexao.parceiro.user.get_full_name }}
-          {% if user.prof_a %}
+          {% if user.eh_prof_a %}
             </a>
           {% endif %}
           {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
