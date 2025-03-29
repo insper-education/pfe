@@ -95,16 +95,20 @@
   
   {% comment %} Para mensagens de erro ou avisos {% endcomment %}
   {% if mensagem_aviso %}
-    <div id="mensagem_aviso">
-      {% lng mensagem_aviso.pt mensagem_aviso.en %}
-      {% comment %} {{ mensagem_aviso|safe|linebreaks }} {% endcomment %}
-    </div>
+    {% if mensagem_aviso.pt or mensagem_aviso.en %}
+      <div id="mensagem_aviso">
+        {% lng mensagem_aviso.pt mensagem_aviso.en %}
+        {% comment %} {{ mensagem_aviso|safe|linebreaks }} {% endcomment %}
+      </div>
+    {% endif %}
   {% elif mensagem_alerta_fade %}
-    <div id="mensagem_aviso">
-      {% lng mensagem_alerta_fade.pt mensagem_alerta_fade.en %}
-      {% comment %} {{ mensagem_alerta_fade|safe|linebreaks }} {% endcomment %}
-    </div>
-    <script>setTimeout(function() {$("#mensagem_aviso").fadeOut("fast");}, 5000);</script>
+    {% if mensagem_alerta_fade.pt or mensagem_alerta_fade.en %}
+      <div id="mensagem_aviso">
+        {% lng mensagem_alerta_fade.pt mensagem_alerta_fade.en %}
+        {% comment %} {{ mensagem_alerta_fade|safe|linebreaks }} {% endcomment %}
+      </div>
+      <script>setTimeout(function() {$("#mensagem_aviso").fadeOut("fast");}, 5000);</script>
+    {% endif %}
   {% endif %}
 
   <div id="tudo" class="container-fluid">    
