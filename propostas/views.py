@@ -655,12 +655,15 @@ def proposta_editar(request, slug=None):
     if request.user and request.user.is_authenticated:
 
         if request.user.eh_estud:  # estudante
-            mensagem = "Você não está cadastrado como parceiro!"
+            mensagem_erro = {
+                "pt": "Você não está cadastrado como parceiro!",
+                "en": "You are not registered as a partner!",
+            }
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": mensagem_erro,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         if request.user.eh_parc:  # parceiro
             parceiro = get_object_or_404(Parceiro, pk=request.user.parceiro.pk)
@@ -682,11 +685,16 @@ def proposta_editar(request, slug=None):
             if "new" in request.POST:
                 titulo = request.POST.get("titulo_prop", "").strip()
                 if titulo and Proposta.objects.filter(titulo=titulo, ano=ano, semestre=semestre).exists():
+                    mensagem_erro = {
+                        "pt": "Uma proposta com este título já existe para o próximo semestre e aparentemente está sendo duplicada.<br> Caso considere que isso não deveria acontecer, por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> A proposta não foi salva.",
+                        "en": "A proposal with this title already exists for the next semester and appears to be duplicated.<br> If you believe this should not happen, please contact: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> The proposal has not been saved.",
+                    }
+  
                     context = {
                         "voltar": True,
-                        "mensagem": "Uma proposta com este título já existe para o próximo semestre e aparentemente está sendo duplicada.<br> Caso considere que isso não deveria acontecer, por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> A proposta não foi salva.",
+                        "mensagem_erro": mensagem_erro,
                     }
-                    return render(request, "generic.html", context=context)
+                    return render(request, "generic_ml.html", context=context)
 
                 if proposta:  # Nova proposta baseada na antiga
                     organizacao = proposta.organizacao
@@ -705,9 +713,9 @@ def proposta_editar(request, slug=None):
                 proposta.delete()
                 context = {
                     "voltar": True,
-                    "mensagem": "Proposta removida!",
+                    "mensagem": {"pt": "Proposta removida!", "en": "Proposal removed!"},
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
             else:
                 return HttpResponse("Erro não identificado.", status=401)
 
@@ -731,16 +739,20 @@ def proposta_editar(request, slug=None):
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
 
-            resposta = "Submissão de proposta de projeto realizada com sucesso.<br>"
+            resposta = {"pt": "Submissão de proposta de projeto realizada com sucesso.<br>",
+                          "en": "Project proposal submission completed successfully.<br>"}
+            
             if enviar:
-                resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
-            resposta += "<br><hr>"
+                resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
+                resposta["en"] += "You should receive a confirmation email in the next few moments.<br>"
+            resposta["pt"] += "<br><hr>" + mensagem  # Precisa acertar isso
+            resposta["en"] += "<br><hr>" + mensagem  # Precisa acertar isso
 
             context = {
                 "voltar": True,
-                "mensagem": resposta + mensagem,
+                "mensagem": resposta,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         else:
             return HttpResponse("Propostas não estão liberadas para submissão/edição.", status=401)
@@ -825,9 +837,9 @@ def proposta_remover(request, slug):
 
     context = {
         "voltar": True,
-        "mensagem": "Proposta removida!",
+        "mensagem": {"pt": "Proposta removida!", "en": "Proposal removed!"},
     }
-    return render(request, "generic.html", context=context)
+    return render(request, "generic_ml.html", context=context)
 
 # @login_required
 def carrega_proposta(request):
@@ -838,16 +850,19 @@ def carrega_proposta(request):
     if request.user and request.user.is_authenticated:
 
         if request.user.eh_estud:  # estudantes
-            mensagem = "Você não está cadastrado como parceiro!"
+            mensagem_erro = {
+                "pt": "Você não está cadastrado como parceiro!",
+                "en": "You are not registered as a partner!",
+            }
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": mensagem_erro,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
     if request.method == "POST":
 
-        resposta = ""
+        resposta = {"pt": "", "en": ""}
 
         if "arquivo" in request.FILES:
             arquivo = simple_upload(request.FILES["arquivo"],
@@ -855,12 +870,15 @@ def carrega_proposta(request):
 
             fields = get_form_fields(arquivo[1:])
             if fields is None:
-                mensagem = "<b>ERRO:</b> Arquivo formulário não reconhecido"
+                mensagem_erro = {
+                    "pt": "ERRO: Arquivo formulário não reconhecido",
+                    "en": "ERROR: File form not recognized",
+                }
                 context = {
                     "voltar": True,
-                    "mensagem": mensagem,
+                    "mensagem_erro": mensagem_erro,
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
 
             fields["nome"] = limpa_texto(request.POST.get("nome", "").strip())
             fields["email"] = limpa_texto(request.POST.get("email", "").strip())
@@ -868,25 +886,31 @@ def carrega_proposta(request):
             proposta, erros = preenche_proposta_pdf(fields, None)
 
             if erros:
-                resposta += "ERROS:<br><b style='color:red;font-size:40px'>" + erros + "<br><br></b>"
+                resposta["pt"] += "ERROS:<br><b style='color:red;font-size:40px'>" + erros + "<br><br></b>"
+                resposta["en"] += "ERRORS:<br><b style='color:red;font-size:40px'>" + erros + "<br><br></b>"
                 mensagem = "Proposta de projeto não foi submetida."
             else:
                 enviar = "mensagem" in request.POST  # Por e-mail se enviar
                 mensagem = envia_proposta(proposta, request, enviar)
                 
-                resposta += "Submissão de proposta de projeto realizada com sucesso.<br>"
+                resposta["pt"] += "Submissão de proposta de projeto realizada com sucesso.<br>"
+                resposta["en"] += "Project proposal submission completed successfully.<br>"
 
                 if enviar:
-                    resposta += "Você deve receber um e-mail de confirmação nos próximos instantes.<br><br>"
+                    resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br><br>"
+                    resposta["en"] += "You should receive a confirmation email in the next few moments.<br><br>"
 
         else:
             mensagem = "Arquivo não identificado"
 
+        resposta["pt"] += "<br><hr>" + mensagem
+        resposta["en"] += "<br><hr>" + mensagem
+
         context = {
             "voltar": True,
-            "mensagem": resposta + mensagem,
+            "mensagem": resposta,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     ano_semestre = f"{ano}.{semestre}"
     

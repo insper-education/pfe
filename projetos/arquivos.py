@@ -148,29 +148,29 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
         doc = Documento.objects.filter(documento=documento).last()
         
         if doc:
-            mensagem = "Documento Confidencial"
+            mensagem = {"pt": "Documento Confidencial", "en": "Confidential Document",}
             context = {"mensagem": mensagem,}
             if not bypass_confidencial: # Soh para o caso de documentos de bancas
                 try:
                     user = PFEUser.objects.get(pk=request.user.pk)
                 except PFEUser.DoesNotExist:
                     if doc.confidencial: 
-                        return render(request, "generic.html", context=context)
+                        return render(request, "generic_ml.html", context=context)
 
                 if doc.confidencial and user.tipo_de_usuario not in [2, 4]:
                     if user.tipo_de_usuario == 1:
                         # Verificar se o documento é do estudante ou do grupo dele
                         alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()
                         if (doc.tipo_documento.individual and doc.usuario != user) or not alocado_no_projeto:
-                            return render(request, "generic.html", context=context)
+                            return render(request, "generic_ml.html", context=context)
 
                     elif user.tipo_de_usuario == 3:
                         # Verificar se o documento é da organização que o usuário faz parte
                         if not doc.projeto or doc.projeto.proposta.organizacao != user.parceiro.organizacao:
-                            return render(request, "generic.html", context=context)
+                            return render(request, "generic_ml.html", context=context)
 
                     else:
-                        return render(request, "generic.html", context=context)
+                        return render(request, "generic_ml.html", context=context)
         else:
 
             # Checa se é um outro tipo de documento confidencial
@@ -185,24 +185,27 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
             elif Certificado.objects.filter(documento=documento).exists():
                 pass
             else:
-                mensagem = "Documento não mais válido"
-                context = {"mensagem": mensagem,}
-                return render(request, "generic.html", context=context)
+                mensagem_erro = {"pt": "Documento não mais válido", "en": "Document no longer valid",}
+                context = {"mensagem_erro": mensagem_erro,}
+                return render(request, "generic_ml.html", context=context)
 
         if documento[:3] == "tmp":
-            mensagem = "Documento não acessível"
-            context = {"mensagem": mensagem,}
-            return render(request, "generic.html", context=context)
+            mensagem_erro = {"pt": "Documento não acessível", "en": "Document not accessible",}
+            context = {"mensagem_erro": mensagem_erro,}
+            return render(request, "generic_ml.html", context=context)
 
         with open(file_path, "rb") as file:
             response = get_response(file, path, request)
             if not response:
-                mensagem = "Erro ao carregar arquivo (formato não suportado)."
+                mensagem_erro = {
+                    "pt": "Erro ao carregar arquivo (formato não suportado).",
+                    "en": "Error loading file (unsupported format).",
+                }
                 context = {
                     "area_principal": True,
-                    "mensagem": mensagem,
+                    "mensagem_erro": mensagem_erro,
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
             response["Content-Disposition"] = "inline; filename=" +\
                os.path.basename(file_path)
             return response

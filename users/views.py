@@ -267,12 +267,13 @@ def estudantes_notas(request, professor=None):
         if professor is not None:
             user = get_object_or_404(PFEUser, pk=request.user.pk)
             if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
-                mensagem = "Você não está cadastrado como professor!"
+                mensagem_erro = {"pt": "Você não está cadastrado como professor!",
+                                 "en": "You are not registered as a professor!"}
                 context = {
                     "area_principal": True,
-                    "mensagem": mensagem,
+                    "mensagem_erro": mensagem_erro,
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
             
             # Incluindo também se coorientação
             coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
@@ -752,9 +753,9 @@ def edita_notas(request, primarykey):
         mensagem = html.urlize(mensagem)
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem": {"pt": mensagem, "en": mensagem},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Edição de Notas", "en": "Edit Grades"},
@@ -942,11 +943,12 @@ def envia_contas_senhas(request):
             recipient_list = [estudante.user.email, ]
             email(subject, recipient_list, message_email)
 
+        mensagem = html.urlize(mensagem)
         context = {
             "area_principal": True,
-            "mensagem": html.urlize(mensagem),
+            "mensagem": {"pt": mensagem, "en": mensagem},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     return HttpResponse("Algum erro não identificado.", status=401)
 

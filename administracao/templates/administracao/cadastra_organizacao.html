@@ -24,7 +24,7 @@
 
 {% block content %}
 
-  <form id="organizacaoform" method="post" style="width: 850px;" enctype="multipart/form-data"> {% csrf_token %}
+  <form method="post" enctype="multipart/form-data"> {% csrf_token %}
     
     <label for="organizacao">{% lng "Nome da Organização" "Organization Name" %}:</label><br>
     <textarea id="nome" name="nome" rows="1" cols="80" maxlength="{% max_length organizacao "nome" %}" required>{% if organizacao.nome %}{% slice_max_length organizacao "nome" %}{% elif proposta.nome_organizacao %}{% slice_other_max_length proposta.nome_organizacao organizacao "nome" %}{% endif %}</textarea>
@@ -59,7 +59,7 @@
     <input type="text" size="48" id="inscricao_estadual" name="inscricao_estadual" value="{% if organizacao.inscricao_estadual%}{{organizacao.inscricao_estadual}}{% endif %}"><br>
     <label for="razao_social">Razão Social:</label> <input type="text" size="48" id="razao_social" name="razao_social" value="{% if organizacao.razao_social %}{{organizacao.razao_social}}{% endif %}"><br>
     
-    <label for="ramo_atividade">Ramo de Atividade:</label><br>
+    <label for="ramo_atividade">{% lng "Ramo de Atividade" "Field of Activity" %}:</label><br>
     <textarea id="ramo_atividade" name="ramo_atividade" rows="4" cols="80" maxlength="256">{% if organizacao.ramo_atividade%}{{organizacao.ramo_atividade}}{% endif %}</textarea>
     <br><br>
 

@@ -135,21 +135,19 @@ def alocacao_semanal(request):
     if request.user.tipo_de_usuario == 1:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=configuracao.ano , semestre=configuracao.semestre).last()
         if not projeto:
-            mensagem = "Você não está alocado em um projeto esse semestre."
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": { "pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated in a project this semester."},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
     elif request.user.tipo_de_usuario in (2, 4):
         projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
     else:
-        mensagem = "Você não possui conta de estudante."
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": {"pt": "Você não possui conta de estudante.", "en": "You do not have a student account."},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
     
     context = {
         "titulo": {"pt": "Alocação Semanal", "en": "Weekly Allocation"},
@@ -248,19 +246,17 @@ def encontros_marcar(request):
                 # mandar para cada membro do grupo
                 recipient_list.append(alocacao.aluno.user.email)
             
-            # coordenadoção
+            # coordenação
             recipient_list.append(str(configuracao.coordenacao.user.email))
 
             message = message_agendamento_dinamica(agendado, cancelado)
             email(subject, recipient_list, message)
             horario = "dia " + str(agendado.startDate.strftime("%d/%m/%Y")) + " das " + str(agendado.startDate.strftime("%H:%M")) + ' às ' + str(agendado.endDate.strftime("%H:%M"))
-            mensagem = "Dinâmica agendada: " + horario
-
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem": {"pt": "Dinâmica agendada: " + horario, "en": "Scheduled dynamics: " + horario},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         if not aviso:
             return HttpResponse("Problema! Por favor reportar.")
@@ -308,13 +304,12 @@ def encontros_cancelar(request, evento_id):
     encontro.save()
 
     horario = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
-    mensagem = "Mentoria/Dinâmica cancelada: " + horario
-    
+
     context = {
         "area_principal": True,
-        "mensagem": mensagem,
+        "mensagem": {"pt": "Mentoria/Dinâmica cancelada: " + horario, "en": "Mentoring/Dynamics canceled: " + horario},
     }
-    return render(request, "generic.html", context=context)
+    return render(request, "generic_ml.html", context=context)
 
 
 @login_required
@@ -341,31 +336,32 @@ def estilo_comunicacao(request):
                     }
                 )
 
-        respostas = get_respostas_estilos(request.user)
-        if respostas:
-
-            mensagem = "Opções submetidas com sucesso!<br>"
-            mensagem_resposta = "<br><h4>Tabela de Estilo de Comunicação</h4>"
-            mensagem_resposta += "<br><b>Respostas:</b>"
-            for key, value in respostas.items():
-                mensagem_resposta += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
-
-            subject = "Capstone | Estilo de Comunicação"
-            recipient_list = [request.user.email, ]
-            email(subject, recipient_list, mensagem_resposta)
-            mensagem += mensagem_resposta
-
-        else:
-            mensagem = "Erro na submissão das opções."
-
-
         context = {
             "voltar": True,
             "area_principal": True,
-            "mensagem": mensagem,
         }
+        respostas = get_respostas_estilos(request.user)
+        if respostas:
 
-        return render(request, "generic.html", context=context)
+            mensagem = {"pt": "Opções submetidas com sucesso!<br>", "en": "Options submitted successfully!<br>"}
+            mensagem_resposta = {"pt": "<br><h4>Tabela de Estilo de Comunicação</h4><br><b>Respostas:</b>", 
+                                 "en": "<br><h4>Communication Style Table</h4><br><b>Answers:</b>"}
+            for key, value in respostas.items():
+                mensagem_resposta["pt"] += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+                mensagem_resposta["en"] += f"<br>&nbsp;&nbsp;&nbsp;&nbsp;{key}: {value}"
+
+            subject = "Capstone | Estilo de Comunicação"
+            recipient_list = [request.user.email, ]
+            email(subject, recipient_list, mensagem_resposta["pt"])
+            mensagem["pt"] += mensagem_resposta["pt"]
+            mensagem["en"] += mensagem_resposta["en"]
+            context["mensagem"] = mensagem
+
+        else:
+            mensagem_erro = {"pt": "Erro na submissão das opções.", "en": "Error submitting options."}
+            context["mensagem_erro"] = mensagem_erro
+
+        return render(request, "generic_ml.html", context=context)
 
     texto_estilo = {
         "pt": """
@@ -435,12 +431,11 @@ def codigo_conduta(request):
         codigo_conduta.codigo_conduta = post_data_json
         codigo_conduta.save()
 
-        mensagem = "Dados salvos com sucesso!"
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem": {"pt": "Dados salvos com sucesso!", "en": "Data saved successfully!"},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Código de Conduta Individual", "en": "Individual Code of Conduct"},
@@ -458,12 +453,11 @@ def codigo_conduta_projeto(request):
     if request.user.eh_estud:
         busca_projeto = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         if not busca_projeto:
-            mensagem = "Você não está alocado em um projeto esse semestre!"
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": {"pt": "Você não está alocado em um projeto esse semestre!", "en": "You are not allocated in a project this semester!"},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
         projeto = busca_projeto.projeto
         codigo_conduta, _ = CodigoConduta.objects.get_or_create(
             content_type=ContentType.objects.get_for_model(projeto),
@@ -484,12 +478,11 @@ def codigo_conduta_projeto(request):
         codigo_conduta.codigo_conduta = post_data_json
         codigo_conduta.save()
 
-        mensagem = "Dados salvos com sucesso!"
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem": {"pt": "Dados salvos com sucesso!", "en": "Data saved successfully!"},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Código de Conduta para o Projeto", "en": "Code of Conduct for the Project"},
@@ -541,17 +534,16 @@ def avaliacao_pares(request, momento):
                        "en": (" Intermediate" if momento=="intermediaria" else " Final") + " Peer Evaluation"},
         }
 
-    if request.user.tipo_de_usuario == 1:
+    if request.user.eh_estud:
         projeto = Projeto.objects\
             .filter(alocacao__aluno=estudante, ano=configuracao.ano, semestre=configuracao.semestre).first()
         
         if not projeto:
-            mensagem = "Você não está alocao em um projeto esse semestre!"
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": {"pt": "Você não está alocao em um projeto esse semestre!", "en": "You are not allocated in a project this semester!"},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         alocacao_de = Alocacao.objects.get(projeto=projeto, aluno=estudante)
         alocacoes = Alocacao.objects.filter(projeto=projeto).exclude(aluno=estudante)
@@ -706,24 +698,22 @@ def minhas_bancas(request):
         if (request.user.aluno.ano > configuracao.ano) or\
             (request.user.aluno.ano == configuracao.ano and
             request.user.aluno.semestre > configuracao.semestre):
-            mensagem = "Fora do período de avaliação de bancas."
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": {"pt": "Fora do período de avaliação de bancas.", "en": "Out of the exam period."},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
                                            projeto__ano=configuracao.ano,
                                            projeto__semestre=configuracao.semestre).last()
         
         if not alocacao:
-            mensagem = "Você não está alocado em um projeto esse semestre."
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated in a project this semester."},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
         
         # Banca do projeto (grupo, não probation)
         bancag = Banca.objects.filter(projeto=alocacao.projeto).order_by("-startDate")
@@ -791,24 +781,36 @@ def relato_quinzenal(request):
             relato.texto = texto_relato
             relato.save()
             
-            if prazo:
-                mensagem = "<h5>Relato submetido com sucesso<br><br></h5>"
-            else:
-                mensagem = "<h1 style='color: red;'>Erro na submissão do Relato<br>"
-                mensagem += "Não foi encontrado um prazo de entrega válido para o relato.</h1>"
-
-            mensagem += "<div style='max-width: 1400px; border: 1px solid black; padding: 4px;'>"
-            mensagem += "<b>Horário de recebimento:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
-            mensagem += "<b>Relato:</b> " + texto_relato.replace('\n', "<br>\n") + "<br>"
-            mensagem += "</div>"
-
             context = {
                 "area_aluno": True,
                 "area_principal": True,
                 "voltar": True,
-                "mensagem": mensagem,
             }
-            return render(request, "generic.html", context=context)
+
+            mensagem_tmp = {
+                "pt": "<div style='max-width: 1400px; border: 1px solid black; padding: 4px;'>",
+                "en": "<div style='max-width: 1400px; border: 1px solid black; padding: 4px;'>",
+            }
+            #mensagem_tmp += "<b>Horário de recebimento:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
+            mensagem_tmp["pt"] += "<b>Horário de recebimento:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
+            mensagem_tmp["en"] += "<b>Submission time:</b> " + relato.momento.strftime('%d/%m/%Y, %H:%M:%S') + "<br><hr>"
+            mensagem_tmp["pt"] += "<b>Relato:</b> " + texto_relato.replace('\n', "<br>\n") + "<br>"
+            mensagem_tmp["en"] += "<b>Report:</b> " + texto_relato.replace('\n', "<br>\n") + "<br>"
+            mensagem_tmp["pt"] += "</div>"
+            mensagem_tmp["en"] += "</div>"
+
+            if prazo:
+                mensagem = {"pt": "Relato submetido com sucesso!<br>" + mensagem_tmp["pt"], 
+                            "en": "Report successfully submitted!<br>" + mensagem_tmp["en"]}
+                context["mensagem"] = mensagem
+            else:
+                mensagem_erro = {"pt": "Erro na submissão do Relato<br>"+ mensagem_tmp["pt"], 
+                                 "en": "Error submitting the Report<br>" + mensagem_tmp["en"]}
+                mensagem_erro["pt"] += "Não foi encontrado um prazo de entrega válido para o relato."
+                mensagem_erro["en"] += "No valid deadline was found for the report."
+                context["mensagem_erro"] = mensagem_erro
+
+            return render(request, "generic_ml.html", context=context)
 
         tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
         relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
@@ -932,12 +934,15 @@ def selecao_propostas(request):
             vencido |= aluno.ano <= configuracao.ano
 
         if vencido:
-            mensagem = "Prazo vencido para seleção de propostas de projetos!"
+            mensagem = {
+                "pt": "Prazo vencido para seleção de propostas de projetos!",
+                "en": "Deadline expired for project proposal selection!"
+                }
             context = {
                 "area_aluno": True,
-                "mensagem": mensagem,
+                "mensagem_erro": mensagem,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         if liberadas_propostas and request.method == "POST":
             prioridade = {}

@@ -387,12 +387,13 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
     if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
-        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        mensagem_erro = {"pt": "Você não está cadastrado como parceiro de uma organização!",
+                    "en": "You are not registered as a partner of an organization!"}
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     if hasattr(request.user, "parceiro"):
         organizacao = request.user.parceiro.organizacao
@@ -418,12 +419,13 @@ def parceiro_propostas(request):
 def parceiro_projetos(request):
     """Lista todas as propostas de projetos."""
     if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
-        mensagem = "Você não está cadastrado como parceiro de uma organização!"
+        mensagem_erro = {"pt": "Você não está cadastrado como parceiro de uma organização!",
+                         "en": "You are not registered as a partner of an organization!"}
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     if hasattr(request.user, "parceiro"):
         organizacao = request.user.parceiro.organizacao
@@ -737,8 +739,8 @@ def projeto_feedback(request):
 
         feedback.save()
 
-        context = {"mensagem": "Feedback recebido, obrigado!",}
-        return render(request, "generic.html", context=context)
+        context = {"mensagem": {"pt": "Feedback recebido, obrigado!", "en": "Feedback received, thank you!"}}
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Formulário de Feedback das Organizações Parceiras", "en": "Partnership Organizations Feedback Form"},

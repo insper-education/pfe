@@ -424,9 +424,9 @@ def banca_avaliar(request, slug, documento_id=None):
             if not adm:  # se administrador passa direto
                 context = {
                     "area_principal": True,
-                    "mensagem": mensagem,
+                    "mensagem": {"pt": mensagem, "en": mensagem},  # Arrumar isso
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
 
     except Banca.DoesNotExist:
         return HttpResponseNotFound("<h1>Banca não encontrada!</h1>")
@@ -549,17 +549,19 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [configuracao.coordenacao.user.email, ]
             email(subject, recipient_list, message)
             
-            resposta = "Avaliação submetida e enviada para:<br>"
+            resposta = {"pt": "Avaliação submetida e enviada para:<br>", "en": "Evaluation submitted and sent to:<br>"}
             for recipient in recipient_list:
-                resposta += "&bull; {0}<br>".format(recipient)
+                resposta["pt"] += "&bull; {0}<br>".format(recipient)
+                resposta["en"] += "&bull; {0}<br>".format(recipient)
             if realizada:
-                resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
-            resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+                resposta["pt"] += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+                resposta["en"] += "<br><br><h2>This is an update of an evaluation already sent!</h2><br><br>"
+
             context = {
                 "area_principal": True,
                 "mensagem": resposta,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         return HttpResponse("Avaliação não submetida.")
     else:
@@ -1100,12 +1102,16 @@ def bancas_lista(request, edicao=None):
             email(assunto, recipient_list, mensagem)
             aviso += "Banca de " + projeto.get_titulo_org() + " enviada para: " + str(recipient_list) + "<br>"
 
+        mensagem = {
+            "pt": "Mensagens de Avaliação de Bancas enviadas.<br><br>" + aviso,
+            "en": "Examination Board Evaluation Messages sent.<br><br>" + aviso,
+        }
         context = {
             "voltar": True,
             "area_principal": True,
-            "mensagem": "Mensagens de Avaliação de Bancas enviadas.<br><br>" + aviso,
+            "mensagem": mensagem,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     else:
         context["informacoes"] = [
@@ -1416,7 +1422,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
 
-        resposta = "Avaliação concluída com sucesso.<br>"
+        resposta = {"pt": "Avaliação concluída com sucesso.<br>", 
+                   "en": "Evaluation completed successfully.<br>"}
 
         envia = "envia" in request.POST
         if envia:
@@ -1442,22 +1449,23 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     recipient_list.append(alocacao.aluno.user.email)
 
             email(subject, recipient_list, message)
-            resposta += "<br>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos<br>"
+            resposta["pt"] += "<br>Enviada mensagem por e-mail notificando estudantes dos conceitos definidos<br>"
+            resposta["en"] += "<br>Sent message by e-mail notifying students of the defined concepts<br>"
         
-        if request.user.professor:
+        if request.user.eh_prof_a:
             request.user.professor.email_avaliacao = envia
             request.user.professor.save()
         
         if not nova_avaliacao:
-            resposta += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+            resposta["pt"] += "<br><br><h2>Essa é uma atualização de uma avaliação já enviada anteriormente!</h2><br><br>"
+            resposta["en"] += "<br><br><h2>This is an update of an evaluation already sent before!</h2><br><br>"
         
-        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
         context = {
             "area_principal": True,
             "avaliar_entregas": True,
             "mensagem": resposta,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     else:  # Não é POST
 
@@ -1493,18 +1501,13 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 avaliacao = avaliacoes[i].nota
 
         if composicao.exame.grupo:
-            observacao = Observacao.objects.filter(projeto=projeto,
-                                                    exame=composicao.exame,
-                                                    avaliador=projeto.orientador.user
-                                                ).last()
+            observacao = Observacao.objects.filter(projeto=projeto, exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user).last()
         else:
             if not estudante or not alocacao:
                 return HttpResponseNotFound("<h1>Estudante não encontrado!</h1>")
-            observacao = Observacao.objects.filter(projeto=projeto,
-                                                    exame=composicao.exame,
-                                                    avaliador=projeto.orientador.user,
-                                                    alocacao=alocacao
-                                                ).last()
+            observacao = Observacao.objects.filter(projeto=projeto, exame=composicao.exame,
+                                                    avaliador=projeto.orientador.user, alocacao=alocacao).last()
 
         atrasado = documentos.first().data.date() > evento.endDate  # primeiro é o último entregue por data
         
@@ -1552,19 +1555,19 @@ def informe_bancas(request, sigla):
             recipient_list = [banca.projeto.orientador.user.email, ]
             email(subject, recipient_list, message)
 
-        resposta = "Informe enviado para:<br>"
+        resposta = {"pt": "Informe enviado para:<br>", 
+                   "en": "Report sent to:<br>"}
 
         for banca in bancas:
-            resposta += "&bull; {0} - banca do dia: {1}<br>".format(banca.projeto.orientador, banca.startDate)
-
-        resposta += "<br><a href='javascript:history.back(1)'>Voltar</a>"
+            resposta["pt"] += "&bull; {0} - banca do dia: {1}<br>".format(banca.projeto.orientador, banca.startDate)
+            resposta["en"] += "&bull; {0} - board on: {1}<br>".format(banca.projeto.orientador, banca.startDate)
 
         context = {
             "area_principal": True,
             "mensagem": resposta,
         }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     mensagem_aviso = None
     if not administracao:
@@ -2263,13 +2266,14 @@ def relato_avaliar(request, projeto_id, evento_id):
                 corpo_email += "<hr>"
                 corpo_email += "<b>Observações:</b><br>\n" 
                 corpo_email += "<div style='padding: 10px; border: 2px solid #DDDDDD;'>" + htmlizar(observacoes) + "</div><br>\n"
-                email("Observações de Anotação Quinzenal Realizada pelo orientador", email_dest, corpo_email)
+                assunto = "Observações de Anotação Quinzenal Realizada pelo orientador"
+                email(assunto, email_dest, corpo_email)
 
             context = {
                 "area_principal": True,
-                "mensagem": "avaliação realizada",
+                "mensagem": {"pt": "avaliação realizada", "en": "evaluation made"},
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
             
         else:
             return HttpResponseNotFound("<h1>Erro na edição do relato!</h1>")
@@ -2325,14 +2329,14 @@ def objetivo_editar(request, primarykey):
 
     if request.method == "POST":
         # if editar_objetivo(objetivo, request):
-        #     mensagem = "Banca editada."
+        #     mensagem = {"pt": "Banca editada.", "en": "Banca edited."}
         # else:
-        #     mensagem = "Erro ao Editar banca."
+        #     mensagem = {"pt": "Erro ao Editar banca.", "en": "Error editing banca."}
         context = {
             "area_principal": True,
             "bancas_index": True,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
             "titulo": {"pt": "Editar Objetivo de Aprendizagem", "en": "Edit Learning Goal"},

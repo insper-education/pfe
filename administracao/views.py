@@ -135,7 +135,7 @@ def cadastrar_organizacao(request, proposta_id=None):
                     "voltar": True,
                     "organizacao": org_ja_existe.last(),
                     "area_principal": True,
-                    "mensagem": "<h3 style='color:red'>Conflito: Organização já cadastrada!</h3>",
+                    "mensagem_erro": {"pt": "Conflito: Organização já cadastrada!", "en": "Conflict: Organization already registered!"},
                 }
 
             else:
@@ -148,7 +148,7 @@ def cadastrar_organizacao(request, proposta_id=None):
                     "organizacao": organizacao,
                     "organizacoes_lista": True,
                     "area_principal": True,
-                    "mensagem": "Organização inserida na base de dados.",
+                    "mensagem": {"pt": "Organização inserida na base de dados.", "en": "Organization inserted in the database."},
                 }
 
         else:
@@ -156,10 +156,10 @@ def cadastrar_organizacao(request, proposta_id=None):
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
+                "mensagem_erro": {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."},
             }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     proposta = None
     if proposta_id:
@@ -195,7 +195,7 @@ def edita_organizacao(request, primarykey):
                 "organizacao": organizacao,
                 "organizacoes_lista": True,
                 "area_principal": True,
-                "mensagem": "Organização atualizada na base de dados.",
+                "mensagem": {"pt": "Organização atualizada na base de dados.", "en": "Organization updated in the database."},
             }
 
         else:
@@ -203,10 +203,10 @@ def edita_organizacao(request, primarykey):
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
+                "mensagem_erro": {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."},
             }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Edição de Organização", "en": "Organization Edition"},
@@ -343,7 +343,7 @@ def edita_usuario(request, primarykey):
 
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
-            context["mensagem"] = mensagem
+            context["mensagem"] = {"pt": mensagem, "en": mensagem}
 
         else:
             context["mensagem_erro"] = {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."}
@@ -414,38 +414,43 @@ def carrega_arquivo(request, dado):
         result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={"dry_run": True})
 
         if result.has_errors():
-            mensagem = "Erro ao carregar arquivo." + str(result)
-
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": {"pt": f"Erro ao carregar arquivo: {result}", "en": f"Error loading file: {result}"},
             }
-
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         resource.import_data(dataset, dry_run=False, collect_failed_rows=True, before_import_kwargs={"dry_run": False})  # importa os dados agora
         
+        string_html = {"pt": "", "en": ""}
         if hasattr(resource, "registros"):
-            string_html = "<b>Importado ({0} registros novos): </b><br>".format(len(resource.registros["novos"]))
+            string_html["pt"] = "<b>Importado ({0} registros novos): </b><br>".format(len(resource.registros["novos"]))
+            string_html["en"] = "<b>Imported ({0} new records): </b><br>".format(len(resource.registros["novos"]))
             for row_values in resource.registros["novos"]:
-                string_html += str(row_values) + "<br>"
-            string_html += "<br><br><b>Atualizando ({0} registros): </b><br>".format(len(resource.registros["atualizados"]))
+                string_html["pt"] += str(row_values) + "<br>"
+                string_html["en"] += str(row_values) + "<br>"
+            string_html["pt"] += "<br><br><b>Atualizando ({0} registros): </b><br>".format(len(resource.registros["atualizados"]))
+            string_html["en"] += "<br><br><b>Updating ({0} records): </b><br>".format(len(resource.registros["atualizados"]))
             for row_values in resource.registros["atualizados"]:
-                string_html += str(row_values) + "<br>"
+                string_html["pt"] += str(row_values) + "<br>"
+                string_html["en"] += str(row_values) + "<br>"
         else:
-            string_html = "Importado ({0} registros): <br>".format(len(dataset))
+            string_html["pt"] = "Importado ({0} registros): <br>".format(len(dataset))
+            string_html["en"] = "Imported ({0} records): <br>".format(len(dataset))
             for row_values in dataset:
-                string_html += str(row_values) + "<br>"
+                string_html["pt"] += str(row_values) + "<br>"
+                string_html["en"] += str(row_values) + "<br>"
         
         acerta_nomes = reverse("nomes")
-        string_html += f"<br><br>Para acertar Maiúsculas e Mínúsculas <a href='{acerta_nomes}'>clique aqui</a>"
+        string_html["pt"] += f"<br><br>Para acertar Maiúsculas e Mínúsculas <a href='{acerta_nomes}'>clique aqui</a>"
+        string_html["en"] += f"<br><br>To correct Uppercase and Lowercase <a href='{acerta_nomes}'>click here</a>"
 
         context = {
             "area_principal": True,
             "mensagem": string_html,
         }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Carregamento de CSV (Comma Separated Values)", "en": "CSV Upload"},
@@ -488,9 +493,9 @@ def configurar(request):
                 configuracao.save()
                 context = {
                     "area_principal": True,
-                    "mensagem": "Dados atualizados.",
+                    "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
             except (ValueError, OverflowError, MultiValueDictKeyError):
                 return HttpResponse("Algum erro não identificado.", status=401)
         else:
@@ -557,12 +562,15 @@ def exportar(request):
 
             resource = get_resource(dado)
             if resource is None:
-                mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
+                mensagem_erro = {
+                    "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
+                    "en": "Irregular call: Unknown database = " + modelo,
+                }
                 context = {
                     "area_principal": True,
-                    "mensagem": mensagem,
+                    "mensagem_erro": mensagem_erro,
                 }
-                return render(request, "generic.html", context=context)
+                return render(request, "generic_ml.html", context=context)
         
             if edicao != "todas":
                 queryset = get_queryset(resource, dado, ano, semestre)
@@ -1114,12 +1122,15 @@ def export(request, modelo, formato):
     resource = get_resource(modelo)
 
     if resource is None:
-        mensagem = "Chamada irregular: Base de dados desconhecida = " + modelo
+        mensagem_erro = {
+            "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
+            "en": "Irregular call: Unknown database = " + modelo,
+        }
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     dataset = resource.export()
     databook = tablib.Databook()
@@ -1132,12 +1143,15 @@ def export(request, modelo, formato):
     elif formato == "csv":
         response = HttpResponse(dataset.csv, content_type="text/csv")
     else:
-        mensagem = "Chamada irregular : Formato desconhecido = " + formato
+        mensagem_erro = {
+            "pt": "Chamada irregular : Formato desconhecido = " + formato,
+            "en": "Irregular call: Unknown format = " + formato,
+        }
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
 
@@ -1155,12 +1169,15 @@ def backup(request, formato):
     elif formato == "json":
         response = HttpResponse(databook.json, content_type="application/json")
     else:
-        mensagem = "Chamada irregular : Formato desconhecido = " + formato
+        mensagem_erro = {
+            "pt": "Chamada irregular : Formato desconhecido = " + formato,
+            "en": "Irregular call: Unknown format = " + formato,
+        }
         context = {
             "area_principal": True,
-            "mensagem": mensagem,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     response["Content-Disposition"] = 'attachment; filename="backup.'+formato+'"'
 
@@ -1241,11 +1258,15 @@ def relatorio(request, modelo, formato):
         arquivo = "administracao/relatorio_codigo_conduta_proj.html"
 
     else:
+        mensagem_erro = {
+            "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
+            "en": "Irregular call: Unknown database = " + modelo,
+        }
         context = {
             "area_principal": True,
-            "mensagem": "Chamada irregular: Base de dados desconhecida = " + modelo,
+            "mensagem_erro": mensagem_erro,
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     if formato in ("html", "HTML"):
         return render(request, arquivo, context)
@@ -1302,9 +1323,9 @@ def lista_git(request):
         context = {
             "voltar": True,
             "area_principal": True,
-            "mensagem": "<h3 style='color:red'>Backup realizado.<h3>",
+            "mensagem": {"pt": "Backup realizado.", "en": "Backup completed."},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     #REPOS_URL = f"https://api.github.com/orgs/pfeinsper/repos"
     headers = {"Authorization": f"token {settings.GITHUB_TOKEN}"}

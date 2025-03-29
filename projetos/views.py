@@ -511,12 +511,11 @@ def carrega_bancos(request):
                 banco = Banco.objects.create(nome=row[0], codigo=row[1])
                 banco.save()
             line_count += 1
-    mensagem = "Bancos carregados."
     context = {
         "area_principal": True,
-        "mensagem": mensagem,
+        "mensagem": {"pt": "Bancos carregados.", "en": "Banks loaded."},
     }
-    return render(request, "generic.html", context=context)
+    return render(request, "generic_ml.html", context=context)
 
 
 @login_required
@@ -531,12 +530,15 @@ def reembolso_pedir(request):
 
         if aluno.ano > configuracao.ano or\
             (aluno.ano == configuracao.ano and aluno.semestre > configuracao.semestre):
-            mensagem = "Projetos ainda não disponíveis para o seu período do Capstone."
+            mensagem_erro = {
+                "pt": "Projetos ainda não disponíveis para o seu período do Capstone.",
+                "en": "Projects not yet available for your Capstone period.",
+            }
             context = {
                 "area_principal": True,
-                "mensagem": mensagem,
+                "mensagem_erro": mensagem_erro,
             }
-            return render(request, "generic.html", context=context)
+            return render(request, "generic_ml.html", context=context)
 
         projeto = Projeto.objects.filter(alocacao__aluno=aluno).last()
     else:

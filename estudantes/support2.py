@@ -31,9 +31,12 @@ def estudante_feedback_geral(request, usuario):
         projeto = Projeto.objects.filter(alocacao__aluno=usuario.aluno).last()
         evento_banca_final = Evento.get_evento(nome="Bancas Finais", ano=projeto.ano, semestre=projeto.semestre)
         if not evento_banca_final or (evento_banca_final and hoje <= evento_banca_final.endDate):
-            mensagem = "Fora do período de feedback do Capstone!"
-            context = {"mensagem": mensagem,}
-            return render(request, "generic.html", context=context)
+            mensagem_erro = {
+                "pt": "Fora do período de feedback do Capstone!",
+                "en": "It is not the Capstone feedback period!",
+            }
+            context = {"mensagem_erro": mensagem_erro,}
+            return render(request, "generic_ml.html", context=context)
 
     if request.method == "POST":
         feedback = FeedbackEstudante()
@@ -60,11 +63,10 @@ def estudante_feedback_geral(request, usuario):
 
         feedback.save()
 
-        mensagem = "Feedback recebido, obrigado!"
         context = {
-            "mensagem": mensagem,
+            "mensagem": {"pt": "Feedback recebido, obrigado!", "en": "Feedback received, thank you!",},
         }
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Formulário de Feedback dos Estudantes", "en": "Student Feedback Form"},

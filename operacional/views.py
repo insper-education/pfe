@@ -275,15 +275,21 @@ def carregar_certificado(request):
 
             certificado.save()
 
-            mensagem = "Certificado inserido na base de dados."
-            mensagem += "<br><b>Usuário</b>: " + str(certificado.usuario)
-            mensagem += "<br><b>Projeto</b>: " + str(certificado.projeto)
-            mensagem += "<br><b>Data</b>: " + str(certificado.data)
-            mensagem += "<br><b>Tipo</b>: " + str(certificado.tipo_certificado.titulo)
+            mensagem = {"pt": "Certificado inserido na base de dados.", "en": "Certificate inserted in the database."}
+            mensagem["pt"] += "<br><b>Usuário</b>: " + str(certificado.usuario)
+            mensagem["en"] += "<br><b>User</b>: " + str(certificado.usuario)
+            mensagem["pt"] += "<br><b>Projeto</b>: " + str(certificado.projeto)
+            mensagem["en"] += "<br><b>Project</b>: " + str(certificado.projeto)
+            mensagem["pt"] += "<br><b>Data</b>: " + str(certificado.data)
+            mensagem["en"] += "<br><b>Date</b>: " + str(certificado.data)
+            mensagem["pt"] += "<br><b>Tipo</b>: " + str(certificado.tipo_certificado.titulo)
+            mensagem["en"] += "<br><b>Type</b>: " + str(certificado.tipo_certificado.titulo)
             if certificado.observacao:
-                mensagem += "<br><b>Observação</b>: " + str(certificado.observacao)
+                mensagem["pt"] += "<br><b>Observação</b>: " + str(certificado.observacao)
+                mensagem["en"] += "<br><b>Observation</b>: " + str(certificado.observacao)
             
-            mensagem += "<br><b>Documento</b>: " + str(certificado.documento)
+            mensagem["pt"] += "<br><b>Documento</b>: " + str(certificado.documento)
+            mensagem["en"] += "<br><b>Document</b>: " + str(certificado.documento)
 
             context = {
                 "voltar": True,
@@ -296,10 +302,11 @@ def carregar_certificado(request):
             context = {
                 "voltar": True,
                 "area_principal": True,
-                "mensagem": "<h3 style='color:red'>Falha na inserção na base da dados.<h3>",
+                "mensagem_erro": {"pt": "Falha na inserção na base da dados.", 
+                                  "en": "Failed to insert in the database."},
             }
 
-        return render(request, "generic.html", context=context)
+        return render(request, "generic_ml.html", context=context)
 
     projetos = Projeto.objects.annotate(
         titulo=Coalesce("titulo_final", "proposta__titulo")
