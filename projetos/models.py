@@ -1001,7 +1001,7 @@ class Banca(models.Model):
                   Banca.objects.filter(membro3=membro))
 
         # if hasattr(membro, "Professor"):
-        if membro.prof_a():
+        if membro.eh_prof_a:
             # Orientador é automaticamente membro de banca final e intermediária
             bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla__in=("BI", "BF"))
         return bancas
