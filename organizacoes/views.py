@@ -28,8 +28,7 @@ from calendario.support import cria_material_documento
 from users.support import adianta_semestre, get_edicoes
 from users.models import PFEUser, Parceiro, Aluno, Alocacao
 
-from projetos.models import Proposta, Organizacao
-from projetos.models import Projeto, Configuracao, Feedback
+from projetos.models import Proposta, Organizacao, Projeto, Configuracao, Feedback
 from projetos.models import Anotacao, Conexao, Documento, TipoRetorno
 
 from operacional.models import Curso
@@ -299,6 +298,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     }
     
     return render(request, "organizacoes/documento_view.html", context=context)
+
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
@@ -814,19 +814,14 @@ def todos_parceiros(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def todos_usuarios(request):
-    """Exibe usuários."""
-    usuarios = []
-    if request.is_ajax():                
-        nome = request.POST.get("nome", None)
-        if nome:
-            usuarios = PFEUser.objects.filter(Q(first_name__icontains=nome) | Q(last_name__icontains=nome))
-
+    """Procura e exibe usuários por busca de nome."""
     context = {
-        "usuarios": usuarios,
         "cabecalhos": [{"pt": "Nome", "en": "Name", }, {"pt": "e-mail", "en": "e-mail", }, {"pt": "Tipo", "en": "Type", }, ],
         "titulo": {"pt": "Todos os Usuários", "en": "All Users"},
-        }
-
+    }
+    if request.is_ajax():                
+        nome = request.POST.get("nome", None).strip()
+        context["usuarios"] = PFEUser.objects.filter(Q(first_name__icontains=nome) | Q(last_name__icontains=nome)) if nome else []
     return render(request, "organizacoes/todos_usuarios.html", context)
 
 
@@ -870,13 +865,11 @@ def seleciona_conexoes(request):
             colaboracao = request.POST.get("colaboracao", None)
             if colaboracao and colaboracao != "":
                 parceiro = Parceiro.objects.get(id=colaboracao)
-                (conexao, _) = Conexao.objects.get_or_create(parceiro=parceiro,
-                                                                    projeto=projeto)
+                conexao, _ = Conexao.objects.get_or_create(parceiro=parceiro, projeto=projeto)
                 conexao.colaboracao = True
                 conexao.save()
             else:
-                conexoes_colab = Conexao.objects.filter(colaboracao=True,
-                                                        projeto=projeto)
+                conexoes_colab = Conexao.objects.filter(colaboracao=True, projeto=projeto)
 
                 if conexoes_colab.exists():  # Caso já exista uma conexão
                     for conexao in conexoes_colab:
