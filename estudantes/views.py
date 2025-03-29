@@ -758,7 +758,7 @@ def relato_quinzenal(request):
         "ia_feedback": Estrutura.loads(nome="IA Feedback"),
     }
 
-    if request.user.estud():  # Estudante
+    if request.user.eh_estud:  # Estudante
 
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
                                            projeto__ano=configuracao.ano,
