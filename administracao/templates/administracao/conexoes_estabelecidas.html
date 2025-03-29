@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+  {% load tipo_usuario %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
@@ -30,8 +31,8 @@
         {% for usuario in usuarios %} 
           <tr class="item">
             <td>{{ usuario.usuario.get_full_name }}</td>
-            <td>{{ usuario.usuario.get_tipo_de_usuario_display }}</td>
-            <td>{{ usuario.autenticado }}</td>
+            <td>{% lng usuario.usuario|tipo_usuario:"pt" usuario.usuario|tipo_usuario:"en" %}</td>
+            <td>{% lng_b usuario.autenticado "Sim" "Não" "True" "False" %}</td>
             <td>{{ usuario.desde }}</td>
             <td>{{ usuario.expire_date }}</td>
             <td>{{ usuario.permissoes }}</td>

@@ -8,6 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+  {% load tipo_usuario %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
@@ -47,7 +48,7 @@
             </a>
           </th>
           <td>{{usuario.email}}</td>
-          <td>{{usuario.get_tipo_de_usuario_display}}</td>
+          <td>{% lng usuario|tipo_usuario:"pt" usuario|tipo_usuario:"en" %}</td>
         </tr>
       {% endfor %}
     {% include "tabelas_bottom.html" %}
