@@ -6,28 +6,27 @@
 
 {% load static %}
 {% load linguas %}
+{% load autorizado %}
 
 {% if projeto %}
-  <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
-  {% if tit_proposta and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-    {{projeto.titulo_final}}
-    {% if user.eh_prof_a or user.eh_estud %}
-      </a>
+  {% with autoriz=projeto|autorizado:user %}
+    {% if user.is_authenticated and autoriz %}<a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">{% endif %}
+    {% if tit_proposta and projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+      {{projeto.titulo_final}}
+      {% if user.is_authenticated and autoriz %}</a>{% endif %}
+      <br><span class="tit_ori">
+        <small>
+          {% lng "Título original da proposta" "Original title of the proposal" %}:
+          <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
+          {{projeto.proposta.titulo}}
+        </small>
+      </span>
+    {% else %}
+      {{projeto.get_titulo}}
     {% endif %}
-    <span class="tit_ori"><br>
-      <small>
-        {% lng "Título original da proposta" "Original title of the proposal" %}:
-        <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
-        {{projeto.proposta.titulo}}
-      </small>
-    </span>
-  {% else %}
-    {{projeto.get_titulo}}
-  {% endif %}
-  {% if user.eh_prof_a or user.eh_estud %}
-    </a>
-  {% endif %}
-  {% include "tipo_projeto.html" with projeto=projeto %}
+    {% if user.is_authenticated and autoriz %}</a>{% endif %}
+    {% include "tipo_projeto.html" with projeto=projeto %}
+  {% endwith %}
 {% else %}
   <div class="text-danger">
     {% lng "TITULO DO PROJETO NÃO DEFINIDO" "PROJECT TITLE NOT DEFINED" %}

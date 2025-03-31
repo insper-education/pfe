@@ -6,7 +6,6 @@ Data: 7 de Abril de 2024
 """
 
 from django import template
-from users.models import Alocacao
 
 register = template.Library()
 
