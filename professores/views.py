@@ -515,7 +515,7 @@ def banca_avaliar(request, slug, documento_id=None):
                     mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
                     mensagem_anot += "Documento com Anotações: "
                     mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
-                    mensagem_anot += documento.documento.url + "</a><br>\n<br>\n<br>\n"
+                    mensagem_anot += request.scheme + "://" + request.get_host() + documento.documento.url + "</a><br>\n<br>\n<br>\n"
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
