@@ -12,8 +12,10 @@ register = template.Library()
 @register.filter
 def autorizado(projeto, usuario):
     """Verifica se projeto pode ser visto por usuário."""
-    if usuario.eh_parc:
-        if projeto.proposta.organizacao == usuario.parceiro.organizacao:
-            return True
-        return False
-    return True  # Teremos de analisar o caso de aluno e professor também
+    if usuario.is_authenticated:
+        if usuario.eh_parc:
+            if projeto.proposta.organizacao == usuario.parceiro.organizacao:
+                return True
+            return False
+        return True  # Teremos de analisar o caso de aluno e professor também
+    return False
