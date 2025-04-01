@@ -502,7 +502,8 @@ def banca_avaliar(request, slug, documento_id=None):
             if "arquivo" in request.FILES:
                 # Envia documento com anotações para os envolvidos intantanemente
                 documento = cria_material_documento(request, "arquivo", sigla="RAMB", confidencial=False,
-                                                    projeto=projeto, prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
+                                                    projeto=projeto, usuario=avaliador,
+                                                    prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
                 if documento:
                     documento.anotacao = banca.composicao.exame.titulo
                     documento.save()

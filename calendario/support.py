@@ -88,8 +88,11 @@ def gera_descricao_banca(banca, estudantes):
     return description
 
 
-def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS", confidencial=True, projeto=None, prefix=""):
+def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS", confidencial=True, projeto=None, prefix="", usuario=None):
         """Cria documento."""
+
+        # ESSE CODIGO É MUITO SEMELHANTE AO DE CRIA_DOCUMENTO NO ORGANIZACOES / SUPPORT.PY
+
         max_length_link = Documento._meta.get_field("link").max_length
         if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
             raise ValueError("Erro: Link maior que " + str(max_length_link) + " caracteres.")
@@ -98,13 +101,20 @@ def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS"
         if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
             raise ValueError("Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.")
         
+        # if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+        #     return "<h1>Sem privilégios para gravar tipo de arquivo!</h1>"
+
         documento = Documento()  # Criando documento na base de dados
         documento.tipo_documento = get_object_or_404(TipoDocumento, sigla=sigla)
         documento.data = datetime.datetime.now()
         
         documento.lingua_do_documento = 0  # (0, "Português")
         documento.confidencial = confidencial
-        documento.usuario = request.user
+        if usuario:
+            documento.usuario = usuario
+        else:
+            if request.user.is_authenticated:
+                documento.usuario = request.user
         documento.projeto = projeto
     
         if campo_arquivo and campo_arquivo in request.FILES:
