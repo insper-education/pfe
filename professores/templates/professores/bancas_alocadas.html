@@ -86,7 +86,7 @@
         <div>
           {% with relatorio=banca|get_relatorio %}
             {% if relatorio %}
-              <a href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
+              <a class="esconder" href="{{request.scheme}}://{{request.get_host}}{{relatorio.documento.url}}"
                 target="_blank" rel="noopener noreferrer"><b>[{% lng "RELATÓRIO" "REPORT" %}]</b>
               </a>
             {% endif %}
@@ -94,13 +94,13 @@
 
           {% with site=banca.projeto.get_site %}
             {% if site %}
-              <a href="{{site}}" target="_blank"><b>[SITE]</b></a>
+              <a class="esconder" href="{{site}}" target="_blank"><b>[SITE]</b></a>
             {% endif %}
           {% endwith %}
 
           {% with certificado=banca|certificado_banca:user %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[{% lng "CERTIFICADO" "CERTIFICATE" %}]</b></a>
+              <a class="esconder" href="{{certificado}}" target="_blank" rel="noopener noreferrer"><b>[{% lng "CERTIFICADO" "CERTIFICATE" %}]</b></a>
             {% endif %}
           {% endwith %}
         </div>
