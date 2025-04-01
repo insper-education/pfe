@@ -41,9 +41,9 @@
             <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
           {% endif %}
         {% endwith %}
-        {% if projeto.proposta.intercambio %}
+        {% comment %} {% if projeto.proposta.intercambio %}
           <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
-        {% endif %}
+        {% endif %} {% endcomment %}
         </li>
       {% endif %}
     {% empty %}
@@ -67,6 +67,29 @@
               <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
             {% endif %}
           {% endwith %}
+        </li>
+      {% endif %}
+    {% empty %}
+      {% lng "Projetos não encontrados" "Projects not found" %}
+    {% endfor %}
+    </ol>
+  {% endif %}
+
+  {% if responsavel %}
+    <hr>
+    <h4>{% lng "Professor Responsável" "Professor in charge" %}</h4>
+    <ol>
+    {% for projeto in responsavel %}
+      {% if projeto.alocacao_set.all.count > 0 %}
+        <li><a href="{% url 'projeto_infos' projeto.id %}">
+        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+        {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
+        </a>
+        {% comment %} {% with certificado_orientador=projeto|certificado_responsavel %}
+          {% if certificado_orientador %}
+            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
+          {% endif %}
+        {% endwith %} {% endcomment %}
         </li>
       {% endif %}
     {% empty %}

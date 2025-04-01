@@ -824,8 +824,9 @@ def professor_detail(request, primarykey):
     context = {
             "titulo": {"pt": "Professor", "en": "Professor"},
             "professor": professor,
-            "projetos": Projeto.objects.filter(orientador=professor),
+            "projetos": Projeto.objects.filter(orientador=professor, proposta__intercambio=False),
             "coorientacoes": Coorientador.objects.filter(usuario=professor.user).order_by("projeto__ano", "projeto__semestre"),
+            "responsavel": Projeto.objects.filter(orientador=professor, proposta__intercambio=True),
             "bancas": Banca.get_bancas_com_membro(professor.user),
             "mentorias": Encontro.objects.filter(facilitador=professor.user, projeto__isnull=False).order_by("startDate"),
             "aulas": Evento.objects.filter(tipo_evento__sigla="A", responsavel=professor.user),
