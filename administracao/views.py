@@ -343,7 +343,7 @@ def edita_usuario(request, primarykey):
 
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
-            context["mensagem"] = {"pt": mensagem, "en": mensagem}
+            context["mensagem"] = mensagem
 
         else:
             context["mensagem_erro"] = {"pt": "Falha na inserção na base da dados.", "en": "Failed to insert into the database."}
