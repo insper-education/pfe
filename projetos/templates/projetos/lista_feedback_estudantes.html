@@ -26,19 +26,20 @@
   <div id="atualizar">
 
     <script>
-      var recomendaria = [0, 0, 0];
-      var primeira_opcao = [0, 0];
-      var proposta = [0, 0, 0, 0, 0];
-      var trabalhando = [0, 0, 0, 0];
+      var recomendaria = {{recomendaria}};
+      var primeira_opcao = {{primeira_opcao}};
+      var proposta = {{proposta}};
+      var trabalhando = {{trabalhando}};
+      //var comentarios = {{comentarios}};
       var comentarios = [];
     </script>
 
     {% include "tabelas_top_ml.html" with tabela="Feedbacks" cabecalhos=cabecalhos %}
-      {% for estudante, projeto, feedback in alocacoes %}
+      {% for alocacao, projeto, feedback in estudantes %}
         <tr class="item">
-          <td style="font-size:80%" data-sort="{{estudante.user.get_full_name}}">
-            <a href="{% url 'estudante_detail' estudante.id %}">
-              {{estudante.user.get_full_name}} {% if estudante.externo %}<span style="color:red">[{{estudante.externo}}]</span>{% endif %}
+          <td style="font-size:80%" data-sort="{{alocacao.aluno.user.get_full_name}}">
+            <a href="{% url 'estudante_detail' alocacao.aluno.id %}">
+              {{alocacao.aluno.user.get_full_name}} {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
             </a>
           </td>
           
@@ -55,24 +56,12 @@
               </a>
             {% endif %}
           </td>
-          {% if feedback.recomendaria %}
-            <script>recomendaria[{{feedback.recomendaria}}-1] += 1;</script>
-          {% endif %}
-          {% if feedback.primeira_opcao != None %}
-            <script>primeira_opcao{% if feedback.primeira_opcao %}[0]{% else %}[1]{% endif %} += 1;</script>
-          {% endif %}
-          {% if feedback.recomendaria %}
-            <script>proposta[{{feedback.proposta}}-1] += 1;</script>
-          {% endif %}
-          {% if feedback.trabalhando %}
-            <script>trabalhando[{{feedback.trabalhando}}-1] += 1;</script>
-          {% endif %}
           {% if feedback.outros %}
             <script>comentarios.push(`{{feedback.outros}}`);</script>
           {% endif %}
 
           <td style="font-size:80%" class="text-center">
-            <a href="mailto:{{estudante.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'>
+            <a href="mailto:{{alocacao.aluno.user.email}}?subject=Feedback%20Final%20PFE&amp;body={% include 'mensagem_feedback_final.html' %}" target='_blank'>
               e-mail
             </a>
           </td>

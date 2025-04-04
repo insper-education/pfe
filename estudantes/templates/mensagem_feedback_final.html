@@ -6,7 +6,7 @@
 
 {% load escape_emails %}
 
-Olá {{estudante.user.get_full_name}},
+Olá {{alocacao.aluno.user.get_full_name}},
 
 %0D%0A%0D%0A
 {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
@@ -31,7 +31,7 @@ Estamos encerrando o Capstone, e gostaríamos de saber o impacto dele na sua vid
 %0D%0A%0D%0A
 {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}
 Por favor, responda essas 4 perguntas no link abaixo:%0D%0A
-{% if formatada %}%3Ca href="{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' estudante.user.hashid %}" target='_blank' rel='noopener noreferrer'%3E{% endif %}{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' estudante.user.hashid %}{% if formatada %}%3C%2Fa%3E%3Cbr%3E{% endif %}%0D%0A
+{% if formatada %}%3Ca href="{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' alocacao.aluno.user.hashid %}" target='_blank' rel='noopener noreferrer'%3E{% endif %}{{ request.scheme }}://{{ request.get_host }}{% url 'estudante_feedback_hashid' alocacao.aluno.user.hashid %}{% if formatada %}%3C%2Fa%3E%3Cbr%3E{% endif %}%0D%0A
 
 %0D%0A
 {% if formatada %}&nbsp;&nbsp;&nbsp;&nbsp;{% else %}%20%20%20%20{% endif %}

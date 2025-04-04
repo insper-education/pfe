@@ -683,7 +683,12 @@ def lista_feedback(request):
 def lista_feedback_estudantes(request):
     """Lista todos os feedback das Organizações Parceiras."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes, _, _ = get_edicoes(Projeto)
+    edicoes = get_edicoes(Projeto)[0]
+
+    recomendaria = [0, 0, 0]
+    primeira_opcao = [0, 0]
+    proposta = [0, 0, 0, 0, 0]
+    trabalhando = [0, 0, 0, 0]
 
     if request.is_ajax():
 
@@ -701,46 +706,51 @@ def lista_feedback_estudantes(request):
                 values("estudante").distinct().count()
             num_feedbacks.append(numb_feedb)
 
-        estudantes = Aluno.objects.all()
+        alocacoes = Alocacao.objects.filter(aluno__trancado=False)
 
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
                 ano, semestre = edicao.split('.')
-                estudantes = estudantes.filter(trancado=False, ano=ano, semestre=semestre)
+                alocacoes = alocacoes.filter(projeto__ano=ano, projeto__semestre=semestre)
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
         projetos = []
         feedbacks = []
-        for estudante in estudantes:
-
-            alocacao = Alocacao.objects.filter(projeto__ano=ano,
-                                            projeto__semestre=semestre,
-                                            aluno=estudante).last()
-
-            if alocacao:
-                projetos.append(alocacao.projeto)
-
-                feedback = todos_feedbacks.filter(projeto=alocacao.projeto,
-                                                estudante=estudante).first()
-
-                feedbacks.append(feedback if feedback else None)
-
+        for alocacao in alocacoes:
+            
+            projetos.append(alocacao.projeto)
+            
+            feedback = todos_feedbacks.filter(projeto=alocacao.projeto, estudante=alocacao.aluno).last()
+            
+            if feedback:
+                feedbacks.append(feedback)
+                if feedback.recomendaria:
+                    recomendaria[feedback.recomendaria-1] += 1
+                if feedback.primeira_opcao != None:
+                    primeira_opcao[0 if feedback.primeira_opcao else 1] += 1
+                if feedback.proposta:
+                    proposta[feedback.proposta-1] += 1
+                if feedback.trabalhando:
+                    trabalhando[feedback.trabalhando-1] += 1
             else:
-                projetos.append(None)
                 feedbacks.append(None)
 
-
-        alocacoes = zip(estudantes, projetos, feedbacks)
+        estudantes = zip(alocacoes, projetos, feedbacks)
 
         context = {
             "edicoes": edicoes,
             "num_estudantes": num_estudantes,
             "num_feedbacks": num_feedbacks,
-            "alocacoes": alocacoes,
+            "estudantes": estudantes,
             "coordenacao": configuracao.coordenacao,
-            "cabecalhos": [{"pt": "Nome", "en": "Name"}, 
+            "recomendaria": recomendaria,
+            "primeira_opcao": primeira_opcao,
+            "proposta": proposta,
+            "trabalhando": trabalhando,
+
+            "cabecalhos": [{"pt": "Nome", "en": "Name"},
                            {"pt": "Projeto", "en": "Project"}, 
                            {"pt": "Data", "en": "Date"}, 
                            {"pt": "Mensagem", "en": "Message"}, ],
@@ -750,6 +760,10 @@ def lista_feedback_estudantes(request):
         context = {
             "titulo": {"pt": "Feedbacks Finais dos Estudantes", "en": "Final Feedback from Students"},
             "edicoes": edicoes,
+            "recomendaria": recomendaria,
+            "primeira_opcao": primeira_opcao,
+            "proposta": proposta,
+            "trabalhando": trabalhando,
         }
 
     return render(request, "projetos/lista_feedback_estudantes.html", context)
@@ -785,6 +799,7 @@ def mostra_feedback_estudante(request, feedback_id):
     feedback = get_object_or_404(FeedbackEstudante, id=feedback_id)
     context = {
         "feedback": feedback,
+        "usuario": feedback.estudante.user,
         "projeto": feedback.projeto,
         "organizacao": feedback.projeto.proposta.organizacao,
         }
