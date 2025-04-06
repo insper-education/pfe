@@ -87,7 +87,6 @@
       {% endif %}
 
       {% if pesos %}
-      SSS{{sem_documentos}}SSS
         {% include "tabela_avaliacao_objetivos.html" with sem_NA=True individual=composicao.exame.grupo|negate %}
         {% include "atualiza_objetivos.html" %}
       {% else %}
