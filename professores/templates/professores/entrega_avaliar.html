@@ -32,7 +32,7 @@
 
       <br>
       <b>{% lng "Prazo:" "Deadline:" %}</b><br>
-      &nbsp;{{evento.endDate}} (ao final do dia)<br>
+      &nbsp;{% lng_dl evento.endDate %} ({% lng "ao final do dia" "by the end of the day" %})<br>
 
       <br>
       <b>{% lng "Documento:" "Document:" %}</b><br>
@@ -87,6 +87,7 @@
       {% endif %}
 
       {% if pesos %}
+      SSS{{sem_documentos}}SSS
         {% include "tabela_avaliacao_objetivos.html" with sem_NA=True individual=composicao.exame.grupo|negate %}
         {% include "atualiza_objetivos.html" %}
       {% else %}
@@ -95,12 +96,16 @@
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0" name="decisao" class="custom-control-input" required
                     value="1" {% if avaliacao and avaliacao > 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline0">Adequado</label>
+            <label class="custom-control-label" for="customRadioInline0">
+              {% lng "Adequado" "Adequate" %} 
+            </label>
           </div>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline1" name="decisao" class="custom-control-input" required
                     value="0" {% if avaliacao and avaliacao < 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
-            <label class="custom-control-label" for="customRadioInline1">Inadequado</label>
+            <label class="custom-control-label" for="customRadioInline1">
+              {% lng "Inadequado" "Inadequate" %}
+            </label>
           </div>
         </div>
         <br><br>
