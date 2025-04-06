@@ -1510,7 +1510,13 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             observacao = Observacao.objects.filter(projeto=projeto, exame=composicao.exame,
                                                     avaliador=projeto.orientador.user, alocacao=alocacao).last()
 
-        atrasado = documentos.first().data.date() > evento.endDate  # primeiro é o último entregue por data
+        hoje = datetime.datetime.now()
+
+        primeiro_documento = documentos.first()  # primeiro é o último entregue por data
+        atrasado = hoje.date() > evento.endDate  # USADO PARA BLOQUEAR NOTAS EM OBJETIVOS DE APRENDIZAGEM
+        if primeiro_documento and primeiro_documento.data:
+            if primeiro_documento.data.date() <= evento.endDate:
+                atrasado = False
         
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
@@ -1523,7 +1529,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "evento": evento,
             "periodo_para_rubricas": composicao.exame.periodo_para_rubricas,
             "pesos": pesos,
-            "today": datetime.datetime.now(),
+            "today": hoje,
             "conceitos": conceitos,
             "observacao": observacao,
             "editor": editor,

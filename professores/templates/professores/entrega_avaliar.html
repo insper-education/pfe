@@ -68,11 +68,15 @@
                 </a>
               {% endif %}
             {% endif %}
-            {% if documento.data|diff_days:evento.endDate > 0 %}<span style="color: red;">[FORA DO PRAZO]</span>{% endif %}
+            {% if documento.data|diff_days:evento.endDate > 0 %}
+              <span style="color: red;">
+                [{% lng "FORA DO PRAZO" "OUT OF DEADLINE" %}]
+              </span>
+            {% endif %}
             {% if forloop.first%}</b>{% endif %}  
           </li>
         {% empty %}
-          Não entregue
+          {% lng "Não entregue" "Not submitted" %}
         {% endfor %} 
         </ul><br>
       
