@@ -34,7 +34,7 @@
       <table id="MentoriasTable" class="table table-borderless table-sm arredondado"><tbody>
         {% for e in encontros %} 
           <tr>
-            <td>
+            <td {% if not e.projeto %}style="background-color:rgb(239, 255, 239);"{% endif %}>
               {% comment %} <a class="imprimir" href="{% url 'dinamicas_editar' e.id %}"> {% endcomment %}
               <b>{% lng "Horário" "Time" %}:</b> {{e.startDate}} - {{e.endDate|date:'H:i'}}<br>
               {% if e.facilitador %}
