@@ -53,14 +53,15 @@ def converte_letra(nota, mais="+", espaco=""):
         return "D"+"-"
     return "I"+espaco
 
-def arredonda_conceitos(nota):
-    if( nota >= 9.5 ): return 10
-    if( nota >= 8.5 ): return 9
-    if( nota >= 7.5 ): return 8
-    if( nota >= 6.5 ): return 7
-    if( nota >= 5.5 ): return 6
-    if( nota >= 4.5 ): return 5
-    if( nota >= 3.5 ): return 4
-    if( nota >= 2.5 ): return 3
-    if( nota >= 1.5 ): return 2
-    return 0
+# CREIO NÃO SER MAIS USADO
+# def arredonda_conceitos(nota):
+#     if( nota >= 9.5 ): return 10
+#     if( nota >= 8.5 ): return 9
+#     if( nota >= 7.5 ): return 8
+#     if( nota >= 6.5 ): return 7
+#     if( nota >= 5.5 ): return 6
+#     if( nota >= 4.5 ): return 5
+#     if( nota >= 3.5 ): return 4
+#     if( nota >= 2.5 ): return 3
+#     if( nota >= 1.5 ): return 2
+#     return 0

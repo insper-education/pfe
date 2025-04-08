@@ -565,9 +565,8 @@ def mensagem_orientador(banca, geral=False):
     # Buscando Avaliadores e Avaliações
     avaliadores = {}
     for objetivo in objetivos:
-        avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame)\
-                .order_by("avaliador", "-momento")
-        if banca.alocacao:
+        avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame).order_by("avaliador", "-momento")
+        if banca.alocacao:  # Caso de probation
             avaliacoes = avaliacoes.filter(alocacao=banca.alocacao)
 
         for avaliacao in avaliacoes:

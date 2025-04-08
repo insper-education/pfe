@@ -878,6 +878,12 @@ class Banca(models.Model):
             return self.composicao.exame
         return None
     
+    def get_sigla(self):
+        """Retorna a sigla do tipo de banca."""
+        if self.composicao and self.composicao.exame:
+            return self.composicao.exame.sigla
+        return None
+    
     @property
     def periodo(self):
         if datetime.datetime.now() < self.startDate + datetime.timedelta(days=30):

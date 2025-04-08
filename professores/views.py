@@ -548,7 +548,9 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [projeto.orientador.user.email, ]
             else:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
-            email(subject, recipient_list, message)
+            print("recipient_list", recipient_list)
+            print("message", message)
+            #email(subject, recipient_list, message)
             
             resposta = {"pt": "Avaliação submetida e enviada para:<br>", "en": "Evaluation submitted and sent to:<br>"}
             for recipient in recipient_list:

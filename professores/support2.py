@@ -6,7 +6,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 8 de Janeiro de 2024
 """
 
-from academica.support_notas import converte_letra, arredonda_conceitos
+from academica.support_notas import converte_letra
 
 
 def calcula_media_notas_bancas(obj_avaliados):
@@ -21,7 +21,7 @@ def calcula_media_notas_bancas(obj_avaliados):
             message += txt
             message += ": "
             media = obj["nota"]/obj["qtd"]
-            medias += arredonda_conceitos(media)
+            medias += media
             message += converte_letra(media)
             message += "</li>"
         else:
