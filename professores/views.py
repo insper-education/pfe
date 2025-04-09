@@ -1439,6 +1439,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 "julgamento": julgamento,
                 "julgamento_observacoes": julgamento_observacoes,
                 "objetivos_possiveis": objetivos_possiveis,
+                "individual": not composicao.exame.grupo,
             }
             message = render_message("Resultado Estudantes", context_carta)
         
