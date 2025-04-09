@@ -119,7 +119,6 @@
                   setTimeout(function() {location.reload();}, 0.001); // No futuro incluir a linha e evitar reload
                 }
                 if(response.novo) {
-                  console.log("#mostra_anot_"+organizacao_id);
                   $("#mostra_anot_"+organizacao_id).prepend(
                     '<div style="background-color:#' + response.cor + ';"' +
                     'class="acompanhamentos quad_anot anot_' + response.tipo_retorno_id + '" data-type="' + response.tipo_retorno_id + '">' +
