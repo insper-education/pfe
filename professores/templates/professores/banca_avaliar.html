@@ -131,10 +131,10 @@
         <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px;">
           <label for="destaque">
             <b>{% lng "Projeto Destaque" "Highlight Project" %}:</b>&nbsp;
-            <input type="radio" name="destaque" value="true" required>
+            <input type="radio" name="destaque" value="true" required {% if destaque == True %}checked{% endif %}>
             {% lng "Sim" "Yes" %}
             &nbsp;
-            <input type="radio" name="destaque" value="false" required>
+            <input type="radio" name="destaque" value="false" required {% if destaque == False %}checked{% endif %}>
             {% lng "Não" "No" %}
           </label>
           <br>

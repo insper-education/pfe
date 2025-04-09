@@ -530,16 +530,19 @@ def banca_avaliar(request, slug, documento_id=None):
 
             # Envio de mensagem para Avaliador
             context_carta = {
+                "request": request,
                 "avaliador": avaliador,
                 "realizada": realizada,
                 "banca": banca,
                 "julgamento": julgamento,
                 "julgamento_observacoes": julgamento_observacoes,
+                "destaque": True if request.POST.get("destaque") == "true" else False,
             }
-            message = render_message("Resultado Avaliador", context_carta)
+            message = render_message("Resultado Avaliador", context_carta, urlize=False)
 
             recipient_list = [avaliador.email, ]
             email(subject, recipient_list, message)
+            return HttpResponse(message)
 
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
@@ -548,9 +551,7 @@ def banca_avaliar(request, slug, documento_id=None):
                 recipient_list = [projeto.orientador.user.email, ]
             else:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
-            print("recipient_list", recipient_list)
-            print("message", message)
-            #email(subject, recipient_list, message)
+            email(subject, recipient_list, message)
             
             resposta = {"pt": "Avaliação submetida e enviada para:<br>", "en": "Evaluation submitted and sent to:<br>"}
             for recipient in recipient_list:
@@ -606,6 +607,10 @@ def banca_avaliar(request, slug, documento_id=None):
 
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
+        destaque = request.GET.get("destaque", None)
+        if destaque is not None:
+            destaque = True if destaque == "True" else False
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
@@ -624,6 +629,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "today": datetime.datetime.now(),
             "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
             "niveis_objetivos": niveis_objetivos,
+            "destaque": destaque,
         }
 
         if mensagem:
