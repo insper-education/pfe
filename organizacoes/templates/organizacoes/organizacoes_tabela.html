@@ -17,29 +17,12 @@
 
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Organizacoes" cabecalhos=cabecalhos %}
-
-      {% comment %} <table id="OrganizacoesTable" class="table table-bordered table-hover table-sm" style="width: auto;">
-        <thead class="table-info">
-          <tr>
-            <th scope="col" style="text-align: center;width:425px;"><span style="margin-right: 0.6ex;">
-              {% lng "Organização" "Organization" %}
-            </span></th>
-            <th scope="col" style="text-align: center;width:70px;"><span style="margin-right: 0.6ex;">
-              {% lng "Projetos" "Projects" %}
-            </span></th>
-          </tr>
-        </thead> {% endcomment %}
       {% for organizacao, projetos in organizacoes %} 
         <tr class="item">
-          
           <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=organizacao %}</td>
-
           <td style="text-align: center;" data-toggle="tooltip" data-html="true" animation="true" title="
             {% for projeto in projetos %}
-              &bull;
-              {{projeto.get_titulo}}
-              [{{projeto.orientador}}]
-              <br>
+              &bull; {{projeto.get_titulo}} [{{projeto.orientador}}]<br>
             {% endfor %}
           "> 
             {{projetos|length}}
@@ -50,6 +33,5 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Organizacoes" %}
-  {% comment %} {% include "tabelas_simples_scripts.html" %} {% endcomment %}
 
 {% endblock %}

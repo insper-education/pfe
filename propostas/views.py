@@ -726,15 +726,14 @@ def proposta_editar(request, slug=None):
                 proposta.save()
 
             # Só faz essa parte se usuário logado e professor ou administrador:
-            if request.user.is_authenticated:
-                if request.user.tipo_de_usuario == 2 or request.user.tipo_de_usuario == 4:
-                    proposta.internacional = True if request.POST.get("internacional", None) else False
-                    proposta.intercambio = True if request.POST.get("intercambio", None) else False
-                    proposta.empreendendo = True if request.POST.get("empreendendo", None) else False
-                    colaboracao_id = request.POST.get("colaboracao", None)
-                    if colaboracao_id:
-                        proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-                    proposta.save()
+            if request.user.is_authenticated and request.user.eh_prof_a:
+                proposta.internacional = True if request.POST.get("internacional", None) else False
+                proposta.intercambio = True if request.POST.get("intercambio", None) else False
+                proposta.empreendendo = True if request.POST.get("empreendendo", None) else False
+                colaboracao_id = request.POST.get("colaboracao", None)
+                if colaboracao_id:
+                    proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+                proposta.save()
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
