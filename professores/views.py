@@ -401,11 +401,10 @@ def encontro_feedback(request, pk):
         recipient_list = [encontro.facilitador.email, configuracao.coordenacao.user.email]
         mensagem = encontro.facilitador.get_full_name() + ",<br>\n<br>\n"
         mensagem = "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por sua participação na faciltação da mentoria para o Capstone do Insper.<br>\n<br>\n"
-        mensagem += "Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n"
-        mensagem += "Observações para Estudantes: " + encontro.observacoes_estudantes + "<br>\n"
-        mensagem += "Observações para Orientador: " + encontro.observacoes_orientador + "<br>\n"
-        mensagem += "<br>\n<br>\n"
-
+        mensagem += "Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n<br>\n"
+        mensagem += "<b>Observações para Estudantes</b>: " + encontro.observacoes_estudantes + "<br>\n<br>\n"
+        mensagem += "<b>Observações para Orientador</b>: " + encontro.observacoes_orientador + "<br>\n"
+        
         email(subject, recipient_list, mensagem)
 
         if request.user.is_authenticated:
