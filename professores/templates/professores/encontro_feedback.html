@@ -11,6 +11,7 @@
   {% load tz %}
   {% load get_field %}
   {% load linguas %}
+  {% load bleach %}
   
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
@@ -39,10 +40,10 @@
       {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}<br>
 
       {% if encontro.location %}
-        <b>{% lng "Local" "Location" %}:</b> {{encontro.location}}<br>
+        <b>{% lng "Local" "Location" %}:</b> {{encontro.location|bleach_urlize|safe}}<br>
       {% endif %}  
       {% if encontro.link %}
-        <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link}}</a><br>
+        <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link|bleach_urlize|safe}}</a><br>
       {% endif %}
       
       <b>{% lng "Facilitação" "Facilitation" %}:</b>
