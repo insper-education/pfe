@@ -385,17 +385,34 @@ def banca(request, slug):
     return render(request, "professores/banca_ver.html", context)
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
+# Qualquer um consegue acessar, mesmo não logado
 def encontro_feedback(request, pk):
     """Cria uma tela para preencher feedbacks das mentorias."""
     encontro = get_object_or_404(Encontro, pk=pk)
 
     if request.method == "POST":
-        encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
         encontro.observacoes_estudantes = request.POST.get("observacoes_estudantes")
+        encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
         encontro.save()
-        return redirect("dinamicas_lista")
+
+        # Mensagem para facilitador
+        subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
+        configuracao = get_object_or_404(Configuracao)
+        recipient_list = [encontro.facilitador.email, configuracao.coordenacao.user.email]
+        mensagem = encontro.facilitador.get_full_name() + ",<br>\n<br>\n"
+        mensagem = "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por sua participação na faciltação da mentoria para o Capstone do Insper.<br>\n<br>\n"
+        mensagem += "Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n"
+        mensagem += "Observações para Estudantes: " + encontro.observacoes_estudantes + "<br>\n"
+        mensagem += "Observações para Orientador: " + encontro.observacoes_orientador + "<br>\n"
+        mensagem += "<br>\n<br>\n"
+
+        email(subject, recipient_list, mensagem)
+
+        if request.user.is_authenticated:
+            return redirect("dinamicas_lista")
+        else:
+            context = {"mensagem": {"pt": "Observações Enviadas, Obrigado", "en": "Notes Sent, Thank you"}}
+            return render(request, "generic_ml.html", context=context)
 
     context = {
             "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},

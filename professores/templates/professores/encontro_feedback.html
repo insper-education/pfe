@@ -49,7 +49,9 @@
       {% if encontro.facilitador %}
         <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
         <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
-        {% if request.user != encontro.facilitador %}
+        {% if not request.user.is_authenticated %}
+          <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
+        {% elif request.user != encontro.facilitador %}
           <span class="badge badge-warning">{% lng "NÃO É VOCÊ" "IT IS NOT YOU" %}</span>
         {% endif %}
       {% else %}
