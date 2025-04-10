@@ -400,7 +400,7 @@ def encontro_feedback(request, pk):
         configuracao = get_object_or_404(Configuracao)
         recipient_list = [encontro.facilitador.email, configuracao.coordenacao.user.email]
         mensagem = encontro.facilitador.get_full_name() + ",<br>\n<br>\n"
-        mensagem = "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por sua participação na faciltação da mentoria para o Capstone do Insper.<br>\n<br>\n"
+        mensagem = "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por facilitar a mentoria no Capstone do Insper.<br>\n<br>\n"
         mensagem += "Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n<br>\n"
         mensagem += "<b>Observações para Estudantes</b>: " + encontro.observacoes_estudantes + "<br>\n<br>\n"
         mensagem += "<b>Observações para Orientador</b>: " + encontro.observacoes_orientador + "<br>\n"
