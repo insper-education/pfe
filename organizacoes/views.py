@@ -666,19 +666,26 @@ def organizacao_completo(request, org=None):  # acertar isso para pk
 @permission_required("users.altera_professor", raise_exception=True)
 def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
-    configuracao = get_object_or_404(Configuracao)
+    # configuracao = get_object_or_404(Configuracao)
 
-    organizacoes_pfe = []
-    periodo = []
+    if request.is_ajax():
+        if "edicao" not in request.POST:
+            return HttpResponseNotFound("<h1>Edição não encontrada!</h1>")
+        
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            ano, semestre = None, None
+        else:
+            ano, semestre = edicao.split('.')
 
-    ano = 2018    # Ano de início do Capstone
-    semestre = 2  # Semestre de início do Capstone
-    while True:
         organizacoes = []
         grupos = []
         for organizacao in Organizacao.objects.all():
             count_projetos = []
-            grupos_pfe = Projeto.objects.filter(proposta__organizacao=organizacao, ano=ano, semestre=semestre)
+            if ano and semestre:
+                grupos_pfe = Projeto.objects.filter(proposta__organizacao=organizacao, ano=ano, semestre=semestre)
+            else:
+                grupos_pfe = Projeto.objects.filter(proposta__organizacao=organizacao)
             if grupos_pfe:
                 for grupo in grupos_pfe:  # garante que tem alunos no projeto
                     alunos_pfe = Aluno.objects.filter(alocacao__projeto=grupo)
@@ -688,31 +695,19 @@ def organizacoes_tabela(request):
                     organizacoes.append(organizacao)
                     grupos.append(count_projetos)
 
-        # Se não houver nenhum organização não cria entrada na lista
-        if organizacoes:
-            organizacoes_pfe.append(zip(organizacoes, grupos))
-            periodo.append(str(ano)+"."+str(semestre))
+        cabecalhos = [{"pt": "Organização", "en": "Company"},
+                      {"pt": "Projetos", "en": "Projects"}]
 
-        # Para de buscar depois do semestre atual
-        if (((semestre == configuracao.semestre + 1) and
-                (ano == configuracao.ano)) or
-                (ano > configuracao.ano)):
-            break
-
-        # Avança um semestre
-        if semestre == 2:
-            semestre = 1
-            ano += 1
-        else:
-            semestre = 2
-
-    # inverti lista deixando os mais novos primeiro
-    anos = zip(organizacoes_pfe[::-1], periodo[::-1])
-
-    context = {
-        "titulo": {"pt": "Alocação de Organizações Parceiras", "en": "Partnership Organizations Allocation"},
-        "anos": anos,
+        context = {
+            "cabecalhos": cabecalhos,
+            "organizacoes": zip(organizacoes, grupos),
         }
+
+    else:
+        context = {
+            "titulo": {"pt": "Alocação de Organizações Parceiras", "en": "Partnership Organizations Allocation"},
+            "edicoes": get_edicoes(Projeto)[0],
+            }
 
     return render(request, "organizacoes/organizacoes_tabela.html", context)
 
