@@ -62,7 +62,8 @@
           labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
           datasets: [
             {
-              label: "{% if lingua == 'pt' %}propostas{% else %}proposals{% endif %}",
+              label_pt: "propostas",
+              label_en: "proposals",
               backgroundColor: "#8ebed2",
               data: [{% for num in num_propostas %}{{num}}, {% endfor %}],
               projetos: [
@@ -72,7 +73,8 @@
               ],
             }, 
             {
-              label: "{% if lingua == 'pt' %}projetos{% else %}projects{% endif %}",
+              label_pt: "projetos",
+              label_en: "projects",
               backgroundColor: "#656efd",
               data: [{% for num in num_projetos %}{{num}}, {% endfor %}],
               projetos: [
@@ -87,7 +89,8 @@
             legend: { display: true },
             title: {
               display: true,
-              text: "{% if lingua == 'pt' %}Propostas e Projetos{% else %}Proposals and Projects{% endif %}",
+              text_pt: "Propostas e Projetos",
+              text_en: "Proposals and Projects",
             }, 
             plugins: {
                 datalabels: {
@@ -122,17 +125,20 @@
         labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
         datasets: [
             {
-              label: "{% if lingua == 'pt' %}prospectadas (semestre anterior){% else %}prospected (previous semester){% endif %}",
+              label_pt: "prospectadas (semestre anterior)",
+              label_en: "prospected (previous semester)",
               backgroundColor: "#ffe0f0",
               data: [{% for num in org_prospectadas %}{{num}}, {% endfor %}]
             }, 
             {
-              label: "{% if lingua == 'pt' %}com propostas{% else %}with proposals{% endif %}",
+              label_pt: "com propostas",
+              label_en: "with proposals",
               backgroundColor: "#e56883",
               data: [{% for num in org_propostas %}{{num}}, {% endfor %}]
             },
             {
-              label: "{% if lingua == 'pt' %}com projetos{% else %}with projects{% endif %}",
+              label_pt: "com projetos",
+              label_en: "with projects",
               backgroundColor: "#f84359",
               data: [{% for num in org_projetos %}{{num}}, {% endfor %}]
             },
@@ -142,11 +148,12 @@
             legend: { display: true },
             title: {
               display: true,
-              text: "{% if lingua == 'pt' %}Organizações Envolvidas{% else %}Organizations Involved{% endif %}",
+              text_pt: "Organizações Envolvidas",
+              text_en: "Organizations Involved",
             },
             plugins: {
               datalabels: {
-                color: '#000000',
+                color: "#000000",
                 font: function(context) {
                   var dataset_visibeis = context.chart.getVisibleDatasetCount()
                   var width = context.chart.width;
@@ -164,6 +171,30 @@
     };
 
 
+    function lingua_grafico() {
+      if(localStorage.getItem("lingua") == "pt") {
+        window.projeto.options.title.text = window.projeto.options.title.text_pt;
+        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_pt;
+        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_pt;
+        window.organizacoes.options.title.text = window.organizacoes.options.title.text_pt;
+        window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_pt;
+        window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_pt;
+        window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_pt;
+      } else {
+        window.projeto.options.title.text = window.projeto.options.title.text_en;
+        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_en;
+        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_en;
+        window.organizacoes.options.title.text = window.organizacoes.options.title.text_en;
+        window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_en;
+        window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_en;
+        window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_en;
+      }
+      window.projeto.update();
+      window.organizacoes.update();
+    }
+    
+    document.addEventListener("languageChanged", lingua_grafico);
+
     function carrega_semestre() {  
       // Chart da quantidade de projetos
       var bar_projetos = document.getElementById("bar-projetos").getContext("2d");
@@ -172,6 +203,8 @@
       // Chart da quantidade de organizacoes
       var bar_organizacoes = document.getElementById("bar-organizacoes").getContext("2d");
       window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
+
+      lingua_grafico();
     }
 
     window.onload = carrega_semestre
