@@ -63,12 +63,15 @@ class Organizacao(models.Model):
                                     help_text="Razão social da organização parceira")
     
     ramo_atividade = models.TextField("Ramo de Atividade", max_length=1000, null=True, blank=True,
-                                      help_text="Ramo de atividade da organização parceira")
+                                      help_text="Ramo de atividade da organização parceira (registrado para CNPJ)")
 
     estrelas = models.PositiveSmallIntegerField(default=0, help_text="Interesse para o semestre")
 
     area_curso = models.ManyToManyField("operacional.Curso", blank=True,
                                         help_text="Curso que mais se identifica com a área da organização")
+    
+    segmento = models.ForeignKey("organizacoes.Segmento", null=True, blank=True,
+                                 on_delete=models.SET_NULL, help_text="Segmento da organização parceira")
 
     class Meta:
         ordering = [ "nome",]
