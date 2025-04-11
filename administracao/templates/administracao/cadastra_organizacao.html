@@ -43,6 +43,18 @@
     <textarea id="informacoes" name="informacoes" rows="4" cols="80" maxlength="{% max_length organizacao "informacoes" %}">{% if organizacao.informacoes %}{% slice_max_length organizacao "informacoes" %}{% elif proposta.descricao_organizacao %}{% slice_other_max_length proposta.descricao_organizacao organizacao "informacoes" %}{% endif %}</textarea>
     <br><br>
 
+    <label for="segmento">{% lng "Segmento" "Segment" %}:</label>
+    <select id="segmento" name="segmento">
+      <option value="" {% if not organizacao.segmento %}selected{% endif %}>---------</option>
+      {% for segmento in segmentos %}
+        <option value="{{segmento.id}}" {% if organizacao.segmento and organizacao.segmento.id == segmento.id %}selected{% endif %}
+         class="troca_lingua" data-pt="{{ segmento.nome }}" data-en="{{ segmento.nome_en }}">
+          {{ segmento.nome }}
+        </option>
+      {% endfor %}
+    </select>
+    <br><br>
+
     <label for="logo">{% lng "Logotipo da organização" "Organization logo" %}:</label>
     {% include "selecionar_arquivo.html" with arquivo_nome="logo" arquivo_accept="image/*" %}
     {% if organizacao and organizacao.logotipo %}

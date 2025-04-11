@@ -29,6 +29,15 @@
       </th>
 
       <td>
+        {% if organizacao.segmento %}
+          <span class="texto-longo">{% lng organizacao.segmento.nome organizacao.segmento.nome_en %} </span>
+          <span class="texto-curto">
+            <div class="text-center">{{organizacao.segmento.icone}}</div>
+          </span>
+        {% endif %}
+      </td>
+
+      <td>
         {% if contato == '---------' %}
           ---------
         {% else %}

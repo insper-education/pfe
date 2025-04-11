@@ -617,6 +617,7 @@ def organizacoes_lista(request):
 
     cabecalhos = [
         {"pt": "Organização", "en": "Company", },
+        {"pt": "Segmento", "en": "Segment", },
         {"pt": "Último <br>Contato", "en": "Last <br>Contact", },
         {"pt": "Parceira <br>Desde", "en": "Partner <br>Since", },
         {"pt": "Propostas <br>Enviadas", "en": "Submitted <br>Proposals", },

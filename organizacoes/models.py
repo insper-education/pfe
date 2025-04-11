@@ -13,7 +13,9 @@ class Segmento(models.Model):
 
     nome = models.CharField(max_length=64, help_text="nome do segmento da organização")
 
-    icone = models.CharField(max_length=6, default="", help_text="icone que representa o segmento da organização")
+    nome_en = models.CharField(max_length=64, help_text="nome do segmento da organização em inglês", default="")
+
+    icone = models.CharField(max_length=8, default="", help_text="icone que representa o segmento da organização")
 
     def __str__(self):
         return self.nome

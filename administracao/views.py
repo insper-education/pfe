@@ -56,6 +56,8 @@ from estudantes.models import Pares
 
 from operacional.models import Curso
 
+from organizacoes.models import Segmento
+
 from propostas.support import ordena_propostas
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
@@ -169,6 +171,7 @@ def cadastrar_organizacao(request, proposta_id=None):
         "titulo": {"pt": "Cadastro de Organização", "en": "Organization Registration"},
         "proposta": proposta,
         "organizacao": Organizacao,
+        "segmentos": Segmento.objects.all(),
     }
     
     return render(request, "administracao/cadastra_organizacao.html", context=context)
@@ -211,6 +214,7 @@ def edita_organizacao(request, primarykey):
     context = {
         "titulo": {"pt": "Edição de Organização", "en": "Organization Edition"},
         "organizacao": organizacao,
+        "segmentos": Segmento.objects.all(),
         "edicao": True,
     }
 

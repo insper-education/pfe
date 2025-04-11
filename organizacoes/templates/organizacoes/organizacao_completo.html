@@ -36,6 +36,11 @@
     {% for curso in organizacao.area_curso.all %}{% if not forloop.first %}, {% endif %}{{curso.nome}}{% endfor %}.<br>
   {% endif %}
 
+  {% if organizacao.segmento %}
+    <b>{% lng "Segmento" "Segment" %}:</b>
+    {% lng organizacao.segmento.nome organizacao.segmento.nome_en %}<br>
+  {% endif %}
+
   <br>
   <b>{% lng "contato(s)" "contact(s)" %}:</b>
   <small class="esconder"><a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{organizacao.id}}">&#10133;</a></small>

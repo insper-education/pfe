@@ -28,6 +28,8 @@ from projetos.support import get_upload_path, simple_upload
 
 from operacional.models import Curso
 
+from organizacoes.models import Segmento
+
 from users.models import PFEUser, Aluno, Professor, Parceiro
 
 def limpa_texto(texto):
@@ -75,6 +77,13 @@ def registra_organizacao(request, organizacao=None):
     organizacao.endereco = request.POST.get("endereco", None)
     organizacao.informacoes = request.POST.get("informacoes", None)
 
+    segmento = request.POST.get("segmento", None)
+    if segmento:
+        try:
+            organizacao.segmento = Segmento.objects.get(pk=segmento)
+        except (ValueError, OverflowError, Segmento.DoesNotExist):
+            organizacao.segmento = None
+            
     website = request.POST.get("website", "").strip()
     if website:
         if website[:4] == "http":
