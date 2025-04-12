@@ -204,7 +204,10 @@ def relatorios_publicos(request, edicao=None):
                 ano_semestre = request.POST["edicao"].split('.')
                 if len(ano_semestre) != 2:  # Fazendo isso por que algum engracadinho tentar quebrar o servidor
                     return HttpResponse("Erro ao carregar dados!", status=401)
-                ano, semestre = ano_semestre
+                try:
+                    ano, semestre = int(ano_semestre[0]), int(ano_semestre[1])
+                except ValueError:
+                    return HttpResponse("Erro ao carregar dados!", status=401)
                 projetos = projetos.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
