@@ -195,15 +195,16 @@ def materias_midia(request):
 def relatorios_publicos(request, edicao=None):
     """Exibe relatórios públicos."""
 
-    
     if request.is_ajax():
         
         projetos = Projeto.objects.all()
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao != "todas":
-                ano, semestre = request.POST["edicao"].split('.')
-                #relatorios = relatorios.filter(projeto__ano=ano, projeto__semestre=semestre)
+                ano_semestre = request.POST["edicao"].split('.')
+                if len(ano_semestre) != 2:  # Fazendo isso por que algum engracadinho tentar quebrar o servidor
+                    return HttpResponse("Erro ao carregar dados!", status=401)
+                ano, semestre = ano_semestre
                 projetos = projetos.filter(ano=ano, semestre=semestre)
         else:
             return HttpResponse("Erro ao carregar dados.", status=401)
@@ -222,7 +223,6 @@ def relatorios_publicos(request, edicao=None):
         ]
 
         context = {
-            #"relatorios": relatorios,
             "projetos": projetos,
             "edicao": edicao,
             "cabecalhos": cabecalhos,
