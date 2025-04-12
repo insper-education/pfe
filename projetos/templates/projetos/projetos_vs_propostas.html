@@ -51,9 +51,24 @@
         <br><p>Obs: Prospecting data is generally incomplete and based only on stored notes.</p>
       </small>
       <br><br>
+
+      <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
+        <canvas id="bar-segmentos"></canvas>
+      </div>
+
+      <b>{% lng "Total de projetos por segmento da organização" "Total projects by organization segment" %}:</b><br> 
+      {% for segmento, qtd in total_org_segmentos.items %}
+        
+          {% lng segmento.nome segmento.nome_en %}: {{qtd}}
+        
+      {% endfor %}
+    
+
     </div>
+
   </div>
 
+  
   <script>
 
     var config_projetos = {
@@ -102,7 +117,6 @@
                     if(dataset_visibeis>0) {
                         size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
                     }
-                    
                     return {size: size};
                   }
                 },
@@ -161,15 +175,70 @@
                   if(dataset_visibeis>0) {
                       size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
                   }
-                  return {
-                      size: size
-                  };
+                  return {size: size};
                 }
               },
             }
         }
     };
 
+
+    var config_segmentos = {
+      type: "bar",
+      data: {
+        labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
+        datasets: [
+        {% for seg, qtd in org_segmentos.items %}
+          {
+            label_pt: "{{seg.nome}}",
+            label_en: "{{seg.nome_en}}",
+            backgroundColor: "#{{seg.cor}}",
+            icon: "{{seg.icone}}",
+            data: [{% for num in qtd %}{{num}}{% if not forloop.last %}, {% endif %}{% endfor %}]
+          }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        ]
+      },
+      options: {
+        legend: { display: true },
+        title: {
+          display: true,
+          text_pt: "Projetos por Segmento das Organizações",
+          text_en: "Projects by Organization Segment",
+        },
+        scales: {
+          xAxes: [{
+            stacked: true,
+            ticks: {stepSize: 1,},
+          }],
+          yAxes: [{
+            stacked: true,
+            display: false
+          }]
+        },
+        plugins: {
+            datalabels: {
+              color: "#000000",
+              font: function(context) {
+                var dataset_visibeis = context.chart.getVisibleDatasetCount()
+                var width = context.chart.width;
+                var size = 1.0;
+                if(dataset_visibeis>0) {
+                    size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                }
+                return {size: size};
+              },
+              display: function(context) {
+                return context.dataset.data[context.dataIndex] > 0;  // Só mostra se maior que zero
+              },
+              formatter: function(value, context) {
+                var icon = context.dataset.icon || "";
+                return `${value} ${icon}`; // Combine the number and the icon
+              }
+            },
+        },
+      }
+    };
 
     function lingua_grafico() {
       if(localStorage.getItem("lingua") == "pt") {
@@ -180,6 +249,11 @@
         window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_pt;
         window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_pt;
         window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_pt;
+        window.segmentos.options.title.text = window.segmentos.options.title.text_pt;
+        {% for x in org_segmentos %}
+          window.segmentos.data.datasets[{{forloop.counter0}}].label = window.segmentos.data.datasets[{{forloop.counter0}}].label_pt;
+        {% endfor %}
+        
       } else {
         window.projeto.options.title.text = window.projeto.options.title.text_en;
         window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_en;
@@ -188,9 +262,14 @@
         window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_en;
         window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_en;
         window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_en;
+        window.segmentos.options.title.text = window.segmentos.options.title.text_en;
+        {% for x in org_segmentos %}
+          window.segmentos.data.datasets[{{forloop.counter0}}].label = window.segmentos.data.datasets[{{forloop.counter0}}].label_en;
+        {% endfor %}
       }
       window.projeto.update();
       window.organizacoes.update();
+      window.segmentos.update();
     }
     
     document.addEventListener("languageChanged", lingua_grafico);
@@ -203,6 +282,10 @@
       // Chart da quantidade de organizacoes
       var bar_organizacoes = document.getElementById("bar-organizacoes").getContext("2d");
       window.organizacoes = new Chart(bar_organizacoes, config_organizacoes);
+
+      // Chart da quantidade de segmentos
+      var bar_segmentos = document.getElementById("bar-segmentos").getContext("2d");
+      window.segmentos = new Chart(bar_segmentos, config_segmentos);
 
       lingua_grafico();
     }

@@ -57,48 +57,53 @@ def migracao(request):
 
     message = ""
     
-    Segmento.objects.get_or_create(nome="Outros", nome_en="Others", icone="❓")
-    Segmento.objects.get_or_create(nome="Saúde e Biotecnologia", nome_en="Health and Biotechnology", icone="🧬")
-    Segmento.objects.get_or_create(nome="Indústria e Manufatura", nome_en="Industry and Manufacturing", icone="🏭")
-    Segmento.objects.get_or_create(nome="Tecnologia da Informação", nome_en="Information Technology", icone="💻")
-    Segmento.objects.get_or_create(nome="Ensino e Educação", nome_en="Education", icone="🧠")
-    Segmento.objects.get_or_create(nome="Finanças e Investimentos", nome_en="Finance and Investments", icone="🏦")
-    Segmento.objects.get_or_create(nome="Varejo e Consumo", nome_en="Retail and Consumption", icone="🛒")
-    Segmento.objects.get_or_create(nome="Consultoria e Serviços", nome_en="Consulting and Services", icone="🧑‍💼")
-    Segmento.objects.get_or_create(nome="Transporte e Logística", nome_en="Transport and Logistics", icone="🚚")
-    Segmento.objects.get_or_create(nome="Sustentabilidade", nome_en="Sustainability", icone="🌱")
-    Segmento.objects.get_or_create(nome="Setores Públicos", nome_en="Public Sectors", icone="🏛️")
-    Segmento.objects.get_or_create(nome="Agronegócio e Alimentos", nome_en="Agribusiness and Food", icone="🌾")
-    Segmento.objects.get_or_create(nome="Arte e Cultura", nome_en="Art and Culture", icone="🎨")
-    Segmento.objects.get_or_create(nome="Segurança e Defesa", nome_en="Security and Defense", icone="🛡️")
-    Segmento.objects.get_or_create(nome="Esporte e Lazer", nome_en="Sports and Leisure", icone="⚽")
+    Segmento.objects.get_or_create(nome="Agronegócio", nome_en="Agribusiness", icone="🌾", cor="1f77b4")
+    Segmento.objects.get_or_create(nome="Alimentos", nome_en="Food", icone="🍔", cor="ff7f0e")
+    Segmento.objects.get_or_create(nome="Arte e Cultura", nome_en="Art and Culture", icone="🎨", cor="2ca02c")
+    Segmento.objects.get_or_create(nome="Consultoria e Serviços", nome_en="Consulting and Services", icone="🧑‍💼", cor="d62728")
+    Segmento.objects.get_or_create(nome="Energia", nome_en="Energy", icone="⚡", cor="9467bd")
+    Segmento.objects.get_or_create(nome="Ensino e Educação", nome_en="Education", icone="🧠", cor="8c564b")
+    Segmento.objects.get_or_create(nome="Esporte e Lazer", nome_en="Sports and Leisure", icone="⚽", cor="e377c2")
+    Segmento.objects.get_or_create(nome="Finanças e Investimentos", nome_en="Finance and Investments", icone="🏦", cor="bcbd22")
+    Segmento.objects.get_or_create(nome="Indústria e Manufatura", nome_en="Industry and Manufacturing", icone="🏭", cor="17becf")
+    Segmento.objects.get_or_create(nome="Jogos Digitais", nome_en="Digital Games", icone="🎮", cor="aec7e8")
+    Segmento.objects.get_or_create(nome="Saúde e Biotecnologia", nome_en="Health and Biotechnology", icone="🧬", cor="ffbb78")
+    Segmento.objects.get_or_create(nome="Segurança e Defesa", nome_en="Security and Defense", icone="🛡️", cor="98df8a")
+    Segmento.objects.get_or_create(nome="Setores Públicos e Sociais", nome_en="Public Sectors", icone="🏛️", cor="ff9896")
+    Segmento.objects.get_or_create(nome="Sustentabilidade", nome_en="Sustainability", icone="🌱", cor="c5b0d5")
+    Segmento.objects.get_or_create(nome="Tecnologia da Informação", nome_en="Information Technology", icone="💻", cor="c49c94")
+    Segmento.objects.get_or_create(nome="Transporte e Logística", nome_en="Transport and Logistics", icone="🚚", cor="f7b6d2")
+    Segmento.objects.get_or_create(nome="Varejo e Consumo", nome_en="Retail and Consumption", icone="🛒", cor="d787c1")
     
     message += "<br>Segmentos criados com sucesso:<br>"
 
     empresas = {
-        "Agronegócio e Alimentos": [
+        "Agronegócio": [
+            "Embrapa",
+            "Sipcam Nichino Brasil",
+            "Syngenta Seeds",
+            "J. Assy",
+            "Spacetime Ventures",
+        ],
+        "Alimentos": [
             "Ambev",
-            "Bayer",
-            "Cargill",
             "Coca-Cola FEMSA",
             "Danone",
-            "Embrapa",
-            "Mitsui & Co Coffee Trading Brazil",
             "Puratos",
-            "Raízen",
-            "Sipcam Nichino Brasil",
-            "Syngenta Seeds"
+            "Cargill",
         ],
         "Arte e Cultura": [
-            "Arvore Experiências Imersivas",
             "Daccord Music",
-            "Lote45",
             "MASP",
             "SBT",
-            "Wildlife Studios"
+        ],
+        "Jogos Digitais": [
+            "Arvore Experiências Imersivas",
+            "Tapps Games",
+            "Wildlife Studios",
+            "Fanatee",
         ],
         "Consultoria e Serviços": [
-            "AUGME CAPITAL",
             "Backstage Estratégias Digitais",
             "Cambridge Family Enterprise Group",
             "Exed Consulting",
@@ -113,10 +118,15 @@ def migracao(request):
             "Serasa experian",
             "Tivit",
             "Traive",
-            "Velt Partners"
+            "Velt Partners",
+            "Sistemas Urbanos",
+            "Tata  Consultancy Services",
+        ],
+        "Energia": [
+            "Raízen",
+            "Daimon",
         ],
         "Ensino e Educação": [
-            "Bioedtech",
             "Insper",
             "PrairieLearn",
             "Technische Hochschule Ingolstadt",
@@ -128,9 +138,9 @@ def migracao(request):
         "Esporte e Lazer": [
             "Confederação Brasileira de Futsal",
             "Paraty Brazil by UTMB",
-            "Tapps Games"
         ],
         "Finanças e Investimentos": [
+            "AUGME CAPITAL",
             "Bexs Banco",
             "Blackbelt Finance",
             "Bradesco",
@@ -145,7 +155,11 @@ def migracao(request):
             "Nubank",
             "QI Tech",
             "Rendimento Pay",
-            "SRM Asset"
+            "SRM Asset",
+            "Dotz",
+            "Lote45",
+            "Creditas",
+            "Mitsui & Co Coffee Trading Brazil",
         ],
         "Indústria e Manufatura": [
             "ABB",
@@ -176,31 +190,25 @@ def migracao(request):
             "Schulz S.A",
             "Selco Tecnologia e Indústria",
             "Siemens",
-            "Sindipeças",
             "Voith Paper",
             "VOSS Automotive",
             "Votorantim",
             "WEG",
-            "Whirlpool"
-        ],
-        "Outros": [
-            "Albernaz",
-            "Boldr",
+            "Whirlpool",
+            "Suzano",
+            "Bioedtech",
+            "BPN Transmissões",
+            "SCANIA",
+            "Incentiv",
             "Confederação Nacional da Indústria",
-            "Correios",
-            "Dotz",
-            "Eixo Estratégia Política",
-            "Fundação Oswaldo Cruz - Instituto carlos chagas",
-            "Inovação Social",
-            "Instituto Nacional de Pesquisas Espaciais",
-            "IPT",
-            "J. Assy",
-            "Ministério Público Federal",
-            "Polícia Militar do Estado de São Paulo",
-            "Sabesp",
-            "Salvaguarda",
-            "Sistemas Urbanos",
-            "Suzano"
+            "Sindipeças",
+            "Klabin",
+            "Solar Bot",
+            "Suzano",
+            "SPI",
+            "Indago Devices Inc",
+            "Fiberbus",
+            "D2Eng",
         ],
         "Saúde e Biotecnologia": [
             "A. C. Camargo Cancer Center",
@@ -212,30 +220,36 @@ def migracao(request):
             "Hospital Alemão Oswaldo Cruz",
             "Hospital Beneficência Portuguesa",
             "Hospital Sírio-Libanês",
-            "Indago Devices Inc",
             "Johnson & Johnson",
             "Kenvue (J&J)",
             "Magnamed Tecnologia Médica",
             "Mediterrâneo Saúde",
             "Mevo Saúde",
-            "Mirca Serviços de Fisioterapia"
+            "Mirca Serviços de Fisioterapia",
+            "Albernaz",
+            "Fundação Oswaldo Cruz - Instituto carlos chagas",
+            "Bayer",
         ],
         "Segurança e Defesa": [
             "Akaer",
-            "Airis",
-            "Akaer",
             "Salvaguarda"
         ],
-        "Setores Públicos": [
-            "CTI Renato Archer"
+        "Setores Públicos e Sociais": [
+            "CTI Renato Archer",
+            "Correios",
+            "Eixo Estratégia Política",
+            "Instituto Nacional de Pesquisas Espaciais",
+            "IPT",
+            "Ministério Público Federal",
+            "Polícia Militar do Estado de São Paulo",
+            "Sabesp",
+            "Salvaguarda",
+            "Incentiv",
+            "join.valle",
         ],
         "Sustentabilidade": [
-            "Cicloway",
-            "Klabin",
-            "Mínimo P&D",
-            "Solar Bot",
-            "Suzano",
-            "Université Côte d'Azur – Mediterranean Institute of Risk, Environment and Sustainable Development"
+            "Inovação Social",
+            "Lab. Arq. Futuro de Cidades",
         ],
         "Tecnologia da Informação": [
             "Amazon",
@@ -245,11 +259,8 @@ def migracao(request):
             "COMPSIS",
             "Connect Data",
             "CWS Platform",
-            "D2Eng",
             "Dell Technologies",
             "deX Labs",
-            "Fanatee",
-            "Fiberbus",
             "Google",
             "Grupo BYX",
             "Hewlett-Packard",
@@ -257,8 +268,6 @@ def migracao(request):
             "iCelera",
             "ifood",
             "Intel",
-            "join.valle",
-            "Lab. Arq. Futuro de Cidades",
             "Loft",
             "Looqbox",
             "Mastertech",
@@ -278,28 +287,24 @@ def migracao(request):
             "PREDIPARK",
             "Quinto Andar",
             "SMART Modular Technologies",
-            "Spacetime Ventures",
-            "SPI",
             "STMicroelectronics",
-            "Tata  Consultancy Services",
-            "Unico"
+            "Unico",
+            "Boldr",
+            "Airis",
+            "Mínimo P&D",
         ],
         "Transporte e Logística": [
             "Alupar",
             "Azul",
-            "BPN Transmissões",
             "Latam",
             "Mercosul-Line",
             "Mottu",
-            "SCANIA",
             "tembici",
-            "Ultracargo"
+            "Ultracargo",
+            "Cicloway",
         ],
         "Varejo e Consumo": [
             "B2W",
-            "Creditas",
-            "Daimon",
-            "Incentiv",
             "Via Varejo"
         ]
     }

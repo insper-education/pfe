@@ -840,7 +840,7 @@ def proposta_remover(request, slug):
     }
     return render(request, "generic_ml.html", context=context)
 
-# @login_required
+@login_required
 def carrega_proposta(request):
     """Página para carregar Proposta de Projetos em PDF."""
     configuracao = get_object_or_404(Configuracao)

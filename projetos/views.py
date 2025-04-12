@@ -48,6 +48,8 @@ from administracao.support import usuario_sem_acesso
 
 from operacional.models import Curso
 
+from organizacoes.models import Segmento
+
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
 from users.support import adianta_semestre, get_edicoes, adianta_semestre_conf
 
@@ -838,8 +840,10 @@ def validate_aviso(request):
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções dos projetos e propostas."""
     configuracao = get_object_or_404(Configuracao)
-    edicoes = range(2018, configuracao.ano+1)
-    edicoes2, _, _ = get_edicoes(Proposta)
+    #edicoes = range(2018, configuracao.ano+1)
+    edicoes  =range(2023, 2024)
+    #edicoes2, _, _ = get_edicoes(Proposta)
+    edicoes2 = ["2023.1", "2023.2", "2024.1", "2024.2"]
 
     total_org_propostas = {}
     total_org_projetos = {}
@@ -852,8 +856,7 @@ def projetos_vs_propostas(request):
 
         ano_projeto, semestre = edicao.split('.')
 
-        propostas = Proposta.objects.filter(ano=int(ano_projeto)).\
-            filter(semestre=semestre)
+        propostas = Proposta.objects.filter(ano=ano_projeto, semestre=semestre)
         nome_propostas.append(propostas)
         num_propostas.append(propostas.count())
         tmp_org = {}
@@ -867,20 +870,36 @@ def projetos_vs_propostas(request):
     num_projetos = []
     org_projetos = []
     nome_projetos = []
+
+    segmentos = list(Segmento.objects.all())
+    org_segmentos = {}
+    total_org_segmentos = {}
+    for segmento in segmentos:
+        org_segmentos[segmento] = []
+        total_org_segmentos[segmento] = 0
+
     for edicao in edicoes2:
 
         ano_projeto, semestre = edicao.split('.')
 
-        projetos = Projeto.objects.filter(ano=int(ano_projeto)).\
-            filter(semestre=semestre)
+        projetos = Projeto.objects.filter(ano=ano_projeto, semestre=semestre)
         nome_projetos.append(projetos)
         num_projetos.append(projetos.count())
         tmp_org = {}
+
+        tmp_segmentos = {}
+        for segmento in segmentos:
+            tmp_segmentos[segmento] = 0
         for projeto in projetos:
             if projeto.organizacao:
                 tmp_org[projeto.organizacao.id] = "True"
                 total_org_projetos[projeto.organizacao.id] = "True"
+                if projeto.organizacao.segmento:    # Segmentos por organização
+                    tmp_segmentos[projeto.organizacao.segmento] += 1
+                    total_org_segmentos[projeto.organizacao.segmento] += 1
         org_projetos.append(len(tmp_org))
+        for segmento in segmentos:
+            org_segmentos[segmento].append(tmp_segmentos[segmento])
 
     # ORGANIZACOES PROSPECTADAS
     org_prospectadas = []
@@ -920,6 +939,8 @@ def projetos_vs_propostas(request):
         "org_projetos": org_projetos,
         "total_org_propostas": len(total_org_propostas),
         "total_org_projetos": len(total_org_projetos),
+        "org_segmentos": org_segmentos,
+        "total_org_segmentos": total_org_segmentos,
         "loop_anos": edicoes,
         "edicoes": edicoes2,
     }
