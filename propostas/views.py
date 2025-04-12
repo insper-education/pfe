@@ -840,7 +840,7 @@ def proposta_remover(request, slug):
     }
     return render(request, "generic_ml.html", context=context)
 
-@login_required
+#@login_required
 def carrega_proposta(request):
     """Página para carregar Proposta de Projetos em PDF."""
     configuracao = get_object_or_404(Configuracao)
@@ -864,14 +864,21 @@ def carrega_proposta(request):
         resposta = {"pt": "", "en": ""}
 
         if "arquivo" in request.FILES:
-            arquivo = simple_upload(request.FILES["arquivo"],
-                                    path=get_upload_path(None, ""))
+            try:
+                arquivo = simple_upload(request.FILES["arquivo"],
+                                        path=get_upload_path(None, ""),
+                                        valida="pdf")
+            except Exception as e:
+                return HttpResponse("Erro ao processar o arquivo: " + str(e), status=401)
 
-            print(arquivo.content_type)
-            if arquivo.content_type != "application/pdf":
-                return HttpResponse("Arquivo não é um PDF.", status=401)
-
-            fields = get_form_fields(arquivo[1:])
+            if arquivo is None:
+                return HttpResponse("Arquivo não reconhecido.", status=401)
+            
+            try:
+                fields = get_form_fields(arquivo[1:])
+            except Exception as e:
+                return HttpResponse("Erro ao processar o arquivo: " + str(e), status=401)
+            
             if fields is None:
                 mensagem_erro = {
                     "pt": "ERRO: Arquivo formulário não reconhecido",
@@ -911,7 +918,7 @@ def carrega_proposta(request):
 
         context = {
             "voltar": True,
-            "mensagem": resposta,
+            "mensagem_l": resposta,
         }
         return render(request, "generic_ml.html", context=context)
 

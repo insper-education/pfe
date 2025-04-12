@@ -54,14 +54,24 @@ def get_upload_path(instance, filename):
     return "{0}".format(caminho)
 
 
-def simple_upload(myfile, path="", prefix=""):
+def simple_upload(arquivo, path="", prefix="", valida=None):
     """Faz uploads para o servidor."""
+    if valida:
+        if valida == "pdf":
+            if arquivo.content_type != "application/pdf":
+                return None  # Não é PDF
     file_system_storage = FileSystemStorage()
-    filename = str(myfile.name.encode("utf-8").decode("ascii", "ignore"))
+    filename = str(arquivo.name.encode("utf-8").decode("ascii", "ignore"))
     while ".." in filename:  # Remove .. do nome do arquivo
         filename = filename.replace("..", ".")
-    name = path+prefix+text.get_valid_filename(filename)
-    filename = file_system_storage.save(name, myfile)
+
+    sanitized_filename = text.get_valid_filename(filename)
+
+    if not sanitized_filename:
+        raise ValueError(f"Erro com nome do arquivo: {arquivo.name}")
+    
+    name = path+prefix+sanitized_filename
+    filename = file_system_storage.save(name, arquivo)
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
 

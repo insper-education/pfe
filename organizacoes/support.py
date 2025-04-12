@@ -68,10 +68,12 @@ def _getFields(obj, tree=None, retval=None, fileobj=None):
 
 # Para pegar os campos do PDF
 def get_form_fields(infile):
-    infile = PdfFileReader(open(infile, "rb"))
-    fields = _getFields(infile)
-    return fields
-
+    try:
+        infile = PdfFileReader(open(infile, "rb"))
+        fields = _getFields(infile)
+        return fields
+    except Exception as e:
+        raise ValueError(f"Erro ao ler o arquivo PDF: {str(e)}")
 
 # Adiciona um novo documento na base de dados
 def cria_documento(request, forca_confidencial=False, usuario=None):
