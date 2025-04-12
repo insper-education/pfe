@@ -55,13 +55,13 @@
       <div class="chart-container" style="position: relative; width:100vw; max-height: 768px; max-width: 1240px; padding-right: 30px;">
         <canvas id="bar-segmentos"></canvas>
       </div>
-
+      <br>
       <b>{% lng "Total de projetos por segmento da organização" "Total projects by organization segment" %}:</b><br> 
-      {% for segmento, qtd in total_org_segmentos.items %}
-        
-          {% lng segmento.nome segmento.nome_en %}: {{qtd}}
-        
-      {% endfor %}
+      <div class="mt-2 ml-2">
+        {% for segmento, qtd in total_org_segmentos.items %}
+          {{segmento.icone}} - {% lng segmento.nome segmento.nome_en %}: {{qtd}}<br>  
+        {% endfor %}
+      </div>
     
 
     </div>
@@ -200,7 +200,10 @@
         ]
       },
       options: {
-        legend: { display: true },
+        legend: { 
+          display: true,
+          position: "bottom"
+        },
         title: {
           display: true,
           text_pt: "Projetos por Segmento das Organizações",
@@ -224,7 +227,7 @@
                 var width = context.chart.width;
                 var size = 1.0;
                 if(dataset_visibeis>0) {
-                    size = Math.round(width / (2 * dataset_visibeis * {{ edicoes|length }}));
+                    size = Math.round(3 * width / (dataset_visibeis * {{ edicoes|length }}));
                 }
                 return {size: size};
               },
@@ -233,7 +236,7 @@
               },
               formatter: function(value, context) {
                 var icon = context.dataset.icon || "";
-                return `${value} ${icon}`; // Combine the number and the icon
+                return `${icon} ${value}`; // Combine the number and the icon
               }
             },
         },

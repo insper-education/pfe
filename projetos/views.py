@@ -840,10 +840,8 @@ def validate_aviso(request):
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções dos projetos e propostas."""
     configuracao = get_object_or_404(Configuracao)
-    #edicoes = range(2018, configuracao.ano+1)
-    edicoes  =range(2023, 2024)
-    #edicoes2, _, _ = get_edicoes(Proposta)
-    edicoes2 = ["2023.1", "2023.2", "2024.1", "2024.2"]
+    edicoes = range(2018, configuracao.ano+1)
+    edicoes2, _, _ = get_edicoes(Proposta)
 
     total_org_propostas = {}
     total_org_projetos = {}
