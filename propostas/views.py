@@ -867,6 +867,10 @@ def carrega_proposta(request):
             arquivo = simple_upload(request.FILES["arquivo"],
                                     path=get_upload_path(None, ""))
 
+            print(arquivo.content_type)
+            if arquivo.content_type != "application/pdf":
+                return HttpResponse("Arquivo não é um PDF.", status=401)
+
             fields = get_form_fields(arquivo[1:])
             if fields is None:
                 mensagem_erro = {

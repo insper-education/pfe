@@ -198,19 +198,19 @@ def relatorios_publicos(request, edicao=None):
     if request.is_ajax():
         
         projetos = Projeto.objects.all()
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano_semestre = request.POST["edicao"].split('.')
-                if len(ano_semestre) != 2:  # Fazendo isso por que algum engracadinho tentar quebrar o servidor
-                    return HttpResponse("Erro ao carregar dados!", status=401)
-                try:
-                    ano, semestre = int(ano_semestre[0]), int(ano_semestre[1])
-                except ValueError:
-                    return HttpResponse("Erro ao carregar dados!", status=401)
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-        else:
-            return HttpResponse("Erro ao carregar dados.", status=401)
+        if "edicao" not in request.POST:
+            return HttpResponse("Erro ao carregar dados!", status=401)
+        edicao = request.POST["edicao"]
+        if edicao != "todas":
+            ano_semestre = request.POST["edicao"].split('.')
+            if len(ano_semestre) != 2:  # Fazendo isso por que algum engracadinho tentar quebrar o servidor
+                return HttpResponse("Erro ao carregar dados!", status=401)
+            try:
+                ano, semestre = int(ano_semestre[0]), int(ano_semestre[1])
+            except ValueError:
+                return HttpResponse("Erro ao carregar dados!", status=401)
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+        
         
         cabecalhos = [{"pt": "Projeto", "en": "Project"},
                       {"pt": "Estudantes", "en": "Students"},
