@@ -302,6 +302,7 @@ def preenche_proposta_pdf(campos, proposta):
                 )
                 contatos.append(contato)
 
+    proposta.save()  # Precisa salvar a proposta pois é necessária na definição das áreas
     check_values = cria_area_proposta_pdf(campos, proposta)
     proposta.aprimorar =  "interesse#0" in check_values
     proposta.realizar =  "interesse#1" in check_values
