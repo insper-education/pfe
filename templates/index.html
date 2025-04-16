@@ -9,6 +9,37 @@
   {% load static %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+
+  <style>
+
+    .c_destaque {
+      background: linear-gradient(135deg, rgb(239, 235, 255), rgb(236, 232, 252));
+      box-shadow: 0 4px 8px rgba(225, 221, 255, 0.8);
+      border-radius: 9px;
+      border: 2px solid rgba(135, 121, 155, 0.4);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .c_destaque h5 {
+      font-weight: 600;
+    }
+
+    .card-title i {
+      color: #5c656d;
+      width: 24px;
+      text-align: center;
+      margin-right: 6px;
+      font-size: 1.2em;
+    }
+    
+    .card:hover i {
+      color: #004baf;
+    }
+
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -18,7 +49,7 @@
         <a  class="link_direto" href="{% url 'calendario' %}">
           <div class="card-body">
             <h5 class="card-title">
-              {% lng "Calendário Geral" "General Calendar" %}
+              <i class="fas fa-calendar-alt"></i> {% lng "Calendário Geral" "General Calendar" %}
             </h5>
           </div>
         </a>
@@ -26,19 +57,21 @@
 
       {% if perms.estudantes %}
         <div class="card extra-space">
-          <div class="card-body" onclick="loadContent(this, '{% url 'estudantes' %}')">
+          <div class="card-body {% if user.eh_estud %}c_destaque{% endif %}" 
+           onclick="loadContent(this, '{% url 'estudantes' %}')">
             <h5 class="card-title">
-              {% lng "Área dos Estudantes" "Students Area" %}
+              <i class="fas fa-user-graduate"></i> {% lng "Área dos Estudantes" "Students Area" %}
             </h5>
           </div>
           <div class="card-content"></div>
         </div>
       {% endif %}
       {% if perms.projetos.add_proposta %}
-        <div class="card">
-          <div class="card-body" onclick="loadContent(this, '{% url 'organizacoes' %}')">
+        <div class="card ">
+          <div class="card-body {% if user.eh_parc %}c_destaque{% endif %}"
+           onclick="loadContent(this, '{% url 'organizacoes' %}')">
             <h5 class="card-title">
-              {% lng "Área dos Parceiros" "Partners Area" %}
+              <i class="fas fa-handshake"></i> {% lng "Área dos Parceiros" "Partners Area" %}
             </h5>
           </div>
           <div class="card-content"></div>
@@ -46,9 +79,10 @@
       {% endif %}
       {% if perms.users.change_professor %}
         <div class="card">
-          <div class="card-body" onclick="loadContent(this, '{% url 'professores' %}')">
+          <div class="card-body {% if user.eh_prof %}c_destaque{% endif %}"
+           onclick="loadContent(this, '{% url 'professores' %}')">
             <h5 class="card-title">
-              {% lng "Área dos Professores" "Professors Area" %}
+              <i class="fas fa-chalkboard-teacher"></i> {% lng "Área dos Professores" "Professors Area" %}
             </h5>
           </div>
           <div class="card-content"></div>
@@ -56,7 +90,7 @@
         <div class="card extra-space">
           <div class="card-body" onclick="loadContent(this, '{% url 'academica' %}')">
             <h5 class="card-title">
-              {% lng "Área Acadêmica" "Academic Area" %}
+              <i class="fas fa-book"></i> {% lng "Área Acadêmica" "Academic Area" %}
             </h5>
           </div>
           <div class="card-content"></div>
@@ -64,7 +98,7 @@
         <div class="card">
           <div class="card-body" onclick="loadContent(this, '{% url 'operacional' %}')">
             <h5 class="card-title">
-              {% lng "Área Operacional" "Operational Area" %}
+              <i class="fas fa-clipboard-list"></i> {% lng "Área Operacional" "Operational Area" %}
             </h5>
           </div>
           <div class="card-content"></div>
@@ -73,7 +107,7 @@
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'administracao' %}')">
               <h5 class="card-title">
-                {% lng "Área Administrativa" "Administrative Area" %}
+                <i class="fas fa-user-cog"></i> {% lng "Área Administrativa" "Administrative Area" %}
               </h5>
             </div>
             <div class="card-content"></div>
@@ -85,7 +119,7 @@
           <div class="card extra-space">
             <div class="card-body" onclick="loadContent(this, '{% url 'propostas' %}')">
               <h5 class="card-title">
-                {% lng "Propostas" "Proposals" %}
+                <i class="fas fa-file-contract"></i> {% lng "Propostas" "Proposals" %}
               </h5>
             </div>
             <div class="card-content"></div>
@@ -95,7 +129,7 @@
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'projetos' %}')">
               <h5 class="card-title">
-                {% lng "Projetos" "Projects" %}
+                <i class="fas fa-sitemap"></i> {% lng "Projetos" "Projects" %}
               </h5>
             </div>
             <div class="card-content"></div>
@@ -106,7 +140,7 @@
       <div class="card extra-space">
         <div class="card-body" onclick="loadContent(this, '{% url 'documentos' %}')">
           <h5 class="card-title">
-            {% lng "Documentações" "Documentation" %}
+            <i class="fas fa-folder-open"></i> {% lng "Documentações" "Documentation" %}
           </h5>
         </div>
         <div class="card-content"></div>
