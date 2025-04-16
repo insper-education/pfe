@@ -29,18 +29,18 @@
   {% include "tipo_proposta.html" with descr_long=True %}<br>
 
   {% if proposta.descricao %}
-    <p>
+    <div class="mt-3">
       <b data-toggle="tooltip" data-html="true" animation="true"
        title="Uma breve descrição do que se trata o projeto e outras informações relevantes.">
         {% lng "Descrição:" "Description:" %}
       </b> {{proposta.descricao|linebreaks|bleach_urlize|safe}}
-    </p>
+    </div>
   {% else %}
     <p><u>{% lng "Campo de descrição ausente." "Description field missing." %}<u><br></p>
   {% endif %}
 
   {% if proposta.expectativas %}
-    <p>
+    <div class="mt-3">
       <b data-toggle="tooltip" data-html="true" animation="true" title="
         Exemplos de resultados ou entregas esperadas.
         Durante o projeto isso deverá ser dicutido com a organização parceira e com os professores orientadores para um melhor alinhamento.
@@ -48,13 +48,13 @@
         {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
       </b>
       {{proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
-    <p>
+    </div>
   {% else %}
       <p><u>{% lng "Campo de expectativas ausente." "Expectations field missing." %}<u><br></p>
   {% endif %}
 
   {% if proposta.recursos %}
-    <p>
+    <div class="mt-3">
       <b data-toggle="tooltip" data-html="true" animation="true" title="
         Recursos que as organizações informaram que irão disponibilizar para os estudantes.
         O Insper irá auxiliar em um acesso facilitado para os diversos laboratórios da escola conforme sua disponibiidade.
@@ -62,24 +62,24 @@
         {% lng "Recursos a serem disponibilizados:" "Resources to be made available:" %}
       </b>
       {{proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
-    </p>
+    </div>
   {% endif %}
 
   {% if proposta.observacoes %}
-    <p>
+    <div class="mt-3">
       <b data-toggle="tooltip" data-html="true" animation="true"
        title="Outras observações que a organização parceira considerou relevante para informar aos estudantes.">
         {% lng "Outras observações:" "Other observations:" %}
       </b>
       {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
-    </p>
+    </div>
   {% endif %}
 
   {% if proposta.anexo %}
-    <p>
+    <div class="mt-3">
       <b>{% lng "Anexo:" "Attachment:" %}</b>
       <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
-    </p>
+    </div>
   {% endif %}
   
   {% if completo %}
