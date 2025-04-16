@@ -109,3 +109,29 @@ h5 {
   list-style-type:none;
   margin-bottom: 0.8em;
 }
+
+.c_destaque {
+  background: linear-gradient(135deg, rgb(239, 235, 255), rgb(236, 232, 252));
+  box-shadow: 0 4px 8px rgba(225, 221, 255, 0.8);
+  border-radius: 9px;
+  border: 2px solid rgba(135, 121, 155, 0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.c_destaque h5 {
+  font-weight: 600;
+}
+
+.card-title i {
+  color: #5c656d;
+  width: 24px;
+  text-align: center;
+  margin-right: 6px;
+  font-size: 1.2em;
+}
+
+.card:hover i {
+  color: #004baf;
+}
