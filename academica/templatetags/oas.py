@@ -60,11 +60,12 @@ def get_oas_g(projeto):
     avaliacoes = Avaliacao2.objects.filter(projeto=projeto, exame__grupo=True)
     resultados = get_objetivos(projeto, avaliacoes)[0]
     objetivos = {}
-    for obj, val_pes in resultados.items():
-        cor = "black"
-        if val_pes[0] < 5:
-            cor = "red"
-        objetivos[obj] = {"media": [converte_letra(val_pes[0]), val_pes[0], cor], "peso": val_pes[1]}
+    if resultados:
+        for obj, val_pes in resultados.items():
+            cor = "black"
+            if val_pes[0] < 5:
+                cor = "red"
+            objetivos[obj] = {"media": [converte_letra(val_pes[0]), val_pes[0], cor], "peso": val_pes[1]}
     return objetivos
 
 

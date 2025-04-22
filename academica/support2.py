@@ -36,7 +36,7 @@ def get_objetivos(avaliado, avaliacoes):
                 # Senão é só uma avaliação de objetivo mais antiga (E IGNORAR)
 
     if not lista_objetivos:
-        return 0, None, None
+        return {}, None, None
 
     # média por objetivo
     val_objetivos = {}
