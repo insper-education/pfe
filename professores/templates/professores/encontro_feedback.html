@@ -30,73 +30,75 @@
 {% endblock %}
 
 {% block content %}
-
-  {% if encontro.projeto %}
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-
-      {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}<br>
-
-      <b>{% lng "Data da Mentoria" "Mentoring Date" %}:</b>
-      {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}<br>
-
-      {% if encontro.location %}
-        <b>{% lng "Local" "Location" %}:</b> {{encontro.location|bleach_urlize|safe}}<br>
-      {% endif %}  
-      {% if encontro.link %}
-        <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link|bleach_urlize|safe}}</a><br>
-      {% endif %}
-      
-      <b>{% lng "Facilitação" "Facilitation" %}:</b>
-      {% if encontro.facilitador %}
-        <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
-        <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
-        {% if not request.user.is_authenticated %}
-          <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
-        {% elif request.user != encontro.facilitador %}
-          <span class="badge badge-warning">{% lng "NÃO É VOCÊ" "IT IS NOT YOU" %}</span>
-        {% endif %}
-      {% else %}
-        {% lng "Não definido" "Not defined" %}
-      {% endif %}
-      <br>
-
-      <br>
-      {% include "ver_documentos.html" %}
-      {% include "professores/includes/ver_site.html" %}
   
-      {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-      <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
-            title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
-      </b></label><br>
-      <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_estudantes' %}">{% if encontro.observacoes_estudantes %}{{encontro.observacoes_estudantes}}{% endif %}</textarea>
-      <br><br>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+
+    {% include "cabecalho_projeto.html" with projeto=encontro.projeto com_grupo=True %}<br>
+
+    <b>{% lng "Data da Mentoria" "Mentoring Date" %}:</b>
+    {% include "professores/includes/ver_datas_evento.html" with evento_p_data=encontro %}<br>
+
+    {% if encontro.location %}
+      <b>{% lng "Local" "Location" %}:</b> {{encontro.location|bleach_urlize|safe}}<br>
+    {% endif %}  
+    {% if encontro.link %}
+      <b>Link:</b> <a href="{{encontro.link}}">{{encontro.link|bleach_urlize|safe}}</a><br>
+    {% endif %}
     
-      {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
-             title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
-      </b></label><br>
-      <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_orientador' %}">{% if encontro.observacoes_orientador %}{{encontro.observacoes_orientador}}{% endif %}</textarea>
-      <br><br>
-      
-      {% if evento.startDate.date > today.date %}
-        <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
-          <span class="red-bold">
-            {% lng "Você está acessado o formulário antes da data agendada da mentoria." "You have accessed the form before the scheduled mentoring date." %}
-          </span><br>
-          <span class="red-bold">
-            {% lng "Tem certeza que deseja enviar os feedbacks agora!!" "Are you sure you want to submit your feedbacks now!!" %}
-          </span><br>
-        </div><br>
+    <b>{% lng "Facilitação" "Facilitation" %}:</b>
+    {% if encontro.facilitador %}
+      <a class="imprimir" href="{% url 'user_detail' encontro.facilitador.id %}">{{ encontro.facilitador.get_full_name }}</a>
+      <a class="email" href="mailto:{{encontro.facilitador.email}}">&lt;{{encontro.facilitador.email}}&gt;</a>
+      {% if not request.user.is_authenticated %}
+        <span class="badge badge-warning">{% lng "NÃO LOGADO, MAS OBSERVAÇOES SERÃO ENVIADAS NORMALMENTE" "NOT LOGGED IN, BUT OBSERVATIONS WILL BE SENT NORMALLY" %}</span>
+      {% elif request.user != encontro.facilitador %}
+        <span class="badge badge-warning">{% lng "NÃO É VOCÊ" "IT IS NOT YOU" %}</span>
       {% endif %}
+    {% else %}
+      {% lng "Não definido" "Not defined" %}
+    {% endif %}
+    <br>
 
-      <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
+    <br>
+    {% include "ver_documentos.html" %}
+    {% include "professores/includes/ver_site.html" %}
 
-    </form>
-  {% else %}
-    <p>{% lng "Não existe projeto disponível para avaliar." "There is no project available to evaluate." %}</p>
-  {% endif %}
+    {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
+    <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+          title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+      {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
+    </b></label><br>
+    <textarea id="observacoes_estudantes" name="observacoes_estudantes"
+     rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_estudantes' %}"
+     {% if not encontro.projeto %}disabled{% endif %}
+     >{% if encontro.observacoes_estudantes %}{{encontro.observacoes_estudantes}}{% endif %}</textarea>
+    <br><br>
+  
+    {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
+    <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
+            title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+      {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
+    </b></label><br>
+    <textarea id="observacoes_orientador" name="observacoes_orientador"
+     rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_orientador' %}"
+     {% if not encontro.projeto %}disabled{% endif %}
+     >{% if encontro.observacoes_orientador %}{{encontro.observacoes_orientador}}{% endif %}</textarea>
+    <br><br>
+    
+    {% if evento.startDate.date > today.date %}
+      <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
+        <span class="red-bold">
+          {% lng "Você está acessado o formulário antes da data agendada da mentoria." "You have accessed the form before the scheduled mentoring date." %}
+        </span><br>
+        <span class="red-bold">
+          {% lng "Tem certeza que deseja enviar os feedbacks agora!!" "Are you sure you want to submit your feedbacks now!!" %}
+        </span><br>
+      </div><br>
+    {% endif %}
+
+    <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
+
+  </form>
 
   <script>
     $(document).ready(function() {

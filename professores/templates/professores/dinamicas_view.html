@@ -17,6 +17,10 @@
 <style>
   table, th, td {border: 0px;}
   {% comment %} Para seleção de projeto não vazar a tela {% endcomment %}
+  .url_reativo {font-size: 16px;}
+  @media (max-width: 460px) {
+    .url_reativo {font-size: 14px;}
+  }
   .bootstrap-select > .dropdown-menu { 
     width: 100vw;
     max-width: fit-content;
@@ -200,9 +204,21 @@
 
         </div>
 
-        <br><br>
-        <span id="mensagem"></span>
-
+        {% if encontro %}
+          <br>
+          <div style="overflow-wrap: break-word;">
+            &#9733;
+            {% lng "Formulário de feedback" "Feedback form" %}:
+            <a class="url_reativo" target="_blank" rel="noopener noreferrer" 
+              href="{% url 'encontro_feedback' encontro.id %}">
+              https://{{ request.get_host }}{% url 'encontro_feedback' encontro.id %}
+            </a>
+          </div>
+        {% endif %}
+    
+        <br>
+        <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
+        <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
       </div>
 
     {% endif %}
