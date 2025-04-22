@@ -198,6 +198,14 @@ def calcula_objetivos(alocacoes):
 
         media_grupo[media]["media"] = media_grupo[media]["media"] / count if count > 0 else None
 
+    media_grupo_geral = 0
+    count = 0
+    for media_g in media_grupo:
+        if media_grupo[media_g]["media"] is not None:
+            media_grupo_geral += media_grupo[media_g]["media"]
+            count += 1
+    media_grupo_geral = media_grupo_geral / count if count > 0 else None
+    
     context = {
         "medias_api": medias["api"],
         "medias_apg": medias["apg"],
@@ -212,6 +220,7 @@ def calcula_objetivos(alocacoes):
         "medias_geral": medias_geral,
         "media_individual": media_individual,
         "media_grupo": media_grupo,
+        "media_grupo_geral": media_grupo_geral,
     }
 
     return context

@@ -23,6 +23,12 @@
 
   <style>
     .wbtn {width: 13em;}
+    .medias-title {
+      font-size: 1.05em;
+      font-weight: 550;
+      color: #333;
+      display: inline-block;
+    }
   </style>
 
 {% endblock %}
@@ -319,12 +325,18 @@
     <hr>
     <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>
 
-    {% lng "Médias" "Averages" %}:
+    <span class="medias-title">{% lng "Médias" "Averages" %}:</span>
     {% for key, value in medias_oo.media_grupo.items %}
       {% if value.media >= 0 %}
-        <span style="white-space: nowrap;">{% lng key.titulo key.titulo_en %}={{value.media|stringformat:".1f"}}</span>{% if not forloop.last %}, {% endif %}
+        <span class="badge badge-secondary" style="white-space: nowrap;">{% lng key.titulo key.titulo_en %} = {{value.media|stringformat:".1f"}}</span>
       {% endif %}
     {% endfor %}
+    
+    <span class="badge badge-info" style="white-space: nowrap;">
+      {% lng "Média Grupo Geral" "General Group Average" %} =
+      {{medias_oo.media_grupo_geral|stringformat:".1f"}}
+    </span>
+    <br>
 
     <div class="table-responsive">
       <div style="position: relative; height:203px; width:406px">
