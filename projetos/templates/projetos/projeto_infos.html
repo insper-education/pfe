@@ -565,70 +565,102 @@
   {% if user.eh_prof_a %}
 
     <hr>
-    <div style="max-width: 95em; text-align: center;">
 
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
-       href="{% url 'proposta_completa' projeto.proposta.id %}">
-        {% lng "Proposta" "Proposal" %}
-      </a>
-
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
-       href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-        {% lng "Resultado Bancas" "Exam. Boards Results" %}
-      </a>
-
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
-       href="{% url 'bancas_lista' projeto.id %}">
-        {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
-      </a>
-
-      {% if projetos_avancados %}
-        <a class="btn btn-primary mb-1 mt-2 wbtn" 
-         data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
-         href="{% url 'projeto_avancado' projeto.id %}">
-          {% lng "Versão Avançada" "Advanced Version" %}
-        </a>
-      {% else %}
-        <a class="btn btn-primary mb-1 mt-2 wbtn" 
-         data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
-         onclick="cria_avancado()" style="color:white;">
-          {% lng "Cria Avançado" "Create Advanced" %}
-        </a>
-      {% endif %}
-
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
-       {% if projeto.orientador %}
-        href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}"
-       {% else %}
-        disabled
-       {% endif %}
-      >
-        {% lng "Avaliar Entregas" "Evaluate Deliveries" %}
-      </a>
-
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
-       {% if projeto.orientador %}
-        href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
-       {% else %}
-        disabled
-       {% endif %}
-      >
-        {% lng "Avaliação de Pares" "Peer Evaluation" %}
-      </a>
-
-      <a class="btn btn-primary mb-1 mt-2 wbtn"
-       data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
-       href="{% url 'editar_projeto' projeto.id %}">
-        {% lng "Editar" "Edit" %}
-      </a>
-
-    </div>
     
+    <div class="card mb-3 text-muted font-weight-bold">
+      <div class="card-header py-1 pl-2">
+        {% lng "Avaliações e Resultados" "Evaluations and Results" %}
+      </div>
+      <div class="card-body p-3">
+ 
+       <a class="btn btn-primary wbtn"
+        data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
+        {% if projeto.orientador %}
+         href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}"
+        {% else %}
+         disabled
+        {% endif %}
+       >
+         {% lng "Resultados Entregas" "Deliveries Results" %}
+       </a>
+
+       <a class="btn btn-primary wbtn"
+        data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
+        href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
+         {% lng "Resultado Bancas" "Exam. Boards Results" %}
+       </a>
+
+       <a class="btn btn-primary mb-1 mt-2 wbtn"
+        data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
+        {% if projeto.orientador %}
+          href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
+        {% else %}
+          disabled
+        {% endif %}
+        >
+          {% lng "Avaliação de Pares" "Peer Evaluation" %}
+        </a>
+
+      </div>
+    </div>
+
+    <div class="card mb-3 text-muted font-weight-bold">
+      <div class="card-header py-1 pl-2">
+        {% lng "Agendamentos" "Schedules" %}
+      </div>
+      <div class="card-body p-3">
+
+        <a class="btn btn-primary mb-1 mt-2 wbtn"
+        data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
+        href="{% url 'bancas_lista' projeto.id %}">
+         {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
+       </a>
+ 
+      </div>
+    </div>
+
+    <div class="card mb-3 text-muted font-weight-bold">
+      <div class="card-header py-1 pl-2">
+        {% lng "Edições" "Editions" %}
+      </div>
+      <div class="card-body p-3">
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
+          href="{% url 'proposta_completa' projeto.proposta.id %}">
+          {% lng "Proposta" "Proposal" %}
+        </a>
+
+        {% if projetos_avancados %}
+          <a class="btn btn-primary wbtn" 
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
+          href="{% url 'projeto_avancado' projeto.id %}">
+            {% lng "Versão Avançada" "Advanced Version" %}
+          </a>
+        {% else %}
+          <a class="btn btn-primary wbtn" 
+          data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
+          onclick="cria_avancado()" style="color:white;">
+            {% lng "Cria Avançado" "Create Advanced" %}
+          </a>
+        {% endif %}
+        
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
+          href="{% url 'editar_projeto' projeto.id %}">
+          {% lng "Editar" "Edit" %}
+        </a>
+      </div>
+    </div>
+
+     
+
+
+
+    
+      
+
+     
+
     {% if not projetos_avancados %}
       <script>
         function cria_avancado() {
