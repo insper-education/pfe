@@ -230,13 +230,15 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
 
 
 def puxa_encontros(edicao):
+    """Puxa os encontros/mentorias de acordo com a edição selecionada."""
+    projeto = None
     encontros = Encontro.objects.all().order_by("startDate")
     if edicao == "todas":
         pass  # segue com encontros
     elif edicao == "proximas":
         hoje = datetime.date.today()
         encontros = encontros.filter(startDate__gt=hoje)
-    else:
+    elif '.' in edicao:
         ano, semestre = map(int, edicao.split('.'))
 
         encontros = encontros.filter(startDate__year=ano)
@@ -244,5 +246,61 @@ def puxa_encontros(edicao):
             encontros = encontros.filter(startDate__month__lt=8)
         else:
             encontros = encontros.filter(startDate__month__gt=7)
-    return encontros
+    else:
+        projeto = get_object_or_404(Projeto, id=edicao)
+        encontros = encontros.filter(projeto=projeto)
 
+    # checando se projetos atuais tem banca marcada
+    configuracao = get_object_or_404(Configuracao)
+    sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
+                                    semestre=configuracao.semestre)
+    for encontro in encontros:
+        if encontro.projeto:
+            sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
+
+    context = {
+        "encontros": encontros,
+        "sem_dinamicas": sem_dinamicas,
+        "projeto": projeto,
+        "edicao": edicao,
+    }
+    return context
+
+
+def puxa_bancas(edicao):
+    """Puxa as bancas de acordo com a edição selecionada."""
+    sem_banca = []
+    projeto = None
+    configuracao = get_object_or_404(Configuracao)
+    if edicao == "proximas":
+        # Coletando bancas agendadas a partir de hoje
+        hoje = datetime.date.today()
+        bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+
+        # checando se projetos atuais tem banca marcada
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        for banca in bancas:
+            if banca.projeto:
+                projetos = projetos.exclude(id=banca.projeto.id)
+        sem_banca = projetos
+
+    elif edicao == "todas":
+        bancas = Banca.objects.all().order_by("startDate")
+
+    elif '.' in edicao:
+        ano, semestre = map(int, edicao.split('.'))
+        bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+        bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+        bancas = (bancas_p | bancas_a).order_by("startDate")
+
+    else:
+        projeto = get_object_or_404(Projeto, id=edicao)
+        bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
+
+    context = {
+        "bancas": bancas,
+        "sem_banca": sem_banca,
+        "projeto": projeto,
+        "edicao": edicao,
+    }
+    return context

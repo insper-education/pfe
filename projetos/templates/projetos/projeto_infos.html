@@ -590,7 +590,7 @@
          {% lng "Resultado Bancas" "Exam. Boards Results" %}
        </a>
 
-       <a class="btn btn-primary mb-1 mt-2 wbtn"
+       <a class="btn btn-primary wbtn"
         data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
         {% if projeto.orientador %}
           href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
@@ -610,11 +610,17 @@
       </div>
       <div class="card-body p-3">
 
-        <a class="btn btn-primary mb-1 mt-2 wbtn"
-        data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
-        href="{% url 'bancas_lista' projeto.id %}">
-         {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
-       </a>
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
+          href="{% url 'bancas_lista' projeto.id %}">
+          {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
+        </a>
+
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das mentorias"
+          href="{% url 'dinamicas_lista' projeto.id %}">
+          {% lng "Agendamento Mentorias" "Mentorships Schedule" %}
+        </a>
  
       </div>
     </div>

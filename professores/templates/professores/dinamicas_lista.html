@@ -17,8 +17,13 @@
 {% block content %}
 
   {% include "edicoes.html" with com_proximas=True %}
-  
   {% include "informacoes_ml.html" %}<br>
+
+  {% if projeto %}
+    <script>
+      $("#filterEdicao").append($("<option>", {value: "{{projeto.id}}", text: "{{projeto.get_titulo}}", selected: "selected"}));
+    </script>
+  {% endif %}
 
   <span class="esconder">
     <a href="{% url 'dinamicas_criar'%}" class="open-modal" style="cursor:pointer;"

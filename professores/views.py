@@ -28,7 +28,7 @@ from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
-from .support3 import resultado_projetos_intern, puxa_encontros
+from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_composicoes, filtra_entregas
@@ -1010,23 +1010,7 @@ def dinamicas_lista(request, edicao=None):
     """Mostra os horários de dinâmicas."""
 
     if request.is_ajax() and "edicao" in request.POST:
-
-        edicao = request.POST["edicao"]
-        encontros = puxa_encontros(edicao)
-
-        # checando se projetos atuais tem banca marcada
-        configuracao = get_object_or_404(Configuracao)
-        sem_dinamicas = Projeto.objects.filter(ano=configuracao.ano,
-                                        semestre=configuracao.semestre)
-        for encontro in encontros:
-            if encontro.projeto:
-                sem_dinamicas = sem_dinamicas.exclude(id=encontro.projeto.id)
-
-        context = {
-            "sem_dinamicas": sem_dinamicas,
-            "encontros": encontros,
-            "edicao": edicao,
-        }
+        context = puxa_encontros(request.POST["edicao"])
 
     else:
 
@@ -1049,6 +1033,12 @@ def dinamicas_lista(request, edicao=None):
                 "informacoes": informacoes,
             }
         
+        if edicao:
+            if '.' in edicao:
+                context["selecionada"] = edicao
+            elif edicao != "proximas" and edicao != "todas":
+                context["projeto"] = get_object_or_404(Projeto, id=edicao)
+        
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
@@ -1070,38 +1060,8 @@ def bancas_lista(request, edicao=None):
     context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
 
     if request.is_ajax() and "edicao" in request.POST:
+        context.update(puxa_bancas(request.POST["edicao"]))
         
-        edicao = request.POST["edicao"]
-
-        if edicao == "proximas":
-
-            # Coletando bancas agendadas a partir de hoje
-            hoje = datetime.date.today()
-            bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-
-            # checando se projetos atuais tem banca marcada
-            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-            for banca in bancas:
-                if banca.projeto:
-                    projetos = projetos.exclude(id=banca.projeto.id)
-            context["sem_banca"] = projetos
-
-        elif edicao == "todas":
-            bancas = Banca.objects.all().order_by("startDate")
-
-        elif '.' in edicao:
-            ano, semestre = map(int, edicao.split('.'))
-            bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-            bancas_a = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
-            bancas = (bancas_p | bancas_a).order_by("startDate")
-
-        else:
-            projeto = get_object_or_404(Projeto, id=edicao)
-            context["projeto"] = projeto
-            bancas = Banca.objects.filter(projeto=projeto).order_by("startDate")
-
-        context["bancas"] = bancas
-
     elif request.method == "POST":
 
         aviso = ""
