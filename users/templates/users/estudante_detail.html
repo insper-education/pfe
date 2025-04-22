@@ -180,12 +180,12 @@
                   </a>
                   {% if relato.avaliacao >= 0 %}
                     {% if relato.avaliacao > 0 %}
-                      <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
+                      <span data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
                     {% else %}
-                      <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
+                      <span data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
                     {% endif %}
                   {% else %}
-                    <span style="background-color:#EEF;" data-toggle="tooltip" data-html="true" animation="true" title="Não conferido pelo orientador">&#10060;</span>
+                    <span data-toggle="tooltip" data-html="true" animation="true" title="Aguardando orientador conferir">&#x23F3;</span>
                   {% endif %}
                 {% else %}
                   {{ordem|add:1}}&ordm; - 
