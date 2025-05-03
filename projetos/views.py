@@ -1366,7 +1366,12 @@ def evolucao_objetivos(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
 
-        cores = ["#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f", "#e8c3b9", "#c45890", "#b76353", "#a48577"]
+        cores = [
+            "#c3cf95", "#d49fbf", "#ceb5ed", "#9efef9", "#7cfa9f",
+            "#e8c3b9", "#c45890", "#b76353", "#a48577", "#ffd3b6",
+            "#b5ead7", "#ffdac1", "#e2f0cb", "#c7ceea", "#f2b5d4",
+            "#b3d9ff", "#d4a5a5", "#e0bbff", "#ffb7b2", "#bae1ff"
+        ]
 
         medias = []
         objetivos = ObjetivosDeAprendizagem.objects.all()
