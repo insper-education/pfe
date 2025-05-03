@@ -1405,8 +1405,8 @@ def evolucao_objetivos(request):
                 notas.append(media(notas_lista))
                 faixas.append(faixa)
 
-            titulo = objetivo.titulo if configuracao.lingua == "pt" else objetivo.titulo_en
-            medias.append({"objetivo": titulo, "media": notas, "cor": cores[count], "faixas": faixas})
+            #titulo = objetivo.titulo if configuracao.lingua == "pt" else objetivo.titulo_en
+            medias.append({"objetivo": objetivo, "media": notas, "cor": cores[count], "faixas": faixas})
             count += 1
 
         # Número de estudantes por semestre

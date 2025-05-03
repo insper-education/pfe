@@ -53,9 +53,9 @@
         <canvas id="horizontal-objetivos"></canvas>
       </div></div>
 
-      <div style="max-width:860px;margin: auto;"> 
-          <canvas id="chart-medias"></canvas>
-      </div>
+      <div class="row mt-5"><div style="height: {{edicoes|length}}00px" class="col resizable-content">
+        <canvas id="chart-medias"></canvas>
+      </div></div>
 
       <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
@@ -63,12 +63,15 @@
 
         var labels = [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}]
 
-        var students = [{% for student in students %}"{{student}} student{% if student > 1 %}s{% endif %}",{% endfor %}]
+        var students_pt = [{% for student in students %}"{{student}} estudante{% if student > 1 %}s{% endif %}",{% endfor %}]
+        var students_en = [{% for student in students %}"{{student}} student{% if student > 1 %}s{% endif %}",{% endfor %}]
 
         var datasets = [
           {% for media in medias %}{ 
               data: [{% for nota in media.media %}{% if nota >= 0 %}{{nota|stringformat:".2f"|unlocalize}}{% endif %},{% endfor %}],
-              label: "{{media.objetivo}}",
+              label: "{{media.objetivo.titulo}} ({{media.objetivo.data_inicial|date:"m/y"}})",
+              label_pt: "{{media.objetivo.titulo}} ({{media.objetivo.data_inicial|date:"m/y"}})",
+              label_en: "{{media.objetivo.titulo_en}} ({{media.objetivo.data_inicial|date:"m/y"}})",
               borderColor: "{{media.cor}}",
               backgroundColor: "{{media.cor}}",
               fill: false,
@@ -85,7 +88,8 @@
           options: {
               title: {
                   display: true,
-                  text: '{% if lingua == "pt" %}Evolução nos semestres{% else %}Evolution by semester{% endif %}'
+                  text_pt: "Evolução nos semestres",
+                  text_en: "Evolution by semester"
               }, 
           }
         }
@@ -98,7 +102,8 @@
               maintainAspectRatio: false,
               title: {
                   display: true,
-                  text: '{% if lingua == "pt" %}Médias Obtidas nos Objetivos de Aprendizagem{% else %}Average Grades Obtained in Learning Goals{% endif %}'
+                  text_pt: "Médias Obtidas nos Objetivos de Aprendizagem",
+                  text_en: "Average Grades Obtained in Learning Goals"
               },
               scales: {
                   xAxes: [{
@@ -111,12 +116,13 @@
                   yAxes: [
                     {labels: labels,},
                     {
-                      position: 'right',
-                      labels: students,
+                      position: "right",
+                      labels_pt: students_pt,
+                      labels_en: students_en,
                       gridLines: {
                       display: false
                       },
-                      type: 'category',
+                      type: "category",
                       offset: true
                     }
                   ]
@@ -171,49 +177,66 @@
             { 
                 // SO para o Label
                 data: [{% for faixa in media.faixas %}0,{% endfor %}],
-                label: "{{media.objetivo}}",
+                label: "{{media.objetivo.titulo}}",
+                label_pt: "{{media.objetivo.titulo}}",
+                label_en: "{{media.objetivo.titulo_en}}",
                 borderColor: "white",
                 backgroundColor: "white",
                 fill: false,
                 spanGaps: true,
-                stack: '{{media.objetivo}}',
+                stack: "{{media.objetivo.titulo}}",
+                stack_pt: "{{media.objetivo.titulo}}",
+                stack_en: "{{media.objetivo.titulo_en}}"
             },{ 
                 data: [{% for faixa in media.faixas %}{{faixa.0|stringformat:".2f"|unlocalize}},{% endfor %}],
-                label: "{{media.objetivo}}",
+                label: "{{media.objetivo.titulo}}",
+                label_pt: "{{media.objetivo.titulo}}",
+                label_en: "{{media.objetivo.titulo_en}}",
                 borderColor: "red",
                 backgroundColor: "red",
                 fill: false,
                 spanGaps: true,
-                stack: '{{media.objetivo}}',
+                stack: "{{media.objetivo.titulo}}",
+                stack_pt: "{{media.objetivo.titulo}}",
+                stack_en: "{{media.objetivo.titulo_en}}"
             }, { 
                 data: [{% for faixa in media.faixas %}{{faixa.1|stringformat:".2f"|unlocalize}},{% endfor %}],
-                label: "{{media.objetivo}}",
+                label: "{{media.objetivo.titulo}}",
+                label_pt: "{{media.objetivo.titulo}}",
+                label_en: "{{media.objetivo.titulo_en}}",
                 borderColor: "yellow",
                 backgroundColor: "yellow",
                 fill: false,
                 spanGaps: true,
-                stack: '{{media.objetivo}}',
+                stack: "{{media.objetivo.titulo}}",
+                stack_pt: "{{media.objetivo.titulo}}",
+                stack_en: "{{media.objetivo.titulo_en}}"
             },{ 
                 data: [{% for faixa in media.faixas %}{{faixa.2|stringformat:".2f"|unlocalize}},{% endfor %}],
-                label: "{{media.objetivo}}",
+                label: "{{media.objetivo.titulo}}",
+                label_pt: "{{media.objetivo.titulo}}",
+                label_en: "{{media.objetivo.titulo_en}}",
                 borderColor: "green",
                 backgroundColor: "green",
                 fill: false,
                 spanGaps: true,
-                stack: '{{media.objetivo}}',
+                stack: "{{media.objetivo.titulo}}",
+                stack_pt: "{{media.objetivo.titulo}}",
+                stack_en: "{{media.objetivo.titulo_en}}"
             },
           {% endfor %}
           ] 
 
       var config_div_objetivos = {
-          type: 'horizontalBar',
+          type: "horizontalBar",
           data: {datasets: div_datasets,},
           options: {            
               legend: {display: false },
               maintainAspectRatio: false,
               title: {
                   display: true,
-                  text: '{% if lingua == "pt" %}Proporção nos Objetivos de Aprendizagem{% else %}Proportion Among Learning Goals{% endif %}',
+                  text_pt: "Proporção nos Objetivos de Aprendizagem",
+                  text_en: "Proportion Among Learning Goals"
               },
               scales: {
                 x: {stacked: true,},
@@ -229,10 +252,11 @@
                 }],
                 yAxes: [
                   {labels: labels,},
-                  { position: 'right',
-                    labels: students,
+                  { position: "right",
+                    labels_pt: students_pt,
+                    labels_en: students_en,
                     gridLines: {display: false},
-                    type: 'category',
+                    type: "category",
                     offset: true
                   }
                 ]
@@ -241,7 +265,7 @@
                 datalabels: {
                   align: function (context) {
                     var value = context.dataset.data[context.dataIndex];
-                    return value > 0 ? 'center' : 'start';
+                    return value > 0 ? "center" : "start";
                   },
                   formatter: (value, ctx) => {
                     if(value>0) {
@@ -269,46 +293,99 @@
               },
               annotation: {
                 annotations: [{
-                  type: 'line',
-                  mode: 'vertical',
-                  scaleID: 'x-axis-0',
+                  type: "line",
+                  mode: "vertical",
+                  scaleID: "x-axis-0",
                   value: 20,
-                  borderColor: 'grey',
+                  borderColor: "grey",
                   borderWidth: 3,
                   label: {
                       enabled: false,
-                      content: 'Test label'
+                      content: "Test label"
                   }
                 }, {
-                  type: 'line',
-                  mode: 'vertical',
-                  scaleID: 'x-axis-0',
+                  type: "line",
+                  mode: "vertical",
+                  scaleID: "x-axis-0",
                   value: 40,
-                  borderColor: 'grey',
+                  borderColor: "grey",
                   borderWidth: 3,
                   label: {
                       enabled: false,
-                      content: 'Test label'
+                      content: "Test label"
                   },
                 }]
               }
           }
         }
 
+        function lingua_grafico() {
+          if(window.div_objetivos == undefined) {return;}
+          if(localStorage.getItem("lingua") == "pt") {
+            window.div_objetivos.options.title.text = window.div_objetivos.options.title.text_pt;
+            window.div_objetivos.options.scales.yAxes[1].labels = window.div_objetivos.options.scales.yAxes[1].labels_pt;
+            {% for media in medias %}
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].label_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].label_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].label_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].label_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].stack_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].stack_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].stack_pt;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].stack_pt;
+            {% endfor %}
+            window.objetivos.options.scales.yAxes[1].labels = window.objetivos.options.scales.yAxes[1].labels_pt;
+            window.objetivos.options.title.text = window.objetivos.options.title.text_pt;
+            {% for media in medias %}
+              window.objetivos.data.datasets[{{forloop.counter0}}].label = window.objetivos.data.datasets[{{forloop.counter0}}].label_pt;
+            {% endfor %}
+            window.medias.options.title.text = window.medias.options.title.text_pt;
+            {% for media in medias %}
+              window.medias.data.datasets[{{forloop.counter0}}].label = window.medias.data.datasets[{{forloop.counter0}}].label_pt;
+            {% endfor %}
+          } else {
+            window.div_objetivos.options.title.text = window.div_objetivos.options.title.text_en;
+            window.div_objetivos.options.scales.yAxes[1].labels = window.div_objetivos.options.scales.yAxes[1].labels_en;
+            {% for media in medias %}
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].label_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].label_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].label_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].label = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].label_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+0].stack_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+1].stack_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+2].stack_en;
+              window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].stack = window.div_objetivos.data.datasets[({{forloop.counter0}}*4)+3].stack_en;
+            {% endfor %}
+            window.objetivos.options.title.text = window.objetivos.options.title.text_en;
+            window.objetivos.options.scales.yAxes[1].labels = window.objetivos.options.scales.yAxes[1].labels_en;
+            {% for media in medias %}
+              window.objetivos.data.datasets[{{forloop.counter0}}].label = window.objetivos.data.datasets[{{forloop.counter0}}].label_en;
+            {% endfor %}
+            window.medias.options.title.text = window.medias.options.title.text_en;
+            {% for media in medias %}
+              window.medias.data.datasets[{{forloop.counter0}}].label = window.medias.data.datasets[{{forloop.counter0}}].label_en;
+            {% endfor %}
+          }
+          window.div_objetivos.update();
+          window.objetivos.update();
+          window.medias.update();
+        }
+        document.addEventListener("languageChanged", lingua_grafico);
+
         function carrega_pagina() { 
         
-          var div_objetivos = document.getElementById('horizontal-div_objetivos').getContext('2d');
+          var div_objetivos = document.getElementById("horizontal-div_objetivos").getContext("2d");
           window.div_objetivos = new Chart(div_objetivos, config_div_objetivos);
 
-          {% comment %} {% if medias_geral %} {% endcomment %}
-              // Chart do nível nos objetivos de aprendizagem
-              var horizontal_objetivos = document.getElementById('horizontal-objetivos').getContext('2d');
-              window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
-          {% comment %} {% endif %} {% endcomment %}
-
+          // Chart do nível nos objetivos de aprendizagem
+          var horizontal_objetivos = document.getElementById("horizontal-objetivos").getContext("2d");
+          window.objetivos = new Chart(horizontal_objetivos, config_objetivos);
+      
           // Chart do média dos alunos
-          var chart_medias = document.getElementById('chart-medias').getContext('2d');
+          var chart_medias = document.getElementById("chart-medias").getContext("2d");
           window.medias = new Chart(chart_medias, config_medias);
+
+          lingua_grafico();
 
         }
 
