@@ -372,6 +372,10 @@ def projetos_fechados(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_lista(request):
     """Lista todos os projetos."""
+
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
+
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -382,9 +386,15 @@ def projetos_lista(request):
                 projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
 
             avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
-
             if not avancados:
                 projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
+
+            curso = request.POST["curso"]
+            if curso != "TE":
+                if curso != 'T':
+                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+                else:
+                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
 
             cabecalhos = [{ "pt": "Projeto", "en": "Project" },
                           { "pt": "Estudantes", "en": "Students" },
@@ -398,9 +408,12 @@ def projetos_lista(request):
         else:
             return HttpResponse("Algum erro não identificado.", status=401)
     else:
+
         context = {
             "titulo": { "pt": "Projetos", "en": "Projects"},
             "edicoes": get_edicoes(Projeto)[0],
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
 
     return render(request, "projetos/projetos_lista.html", context)

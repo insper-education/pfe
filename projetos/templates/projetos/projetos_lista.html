@@ -10,23 +10,31 @@
 {% endblock %}
 
 {% block content %}
-  {% include "edicoes.html" with avancados=True %}
+  {% include "edicoes.html" with com_cursos=True com_externos=True avancados=True %}
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
       {% for projeto in projetos %}
         {% with estudantes=projeto.alocacao_set.all %}
-          <tr class="item">
-            <th scope="row" data-order="{{projeto.get_titulo}}">
-              {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
-            </th>
-            <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
-            <td class="text-center">{{projeto.get_edicao}}</td>
-            <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
-            <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
-          </tr>
+          {% if estudantes.count > 0 %}
+            <tr class="item">
+              <th scope="row" data-order="{{projeto.get_titulo}}">
+                {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
+              </th>
+              <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
+              <td class="text-center">{{projeto.get_edicao}}</td>
+              <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
+              <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
+            </tr>
+          {% endif %}
         {% endwith %}
       {% endfor %}     
     {% include "tabelas_bottom.html" %}
   </div>
-  {% include "edicoes_ajax.html" with tabela='Projetos' avancados=True %}
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
+  {% include "edicoes_ajax.html" with tabela="Projetos" com_cursos=True avancados=True %}
 {% endblock %}
