@@ -278,17 +278,19 @@ def projetos_fechados(request):
                     else:
                         estudantes_pfe = estudantes_pfe.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
                 
-                qtd_est.append(len(estudantes_pfe))
+                num_est = len(estudantes_pfe)
+                qtd_est.append(num_est)
                 projetos_selecionados.append(projeto)
 
-                if projeto.avancado:
-                    numero_projetos_avancado += 1
-                elif projeto.time_misto:
-                    numero_projetos_time_misto += 1
-                else:
-                    numero_projetos_regulares += 1
+                if num_est > 0:
+                    if projeto.avancado:
+                        numero_projetos_avancado += 1
+                    elif projeto.time_misto:
+                        numero_projetos_time_misto += 1
+                    else:
+                        numero_projetos_regulares += 1
 
-                numero_projetos += 1
+                    numero_projetos += 1
 
                 prioridades = []
                 for estudante in estudantes_pfe:
@@ -351,6 +353,7 @@ def projetos_fechados(request):
             (".totais", "Totais", "Totals"),
             (".emails", "e-mails", "e-mails"),
             (".avancado", "Avancados", "Advanced"),
+            (".sem_estudantes", "Sem estudantes", "Without students"),
             (".grafico", "Gráfico", "Graph", False),
         ]
 

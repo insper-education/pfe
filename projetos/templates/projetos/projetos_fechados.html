@@ -12,6 +12,12 @@
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">  
   <script src="{% static 'js/Chart.min.js' %}"/></script>
+
+  <style>
+    .sem_estudantes {
+      opacity: 0.3;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -26,8 +32,9 @@
     {% if projetos %}
       <table id="projetos" class="table table-borderless table-sm arredondado">
         {% for projeto, prioridades, cooperacoes, conexoes, qtd_est in projetos %}
-          <tr class="linha no-gutters {% if projeto.avancado %}avancado{% endif %}" data-type="{{projeto.ano}}.{{projeto.semestre}}"
-           {% if qtd_est == 0 %}style="opacity: 0.3;"{% endif %}>
+          <tr class="linha no-gutters {% if projeto.avancado %}avancado{% endif %} {% if qtd_est == 0 %}sem_estudantes{% endif %}"
+           data-type="{{projeto.ano}}.{{projeto.semestre}}"
+           >
               
             <td>
             {% comment %} <td class="projline"> {% endcomment %}
