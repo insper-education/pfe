@@ -14,90 +14,91 @@
 </style>
 
 {% with perguntas=proposta.perguntasrespostas_set.all %}
-{% if perguntas %}
-<hr>
-<h4>
-  {% lng "Fórum de Perguntas sobre Propostas" "Proposal Questions Forum" %}
-</h4>
-<small class="lh-1">
-  {% lng "Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes. Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos." "Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students. Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved." %}
-</small><br>
+  {% if perguntas %}
+    <hr>
+    <h4>
+      {% lng "Fórum de Perguntas sobre Propostas" "Proposal Questions Forum" %}
+    </h4>
+    <small class="lh-1">
+      {% lng "Use o fórum para fazer perguntas sobre a proposta. As perguntas e respostas são públicas e podem ser vistas por todos os estudantes. Entenda que os professores e organizações podem demorar para responder por uma séria de fatores, não siginificando que o projeto teve menos atenção dos envolvidos." "Use the forum to ask questions about the proposal. Questions and answers are public and can be seen by all students. Understand that teachers and organizations may take time to respond for a number of factors, not meaning that the project had less attention from those involved." %}
+    </small><br>
 
-<form id="resposta_form" method="post">{% csrf_token %}
-  <ul id="listas_respostas">
-    {% for pergunta in proposta.perguntasrespostas_set.all %}
-      <li class="perg">
-        <b>{{ pergunta.quem_perguntou.get_full_name }}</b>
-        {{ pergunta.data_pergunta|date:"d/m/Y H:i" }}<br>
-        {% lng "Pergunta:" "Question:" %}
-        <i>{{ pergunta.pergunta }}</i><br>
+    <form id="resposta_form" method="post">{% csrf_token %}
+      <ul id="listas_respostas">
+        {% for pergunta in proposta.perguntasrespostas_set.all %}
+          <li class="perg">
+            <b>{{ pergunta.quem_perguntou.get_full_name }}</b>
+            {{ pergunta.data_pergunta|date:"d/m/Y H:i" }}<br>
+            {% lng "Pergunta:" "Question:" %}
+            <i>{{ pergunta.pergunta }}</i><br>
 
-        {% if pergunta.resposta %}
-          <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
-          {% if pergunta.em_nome_de %}
-            {% lng "em nome de" "on behalf of" %}
-            <b>{{ pergunta.em_nome_de.get_full_name }}</b>
-          {% endif %}
-          {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
-        {% endif %}
-        {% lng "Resposta:" "Answer:" %}
-        <textarea name="resposta_proposta{{pergunta.id}}" class="form-control" required
-        rows="3">{% if pergunta.resposta %}{{ pergunta.resposta }}{% endif %}</textarea>
-        <button type="button" data-id="{{pergunta.id}}" class="btn btn-primary enviar_resposta">
-          {% lng "Enviar Resposta" "Send Answer" %}
-        </button>
-        &nbsp;&nbsp;
-        {% lng "em nome de" "on behalf of" %}
-        <select name="em_nome{{pergunta.id}}" id="em_nome{{pergunta.id}}">
-          <option selected value class="troca_lingua" data-pt="ninguem" data-en="nobody">ninguem</option>
-          {% for p in proposta.organizacao.parceiro_set.all %}
-            <option value={{p.user.id}}
+            {% if pergunta.resposta %}
+              <b>{{ pergunta.quem_respondeu.get_full_name }}</b>
               {% if pergunta.em_nome_de %}
-                {% if pergunta.em_nome_de == p.user %}selected{% endif %}
+                {% lng "em nome de" "on behalf of" %}
+                <b>{{ pergunta.em_nome_de.get_full_name }}</b>
               {% endif %}
-            >{{p.user.get_full_name}}</option>
-          {% endfor %}  
-        </select>
-      </li>
-    {% endfor %}
-  </ul>
-</form>
+              {{ pergunta.data_resposta|date:"d/m/Y H:i" }}<br>
+            {% endif %}
+            {% lng "Resposta:" "Answer:" %}
+            <textarea name="resposta_proposta{{pergunta.id}}" class="form-control" required
+            rows="3">{% if pergunta.resposta %}{{ pergunta.resposta }}{% endif %}</textarea>
+            <button type="button" data-id="{{pergunta.id}}" class="btn btn-primary enviar_resposta">
+              {% lng "Enviar Resposta" "Send Answer" %}
+            </button>
+            &nbsp;&nbsp;
+            {% lng "em nome de" "on behalf of" %}
+            <select name="em_nome{{pergunta.id}}" id="em_nome{{pergunta.id}}">
+              <option selected value class="troca_lingua" data-pt="ninguem" data-en="nobody">ninguem</option>
+              {% for p in proposta.organizacao.parceiro_set.all %}
+                <option value={{p.user.id}}
+                  {% if pergunta.em_nome_de %}
+                    {% if pergunta.em_nome_de == p.user %}selected{% endif %}
+                  {% endif %}
+                >{{p.user.get_full_name}}</option>
+              {% endfor %}  
+            </select>
+          </li>
+        {% endfor %}
+      </ul>
+    </form>
 
-<script>    
-  $(document).ready(function() {
-    $(".enviar_resposta").on("click", function(event) {
-      event.preventDefault(); // Prevent the default form submission
+    <script>    
+      $(document).ready(function() {
+        $(".enviar_resposta").on("click", function(event) {
+          event.preventDefault(); // Prevent the default form submission
 
-      var perguntaId = $(this).data("id");
-      var resposta = $('textarea[name="resposta_proposta' + perguntaId + '"]').val();
-      if (!resposta) {
-        alert("Por favor, preencha a resposta antes de enviar.");
-        return;
-      }
-      var emNome = $('#em_nome' + perguntaId).val();
+          var perguntaId = $(this).data("id");
+          var resposta = $('textarea[name="resposta_proposta' + perguntaId + '"]').val();
+          if (!resposta) {
+            alert("Por favor, preencha a resposta antes de enviar.");
+            return;
+          }
+          var emNome = $('#em_nome' + perguntaId).val();
 
-      $.ajax({
-          type: "POST",
-          url: "{% url 'ajax_proposta_resposta' proposta.id %}",
-          data: {
-            "pergunta_id": perguntaId,
-            "resposta": resposta,
-            "em_nome": emNome,
-            "csrfmiddlewaretoken": "{{ csrf_token }}",
-          },
-          success: function(response) {
-            alert("Resposta enviada com sucesso!");
-            location.reload(); 
-          },
-          {% include "ajax_error_function.js" %}
+          $.ajax({
+              type: "POST",
+              url: "{% url 'ajax_proposta_resposta' proposta.id %}",
+              data: {
+                "pergunta_id": perguntaId,
+                "resposta": resposta,
+                "em_nome": emNome,
+                "csrfmiddlewaretoken": "{{ csrf_token }}",
+              },
+              success: function(response) {
+                alert("Resposta enviada com sucesso!");
+                location.reload(); 
+              },
+              {% include "ajax_error_function.js" %}
+          });
+        });
       });
-    });
-  });
 
-</script> 
-{% endif %}
+    </script>
+
+    <script>
+      aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+    </script>
+
+  {% endif %}
 {% endwith %}
-
-<script>
-  aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
-</script>
