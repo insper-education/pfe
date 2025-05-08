@@ -15,6 +15,7 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
+from django.utils.html import urlize
 
 from users.models import Opcao
 from projetos.models import Configuracao
@@ -37,6 +38,8 @@ def htmlizar(text):
     """Coloca <br> nas quebras de linha e manter espaços."""
     text = text.replace("\n", "<br>\n")
     text = text.replace("  ", "&nbsp; ")
+    text = urlize(text, nofollow=True)
+
     return text
 
 @shared_task
