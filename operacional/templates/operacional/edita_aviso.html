@@ -120,6 +120,9 @@
       {% if valor.atributos %}
         <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
       {% endif %}
+      {% if valor.exemplos %}
+        <small>&nbsp;&nbsp;{% lng "exemplos" "examples" %}: {{valor.exemplos}}<br></small>
+      {% endif %}
     {% endfor %}
     <br>
     <b>{% lng "Filtros" "Filters" %}</b>:<br>

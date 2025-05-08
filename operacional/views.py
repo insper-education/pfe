@@ -215,16 +215,20 @@ def edita_aviso(request, primarykey=None):
         "edicao": { "pt": "Edição do Capstone", "en": "Capstone edition" },
         "delta": { "pt": "Diferença de dias entre o envio do aviso e o aviso", "en": "Difference in days between the sending of the notice and the notice" },
         "delta_invert": { "pt": "Diferença de dias entre o evento e o envio do aviso", "en": "Difference in days between the event and the sending of the notice" },
-        "inicio_aulas": { "pt": "Data de início das aulas no semestre", "en": "Start date of classes in the semester" },
+        "eventos": { 
+            "pt": "Todos os eventos do semestre", "en": "All events of the semester",
+            "exemplos": "IA = Início das aulas, ERF = Entrega do Relatório Final (Grupo e Individual)"
+            },
         "evento": { 
             "pt": "Evento relacionado", "en": "Related event",
-            # "atributos": "location, startDate, endDate, tipo_evento, atividade, observacao, descricao, responsavel, documento"
             "atributos": atributos,
             },
     }
 
     filtros = {
         "dias": { "pt": "Adiciona/subtrai dias a uma data", "en": "Adds/subtracts days to a date" },
+        "data_evento": { "pt": "Busca evento do semestre pelo nome", "en": "Search for event of the semester by name" },
+        "data_evento_sigla": { "pt": "Busca evento do semestre pela sigla", "en": "Search for event of the semester by acronym" },
     }
 
     context = {
