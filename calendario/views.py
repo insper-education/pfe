@@ -43,9 +43,11 @@ def calendario(request):
         administradores = PFEUser.objects.filter(tipo_de_usuario=4) # Administradores
         pessoas["insper"] = (professores | administradores).order_by(Lower("first_name"), Lower("last_name"))
 
-        organizacao = Organizacao.objects.filter(sigla="Falconi").last()
-        pessoas["falconi"] = PFEUser.objects.filter(parceiro__organizacao=organizacao)
+        org_falconi = Organizacao.objects.filter(sigla="Falconi").last()
+        pessoas["falconi"] = PFEUser.objects.filter(parceiro__organizacao=org_falconi)
 
+        pessoas["outros"] = PFEUser.objects.filter(tipo_de_usuario=3).exclude(parceiro__organizacao=org_falconi)
+        
         context["pessoas"] = pessoas
 
         context["DocumentoModel"] = Documento

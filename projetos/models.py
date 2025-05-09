@@ -788,7 +788,6 @@ class Evento(models.Model):
         
         return eventos.order_by("endDate", "startDate")
             
-
     class Meta:
         ordering = ["startDate"]
 

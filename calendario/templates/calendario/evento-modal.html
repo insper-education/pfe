@@ -35,13 +35,12 @@
 
 <script>
   var pessoas = {};
-  {% for pessoa in pessoas.insper %}
-    pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+  {% for _, grupo in pessoas.items %}
+    {% for pessoa in grupo %}
+      pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
+    {% endfor %}
   {% endfor %}
-  {% for pessoa in pessoas.falconi %}
-    pessoas["{{pessoa.id}}"] = "{{pessoa.get_full_name}}"
-  {% endfor %}
-
+  
   function deleteEvent(event) {
       
     $.ajax({
@@ -197,7 +196,11 @@
           $("#carregando_arquivo").hide();
           $("#event-modal").modal("hide");
 
-          if (event.type == 12 ) {
+          console.log("Evento atualizado com sucesso");
+          console.log(event);
+          console.log(event.type);
+
+          if (event.name == "Aula" ) {
             s = event.startDate;
             $("#ev"+event.id+" > th > span").html(
               s.getDate().toString().padStart(2, '0') + "/" + (s.getMonth()+1).toString().padStart(2, '0') + 
@@ -329,6 +332,12 @@
                       <option value="{{pessoa.id}}">{{pessoa.get_full_name}}</option>
                     {% endfor %}
                   </optgroup>
+                  <optgroup id="pesOutros" label="Outros">
+                    {% for pessoa in pessoas.outros %}
+                      <option value="{{pessoa.id}}">{{pessoa.get_full_name}}</option>
+                    {% endfor %}
+                  </optgroup>
+
                 </select>
               </div>
             </div>
