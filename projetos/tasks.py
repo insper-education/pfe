@@ -151,53 +151,57 @@ def avisos_do_dia():
 
 def eventos_do_dia():
     # Checa eventos do calendário e envia e-mail para coordenador(es)
-    context = get_calendario_context()
-
+    
     try:
         configuracao = Configuracao.objects.get()
     except Configuracao.DoesNotExist:
         return None
+    
+    # Coletando todos os eventos possíveis
+    context = get_calendario_context()
+    eventos = context["eventos_academicos"]
+    eventos["coordenacao"] = context["coordenacao"]
 
-    for event in context:
-        if context[event] and isinstance(context[event], django.db.models.query.QuerySet) and context[event].model is Evento:
-            for acao in context[event]:
-                if acao.startDate == datetime.date.today():
+    for event in eventos:
+        for acao in eventos[event]:
+            if acao.startDate == datetime.date.today():
+                print("event4 today: ", acao)
 
-                    recipient_list = []
-                    recipient_list.append(str(configuracao.coordenacao.user.email))
+                recipient_list = []
+                recipient_list.append(str(configuracao.coordenacao.user.email))
 
-                    if acao.tipo_evento.sigla == "A":  # Aula
-                        # Adicionando Orientadores
-                        orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
-                        recipient_list += [obj.user.email for obj in orientadores]
+                if acao.tipo_evento.sigla == "A":  # Aula
+                    # Adicionando Orientadores
+                    orientadores = Professor.objects.filter(professor_orientador__ano=configuracao.ano, professor_orientador__semestre=configuracao.semestre)
+                    recipient_list += [obj.user.email for obj in orientadores]
 
-                    subject = "Capstone | Evento: {0}".format(acao.get_title())
-                    message = "Notificação de evento do Capstone.\n<br>"
-                    message += "(mensagem informativa dos eventos do dia)\n\n<br><br>"
-                    message += "<b>Evento:</b> {0}".format(acao.get_title())
+                subject = "Capstone | Evento: {0}".format(acao.get_title())
+                message = "Notificação de evento do Capstone.\n<br>"
+                message += "(mensagem informativa dos eventos do dia)\n\n<br><br>"
+                message += "<b>Evento:</b> {0}".format(acao.get_title())
 
-                    if acao.atividade:
-                        message += "<br>\n<b>Nome da Atividade:</b> {0}".format(acao.atividade)
-                   
-                    if acao.startDate and (acao.startDate == acao.endDate or (not acao.endDate)):
-                        message += "<br>\n<b>Data:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
-                    else:
-                        message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
-                        message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate.strftime("%d/%m/%Y"))
+                if acao.atividade:
+                    message += "<br>\n<b>Nome da Atividade:</b> {0}".format(acao.atividade)
+                
+                if acao.startDate and (acao.startDate == acao.endDate or (not acao.endDate)):
+                    message += "<br>\n<b>Data:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
+                else:
+                    message += "<br>\n<b>Data inicial:</b> {0}".format(acao.startDate.strftime("%d/%m/%Y"))
+                    message += "<br>\n<b>Data final:</b> {0}".format(acao.endDate.strftime("%d/%m/%Y"))
 
-                    if acao.location:
-                        message += "<br>\n<b>Local:</b> {0}".format(acao.location)
+                if acao.location:
+                    message += "<br>\n<b>Local:</b> {0}".format(acao.location)
 
-                    if acao.descricao:
-                        message += "<br>\n<b>Descrição:</b> {0}".format(acao.descricao)
-                    if acao.responsavel:
-                        message += "<br>\n<b>Responsável:</b> {0}".format(acao.responsavel.get_full_name())
-                    if acao.observacao:
-                        message += "<br>\n<b>Observações:</b> {0}".format(acao.observacao)
-                    # documento (não implementado)
-                    message += "<br>\n<br>\n<br>\n"
+                if acao.descricao:
+                    message += "<br>\n<b>Descrição:</b> {0}".format(acao.descricao)
+                if acao.responsavel:
+                    message += "<br>\n<b>Responsável:</b> {0}".format(acao.responsavel.get_full_name())
+                if acao.observacao:
+                    message += "<br>\n<b>Observações:</b> {0}".format(acao.observacao)
+                # documento (não implementado)
+                message += "<br>\n<br>\n<br>\n"
 
-                    email(subject, recipient_list, message)
+                email(subject, recipient_list, message)
 
 
 @shared_task
