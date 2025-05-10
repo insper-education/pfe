@@ -488,8 +488,18 @@
                     </label>
                   </div>
                 {% endif %}
-
               </div>
+
+              {% if proposta and request.user.eh_prof_a %}
+                <div class="form-check p-0 text-center mt-3">
+                  <a href="{% url 'proposta_completa' proposta.id %}" 
+                    class="btn btn-info mb-1" 
+                    role="button">
+                    {% lng "Ver Proposta" "View Proposal" %}
+                  </a>
+                </div>
+              {% endif %}
+
             </div>
           </div>
         </form>
