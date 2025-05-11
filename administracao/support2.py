@@ -49,6 +49,7 @@ def get_resource(dado):
         "pares": ParesResource,
         "objetivos": ObjetivosDeAprendizagemResource,
         "relatos": RelatosResource,
+        "areas_interesse": AreaDeInteresseResource,
     }
     return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
 

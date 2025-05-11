@@ -122,6 +122,31 @@ class FechadoFilter(SimpleListFilter):
         if self.value():
             return queryset.distinct().filter(alocacao__isnull=True)
         return None
+    
+
+class AnoSemestreFilter(SimpleListFilter):
+    """Para filtrar projetos por ano e semestre."""
+
+    title = "Ano/Semestre"
+    parameter_name = ""
+
+    def lookups(self, request, model_admin):
+        opcoes = []
+        for ano in range(2018, Configuracao.objects.get().ano+2):
+            for semestre in range(1, 3):
+                opcoes.append(("{0}.{1}".format(ano, semestre), "{0}.{1}".format(ano, semestre)))
+        return opcoes
+
+    def queryset(self, request, queryset):
+        if self.value():
+            q_aluno = queryset.distinct().filter(usuario__aluno__ano=int(self.value().split('.')[0]),
+                                                 usuario__aluno__semestre=int(self.value().split('.')[1]))
+            q_proposta = queryset.distinct().filter(proposta__ano=int(self.value().split('.')[0]),
+                                                    proposta__semestre=int(self.value().split('.')[1]))
+            
+            return q_aluno | q_proposta
+                                                    
+        return queryset.distinct().all()
 
 
 class EventoFilter(SimpleListFilter):
@@ -426,7 +451,8 @@ class AreaDeInteresseAdmin(admin.ModelAdmin):
     """Area De Interesse."""
 
     list_display = ("area", "usuario", "proposta",)
-    list_filter = ("area",)
+    #list_filter = ("area", "usuario__aluno__ano", "usuario__aluno__semestre",)
+    list_filter = ("area", AnoSemestreFilter)
     search_fields = ["usuario__username", "proposta__organizacao__sigla", "proposta__titulo",]
 
 @admin.register(Area)

@@ -24,6 +24,7 @@ urlpatterns = [
     path("correlacao_medias_cr", views.correlacao_medias_cr, name="correlacao_medias_cr"),
     path("despesas/", views.despesas, name="despesas"),
     path("distribuicao_areas/", views.distribuicao_areas, name="distribuicao_areas"),
+    path("evolucao_areas/", views.evolucao_areas, name="evolucao_areas"),
     path("editar_projeto/<int:primarykey>", views.editar_projeto, name="editar_projeto"),
     path("evolucao_notas/", views.evolucao_notas, name="evolucao_notas"),
     path("evolucao_objetivos/", views.evolucao_objetivos, name="evolucao_objetivos"),

@@ -612,3 +612,11 @@ class ObjetivosDeAprendizagemResource(resources.ModelResource):
         """Meta do Objetivos de Aprendizagem."""
 
         model = ObjetivosDeAprendizagem
+
+class AreaDeInteresseResource(resources.ModelResource):
+    """Model Resource para tratar dados de Áreas de Interesse."""
+
+    class Meta:
+        """Meta do Área de Interesse."""
+
+        model = AreaDeInteresse

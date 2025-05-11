@@ -610,6 +610,7 @@ def exportar(request):
 
     dados = [
         ("Alocações", "alocacoes"),
+        ("Areas de Interesse", "areas_interesse"),
         ("Avaliação de Pares", "pares"),
         ("Avaliações", "avaliacoes"),
         ("Configuração", "configuracao"),

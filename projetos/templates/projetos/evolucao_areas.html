@@ -29,10 +29,10 @@
 {% block content %}
 
   <script>
-    var save_image_file_name = "distribuicao_areas_capstone";
+    var save_image_file_name = "evolucao_areas_capstone";
   </script>
 
-  {% include "edicoes.html" with com_cursos=True com_tipos=True %}
+  {% include "edicoes.html" with sem_edicao=True com_cursos=True com_tipos=True %}
 
   <br>
 
@@ -73,11 +73,13 @@
     </div>
 
     <br>
-    Total de {{tipo}}: {{total}}
     {% if tipo == "estudantes" %}
-      <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small>
-    {% endif %}
-    <br>
+        Total de Estudantes: {{total}} <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small><br>
+    {% elif tipo == "propostas" %}
+        Total de Propostas: {{total}}<br>
+    {% elif tipo == "projetos" %}
+        Total de Projetos: {{total}}<br>
+    {% endif %} 
   </div>
   
   <script>
@@ -120,6 +122,6 @@
     }
   </script> 
 
-  {% include "edicoes_ajax.html" with com_cursos=True com_tipo=True %}
+  {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True com_tipo=True %}
 
 {% endblock %}

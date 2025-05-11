@@ -167,6 +167,7 @@ def distribuicao_areas(request):
 
             if not todas:
                 alunos = alunos.filter(ano=ano, semestre=semestre)
+
             total_preenchido = 0
             for aluno in alunos:
                 if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
@@ -211,6 +212,7 @@ def distribuicao_areas(request):
         else:
             return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
 
+        context["tipo"] = tipo
         return render(request, "projetos/distribuicao_areas.html", context)
 
     context = {
@@ -221,6 +223,95 @@ def distribuicao_areas(request):
     }
 
     return render(request, "projetos/distribuicao_areas.html", context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def evolucao_areas(request):
+    """Evolução das áreas de interesse dos alunos/propostas/projetos nos anos."""
+    configuracao = get_object_or_404(Configuracao)
+    ano = configuracao.ano              # Ano atual
+    semestre = configuracao.semestre    # Semestre atual
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
+
+    todas = False  # Para mostrar todos os dados de todos os anos e semestres
+    tipo = "estudantes"
+    curso = "todos"
+
+    if request.is_ajax():
+        if "tipo" in request.POST:
+            tipo = request.POST["tipo"]
+            if tipo == "estudantes" and "curso" in request.POST:
+                curso = request.POST["curso"]
+
+        else:
+            return HttpResponse("Erro não identificado (POST incompleto)", status=401)
+
+        if tipo == "estudantes":
+            alunos = Aluno.objects.all()
+
+            if curso != "T":
+                alunos = alunos.filter(curso2__sigla_curta=curso)
+            
+            # Filtra para estudantes de um curso específico
+            if curso != "TE":
+                if curso != 'T':
+                    alunos = alunos.filter(curso2__sigla_curta=curso)
+                else:
+                    alunos = alunos.filter(curso2__in=cursos_insper)
+
+            total_preenchido = 0
+            for aluno in alunos:
+                if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
+                    total_preenchido += 1
+            areaspfe, outras = get_areas_estudantes(alunos)
+            context = {
+                "total": alunos.count(),
+                "total_preenchido": total_preenchido,
+                "areaspfe": areaspfe,
+                "outras": outras,
+            }
+
+        elif tipo == "propostas":
+            propostas = Proposta.objects.all()
+            areaspfe, outras = get_areas_propostas(propostas)
+            context = {
+                "total": propostas.count(),
+                "areaspfe": areaspfe,
+                "outras": outras,
+            }
+
+        elif tipo == "projetos":
+
+            projetos = Projeto.objects.all()
+
+            # Estudar forma melhor de fazer isso
+            propostas = [p.proposta.id for p in projetos]
+            propostas_projetos = Proposta.objects.filter(id__in=propostas)
+
+            areaspfe, outras = get_areas_propostas(propostas_projetos)
+
+            context = {
+                "total": propostas_projetos.count(),
+                "areaspfe": areaspfe,
+                "outras": outras,
+            }
+
+        else:
+            return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
+
+        return render(request, "projetos/evolucao_areas.html", context)
+
+    context = {
+        "titulo": { "pt": "Evolução de Áreas de Interesse", "en": "Evolution of Areas of Interest"},
+        "edicoes": get_edicoes(Aluno)[0],
+        "cursos": cursos_insper,
+        "cursos_externos": cursos_externos,
+    }
+
+    return render(request, "projetos/evolucao_areas.html", context)
 
 
 @login_required
