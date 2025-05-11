@@ -60,8 +60,8 @@ def migracao(request):
 
     for d in dados:
         if d["proposta"] == "" and d["usuario"] != "" and d["outras"] == "":
-            usuario = PFEUser.objects.get(id=int(d["usuario"]))
-            area = Area.objects.get(id=int(d["area"]))
+            usuario = PFEUser.objects.filter(id=int(d["usuario"])).last()
+            area = Area.objects.filter(id=int(d["area"])).last()
             if usuario and area:
                 x, _ = AreaDeInteresse.objects.get_or_create(usuario=usuario, area=area)
                 x.save()
