@@ -230,13 +230,11 @@ def distribuicao_areas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def evolucao_areas(request):
     """Evolução das áreas de interesse dos alunos/propostas/projetos nos anos."""
-    configuracao = get_object_or_404(Configuracao)
-    ano = configuracao.ano              # Ano atual
-    semestre = configuracao.semestre    # Semestre atual
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
+    edicoes = get_edicoes(Aluno)[0]
+    edicoes = ["2024.1", "2024.2", "2025.1"]
 
-    todas = False  # Para mostrar todos os dados de todos os anos e semestres
     tipo = "estudantes"
     curso = "todos"
 
@@ -249,7 +247,14 @@ def evolucao_areas(request):
         else:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
+        tabela_areas = {}
+        tabela_areas["QUANTIDADES"] = []
+        for a in Area.objects.filter(ativa=True):
+            tabela_areas[a.titulo] = []
+        tabela_areas["outras"] = []
+        
         if tipo == "estudantes":
+            tabela_areas["PREENCHIDOS"] = []
             alunos = Aluno.objects.all()
 
             if curso != "T":
@@ -262,51 +267,80 @@ def evolucao_areas(request):
                 else:
                     alunos = alunos.filter(curso2__in=cursos_insper)
 
-            total_preenchido = 0
-            for aluno in alunos:
-                if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
-                    total_preenchido += 1
-            areaspfe, outras = get_areas_estudantes(alunos)
-            context = {
-                "total": alunos.count(),
-                "total_preenchido": total_preenchido,
-                "areaspfe": areaspfe,
-                "outras": outras,
-            }
+            for edicao in edicoes:
+                ano, semestre = edicao.split('.')
+                alunos_as = alunos.filter(ano=ano, semestre=semestre)
+                total_preenchido = 0
+                for aluno in alunos_as:
+                    if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
+                        total_preenchido += 1
+
+                tabela_areas["QUANTIDADES"].append(alunos_as.count())
+                tabela_areas["PREENCHIDOS"].append(total_preenchido)
+
+                areaspfe, outras = get_areas_estudantes(alunos_as)
+            
+                for area, objs in areaspfe.items():
+                    q = objs[0].count() if objs[0] else 0
+                    tabela_areas[area].append(q)
+                outras_txt = ""
+                for o in outras:
+                    outras_txt += o.outras + ", "
+                tabela_areas["outras"].append(outras_txt)
 
         elif tipo == "propostas":
             propostas = Proposta.objects.all()
-            areaspfe, outras = get_areas_propostas(propostas)
-            context = {
-                "total": propostas.count(),
-                "areaspfe": areaspfe,
-                "outras": outras,
-            }
+            for edicao in edicoes:
+                ano, semestre = edicao.split('.')
+                propostas_as = propostas.filter(ano=ano, semestre=semestre)
+                areaspfe, outras = get_areas_propostas(propostas_as)
+
+                tabela_areas["QUANTIDADES"].append(propostas_as.count())
+            
+                for area, objs in areaspfe.items():
+                    q = objs[0].count() if objs[0] else 0
+                    tabela_areas[area].append(q)
+                outras_txt = ""
+                for o in outras:
+                    outras_txt += o.outras + ", "
+                tabela_areas["outras"].append(outras_txt)
 
         elif tipo == "projetos":
 
             projetos = Projeto.objects.all()
 
-            # Estudar forma melhor de fazer isso
-            propostas = [p.proposta.id for p in projetos]
-            propostas_projetos = Proposta.objects.filter(id__in=propostas)
+            for edicao in edicoes:
+                ano, semestre = edicao.split('.')
 
-            areaspfe, outras = get_areas_propostas(propostas_projetos)
+                projetos_as = projetos.filter(ano=ano, semestre=semestre)
+                # Estudar forma melhor de fazer isso
+                propostas = [p.proposta.id for p in projetos_as]
+                propostas_projetos = Proposta.objects.filter(id__in=propostas)
 
-            context = {
-                "total": propostas_projetos.count(),
-                "areaspfe": areaspfe,
-                "outras": outras,
-            }
+                areaspfe, outras = get_areas_propostas(propostas_projetos)
+
+                tabela_areas["QUANTIDADES"].append(propostas_projetos.count())
+            
+                for area, objs in areaspfe.items():
+                    q = objs[0].count() if objs[0] else 0
+                    tabela_areas[area].append(q)
+                outras_txt = ""
+                for o in outras:
+                    outras_txt += o.outras + ", "
+                tabela_areas["outras"].append(outras_txt)
 
         else:
             return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
 
+        context = {
+            "tipo": tipo,
+            "tabela_areas": tabela_areas,
+            "edicoes": edicoes,
+        }
         return render(request, "projetos/evolucao_areas.html", context)
 
     context = {
         "titulo": { "pt": "Evolução de Áreas de Interesse", "en": "Evolution of Areas of Interest"},
-        "edicoes": get_edicoes(Aluno)[0],
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
     }

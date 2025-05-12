@@ -4,13 +4,14 @@
   Data: 4 de Fevereiro de 2021
 {% endcomment %}
 
-{% if edicoes %}
+{% comment %} {% if edicoes %} {% endcomment %}
   <script>
 
     var request_ajax = null;
      
     var xhrCount = 0;  // Para contar as chamadas e usar somente a última
 
+    
     function recarregar_pagina() {
       
       var seqNumber = ++xhrCount;
@@ -115,8 +116,8 @@
 
     $(document).ready(function() {
       recarregar();
-    }); 
+    });
 
   </script>
 
-{% endif %}
+{% comment %} {% endif %} {% endcomment %}
