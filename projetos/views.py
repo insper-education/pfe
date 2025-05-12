@@ -233,8 +233,7 @@ def evolucao_areas(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
     edicoes = get_edicoes(Aluno)[0]
-    edicoes = ["2024.1", "2024.2", "2025.1"]
-
+    
     tipo = "estudantes"
     curso = "todos"
 

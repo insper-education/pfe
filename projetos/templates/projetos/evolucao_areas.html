@@ -8,14 +8,10 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-  {% comment %} <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
-  <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script> {% endcomment %}
-
-  {% comment %} Para janela dos Tooltips {% endcomment %}
-  {% comment %} <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script> {% endcomment %}
-
+  {% load dictionary %}
+  
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
 {% endblock %}
 
@@ -38,12 +34,22 @@
     <script>
       
       var colors = [
-          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#E7E9ED",
+          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#A799ED",
           "#8E44AD", "#3498DB", "#1ABC9C", "#F39C12", "#E74C3C", "#2ECC71", "#34495E",
           "#D35400", "#7D3C98", "#16A085", "#F4D03F", "#C0392B", "#2980B9", "#27AE60", 
           "#8E44AD", "#BDC3C7", "#2C3E50"
       ];
-      
+
+      {% if tipo == "estudantes" %}
+        {% with qtd=tabela_areas|dict_key:"PREENCHIDOS" %}
+          var qtd = {% if qtd %}{{qtd}}{% else %}0{% endif %};
+        {% endwith %}
+      {% else %}
+        {% with qtd=tabela_areas|dict_key:"QUANTIDADES" %}
+          var qtd = {% if qtd %}{{qtd}}{% else %}0{% endif %};
+        {% endwith %}
+      {% endif %}
+
       var config_evolucao_areas = {
           type: "line",
           data: {
@@ -52,7 +58,7 @@
                   {% for area, valores in tabela_areas.items %}
                     {% if area != "outras" and area != "QUANTIDADES" and area != "PREENCHIDOS" %}
                       { 
-                          data: [{% for no_anose in valores %}({{no_anose}}/100), {% endfor %}],
+                          data: [{% for no_anose in valores %}({{no_anose}}/qtd[{{forloop.counter0}}])*100, {% endfor %}],
                           label: "{{area}}",
                           borderColor: colors[{{ forloop.counter0 }} % colors.length],
                           fill: false,
@@ -65,32 +71,56 @@
           },
           options: {
               title: { display: true,
-                        text: "Evolução das áreas de interesse"},
+                        text: "Evolução das áreas de interesse"
+                     },
+              tooltips: {
+                  callbacks: {
+                      label: function(tooltipItem, data) {
+                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                        if (label) {label += ': ';}
+                        label += tooltipItem.yLabel.toFixed(2) + "%";
+                        return label;
+                      }
+                  }
+              },
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          callback: function(value) {
+                              return value + "%";
+                          },
+                          min: 0,
+                          max: 100,
+                          stepSize: 10
+                      }
+                  }]
+              }
           }
       }
 
     </script>
 
-
-    <table class="tabela-padrao table table-striped table-bordered table-hover">
-      <thead>
-        <tr>
-          <th style="width: 18em;">Area</th>
-          {% for edicao in edicoes %}<th>{{edicao}}</th>{% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for area, valores in tabela_areas.items %}
+    <div class="table-responsive mb-1">
+      <table class="tabela-padrao table table-striped table-bordered table-hover">
+        <thead>
           <tr>
-            <td>{{area}}</td>
-            {% for no_anose in valores %}
-              <td style="text-align: right;">{{no_anose}}</td>
-            {% endfor %}
+            <th style="width: 18em;">Area</th>
+            {% for edicao in edicoes %}<th>{{edicao}}</th>{% endfor %}
           </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+          {% for area, valores in tabela_areas.items %}
+            <tr>
+              <td>{{area}}</td>
+              {% for no_anose in valores %}
+                <td style="text-align: right;">{{no_anose}}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
 
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
 
   </div>
   
