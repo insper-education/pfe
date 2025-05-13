@@ -2344,7 +2344,7 @@ def objetivo_editar(request, primarykey):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_objetidosdeaprendizagem", raise_exception=True)
 def objetivos_rubricas(request):
     """Exibe os objetivos e rubricas."""
     context = {
@@ -2434,7 +2434,7 @@ def resultado_meus_projetos(request):
 
 
 @login_required
-@permission_required("users.view_administrador", raise_exception=True)
+@permission_required("projetos.view_avaliacao2", raise_exception=True)
 def resultado_p_certificacao(request):
     if request.is_ajax():
         if "edicao" in request.POST:

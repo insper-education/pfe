@@ -11,6 +11,14 @@
   {% load tipo_usuario %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
+  <style>
+    .scrollable-text {
+      max-height: 4.8em; /* Limit to 4 lines (1.2em per line for most fonts) */
+      overflow-y: auto; /* Add vertical scrollbar if content overflows */
+      line-height: 1.2em; /* Set line height to match the font size */
+      word-wrap: break-word; /* Break long words to prevent horizontal scrolling */
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -19,7 +27,7 @@
     <table id="UsuariosTable" class="table-bordered table-sm">
       <thead class="table-info">
         <tr>
-          <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(1)')">{% lng "Usuário" "User" %}</th>
+          <th style="width: 10em;" onclick="sort('#UsuariosTable', '.item', 'td:nth-child(1)')">{% lng "Usuário" "User" %}</th>
           <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(2)')">{% lng "Tipo" "Type" %}</th>
           <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(3)')">{% lng "Autenticado" "Authenticated" %}</th>
           <th onclick="sort('#UsuariosTable', '.item', 'td:nth-child(4)')">{% lng "Conectado desde" "Connected since" %}</th>
@@ -30,12 +38,16 @@
       <tbody>
         {% for usuario in usuarios %} 
           <tr class="item">
-            <td>{{ usuario.usuario.get_full_name }}</td>
+            <td>{{ usuario.usuario.get_full_name }} ({{ usuario.usuario.username }})</td>
             <td>{% lng usuario.usuario|tipo_usuario:"pt" usuario.usuario|tipo_usuario:"en" %}</td>
             <td>{% lng_b usuario.autenticado "Sim" "Não" "True" "False" %}</td>
             <td>{{ usuario.desde }}</td>
             <td>{{ usuario.expire_date }}</td>
-            <td>{{ usuario.permissoes }}</td>
+            <td>
+              <div class="scrollable-text">
+                {{ usuario.permissoes }}
+              </div>
+            </td>
           </tr>
         {% empty %}
           <tr><td colspan="5">{% lng "Nenhum usuário conectado" "No user connected" %}</td></tr>

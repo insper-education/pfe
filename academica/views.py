@@ -10,6 +10,7 @@ Data: 10 de Abril de 2023
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -23,9 +24,10 @@ from users.support import get_edicoes
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
 def index_academica(request):
     """Mostra página principal da área acadêmica do sistema."""
+    if not (request.user.has_perm("users.altera_professor") or request.user.has_perm("projetos.view_avaliacao2")):
+        raise PermissionDenied
     context = {"titulo": {"pt": "Área Acadêmica", "en": "Academic Area"},}
     if "/academica/academica" in request.path:
         return render(request, "academica/academica.html", context=context)

@@ -9,42 +9,6 @@
   {% load static %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
-
-
-
-  {% comment %} vvvv   REMOVER   vvvvvv {% endcomment %}
-  <style>
-
-    .c_destaque {
-      background: linear-gradient(135deg, rgb(239, 235, 255), rgb(236, 232, 252));
-      box-shadow: 0 4px 8px rgba(225, 221, 255, 0.8);
-      border-radius: 9px;
-      border: 2px solid rgba(135, 121, 155, 0.4);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-    
-    .c_destaque h5 {
-      font-weight: 600;
-    }
-
-    .card-title i {
-      color: #5c656d;
-      width: 24px;
-      text-align: center;
-      margin-right: 6px;
-      font-size: 1.2em;
-    }
-    
-    .card:hover i {
-      color: #004baf;
-    }
-
-  </style>
-
-  {% comment %} ˆˆˆˆˆˆˆ REMOVER ˆˆˆˆˆˆˆˆ {% endcomment %}
-
 {% endblock %}
 
 {% block content %}
@@ -59,9 +23,11 @@
           </div>
         </a>
       </div>
+      
+      <div class="extra-space"></div>
 
       {% if perms.estudantes %}
-        <div class="card extra-space">
+        <div class="card">
           <div class="card-body {% if user.eh_estud %}c_destaque{% endif %}" 
            onclick="loadContent(this, '{% url 'estudantes' %}')">
             <h5 class="card-title">
@@ -92,22 +58,31 @@
           </div>
           <div class="card-content"></div>
         </div>
-        <div class="card extra-space">
-          <div class="card-body" onclick="loadContent(this, '{% url 'academica' %}')">
-            <h5 class="card-title">
-              <i class="fas fa-book"></i> {% lng "Área Acadêmica" "Academic Area" %}
-            </h5>
+      {% endif %}
+      
+      {% if perms.projetos.view_avaliacao2 or perms.users.change_professor %}
+        <div class="extra-space"></div>
+        
+        {% if perms.projetos.view_avaliacao2 %}
+          <div class="card">
+            <div class="card-body" onclick="loadContent(this, '{% url 'academica' %}')">
+              <h5 class="card-title">
+                <i class="fas fa-book"></i> {% lng "Área Acadêmica" "Academic Area" %}
+              </h5>
+            </div>
+            <div class="card-content"></div>
           </div>
-          <div class="card-content"></div>
-        </div>
-        <div class="card">
-          <div class="card-body" onclick="loadContent(this, '{% url 'operacional' %}')">
-            <h5 class="card-title">
-              <i class="fas fa-clipboard-list"></i> {% lng "Área Operacional" "Operational Area" %}
-            </h5>
+        {% endif %}
+        {% if perms.users.change_professor %}
+          <div class="card">
+            <div class="card-body" onclick="loadContent(this, '{% url 'operacional' %}')">
+              <h5 class="card-title">
+                <i class="fas fa-clipboard-list"></i> {% lng "Área Operacional" "Operational Area" %}
+              </h5>
+            </div>
+            <div class="card-content"></div>
           </div>
-          <div class="card-content"></div>
-        </div>
+        {% endif %}
         {% if perms.users.view_administrador %}
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'administracao' %}')">
@@ -119,9 +94,11 @@
           </div>
         {% endif %}
       {% endif %}
+      
       {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
+        <div class="extra-space"></div>
         {% if perms.projetos.view_proposta %}
-          <div class="card extra-space">
+          <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'propostas' %}')">
               <h5 class="card-title">
                 <i class="fas fa-file-contract"></i> {% lng "Propostas" "Proposals" %}
@@ -142,7 +119,8 @@
         {% endif %}
       {% endif %}
 
-      <div class="card extra-space">
+      <div class="extra-space"></div>
+      <div class="card">
         <div class="card-body" onclick="loadContent(this, '{% url 'documentos' %}')">
           <h5 class="card-title">
             <i class="fas fa-folder-open"></i> {% lng "Documentações" "Documentation" %}

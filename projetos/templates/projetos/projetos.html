@@ -6,23 +6,29 @@
 
 {% load linguas %}
 
-<a href="{% url 'projetos_fechados' %}">
-  {% lng "Listagem Geral" "General Listing" %}
-</a><br>
-<a href="{% url 'organizacoes_projetos' %}">
-  {% lng "Acompanhamento de Organizações com Projetos" "Follow-up of Organizations with Projects" %}
-</a><br>
-<br>
+{% if perms.projetos.view_projeto %}
+  <a class="mt-2" href="{% url 'projetos_fechados' %}">
+    {% lng "Listagem Geral" "General Listing" %}
+  </a><br>
+{% endif %}
 
-<h5>
-  {% lng "Análises" "Analyses" %}
-</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_vs_propostas' %}">
-  {% lng " Organizações, Projetos e Propostas" "Organizations, Projects and Proposals" %}
-</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'interesses_projetos' %}">
-  {% lng "Interesses com Projetos" "Interests with Projects" %}
-</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'filtro_projetos' %}">
-  {% lng "Filtro para Projetos" "Projects Filter" %}
-</a></div>
+{% if perms.anotcao.change_anotacao %}
+  <a class="mt-2" href="{% url 'organizacoes_projetos' %}">
+    {% lng "Acompanhamento de Organizações com Projetos" "Follow-up of Organizations with Projects" %}
+  </a><br>
+{% endif %}
+
+{% if perms.projetos.view_projeto %}
+  <h5 class="mt-3">
+    {% lng "Análises" "Analyses" %}
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'projetos_vs_propostas' %}">
+    {% lng " Organizações, Projetos e Propostas" "Organizations, Projects and Proposals" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'interesses_projetos' %}">
+    {% lng "Interesses com Projetos" "Interests with Projects" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'filtro_projetos' %}">
+    {% lng "Filtro para Projetos" "Projects Filter" %}
+  </a></div>
+{% endif %}

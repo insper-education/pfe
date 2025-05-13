@@ -1428,7 +1428,7 @@ def conexoes_estabelecidas(request):
                     "autenticado": user.is_authenticated,
                     "desde": user.last_login,
                     "expire_date": session.expire_date,
-                    "permissoes": str(user.get_all_permissions())[:120],
+                    "permissoes": str(user.get_all_permissions()),
                 }
                 usuarios.append(usuario)
             except PFEUser.DoesNotExist:

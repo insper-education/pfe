@@ -90,8 +90,9 @@ def projeto_infos(request, primarykey):
 
     if request.user.eh_parc:  # Se usuário é parceiro
         organizacao = getattr(request.user.parceiro, "organizacao", None)
-        if organizacao is None or projeto.proposta.organizacao != organizacao:
-            return HttpResponseForbidden("Você não tem autorização para visualizar projeto")
+        if not request.user.has_perm("projetos.view_projeto"):
+            if organizacao is None or projeto.proposta.organizacao != organizacao:
+                return HttpResponseForbidden("Você não tem autorização para visualizar projeto")
         tipos_docs = ["RFR", "ABF", "B", "RPU", "VP", "COP", "CC", "COE", "APE"]
         context["documentos"] = Documento.objects.filter(projeto=projeto, tipo_documento__sigla__in=tipos_docs)
 
@@ -348,7 +349,7 @@ def evolucao_areas(request):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_projeto", raise_exception=True)
 def projetos_fechados(request):
     """Lista todos os projetos fechados."""
 
@@ -976,7 +977,7 @@ def validate_aviso(request):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_projeto", raise_exception=True)
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções dos projetos e propostas."""
     configuracao = get_object_or_404(Configuracao)
@@ -1580,7 +1581,7 @@ def evolucao_objetivos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_projeto", raise_exception=True)
 def filtro_projetos(request):
     """Filtra os projetos."""
     if request.is_ajax():
@@ -1621,7 +1622,7 @@ def filtro_projetos(request):
 
 
 @login_required
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("projetos.view_projeto", raise_exception=True)
 def interesses_projetos(request):
     """Verifica interesse para com projetos (na verdade verifico as propostas)."""
     if request.is_ajax():
