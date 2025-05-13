@@ -38,7 +38,7 @@ def htmlizar(text):
     """Coloca <br> nas quebras de linha e manter espaços."""
     text = text.replace("\n", "<br>\n")
     text = text.replace("  ", "&nbsp; ")
-    text = urlize(text, nofollow=True)
+    #text = urlize(text, nofollow=True) #Como algumas mensagens estão com links, o urlize bagunça o texto
 
     return text
 
