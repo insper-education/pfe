@@ -1016,8 +1016,7 @@ def link_organizacao(request, proposta_id):
 
     if request.is_ajax() and "organizacao_id" in request.POST:
 
-        organizacao_id = int(request.POST["organizacao_id"])
-        organizacao = get_object_or_404(Organizacao, id=organizacao_id)
+        organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao_id"])
 
         proposta.organizacao = organizacao
 
