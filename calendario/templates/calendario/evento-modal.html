@@ -196,10 +196,6 @@
           $("#carregando_arquivo").hide();
           $("#event-modal").modal("hide");
 
-          console.log("Evento atualizado com sucesso");
-          console.log(event);
-          console.log(event.type);
-
           if (event.name == "Aula" ) {
             s = event.startDate;
             $("#ev"+event.id+" > th > span").html(

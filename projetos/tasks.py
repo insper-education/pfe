@@ -71,6 +71,10 @@ def avisos_do_dia():
     orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
     orientadores = Professor.objects.filter(id__in=orientadores_ids)
     
+    estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano,
+                                      alocacao__projeto__semestre=configuracao.semestre,
+                                      externo__isnull=True)
+
     # Checa avisos do dia
     avisos = []
     for evento in eventos:
@@ -99,14 +103,13 @@ def avisos_do_dia():
                 "evento": evento,
                 "eventos": eventos,
                 "orientadores": orientadores,
+                "estudantes": estudantes,
             }
 
         recipient_list = []
 
         mensagem_final = mensagem_como_template.render(Context(context))
 
-        print("Mensagem final: ", mensagem_final)
-        
         mensagem_enviados = "Aviso enviado para: "
         if aviso.coordenacao:
             mensagem_enviados += "[<b>Coordenação</b>], "
@@ -171,7 +174,6 @@ def eventos_do_dia():
     for event in eventos:
         for acao in eventos[event]:
             if acao.startDate == datetime.date.today():
-                print("event4 today: ", acao)
 
                 recipient_list = []
                 recipient_list.append(str(configuracao.coordenacao.user.email))

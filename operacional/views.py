@@ -216,6 +216,7 @@ def edita_aviso(request, primarykey=None):
         "delta": { "pt": "Diferença de dias entre o envio do aviso e o aviso", "en": "Difference in days between the sending of the notice and the notice" },
         "delta_invert": { "pt": "Diferença de dias entre o evento e o envio do aviso", "en": "Difference in days between the event and the sending of the notice" },
         "orientadores": { "pt": "Professores orientadores do semestre", "en": "Advisors of the semester" },
+        "estudantes": { "pt": "Estudantes do semestre (somente internos)", "en": "Students of the semester (only internal)" },
         "eventos": { 
             "pt": "Todos os eventos do semestre", "en": "All events of the semester",
             "exemplos": "IA = Início das aulas, ERF = Entrega do Relatório Final (Grupo e Individual)"
