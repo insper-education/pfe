@@ -19,7 +19,7 @@ from django.template import Template, Context
 
 from calendario.support import get_calendario_context
 
-from .models import Aviso, Evento, Configuracao
+from .models import Aviso, Evento, Configuracao, Projeto
 from .messages import email, htmlizar
 
 from users.models import Aluno, Professor, PFEUser
@@ -67,7 +67,10 @@ def avisos_do_dia():
         return None
 
     eventos = Evento.get_eventos(configuracao=configuracao)  # Filtra avisos do semestre
-
+    
+    orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
+    orientadores = Professor.objects.filter(id__in=orientadores_ids)
+    
     # Checa avisos do dia
     avisos = []
     for evento in eventos:
@@ -95,12 +98,15 @@ def avisos_do_dia():
                 "delta_invert": -aviso.delta,
                 "evento": evento,
                 "eventos": eventos,
+                "orientadores": orientadores,
             }
 
         recipient_list = []
 
         mensagem_final = mensagem_como_template.render(Context(context))
 
+        print("Mensagem final: ", mensagem_final)
+        
         mensagem_enviados = "Aviso enviado para: "
         if aviso.coordenacao:
             mensagem_enviados += "[<b>Coordenação</b>], "
