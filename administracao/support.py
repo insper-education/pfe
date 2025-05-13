@@ -331,8 +331,8 @@ def envia_senha_mensagem(user):
     recipient_list = [user.email,]
 
     email(subject, recipient_list, message_email)
-    mensagem = "<br><br>Enviado mensagem com senha para: "
-    mensagem += user.get_full_name() + " " + "&lt;" + user.email + "&gt;<br>\n"
+    mensagem = {"pt": "<br><br>Enviado mensagem com senha para: " + user.get_full_name() + " " + "&lt;" + user.email + "&gt;<br>\n",
+                "en": "<br><br>Sent message with password to: " + user.get_full_name() + " " + "&lt;" + user.email + "&gt;<br>\n"}
     codigo = 200
     
     return mensagem, codigo

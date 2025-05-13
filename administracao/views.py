@@ -244,8 +244,8 @@ def cadastrar_usuario(request):
 
                 if user is not None and "envia" in request.POST:
                     mensagem_email, codigo_email = envia_senha_mensagem(user)
-                    mensagem["pt"] += mensagem_email
-                    mensagem["en"] += mensagem_email
+                    mensagem["pt"] += mensagem_email["pt"]
+                    mensagem["en"] += mensagem_email["en"]
                     if codigo_email != 200:
                         return HttpResponse(mensagem, status=codigo_email)
 
@@ -338,12 +338,13 @@ def edita_usuario(request, primarykey):
 
         if "email" in request.POST:
             mensagem, codigo, _ = registro_usuario(request, user)
-
+            
             if user is not None and "envia" in request.POST:
                     mensagem_email, codigo_email = envia_senha_mensagem(user)
-                    mensagem += mensagem_email
+                    mensagem["pt"] += mensagem_email["pt"]
+                    mensagem["en"] += mensagem_email["en"]
                     if codigo_email != 200:
-                        return HttpResponse(mensagem, status=codigo_email)
+                        return HttpResponse(mensagem["pt"], status=codigo_email)
 
             if codigo != 200:
                 return HttpResponse(mensagem, status=codigo)
