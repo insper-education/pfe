@@ -10,7 +10,7 @@
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <style>
     input {display: inline-block;}
     .enviar {margin-right: 22px;}
@@ -130,5 +130,9 @@
       |{{chave}}: - {% lng valor.pt valor.en %}<br>
     {% endfor %}
   </div>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
+  </script>
 
 {% endblock %}
