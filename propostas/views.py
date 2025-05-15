@@ -356,6 +356,8 @@ def propostas_apresentadas(request):
 
                     total_vagas["prop"] += prop
                     total_vagas["prop_disp"] += prop_disp
+                
+                total_propostas = propostas_filtradas.count()
 
             cabecalhos = [
                 {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes"},
@@ -384,6 +386,7 @@ def propostas_apresentadas(request):
                 "limite_propostas": get_limite_propostas(configuracao),
                 "liberadas_propostas": propostas_liberadas(configuracao),
                 "cabecalhos": cabecalhos,
+                "total_propostas": total_propostas,
             }
 
         else:
