@@ -21,6 +21,32 @@
   }
 </style>
 
+<b>
+  {% if request.user.eh_admin %}
+    <span id="checar_todas_conformidades"  style="cursor: pointer;" 
+    onclick="checar_todas_conformidades()">🆗</span>
+
+    <script>
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function checar_todas_conformidades() {
+        var checkboxes = document.querySelectorAll(".conformidade");
+        for (const checkbox of checkboxes) {
+          if (!checkbox.checked) {
+            checkbox.checked = true;
+            checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+            await sleep(20);
+          }
+        }
+      }
+    </script>
+
+  {% endif %}
+  {% lng "Conformidade de Proposta" "Proposal Conformity" %}
+</b>
+
 <table id="ConformidadeTable" class="table table-borderless" style="border: 0px; width: auto;">
   <tbody>
     {% for conformidade, descr in conformidades.items %}
