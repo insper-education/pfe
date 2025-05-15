@@ -354,6 +354,7 @@ def envia_proposta(proposta, request, enviar=True):
             "request": request,
             "proposta": proposta,
             "settings": settings,
+            "atualizada": "update" in request.POST,
             "emails": list(map(str.strip, re.split(",|;", proposta.email))),
             "lista_areas": lista_areas(proposta),
             "lista_interesses": lista_interesses(proposta),
@@ -362,6 +363,8 @@ def envia_proposta(proposta, request, enviar=True):
     t = Template(carta.texto)
     message = t.render(Context(context_carta))
     message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
+
+    print("Mensagem: ", message)
 
     subject = "Capstone | Proposta: ({0}.{1} - {2})".format(proposta.ano, proposta.semestre, proposta.titulo)
 

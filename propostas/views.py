@@ -707,8 +707,12 @@ def proposta_editar(request, slug=None):
                     proposta.save()
                 else:
                     proposta = preenche_proposta(request, None)
+                resposta = {"pt": "Submissão de proposta de projeto realizada com sucesso.<br>",
+                            "en": "Project proposal submission completed successfully.<br>"}
             elif "update" in request.POST:
                 preenche_proposta(request, proposta)
+                resposta = {"pt": "Atualização de proposta de projeto realizada com sucesso.<br>",
+                            "en": "Project proposal update completed successfully.<br>"}
             elif "remover" in request.POST:
                 proposta.delete()
                 context = {
@@ -738,9 +742,6 @@ def proposta_editar(request, slug=None):
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
 
-            resposta = {"pt": "Submissão de proposta de projeto realizada com sucesso.<br>",
-                          "en": "Project proposal submission completed successfully.<br>"}
-            
             if enviar:
                 resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
                 resposta["en"] += "You should receive a confirmation email in the next few moments.<br>"
