@@ -184,7 +184,7 @@
             </label><br>
 
             {% if proposta.contatos_tecnicos %} {% comment %} O campo contatos_tecnicos é um campo de texto livre que não é mais usado. {% endcomment %}
-              <textarea id="contatos_tecnicos" class="requiredField" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" required 
+              <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" 
                 {% if edicao and liberadas_propostas %}disabled{% endif %}>{% if proposta.contatos_tecnicos %}{{proposta.contatos_tecnicos}}{% endif %}</textarea>
             {% endif %}
             <table class="tab_contatos">
