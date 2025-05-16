@@ -164,6 +164,14 @@
             </a>
           {% endif %}
 
+          {% if request.user.eh_prof_a %}
+            {% if ver_proposta %}
+              <a href="{% url 'proposta_completa' ver_proposta.id %}">
+                {% lng "Ver proposta" "See proposal" %}
+              </a>
+            {% endif %}
+          {% endif %}
+
           {% if voltar or area_principal %}
             <hr>
 

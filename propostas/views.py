@@ -754,6 +754,7 @@ def proposta_editar(request, slug=None):
             context = {
                 "voltar": True,
                 "mensagem": resposta,
+                "ver_proposta": proposta,
             }
             return render(request, "generic_ml.html", context=context)
 
