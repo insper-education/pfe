@@ -8,6 +8,8 @@
 {% load linguas %}
 {% load get_field %}
 
+<script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
+
 <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
@@ -169,6 +171,10 @@
     $(".texto_feedback").on("input", function() {
       $("#enviar_feedbacks").show(); // Show the button
     });
+  </script>
+
+  <script>
+    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 </form>
