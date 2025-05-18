@@ -83,7 +83,11 @@
             {{ repositorio.message }}<br>
           {% else %}
             <a href="{{ repositorio.html_url }}" target="_blank">{{ repositorio.name }}</a><br>
-            <a href="{{repositorio.html_url}}/graphs/contributors?from={{evento_anterior.endDate.month}}%2F{{evento_anterior.endDate.day}}%2F{{evento_anterior.endDate.year}}&amp;to={{evento.endDate.month}}%2F{{evento.endDate.day}}%2F{{evento.endDate.year}}" target="_blank"><b>VER CONTRIBUIÇÕES NO PERÍODO</b></a><br>
+            <a href="{{repositorio.html_url}}/graphs/contributors?from={{evento_anterior.endDate.month}}%2F{{evento_anterior.endDate.day}}%2F{{evento_anterior.endDate.year}}&amp;to={{evento.endDate.month}}%2F{{evento.endDate.day}}%2F{{evento.endDate.year}}" target="_blank">
+              <b>
+                {% lng "Ver contribuições no período" "See contributions in the period" %}
+              </b>
+            </a><br>
             {% for usuario, dados in repositorio|contributor %}
               &nbsp;&bull;&nbsp;<a href="{{dados.html_url}}">{{usuario}}</a>{% with us=usuario|git_usuario %}{% if us %}&nbsp;(<a class="imprimir" href="{% url 'user_detail' us.id %}">{{ us.get_full_name }}</a>){% endif %}{% endwith %}:&nbsp;{{dados.contributions}} commits total<br>
             {% endfor %}
@@ -166,7 +170,7 @@
                 Feedback ({% lng "opcional" "optional" %})
                 {% if relato.feedback %}<span class="seta seta-baixo">{% else %}<span class="seta seta-cima">{% endif %}</span></label>
               <div id="customFeedback{{relato.id}}" style="{% if not relato.feedback %}display: none;{% endif %} border: 2px solid red; margin-top: 10px; margin-right: 38px; width: 100%;">
-                <label for="feedback{{relato.id}}">Feedback:</label>
+                <label style="margin: 0px 0px 0px 4px;" for="feedback{{relato.id}}">Feedback:</label>
                 <textarea id="feedback{{relato.id}}" name="feedback{{relato.id}}" rows="10" cols="180" 
                 {% if not relato or not editor %}disabled {% endif %} maxlength="{% max_length Relato 'feedback' %}">{% if relato.feedback %}{{relato.feedback}}{% endif %}</textarea>
               </div>

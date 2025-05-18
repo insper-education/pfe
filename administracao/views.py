@@ -52,7 +52,7 @@ from administracao.models import Estrutura
 
 from documentos.support import render_to_pdf
 
-from estudantes.models import Pares
+from estudantes.models import Pares, FeedbackPares
 
 from operacional.models import Curso
 
@@ -1194,7 +1194,7 @@ def backup(request, formato):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    configuracao = get_object_or_404(Configuracao)
+    #configuracao = get_object_or_404(Configuracao)
     context = {"titulo": {"pt": "Relatório", "en": "Report"},}
 
     edicao = request.GET.get("edicao", None)
@@ -1246,6 +1246,7 @@ def relatorio(request, modelo, formato):
             colegas.append(get_pares_colegas(projeto))
 
         context["proj_pares"] = zip(projetos, colegas)
+        context["FeedbackPares"] = FeedbackPares
         
         context["entregas"] = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
         context["iniciativas"] = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]

@@ -42,7 +42,7 @@ from calendario.support import cria_material_documento
 
 from documentos.models import TipoDocumento
 
-from estudantes.models import Relato, Pares
+from estudantes.models import Relato, Pares, FeedbackPares
 
 from professores.support3 import get_banca_incompleta
 
@@ -2572,22 +2572,68 @@ def todos_professores(request):
 def ver_pares_projeto(request, projeto_id, momento):
     """Permite visualizar a avaliação de pares."""
 
+    configuracao = get_object_or_404(Configuracao)
     projeto = get_object_or_404(Projeto, pk=projeto_id)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
+    tipo = 0 if momento=="intermediaria" else 1
 
-    if request.user != projeto.orientador.user and request.user.tipo_de_usuario != 4:
+    if request.user != projeto.orientador.user and not request.user.eh_admin:
         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
     # Marcando que orientador viu avaliação
+    editor = False
     if request.user == projeto.orientador.user:
+        editor = True
         for alocacao in alocacoes:
             if momento=="intermediaria" and not alocacao.avaliacao_intermediaria:
                 alocacao.avaliacao_intermediaria = datetime.datetime.now()
             elif momento=="final" and not alocacao.avaliacao_final:
                 alocacao.avaliacao_final = datetime.datetime.now()
             alocacao.save()
+        if request.method == "POST":
+            for alocacao in alocacoes:
+                feedback = request.POST.get("feedback" + str(alocacao.id), None)
+                if feedback and feedback != "":
+                    feedbackpares = FeedbackPares.objects.get_or_create(alocacao=alocacao, tipo=tipo)[0]
+                    if feedback != feedbackpares.feedback:
+                        feedbackpares.feedback = feedback
+                        feedbackpares.momento = datetime.datetime.now()
+                        feedbackpares.save()
 
-    tipo = 0 if momento=="intermediaria" else 1
+                        # Manda mensagem para estudante
+                        corpo_email = f"{alocacao.aluno.user.get_full_name()},<br>\n<br>\n"
+                        corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Você teve feedbacks da sua avaliação de pares "
+                        if projeto.orientador.user.genero == "F":
+                            corpo_email += "pela sua orientadora"
+                        else:
+                            corpo_email += "pelo seu orientador"
+                        corpo_email += f" ({projeto.orientador.user.get_full_name()}).<br>\n"
+                        corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Por favor, observe com muita atenção a fim de melhor entender como você está se saindo no projeto.<br>\n<br>\n"
+                        corpo_email += "<br>\n<br>\n"
+                        corpo_email += "Feedback:<br>\n" 
+                        corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
+                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                        email("Capstone | Feedback de Avaliação de Pares", email_dest, corpo_email)
+                        
+                else:
+                    feedbackpares = FeedbackPares.objects.filter(alocacao=alocacao, tipo=tipo).last()
+                    if feedbackpares:
+                        feedbackpares.delete()
+
+            # Mensagem que feedbacks foram enviados
+            context = {
+                "area_principal": True,
+                "mensagem": {"pt": "feedbacks enviados", "en": "feedbacks sent"},
+            }
+            return render(request, "generic_ml.html", context=context)
+            
+    verificada = None
+    for alocacao in alocacoes:
+        if momento=="intermediaria" and not verificada:
+            verificada = alocacao.avaliacao_intermediaria
+        elif momento=="final" and not verificada:
+            verificada = alocacao.avaliacao_final
+
     colegas = get_pares_colegas(projeto, tipo)
     
     entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
@@ -2607,6 +2653,9 @@ def ver_pares_projeto(request, projeto_id, momento):
         "entregas": entregas,
         "iniciativas": iniciativas,
         "comunicacoes": comunicacoes,
+        "FeedbackPares": FeedbackPares,
+        "verificada": verificada,
+        "editor": editor,
     }
 
     return render(request, "professores/ver_pares_projeto.html", context)

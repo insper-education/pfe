@@ -42,3 +42,12 @@ class EstiloComunicacaoAdmin(admin.ModelAdmin):
     """Exibição no sistema de administração do Django para Avaliação de EstiloComunicacao."""
 
     list_display = ("bloco", "questao")
+
+
+@admin.register(FeedbackPares)
+class FeedbackParesAdmin(admin.ModelAdmin):
+    """Exibição no sistema de administração do Django para FeedbackPares."""
+
+    list_display = ("momento", "alocacao",)
+    #list_filter = ("momento",)
+    #search_fields = []

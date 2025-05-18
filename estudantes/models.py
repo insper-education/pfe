@@ -46,7 +46,7 @@ class Pares(models.Model):
     """Avaliações de Pares."""
 
     momento = models.DateTimeField("Momento", default=datetime.datetime.now, blank=True,
-                                   help_text='Data e hora do relato') # hora ordena para dia
+                                   help_text="Data e hora do relato")
 
     # Para Alocações dos estudantes (caso um aluno reprove ele teria duas alocações)
     alocacao_de = models.ForeignKey("users.Alocacao", null=True, blank=True,
@@ -169,3 +169,31 @@ class FuncionalidadeGrupo(models.Model):
     class Meta:
         verbose_name = "Funcionalidade de Grupo"
         verbose_name_plural = "Funcionalidades de Grupo"
+
+
+class FeedbackPares(models.Model):
+    """Observações para Avaliações de Pares."""
+
+    momento = models.DateTimeField("Momento", default=datetime.datetime.now, blank=True,
+                                   help_text="Data e hora da observação")
+
+    TIPO_TIPO = (
+        (0, "intermediaria"),
+        (1, "final"),
+    )
+    tipo = models.PositiveSmallIntegerField(choices=TIPO_TIPO, null=True, blank=True,
+                                               help_text="Define o tipo de avaliação de pares observada")
+
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
+                                    on_delete=models.SET_NULL,
+                                    help_text="para qual alocação se refere a observação")
+
+    feedback = models.TextField("Observação", max_length=2100, null=True, blank=True,
+                                   help_text="Texto da observação")
+    
+    def __str__(self):
+        return str(self.alocacao) + " (" + str(self.momento) + ") "
+    
+    class Meta:
+        verbose_name = "Feedback de Pares"
+        verbose_name_plural = "Feedbacks de Pares"

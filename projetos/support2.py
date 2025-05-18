@@ -12,7 +12,7 @@ from .models import Area, AreaDeInteresse, Observacao
 
 from academica.models import Exame
 
-from estudantes.models import Pares, Relato
+from estudantes.models import Pares, Relato, FeedbackPares
 
 from operacional.models import Curso
 
@@ -55,9 +55,11 @@ def get_alocacoes(projeto):
 def get_pares_colegas(projeto, tipo=0):
     alocacoes = Alocacao.objects.filter(projeto=projeto)
     pares = []
+    feedbacks = []
     for alocacao in alocacoes:
         pares.append(Pares.objects.filter(alocacao_de__projeto=projeto, alocacao_para=alocacao, tipo=tipo))
-    colegas = zip(alocacoes, pares)
+        feedbacks.append(FeedbackPares.objects.filter(alocacao=alocacao, tipo=tipo).last())
+    colegas = zip(alocacoes, pares, feedbacks)
     return colegas
 
 def get_nativamente(self):
