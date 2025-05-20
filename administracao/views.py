@@ -538,7 +538,7 @@ def exportar(request):
     """Exporta dados."""
 
     if request.method == "POST":
-        if not request.user.eh_admin:
+        if not request.user.has_perm("users.change_administrador"):  # Um pouco mais restritivo por segurança
             return HttpResponse("Usuário sem privilégios de administrador.", status=403)
 
         periodo = ""
