@@ -12,6 +12,7 @@ import string
 import random
 import re
 import json
+from itertools import chain
 
 from django.db import models
 from django.conf import settings
@@ -485,7 +486,16 @@ class Proposta(models.Model):
     def get_anexo(self):
         """Nome do arquivo do anexo."""
         return self.anexo.name.split('/')[-1]
-       
+    
+    def cursos(self):
+        """Retorna os cursos que estão associados a proposta."""
+        combined = chain(
+            self.perfil1.all(),
+            self.perfil2.all(),
+            self.perfil3.all(),
+            self.perfil4.all()
+        )
+        return list(set(combined))        
 
 
 class Configuracao(models.Model):

@@ -13,15 +13,16 @@
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 
   <style>
-    .ordenar {
+
+    .botaopequeno{
       box-shadow: inset 0px 1px 3px 0px #91b8b3;
-      background: linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);
-      background-color: #96ada7;
+      /*background: linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);*/
+      /*background-color: #96ada7;*/
       border-radius: 5px;
-      border: 1px solid #768983;
+      /*border: 1px solid #768983;*/
       display: inline-block;
       cursor: pointer;
-      color: #ffffff;
+      /*color: #ffffff;*/
       font-family: Arial;
       font-size: 13px;
       font-weight: bold;
@@ -31,6 +32,19 @@
       margin-left: 10px;
       margin-bottom: 3px;    
       float: right;
+    }
+
+    .filtrar {
+      background-color: #D0CBA8;
+      border: 1px solid #CEB472;
+      color: #ffffff;
+    }
+
+    .ordenar {
+      
+      background-color: #96ada7;
+      border: 1px solid #768983;
+      color: #ffffff;
     }
 
     .ordenar:hover {
@@ -116,13 +130,19 @@
   {% endif %}
 
   <div class="container-fluid mt-1">
-    <div class="row">
-      <div class="col-12 col-md-10">
+    <div class="row align-items-center">
+      <!-- First div aligned to the left -->
+      <div class="col-12 col-md-10 text-left">
         {% lng "Selecione as propostas conforme seu interesse" "Select the proposals according to your interest" %}
       </div>
-      <div class="col-12 col-md-2 text-md-right mt-2 mt-md-0">
-        <button class="ordenar btn btn-primary" onclick="sortTable()">
+    
+      <!-- Second and third divs aligned to the right -->
+      <div class="col-12 col-md-2 text-right">
+        <button class="botaopequeno ordenar btn btn-primary ml-2" onclick="sortTable()">
           {% lng "Ordenar" "Sort" %}&nbsp;&#x21e3;
+        </button>
+        <button class="botaopequeno filtrar btn btn-secondary" data-toggle="modal" data-target="#filterModal">
+          <i class="fas fa-filter"></i> {% lng "Filtrar" "Filter" %}
         </button>
       </div>
     </div>
@@ -135,7 +155,7 @@
               <tbody>
               {% for proposta in propostas %} 
                 {% if proposta.disponivel %}
-                  <tr class="table-row">
+                  <tr class="table-row" data-cursos="{% for curso in proposta.cursos %}{{curso.sigla}} {% endfor %}">
                     <th scope="row" class="linha_th align-middle text-center" style="width: 1%;">
                       <div class="select-wrapper">
                         <select
@@ -225,7 +245,62 @@
 
   </div>
 
+  <!-- Modal Window -->
+  <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">{% lng "Filtrar Propostas" "Filter Proposals" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>{% lng "Selecione propostas com vagas para determinado curso" "Select proposals with vacancies for a specific course" %}:</div>
+          <form id="filterForm">
+            {% for curso in cursos %}
+              <div class="form-check">
+                <input class="form-check-input filter-checkbox" type="checkbox" value="{{curso.sigla}}" id="filter{{curso.sigla}}" checked>
+                <label class="form-check-label" for="filter{{curso.sigla}}">{% lng curso.nome curso.nome_en %}</label>
+              </div>
+            {% endfor %}
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% lng "Fechar" "Close" %}</button>
+          <button type="button" class="btn btn-primary" onclick="applyFilter()">{% lng "Aplicar Filtro" "Apply Filter" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+
+    function applyFilter() {
+      // Get all selected classes from the checkboxes
+      const selectedClasses = [];
+      document.querySelectorAll(".filter-checkbox:checked").forEach((checkbox) => {
+        selectedClasses.push(checkbox.value);
+      });
+    
+      // Get all table rows
+      const rows = document.querySelectorAll("#propostas tbody tr");
+    
+      // Show or hide rows based on the selected classes
+      rows.forEach((row) => {
+        const rowCursos = row.getAttribute("data-cursos").split(" ");
+        const hasClass = selectedClasses.some((cls) => rowCursos.includes(cls));
+        if (hasClass) {
+          row.style.display = ""; // Show row
+        } else {
+          row.style.display = "none"; // Hide row
+        }
+      });
+    
+      // Close the modal
+      $("#filterModal").modal("hide");
+    }
+
     {% comment %} https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number {% endcomment %}
     function sortTable() {
 

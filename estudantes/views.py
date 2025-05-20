@@ -36,6 +36,8 @@ from administracao.support import get_limite_propostas, get_limite_propostas2, u
 
 from estudantes.models import FuncionalidadeGrupo
 
+from operacional.models import Curso
+
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
 from projetos.messages import email, message_agendamento_dinamica, create_message, message_cancelamento
@@ -1023,6 +1025,7 @@ def selecao_propostas(request):
         "areas": areas,
         "warnings": warnings,
         "limite_propostas": get_limite_propostas(configuracao),
+        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
     }
 
     if request.user.tipo_de_usuario != 1:
