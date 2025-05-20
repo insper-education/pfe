@@ -265,7 +265,9 @@
                 {% lng "Tipo" "Type" %}
               </label>
               <div class="col-sm-8">
-                <select id="event-type" name="event-type" class="form-control">
+                <select id="event-type" name="event-type" class="form-control"
+                  {% if not user.eh_admin %}disabled{% endif %}
+                >
                   {% for tipo in tipos_eventos %}
                     {% ifchanged tipo.coordenacao %}
                       {% if not forloop.first %}</optgroup>{% endif %}
@@ -283,7 +285,9 @@
                 {% lng "Atividade (nome)" "Activity (name)" %}
               </label>
               <div class="col-sm-8">
-                <input id="event-atividade" name="event-atividade" type="text" class="form-control" maxlength="{% max_length Evento "atividade" %}">
+                <input id="event-atividade" name="event-atividade" type="text" class="form-control" 
+                {% if not user.eh_admin %}disabled{% endif %}
+                maxlength="{% max_length Evento "atividade" %}">
               </div>
             </div>
 
@@ -293,7 +297,8 @@
               </label>
               <div class="col-sm-8">
                 <div class="input-group input-daterange" data-provide="datepicker">
-                  <input id="min-date" name="event-start-date" type="text" class="form-control">
+                  <input id="min-date" name="event-start-date" type="text" class="form-control"
+                  {% if not user.eh_admin %}disabled{% endif %}>
                   <div class="input-group-prepend input-group-append">
                     <div class="input-group-text">
                       {% lng "até" "to" %}
@@ -307,7 +312,8 @@
             <div class="form-group row">
               <label for="event-location" class="col-sm-4 control-label">Local</label>
               <div class="col-sm-8">
-                <input id="event-location" name="event-location" type="text" class="form-control" maxlength="{% max_length Evento "location" %}">
+                <input id="event-location" name="event-location" type="text" class="form-control"
+                maxlength="{% max_length Evento "location" %}" {% if not user.eh_admin %}disabled{% endif %}>
               </div>
             </div>
 
@@ -316,7 +322,8 @@
                 {% lng "Responsável" "Responsible" %}
               </label>
               <div class="col-sm-8">
-                <select name="event-responsavel" id="event-responsavel" class="form-control" title="Selecione responsável">
+                <select name="event-responsavel" id="event-responsavel" class="form-control" 
+                 title="Selecione responsável" {% if not user.eh_admin %}disabled{% endif %}>
                   <option value id="nenhum"> -------- </option>
                   <optgroup id="profInsper" label="Professor Insper">
                     {% for pessoa in pessoas.insper %}
@@ -343,7 +350,8 @@
                 {% lng "Descrição" "Description" %}
               </label>
               <div class="col-sm-8">
-                <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3" maxlength="{% max_length Evento "descricao" %}"></textarea>
+                <textarea class="form-control" id="event-descricao" name="event-descricao" rows="3" 
+                 maxlength="{% max_length Evento "descricao" %}"{% if not user.eh_admin %}disabled{% endif %}></textarea>
               </div>
             </div>
 
@@ -352,7 +360,8 @@
                 {% lng "Observações" "Observations" %}
               </label>
               <div class="col-sm-8">
-                <input id="event-observacao" name="event-observacao" type="text" class="form-control" maxlength="{% max_length Evento "observacao" %}">
+                <input id="event-observacao" name="event-observacao" type="text" class="form-control" 
+                maxlength="{% max_length Evento "observacao" %}" {% if not user.eh_admin %}disabled{% endif %}>
               </div>
             </div>
 
@@ -368,32 +377,38 @@
                 <div style="display: flex; align-items: center; border: 1px solid #ccc; padding: 3px 2px; margin-bottom: 5px;">
                   <div style="margin-right: 10px;">1</div>
                   <div style="flex-grow: 1;">
-                    <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo">
+                    <select name="event-material" id="event-material" class="form-control" title="Selecione material anexo"
+                     {% if not user.eh_admin %}disabled{% endif %}>
                       <option value id="nenhum"> -------- </option>
                       {% for documento in documentos %}
                         <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
                       {% endfor %}
                     </select>
-                    <input required id="arquivo" type="file" name="arquivo" class="form-control" style="border: 0px; padding-left: 0px;"
+                    <input required id="arquivo" type="file" name="arquivo" class="form-control" 
+                      style="border: 0px; padding-left: 0px;" {% if not user.eh_admin %}disabled{% endif %}
                       {% include "formatos_suportados.html" %}>
                     <label for="link1">link</label>
-                    <input type="text" size="25" maxlength="{% max_length DocumentoModel "link" %}" id="link1" name="link1">
+                    <input type="text" size="25" maxlength="{% max_length DocumentoModel "link" %}" id="link1" name="link1"
+                    {% if not user.eh_admin %}disabled{% endif %}>
                   </div>
                 </div>
 
                 <div style="display: flex; align-items: center; border: 1px solid #ccc; padding: 3px 2px; margin-bottom: 5px;">
                   <div style="margin-right: 10px;">2</div>
                   <div style="flex-grow: 1;">
-                    <select name="event-material2" id="event-material2" class="form-control" title="Selecione material anexo">
+                    <select name="event-material2" id="event-material2" class="form-control" title="Selecione material anexo"
+                    {% if not user.eh_admin %}disabled{% endif %}>
                       <option value id="nenhum"> -------- </option>
                       {% for documento in documentos %}
                         <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
                       {% endfor %}
                     </select>
-                    <input required id="arquivo2" type="file" name="arquivo2" class="form-control" style="border: 0px; padding-left: 0px;"
+                    <input required id="arquivo2" type="file" name="arquivo2" class="form-control" 
+                     style="border: 0px; padding-left: 0px;" {% if not user.eh_admin %}disabled{% endif %}
                       {% include "formatos_suportados.html" %}>
                     <label for="link2">link</label>
-                    <input type="text" size="25" maxlength="{% max_length DocumentoModel "link" %}" id="link2" name="link2">
+                    <input type="text" size="25" maxlength="{% max_length DocumentoModel "link" %}" 
+                     id="link2" name="link2" {% if not user.eh_admin %}disabled{% endif %}>
                   </div>
                 </div>
 
@@ -426,7 +441,7 @@
           </button>
           
           <button type="button" class="btn btn-primary mb-1" id="save-event"
-          {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+            {% if not user.eh_admin %}disabled{% endif %}
             {% lng "Atualizar" "Save" %}
           </button>
           
