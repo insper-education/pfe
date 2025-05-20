@@ -386,7 +386,16 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
 @permission_required("projetos.add_proposta", raise_exception=True)
 def parceiro_propostas(request):
     """Lista todas as propostas de projetos."""
-    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
+    if request.user.eh_prof: # Não é Professor
+        mensagem_erro = {"pt": "Área restrita a Parceiros, Professores podem acessar propostas através do menu Propostas!",
+                         "en": "Restricted area for Partners, Professors can access proposals through the Proposals menu!"}
+        context = {
+            "area_principal": True,
+            "propostas_lista": True,
+            "mensagem_erro": mensagem_erro,
+        }
+        return render(request, "generic_ml.html", context=context)
+    elif not (request.user.eh_parc or request.user.eh_admin):  # Não é Parceiro ou Admin
         mensagem_erro = {"pt": "Você não está cadastrado como parceiro de uma organização!",
                     "en": "You are not registered as a partner of an organization!"}
         context = {
@@ -418,9 +427,18 @@ def parceiro_propostas(request):
 @permission_required("projetos.add_proposta", raise_exception=True)
 def parceiro_projetos(request):
     """Lista todas as propostas de projetos."""
-    if request.user.tipo_de_usuario != 3 and request.user.tipo_de_usuario != 4:  # Não é Parceiro ou Admin
+    if request.user.eh_prof: # Não é Professor
+        mensagem_erro = {"pt": "Área restrita a Parceiros, Professores podem acessar projetos através do menu Projetos!",
+                         "en": "Restricted area for Partners, Professors can access projects through the Projects menu!"}
+        context = {
+            "area_principal": True,
+            "projetos_fechados": True,
+            "mensagem_erro": mensagem_erro,
+        }
+        return render(request, "generic_ml.html", context=context)
+    elif not (request.user.eh_parc or request.user.eh_admin):  # Não é Parceiro ou Admin
         mensagem_erro = {"pt": "Você não está cadastrado como parceiro de uma organização!",
-                         "en": "You are not registered as a partner of an organization!"}
+                    "en": "You are not registered as a partner of an organization!"}
         context = {
             "area_principal": True,
             "mensagem_erro": mensagem_erro,

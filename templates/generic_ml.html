@@ -164,6 +164,24 @@
             </a>
           {% endif %}
 
+          {% if projetos_fechados %}
+            <a href="{% url 'projetos_fechados' %}">
+              {% lng "Ver projetos fechados" "See closed projects" %}
+            </a>
+          {% endif %}
+
+          {% if propostas_index %}
+            <a href="{% url 'propostas_index' %}">
+              {% lng "Ir para índice das propostas" "Go to proposals index" %}
+            </a>
+          {% endif %}
+
+          {% if propostas_aceitas %}
+            <a href="{% url 'propostas_aceitas' %}">
+              {% lng "Ver lista de propostas aceitas" "See list of accepted proposals" %}
+            </a>
+          {% endif %}
+
           {% if request.user.eh_prof_a %}
             {% if ver_proposta %}
               <a href="{% url 'proposta_completa' ver_proposta.id %}">
