@@ -229,8 +229,10 @@ def edita_aviso(request, primarykey=None):
 
     filtros = {
         "dias": { "pt": "Adiciona/subtrai dias a uma data", "en": "Adds/subtracts days to a date" },
-        "data_evento": { "pt": "Busca evento do semestre pelo nome", "en": "Search for event of the semester by name" },
-        "data_evento_sigla": { "pt": "Busca evento do semestre pela sigla", "en": "Search for event of the semester by acronym" },
+        "data_evento": { "pt": "Busca a data inicial de evento do semestre pelo nome", "en": "Search for the start date of the semester event by name" },
+        "data_evento_sigla": { "pt": "Busca a data inicial de evento do semestre pela sigla", "en": "Search for the start date of the semester event by the acronym" },
+        "data_final_evento": { "pt": "Busca a data final de evento do semestre pelo nome", "en": "Search for the end date of the semester event by name" },
+        "data_final_evento_sigla": { "pt": "Busca a data final de evento do semestre pela sigla", "en": "Search for the end date of the semester event by the acronym" },
     }
 
     context = {
