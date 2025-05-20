@@ -28,10 +28,15 @@ from estudantes.models import Relato
 class ProjetosResource(resources.ModelResource):
     """Model Resource para tratar dados de Projetos."""
 
+    titulo_org_periodo_seguro = fields.Field()  # Campo com a pasta que serão salvo os documentos
+
     class Meta:
         """Meta do Projeto."""
 
         model = Projeto
+        
+    def dehydrate_titulo_org_periodo_seguro(self, obj):
+        return obj.get_titulo_org_periodo_seguro()
 
 
 class OrganizacoesResource(resources.ModelResource):
@@ -41,6 +46,15 @@ class OrganizacoesResource(resources.ModelResource):
         """Meta do Projeto."""
 
         model = Organizacao
+
+
+class PropostasResource(resources.ModelResource):
+    """Model Resource para tratar dados de Propostas."""
+
+    class Meta:
+        """Meta do Projeto."""
+
+        model = Proposta
 
 
 class ConfiguracaoResource(resources.ModelResource):

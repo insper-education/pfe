@@ -380,10 +380,7 @@ def exportar_documentos_projetos(request):
                 
                 # Loop over all documents
                 for documento in documentos:
-                    if documento.projeto:
-                        projeto_titulo = re.sub(r"\W+", "", documento.projeto.get_titulo().replace(' ', '_'))
-                    else:
-                        projeto_titulo = "sem_projeto"
+                    projeto_titulo = documento.projeto.get_titulo_org_periodo_seguro()
                     
                     if documento.usuario and documento.usuario.username:
                         username = re.sub(r'\W+', '', documento.usuario.username.replace(' ', '_'))

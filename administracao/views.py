@@ -623,6 +623,7 @@ def exportar(request):
         ("Parceiros", "parceiros"),
         ("Professores", "professores"),
         ("Projetos", "projetos" ),
+        ("Propostas", "propostas"),
         ("Relatos Quinzenais", "relatos"),
         ("Usuários", "usuarios"),
     ]

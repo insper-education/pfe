@@ -50,6 +50,7 @@ def get_resource(dado):
         "objetivos": ObjetivosDeAprendizagemResource,
         "relatos": RelatosResource,
         "areas_interesse": AreaDeInteresseResource,
+        "propostas": PropostasResource,
     }
     return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
 
@@ -63,6 +64,8 @@ def get_queryset(resource, dado, ano, semestre):
     if dado == "projetos":
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
     elif dado == "estudantes":
+        queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
+    elif dado == "propostas":
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
     elif dado == "alocacoes" or dado == "avaliacoes":
         queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)

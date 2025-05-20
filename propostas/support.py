@@ -364,8 +364,6 @@ def envia_proposta(proposta, request, enviar=True):
     message = t.render(Context(context_carta))
     message = html.urlize(message) # Faz links de e-mail, outros sites funcionarem
 
-    print("Mensagem: ", message)
-
     subject = "Capstone | Proposta: ({0}.{1} - {2})".format(proposta.ano, proposta.semestre, proposta.titulo)
 
     if enviar:
