@@ -10,6 +10,12 @@
   {% load class_tag %}
   {% load linguas %}
   {% include "reload.html" %}
+  <style>
+    #AvisosTable tr td, #AvisosTable tr th {
+      vertical-align: middle;
+    }
+  </style>
+    
 {% endblock %}
 
 {% block content %}
@@ -40,19 +46,19 @@
     {% include "tabelas_top_ml.html" with tabela="Avisos" cabecalhos=cabecalhos captions=captions tabela_simples=True %}
       {% for a in avisos %}
         {% if a.class == "Evento" %}
-          <tr style="vertical-align: middle; {% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
+          <tr style="{% if hoje == a.evento.get_data %}background-color: #F0FFFF;{% endif %}"
             class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
             <th scope="row"></th>
-            <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
+            <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
               <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
             </td>
-            <td style="vertical-align: middle;" class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
+            <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
               <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
                 {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
                 {% if a.evento.tipo_evento.sigla == "A" %}Or{% endif %}
               </span>
             </td>
-            <td style="vertical-align: middle; background-color:{{a.evento.get_color}}">
+            <td style="background-color:{{a.evento.get_color}}">
               {% lng a.evento.tipo_evento.nome a.evento.tipo_evento.nome_en %}
             </td>
           </tr>
@@ -78,7 +84,7 @@
           " 
           {% if a.data == hoje %}style="background-color: #F0FFFF;"{% endif %} >
 
-          <th style="vertical-align: middle; text-align:center;" scope="row">
+          <th style="text-align:center;" scope="row">
             {% if a.data %}
               {% with instante=a.data|date:"md"%}
                 <input class="aviso" type="checkbox" id="{{forloop.counter}}" name="aviso{{a.id}}" value="{{instante}}" 
@@ -88,7 +94,7 @@
             {% endif %}
           </th>
           
-          <td style="vertical-align: middle;" data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}">
+          <td> {% comment %} data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}" {% endcomment %}
             <label style="line-height: 1;" for="{{forloop.counter}}">
               {% if a.data%}
                 <span class="texto-longo">{{a.data}}</span>
@@ -99,7 +105,7 @@
             </label>
           </td>
 
-          <td style="vertical-align: middle;">
+          <td>
             {% if a.aviso.coordenacao %}
               <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
             {% endif %}
@@ -120,7 +126,7 @@
             {% endif %}
           </td>
 
-          <td style="vertical-align: middle;">
+          <td>
             {% if a.id %}<a {% if not a.data %}class="text-muted"{% endif %} href="{% url 'edita_aviso' a.id %}">{% endif %}
               {{a.aviso.titulo}}
             {% if a.id %}</a>{% endif %}
