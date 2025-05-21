@@ -22,7 +22,10 @@
   {% include "reload.html" %}  {% comment %} Atualiza as conexões quando se da um back {% endcomment %}
 
   <style>
-    .wbtn {width: 13em;}
+    .wbtn {
+      width: 11em;
+      margin: 0.25em 0;
+    }
     .medias-title {
       font-size: 1.05em;
       font-weight: 550;
@@ -571,7 +574,7 @@
       <div class="card-header py-1 pl-2">
         {% lng "Avaliações e Resultados" "Evaluations and Results" %}
       </div>
-      <div class="card-body p-3">
+      <div class="card-body p-2">
  
        <a class="btn btn-primary wbtn"
         data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
@@ -608,18 +611,18 @@
       <div class="card-header py-1 pl-2">
         {% lng "Agendamentos" "Schedules" %}
       </div>
-      <div class="card-body p-3">
+      <div class="card-body p-2">
 
         <a class="btn btn-primary wbtn"
           data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
           href="{% url 'bancas_lista' projeto.id %}">
-          {% lng "Agendamento Bancas" "Exam. Boards Schedule" %}
+          {% lng "Bancas" "Exam. Boards" %}
         </a>
 
         <a class="btn btn-primary wbtn"
           data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das mentorias"
           href="{% url 'dinamicas_lista' projeto.id %}">
-          {% lng "Agendamento Mentorias" "Mentorships Schedule" %}
+          {% lng "Mentorias" "Mentorships" %}
         </a>
  
       </div>
@@ -629,7 +632,7 @@
       <div class="card-header py-1 pl-2">
         {% lng "Edições" "Editions" %}
       </div>
-      <div class="card-body p-3">
+      <div class="card-body p-2">
         <a class="btn btn-primary wbtn"
           data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
           href="{% url 'proposta_completa' projeto.proposta.id %}">
@@ -657,15 +660,6 @@
         </a>
       </div>
     </div>
-
-     
-
-
-
-    
-      
-
-     
 
     {% if not projetos_avancados %}
       <script>
