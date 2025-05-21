@@ -15,13 +15,15 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'bancas_criar'%}" class="open-modal" style="cursor:pointer;"
-    data-url="{% url 'bancas_criar' %}">
-      <i class="fas fa-plus"></i>
-      {% lng "Cadastrar Nova Banca" "Register New Examination Board" %}
-    </a>
-  </span>
+  {% if request.user.is_authenticated and request.user.eh_prof_a %}
+    <span class="esconder">
+      <a href="{% url 'bancas_criar'%}" class="open-modal" style="cursor:pointer;"
+      data-url="{% url 'bancas_criar' %}">
+        <i class="fas fa-plus"></i>
+        {% lng "Cadastrar Nova Banca" "Register New Examination Board" %}
+      </a>
+    </span>
+  {% endif %}
   <br><br>
 
   <div id="atualizar">

@@ -121,8 +121,9 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
     return render(request, "professores/avaliacoes_pares.html", context=context)
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
+# @login_required
+# @permission_required("users.altera_professor", raise_exception=True)
+# Permite que compartilhe com a agenda mesmo com pessoas não logadas
 def ajax_bancas(request):
     """Retorna as bancas do ano."""
     if request.is_ajax() and "start" in request.POST and "end" in request.POST:
@@ -136,7 +137,10 @@ def ajax_bancas(request):
             organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
             estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
             membros = banca.membros()
-            editable = request.user.tipo_de_usuario == 4 or (projeto and projeto.orientador == request.user.professor)
+            if request.user.is_authenticated and request.user.eh_prof_a:
+                editable = request.user.eh_admin or (projeto and projeto.orientador == request.user.professor)
+            else:
+                editable = False
 
             title = f"{projeto.get_titulo_org()}" if projeto else "Projeto ou alocação não identificados"
             if banca.alocacao:
@@ -969,15 +973,22 @@ def dinamicas_index(request, facilit_id=None):
     return render(request, "professores/dinamicas_index.html", context)
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
+# @login_required
+# @permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
     dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
-    if prof_id and request.user.eh_admin:  # Administrador
-        professor = get_object_or_404(Professor, pk=prof_id)
+    if request.user.is_authenticated:
+        usuario = request.user
+        if prof_id and request.user.eh_admin:  # Administrador
+            professor = get_object_or_404(Professor, pk=prof_id)
+        elif request.user.eh_prof:
+            professor = request.user.professor
+        else:
+            professor = None
     else:
-        professor = request.user.professor
+        usuario = None
+        professor = None
 
     # checando se projetos atuais tem banca marcada
     configuracao = get_object_or_404(Configuracao)
@@ -990,13 +1001,12 @@ def bancas_index(request, prof_id=None):
 
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
-
     context = {
-        "titulo": {"pt": "Agendar Bancas", "en": "Schedule Examination Boards"},
+        "titulo": {"pt": "Agenda de Bancas", "en": "Examination Board Schedule"},
         "dias_bancas": dias_bancas,
         "view": request.GET.get("view", None),
         "date": request.GET.get("date", None),
-        "usuario": request.user,
+        "usuario": usuario,
         "sem_banca": sem_banca,
         "root_page_url": request.session["root_page_url"],  # Usando para #atualizar a página raiz no edit da banca
     }

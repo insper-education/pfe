@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    {% if user %}
+    {% if usuario %}
       <div class="legenda-block">
         <div class="legenda-item">
           <div class="legenda-texto"><font id="banca_orientador" style="color: lightgray;">&#9608;</font>&nbsp;&nbsp;
@@ -180,7 +180,6 @@
                           title: value.title ? value.title : "",
                           description: value.title ? value.title : "",
                           editable: value.editable,
-                          //className: value.className,
                         });
                       }
                       successCallback(eventsList);
