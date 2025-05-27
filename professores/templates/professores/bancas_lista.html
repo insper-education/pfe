@@ -37,6 +37,20 @@
   <div id="atualizar">
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
+
+      <div class="mt-2 mb-2">
+        {% if bancas and request.user.eh_admin %}
+          {% if request.user.eh_admin %}
+            <button onclick="return confirm('Você tem certeza que deseja enviar mensagem de bancas?');"
+             type="submit" class="btn btn-warning btn-sm btn-outline-secondary">
+              {% lng "Enviar Mensagem para Todas as Bancas Selecionadas" "Send Message to All Selected Examination Boards" %}
+            </button>
+          {% endif %}
+        {% else %}
+          {% lng "Não existem bancas definidas." "There are no defined examination boards." %}
+        {% endif %}
+      </div>
+
       <table id="BancasTable" class="table table-borderless table-sm arredondado mb-1"><tbody>
         {% for banca in bancas %} 
           <tr class="item {{banca.composicao.exame}}">
@@ -155,19 +169,6 @@
           </tr>
         {% endfor %}
       </tbody></table>
-
-      <div class="mb-3">
-        {% if bancas %}
-          {% if request.user.eh_admin %}
-            <button onclick="return confirm('Você tem certeza que deseja enviar mensagem de bancas?');"
-             type="submit" class="btn btn-warning">
-              {% lng "Enviar Mensagem para Bancas Selecionadas" "Send Message to Selected Examination Boards" %}
-            </button>
-          {% endif %}
-        {% else %}
-          {% lng "Não existem bancas definidas." "There are no defined examination boards." %}
-        {% endif %}
-      </div>
 
     </form>
 
