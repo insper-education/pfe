@@ -552,6 +552,7 @@ def projetos_lista(request):
 
             cabecalhos = [{ "pt": "Projeto", "en": "Project" },
                           { "pt": "Estudantes", "en": "Students" },
+                          { "pt": "Média CR", "en": "Average GPA" },
                           { "pt": "Período", "en": "Semester" },
                           { "pt": "Orientador", "en": "Advisor" },
                           { "pt": "Organização", "en": "Sponsor" },]

@@ -5,6 +5,9 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+
+{% load coeficiente_rendimento %}
+
 {% block head %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
@@ -21,6 +24,10 @@
                 {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
               </th>
               <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
+              <td style="text-align: right;">{% with val=projeto.alocacao_set.all|media_crs %}
+                {{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}
+                {% endwith %}
+              </td>
               <td class="text-center">{{projeto.get_edicao}}</td>
               <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td>
               <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
