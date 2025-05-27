@@ -174,11 +174,21 @@ def distribuicao_areas(request):
                 if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
                     total_preenchido += 1
             areaspfe, outras = get_areas_estudantes(alunos)
+
+            tabela = {}
+            for area, objs in areaspfe.items():
+                for o in objs[0]:
+                    if o.usuario not in tabela:
+                        tabela[o.usuario] = []
+                    tabela[o.usuario].append(o.area)
+
             context = {
                 "total": alunos.count(),
                 "total_preenchido": total_preenchido,
                 "areaspfe": areaspfe,
                 "outras": outras,
+                "tabela": tabela,
+                "areas": Area.objects.filter(ativa=True),
             }
 
         elif tipo == "propostas":
@@ -186,10 +196,20 @@ def distribuicao_areas(request):
             if not todas:
                 propostas = propostas.filter(ano=ano, semestre=semestre)
             areaspfe, outras = get_areas_propostas(propostas)
+
+            tabela = {}
+            for area, objs in areaspfe.items():
+                for o in objs[0]:
+                    if o.proposta not in tabela:
+                        tabela[o.proposta] = []
+                    tabela[o.proposta].append(o.area)
+            
             context = {
                 "total": propostas.count(),
                 "areaspfe": areaspfe,
                 "outras": outras,
+                "tabela": tabela,
+                "areas": Area.objects.filter(ativa=True),
             }
 
         elif tipo == "projetos":
@@ -204,10 +224,19 @@ def distribuicao_areas(request):
 
             areaspfe, outras = get_areas_propostas(propostas_projetos)
 
+            tabela = {}
+            for area, objs in areaspfe.items():
+                for o in objs[0]:
+                    if o.proposta not in tabela:
+                        tabela[o.proposta] = []
+                    tabela[o.proposta].append(o.area)
+
             context = {
                 "total": propostas_projetos.count(),
                 "areaspfe": areaspfe,
                 "outras": outras,
+                "tabela": tabela,
+                "areas": Area.objects.filter(ativa=True),
             }
 
         else:

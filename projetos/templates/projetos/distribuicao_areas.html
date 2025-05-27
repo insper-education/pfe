@@ -11,6 +11,23 @@
   <link href="{% static 'css/horizBarChart.css' %}" media="all" rel="stylesheet" type="text/css" />
   <script src="{% static 'js/jquery.horizBarChart.min.js' %}"></script>
 
+  <style>
+    .vertical-header {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      white-space: nowrap;
+      vertical-align: bottom;
+      text-align: left;
+    }
+    .horizontal-header {
+      writing-mode: horizontal-tb;
+      text-orientation: mixed;
+      vertical-align: bottom;
+      white-space: nowrap;
+    }
+  </style>
+
   <script>
     function bar(){
       $(".chart").horizBarChart({
@@ -77,7 +94,36 @@
     {% if tipo == "estudantes" %}
       <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small>
     {% endif %}
-    <br>
+    <br><br>
+    <hr><br>
+    
+    <span>Tabela Individualizada de Distribuição</span>
+    <div class="table-responsive mb-1">
+      <table id="BloqueadosTable" class="table-bordered table-sm">
+        <thead class="table-info">
+          <tr>
+            <th class="horizontal-header">Nome</th>
+            <th class="horizontal-header">Edição</th>
+            {% for area in areas %}
+              <th class="vertical-header">{{ area }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for dado, linha in tabela.items %}
+            <tr class="item">
+              <td>{% if tipo == "estudantes" %}{{ dado.get_full_name }}{% else %}{{ dado.get_titulo_org }}{% endif %}</td>
+              <td>{% if tipo == "estudantes" %}{{ dado.aluno.get_ultimo_periodo }}
+                {% else %}{{ dado.get_edicao }}{% endif %}</td>
+              {% for area in areas %}
+                <td>{% if area in linha %}&#10003;{% endif %}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
   </div>
   
   <script>
@@ -87,9 +133,7 @@
       carrega_pagina();
     };
     window.onload = carrega_site
-  </script>
 
-  <script>
     // Botao de curso só faz sentido se tipo == estudantes, senão é desabilitado
     $("#filterTipo").change(function() {
         function slideLeft(element) {

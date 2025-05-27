@@ -346,6 +346,12 @@ class Aluno(models.Model):
     def __str__(self):
         """Retorna o nome completo do estudante."""
         return self.user.get_full_name()
+    
+    @property
+    def get_ultimo_periodo(self):
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "SEM PERÍODO DEFINIDO"
 
 
 class Opcao(models.Model):

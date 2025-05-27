@@ -149,6 +149,12 @@ class Projeto(models.Model):
         """Returns the url to access a particular instance of MyModelName."""
         return reverse("projeto-detail", args=[str(self.id)])
 
+    @property
+    def get_edicao(self):
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "SEM PERÍODO DEFINIDO"
+    
     def get_titulo(self):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:
@@ -167,11 +173,7 @@ class Projeto(models.Model):
 
     def get_titulo_org_periodo(self):
         """Retorna o título original da proposta."""
-        if self.ano and self.semestre:
-            periodo = " (" + str(self.ano) + "." + str(self.semestre) + ")"
-        else:
-            periodo = " (SEM PERÍODO DEFINIDO)"
-        return self.get_titulo_org() + periodo
+        return self.get_titulo_org() + " (" + self.get_edicao + ")"
 
     def get_titulo_org_periodo_seguro(self):
         return re.sub(r"\W+", "", self.get_titulo_org_periodo().replace(' ', '_'))
@@ -201,11 +203,7 @@ class Projeto(models.Model):
         if self.ano == configuracao.ano and self.semestre >= configuracao.semestre:
             return {"pt": "Atuais", "en": "Current"}
         return {"pt": "Anteriores", "en": "Previous"}
-        
-    @property
-    def get_edicao(self):
-        return str(self.ano)+"."+str(self.semestre)
-    
+            
     def get_site(self):
         site_root = settings.MEDIA_ROOT + "/" + get_upload_path(self, "") + "pagina/"
         if os.path.exists(site_root):
@@ -424,25 +422,43 @@ class Proposta(models.Model):
     def perfis(self):
         perfis = [getattr(self, f"perfil{i}") for i in range(1, 5)]
         return perfis
+    
+    @property
+    def get_edicao(self):
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "SEM PERÍODO DEFINIDO"
+    
+    def get_titulo_org_periodo(self):
+        """Retorna o título original da proposta."""
+        return self.get_titulo_org() + " " + self.get_edicao()
 
-    def __str__(self):
-        """Retorno padrão textual."""
-        org = ""
-        if self.organizacao:
+    def get_titulo(self):
+        """Caso tenha titulo, senão retorna mensagem de erro."""
+        if not self.titulo:
+            return "PROBLEMA NA IDENTIFICAÇÃO DO TÍTULO DA PROPOSTA"
+        return self.titulo
+    
+    def get_titulo_org(self):
+        """Retorna o título original da proposta com organização."""
+        if self.organizacao and self.organizacao.sigla:
             org = self.organizacao.sigla
         elif self.nome_organizacao:
             org = self.nome_organizacao
         else:
             org = "ORG. NÃO DEFINIDA"
-        if self.ano and self.semestre:
-            ano, semestre = str(self.ano), str(self.semestre)
-        else:
-            ano, semestre = "ANO NÃO DEFINIDO", "SEMESTRE NÃO DEFINIDO"
-        if self.titulo:
-            titulo = self.titulo
-        else:
-            titulo = "TÍTULO NÃO DEFINIDO"
-        return org + " (" + ano + "." + semestre + ") " + titulo
+        return "[" + org + "] " + self.get_titulo()
+
+    def get_titulo_org_periodo(self):
+        """Retorna o título original da proposta."""
+        return self.get_titulo_org() + " (" + self.get_edicao + ")"
+
+    def get_titulo_org_periodo_seguro(self):
+        return re.sub(r"\W+", "", self.get_titulo_org_periodo().replace(' ', '_'))
+
+    def __str__(self):
+        """Retorno padrão textual."""
+        return self.get_titulo_org_periodo()
 
     # pylint: disable=arguments-differ
     def save(self, *args, **kwargs):
@@ -1940,7 +1956,7 @@ class AreaDeInteresse(models.Model):
 
     # As áreas são de interesse ou do usuário ou da proposta (que passa para o projeto)
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
-                                help_text="área dde interessada da pessoa")
+                                help_text="área de interessada da pessoa")
     
     proposta = models.ForeignKey(Proposta, null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="área de interesse da proposta")
