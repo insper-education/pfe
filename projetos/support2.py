@@ -25,7 +25,7 @@ def get_areas_estudantes(alunos):
 
     todas_areas = Area.objects.filter(ativa=True)
     areaspfe = {
-        area.titulo: (AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area), area.descricao)
+        area: (AreaDeInteresse.objects.filter(usuario__in=usuarios, area=area), area.descricao)
         for area in todas_areas
     }
 
@@ -36,7 +36,7 @@ def get_areas_estudantes(alunos):
 def get_areas_propostas(propostas):
     """Retorna dicionário com as áreas de interesse da lista de entrada."""
     areaspfe = {
-        area.titulo: (AreaDeInteresse.objects.filter(proposta__in=propostas, area=area), area.descricao)
+        area: (AreaDeInteresse.objects.filter(proposta__in=propostas, area=area), area.descricao)
         for area in Area.objects.filter(ativa=True)
     }
 

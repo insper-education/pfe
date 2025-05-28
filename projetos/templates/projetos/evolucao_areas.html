@@ -9,7 +9,7 @@
   {% load static %}
   {% load l10n %}
   {% load linguas %}
-  {% load dictionary %}
+  {% load range %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
@@ -49,7 +49,8 @@
                     {% if area != "outras" and area != "QUANTIDADE" and area != "PREENCHIDOS" %}
                       { 
                           data: [{% for no_anose in valores %}{{no_anose.1|unlocalize}}, {% endfor %}],
-                          label: "{{area}}",
+                          label_pt: "{{area.titulo}}",
+                          label_en: "{{area.titulo_en}}",
                           borderColor: colors[{{ forloop.counter0 }} % colors.length],
                           fill: false,
                           spanGaps: true,
@@ -61,7 +62,8 @@
           },
           options: {
               title: { display: true,
-                        text: "Evolução das áreas de interesse"
+                        text_pt: "Evolução das áreas de interesse",
+                        text_en: "Evolution of Areas of Interest"
                      },
               tooltips: {
                   callbacks: {
@@ -101,12 +103,18 @@
         <tbody>
           {% for area, valores in tabela_areas.items %}
             <tr>
-              <td style="background-color: rgb(255,255,255);">{{area}}</td>
               {% if area == "outras" or area == "QUANTIDADE" or area == "PREENCHIDOS" %}
+                <td style="background-color: rgb(255,255,255); font-weight: bold; text-align: center;">
+                  {% if area == "outras"%}{% lng "Outras" "Other" %}
+                  {% elif area == "QUANTIDADE" %}{% lng "Quantidade" "Quantity" %}
+                  {% elif area == "PREENCHIDOS" %}{% lng "Preenchidos" "Filled" %}
+                  {% endif %}
+                </td>
                 {% for no_anose in valores %}
                   <td colspan="2" style="text-align: right; background-color: rgb(255,255,255);">{{no_anose}}</td>
                 {% endfor %}
               {% else %}
+                <td style="background-color: rgb(255,255,255);">{% lng area.titulo area.titulo_en %}</td>
                 {% for no_anose in valores %}
                   <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.0}}</td>
                   <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.1|floatformat:"0"}}%</td>
@@ -119,14 +127,36 @@
       </table>
     </div>
 
+
+    <script>
+
+      function lingua_grafico() {
+        if(window.evolucao_areas == undefined) {return;}
+        if(localStorage.getItem("lingua") == "pt") {
+          window.evolucao_areas.options.title.text = window.evolucao_areas.options.title.text_pt;
+          {% for c in tabela_areas|length|range_d:-3 %}
+              window.evolucao_areas.data.datasets[{{c}}].label = window.evolucao_areas.data.datasets[{{c}}].label_pt;
+          {% endfor %}
+        } else {
+          window.evolucao_areas.options.title.text = window.evolucao_areas.options.title.text_en;
+          {% for c in tabela_areas|length|range_d:-3 %}
+              window.evolucao_areas.data.datasets[{{c}}].label = window.evolucao_areas.data.datasets[{{c}}].label_en;
+          {% endfor %}
+        }
+        window.evolucao_areas.update();
+      }
+      document.addEventListener("languageChanged", lingua_grafico);
+    </script>
+
+
   </div>
   
   <script>
-    //function carrega_pagina() {bar();};
-
+      
     function carrega_pagina() {  
       var chart_evolucao_areas = document.getElementById("evolucao_areas").getContext("2d");
-      window.medias = new Chart(chart_evolucao_areas, config_evolucao_areas);
+      window.evolucao_areas = new Chart(chart_evolucao_areas, config_evolucao_areas);
+      lingua_grafico();
     }
 
     function carrega_site() {carrega_pagina();};

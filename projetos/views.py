@@ -280,7 +280,7 @@ def evolucao_areas(request):
         tabela_areas["QUANTIDADE"] = []
         tabela_areas["PREENCHIDOS"] = []
         for a in Area.objects.filter(ativa=True):
-            tabela_areas[a.titulo] = []
+            tabela_areas[a] = []
         tabela_areas["outras"] = []
         
         if tipo == "estudantes":

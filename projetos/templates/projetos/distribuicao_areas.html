@@ -64,7 +64,7 @@
                 data-toggle="tooltip" data-html="true" animation="true" title="{{value.1}}"
             {% endif %}
             >
-            {{key}}<br>
+            {% lng key.titulo key.titulo_en %}<br>
           </span>
           <li class="past" title="" style="margin-top:0px; margin-bottom: 12px;">
             <span class="bar" data-number="{{value.0.count}}"></span>
@@ -90,22 +90,32 @@
     </div>
 
     <br>
-    Total de {{tipo}}: {{total}}
+    {% lng "Total de" "Total Number of" %}
     {% if tipo == "estudantes" %}
-      <small>(total de estudantes que preencheram algum campo: {{total_preenchido}})</small>
+      {% lng "estudantes" "students" %}:
+    {% elif tipo == "propostas" %}
+      {% lng "propostas" "proposals" %}:
+    {% elif tipo == "projetos" %}
+      {% lng "projetos" "projects" %}:
+    {% endif %}
+    {{total}}
+    {% if tipo == "estudantes" %}
+      <small>({% lng "total de estudantes que preencheram algum campo" "total number of students who filled in any field" %}: {{total_preenchido}})</small>
     {% endif %}
     <br><br>
     <hr><br>
     
-    <span>Tabela Individualizada de Distribuição</span>
+    <span>
+      {% lng "Tabela Individualizada de Distribuição" "Individualized Distribution Table" %}
+    </span>
     <div class="table-responsive mb-1">
       <table id="BloqueadosTable" class="table-bordered table-sm">
         <thead class="table-info">
           <tr>
-            <th class="horizontal-header">Nome</th>
-            <th class="horizontal-header">Edição</th>
+            <th class="horizontal-header">{% lng "Nome" "Name" %}</th>
+            <th class="horizontal-header">{% lng "Edição" "Edition" %}</th>
             {% for area in areas %}
-              <th class="vertical-header">{{ area }}</th>
+              <th class="vertical-header">{% lng area.titulo area.titulo_en %}</th>
             {% endfor %}
           </tr>
         </thead>
