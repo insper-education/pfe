@@ -1940,6 +1940,9 @@ class Area(models.Model):
 
     descricao = models.CharField("Descrição", max_length=512, null=True, blank=True,
                                  help_text="Descrição da área de interesse")
+    
+    descricao_en = models.CharField("Descrição Inglês", max_length=512, null=True, blank=True,
+                                    help_text="Descrição da área de interesse em inglês")
 
     ativa = models.BooleanField("Ativa", default=True,
                                 help_text="Se a área de interesse está sendo usada atualmente")

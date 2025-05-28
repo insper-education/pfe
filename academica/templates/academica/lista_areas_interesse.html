@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Maio de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load linguas %}
+{% endblock %}
+
+{% block content %}
+
+    {% include "tabelas_top_ml.html" with tabela="AreasInteresse" cabecalhos=cabecalhos tabela_simples=True %}
+      {% for area in areas %}
+        <tr class="item">
+          <td>{% lng area.titulo area.titulo_en %}</td>
+          <td>{% lng area.descricao area.descricao_en %}</td>
+        </tr>
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+  </div>
+
+{% endblock %}

@@ -15,7 +15,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from estudantes.models import Relato, Pares
-from projetos.models import Evento
+from projetos.models import Evento, Area
 
 from operacional.models import Curso
 
@@ -145,3 +145,22 @@ def dinamicas_grupos(request):
             }
 
     return render(request, "academica/dinamicas_grupos.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def lista_areas_interesse(request):
+    """Mostra tabela com as possíveis áreas de interesse."""
+    
+    cabecalhos = [
+        {"pt": "Área", "en": "Area"},
+        {"pt": "Descrição", "en": "Description"}, 
+    ]
+
+    context = {
+        "titulo": {"pt": "Lista de Áreas de Interesse", "en": "Areas of Interest List"},
+        "cabecalhos": cabecalhos,
+        "areas": Area.objects.filter(ativa=True),
+    }
+
+    return render(request, "academica/lista_areas_interesse.html", context)
