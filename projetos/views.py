@@ -262,7 +262,7 @@ def evolucao_areas(request):
     """Evolução das áreas de interesse dos alunos/propostas/projetos nos anos."""
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
-    edicoes = get_edicoes(Aluno)[0]
+    edicoes = get_edicoes(Projeto)[0]
     
     tipo = "estudantes"
     curso = "todos"
@@ -277,13 +277,14 @@ def evolucao_areas(request):
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
         tabela_areas = {}
-        tabela_areas["QUANTIDADES"] = []
+        tabela_areas["QUANTIDADE"] = []
+        tabela_areas["PREENCHIDOS"] = []
         for a in Area.objects.filter(ativa=True):
             tabela_areas[a.titulo] = []
         tabela_areas["outras"] = []
         
         if tipo == "estudantes":
-            tabela_areas["PREENCHIDOS"] = []
+            
             alunos = Aluno.objects.all()
 
             if curso != "T":
@@ -304,35 +305,45 @@ def evolucao_areas(request):
                     if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
                         total_preenchido += 1
 
-                tabela_areas["QUANTIDADES"].append(alunos_as.count())
+                tabela_areas["QUANTIDADE"].append(alunos_as.count())
                 tabela_areas["PREENCHIDOS"].append(total_preenchido)
 
                 areaspfe, outras = get_areas_estudantes(alunos_as)
             
                 for area, objs in areaspfe.items():
                     q = objs[0].count() if objs[0] else 0
-                    tabela_areas[area].append(q)
+                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
+                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
+                    tabela_areas[area].append( [q, p, h] )
                 outras_txt = ""
                 for o in outras:
                     outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt)
+                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
 
         elif tipo == "propostas":
             propostas = Proposta.objects.all()
             for edicao in edicoes:
                 ano, semestre = edicao.split('.')
                 propostas_as = propostas.filter(ano=ano, semestre=semestre)
-                areaspfe, outras = get_areas_propostas(propostas_as)
+                total_preenchido = 0
+                for proposta in propostas_as:
+                    if AreaDeInteresse.objects.filter(proposta=proposta).count() > 0:
+                        total_preenchido += 1
 
-                tabela_areas["QUANTIDADES"].append(propostas_as.count())
+                tabela_areas["QUANTIDADE"].append(propostas_as.count())
+                tabela_areas["PREENCHIDOS"].append(total_preenchido)
+
+                areaspfe, outras = get_areas_propostas(propostas_as)
             
                 for area, objs in areaspfe.items():
                     q = objs[0].count() if objs[0] else 0
-                    tabela_areas[area].append(q)
+                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
+                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
+                    tabela_areas[area].append( [q, p, h] )
                 outras_txt = ""
                 for o in outras:
                     outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt)
+                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
 
         elif tipo == "projetos":
 
@@ -345,18 +356,26 @@ def evolucao_areas(request):
                 # Estudar forma melhor de fazer isso
                 propostas = [p.proposta.id for p in projetos_as]
                 propostas_projetos = Proposta.objects.filter(id__in=propostas)
+                total_preenchido = 0
+                for proposta in propostas_projetos:
+                    if AreaDeInteresse.objects.filter(proposta=proposta).count() > 0:
+                        total_preenchido += 1
+                
+                tabela_areas["QUANTIDADE"].append(propostas_projetos.count())
+                tabela_areas["PREENCHIDOS"].append(total_preenchido)
 
                 areaspfe, outras = get_areas_propostas(propostas_projetos)
 
-                tabela_areas["QUANTIDADES"].append(propostas_projetos.count())
-            
                 for area, objs in areaspfe.items():
                     q = objs[0].count() if objs[0] else 0
-                    tabela_areas[area].append(q)
+                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
+                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
+                    tabela_areas[area].append( [q, p, h] )
+
                 outras_txt = ""
                 for o in outras:
                     outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt)
+                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
 
         else:
             return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)

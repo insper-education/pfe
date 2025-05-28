@@ -7,11 +7,11 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
   {% load linguas %}
   {% load dictionary %}
-  
+
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
 
 {% endblock %}
 
@@ -40,25 +40,15 @@
           "#8E44AD", "#BDC3C7", "#2C3E50"
       ];
 
-      {% if tipo == "estudantes" %}
-        {% with qtd=tabela_areas|dict_key:"PREENCHIDOS" %}
-          var qtd = {% if qtd %}{{qtd}}{% else %}0{% endif %};
-        {% endwith %}
-      {% else %}
-        {% with qtd=tabela_areas|dict_key:"QUANTIDADES" %}
-          var qtd = {% if qtd %}{{qtd}}{% else %}0{% endif %};
-        {% endwith %}
-      {% endif %}
-
       var config_evolucao_areas = {
           type: "line",
           data: {
               labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
               datasets: [
                   {% for area, valores in tabela_areas.items %}
-                    {% if area != "outras" and area != "QUANTIDADES" and area != "PREENCHIDOS" %}
+                    {% if area != "outras" and area != "QUANTIDADE" and area != "PREENCHIDOS" %}
                       { 
-                          data: [{% for no_anose in valores %}({{no_anose}}/qtd[{{forloop.counter0}}])*100, {% endfor %}],
+                          data: [{% for no_anose in valores %}{{no_anose.1|unlocalize}}, {% endfor %}],
                           label: "{{area}}",
                           borderColor: colors[{{ forloop.counter0 }} % colors.length],
                           fill: false,
@@ -101,20 +91,27 @@
     </script>
 
     <div class="table-responsive mb-1">
-      <table class="tabela-padrao table table-striped table-bordered table-hover">
+      <table class="tabela-padrao table-bordered table-hover">
         <thead>
           <tr>
-            <th style="width: 18em;">Area</th>
-            {% for edicao in edicoes %}<th>{{edicao}}</th>{% endfor %}
+            <th style="width: 18em;">{% lng "Área" "Area" %}</th>
+            {% for edicao in edicoes %}<th colspan="2">{{edicao}}</th>{% endfor %}
           </tr>
         </thead>
         <tbody>
           {% for area, valores in tabela_areas.items %}
             <tr>
-              <td>{{area}}</td>
-              {% for no_anose in valores %}
-                <td style="text-align: right;">{{no_anose}}</td>
-              {% endfor %}
+              <td style="background-color: rgb(255,255,255);">{{area}}</td>
+              {% if area == "outras" or area == "QUANTIDADE" or area == "PREENCHIDOS" %}
+                {% for no_anose in valores %}
+                  <td colspan="2" style="text-align: right; background-color: rgb(255,255,255);">{{no_anose}}</td>
+                {% endfor %}
+              {% else %}
+                {% for no_anose in valores %}
+                  <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.0}}</td>
+                  <td style="text-align: right; background-color: rgb({{no_anose.2|floatformat:"0"}}, {{no_anose.2|floatformat:"0"}}, 255);">{{no_anose.1|floatformat:"0"}}%</td>
+                {% endfor %}
+              {% endif %}
             </tr>
           {% endfor %}
 
