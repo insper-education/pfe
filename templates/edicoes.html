@@ -46,6 +46,7 @@
     background-repeat: repeat-y;
     animation: animatedBackground 4s linear infinite;
     background-size: 400% 100%;
+    display: block; /* Use block for full coverage */
   }
 
   #container_edicao {
@@ -64,18 +65,107 @@
   }
 </style>
 
+<style>
+.pure-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.pure-switch input { display: none; }
+.pure-switch .slider {
+  width: 110px;
+  height: 30px;
+  background: #ccc;
+  border-radius: 32px;
+  position: relative;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.0rem;
+  font-weight: 400;
+  color: #fff;
+  user-select: none;
+}
+.pure-switch .slider-text {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  transition: color 0.3s;
+  border-radius: 32px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.pure-switch .slider:before {
+  content: "";
+  position: absolute;
+  left: 4px; top: 4px;
+  width: 22px; height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s, background 0.3s;
+  z-index: 1;
+}
+.pure-switch input:checked + .slider {
+  background: #003bff;
+}
+.pure-switch input:checked + .slider:before {
+  transform: translateX(80px);
+  background: #e6f0ff;
+}
+
+.filter-hide {
+  opacity: 0;
+  transform: translateX(100%) scaleX(0.1);
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  transition: 
+    opacity 0.4s cubic-bezier(.4,0,.2,1),
+    transform 0.4s cubic-bezier(.4,0,.2,1),
+    max-width 0.4s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+}
+
+.bloco_filtro {
+  transition: 
+    opacity 0.4s cubic-bezier(.4,0,.2,1),
+    transform 0.4s cubic-bezier(.4,0,.2,1),
+    max-width 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+</style>
+
 <div id="container_edicao" class="container">
   <div class="row align-items-start justify-content-start mb-1">
     <div class="ml-3 form-inline">
+      {% if todos %}
+        <div id="blocoTodos" class="input-group input-group-sm mt-1 flex-nowrap mr-3">
+          <div class="input-group-prepend">
+            <label class="pure-switch">
+              <input type="checkbox" id="todos" onClick="recarregar_pagina()" name="todos" class="" checked>
+              <span class="slider">
+                <span class="slider-text to_label">{% lng "Todos" "All" %}</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      {% endif %}
       {% if edicoes %}
         {% if not sem_edicao %}
-          <div  id="blocoFilterEdicao" class="input-group input-group-sm mt-1 flex-nowrap">
+          <div id="blocoFilterEdicao" class="input-group input-group-sm mt-1 flex-nowrap bloco_filtro">
             <div class="input-group-prepend">
               <label class="to_label input-group-text" for="filterEdicao" onClick="recarregar_pagina()"><span class="to_hide">
                 {% lng "Edição" "Edition" %}
               </span></label>
             </div>
-            <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">
+            <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao" disabled>
               <optgroup class="opt_edi">
               {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
               {% if not n_todas %}
@@ -104,7 +194,7 @@
       {% endif %}
 
       {% if com_cursos %}
-        <div id="blocoFilterCurso" class="input-group input-group-sm mt-1 flex-nowrap">
+        <div id="blocoFilterCurso" class="input-group input-group-sm mt-1 flex-nowrap bloco_filtro">
           <div class="input-group-prepend">
             <label class="to_label input-group-text" for="filterCurso" onClick="recarregar_pagina()"><span class="to_hide">
               {% lng "Curso" "Program" %}
@@ -352,6 +442,31 @@
     </div>
   </div>
 </div>
+
+{% if todos %}
+  <script>
+    function esconde_bloco_filtros(val) {
+        const filters = document.querySelectorAll(".bloco_filtro");
+        filters.forEach(filter => {
+          if (val) {
+            filter.classList.add("filter-hide");
+          } else {
+            filter.classList.remove("filter-hide");
+          }
+        });
+    }
+    function esconde_filtros() {
+      const switchAll = document.getElementById("todos");
+      switchAll.addEventListener("change", () => {
+        esconde_bloco_filtros(switchAll.checked);
+      });
+    }
+    document.addEventListener("DOMContentLoaded", esconde_filtros);
+    esconde_bloco_filtros(true);
+  </script>
+{% endif %}
+
+{% comment %} Salva o filtro de edição selecionado {% endcomment %}
 
 {% comment %} Salva a última edição selecionada {% endcomment %}
 {% if edicoes %}

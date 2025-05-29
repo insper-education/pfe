@@ -18,6 +18,9 @@
 
       $(".filter").attr("disabled", true);
       $(".to_label").addClass("label_animado");
+      {% if todos %}
+        var todos = $("#todos").is(':checked');
+      {% endif %}
       {% if not sem_edicao %}
         var edicao = $("#filterEdicao option:selected").attr("value");
       {% endif %}
@@ -45,6 +48,9 @@
           type: "POST",
           //url: "Normalmente a mesma página",
           data: {
+              {% if todos %}
+                todos: todos,
+              {% endif %}
               {% if not sem_edicao %}
                 edicao: edicao,
               {% endif %}

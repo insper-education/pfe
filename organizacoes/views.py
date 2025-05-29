@@ -769,34 +769,40 @@ def todos_parceiros(request):
     parceiros = None
     edicao = "todas"
     if request.is_ajax():
-        if "edicao" not in request.POST:
-            return HttpResponseNotFound("<h1>Edição não encontrada!</h1>")
         
-        edicao = request.POST["edicao"]
-        
-        if "curso" in request.POST:
-            curso = request.POST["curso"]
-            if curso != "TE" and curso != 'T':
-                if edicao not in ("todas",):
-                    ano, semestre = map(int, edicao.split('.'))
-                    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__curso2__sigla_curta=curso)
-                else:
-                    alocacoes = Alocacao.objects.filter(aluno__curso2__sigla_curta=curso)
-                lista_projetos = alocacoes.values_list("projeto", flat=True)
-                conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
-                lista_conexoes = conexoes.values_list("parceiro", flat=True)
-                parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
-            else:
-                if edicao not in ("todas",):
-                    ano, semestre = map(int, edicao.split('.'))
-                    lista_projetos = Projeto.objects.filter(ano=ano, semestre=semestre).values_list("id", flat=True)
+        if request.POST.get("todos") == "true":
+            parceiros = Parceiro.objects.all()
+        else:
+            if "edicao" not in request.POST:
+                return HttpResponseNotFound("<h1>Edição não encontrada!</h1>")
+            
+            edicao = request.POST["edicao"]
+            
+            if "curso" in request.POST:
+                curso = request.POST["curso"]
+                if curso != "TE" and curso != 'T':
+                    if edicao not in ("todas",):
+                        ano, semestre = map(int, edicao.split('.'))
+                        alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre, aluno__curso2__sigla_curta=curso)
+                    else:
+                        alocacoes = Alocacao.objects.filter(aluno__curso2__sigla_curta=curso)
+                    lista_projetos = alocacoes.values_list("projeto", flat=True)
                     conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
                     lista_conexoes = conexoes.values_list("parceiro", flat=True)
                     parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
                 else:
-                    parceiros = Parceiro.objects.all()
-        else:
-            return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
+                    if edicao not in ("todas",):
+                        ano, semestre = map(int, edicao.split('.'))
+                        lista_projetos = Projeto.objects.filter(ano=ano, semestre=semestre).values_list("id", flat=True)
+                        conexoes = Conexao.objects.filter(projeto__id__in=lista_projetos)
+                        lista_conexoes = conexoes.values_list("parceiro", flat=True)
+                        parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
+                    else:
+                        conexoes = Conexao.objects.filter(projeto__isnull=False)
+                        lista_conexoes = conexoes.values_list("parceiro", flat=True)
+                        parceiros = Parceiro.objects.filter(id__in=lista_conexoes)
+            else:
+                return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
 
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
                   { "pt": "Gênero", "en": "Gender", },
@@ -817,6 +823,7 @@ def todos_parceiros(request):
         "cabecalhos": cabecalhos,
         "titulo": { "pt": "Parceiros Conectados a Projetos", "en": "Partners Connected to Projects", },
         "edicoes": get_edicoes(Conexao)[0],
+        "todos": True,
         "edicao": edicao,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         "captions": captions,
