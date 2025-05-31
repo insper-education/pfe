@@ -562,8 +562,7 @@ def banca_avaliar(request, slug, documento_id=None):
 
             recipient_list = [avaliador.email, ]
             email(subject, recipient_list, message)
-            return HttpResponse(message)
-
+            
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
             

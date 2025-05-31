@@ -5,8 +5,8 @@
 {% endcomment %}
 
 $(document).ready(function () {
-  // Somente mostra elemento selecionado
-  $("#{{select}}").on("changed.bs.select", function (e, clickedIndex, isSelected, previousValue) {
+  {% comment %} Somente mostra elemento selecionado {% endcomment %}
+  function mostra_elem_selecionado() {  // (e, clickedIndex, isSelected, previousValue)
     table = $("#{{tabela}}Table").DataTable();
     $.fn.dataTable.ext.search.push(
       function(settings, data, dataIndex) {
@@ -20,6 +20,8 @@ $(document).ready(function () {
       }
     );
     table.draw();
-  });
+  }
+  $("#{{select}}").on("changed.bs.select", mostra_elem_selecionado);
+  document.addEventListener("edicaoEvent", mostra_elem_selecionado);
 });
 

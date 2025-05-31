@@ -132,7 +132,7 @@ class Peso(models.Model):
                              help_text="Peso da avaliação na média em % (varia de 0 a 100)")
 
     bloqueio_atraso = models.FloatField("Bloqueio por Atraso", validators=[MinValueValidator(0), MaxValueValidator(10)], null=True, blank=True,
-                                        help_text="Bloqueio por atraso na entrega de 0 a 10")
+                                        help_text="Bloqueio por atraso na entrega de 0 a 10, estudante não podera ter nota mais alta que a definida se entregou atrasado")
     class Meta:
         """Meta para Peso."""
         verbose_name = "Peso"

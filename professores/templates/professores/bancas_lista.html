@@ -88,7 +88,7 @@
                 {% if banca.composicao is not None %}
                   {{ banca.composicao.exame }}
                 {% else %}
-                  Não definido
+                  {% lng "Não definido" "Not defined" %}
                 {% endif %}
               </div>
               
@@ -192,15 +192,20 @@
   <script>
     // Callback function when #tipo_banca changes
     $(document).ready(function() {
-      $("#tipo_banca").change(function() {
-        var value = $(this).val();
+
+      function atualiza_por_tipo() {
+        var value = $("#tipo_banca").val();
         if(value == "todos") {
           $(".item").show();
         } else {
           $(".item").hide();
           $('.'+value).show();
         }
-      });
+      }
+      
+      $("#tipo_banca").change(atualiza_por_tipo);
+      document.addEventListener("edicaoEvent", atualiza_por_tipo);
+
     });
   
     function carrega_pagina() {montar_calendario();};
