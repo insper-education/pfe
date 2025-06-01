@@ -21,14 +21,14 @@
   {% include "edicoes.html" with com_cursos=True %}
 
   <div class="input-group input-group-sm mt-1">
-      <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
-          <label class="form-check-label" for="inlineRadio1">{% lng "Médias Finais" "Final Grades" %}</label>
-      </div>
-      <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
-          <label class="form-check-label" for="inlineRadio2">{% lng "Notas Individuais" "Individual Grades" %}</label>
-      </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="individual" id="inlineRadio1" value="media" checked>
+      <label class="form-check-label" for="inlineRadio1">{% lng "Médias Finais" "Final Grades" %}</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="individual" id="inlineRadio2" value="individual">
+      <label class="form-check-label" for="inlineRadio2">{% lng "Notas Individuais" "Individual Grades" %}</label>
+    </div>
   </div>
 
   <div id="atualizar">
@@ -48,247 +48,326 @@
       <div class="chart-container" style="position: relative; max-width:80vh">
         <canvas id="correlacao"></canvas>
       </div>
-          
       <br>
-      <small>
-        <div id="semestres"></div>
+
+      <div id="semestres" style="font-size: 0.8em;">
         {% for curs, estud in estudantes.items %}
-          <div id="{{curs.sigla}}"></div>
+          <div> {% lng "Quantidade de estudantes de" "Number of students in" %} {% lng curs.nome curs.nome_en %} = <span id="{{curs.sigla}}"></span></div>
         {% endfor %}
-      </small>
+      </div>
 
-            <script>
-                {% if alocacoes %}
-                    semestres = ""
-                    {% for key, alocacoes_tmp in alocacoes.items %}
-                        var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao|get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                    {  x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
-                                       y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
-                                       i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
-                                       name: "{{alocacao.aluno.user.get_full_name}}"
-                                    }{% if not forloop.last %},{% endif %}
+      <table id="notas_estudantes" class=" table-sm table-striped table-bordered mt-3">
+        <thead class="table-info">
+          <tr>
+            <th scope="col">{% lng "Estudante" "Student" %}</th>
+            <th scope="col">{% lng "Curso" "Program" %}</th>
+            <th scope="col">{% lng "Semestre" "Semester" %}</th>
+            <th scope="col">{% lng "CR" "GPA" %}</th>
+            <th scope="col">{% lng "Média Final" "Final Grade" %}</th>
+            <th scope="col">{% lng "Média Individual" "Individual Grade" %}</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <script>
+        {% if alocacoes %}
+          semestres = ""
+          {% for key, alocacoes_tmp in alocacoes.items %}
+              var data{{key}} = [{% for alocacao in alocacoes_tmp %}{% with media=alocacao|get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                          {  x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
+                              y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
+                              i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
+                              name: "{{alocacao.aluno.user.get_full_name}}",
+                              curso: "{{alocacao.aluno.curso2.sigla}}"
+                          }{% if not forloop.last %},{% endif %}
+              {% endif %}{% endwith %}{% endfor %}];
+              semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
+          {% endfor %}
+
+          $("#semestres").html(semestres);
+          {% for key, alocacoes_tmp in alocacoes.items %}
+              var data{{key}}_i = [];
+              for (var est in data{{key}}) {
+                  data{{key}}_i.push(
+                      {
+                          x: data{{key}}[est].i,
+                          y: data{{key}}[est].y,
+                          name: data{{key}}[est].name
+                      }
+                  );
+
+                  $("#notas_estudantes tbody").append(
+                    "<tr>" +
+                    "<td>" + data{{key}}[est].name + "</td>" +
+                    "<td>" + data{{key}}[est].curso + "</td>" +
+                    "<td>" + "{{key}}" + "</td>" +
+                    "<td>" + data{{key}}[est].y.toFixed(2) + "</td>" +
+                    "<td>" + data{{key}}[est].x.toFixed(2) + "</td>" +
+                    "<td>" + data{{key}}[est].i.toFixed(2) + "</td>" +
+                    "</tr>"
+                  );
+
+              }
+          {% endfor %}
+        {% endif %}
+
+        {% for curs, estud in estudantes.items %}
+            var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao|get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
+                        {   x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
+                            y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
+                            i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
+                            name: "{{alocacao.aluno.user.get_full_name}}"
+                        }{% if not forloop.last %},{% endif %}
                         {% endif %}{% endwith %}{% endfor %}];
-                        semestres += "Quantidade de estudantes em {{key}} = " + data{{key}}.length + "<br>"
-                    {% endfor %}
+            if (data_estudantes_{{curs.sigla}}.length > 0) {
+                $("#{{curs.sigla}}").html(data_estudantes_{{curs.sigla}}.length);
 
-                    $("#semestres").html(semestres);
-                    {% for key, alocacoes_tmp in alocacoes.items %}
-                        var data{{key}}_i = [];
-                        for (var est in data{{key}}) {
-                            data{{key}}_i.push(
-                                {
-                                    x: data{{key}}[est].i,
-                                    y: data{{key}}[est].y,
-                                    name: data{{key}}[est].name
-                                }
-                            );
-                        }
-                    {% endfor %}
-                {% endif %}
-
-                {% for curs, estud in estudantes.items %}
-                    var data_estudantes_{{curs.sigla}} = [{% for alocacao in estud %}{% with media=alocacao|get_media_alocacao %}{% if media.pesos == 1 and alocacao.aluno.cr > 0 %}
-                                {   x:{% if media.media %}{{media.media|unlocalize}}{% else%}0{% endif %},
-                                    y:{% if alocacao.aluno.cr %}{{alocacao.aluno.cr|unlocalize}}{% else%}0{% endif %},
-                                    i:{% if media.individual %}{{media.individual|unlocalize}}{% else%}0{% endif %},
-                                   name: "{{alocacao.aluno.user.get_full_name}}"
-                                }{% if not forloop.last %},{% endif %}
-                                {% endif %}{% endwith %}{% endfor %}];
-                    if (data_estudantes_{{curs.sigla}}.length > 0) {
-                        $("#{{curs.sigla}}").html("Quantidade de estudantes de {{curs.nome}} = " + data_estudantes_{{curs.sigla}}.length);
-                    }
-                    
-                    var data_estudantes_{{curs.sigla}}_i = [];
-                    for (var est in data_estudantes_{{curs.sigla}}) {
-                        data_estudantes_{{curs.sigla}}_i.push(
-                            {
-                                x: data_estudantes_{{curs.sigla}}[est].i,
-                                y: data_estudantes_{{curs.sigla}}[est].y,
-                                name: data_estudantes_{{curs.sigla}}[est].name
-                            }
-                        );
-                    }
-                {% endfor %}
-
-                var options = {
-                    aspectRatio: 1,
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    tooltips: {
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
-                                return label + ': (' + tooltipItem.xLabel.toFixed(2) + ', ' + tooltipItem.yLabel.toFixed(2) + ')';
-                            }
-                        }
-                    },
-                    
-                    plugins: {
-                        colorschemes: {
-                            //scheme: 'tableau.HueCircle19',
-                            scheme: 'tableau.Tableau20',
-                        }
-                    },
-                    scales: {
-                        yAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'CR'
-                            },
-                            ticks: {
-                                min: 0,
-                                max: 10,
-                            }
-                        }],
-                        xAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Médias Finais'
-                            },
-                            ticks: {
-                                min: 0,
-                                max: 10,
-                            }
-                        }]
-                    },
-                };
-
-                var options_i = {
-                    aspectRatio: 1,
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    tooltips: {
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
-                                return label + ': (' + tooltipItem.xLabel.toFixed(2) + ', ' + tooltipItem.yLabel.toFixed(2) + ')';
-                            }
-                        }
-                    },
-                    
-                    plugins: {
-                        colorschemes: {
-                            //scheme: 'tableau.HueCircle19',
-                            scheme: 'tableau.Tableau20',
-                        } 
-                    },
-                    scales: {
-                        yAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'CR'
-                            },
-                            ticks: {
-                                min: 0,
-                                max: 10,
-                            }
-                        }],
-                        xAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Notas Individuais'
-                            },
-                            ticks: {
-                                min: 0,
-                                max: 10,
-                            }
-                        }]
-                    },
-
-                };
-
-                function adjust(color, amount) {
-                    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+                for (var i = 0; i < data_estudantes_{{curs.sigla}}.length; i++) {
+                    $("#notas_estudantes tbody").append(
+                        "<tr>" +
+                        "<td>" + data_estudantes_{{curs.sigla}}[i].name + "</td>" +
+                        "<td>{{curs.sigla}}</td>" +
+                        "<td>{{periodo.0}}.{{periodo.1}}</td>" +
+                        "<td>" + data_estudantes_{{curs.sigla}}[i].y.toFixed(2) + "</td>" +
+                        "<td>" + data_estudantes_{{curs.sigla}}[i].x.toFixed(2) + "</td>" +
+                        "<td>" + data_estudantes_{{curs.sigla}}[i].i.toFixed(2) + "</td>" +
+                        "</tr>"
+                    );
                 }
 
-                var datasets_media = [
-                    {% for key, alocacao_tmp in alocacoes.items %}
-                        {
-                            label: '{{key}}',
-                            data: data{{key}},
-                            trendlineLinear: {
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endfor %}
-
-                    {% for curs, estud in estudantes.items %}
-                        {
-                            label: "{{curs.nome}}",
-                            pointBackgroundColor: '#{{curs.cor}}',
-                            pointBorderColor: adjust("#{{curs.cor}}",-20),
-                            backgroundColor: "#{{curs.cor}}",
-                            borderColor: adjust("#{{curs.cor}}",-20),
-                            data: data_estudantes_{{curs.sigla}},
-                            trendlineLinear: {
-                                style: "#{{curs.cor}}",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endfor %}
-                    ]
-
-                var datasets_i = [
-                    {% for key, alocacao_tmp in alocacoes.items %}
-                        {
-                            label: '{{key}}',
-                            data: data{{key}}_i,
-                            trendlineLinear: {
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endfor %}
-
-                    {% for curs, estud in estudantes.items %}
-                        {
-                            label: "{{curs.sigla}}",
-                            pointBackgroundColor: '#{{curs.cor}}',
-                            pointBorderColor: adjust("#{{curs.cor}}",-20),
-                            backgroundColor: "#{{curs.cor}}",
-                            borderColor: adjust("#{{curs.cor}}",-20),
-                            data: data_estudantes_{{curs.sigla}}_i,
-                            trendlineLinear: {
-                                style: "#{{curs.cor}}",
-                                lineStyle: "dotted",
-                                width: 2
-                            }
-                        },
-                    {% endfor %}
-                    ]
-
-                function carrega_pagina() {  
-
-                    valor_individual = $("input[type='radio'][name=individual]:checked").val();
-                    
-                    if (valor_individual == "media") {
-                        var config_corelacao = {
-                            type: 'scatter',
-                            data: {datasets: datasets_media,},
-                            options: options
-                        }
-                    } else {
-                        var config_corelacao = {
-                            type: 'scatter',
-                            data: {datasets: datasets_i,},
-                            options: options_i
-                        }
+            }
+            
+            var data_estudantes_{{curs.sigla}}_i = [];
+            for (var est in data_estudantes_{{curs.sigla}}) {
+                data_estudantes_{{curs.sigla}}_i.push(
+                    {
+                        x: data_estudantes_{{curs.sigla}}[est].i,
+                        y: data_estudantes_{{curs.sigla}}[est].y,
+                        name: data_estudantes_{{curs.sigla}}[est].name
                     }
-                    
-                    if( window.corr!==undefined) window.corr.destroy();
-                    var corr = document.getElementById('correlacao').getContext('2d');
-                    window.corr = new Chart(corr, config_corelacao);
+                );
+            }
+        {% endfor %}
 
+        var options = {
+            aspectRatio: 1,
+            responsive: true,
+            maintainAspectRatio: true,
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
+                        return label + ': (' + tooltipItem.xLabel.toFixed(2) + ', ' + tooltipItem.yLabel.toFixed(2) + ')';
+                    }
                 }
+            },
+            
+            plugins: {
+                colorschemes: {
+                    //scheme: 'tableau.HueCircle19',
+                    scheme: 'tableau.Tableau20',
+                }
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString_pt: "CR",
+                        labelString_en: "GPA"
+                    },
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString_pt: "Médias Finais",
+                        labelString_en: "Final Grades"
+                    },
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                    }
+                }]
+            },
+        };
 
-                window.onload = carrega_pagina
+        var options_i = {
+            aspectRatio: 1,
+            responsive: true,
+            maintainAspectRatio: true,
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].name;
+                        return label + ': (' + tooltipItem.xLabel.toFixed(2) + ', ' + tooltipItem.yLabel.toFixed(2) + ')';
+                    }
+                }
+            },
+            
+            plugins: {
+                colorschemes: {
+                    //scheme: 'tableau.HueCircle19',
+                    scheme: 'tableau.Tableau20',
+                } 
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString_pt: "CR",
+                        labelString_en: "GPA"
+                    },
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString_pt: "Notas Individuais",
+                        labelString_en: "Individual Grades"
+                    },
+                    ticks: {
+                        min: 0,
+                        max: 10,
+                    }
+                }]
+            },
 
-                $('input[type=radio][name=individual]').change(function() {
-                    carrega_pagina();
-                });
-            </script>
+        };
+
+        function adjust(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        var datasets_media = [
+            {% for key, alocacao_tmp in alocacoes.items %}
+                {
+                    label: "{{key}}",
+                    label_pt: "{{key}}",
+                    label_en: "{{key}}",
+                    data: data{{key}},
+                    trendlineLinear: {
+                        lineStyle: "dotted",
+                        width: 2
+                    }
+                },
+            {% endfor %}
+
+            {% for curs, estud in estudantes.items %}
+                {
+                    label_pt: "{{curs.nome}}",
+                    label_en: "{{curs.nome_en}}",
+                    pointBackgroundColor: "#{{curs.cor}}",
+                    pointBorderColor: adjust("#{{curs.cor}}",-20),
+                    backgroundColor: "#{{curs.cor}}",
+                    borderColor: adjust("#{{curs.cor}}",-20),
+                    data: data_estudantes_{{curs.sigla}},
+                    trendlineLinear: {
+                        style: "#{{curs.cor}}",
+                        lineStyle: "dotted",
+                        width: 2
+                    }
+                },
+            {% endfor %}
+            ]
+
+        var datasets_i = [
+            {% for key, alocacao_tmp in alocacoes.items %}
+                {
+                    label: "{{key}}",
+                    label_pt: "{{key}}",
+                    label_en: "{{key}}",
+                    data: data{{key}}_i,
+                    trendlineLinear: {
+                        lineStyle: "dotted",
+                        width: 2
+                    }
+                },
+            {% endfor %}
+
+            {% for curs, estud in estudantes.items %}
+                {
+                    label_pt: "{{curs.nome}}",
+                    label_en: "{{curs.nome_pt}}",
+                    pointBackgroundColor: '#{{curs.cor}}',
+                    pointBorderColor: adjust("#{{curs.cor}}",-20),
+                    backgroundColor: "#{{curs.cor}}",
+                    borderColor: adjust("#{{curs.cor}}",-20),
+                    data: data_estudantes_{{curs.sigla}}_i,
+                    trendlineLinear: {
+                        style: "#{{curs.cor}}",
+                        lineStyle: "dotted",
+                        width: 2
+                    }
+                },
+            {% endfor %}
+            ]
+
+        function carrega_pagina() {  
+
+            valor_individual = $("input[type='radio'][name=individual]:checked").val();
+            
+            if (valor_individual == "media") {
+                var config_corelacao = {
+                    type: "scatter",
+                    data: {datasets: datasets_media,},
+                    options: options
+                }
+            } else {
+                var config_corelacao = {
+                    type: "scatter",
+                    data: {datasets: datasets_i,},
+                    options: options_i
+                }
+            }
+            
+            if( window.corr!==undefined) window.corr.destroy();
+            var corr = document.getElementById("correlacao").getContext("2d");
+            window.corr = new Chart(corr, config_corelacao);
+
+            lingua_grafico();
+
+        }
+
+        function carrega_site() {
+            {% include "edicao_puxar_local_ou_versao.js" %}
+            carrega_pagina();
+        };
+        
+        window.onload = carrega_site
+
+        $("input[type=radio][name=individual]").change(function() {
+            carrega_pagina();
+        });
+
+        function lingua_grafico() {
+          if(window.corr == undefined) {return;}
+          if(localStorage.getItem("lingua") == "pt") {
+            window.corr.options.scales.xAxes[0].scaleLabel.labelString = window.corr.options.scales.xAxes[0].scaleLabel.labelString_pt;
+            window.corr.options.scales.yAxes[0].scaleLabel.labelString = window.corr.options.scales.yAxes[0].scaleLabel.labelString_pt;
+            for (var i = 0; i < window.corr.data.datasets.length; i++) {
+              window.corr.data.datasets[i].label = window.corr.data.datasets[i].label_pt;
+            }
+
+
+          } else {
+            window.corr.options.scales.xAxes[0].scaleLabel.labelString = window.corr.options.scales.xAxes[0].scaleLabel.labelString_en;
+            window.corr.options.scales.yAxes[0].scaleLabel.labelString = window.corr.options.scales.yAxes[0].scaleLabel.labelString_en;
+            for (var i = 0; i < window.corr.data.datasets.length; i++) {
+              window.corr.data.datasets[i].label = window.corr.data.datasets[i].label_en;
+            }
+          }
+          window.corr.update();
+        }
+        document.addEventListener("languageChanged", lingua_grafico);
+
+      </script>
 
     </div>
     

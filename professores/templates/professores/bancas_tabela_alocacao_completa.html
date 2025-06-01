@@ -72,7 +72,9 @@
         </table>
         <br>
       {% else %}
-        <p>Não existem bancas.</p>
+        <p>
+          {% lng "Não existem bancas alocadas para este período." "There are no allocated boards for this period." %}  
+        </p>
         <br>
       {% endif %}
     {% endfor %}

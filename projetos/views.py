@@ -1846,7 +1846,6 @@ def evolucao_por_objetivo(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def correlacao_medias_cr(request):
     """Mostra graficos da correlação entre notas e o CR dos estudantes."""
-    configuracao = get_object_or_404(Configuracao)
     edicoes, _, semestre = get_edicoes(Avaliacao2)
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
@@ -1895,8 +1894,6 @@ def correlacao_medias_cr(request):
             "alocacoes": alocacoes,
             "estudantes": estudantes,
             "periodo": periodo,
-            "ano": configuracao.ano,
-            "semestre": configuracao.semestre,
             "edicoes": edicoes,
             "curso": curso,
         }
