@@ -5,31 +5,26 @@
 """
 
 import os
+import logging
 from celery.schedules import crontab
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '<PONHA UMA SENHA AQUI>'
-# python manage.py shell -c
-#  "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+SECRET_KEY = "<PONHA UMA SENHA AQUI>"
+# python manage.py shell -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = [('Luciano Pereira Soares', 'lucianops@insper.edu.br'),
-          ('Luciano Soares', 'lpsoares@gmail.com')]
+ADMINS = [("Luciano Pereira Soares", "lucianops@insper.edu.br"), 
+          ("Luciano Soares", "lpsoares@gmail.com")]
 
-# Application definition
-
-INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost', "::1"]
+INTERNAL_IPS = ["127.0.0.1", "0.0.0.0", "localhost", "::1"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -71,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'pfe.middleware.MaintenanceModeMiddleware',
     'axes.middleware.AxesMiddleware',
+    'pfe.timing_middleware.TimingMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
@@ -84,7 +80,7 @@ AXES_COOLOFF_TIME = 1 # 1 hour
 # Prevent login from IP under a particular username if the attempt limit has been exceeded,
 AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
 
-ROOT_URLCONF = 'pfe.urls'
+ROOT_URLCONF = "pfe.urls"
 
 TEMPLATES = [
     {
@@ -102,8 +98,6 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'pfe.wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -111,37 +105,32 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-
         'ENGINE': 'django.db.backends.XXX',
         'NAME': 'XXX',
         'USER': 'XXX',
         'PASSWORD': 'XXX',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-
     }
-
 }
+
+BACKUP_CLEANUP_DAYS = 365
+BACKUP_FOLDER = "../backups/backups"
 
 DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
-DBBACKUP_STORAGE_OPTIONS = {
-    "location": "../backups/backups"
+DBBACKUP_STORAGE_OPTIONS = {"location": BACKUP_FOLDER}
+DBBACKUP_CONNECTORS = {
+    'default': {
+        'CONNECTOR': 'dbbackup.db.postgresql.PgDumpBinaryConnector',
+        'DROP': True,
+        'SINGLE_TRANSACTION': False
+    }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
-
-#AUTH_PASSWORD_VALIDATORS = [
-#    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-#    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-#    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-#    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
-#]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
-LANGUAGE_CODE = 'pt-br'
-TIME_ZONE = 'America/Sao_Paulo'
+LANGUAGE_CODE = "pt-br"
+TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
@@ -152,7 +141,6 @@ STATIC_URL = "/static/"
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = "index"
-#LOGOUT_REDIRECT_URL = 'logout'   #desligar, senão fica recursivo
 
 AUTH_USER_MODEL = "users.PFEUser"
 
@@ -166,18 +154,25 @@ EMAIL_HOST_PASSWORD = "XXXXXXXXX"
 EMAIL_USER = "PFE Insper"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+class TimingFormatter(logging.Formatter):
+    def format(self, record):
+        if hasattr(record, "duration"):
+            record.message = f"{record.message} | Time taken: {record.duration:.2f} seconds"
+        return super().format(record)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
+            '()': TimingFormatter,
             'format': '[{levelname}] ({asctime}) |{module}|: {message}',
             'style': '{',
         },
     },
     'handlers': {
         'file': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'logging.FileHandler',
             'filename': os.path.join('pfe.log'),
             'formatter': 'verbose',
@@ -188,14 +183,14 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'mail_admins': {
-            'level': 'WARNING',  # 'level': 'ERROR',
+            'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console', 'mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['file', 'mail_admins'],
+            'level': 'INFO',
             'propagate': True
         },
     },
@@ -203,11 +198,12 @@ LOGGING = {
 
 MEDIA_URL = '/<local_dos_arquivos>/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')
-#SITE_ROOT = os.path.join(BASE_DIR, "<local_dos_arquivos>")
 FILE_UPLOAD_PERMISSIONS = 0o644
 
+GITHUB_USERNAME = "<NOME_USUARIO_GITHUB>"
+GITHUB_TOKEN = "<SEU_TOKEN_GITHUB>"
+
 # CELERY
-# CELERY_TIMEZONE = 'America/Sao_Paulo'
 # Tempo usado para os alarmes eh GMT
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
@@ -259,11 +255,9 @@ DEBUG_TOOLBAR_PANELS = [
 def show_toolbar(request):
     """Controle se exibe a barra do Debbuger."""
     return not request.is_ajax() and request.user and request.user.username == "lpsoares"
-    # Só funciona o debug para mim
+    # Só funciona em debug
 
 DEBUG_TOOLBAR_CONFIG = {
-    #'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
-    #'SHOW_TOOLBAR_CALLBACK': 'pfe.settings.show_toolbar',
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
 
