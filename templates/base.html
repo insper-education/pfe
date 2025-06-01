@@ -29,7 +29,17 @@
   <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/pega_erro.js' %}"></script>
 
+  <style>
+    {% comment %} REMOVER {% endcomment %}
+    .icone_usuario {
+      font-size: 1.1em;
+      margin-right: 2px;
+    }
+  </style>
+
   {% block head %}
+
+
   {% endblock %}
 </head>
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
@@ -42,7 +52,18 @@
         </div>
       {% if user.is_authenticated %}</a>{% endif %}
       {% if user.is_authenticated %}
-        <a href="{% url 'perfil' %}" id="link_username"><i class="fas fa-user icone_usuario"></i>&nbsp;
+        <a href="{% url 'perfil' %}" id="link_username">
+          {% if user.eh_estudante %}
+            <i class="fas fa-user-graduate icone_usuario" title="Estudante"></i>
+          {% elif user.eh_professor %}
+            <i class="fas fa-chalkboard-teacher icone_usuario" title="Professor"></i>
+          {% elif user.eh_parc %}
+            <i class="fas fa-user-tie icone_usuario" title="Parceiro"></i>
+          {% elif user.is_superuser or user.eh_admin %}
+            <i class="fas fa-user-shield icone_usuario" title="Administrador"></i>
+          {% else %}
+            <i class="fas fa-user icone_usuario" title="Usuário"></i>
+          {% endif %}
           <span class="first_name">{{user.first_name}}</span>
           <span class="last_name">{{user.last_name}}</span>
         </u></a>

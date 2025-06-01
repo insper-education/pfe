@@ -154,7 +154,8 @@ a#logo_inicial:hover {
 }
 
 .icone_usuario {
-  font-size: 0.65em;
+  font-size: 1.1em;
+  margin-right: 2px;
 }
 
 .interrogacao {
