@@ -213,23 +213,27 @@ CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_BEAT_SCHEDULE = {
     "backup": {
         "task": "projetos.tasks.backup",
-        "schedule": crontab(0, 0, day_of_month='1'),
+        "schedule": crontab(minute=0, hour=0, day_of_month='1'),
     },
     "mediabackup": {
         "task": "core.tasks.mediabackup",
-        "schedule": crontab(0, 0, day_of_month='1'),
+        "schedule": crontab(minute=0, hour=0, day_of_month='1'),
+    },
+    "remove_old_backups": {
+        "task": "projetos.tasks.remove_old_backups",
+        "schedule": crontab(minute=0, hour=0, day_of_week='1'),
     },
     "send-email-daily": {
         "task": "projetos.tasks.envia_aviso",
-        "schedule": crontab(hour=10, minute=0),
+        "schedule": crontab(minute=0, hour=10),
     },
     "certbot-renew": {
         "task": "projetos.tasks.certbot_renew",
-        "schedule": crontab(0, 0, day_of_month='1'),
+        "schedule": crontab(minute=0, hour=0, day_of_month='1'),
     },
     'apaga_tmp': {
         'task': 'projetos.tasks.apaga_tmp',
-        'schedule': crontab(hour=0, minute=0, day_of_week=2),
+        'schedule': crontab(minute=0, hour=0, day_of_week=2),
     },
 }
 

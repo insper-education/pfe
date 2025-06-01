@@ -6,6 +6,8 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 18 de Outubro de 2019
 """
 
+import os
+import time
 import datetime
 import subprocess
 import logging
@@ -14,7 +16,6 @@ from celery import shared_task
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management import execute_from_command_line
-import django.db.models.query
 from django.template import Template, Context
 
 from calendario.support import get_calendario_context
@@ -24,34 +25,76 @@ from .messages import email, htmlizar
 
 from users.models import Aluno, Professor, PFEUser
 
-# Get an instance of a logger
-logger = logging.getLogger("django")
+logger = logging.getLogger("django")  # Get an instance of a logger
+
 
 @shared_task
 def backup():
     """Rotina de Backup."""
-    if settings.DEBUG is True:
-        return "Não se pode fazer o Backup: Debug está True"
+    if settings.DEBUG:
+        msg = "Não se pode fazer o Backup: Debug está True"
+        logger.warning(msg)
+        return msg
 
     try:
         call_command("dbbackup")
-        return f"Backup realizado: {datetime.datetime.now()}"
-    except:
-        return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+        msg = f"Backup realizado: {datetime.datetime.now()}"
+        logger.info(msg)
+        return msg
+    except Exception as e:
+        msg = f"Não foi possível fazer o backup: {datetime.datetime.now()} | Erro: {str(e)}"
+        logger.error(msg)
+        return msg
 
 
 @shared_task
 def mediabackup():
     """Rotina de Backup dos arquivos (media)."""
-    if settings.DEBUG is True:
-        return "Não pode fazer o Backup: Debug está True"
+    if settings.DEBUG:
+        msg = "Não pode fazer o Backup: Debug está True"
+        logger.warning(msg)
+        return msg
 
     try:
         argv = ['', "mediabackup", "--compress"]
         execute_from_command_line(argv)
-        return f"Backup realizado: {datetime.datetime.now()}"
-    except:
-        return f"Não foi possível fazer o backup: {datetime.datetime.now()}"
+        msg = f"Backup realizado: {datetime.datetime.now()}"
+        logger.info(msg)
+        return msg
+    except Exception as e:
+        msg = f"Não foi possível fazer o backup: {datetime.datetime.now()} | Erro: {str(e)}"
+        logger.error(msg)
+        return msg
+
+
+@shared_task
+def remove_old_backups():
+    """Remove backups mais velhos que o número de dias em um dado diretório."""
+    now = time.time()
+    cutoff = now - days * 86400  # 60 days in seconds
+
+    days = settings.BACKUP_CLEANUP_DAYS
+    backup_dir = settings.BACKUP_FOLDER
+    if not os.path.isdir(backup_dir):
+        msg = f"Diretório de Backup: {backup_dir}, não existe."
+        logger.error(msg)
+        return msg
+
+    removed = 0
+    for filename in os.listdir(backup_dir):
+        file_path = os.path.join(backup_dir, filename)
+        if os.path.isfile(file_path):
+            file_mtime = os.path.getmtime(file_path)
+            if file_mtime < cutoff:
+                try:
+                    os.remove(file_path)
+                    removed += 1
+                    logger.info(f"Removido backup antigo: {file_path}")
+                except Exception as e:
+                    logger.error(f"Erro ao remover {file_path}: {str(e)}")
+    msg = f"Removidos {removed} backups antigos de mais de {days} dias do diretório: {backup_dir}"
+    logger.info(msg)
+    return msg
 
 
 @shared_task
