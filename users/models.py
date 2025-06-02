@@ -273,10 +273,6 @@ class Aluno(models.Model):
     trabalhou = models.TextField(max_length=1000, null=True, blank=True,
                                  help_text="Trabalhou/trabalha ou estagio/estagia em alguma empresa de tecnologia?")
 
-    # Campo sendo eliminado
-    # social = models.TextField(max_length=1000, null=True, blank=True,
-    #                           help_text="Já participou de atividade sociais?")
-
     atividades = models.TextField(max_length=1000, null=True, blank=True,
                                 help_text="Já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?")
 
