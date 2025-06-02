@@ -62,8 +62,11 @@
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'conexoes_estabelecidas' %}">
   {% lng "Usuários Conectados" "Connected Users" %}
 </a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs' %}">
-  {% lng "Logs de Sistema" "System Logs" %}
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'logs_django_admin' %}">
+  {% lng "Logs do Django Admin" "Django Admin Logs" %}
+</a></div>
+<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'log_viewer:log_file_view' %}">
+  {% lng "Logs do Sistema" "System Logs" %}
 </a></div>
 <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'bloqueados' %}">
   {% lng "Usuários/IPs Bloqueados" "Blocked Users/IPs" %}

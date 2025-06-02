@@ -7,7 +7,7 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 17 de Dezembro de 2020
 """
 
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -33,8 +33,9 @@ urlpatterns = [
     path("fechar_conexoes/", views.fechar_conexoes, name="fechar_conexoes"),
     path("index_carregar/", views.index_carregar, name="index_carregar"),
     path("lista_git/", views.lista_git, name="lista_git"),
-    path("logs/", views.logs, name="logs"),
-    path("logs/<int:dias>", views.logs, name="logs"),
+    path("logs/", include("log_viewer.urls")),
+    path("logs_django_admin/", views.logs_django_admin, name="logs_django_admin"),
+    path("logs_django_admin/<int:dias>", views.logs_django_admin, name="logs_django_admin"),
     path("montar_grupos/", views.montar_grupos, name="montar_grupos"),
     path("pre_alocar_estudante/", views.pre_alocar_estudante, name="pre_alocar_estudante"),
     path("propor/", views.propor, name="propor"),

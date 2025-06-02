@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'dbbackup',
     'axes',
+    'log_viewer',
     #'debug_toolbar',
 ]
 
@@ -195,6 +196,15 @@ LOGGING = {
         },
     },
 }
+
+LOG_VIEWER_FILES = ["pfe",]
+LOG_VIEWER_FILES_PATTERN = "*.log*"
+LOG_VIEWER_FILES_DIR = "logs/"
+LOG_VIEWER_PAGE_LENGTH = 25       # total log lines per-page
+LOG_VIEWER_MAX_READ_LINES = 1000  # total log lines will be read
+LOG_VIEWER_FILE_LIST_MAX_ITEMS_PER_PAGE = 25 # Max log files loaded in Datatable per page
+LOG_VIEWER_PATTERNS = ['[INFO]', '[DEBUG]', '[WARNING]', '[ERROR]', '[CRITICAL]']
+LOG_VIEWER_EXCLUDE_TEXT_PATTERN = None  # String regex expression to exclude the log from line
 
 MEDIA_URL = '/<local_dos_arquivos>/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '<local_dos_arquivos>')

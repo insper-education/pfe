@@ -1288,14 +1288,13 @@ def relatorio(request, modelo, formato):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def logs(request, dias=30):
+def logs_django_admin(request, dias=30):
     """Alguns logs de Admin."""
     usuario_sem_acesso(request, (4,)) # Soh Adm
 
     thirty_days_ago = timezone.now() - datetime.timedelta(days=dias)
     message = "As seguintes alterações foram realizadas pela interface de administrador:<br>"
     message += "(mostrando os últimos " + str(dias) + " dias)<br><br>"
-    #for log in LogEntry.objects.all():
     for log in LogEntry.objects.filter(action_time__gte=thirty_days_ago):
         message += "&bull; " + str(log.user) + " [" + str(log.action_time) + "]: " + str(log)+"<br>\n"
 

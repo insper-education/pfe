@@ -89,11 +89,11 @@ def remove_old_backups():
                 try:
                     os.remove(file_path)
                     removed += 1
-                    logger.info(f"Removido backup antigo: {file_path}")
+                    logger.warning(f"Removido backup antigo: {file_path}")
                 except Exception as e:
                     logger.error(f"Erro ao remover {file_path}: {str(e)}")
     msg = f"Removidos {removed} backups antigos de mais de {days} dias do diretório: {backup_dir}"
-    logger.info(msg)
+    logger.warning(msg)
     return msg
 
 
