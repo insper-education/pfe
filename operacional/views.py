@@ -165,6 +165,10 @@ def emails_semestre(request):
             estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, curso2__curso_do_insper=True).select_related("user")
             data["EstudantesInsper"] = list(estudantesInsper.values_list("user__first_name", "user__last_name", "user__email"))
 
+            # Estudantes do semestre, mas que não estão alocados
+            estudantesNaoAlocados = Aluno.objects.filter(ano=ano, semestre=semestre).exclude(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
+            data["EstudantesNaoAlocados"] = list(estudantesNaoAlocados.values_list("user__first_name", "user__last_name", "user__email"))
+
             # Orientadores
             data["Orientadores"] = [[i.user.first_name, i.user.last_name, i.user.email] for i in orientadores]
 

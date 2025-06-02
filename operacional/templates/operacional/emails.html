@@ -132,6 +132,12 @@
             </button>
           </a>
 
+          <a id="EstudantesNaoAlocados" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+              {% lng "Estudantes não alocados" "Students not allocated" %}
+            </button>
+          </a>
+
           <a id="Orientadores" href="" target="_blank">
             <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
               {% lng "Orientadores" "Advisors" %}
@@ -265,6 +271,7 @@
 
       $("#Estudantes").hide();
       $("#EstudantesInsper").hide();
+      $("#EstudantesNaoAlocados").hide();
       $("#Orientadores").hide();
       $("#Parceiros").hide();
       $("#Bancas").hide();
@@ -310,6 +317,22 @@
               str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
               $("#EstudantesInsper").attr("href", str);
               $("#EstudantesInsper").show();
+            }
+
+
+            // Estudantes ainda não alocados em projetos
+            if(response.EstudantesNaoAlocados.length) {
+              var str = "mailto:";
+
+              var emails = [];
+              for (var id in response.EstudantesNaoAlocados) {
+                emails.push(response.EstudantesNaoAlocados[id][2]);
+              }
+              str += emails.join(';');
+
+              str += "?cc={{coordenacao.user.email}}&subject=Capstone&body=Caros%20estudantes,%0D%0A%0D%0Aatenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)";
+              $("#EstudantesNaoAlocados").attr("href", str);
+              $("#EstudantesNaoAlocados").show();
             }
 
             // Orientadores
