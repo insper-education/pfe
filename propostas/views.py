@@ -26,6 +26,7 @@ from .models import PerguntasRespostas
 from .support import ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 
+from administracao.models import Estrutura
 from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
 from administracao.support import limpa_texto
 
@@ -593,7 +594,7 @@ def proposta_completa(request, primarykey):
 
     prioridades = 5
     procura = {str(prioridade+1): opcoes.filter(prioridade=prioridade+1).count() for prioridade in range(prioridades)}
-    
+
     context = {
         "titulo": {"pt": "Proposta de Projeto", "en": "Project Proposal"},
         "configuracao": configuracao,
@@ -608,6 +609,7 @@ def proposta_completa(request, primarykey):
         "cursos": Curso.objects.all().order_by("id"),
         "liberacao_visualizacao": Evento.objects.filter(tipo_evento__sigla="APDE").last(),
         "conformidades": proposta.CONFORMIDADES,
+        "cores_opcoes": Estrutura.loads(nome="Cores Opcoes"),
     }
     return render(request, "propostas/proposta_completa.html", context=context)
 
@@ -642,7 +644,7 @@ def proposta_detalhes(request, primarykey):
         "proposta": proposta,
         "procura": procura,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
-
+        "cores_opcoes": Estrutura.loads(nome="Cores Opcoes"),
     }
     return render(request, "propostas/proposta_detalhes.html", context=context)
 

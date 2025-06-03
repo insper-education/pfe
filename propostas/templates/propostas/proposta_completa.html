@@ -19,12 +19,32 @@
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
 
+  {% include "tabelas_includes.html" %}
+
   <style>
     label {
       margin-bottom: 2px;
       line-height: 1.0;
     }
     select {margin-bottom: 12px;}
+
+    /* DataTables sorting arrow alignment fix */
+    table.dataTable thead th.sorting:before,
+    table.dataTable thead th.sorting:after,
+    table.dataTable thead th.sorting_asc:before,
+    table.dataTable thead th.sorting_asc:after,
+    table.dataTable thead th.sorting_desc:before,
+    table.dataTable thead th.sorting_desc:after {
+      bottom: 0.0em !important;
+      top: auto !important;
+      vertical-align: middle !important;
+    }
+
+    #OpcoesEstudantesTable thead th,
+    #OpcoesEstudantesTable tbody td {
+      padding: 0.05em 0.3em;
+    }
+
   </style>
 
 {% endblock %}
@@ -233,48 +253,51 @@
     {% lng "Estudantes Aplicando para a Proposta" "Students Applying for the Proposal" %}
   </h5>
 
-  {% for estudante in sem_opcao %}
-    <a href="{% url 'estudante_detail' estudante.id %}"
-      class="dark-green-bold">
-        {{estudante.user.get_full_name}}
-        [{{ estudante.curso2 }}]
-        &nbsp;=>&nbsp;SEM PRIORIDADE DEFINIDA
-        &nbsp;|
-        {% comment %} &nbsp;{ {{estudante.ano}}.{{estudante.semestre}} } {% endcomment %}
-        &nbsp;CR={{estudante.cr}}
-      <br>
-    </a>
-  {% empty %}
-    <p>
-      &nbsp;&nbsp;
-      {% lng "Ainda nenhum estudante aplicou para esta proposta." "No student has applied for this proposal yet." %}
-    </p>
-  {% endfor %}
+  <table id="OpcoesEstudantesTable" class="table-bordered table-hover">
+    <thead class="table-info">
+      <tr>
+        <th title="Nome do estudante">{% lng "Nome" "Name" %}</th>
+        <th title="Curso do estudante">{% lng "Curso" "Program" %}</th>
+        <th style="width: 4em;" title="Prioridade de opção do estudante">{% lng "Ordem" "Order" %}</th>
+        <th title="Coeficiente de Rendimento Acadêmico do estudante">{% lng "CR" "GPA" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for estudante in sem_opcao %}
+        <tr class="font-weight-bold" style="background-color:rgb(255, 148, 255);">
+          <td><a href="{% url 'estudante_detail' estudante.id %}">{{estudante.user.get_full_name}}</a></td>
+          <td>{{estudante.curso2}}</td>
+          <td class="text-center" data-order="0">
+            {% lng "SEM" "WITHOUT" %}
+          </td>
+          <td class="text-right">{{estudante.cr|floatformat:2}}</td>
+        </tr>
+      {% endfor %}
+      {% for opcao in proposta.opcao_set.all %}
+        <tr class="{% if opcao.aluno in estudantes %}font-weight-bold{% endif %}"
+         style="background-color:
+          {% if opcao.prioridade == 1 %}
+            {{cores_opcoes.0}}
+          {% elif opcao.prioridade == 2 %}
+            {{cores_opcoes.1}}
+          {% elif opcao.prioridade == 3 %}
+            {{cores_opcoes.2}}
+          {% elif opcao.prioridade == 4 %}
+            {{cores_opcoes.3}}
+          {% elif opcao.prioridade == 5 %}
+            {{cores_opcoes.4}}
+          {% else %}
+            rgb(158, 158, 158)
+          {% endif %};">
+          <td><a href="{% url 'estudante_detail' opcao.aluno.id %}">{{opcao.aluno.user.get_full_name}}</a></td>
+          <td>{{opcao.aluno.curso2}}</td>
+          <td class="text-center" data-order="{{opcao.prioridade}}">{{opcao.prioridade}}</td>
+          <td class="text-right">{{opcao.aluno.cr|floatformat:2}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-  {% for opcao in proposta.opcao_set.all %}
-    <a href="{% url 'estudante_detail' opcao.aluno.id %}"
-       class="
-       {% if opcao.aluno in estudantes %}
-        {% if opcao.prioridade <= 5 %}green-bold{% else %}yellow-bold{% endif %}
-       {% else %}
-        {% if opcao.prioridade <= 5 %}green-normal{% else %}yellow-normal{% endif %}
-       {% endif %}
-       ">
-        {{opcao.aluno.user.get_full_name}}
-        <span class="texto-longo">
-          [{{ opcao.aluno.curso2 }}]
-          &#10140; opção 
-        </span>
-        <span class="texto-curto">
-          [{{ opcao.aluno.curso2.sigla_curta }}]
-          &#10140; op
-        </span>
-          #{{opcao.prioridade}} | CR={{opcao.aluno.cr|floatformat:2}}
-      <br>
-    </a>
-    
-  
-  {% endfor %}
 
   <script>
       
@@ -308,5 +331,21 @@
   </script>
 
   {% include "forum_respostas.html" %}
+
+  {% comment %} Só Para usar DataTables {% endcomment %}
+  {% comment %} tabela="OpcoesEstudantes" {% endcomment %}
+  <script>
+    {% include "tabelas_scripts.js" %}
+    $(document).ready(function() {
+      // get language
+      lingua_atual = localStorage.getItem("lingua");
+      $('#OpcoesEstudantesTable').DataTable({
+        "order": [[2, "asc"]],
+        "paging": false,
+        "searching": false,
+        "language": textos_linguas[lingua_atual]
+      });
+    });
+  </script>
 
 {% endblock %}
