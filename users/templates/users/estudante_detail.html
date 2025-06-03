@@ -95,10 +95,9 @@
           {% if opcao.proposta.ano == opcao.aluno.ano and opcao.proposta.semestre == opcao.aluno.semestre %}
             <a href="{% url 'proposta_completa' opcao.proposta.id %}">
               <div><b>{{opcao.prioridade}}</b> - 
-                {{opcao.proposta.titulo}}
-                ({{opcao.proposta.organizacao.nome}})
+                [{{opcao.proposta.organizacao.nome}}] {{opcao.proposta.titulo}}
                 {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                |{% mede_aderencia aluno opcao.proposta %}%|
+                | {% mede_aderencia aluno opcao.proposta %}%|
               </div>
             </a>
           {% endif %}
