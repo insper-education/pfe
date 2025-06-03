@@ -70,11 +70,12 @@ def mediabackup():
 @shared_task
 def remove_old_backups():
     """Remove backups mais velhos que o número de dias em um dado diretório."""
+    days = settings.BACKUP_CLEANUP_DAYS
+    backup_dir = settings.BACKUP_FOLDER
+
     now = time.time()
     cutoff = now - days * 86400  # 60 days in seconds
 
-    days = settings.BACKUP_CLEANUP_DAYS
-    backup_dir = settings.BACKUP_FOLDER
     if not os.path.isdir(backup_dir):
         msg = f"Diretório de Backup: {backup_dir}, não existe."
         logger.error(msg)
