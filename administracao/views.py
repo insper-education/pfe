@@ -69,8 +69,8 @@ from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 from users.support import adianta_semestre, adianta_semestre_conf, get_edicoes
 
-
-celery_app = Celery()
+from pfe.celery import APP as celery_app
+# celery_app = Celery()
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
