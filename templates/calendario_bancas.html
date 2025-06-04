@@ -24,19 +24,19 @@
 <div class="wrap table-responsive">  
   <div class="legenda" style="display: flex;">
     <div class="legenda-block">
-      <div id="leg_intermediaria" class="legenda-item">
+      <div id="leg_b_intermediaria" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_intermediaria">&#9608;</font>&nbsp;
           {% lng "Bancas Intermediárias" "Intermediate Examination Boards" %}        </div>
       </div>
-      <div id="leg_final" class="legenda-item">
+      <div id="leg_b_final" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_final">&#9608;</font>&nbsp;
           {% lng "Bancas Finais" "Final Examination Boards" %}        </div>
       </div>
-      <div id="leg_falconi" class="legenda-item">
+      <div id="leg_b_falconi" class="legenda-item">
         <div class="legenda-texto"><font id="color_banca_falconi">&#9608;</font>&nbsp;
           {% lng "Bancas Falconi" "Falconi Examination Boards" %}        </div>
       </div>
-      <div id="leg_probation" class="legenda-item">
+      <div id="leg_b_probation" class="legenda-item">
         <div class="legenda-texto"><font id="color_probation">&#9608;</font>&nbsp;
           {% lng "Probation" "Probation" %}        </div>
       </div>
@@ -303,30 +303,19 @@
     $("#banca_orientador").css("boxShadow", "0 0 3px 4px red");
     $("#banca_membro").css("boxShadow", "0 0 3px 4px darkblue");
 
-    
-    $("#leg_intermediaria").click(function(){
-      $(this).toggleClass("strikeout");
-      $(".b_intermediaria").toggle();
-      calendar.updateSize();
-    });
 
-    $("#leg_final").click(function(){
-      $(this).toggleClass("strikeout");
-      $(".b_final").toggle();
-      calendar.updateSize();
-    });
+    function toggleEventsByClass(legendSelector, eventClass) {
+      $(legendSelector).click(function() {
+        $(this).toggleClass("strikeout");
+        $("." + eventClass).toggle(!$(this).hasClass("strikeout"));
+        calendar.updateSize();
+      });
+    }
 
-    $("#leg_probation").click(function(){
-      $(this).toggleClass("strikeout");
-      $(".b_probation").toggle();
-      calendar.updateSize();
-    });
-
-    $("#leg_falconi").click(function(){
-      $(this).toggleClass("strikeout");
-      $(".b_falconi").toggle();
-      calendar.updateSize();
-    });
+    {% comment %} Passando por todos os tipos de bancas {% endcomment %}
+    {% for tb in tipos_bancas %}
+      toggleEventsByClass("#leg_{{tb.className}}", "{{tb.className}}");
+    {% endfor %}
 
   }
 
