@@ -1306,7 +1306,7 @@ def logs_django_admin(request, dias=30):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def tarefas_agendadas(request):
-    """Alguns logs de Admin."""
+    """Tarefas agendadas."""
     usuario_sem_acesso(request, (4,)) # Soh Adm
     i = celery_app.control.inspect()
     scheduled_tasks = i.scheduled()
