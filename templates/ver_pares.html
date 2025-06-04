@@ -143,7 +143,9 @@
             <span style="color: green; font-size: 0.8rem; padding: 4px;">
               {% lng "Você pode, opcionalmente, dar o feedback por texto aqui. Use como base os padrões recorrentes das avaliações, sem identificar quem comentou. Seja construtivo e objetivo, e deixe aberta a possibilidade de um diálogo presencial depois." "You may optionally provide feedback in writing here. Base it on recurring patterns from the evaluations, without identifying who made the comments. Be constructive and objective, and leave room for a possible follow-up conversation in person." %}
             </span><br>
-            <label style="margin: 0px 0px 0px 4px;" for="feedback{{colega.id}}">Feedback para {{colega.aluno}}:</label>
+            <label style="margin: 0px 0px 0px 4px;" for="feedback{{colega.id}}">
+              {% lng "Feedback para" "Feedback for" %} {{colega.aluno}}:
+            </label>
             <textarea id="feedback{{colega.id}}" name="feedback{{colega.id}}" rows="10" cols="180" class="texto_feedback"
             {% if not editor %}disabled="disabled"{% endif %}
             maxlength="{% max_length FeedbackPares 'feedback' %}">{% if feedback %}{{feedback.feedback}}{% endif %}</textarea>
@@ -155,7 +157,11 @@
   {% endfor %}
 
   {% if verificada %}
-    <b>Anotado que a Avaliação de Pares foi verificada em: {{verificada}}</b><br>
+    <b>
+      {% lng "Anotado que a Avaliação de Pares foi verificada em:" "Noted that the Peer Evaluation was verified on:" %}
+      <span class="texto-longo">{% lng_dhl verificada %}</span>
+      <span class="texto-curto">{% lng_dh verificada %}</span>
+    </b><br>
   {% endif %}
 
   <button id="enviar_feedbacks" type="submit" name="enviar_feedbacks" value="enviar" 

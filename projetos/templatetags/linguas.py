@@ -27,14 +27,14 @@ def thtml(pt_text, en_text):
 def lng(pt_text, en_text):
     return thtml(pt_text, en_text)
 
-# Para mostrar datas
+# Para mostrar datas de forma curta
 @register.simple_tag
 def lng_d(date, pt_text="", en_text=""):
     pt_text = date.strftime("%d/%m/%y") + ( " " + pt_text if pt_text else "")
     en_text = date.strftime("%b %d, %y") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
 
-# Para mostrar datas
+# Para mostrar datas em um formato mais longo
 @register.simple_tag
 def lng_dl(date, pt_text="", en_text=""):
     locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
@@ -47,22 +47,22 @@ def lng_dl(date, pt_text="", en_text=""):
 @register.simple_tag
 def lng_dh(date, pt_text="", en_text=""):
     pt_text = date.strftime("%d/%m/%y %H:%M") + ( " " + pt_text if pt_text else "" )
-    en_text = date.strftime("%b %d, %y %H:%M") + ( " " + en_text if en_text else "")
+    en_text = date.strftime("%b %d, %y %I:%M%p") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
 
-# Para mostrar datas e horas
+# Para mostrar datas e horas no formato longo
 @register.simple_tag
 def lng_dhl(date, pt_text="", en_text=""):
     locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
-    pt_text = date.strftime("%d de %B de %Y %H:%M") + ( " " + pt_text if pt_text else "")
+    pt_text = date.strftime("%d de %B de %Y às %H:%M") + ( " " + pt_text if pt_text else "")
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    en_text = date.strftime("%B %d, %Y %H:%M") + ( " " + en_text if en_text else "")
+    en_text = date.strftime("%B %d, %Y at %I:%M%p") + ( " " + en_text if en_text else "")
     return thtml(pt_text, en_text)
 
 @register.simple_tag
 def lng_d_de_ate(data_inicial, data_final):
     pt_text = data_inicial.strftime("%d/%m/%y das %H:%M às ") + data_final.strftime("%H:%M")
-    en_text = data_inicial.strftime("%b %d, %y from %H:%M to ") + data_final.strftime("%H:%M")
+    en_text = data_inicial.strftime("%b %d, %y from %I:%M%p to ") + data_final.strftime("%I:%M%p")
     return thtml(pt_text, en_text)
 
 @register.simple_tag
@@ -70,7 +70,7 @@ def lng_dl_de_ate(data_inicial, data_final):
     locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     pt_text = data_inicial.strftime("%d de %B de %y das %H:%M às ") + data_final.strftime("%H:%M")
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    en_text = data_inicial.strftime("%B %d, %y from %H:%M to ") + data_final.strftime("%H:%M")
+    en_text = data_inicial.strftime("%B %d, %y from %I:%M%p to ") + data_final.strftime("%I:%M%p")
     return thtml(pt_text, en_text)
 
 @register.simple_tag
@@ -78,7 +78,7 @@ def lng_dll_de_ate(data_inicial, data_final):
     locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
     pt_text = data_inicial.strftime("%d de %B de %Y (%A) das %H:%M às ") + data_final.strftime("%H:%M")
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-    en_text = data_inicial.strftime("%B %d, %Y (%A) from %H:%M to ") + data_final.strftime("%H:%M")
+    en_text = data_inicial.strftime("%B %d, %Y (%A) from %I:%M%p to ") + data_final.strftime("%I:%M%p")
     return thtml(pt_text, en_text)
 
 

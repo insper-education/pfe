@@ -21,7 +21,7 @@
 
   {% for item in entregas %}
     {% with dias_ate=item.evento.endDate|dif_dias_hoje dias=14 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
-      <div class="div_arredondado pintern" {% if dias_ate > dias and user.tipo_de_usuario == 1 %}style="display:none;"{% endif %}>
+      <div class="div_arredondado pintern" {% if dias_ate > dias and request.user.eh_estud %}style="display:none;"{% endif %}>
         <span class="nome_entrega" {% if dias_ate > dias %}style="color:lightgrey;"{% endif %}>
         {% if item.composicao.tipo_documento %}
           <b>{{item.composicao.tipo_documento.nome}}</b> 
