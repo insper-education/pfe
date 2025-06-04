@@ -102,7 +102,7 @@
       {% include "tabela_avaliacao_objetivos.html" with editor=True %}
       {% include "atualiza_objetivos.html" %}
 
-      {% if banca.composicao.exame.sigla != "P" %}{% comment %} Não é probation {% endcomment %}
+      {% if banca.composicao.exame.sigla != "P" and banca.composicao.exame.sigla != "F" %}{% comment %} Não é probation {% endcomment %}
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
         <div class="mb-3">
           <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
