@@ -685,7 +685,7 @@ def proposta_editar(request, slug=None):
 
     if request.method == "POST":
 
-        if (not liberadas_propostas) or (request.user.eh_admin):
+        if (not liberadas_propostas) or (request.user.is_authenticated and request.user.eh_admin):
             
             if "new" in request.POST:
                 titulo = request.POST.get("titulo_prop", "").strip()
