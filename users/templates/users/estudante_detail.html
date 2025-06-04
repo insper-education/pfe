@@ -13,6 +13,7 @@
   {% load zip_data %}
   {% load relatos %}
   {% load bancas %}
+  {% load documentos %}
   {% load get_notas %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
@@ -212,6 +213,16 @@
             {% endfor %}
             </ul>
             <br>
+          {% endif %}
+        {% endwith %}
+
+
+        {% with documentos=alocado|get_documentos_individuais %}
+          {% if documentos %}
+            <span class="tit_rel ml-2">{% lng "Documentos Individuais" "Individual Documents" %}</span><br>
+            <div class="caixa_rolante">
+              {% include "documentos.html" %}
+            </div>
           {% endif %}
         {% endwith %}
 

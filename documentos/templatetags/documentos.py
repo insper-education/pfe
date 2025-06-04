@@ -76,3 +76,11 @@ def get_relatorio_intermediario(projeto):
     if documento.exists():
         return documento.order_by("data").last()
     return None
+
+@register.filter()
+def get_documentos_individuais(alocacao):
+    """Retorna os documentos individuais de uma alocação."""
+    tipo_documento = TipoDocumento.objects.filter(individual=True)
+    documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, usuario=alocacao.aluno.user, projeto=alocacao.projeto)
+    return documentos.order_by("data")
+    
