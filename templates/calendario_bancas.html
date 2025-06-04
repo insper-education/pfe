@@ -108,7 +108,9 @@
         ],
         eventTextColor: "#FAFAFA",
         eventRender: function(info) {
-        
+          if (info.event.className) {
+            info.el.classList.add(info.event.className);
+          }
           if (!info.event.allDay) {
             let time_s = info.event.start.getHours() + ':' + info.event.start.getMinutes().toString().replace(/^(\d)$/, '0$1');
             let time_e = info.event.end.getHours() + ':' + info.event.end.getMinutes().toString().replace(/^(\d)$/, '0$1');

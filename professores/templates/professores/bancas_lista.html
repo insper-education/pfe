@@ -38,7 +38,7 @@
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-      <div class="mt-2 mb-2">
+      <div class="mt-2 mb-2 esconder">
         {% if bancas and request.user.eh_admin %}
           {% if request.user.eh_admin %}
             <button onclick="return confirm('Você tem certeza que deseja enviar mensagem de bancas?');"
@@ -53,7 +53,7 @@
 
       <table id="BancasTable" class="table table-borderless table-sm arredondado mb-1"><tbody>
         {% for banca in bancas %} 
-          <tr class="item {{banca.composicao.exame}}">
+          <tr class="item {{banca.composicao.exame.className}}">
             <td>
 
               {% if banca.startDate %}
@@ -197,10 +197,16 @@
         var value = $("#tipo_banca").val();
         if(value == "todos") {
           $(".item").show();
+          $(".fc-event").show();
         } else {
           $(".item").hide();
+          $(".fc-event").hide();
           $('.'+value).show();
         }
+        if (typeof calendar !== 'undefined' && calendar !== null) {
+          calendar.updateSize();
+        }
+        
       }
       
       $("#tipo_banca").change(atualiza_por_tipo);
