@@ -155,8 +155,10 @@ def ajax_bancas(request):
 
             if banca.composicao and banca.composicao.exame:
                 cor = banca.composicao.exame.cor
+                className = banca.composicao.exame.className
             else:
                 cor = "808080"
+                className = ""
 
             bancas[banca.id] = {
                 "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -166,6 +168,7 @@ def ajax_bancas(request):
                 "orientador": orientador,
                 "estudante": estudante,
                 "color": f"#{cor}",
+                "className": className,
                 "editable": editable,
                 "title": title,
                 **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
