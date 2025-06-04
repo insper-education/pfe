@@ -24,15 +24,15 @@
             {% if feita %}
               <span class="aval_entreg_{% if tipo_avaliacao == 'final' %}f{% else %}i{% endif %}">
                 {% if tipo_avaliacao == "intermediaria" and alocacao.avaliacao_intermediaria %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">
+                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
                     {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
                   </a>
                 {% elif tipo_avaliacao == "final" and alocacao.avaliacao_final %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:green">
+                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:green">
                     {% lng "Avaliação de Pares Verificada" "Peer Evaluation Verified" %}
                   </a>
                 {% else %}
-                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}" style="color:brown">
+                  <a href="{% url 'ver_pares_projeto' alocacao.projeto.id tipo_avaliacao %}#{{alocacao.aluno.user.username}}" style="color:brown">
                     {% lng "Aguardando Confirmação de Orientador" "Waiting for Advisor Confirmation" %}
                   </a>
                 {% endif %}

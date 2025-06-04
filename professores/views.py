@@ -2665,6 +2665,10 @@ def ver_pares_projeto(request, projeto_id, momento):
         "FeedbackPares": FeedbackPares,
         "verificada": verificada,
         "editor": editor,
+        "tipo_aval": {
+            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
+            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
+            },
     }
 
     return render(request, "professores/ver_pares_projeto.html", context)

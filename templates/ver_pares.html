@@ -34,9 +34,10 @@
       {% include "cabecalho_projeto.html" with com_tit_original=True %}
     {% endif %}
 
-    <div class="div_arredondado mt-2">
+    <div id="{{ colega.aluno.user.username }}" class="div_arredondado mt-2">
       <div class="topico">
-        {% lng "Avaliação para:" "Evaluation for:" %}
+        {% lng tipo_aval.pt tipo_aval.en %}
+        {% lng "para" "for" %}:
         <a href="{% url 'estudante_detail' colega.aluno.id %}"><b>{{colega.aluno}}</b></a>
       </div>
 
@@ -134,7 +135,7 @@
 
       {% if editor or request.user.eh_admin%}
         <div style="width: 100%; display: inline; margin-left: 8px;">
-          <label class="feedbacks feedback-label" for="customFeedback{{relato.id}}">
+          <label class="feedbacks feedback-label" for="feedback{{colega.id}}">
             Feedback ({% lng "opcional" "optional" %})
             {% if feedback %}<span class="seta seta-baixo">{% else %}<span class="seta seta-cima">{% endif %}</span>
           </label>
