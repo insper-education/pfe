@@ -8,8 +8,7 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
-  {% comment %} {% load get_field %} {% endcomment %}
-
+  
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
@@ -190,10 +189,6 @@
         $(this).find('button[type="submit"]').prop("disabled", true);
       });
     });
-  </script>
-
-  <script>
-    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
   </script>
 
 {% endblock %}

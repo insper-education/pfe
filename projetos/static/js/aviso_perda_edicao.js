@@ -5,8 +5,17 @@
 */
 
 function aviso_perda_edicao(formSelector, warningMessage) {
-  document.addEventListener("DOMContentLoaded", function() {
+  
     var formChanged = false;
+    
+    if (!formSelector) {  // check if formSelector was provided
+      formSelector = "form";
+    }
+
+    if (!warningMessage) {  // check if warningMessage was provided
+      warningMessage = "Você tem alterações não salvas. Tem certeza que deseja sair?";
+    }
+
     var form = document.querySelector(formSelector);
 
     if (!form) {
@@ -36,5 +45,10 @@ function aviso_perda_edicao(formSelector, warningMessage) {
     form.addEventListener("submit", function() {
       formChanged = false;
     });
-  });
+  
 }
+
+$(document).ready(function() {
+  // Inicia a função de aviso de perda de edição
+  aviso_perda_edicao();
+});

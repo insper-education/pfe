@@ -89,30 +89,4 @@
 
   </form>
 
-  {% comment %} <div class="modal fade" id="lista_entidades">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Entidades Estudantis</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                {% for e in entidades %}
-                  <p class="ent_nome">{{e.nome}}</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-  </div> {% endcomment %}
-
-  {% comment %} <script>
-    $(".ent_nome").click(function(e){
-      $("#entidade").append(e.target.innerHTML+"; ");
-    });
-  </script> {% endcomment %}
-
-  <script>
-    aviso_perda_edicao("form", "Você tem alterações não salvas. Tem certeza que deseja sair?");
-  </script>
-
 {% endblock %}
