@@ -89,16 +89,19 @@ def editar_banca(banca, request):
     else:
         return "Tipo de banca não informado!", None
     
-    if banca.alocacao:  # Banca Probation      
+    if not exame.banca:
+        return "Exame não é do tipo Banca!", None
+
+    if exame.grupo:
         try:
-            banca.alocacao = Alocacao.objects.get(id=int(request.POST.get("alocacao")))
-        except Alocacao.DoesNotExist:
-            return "Alocação não encontrada!", None
-    else:
-        try:
-            banca.projeto = Projeto.objects.get(id=int(request.POST.get("projeto")))
+            banca.projeto = Projeto.objects.get(id=request.POST.get("projeto"))
         except Projeto.DoesNotExist:
             return "Projeto não encontrado!", None
+    else:  # Banca Probation
+        try:
+            banca.alocacao = Alocacao.objects.get(id=request.POST.get("alocacao"))
+        except Alocacao.DoesNotExist:
+            return "Alocação não encontrada!", None
     
     try:
         banca.startDate = dateutil.parser.parse(request.POST.get("inicio"))
