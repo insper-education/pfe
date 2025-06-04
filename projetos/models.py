@@ -428,10 +428,6 @@ class Proposta(models.Model):
         if self.ano and self.semestre:
             return str(self.ano)+"."+str(self.semestre)
         return "SEM PERÍODO DEFINIDO"
-    
-    def get_titulo_org_periodo(self):
-        """Retorna o título original da proposta."""
-        return self.get_titulo_org() + " " + self.get_edicao()
 
     def get_titulo(self):
         """Caso tenha titulo, senão retorna mensagem de erro."""

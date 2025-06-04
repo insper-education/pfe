@@ -155,7 +155,19 @@
 
       <div style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
         
-        <div style="width: 68px; vertical-align:middle; margin-right: 8px;">
+        <div style="width: 68px; vertical-align:middle; margin-right: 8px;"
+        data-toggle="tooltip" data-html="true" animation="true" 
+        title="<b>{{proposta.get_titulo_org_periodo}}</b><br><br>
+        <b>Descrição</b>: {{proposta.descricao|linebreaks}}
+        <b>Expectativas</b>: {{proposta.expectativas|linebreaks}}
+        {% if proposta.recursos %}
+          <br><b>Recursos</b>: {{proposta.recursos|linebreaks}}
+        {% endif %}
+        {% if proposta.observacoes %}
+          <br><b>Observações</b>: {{proposta.observacoes|linebreaks}}
+        {% endif %}
+        "
+        >
 
           <div style="width: 64px; text-align: center;">
             <img class="logotipo_pequeno" 
