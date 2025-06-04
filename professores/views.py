@@ -329,7 +329,7 @@ def avaliar_bancas(request, prof_id=None):
             else:
                 professor = request.user.professor
 
-            bancas = Banca.get_bancas_com_membro(professor.user)
+            bancas = Banca.get_bancas_com_membro(professor.user).order_by("composicao__exame__id")
 
             edicao = request.POST["edicao"]
             if edicao != "todas":

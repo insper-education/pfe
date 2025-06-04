@@ -15,8 +15,8 @@
   <h5 style="line-height: 1;">
     <div>
       <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-        {% lng "Banca" "Examining Board" %}
-        {{banca.composicao.exame}} ({{banca.startDate|date:"d/m/y"}})
+        {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
+        ({{banca.startDate|date:"d/m/y"}})
       </a>
     </div>
 
