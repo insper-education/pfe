@@ -415,7 +415,7 @@ class Proposta(models.Model):
     mensuravel = models.BooleanField(default=False, help_text=CONFORMIDADES["mensuravel"]["pt"])
     
     class Meta:
-        ordering = [ "ano", "semestre", "organizacao" ]
+        ordering = [ "ano", "semestre", "organizacao__sigla" ]
         verbose_name = "Proposta"
         verbose_name_plural = "Propostas"
 

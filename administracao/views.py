@@ -863,7 +863,7 @@ def montar_grupos(request):
 
     ano, semestre = adianta_semestre(ano, semestre)
 
-    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True).order_by(Lower("organizacao__nome"))
 
     estudantes = Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre).\
         order_by(Lower("user__first_name"), Lower("user__last_name"))

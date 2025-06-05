@@ -51,6 +51,18 @@
               text: 'Proporção entre opção alocada dos estudantes',
               position: "top",
         },
+        plugins: {
+            datalabels: {
+                formatter: (value, ctx) => {
+                    if( value > 0 ) {
+                        return (value).toFixed(0);
+                    } else {
+                        return " ";
+                    }
+                },
+                color: "#000",
+            }
+        },
         legend: {
           display: true,
           position: "bottom",
