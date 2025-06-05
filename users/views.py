@@ -318,7 +318,7 @@ def estudantes_notas(request, professor=None):
         informacoes = [(".pesos_aval", "Pesos", "Weights", False),]
         context = {
             "titulo": {"pt": "Avaliações por Estudante", "en": "Assessments by Student"},
-            "edicoes": get_edicoes(Aluno)[0],
+            "edicoes": get_edicoes(Projeto)[0],
             "informacoes": informacoes,
         }
 
