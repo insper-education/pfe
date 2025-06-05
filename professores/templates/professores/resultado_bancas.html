@@ -12,25 +12,58 @@
 {% block head %}
   {% load static %}
   {% load linguas %}
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   {% include "converte_notas.html" %}
   {% include "avalia_objetivos.html" %}
 {% endblock %}
 
 {% block content %}
-  {% include "edicoes.html" %}
+  {% if edicoes %}
+    {% include "edicoes.html" %}<br>
+  {% endif %}
   <div id="atualizar">
     {% for banca in bancas %}
-      {% with projeto=banca.get_projeto %}
-        {% ifchanged projeto %}
-          {% include "cabecalho_projeto.html" with com_tit_original=True com_semestre=True com_grupo=True %}
-        {% endifchanged %}
-        {% include "dado_banca.html" %}<br>
+      {% with lprojeto=banca.get_projeto %}
+
+        {% if not projeto %}  {% comment %} Para avaliar bancas que tem muitas bancas {% endcomment %}
+          {% ifchanged banca.composicao.exame %}
+            {% if not forloop.first %}
+              </div>
+            {% endif %}
+            <div style="background-color: {{banca.get_cor}}26; padding: 4px 10px; margin-bottom: 1em; width: 820px;">
+              <div style="line-height: 1; font-size: 1.25rem; padding: 4px; font-weight: bold; margin-bottom: 0.5em; border-bottom: 1px solid #ccc;">
+                {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
+                <i class="bancas" style="float:right;"><span class="seta seta-cima"></span></i>
+              </div>
+          {% endifchanged %}
+        {% endif %}
+        <div style="margin-top: 1.1em;">
+          {% ifchanged lprojeto %}
+            {% include "cabecalho_projeto.html" with projeto=lprojeto com_tit_original=True com_semestre=True com_grupo=True %}
+          {% endifchanged %}
+          {% include "dado_banca.html" %}
+        </div>
       {% endwith %}
     {% endfor %}
-    <div>
-      {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais) e depois de 24 horas que a última avaliação foi feita." "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards) and after 24 hours that the last evaluation was made." %}
-    </div>
+    {% if not projeto %}
+     </div>
+    {% endif %}
+
+    <script>
+      $(document).ready(function(){
+        $(".bancas").on("click", function() {
+          $(this).closest("div").siblings("div").toggle(200);
+          //next("div").toggle(200);
+          $("span", this).toggleClass("seta-baixo seta-cima");
+        });
+      });
+    </script>
+
   </div>
+  <div class="ml-2">
+    {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais) e depois de 24 horas que a última avaliação foi feita." "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards) and after 24 hours that the last evaluation was made." %}
+  </div>
+
   {% include "edicoes_ajax.html" %}
 {% endblock %}

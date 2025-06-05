@@ -12,37 +12,38 @@
 </script>
 
 <div class="div_arredondado">
-  <h5 style="line-height: 1;">
+  <div style="line-height: 1; font-size: 1.15rem;">
     <div>
       <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
         {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
-        ({{banca.startDate|date:"d/m/y"}})
+        {% lng "agendada para" "scheduled for" %}
+        {{banca.startDate|date:"d/m/y"}}
       </a>
     </div>
 
     {% if banca.alocacao %}
       <div style="margin: 0.4em;">
-      <span style="font-size: 13px; margin-top: 3.4em; border: 2px solid #f00; padding: 0.3em;">
-        <b>{% lng "Estudante" "Student" %}:</b>
-        <u>
-          <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
-        </u>
-        <span class="texto-longo curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
-        <span class="texto-curto curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
-        <span class="texto-longo emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
-        <span class="texto-curto emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
-      </span>
-    </div>
+        <span style="font-size: 13px; margin-top: 3.4em; border: 2px solid #f00; padding: 0.3em;">
+          <b>{% lng "Estudante" "Student" %}:</b>
+          <u>
+            <a class="imprimir" href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{banca.alocacao.aluno.user.get_full_name}}</a>  
+          </u>
+          <span class="texto-longo curso unselectable">[{{ banca.alocacao.aluno.curso2 }}]</span>
+          <span class="texto-curto curso unselectable">[{{ banca.alocacao.aluno.curso2.sigla_curta }}]</span>
+          <span class="texto-longo emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}">&lt;{{banca.alocacao.aluno.user.email}}&gt;</a></span>
+          <span class="texto-curto emails"><a class="email" href="mailto:{{banca.alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+        </span>
+      </div>
     {% endif %}
     
-    <small style="font-size: 11px;">★ 
+    <small style="font-size: 13px; line-height: 2;">★ 
       {% lng "Formulário" "Form" %}:
       <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
     </small>
-  </h5>
+  </div>
   {% include "membros_da_banca.html" %}
 
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped" style="margin-bottom: 2px;">
     {% for avaliador, objs in banca.get_avaliadores.items %}
       <tr><td>
         <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
