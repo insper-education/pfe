@@ -28,29 +28,35 @@ def get_banca_estudante(estudante, avaliacoes_banca):
     """Retorna média final das bancas informadas."""
     val_objetivos, pes_total, avaliadores = get_objetivos(estudante, avaliacoes_banca)
 
-    if not val_objetivos:
-        return 0, None, None
+    # if not val_objetivos:
+    #     return 0, None, None
 
     # média dos objetivos
-    val = 0.0
-    pes = 0.0
+    media_local = 0.0
+    peso_local = 0.0
     for obj in val_objetivos:
-        if pes_total == 0:  # Deve ser Banca Falconi
-            val += val_objetivos[obj][0]
+        if pes_total == 0:  # Não pesa na nota final
+            media_local += val_objetivos[obj][0]
         else:
-            val += val_objetivos[obj][0]*val_objetivos[obj][1]
-        pes += val_objetivos[obj][1]
+            media_local += val_objetivos[obj][0]*val_objetivos[obj][1]
+        peso_local += val_objetivos[obj][1]
 
     if val_objetivos:
-        pes = float(pes)
-        if pes != 0:
-            val = float(val)/pes
+        peso_local = float(peso_local)
+        if peso_local != 0:
+            media_local = float(media_local)/peso_local
         else:
-            val = float(val)/float(len(val_objetivos))
+            media_local = float(media_local)/float(len(val_objetivos))
     else:
-        pes = None
+        peso_local = None
 
-    return val, pes, avaliadores
+    #return media_local, peso_local, avaliadores
+    return {
+        "media": media_local,
+        "peso": peso_local,
+        "avaliadores": avaliadores,
+        "objetivos": val_objetivos
+    }
 
 
 def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_banca=True):
@@ -122,15 +128,46 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                         valido = False
 
                         if valido:
-                            pnota, ppeso, _ = get_banca_estudante(estudante, paval)
-                            notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                            #pnota, ppeso, _ = get_banca_estudante(estudante, paval)
+                            banca_info = get_banca_estudante(estudante, paval)
+                            #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                            notas.append({
+                                "sigla": pa[0],
+                                #"nota": pnota,
+                                "nota": banca_info["media"],
+                                #"peso": ppeso/100 if ppeso else 0,
+                                "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
+                                "nome": pa[1],
+                                "banca": True,
+                                "objetivos": banca_info["objetivos"]
+                            })
+
                     else:
                         if pa[3]:  # Nota
-                            pnota, ppeso, _ = get_banca_estudante(estudante, paval)
-                            notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                            #pnota, ppeso, _ = get_banca_estudante(estudante, paval)
+                            banca_info = get_banca_estudante(estudante, paval)
+                            #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
+                            notas.append({
+                                "sigla": pa[0],
+                                #"nota": pnota,
+                                "nota": banca_info["media"],
+                                #"peso": ppeso/100 if ppeso else 0,
+                                "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
+                                "nome": pa[1],
+                                "banca": False,
+                                "objetivos": banca_info["objetivos"]
+                            })
                         else:  # Check
                             pnp = paval.order_by("momento").last()
-                            notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
+                            #notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
+                            notas.append({
+                                "sigla": pa[0],
+                                "nota": float(pnp.nota) if pnp.nota else None,
+                                "peso": pnp.peso/100 if pnp.peso else 0,
+                                "nome": pa[1],
+                                "banca": False,
+                                "objetivos": None
+                            })
 
             except Exame.DoesNotExist:
                 raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")

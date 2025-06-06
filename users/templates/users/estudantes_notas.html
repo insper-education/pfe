@@ -77,25 +77,26 @@
               var nota_indiv = 0;
               var peso_indiv = 0;
             </script>
-            {% for aval, nota, peso, descr in aluno|recuper_notas_estudante|dict_key:ano_semestre %} <!-- Notas -->
+            {% comment %} {% for aval, nota, peso, descr in aluno|recuper_notas_estudante|dict_key:ano_semestre %} <!-- Notas --> {% endcomment %}
+            {% for aval in aluno|recuper_notas_estudante|dict_key:ano_semestre %} <!-- Notas -->
                 <span data-toggle="tooltip" data-html="true" animation="true" 
-                title="{{descr}}">
-                  {{aval}}<span class="pesos_aval">({% widthratio peso 1 100 %}%)</span
-                  >={% if peso > 0 %}<span
-                      lang="pt">{% language "pt-br" %}{{nota|floatformat:1}}{% endlanguage %}</span><span
-                      lang="en" style="display:none">{% language "en" %}{{ nota|floatformat:1}}{% endlanguage %}</span>
-                  {% else %}{% if nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
-                  {% if nota == None %}
+                title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
+                  {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
+                  >={% if aval.peso > 0 %}<span
+                      lang="pt">{% language "pt-br" %}{{aval.nota|floatformat:1}}{% endlanguage %}</span><span
+                      lang="en" style="display:none">{% language "en" %}{{ aval.nota|floatformat:1}}{% endlanguage %}</span>
+                  {% else %}{% if aval.nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+                  {% if aval.nota == None %}
                     <span style="color:red">??,??</span>
                   {% endif %}
                 </span>
-                {% if nota != None and peso != None %}
+                {% if aval.nota != None and aval.peso != None %}
                   <script>
-                    nota_linha += {{nota|unlocalize}}*{{peso|unlocalize}};
-                    peso_linha += {{peso|unlocalize}};
-                    {% if aval == "RII" or aval == "RFI" %}
-                      nota_indiv += {{nota|unlocalize}}*{{peso|unlocalize}};
-                      peso_indiv += {{peso|unlocalize}};
+                    nota_linha += {{aval.nota|unlocalize}}*{{aval.peso|unlocalize}};
+                    peso_linha += {{aval.peso|unlocalize}};
+                    {% if aval.sigla == "RII" or aval.sigla == "RFI" %}
+                      nota_indiv += {{aval.nota|unlocalize}}*{{aval.peso|unlocalize}};
+                      peso_indiv += {{aval.peso|unlocalize}};
                     {% endif %}
                   </script>
                 {% endif %}

@@ -113,19 +113,20 @@ def get_media_alocacao_i(alocacao):
     peso_individual = 0
     peso_grupo_inter = 0
     peso_grupo_final = 0
-    for aval, nota, peso, _ in edicao:
-        if aval is not None and nota is not None and peso is not None:
-            peso_final += peso
-            nota_final += nota * peso
-            if aval in ("RII", "RFI", "API", "AFI"):
-                peso_individual += peso
-                nota_individual += nota * peso
-            if aval in ("RIG", "APG", "RPL", "PPF"):
-                peso_grupo_inter += peso
-                nota_grupo_inter += nota * peso
-            if aval in ("RFG", "AFG"):
-                peso_grupo_final += peso
-                nota_grupo_final += nota * peso
+    # for aval, nota, peso, _ in edicao:
+    for aval in edicao:
+        if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
+            peso_final += aval["peso"]
+            nota_final += aval["nota"] * aval["peso"]
+            if aval["sigla"] in ("RII", "RFI", "API", "AFI"):
+                peso_individual += aval["peso"]
+                nota_individual += aval["nota"] * aval["peso"]
+            if aval["sigla"] in ("RIG", "APG", "RPL", "PPF"):
+                peso_grupo_inter += aval["peso"]
+                nota_grupo_inter += aval["nota"] * aval["peso"]
+            if aval["sigla"] in ("RFG", "AFG"):
+                peso_grupo_final += aval["peso"]
+                nota_grupo_final += aval["nota"] * aval["peso"]
     peso_final = round(peso_final, 2)
 
     individual = None

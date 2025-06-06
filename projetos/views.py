@@ -1249,13 +1249,17 @@ def certificacao_falconi(request):
         projetos_selecionados = []
         for projeto in projetos:
             exame = Exame.objects.get(titulo="Falconi")
-            aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto,
-                                                          exame=exame)  # Falc.
+            aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
 
             if aval_banc_falconi:
                 projetos_selecionados.append(projeto)
 
-            nota_banca_falconi, peso, avaliadores = get_banca_estudante(None, aval_banc_falconi)
+            #nota_banca_falconi, peso, avaliadores = get_banca_estudante(None, aval_banc_falconi)
+            banca_info = get_banca_estudante(None, aval_banc_falconi)
+            nota_banca_falconi = banca_info["media"]
+            peso = banca_info["peso"]
+            avaliadores = banca_info["avaliadores"]
+
             if peso is not None:
                 selecionados += 1
                 if nota_banca_falconi >= 9.99:  # conceito A+

@@ -24,18 +24,21 @@
 {% endif %}
 {% if notas %}
 
-<table class="one-line"><tbody>
+<div style="overflow-x: auto; width: 100%;">
+<table class="one-line" style="max-width: 100%;"><tbody>
   <tr>
     <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
-    {% for aval, nota, peso, descr in notas %}
-      {% if user.tipo_de_usuario != 1 or alocado|exibe_notas:aval %} <!-- Filtra certas avaliações para estudantes não verem -->
+    {% comment %} {% for aval, nota, peso, descr in notas %} {% endcomment %}
+    {% for aval in notas %}
+      {% if alocado|exibe_notas:aval.sigla or not user.eh_estud  %} <!-- Filtra certas avaliações para estudantes não verem -->
         <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
-        title="{{descr}} | peso={% widthratio peso 1 100 %}%">
-          <span class="short">{{aval}}</span><span class="long">{{descr}}</span> = {% if peso > 0 or aval == "P" %}{{nota|floatformat:1}}{% else %}{% if nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
-          {% if peso > 0 %}
+        title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
+          <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+          {% if not forloop.last %}<span class="short">|</span>{% endif %}
+          {% if aval.peso > 0 %}
             <script>
-              nota += {{nota|unlocalize}} * {{peso|unlocalize}};
-              peso += {{peso|unlocalize}};
+              nota += {{aval.nota|unlocalize}} * {{aval.peso|unlocalize}};
+              peso += {{aval.peso|unlocalize}};
             </script>
           {% endif %}
         </td>
@@ -70,7 +73,7 @@
     </td>
 
   </tr>
-</tbody></table>
+</tbody></table></div>
 
 {% endif %}
 

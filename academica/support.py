@@ -143,13 +143,15 @@ def filtra_entregas(composicoes, projeto, user=None):
 def media_falconi(projeto):
     exame = Exame.objects.get(titulo="Falconi")
     aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
-    nota_banca_falconi, _, _ = get_banca_estudante(None, aval_banc_falconi)
+    #nota_banca_falconi, _, _ = get_banca_estudante(None, aval_banc_falconi)
+    nota_banca_falconi = get_banca_estudante(None, aval_banc_falconi)["media"]
     return nota_banca_falconi
 
 def media_bancas(projeto):
     exames = Exame.objects.filter(titulo="Banca Final") | Exame.objects.filter(titulo="Banca Intermediária")
     aval_bancas = Avaliacao2.objects.filter(projeto=projeto, exame__in=exames)  # Bancas.
-    nota_bancas, _, _ = get_banca_estudante(None, aval_bancas)
+    #nota_bancas, _, _ = get_banca_estudante(None, aval_bancas)
+    nota_bancas = get_banca_estudante(None, aval_bancas)["media"]
     return nota_bancas
 
 def media_orientador(projeto):

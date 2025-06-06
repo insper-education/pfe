@@ -785,7 +785,7 @@ def estudante_detail(request, primarykey=None):
     if request.user.eh_parc:
         return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
 
-    alocacoes = Alocacao.objects.filter(aluno=estudante)
+    alocacoes = Alocacao.objects.filter(aluno=estudante).reverse()
     context = calcula_objetivos(alocacoes)
     context.update({
         "titulo": {"pt": "Estudante", "en": "Student"},

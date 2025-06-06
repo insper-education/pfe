@@ -165,7 +165,13 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
                 for titulo_aval in nomes_bancas:
                     exame = Exame.objects.get(titulo=titulo_aval[0])
                     aval_b = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Por Bancas
-                    nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
+                    #nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
+                    banca_info = get_banca_estudante(None, aval_b)
+                    nota_b = banca_info["media"]
+                    peso = banca_info["peso"]
+                    avaliadores = banca_info["avaliadores"]
+
+
                     nota_incompleta, _ = get_banca_incompleta(projeto=projeto, sigla=titulo_aval[1], avaliadores=avaliadores)
 
                     if peso is not None:
