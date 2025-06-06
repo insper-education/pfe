@@ -141,7 +141,7 @@ def filtra_entregas(composicoes, projeto, user=None):
 
 
 def media_falconi(projeto):
-    exame = Exame.objects.get(titulo="Falconi")
+    exame = Exame.objects.get(sigla="F")
     aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
     #nota_banca_falconi, _, _ = get_banca_estudante(None, aval_banc_falconi)
     nota_banca_falconi = get_banca_estudante(None, aval_banc_falconi)["media"]

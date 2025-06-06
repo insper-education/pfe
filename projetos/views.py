@@ -1248,7 +1248,7 @@ def certificacao_falconi(request):
         selecionados = 0
         projetos_selecionados = []
         for projeto in projetos:
-            exame = Exame.objects.get(titulo="Falconi")
+            exame = Exame.objects.get(sigla="F")
             aval_banc_falconi = Avaliacao2.objects.filter(projeto=projeto, exame=exame)  # Falc.
 
             if aval_banc_falconi:
@@ -1296,7 +1296,7 @@ def certificacao_falconi(request):
             for objetivo in objetivos:
 
                 # Bancas Falconi
-                exame = Exame.objects.get(titulo="Falconi")
+                exame = Exame.objects.get(sigla="F")
                 bancas_falconi = Avaliacao2.objects.filter(projeto=projeto,
                                                         objetivo=objetivo,
                                                         exame=exame)\
@@ -1311,7 +1311,7 @@ def certificacao_falconi(request):
                     # Senão é só uma avaliação de objetivo mais antiga
 
             # Bancas Falconi
-            exame = Exame.objects.get(titulo="Falconi")
+            exame = Exame.objects.get(sigla="F")
             observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).\
                 order_by("avaliador", "-momento")
             for observacao in observacoes:
