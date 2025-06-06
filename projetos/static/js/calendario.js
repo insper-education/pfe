@@ -109,22 +109,19 @@ function setSemesterStyles(semesterActive) {
 
 function hideElements() {
   document.querySelectorAll(".semestre").forEach(el => el.style.display = "none");
-  // $("#linha_lab").hide();   NÃO MAIS SENDO USADO
-  // $("#linha_provas").hide();   NÃO MAIS SENDO USADO
 }
 
 function showElements(els) {
   els.forEach(el => {
     if (el.classList.contains("lin_aulas")) {
       el.style.display = "table-row";
-      if (!el.classList.contains('ano' + currentYear)) el.style.display = "none";
+      if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
     } else if (el.classList.contains("lin_mentorias")) {
         el.style.display = "table-row";
-        if (!el.classList.contains('ano' + currentYear)) el.style.display = "none";
+        if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
     } else {
       el.style.display = "inline";
     }
-
     if (el.parentNode.classList.contains("ano" + currentYear)) {
       if (el.classList.contains("lab")) $("#linha_lab").show();
       if (el.classList.contains("prova")) $("#linha_provas").show();
@@ -137,6 +134,10 @@ function filterAndShowCoordenacao(inicio_semestre, fim_semestre) {
   let els = Array.from(document.querySelectorAll(".coordenacao[data-mes]"))
     .filter(el => Number(el.dataset.mes) <= fim_semestre && Number(el.dataset.mes) >= inicio_semestre && Number(el.dataset.ano) == currentYear);
   els.forEach(el => el.style.display = "inline");
+  if (els.length > 0) {
+    // Remove o <br> inicial se existir
+    els[0].innerHTML = els[0].innerHTML.replace(/^\s*<br\s*\/?>/i, "");
+  }
 }
 
 function updateInfoVisibility(fim_semestre, inicio_semestre, isSecondSemester) {
@@ -145,14 +146,17 @@ function updateInfoVisibility(fim_semestre, inicio_semestre, isSecondSemester) {
     const no_ano = $(this).parents(".ano" + currentYear).length > 0;
     return no_semestre && no_ano;
   });
-  if (filtragem.length > 0) $("#info_semestre").show();
+  if (filtragem.length > 0) {
+    $("#info_semestre").show();
+    filtragem[0].innerHTML = filtragem[0].innerHTML.replace(/^\s*<br\s*\/?>/i, ""); // Remove o <br> inicial se existir
+  }
   else $("#info_semestre").hide();
 }
 
 function primeiro(e) {
   setSemesterStyles(1);
   const inicio_semestre = 1;
-  const fim_semestre = 7;
+  const fim_semestre = 6;
   hideElements();
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
   showElements(els);
@@ -164,12 +168,12 @@ function primeiro(e) {
 function segundo(e) {
   setSemesterStyles(2);
   const inicio_semestre = 7;
-  const fim_semestre = 13;
+  const fim_semestre = 12;
   hideElements();
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
   showElements(els);
   filterAndShowCoordenacao(inicio_semestre, fim_semestre);
-  updateInfoVisibility(inicio_semestre, 1, true);
+  updateInfoVisibility(fim_semestre, inicio_semestre, true);
   mostra_semestre();
 }
 
@@ -184,7 +188,6 @@ function carrega_semestre() {
 
 $(document).ready(function() {
 
-    //window.console = window.console || { log: function() {} };
     // Enviar a mensagem de resize para o iframe pai
     if (new URLSearchParams(window.location.search).has("type")) {
       window.parent.postMessage("resize", "*");
@@ -219,7 +222,10 @@ $(document).ready(function() {
       [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
           el.style.display = "table-row";
-        } else {
+        } else if(el.classList.contains("lin_mentorias")) {
+          el.style.display = "table-row";
+        } 
+        else {
           el.style.display = "inline";
         }
       });

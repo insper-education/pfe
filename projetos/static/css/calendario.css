@@ -11,6 +11,7 @@ table, th, td {border: 0px;}
   font-size:20px;
   font-weight: bold;
   margin-left: 12px;
+  margin-top: 12px;
   cursor: pointer;
 }
 
