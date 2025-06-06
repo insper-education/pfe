@@ -45,6 +45,8 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
+import datetime
+from projetos.models import Documento
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
@@ -52,4 +54,14 @@ def migracao(request):
     """temporário."""
     message = "Nada Feito"
     
+    documentos = Documento.objects.all()
+    for documento in documentos:
+        if documento.data is None:
+            # 20/12/2019 00:00 - Corrigido para atribuir data de criação ao campo data
+            data_criacao = datetime.datetime(2019, 12, 20, 0, 0)
+            documento.data = data_criacao
+            documento.save()
+    
+    message = "Documentos migrados com sucesso."
+
     return HttpResponse(message)
