@@ -289,10 +289,10 @@
                     {% endfor %}
                   </h6>
 
-                    Grupo:
+                    {% lng "Grupo" "Group" %}:
                     <ul>
                       {% for alocacao in projeto.alocacao_set.all %}
-                        <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}"><p>
+                        <li><a href="{% url 'estudante_detail' alocacao.aluno.id %}">
                           {{alocacao.aluno.user.get_full_name}} 
                           [{{ alocacao.aluno.curso2 }}]
                           {% for opcao in alocacao.aluno.opcao_set.all %}
@@ -300,7 +300,7 @@
                               (opção #{{opcao.prioridade}})
                             {% endif %}
                           {% endfor %}
-                        </p></a></li>
+                        </a></li>
                       {% endfor %}
                     </ul>
 
