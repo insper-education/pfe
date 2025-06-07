@@ -345,6 +345,7 @@ def avaliar_bancas(request, prof_id=None):
         context = {
             "objetivos": ObjetivosDeAprendizagem.objects.all(),
             "bancas": bancas,
+            "hoje": datetime.datetime.now(),
         }
     else:
         configuracao = get_object_or_404(Configuracao)

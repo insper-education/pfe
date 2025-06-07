@@ -6,6 +6,7 @@
 
 {% load rubricas %}
 {% load linguas %}
+{% load date_extras %}
 
 <script>
   banca = new Banca();
@@ -36,15 +37,26 @@
       </div>
     {% endif %}
     
-    <small style="font-size: 13px; line-height: 2;">★ 
+    <div id="banca{{banca.id}}_status" 
+      style="font-size: 14px; line-height: 2; overflow-x: auto; width: 100%; margin: 0.4em 0.4em 0.4em 0.2em; padding: 0.0em 0.4em;"    
+      class="{% if banca.endDate|dias:2 < hoje %}redish{% elif banca.endDate < hoje %}yellowish{% else %}whitish{% endif %}"
+    >★
       {% lng "Formulário" "Form" %}:
       <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
-    </small>
+    </div>
   </div>
   {% include "membros_da_banca.html" %}
 
   <table class="table table-bordered table-striped" style="margin-bottom: 2px;">
     {% for avaliador, objs in banca.get_avaliadores.items %}
+
+      {% if avaliador == user %}
+        {% comment %} Quer dizer que o usuário preencheu a avaliação {% endcomment %}
+        <script>
+          $("#banca{{banca.id}}_status").attr("class", "whitish");
+        </script>  
+      {% endif %}
+
       <tr><td>
         <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
         <a href="{% url 'user_detail' avaliador.id %}">
