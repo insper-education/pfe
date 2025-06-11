@@ -34,25 +34,63 @@ def get_documentos_publicos(self):
 
 @register.filter()
 def get_relatorio(banca):
-    """Retorna o relatório da banca."""
+    """Retorna o relatórios necessários para a banca."""
     if banca.composicao and banca.composicao.exame:
         if banca.composicao.exame.sigla == "BF": # Final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
         elif banca.composicao.exame.sigla == "BI": # Intermediária
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
         elif banca.composicao.exame.sigla == "F":  # Falconi
             # Reaproveita o tipo de documento da banca final
             tipo_documento = TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
+            documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.projeto)
         elif banca.composicao.exame.sigla == "P":  # Probation
-            tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation")
-            documento = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=banca.alocacao.projeto)
+            documentos = Documento.objects.filter(tipo_documento__sigla="RFG", projeto=banca.alocacao.projeto)
         else:
             return None
     else:
         return None
+    
+    if documentos.exists():
+        return documentos.order_by("data").last()
+    
+    return None
+
+
+@register.filter()
+def get_relatorios_individuais(banca):
+    """Retorna o relatórios necessários para a banca."""
+    if banca.composicao and banca.composicao.exame:
+        if banca.composicao.exame.sigla == "P":  # Probation
+            documentos = Documento.objects.filter(tipo_documento__sigla="RII", usuario=banca.alocacao.aluno.user) | Documento.objects.filter(tipo_documento__sigla="RFI", usuario=banca.alocacao.aluno.user)
+        else:
+            return None
+    else:
+        return None
+    
+    if documentos.exists():
+        return documentos.order_by("data")
+    
+    return None
+
+
+@register.filter()
+def get_parecer(banca):  # Para probatório
+    """Retorna o parecer produzido pelo orientador."""
+    if banca.composicao and banca.composicao.exame:
+        if banca.composicao.exame.sigla == "P":  # Probation
+            documentos = Documento.objects.filter(tipo_documento__sigla="PPP", projeto=banca.alocacao.projeto)
+        else:
+            return None
+    else:
+        return None
+    
+    if documentos.exists():
+        return documentos.order_by("data").last()
+    
+    return None
     
     if documento.exists():
         return documento.order_by("data").last()

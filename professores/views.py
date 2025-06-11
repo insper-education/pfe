@@ -619,7 +619,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "BF": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
             "BI": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Intermediária", "Relatório Intermediário de Grupo"]),
             "F": TipoDocumento.objects.filter(nome__in=["Apresentação da Banca Final", "Relatório Final de Grupo"]),
-            "P": TipoDocumento.objects.filter(nome__in=["Relatório para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"])
+            "P": TipoDocumento.objects.filter(nome__in=["Parecer para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"]),
         }
 
         tipo_documento = map_tipo_documento.get(banca.composicao.exame.sigla)
@@ -628,6 +628,9 @@ def banca_avaliar(request, slug, documento_id=None):
         if tipo_documento:
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
+        if banca.composicao.exame.sigla == "P":  # Probation
+            documentos = documentos | Documento.objects.filter(tipo_documento__sigla="RII", usuario=banca.alocacao.aluno.user) | Documento.objects.filter(tipo_documento__sigla="RIF", usuario=banca.alocacao.aluno.user)
+            
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
         destaque = request.GET.get("destaque", None)
