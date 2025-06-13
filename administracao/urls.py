@@ -14,7 +14,6 @@ from . import views
 urlpatterns = [
     path("", views.index_administracao, name="index_administracao"),  # pagina inicial
     path("administracao", views.index_administracao, name="administracao"),
-    # path("backup/<str:formato>", views.backup, name="backup"),  FUNCIONALIDADE REMOVIDA
     path("bloqueados/", views.bloqueados, name="bloqueados"),
     path("cadastrar_disciplina/", views.cadastrar_disciplina, name="cadastrar_disciplina"),
     path("cadastrar_organizacao/", views.cadastrar_organizacao, name="cadastrar_organizacao"),

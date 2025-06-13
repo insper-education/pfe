@@ -5,92 +5,74 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 23 de Janeiro de 2025
 """
 
-import tablib
-
 from projetos.resources import *
 
-
-# FUNCIONALIDADE REMOVIDA
-# def create_backup():
-#     """Rotina para criar um backup."""
-#     databook = tablib.Databook()
-
-#     resources = {
-#         "Projetos": ProjetosResource,
-#         "Organizacoes": OrganizacoesResource,
-#         "Opcoes": OpcoesResource,
-#         "Avaliações": Avaliacoes2Resource,
-#         "Usuarios": UsuariosResource,
-#         "Alunos": EstudantesResource,
-#         "Professores": ProfessoresResource,
-#         "Configuracao": ConfiguracaoResource,
+# def get_resource(dado):
+#     resource_map = {
+#         "disciplinas": DisciplinasResource,
+#         "estudantes": EstudantesResource,
+#         "avaliacoes": Avaliacoes2Resource,
+#         "projetos": ProjetosResource,
+#         "organizacoes": OrganizacoesResource,
+#         "opcoes": OpcoesResource,
+#         "usuarios": UsuariosResource,
+#         "professores": ProfessoresResource,
+#         "parceiros": ParceirosResource,
+#         "configuracao": ConfiguracaoResource,
+#         "feedbacks": FeedbacksResource,
+#         "alocacoes": AlocacoesResource,
+#         "pares": ParesResource,
+#         "objetivos": ObjetivosDeAprendizagemResource,
+#         "relatos": RelatosResource,
+#         "areas_interesse": AreaDeInteresseResource,
+#         "propostas": PropostasResource,
 #     }
-
-#     for title, resource in resources.items():
-#         data = resource().export()
-#         data.title = title
-#         databook.add_sheet(data)
-
-def get_resource(dado):
-    resource_map = {
-        "disciplinas": DisciplinasResource,
-        "estudantes": EstudantesResource,
-        "avaliacoes": Avaliacoes2Resource,
-        "projetos": ProjetosResource,
-        "organizacoes": OrganizacoesResource,
-        "opcoes": OpcoesResource,
-        "usuarios": UsuariosResource,
-        "professores": ProfessoresResource,
-        "parceiros": ParceirosResource,
-        "configuracao": ConfiguracaoResource,
-        "feedbacks": FeedbacksResource,
-        "alocacoes": AlocacoesResource,
-        "pares": ParesResource,
-        "objetivos": ObjetivosDeAprendizagemResource,
-        "relatos": RelatosResource,
-        "areas_interesse": AreaDeInteresseResource,
-        "propostas": PropostasResource,
-    }
-    return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
+#     return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
 
 
-# def get_resource(model_name, fields=None):
+def get_resource(model_name, fields=None):
 
-#     if model_name=="disciplinas":
-#         return DisciplinasResource()
-#         # Disciplina está com um processo diferente, validar o porque
+    # Disciplina está com um processo diferente, validar o porque
+    if model_name=="disciplinas":
+        return DisciplinasResource()
+    elif model_name == "estudantes":
+        return EstudantesResource()
+    elif model_name == "avaliacoes":
+        return Avaliacoes2Resource()
+    elif model_name == "projetos":
+        return ProjetosResource()
 
-#     else:
-#         resource_map = {
-#             # "disciplinas": DisciplinasResource,
-#             "estudantes": EstudantesResource,
-#             "avaliacoes": Avaliacoes2Resource,
-#             "projetos": ProjetosResource,
-#             "organizacoes": OrganizacoesResource,
-#             "opcoes": OpcoesResource,
-#             "usuarios": UsuariosResource,
-#             "professores": ProfessoresResource,
-#             "parceiros": ParceirosResource,
-#             "configuracao": ConfiguracaoResource,
-#             "feedbacks": FeedbacksResource,
-#             "alocacoes": AlocacoesResource,
-#             "pares": ParesResource,
-#             "objetivos": ObjetivosDeAprendizagemResource,
-#             "relatos": RelatosResource,
-#             "areas_interesse": AreaDeInteresseResource,
-#             "propostas": PropostasResource,
-#         }
+    else:
+        resource_map = {
+            # "disciplinas": DisciplinasResource,
+            # "estudantes": EstudantesResource,
+            # "avaliacoes": Avaliacoes2Resource,
+            # "projetos": ProjetosResource,
+            "organizacoes": Organizacao,
+            "opcoes": Opcao,
+            "usuarios": PFEUser,
+            "professores": Professor,
+            "parceiros": Parceiro,
+            "configuracao": Configuracao,
+            "feedbacks": Feedback,
+            "alocacoes": Alocacao,
+            "pares": Pares,
+            "objetivos": ObjetivosDeAprendizagem,
+            "relatos": Relato,
+            "areas_interesse": AreaDeInteresse,
+            "propostas": Proposta,
+        }
         
-#         model_class = resource_map.get(model_name, None)()
+        model_class = resource_map.get(model_name, None)
 
-#         class DynamicResource(resources.ModelResource):
-#             class Meta:
-#                 model = model_class
-#                 # if fields:
-#                 #     fields = tuple(fields)
+        class DynamicResource(resources.ModelResource):
+            class Meta:
+                model = model_class
+                # if fields:
+                #     fields = tuple(fields)
 
         
-#         return DynamicResource()
+        return DynamicResource()
 
 
 def get_queryset(resource, dado, ano, semestre):

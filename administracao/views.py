@@ -44,7 +44,7 @@ from axes.models import AccessAttempt, AccessLog
 from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
 from .support import puxa_github, backup_github
-from .support2 import get_resource, get_queryset   #create_backup
+from .support2 import get_resource, get_queryset
 
 from academica.models import CodigoConduta
 
@@ -70,7 +70,6 @@ from users.models import Opcao, Alocacao
 from users.support import adianta_semestre, adianta_semestre_conf, get_edicoes
 
 from pfe.celery import APP as celery_app
-# celery_app = Celery()
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -1120,63 +1119,36 @@ def excluir_disciplina(request):
     return HttpResponseNotFound("Requisição errada")
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def export(request, modelo, formato):
-    """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
-    # APOSENTAR ESSE MÉTODO
-    # NÃO USAR MAIS
-
-    resource = get_resource(modelo)
-
-    if resource is None:
-        mensagem_erro = {
-            "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
-            "en": "Irregular call: Unknown database = " + modelo,
-        }
-        context = {
-            "area_principal": True,
-            "mensagem_erro": mensagem_erro,
-        }
-        return render(request, "generic_ml.html", context=context)
-
-    dataset = resource.export()
-    databook = tablib.Databook()
-    databook.add_sheet(dataset)
-    if formato in ("xls", "xlsx"):
-        response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
-        formato = "xlsx"
-    elif formato == "json":
-        response = HttpResponse(dataset.json, content_type="application/json")
-    elif formato == "csv":
-        response = HttpResponse(dataset.csv, content_type="text/csv")
-    else:
-        mensagem_erro = {
-            "pt": "Chamada irregular : Formato desconhecido = " + formato,
-            "en": "Irregular call: Unknown format = " + formato,
-        }
-        context = {
-            "area_principal": True,
-            "mensagem_erro": mensagem_erro,
-        }
-        return render(request, "generic_ml.html", context=context)
-
-    response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
-
-    return response
-
-
-## FUNCIONALIDADE DE BACKUP SENDO REMOVIDA
 # @login_required
 # @permission_required("users.altera_professor", raise_exception=True)
-# def backup(request, formato):
-#     """Gera um backup de tudo."""
-#     databook = create_backup()
+# def export(request, modelo, formato):
+#     """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
+#     # APOSENTAR ESSE MÉTODO
+#     # NÃO USAR MAIS
+
+#     resource = get_resource(modelo)
+
+#     if resource is None:
+#         mensagem_erro = {
+#             "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
+#             "en": "Irregular call: Unknown database = " + modelo,
+#         }
+#         context = {
+#             "area_principal": True,
+#             "mensagem_erro": mensagem_erro,
+#         }
+#         return render(request, "generic_ml.html", context=context)
+
+#     dataset = resource.export()
+#     databook = tablib.Databook()
+#     databook.add_sheet(dataset)
 #     if formato in ("xls", "xlsx"):
 #         response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
 #         formato = "xlsx"
 #     elif formato == "json":
-#         response = HttpResponse(databook.json, content_type="application/json")
+#         response = HttpResponse(dataset.json, content_type="application/json")
+#     elif formato == "csv":
+#         response = HttpResponse(dataset.csv, content_type="text/csv")
 #     else:
 #         mensagem_erro = {
 #             "pt": "Chamada irregular : Formato desconhecido = " + formato,
@@ -1188,7 +1160,7 @@ def export(request, modelo, formato):
 #         }
 #         return render(request, "generic_ml.html", context=context)
 
-#     response["Content-Disposition"] = 'attachment; filename="backup.'+formato+'"'
+#     response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
 
 #     return response
 
@@ -1197,7 +1169,6 @@ def export(request, modelo, formato):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    #configuracao = get_object_or_404(Configuracao)
     context = {"titulo": {"pt": "Relatório", "en": "Report"},}
 
     edicao = request.GET.get("edicao", None)

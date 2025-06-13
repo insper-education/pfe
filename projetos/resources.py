@@ -39,40 +39,40 @@ class ProjetosResource(resources.ModelResource):
         return obj.get_titulo_org_periodo_seguro()
 
 
-class OrganizacoesResource(resources.ModelResource):
-    """Model Resource para tratar dados de Organizações."""
+# class OrganizacoesResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Organizações."""
 
-    class Meta:
-        """Meta do Projeto."""
+#     class Meta:
+#         """Meta do Projeto."""
 
-        model = Organizacao
-
-
-class PropostasResource(resources.ModelResource):
-    """Model Resource para tratar dados de Propostas."""
-
-    class Meta:
-        """Meta do Projeto."""
-
-        model = Proposta
+#         model = Organizacao
 
 
-class ConfiguracaoResource(resources.ModelResource):
-    """Model Resource para tratar dados de Configurações."""
+# class PropostasResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Propostas."""
 
-    class Meta:
-        """Meta do Configuração."""
+#     class Meta:
+#         """Meta do Projeto."""
 
-        model = Configuracao
+#         model = Proposta
 
 
-class FeedbacksResource(resources.ModelResource):
-    """Model Resource para tratar dados de Feedbacks."""
+# class ConfiguracaoResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Configurações."""
 
-    class Meta:
-        """Meta do Projeto."""
+#     class Meta:
+#         """Meta do Configuração."""
 
-        model = Feedback
+#         model = Configuracao
+
+
+# class FeedbacksResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Feedbacks."""
+
+#     class Meta:
+#         """Meta do Projeto."""
+
+#         model = Feedback
 
 
 class DisciplinasResource(resources.ModelResource):
@@ -359,15 +359,13 @@ class Avaliacoes2Resource(resources.ModelResource):
         model = Avaliacao2
 
 
-# MOVER PARA RESOURCES DE USERS (ACCOUNTS)
+# class UsuariosResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Usuários."""
 
-class UsuariosResource(resources.ModelResource):
-    """Model Resource para tratar dados de Usuários."""
+#     class Meta:
+#         """Meta para PFEUser."""
 
-    class Meta:
-        """Meta para PFEUser."""
-
-        model = PFEUser
+#         model = PFEUser
 
 
 def atualizar_campo(registro, campo, valor):
@@ -568,69 +566,69 @@ class EstudantesResource(resources.ModelResource):
         model = Aluno
 
 
-class ProfessoresResource(resources.ModelResource):
-    """Model Resource para tratar dados de Professores."""
+# class ProfessoresResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Professores."""
 
-    class Meta:
-        """Meta do Professores."""
+#     class Meta:
+#         """Meta do Professores."""
 
-        model = Professor
-
-
-class ParceirosResource(resources.ModelResource):
-    """Model Resource para tratar dados de Parceiros."""
-
-    class Meta:
-        """Meta do Parceiros."""
-
-        model = Parceiro
+#         model = Professor
 
 
-class OpcoesResource(resources.ModelResource):
-    """Model Resource para tratar dados de Opções."""
+# class ParceirosResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Parceiros."""
 
-    class Meta:
-        """Meta do Opções."""
+#     class Meta:
+#         """Meta do Parceiros."""
 
-        model = Opcao
-
-class ParesResource(resources.ModelResource):
-    """Model Resource para tratar dados de Opções."""
-
-    class Meta:
-        """Meta do Opções."""
-
-        model = Pares
+#         model = Parceiro
 
 
-class AlocacoesResource(resources.ModelResource):
-    """Model Resource para tratar dados de Opções."""
+# class OpcoesResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Opções."""
 
-    class Meta:
-        """Meta do Opções."""
+#     class Meta:
+#         """Meta do Opções."""
 
-        model = Alocacao
+#         model = Opcao
 
-class RelatosResource(resources.ModelResource):
-    """Model Resource para tratar dados de Relatos."""
+# class ParesResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Opções."""
 
-    class Meta:
-        """Meta do Relatos."""
+#     class Meta:
+#         """Meta do Opções."""
 
-        model = Relato
+#         model = Pares
 
-class ObjetivosDeAprendizagemResource(resources.ModelResource):
-    """Model Resource para tratar dados de Objetivos de Aprendizagem."""
 
-    class Meta:
-        """Meta do Objetivos de Aprendizagem."""
+# class AlocacoesResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Opções."""
 
-        model = ObjetivosDeAprendizagem
+#     class Meta:
+#         """Meta do Opções."""
 
-class AreaDeInteresseResource(resources.ModelResource):
-    """Model Resource para tratar dados de Áreas de Interesse."""
+#         model = Alocacao
 
-    class Meta:
-        """Meta do Área de Interesse."""
+# class RelatosResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Relatos."""
 
-        model = AreaDeInteresse
+#     class Meta:
+#         """Meta do Relatos."""
+
+#         model = Relato
+
+# class ObjetivosDeAprendizagemResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Objetivos de Aprendizagem."""
+
+#     class Meta:
+#         """Meta do Objetivos de Aprendizagem."""
+
+#         model = ObjetivosDeAprendizagem
+
+# class AreaDeInteresseResource(resources.ModelResource):
+#     """Model Resource para tratar dados de Áreas de Interesse."""
+
+#     class Meta:
+#         """Meta do Área de Interesse."""
+
+#         model = AreaDeInteresse
