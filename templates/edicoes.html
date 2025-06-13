@@ -165,7 +165,7 @@
                 {% lng "Edição" "Edition" %}
               </span></label>
             </div>
-            <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao" disabled>
+            <select class="to_hide filter custom-select w-auto" id="filterEdicao" name="edicao">  {% comment %} Removendo o disabled do select {% endcomment %}
               <optgroup class="opt_edi">
               {% comment %} Se não quiser que aparece a opção todas crie uma variavel n_todas com True {% endcomment %}
               {% if not n_todas %}

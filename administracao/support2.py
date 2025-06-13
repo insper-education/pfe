@@ -10,27 +10,26 @@ import tablib
 from projetos.resources import *
 
 
-# Essa é uma função que cria um backup de todos os dados do sistema
-# Ela é pesada e deve ser evitada
-def create_backup():
-    """Rotina para criar um backup."""
-    databook = tablib.Databook()
+# FUNCIONALIDADE REMOVIDA
+# def create_backup():
+#     """Rotina para criar um backup."""
+#     databook = tablib.Databook()
 
-    resources = {
-        "Projetos": ProjetosResource,
-        "Organizacoes": OrganizacoesResource,
-        "Opcoes": OpcoesResource,
-        "Avaliações": Avaliacoes2Resource,
-        "Usuarios": UsuariosResource,
-        "Alunos": EstudantesResource,
-        "Professores": ProfessoresResource,
-        "Configuracao": ConfiguracaoResource,
-    }
+#     resources = {
+#         "Projetos": ProjetosResource,
+#         "Organizacoes": OrganizacoesResource,
+#         "Opcoes": OpcoesResource,
+#         "Avaliações": Avaliacoes2Resource,
+#         "Usuarios": UsuariosResource,
+#         "Alunos": EstudantesResource,
+#         "Professores": ProfessoresResource,
+#         "Configuracao": ConfiguracaoResource,
+#     }
 
-    for title, resource in resources.items():
-        data = resource().export()
-        data.title = title
-        databook.add_sheet(data)
+#     for title, resource in resources.items():
+#         data = resource().export()
+#         data.title = title
+#         databook.add_sheet(data)
 
 def get_resource(dado):
     resource_map = {
@@ -53,6 +52,45 @@ def get_resource(dado):
         "propostas": PropostasResource,
     }
     return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
+
+
+# def get_resource(model_name, fields=None):
+
+#     if model_name=="disciplinas":
+#         return DisciplinasResource()
+#         # Disciplina está com um processo diferente, validar o porque
+
+#     else:
+#         resource_map = {
+#             # "disciplinas": DisciplinasResource,
+#             "estudantes": EstudantesResource,
+#             "avaliacoes": Avaliacoes2Resource,
+#             "projetos": ProjetosResource,
+#             "organizacoes": OrganizacoesResource,
+#             "opcoes": OpcoesResource,
+#             "usuarios": UsuariosResource,
+#             "professores": ProfessoresResource,
+#             "parceiros": ParceirosResource,
+#             "configuracao": ConfiguracaoResource,
+#             "feedbacks": FeedbacksResource,
+#             "alocacoes": AlocacoesResource,
+#             "pares": ParesResource,
+#             "objetivos": ObjetivosDeAprendizagemResource,
+#             "relatos": RelatosResource,
+#             "areas_interesse": AreaDeInteresseResource,
+#             "propostas": PropostasResource,
+#         }
+        
+#         model_class = resource_map.get(model_name, None)()
+
+#         class DynamicResource(resources.ModelResource):
+#             class Meta:
+#                 model = model_class
+#                 # if fields:
+#                 #     fields = tuple(fields)
+
+        
+#         return DynamicResource()
 
 
 def get_queryset(resource, dado, ano, semestre):

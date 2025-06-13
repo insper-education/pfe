@@ -44,7 +44,7 @@ from axes.models import AccessAttempt, AccessLog
 from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
 from .support import puxa_github, backup_github
-from .support2 import create_backup, get_resource, get_queryset
+from .support2 import get_resource, get_queryset   #create_backup
 
 from academica.models import CodigoConduta
 
@@ -565,6 +565,7 @@ def exportar(request):
             else:
                 modelo += "_" + dado
 
+            #resource = get_resource(dado)
             resource = get_resource(dado)
             if resource is None:
                 mensagem_erro = {
@@ -1165,30 +1166,31 @@ def export(request, modelo, formato):
     return response
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def backup(request, formato):
-    """Gera um backup de tudo."""
-    databook = create_backup()
-    if formato in ("xls", "xlsx"):
-        response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
-        formato = "xlsx"
-    elif formato == "json":
-        response = HttpResponse(databook.json, content_type="application/json")
-    else:
-        mensagem_erro = {
-            "pt": "Chamada irregular : Formato desconhecido = " + formato,
-            "en": "Irregular call: Unknown format = " + formato,
-        }
-        context = {
-            "area_principal": True,
-            "mensagem_erro": mensagem_erro,
-        }
-        return render(request, "generic_ml.html", context=context)
+## FUNCIONALIDADE DE BACKUP SENDO REMOVIDA
+# @login_required
+# @permission_required("users.altera_professor", raise_exception=True)
+# def backup(request, formato):
+#     """Gera um backup de tudo."""
+#     databook = create_backup()
+#     if formato in ("xls", "xlsx"):
+#         response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
+#         formato = "xlsx"
+#     elif formato == "json":
+#         response = HttpResponse(databook.json, content_type="application/json")
+#     else:
+#         mensagem_erro = {
+#             "pt": "Chamada irregular : Formato desconhecido = " + formato,
+#             "en": "Irregular call: Unknown format = " + formato,
+#         }
+#         context = {
+#             "area_principal": True,
+#             "mensagem_erro": mensagem_erro,
+#         }
+#         return render(request, "generic_ml.html", context=context)
 
-    response["Content-Disposition"] = 'attachment; filename="backup.'+formato+'"'
+#     response["Content-Disposition"] = 'attachment; filename="backup.'+formato+'"'
 
-    return response
+#     return response
 
 
 @login_required
