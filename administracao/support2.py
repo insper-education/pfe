@@ -7,99 +7,58 @@ Data: 23 de Janeiro de 2025
 
 from projetos.resources import *
 
-# def get_resource(dado):
-#     resource_map = {
-#         "disciplinas": DisciplinasResource,
-#         "estudantes": EstudantesResource,
-#         "avaliacoes": Avaliacoes2Resource,
-#         "projetos": ProjetosResource,
-#         "organizacoes": OrganizacoesResource,
-#         "opcoes": OpcoesResource,
-#         "usuarios": UsuariosResource,
-#         "professores": ProfessoresResource,
-#         "parceiros": ParceirosResource,
-#         "configuracao": ConfiguracaoResource,
-#         "feedbacks": FeedbacksResource,
-#         "alocacoes": AlocacoesResource,
-#         "pares": ParesResource,
-#         "objetivos": ObjetivosDeAprendizagemResource,
-#         "relatos": RelatosResource,
-#         "areas_interesse": AreaDeInteresseResource,
-#         "propostas": PropostasResource,
-#     }
-#     return resource_map.get(dado, None)()  # Função precisa ser chamada para criar o objeto
+from projetos.models import Feedback
+from estudantes.models import Relato, Pares
 
 
-def get_resource(model_name, fields=None):
+def get_resource(model_class, field_names=None):
 
-    # Disciplina está com um processo diferente, validar o porque
-    if model_name=="disciplinas":
-        return DisciplinasResource()
-    elif model_name == "estudantes":
-        return EstudantesResource()
-    elif model_name == "avaliacoes":
-        return Avaliacoes2Resource()
-    elif model_name == "projetos":
-        return ProjetosResource()
+    if model_class == Disciplina:
+        return get_DisciplinasResource(field_names)
+    elif model_class == Aluno:
+        return get_EstudantesResource(field_names)
+    elif model_class == Avaliacao2:
+        return get_Avaliacoes2Resource(field_names)
+    elif model_class == Projeto:
+        return get_ProjetosResource(field_names)
 
     else:
-        resource_map = {
-            # "disciplinas": DisciplinasResource,
-            # "estudantes": EstudantesResource,
-            # "avaliacoes": Avaliacoes2Resource,
-            # "projetos": ProjetosResource,
-            "organizacoes": Organizacao,
-            "opcoes": Opcao,
-            "usuarios": PFEUser,
-            "professores": Professor,
-            "parceiros": Parceiro,
-            "configuracao": Configuracao,
-            "feedbacks": Feedback,
-            "alocacoes": Alocacao,
-            "pares": Pares,
-            "objetivos": ObjetivosDeAprendizagem,
-            "relatos": Relato,
-            "areas_interesse": AreaDeInteresse,
-            "propostas": Proposta,
-        }
         
-        model_class = resource_map.get(model_name, None)
-
-        class DynamicResource(resources.ModelResource):
+        bases = (resources.ModelResource,)
+        class DynamicResource(*bases):
             class Meta:
                 model = model_class
-                # if fields:
-                #     fields = tuple(fields)
-
+                if field_names:
+                    fields = tuple(field_names)
         
         return DynamicResource()
 
 
-def get_queryset(resource, dado, ano, semestre):
+def get_queryset(resource, model_class, ano, semestre):
 
     if resource is None:
         return None
     
     queryset = None
-    if dado == "projetos":
+    if model_class == Projeto:
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
-    elif dado == "estudantes":
+    elif model_class == Aluno:
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
-    elif dado == "propostas":
+    elif model_class == Proposta:
         queryset = resource._meta.model.objects.filter(ano=ano, semestre=semestre)
-    elif dado == "alocacoes" or dado == "avaliacoes":
+    elif model_class == Alocacao or model_class == Avaliacao2:
         queryset = resource._meta.model.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-    elif dado == "pares":
+    elif model_class == Pares:
         queryset = resource._meta.model.objects.filter(alocacao_de__projeto__ano=ano, alocacao_de__projeto__semestre=semestre)
-    elif dado == "relatos":
+    elif model_class == Relato:
         queryset = resource._meta.model.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
-    elif dado == "opcoes":
+    elif model_class == Opcao:
         queryset = resource._meta.model.objects.filter(proposta__ano=ano, proposta__semestre=semestre)
-    elif dado == "feedbacks":
-        if semestre == '1':
-            faixa = [ano+"-01-01", ano+"-05-31"]
+    elif model_class == Feedback:
+        if str(semestre) == '1':
+            faixa = [str(ano)+"-01-01", str(ano)+"-05-31"]
         else:
-            faixa = [ano+"-06-01", ano+"-12-31"]
+            faixa = [str(ano)+"-06-01", str(ano)+"-12-31"]
         queryset = resource._meta.model.objects.filter(data__range=faixa)
 
     if queryset is None:

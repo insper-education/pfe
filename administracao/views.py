@@ -69,6 +69,10 @@ from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
 from users.support import adianta_semestre, adianta_semestre_conf, get_edicoes
 
+from projetos.models import ObjetivosDeAprendizagem, AreaDeInteresse
+from estudantes.models import Relato
+
+
 from pfe.celery import APP as celery_app
 
 # Get an instance of a logger
@@ -390,7 +394,29 @@ def edita_usuario(request, primarykey):
 def carrega_arquivo(request, dado):
     """Faz o upload de arquivos CSV para o servidor."""
 
-    resource = get_resource(dado)
+    resource_map = {
+        "Alocações": Alocacao,
+        "Estudantes": Aluno,
+        "Avaliações": Avaliacao2,
+        "Areas de Interesse": AreaDeInteresse,
+        "Configuração": Configuracao,
+        "Disciplinas": Disciplina,
+        "Feedbacks": Feedback,
+        "Objetivos de Aprendizagem": ObjetivosDeAprendizagem,
+        "Opções": Opcao,
+        "Organizações": Organizacao,
+        "Parceiros": Parceiro,
+        "Avaliação de Pares": Pares,
+        "Projetos": Projeto,
+        "Propostas": Proposta,
+        "Usuários": PFEUser,
+        "Professores": Professor,
+        "Relatos Quinzenais": Relato,
+    }
+
+    model_class = resource_map.get(dado, None)
+
+    resource = get_resource(model_class)
 
     if resource is None:
         return HttpResponseNotFound("<h1>Tipo de dado não reconhecido!</h1>")
@@ -536,6 +562,26 @@ def desbloquear_usuarios(request):
 def exportar(request):
     """Exporta dados."""
 
+    resource_map = {
+        "Alocações": Alocacao,
+        "Estudantes": Aluno,
+        "Avaliações": Avaliacao2,
+        "Areas de Interesse": AreaDeInteresse,
+        "Configuração": Configuracao,
+        "Disciplinas": Disciplina,
+        "Feedbacks": Feedback,
+        "Objetivos de Aprendizagem": ObjetivosDeAprendizagem,
+        "Opções": Opcao,
+        "Organizações": Organizacao,
+        "Parceiros": Parceiro,
+        "Avaliação de Pares": Pares,
+        "Projetos": Projeto,
+        "Propostas": Proposta,
+        "Usuários": PFEUser,
+        "Professores": Professor,
+        "Relatos Quinzenais": Relato,
+    }
+    
     if request.method == "POST":
         if not request.user.has_perm("users.change_administrador"):  # Um pouco mais restritivo por segurança
             return HttpResponse("Usuário sem privilégios de administrador.", status=403)
@@ -559,13 +605,20 @@ def exportar(request):
         modelo = None
         dados = request.POST.getlist("dados")
         for dado in dados:
+            nome = re.sub(r'[^\w\-]', '', dado.strip().lower().replace(" ", "_"))
             if modelo is None:
-                modelo = dado
+                modelo = nome
             else:
-                modelo += "_" + dado
+                modelo += "_" + nome
 
-            #resource = get_resource(dado)
-            resource = get_resource(dado)
+            model_class = resource_map.get(dado, None)
+
+            if model_class is None:
+                raise ValueError(f"Modelo '{dado}' não encontrado.")
+            
+            campos = request.POST.getlist(dado)
+           
+            resource = get_resource(model_class, campos)
             if resource is None:
                 mensagem_erro = {
                     "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
@@ -578,18 +631,18 @@ def exportar(request):
                 return render(request, "generic_ml.html", context=context)
         
             if edicao != "todas":
-                queryset = get_queryset(resource, dado, ano, semestre)
+                queryset = get_queryset(resource, model_class, ano, semestre)
                 dataset = resource.export(queryset)
             else:
                 dataset = resource.export()
                 
             if formato == "json":
-                if len(dados) > 1:
-                    livro[dado] = dataset.dict
+                if len(nome) > 1:
+                    livro[nome] = dataset.dict
                 else:
                     livro = dataset.dict
             else:
-                dataset.title = dado
+                dataset.title = nome
                 databook.add_sheet(dataset)
 
         def data_default(obj):
@@ -609,28 +662,19 @@ def exportar(request):
         response["Content-Disposition"] = 'attachment; filename="'+modelo+periodo+'.'+formato+'"'
         return response
 
-    dados = [
-        ("Alocações", "alocacoes"),
-        ("Areas de Interesse", "areas_interesse"),
-        ("Avaliação de Pares", "pares"),
-        ("Avaliações", "avaliacoes"),
-        ("Configuração", "configuracao"),
-        ("Estudantes", "estudantes"),
-        ("Feedbacks", "feedbacks"),
-        ("Organizações", "organizacoes"),
-        ("Objetivos de Aprendizagem", "objetivos"),
-        ("Opções", "opcoes"),        
-        ("Parceiros", "parceiros"),
-        ("Professores", "professores"),
-        ("Projetos", "projetos" ),
-        ("Propostas", "propostas"),
-        ("Relatos Quinzenais", "relatos"),
-        ("Usuários", "usuarios"),
-    ]
+    resource_fields = {}
+    for nome, model in resource_map.items():
+        field_names = [
+            field.name for field in model._meta.get_fields()
+            if (field.concrete and not field.many_to_many)  # and not field.auto_created
+        ]
+        resource_fields[nome] = field_names
+
 
     context = {
         "titulo": {"pt": "Exportar Dados", "en": "Export Data"},
-        "dados": dados,
+        "resource_map": resource_map,
+        "resource_fields": resource_fields,
         "edicoes": get_edicoes(Aluno)[0],
       }
     return render(request, "administracao/exportar.html", context=context)
@@ -1117,52 +1161,6 @@ def excluir_disciplina(request):
         return JsonResponse({"atualizado": True})
 
     return HttpResponseNotFound("Requisição errada")
-
-
-# @login_required
-# @permission_required("users.altera_professor", raise_exception=True)
-# def export(request, modelo, formato):
-#     """Exporta dados direto para o navegador nos formatos CSV, XLS e JSON."""
-#     # APOSENTAR ESSE MÉTODO
-#     # NÃO USAR MAIS
-
-#     resource = get_resource(modelo)
-
-#     if resource is None:
-#         mensagem_erro = {
-#             "pt": "Chamada irregular: Base de dados desconhecida = " + modelo,
-#             "en": "Irregular call: Unknown database = " + modelo,
-#         }
-#         context = {
-#             "area_principal": True,
-#             "mensagem_erro": mensagem_erro,
-#         }
-#         return render(request, "generic_ml.html", context=context)
-
-#     dataset = resource.export()
-#     databook = tablib.Databook()
-#     databook.add_sheet(dataset)
-#     if formato in ("xls", "xlsx"):
-#         response = HttpResponse(databook.xlsx, content_type="application/ms-excel")
-#         formato = "xlsx"
-#     elif formato == "json":
-#         response = HttpResponse(dataset.json, content_type="application/json")
-#     elif formato == "csv":
-#         response = HttpResponse(dataset.csv, content_type="text/csv")
-#     else:
-#         mensagem_erro = {
-#             "pt": "Chamada irregular : Formato desconhecido = " + formato,
-#             "en": "Irregular call: Unknown format = " + formato,
-#         }
-#         context = {
-#             "area_principal": True,
-#             "mensagem_erro": mensagem_erro,
-#         }
-#         return render(request, "generic_ml.html", context=context)
-
-#     response["Content-Disposition"] = 'attachment; filename="'+modelo+'.'+formato+'"'
-
-#     return response
 
 
 @login_required

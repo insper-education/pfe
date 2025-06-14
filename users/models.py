@@ -431,7 +431,11 @@ class Alocacao(models.Model):
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        return self.aluno.user.username+" >>> "+self.projeto.get_titulo()
+        if self.aluno and self.aluno.user and self.aluno.user.username:
+            if self.projeto:
+                return self.aluno.user.username + " >>> " + self.projeto.get_titulo()
+            return self.aluno.user.username + " >>> Projeto sem título"
+        return "Alocação sem aluno"
 
 
 class UsuarioEstiloComunicacao(models.Model):

@@ -14,14 +14,39 @@
 
     {% include "edicoes.html" %}
 
-    <table class="table-striped mt-3"><tbody>
-      {% for nome, dado in dados %}
-        <tr>
-          <td style="padding-right: 8px;">{{ nome }}</td>
-          <td><input type="checkbox" name="dados" value="{{dado}}"></td>
-        </tr>
-      {% endfor %}
-    </tbody></table>
+    <table class="mt-3">
+      <tbody>
+        {% for nome, fields in resource_fields.items %}
+          <tr>
+            <td colspan="2">
+              <div class="card mb-0">
+                <div class="card-header p-1" style="background: #f8f9fa;">
+                  <a class="d-block" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+                    <strong class="p-2">
+                      <input type="checkbox" name="dados" value="{{ nome }}" id="check-{{ forloop.counter }}">
+                      {{ nome }}
+                    </strong>
+                    <span class="float-right"><i class="fa fa-chevron-down" data-toggle="collapse" href="#collapse-{{ forloop.counter }}" ></i></span>
+                  </a>
+                </div>
+                <div class="collapse" id="collapse-{{ forloop.counter }}">
+                  <div class="card-body py-2">
+                    <div class="row">
+                      {% for field in fields %}
+                        <div class="col-md-4 col-6 mb-1">
+                          <input type="checkbox" name="{{ nome }}" value="{{ field }}" id="field-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" checked>
+                          <label for="field-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">{{ field }}</label>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     <br>
     
     <input type="submit" class="btn btn-primary mb-1 mt-2" name="formato" value="CSV">
