@@ -593,6 +593,114 @@ def projetos_lista(request):
     return render(request, "projetos/projetos_lista.html", context)
 
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def projetos_lista_completa(request):
+    """Lista todos os projetos (bem completa)."""
+
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            edicao = request.POST["edicao"]
+            if edicao == "todas":
+                projetos_filtrados = Projeto.objects.all()
+            else:
+                ano, semestre = edicao.split('.')
+                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+            avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
+            if not avancados:
+                projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
+
+            curso = request.POST["curso"]
+            if curso != "TE":
+                if curso != 'T':
+                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
+                else:
+                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
+
+            cabecalhos = [
+                { "pt": "Projeto", "en": "Project" },
+                { "pt": "Tipo de Projeto", "en": "Project Type" },
+                { "pt": "Organização", "en": "Sponsor" },
+                { "pt": "Orientador", "en": "Advisor" },
+                { "pt": "Período", "en": "Semester" },
+                { "pt": "Área de Interesse do Projeto", "en": "Project Area of Interest" },
+                { "pt": "Média CR", "en": "Average GPA" },
+                
+
+                { "pt": "ID Estudante 0", "en": "Student 0 ID" },
+                { "pt": "Curso Estudante 0", "en": "Student 0 Program" },
+                { "pt": "CR Estudante 0", "en": "Student 0 GPA" },
+                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 0", "en": "Student 0 Project Position in Selected Options" },
+                { "pt": "Média Individual Estudante 0", "en": "Student 0 Individual Average" },
+                { "pt": "Média Grupo Estudante 0", "en": "Student 0 Group Average" },
+                { "pt": "Áreas de Interesse Estudante 0", "en": "Student 0 Areas of Interest" },
+                { "pt": "Trabalho/Estágio Estudante 0", "en": "Student 0 Work/Internship" },
+                { "pt": "Atividades Estudantis/Sociais Estudante 0", "en": "Student 0 Student/Social Activities" },
+
+                { "pt": "ID Estudante 1", "en": "Student 1 ID" },
+                { "pt": "Curso Estudante 1", "en": "Student 1 Program" },
+                { "pt": "CR Estudante 1", "en": "Student 1 GPA" },
+                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 1", "en": "Student 1 Project Position in Selected Options" },
+                { "pt": "Média Individual Estudante 1", "en": "Student 1 Individual Average" },
+                { "pt": "Média Grupo Estudante 1", "en": "Student 1 Group Average" },
+                { "pt": "Áreas de Interesse Estudante 1", "en": "Student 1 Areas of Interest" },
+                { "pt": "Trabalho/Estágio Estudante 1", "en": "Student 1 Work/Internship" },
+                { "pt": "Atividades Estudantis/Sociais Estudante 1", "en": "Student 1 Student/Social Activities" },
+
+                { "pt": "ID Estudante 2", "en": "Student 2 ID" },
+                { "pt": "Curso Estudante 2", "en": "Student 2 Program" },
+                { "pt": "CR Estudante 2", "en": "Student 2 GPA" },
+                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 2", "en": "Student 2 Project Position in Selected Options" },
+                { "pt": "Média Individual Estudante 2", "en": "Student 2 Individual Average" },
+                { "pt": "Média Grupo Estudante 2", "en": "Student 2 Group Average" },
+                { "pt": "Áreas de Interesse Estudante 2", "en": "Student 2 Areas of Interest" },
+                { "pt": "Trabalho/Estágio Estudante 2", "en": "Student 2 Work/Internship" },
+                { "pt": "Atividades Estudantis/Sociais Estudante 2", "en": "Student 2 Student/Social Activities" },
+
+                { "pt": "ID Estudante 3", "en": "Student 3 ID" },
+                { "pt": "Curso Estudante 3", "en": "Student 3 Program" },
+                { "pt": "CR Estudante 3", "en": "Student 3 GPA" },
+                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 3", "en": "Student 3 Project Position in Selected Options" },
+                { "pt": "Média Individual Estudante 3", "en": "Student 3 Individual Average" },
+                { "pt": "Média Grupo Estudante 3", "en": "Student 3 Group Average" },
+                { "pt": "Áreas de Interesse Estudante 3", "en": "Student 3 Areas of Interest" },
+                { "pt": "Trabalho/Estágio Estudante 3", "en": "Student 3 Work/Internship" },
+                { "pt": "Atividades Estudantis/Sociais Estudante 3", "en": "Student 3 Student/Social Activities" },
+
+                { "pt": "ID Estudante 4", "en": "Student 4 ID" },
+                { "pt": "Curso Estudante 4", "en": "Student 4 Program" },
+                { "pt": "CR Estudante 4", "en": "Student 4 GPA" },
+                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 4", "en": "Student 4 Project Position in Selected Options" },
+                { "pt": "Média Individual Estudante 4", "en": "Student 4 Individual Average" },
+                { "pt": "Média Grupo Estudante 4", "en": "Student 4 Group Average" },
+                { "pt": "Áreas de Interesse Estudante 4", "en": "Student 4 Areas of Interest" },
+                { "pt": "Trabalho/Estágio Estudante 4", "en": "Student 4 Work/Internship" },
+                { "pt": "Atividades Estudantis/Sociais Estudante 4", "en": "Student 4 Student/Social Activities" },
+
+                ]
+            context = {
+                "projetos": projetos_filtrados,
+                "cabecalhos": cabecalhos,
+            }
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+
+        context = {
+            "titulo": { "pt": "Projetos", "en": "Projects"},
+            "edicoes": get_edicoes(Projeto)[0],
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
+        }
+
+    return render(request, "projetos/projetos_lista_completa.html", context)
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela_agenda(request):

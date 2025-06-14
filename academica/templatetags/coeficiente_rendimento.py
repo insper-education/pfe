@@ -15,7 +15,9 @@ def media_crs(alocacoes):
     if not alocacoes:
         return (0, 0)
     
-    crs = [alocacao.aluno.cr for alocacao in alocacoes if alocacao.aluno and alocacao.aluno.cr is not None]
+    # Descarta alocacoes sem aluno ou com aluno externo
+    crs = [alocacao.aluno.cr for alocacao in alocacoes 
+           if (alocacao.aluno and alocacao.aluno.cr is not None and alocacao.aluno.externo is None)] 
     
     if not crs:
         return (0, 0)

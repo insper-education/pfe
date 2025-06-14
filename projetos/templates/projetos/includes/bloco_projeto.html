@@ -25,7 +25,9 @@
       {{projeto.get_titulo}}
     {% endif %}
     {% if user.is_authenticated and autoriz %}</a>{% endif %}
-    {% include "tipo_projeto.html" with projeto=projeto %}
+    {% if not esconde_tipo %}
+      {% include "tipo_projeto.html" with projeto=projeto %}
+    {% endif %}
   {% endwith %}
 {% else %}
   <div class="text-danger">

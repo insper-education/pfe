@@ -76,6 +76,9 @@ def get_medias_oo(alocacao):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
 
 @register.filter
 def get_media_alocacao(alocacao):
+    """Retorna média individual de alocação."""
+    if not alocacao:
+        return None
     return get_media_alocacao_i(alocacao)
 
 @register.filter

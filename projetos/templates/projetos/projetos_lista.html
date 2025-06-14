@@ -24,7 +24,7 @@
                 {% include "projetos/includes/bloco_projeto.html" with projeto=projeto tit_proposta=True %}
               </th>
               <td>{% include "estudantes/includes/bloco_estudantes.html" with grupo=estudantes %}</td>
-              <td style="text-align: right;">{% with val=projeto.alocacao_set.all|media_crs %}
+              <td style="text-align: right;">{% with val=estudantes|media_crs %}
                 {{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}
                 {% endwith %}
               </td>

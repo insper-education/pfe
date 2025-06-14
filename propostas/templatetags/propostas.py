@@ -7,6 +7,9 @@ Data: 14 de Março de 2025
 
 from django import template
 
+from users.models import Opcao
+
+
 register = template.Library()
 
 
@@ -41,3 +44,14 @@ def contatos_adm3(proposta):
         return [None] * 3
     contatos = proposta.contatos.filter(tipo="A")
     return list(contatos) + [None] * (3 - len(contatos))
+
+
+@register.filter
+def opcao_alocacao(proposta, alocacao):
+    """Retorna a opção do estudante na proposta."""
+    if proposta is None or alocacao is None or not hasattr(alocacao, "aluno") or alocacao.aluno is None:
+        return "X"
+    opcao = Opcao.objects.filter(proposta=proposta, aluno=alocacao.aluno).last()
+    if opcao:
+        return opcao.prioridade
+    return 'X'  # Retorna 'X' se não houver opção registrada

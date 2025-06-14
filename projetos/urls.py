@@ -43,6 +43,7 @@ urlpatterns = [
     path("projeto_infos/<int:primarykey>", views.projeto_infos, name="projeto_infos"),
     path("projetos_fechados/", views.projetos_fechados, name="projetos_fechados"),
     path("projetos_lista", views.projetos_lista, name="projetos_lista"),
+    path("projetos_lista_completa", views.projetos_lista_completa, name="projetos_lista_completa"),
     path("projetos_vs_propostas", views.projetos_vs_propostas, name="projetos_vs_propostas"),
     path("reembolso_pedir/", views.reembolso_pedir, name="reembolso_pedir"),
     path("reenvia_avisos/", views.reenvia_avisos, name="reenvia_avisos"),

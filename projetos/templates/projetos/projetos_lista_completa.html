@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
+{% endcomment %}
+
+
+{% load coeficiente_rendimento %}
+{% load static %}
+{% load dictionary %}
+{% load l10n %}
+{% load i18n %}
+{% load linguas %}
+{% load exibe_notas %}
+{% load propostas %}
+
+{% block head %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+  {% include "edicoes.html" with com_cursos=True com_externos=True avancados=True %}
+  <div id="atualizar">
+    {% include "tabelas_top_ml.html" with tabela="Projetos" cabecalhos=cabecalhos %}
+      {% for projeto in projetos %}
+        {% with alocacoes=projeto.alocacao_set.all %}
+          {% if alocacoes.count > 0 %}
+            <tr class="item">
+              <th scope="row" data-order="{{projeto.get_titulo}}">{% include "projetos/includes/bloco_projeto.html" with esconde_tipo=True projeto=projeto tit_proposta=False %}</th>
+              <td>{% include "tipo_projeto.html" with projeto=projeto %}</td>
+              <td>{% include "organizacoes/includes/bloco_organizacao.html" with organizacao=projeto.organizacao %}</td>
+              {% comment %} <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td> {% endcomment %}
+              <td>{{projeto.orientador.id}}</td>
+              <td class="text-center">{{projeto.get_edicao}}</td>
+              <td>{% for area in projeto.proposta.areadeinteresse_set.all %}
+                {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+              {% endfor %}</td>
+
+
+              <td style="text-align: right;">{% with val=alocacoes|media_crs %}{{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}{% endwith %}</td>
+
+              {% with alocacao=alocacoes.0 %}
+
+                <td>{{alocacao.id}}</td>
+
+                <td>{{alocacao.aluno.curso2}}</td>
+                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
+
+                {% with media=alocacao|get_media_alocacao %}
+                <td> {% comment %} <!-- Individual --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </td>
+
+                <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </td> 
+                {% endwith %}
+
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
+                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+                {% endfor %}</td>
+
+                <td>{{alocacao.aluno.trabalhou}}</td>
+                <td>{{alocacao.aluno.atividades}}</td>
+
+              {% endwith %}
+
+              {% with alocacao=alocacoes.1 %}
+
+                <td>{{alocacao.id}}</td>
+
+                <td>{{alocacao.aluno.curso2}}</td>
+                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
+
+                {% with media=alocacao|get_media_alocacao %}
+                <td> {% comment %} <!-- Individual --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </td>
+
+                <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </td> 
+                {% endwith %}
+
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
+                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+                {% endfor %}</td>
+
+                <td>{{alocacao.aluno.trabalhou}}</td>
+                <td>{{alocacao.aluno.atividades}}</td>
+
+              {% endwith %}
+
+              {% with alocacao=alocacoes.2 %}
+
+                <td>{{alocacao.id}}</td>
+
+                <td>{{alocacao.aluno.curso2}}</td>
+                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
+
+                {% with media=alocacao|get_media_alocacao %}
+                <td> {% comment %} <!-- Individual --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </td>
+
+                <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </td> 
+                {% endwith %}
+
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
+                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+                {% endfor %}</td>
+
+                <td>{{alocacao.aluno.trabalhou}}</td>
+                <td>{{alocacao.aluno.atividades}}</td>
+
+              {% endwith %}
+
+              {% with alocacao=alocacoes.3 %}
+
+                <td>{{alocacao.id}}</td>
+
+                <td>{{alocacao.aluno.curso2}}</td>
+                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
+
+                {% with media=alocacao|get_media_alocacao %}
+                <td> {% comment %} <!-- Individual --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </td>
+
+                <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </td> 
+                {% endwith %}
+
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
+                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+                {% endfor %}</td>
+
+                <td>{{alocacao.aluno.trabalhou}}</td>
+                <td>{{alocacao.aluno.atividades}}</td>
+
+              {% endwith %}
+
+              {% with alocacao=alocacoes.4 %}
+
+                <td>{{alocacao.id}}</td>
+
+                <td>{{alocacao.aluno.curso2}}</td>
+                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
+
+                {% with media=alocacao|get_media_alocacao %}
+                <td> {% comment %} <!-- Individual --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+                </td>
+
+                <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                </td> 
+                {% endwith %}
+
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
+                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
+                {% endfor %}</td>
+
+                <td>{{alocacao.aluno.trabalhou}}</td>
+                <td>{{alocacao.aluno.atividades}}</td>
+
+              {% endwith %}
+
+            </tr>
+          {% endif %}
+        {% endwith %}
+      {% endfor %}     
+    {% include "tabelas_bottom.html" %}
+  </div>
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
+  {% include "edicoes_ajax.html" with tabela="Projetos" com_cursos=True avancados=True %}
+{% endblock %}
