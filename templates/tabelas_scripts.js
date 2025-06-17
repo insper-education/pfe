@@ -114,6 +114,21 @@ var textos_linguas = {
     }
 };
 
+function getVisibleTextInNode(node) {
+  var text = '';
+  $(node).contents().each(function() {
+    if (this.nodeType === 3) { // Text node
+      // Only include if parent is visible
+      if ($(this).parent().is(':visible')) {
+        text += this.nodeValue;
+      }
+    } else if ($(this).is(':visible')) {
+      text += $(this).text();
+    }
+  });
+  return text.trim();
+}
+
 var configuracao_table = {
     dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
 
@@ -133,7 +148,14 @@ var configuracao_table = {
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {
-            extend: "copy"
+            extend: "copy",
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  return getVisibleTextInNode(node);
+                }
+              }
+            }
         } ),
 
         $.extend( true, {}, buttonCommon, {
@@ -141,28 +163,50 @@ var configuracao_table = {
             title: titulo_arquivo,
             fieldBoundary: '"',
             fieldSeparator: ',',
-        } ),
-
-        $.extend( true, {}, buttonCommon, {
-            extend: "excel",
-            title: titulo_arquivo,
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  return getVisibleTextInNode(node);
+                }
+              }
+            }
         } ),
 
         $.extend( true, {}, buttonCommon, {
             text: "JSON",
             filename: titulo_arquivo,
             action: function (e, dt, node, config) {
-                var data = dt.buttons.exportData();
+                //var data = dt.buttons.exportData();
+                var data = dt.buttons.exportData($.extend(true, {}, config.exportOptions));
                 var json = JSON.stringify(data, null, 2);
                 var blob = new Blob([json], {type: "application/json"});
                 var url = URL.createObjectURL(blob);
                 var a = document.createElement('a');
                 a.href = url;
-                a.download = (config.filename || 'datatable') + '.json';
+                a.download = (config.filename || "datatable") + ".json";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
+            },
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  return getVisibleTextInNode(node);
+                }
+              }
+            }
+        } ),
+
+        $.extend( true, {}, buttonCommon, {
+            extend: "excel",
+            title: titulo_arquivo,
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  return getVisibleTextInNode(node);
+                }
+              }
             }
         } ),
 
@@ -172,6 +216,13 @@ var configuracao_table = {
             orientation: "landscape",
             pageSize: "A4",
             text: '<span class="fa fa-file-pdf-o">PDF</span>',
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  return getVisibleTextInNode(node);
+                }
+              }
+            }
         } ),
         
         'colvis'

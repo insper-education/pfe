@@ -33,19 +33,20 @@
               {% comment %} <td>{% include "academica/includes/bloco_orientador.html" with orientador=projeto.orientador %}</td> {% endcomment %}
               <td>{{projeto.orientador.id}}</td>
               <td class="text-center">{{projeto.get_edicao}}</td>
-              <td>{% for area in projeto.proposta.areadeinteresse_set.all %}
-                {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-              {% endfor %}</td>
+              <td>{% for area in projeto.proposta.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
 
-
-              <td style="text-align: right;">{% with val=alocacoes|media_crs %}{{val.0|floatformat:2 }}&plusmn;{{val.1|floatformat:2 }}{% endwith %}</td>
+              <td style="text-align: right;">{% with val=alocacoes|media_crs %}<span lang="pt">{% language "pt-br" %}{{val.0|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{val.0|floatformat:2}}{% endlanguage %}</span>&plusmn;<span lang="pt">{% language "pt-br" %}{{val.1|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{val.1|floatformat:2}}{% endlanguage %}</span>{% endwith %}</td>
 
               {% with alocacao=alocacoes.0 %}
 
                 <td>{{alocacao.id}}</td>
 
                 <td>{{alocacao.aluno.curso2}}</td>
-                <td>{{alocacao.aluno.cr}}</td>
+
+                <td>
+                  <span lang="pt">{% language "pt-br" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                </td>
 
                 <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
 
@@ -61,12 +62,10 @@
                 </td> 
                 {% endwith %}
 
-                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
-                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-                {% endfor %}</td>
-
-                <td>{{alocacao.aluno.trabalhou}}</td>
-                <td>{{alocacao.aluno.atividades}}</td>
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
+                
+                <td>{% if alocacao.aluno.trabalhou %}{{alocacao.aluno.trabalhou}}{% endif %}</td>
+                <td>{% if alocacao.aluno.atividades %}{{alocacao.aluno.atividades}}{% endif %}</td>
 
               {% endwith %}
 
@@ -75,7 +74,10 @@
                 <td>{{alocacao.id}}</td>
 
                 <td>{{alocacao.aluno.curso2}}</td>
-                <td>{{alocacao.aluno.cr}}</td>
+                <td>
+                  <span lang="pt">{% language "pt-br" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                </td>
 
                 <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
 
@@ -91,12 +93,10 @@
                 </td> 
                 {% endwith %}
 
-                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
-                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-                {% endfor %}</td>
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
 
-                <td>{{alocacao.aluno.trabalhou}}</td>
-                <td>{{alocacao.aluno.atividades}}</td>
+                <td>{% if alocacao.aluno.trabalhou %}{{alocacao.aluno.trabalhou}}{% endif %}</td>
+                <td>{% if alocacao.aluno.atividades %}{{alocacao.aluno.atividades}}{% endif %}</td>
 
               {% endwith %}
 
@@ -105,7 +105,10 @@
                 <td>{{alocacao.id}}</td>
 
                 <td>{{alocacao.aluno.curso2}}</td>
-                <td>{{alocacao.aluno.cr}}</td>
+                <td>
+                  <span lang="pt">{% language "pt-br" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                </td>
 
                 <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
 
@@ -121,12 +124,10 @@
                 </td> 
                 {% endwith %}
 
-                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
-                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-                {% endfor %}</td>
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
 
-                <td>{{alocacao.aluno.trabalhou}}</td>
-                <td>{{alocacao.aluno.atividades}}</td>
+                <td>{% if alocacao.aluno.trabalhou %}{{alocacao.aluno.trabalhou}}{% endif %}</td>
+                <td>{% if alocacao.aluno.atividades %}{{alocacao.aluno.atividades}}{% endif %}</td>
 
               {% endwith %}
 
@@ -135,7 +136,10 @@
                 <td>{{alocacao.id}}</td>
 
                 <td>{{alocacao.aluno.curso2}}</td>
-                <td>{{alocacao.aluno.cr}}</td>
+                <td>
+                  <span lang="pt">{% language "pt-br" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                </td>
 
                 <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
 
@@ -151,12 +155,10 @@
                 </td> 
                 {% endwith %}
 
-                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
-                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-                {% endfor %}</td>
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
 
-                <td>{{alocacao.aluno.trabalhou}}</td>
-                <td>{{alocacao.aluno.atividades}}</td>
+                <td>{% if alocacao.aluno.trabalhou %}{{alocacao.aluno.trabalhou}}{% endif %}</td>
+                <td>{% if alocacao.aluno.atividades %}{{alocacao.aluno.atividades}}{% endif %}</td>
 
               {% endwith %}
 
@@ -165,7 +167,10 @@
                 <td>{{alocacao.id}}</td>
 
                 <td>{{alocacao.aluno.curso2}}</td>
-                <td>{{alocacao.aluno.cr}}</td>
+                <td>
+                  <span lang="pt">{% language "pt-br" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                  <span lang="en" style="display:none">{% language "en" %}{{alocacao.aluno.cr}}{% endlanguage %}</span>
+                </td>
 
                 <td>{% if alocacao %}{{projeto.proposta|opcao_alocacao:alocacao}}{% endif %}</td>
 
@@ -181,12 +186,10 @@
                 </td> 
                 {% endwith %}
 
-                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}
-                  {% if area.outras %}(outras='{{ area.outras }}'){% else %}{{ area.area }}{% endif %}{% if not forloop.last %}; {% endif %}
-                {% endfor %}</td>
+                <td>{% for area in alocacao.aluno.user.areadeinteresse_set.all %}{% if area.outras %}({{ area.outras }}){% else %}{% lng area.area.titulo area.area.titulo_en %}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
 
-                <td>{{alocacao.aluno.trabalhou}}</td>
-                <td>{{alocacao.aluno.atividades}}</td>
+                <td>{% if alocacao.aluno.trabalhou %}{{alocacao.aluno.trabalhou}}{% endif %}</td>
+                <td>{% if alocacao.aluno.atividades %}{{alocacao.aluno.atividades}}{% endif %}</td>
 
               {% endwith %}
 
