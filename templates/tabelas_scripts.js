@@ -133,24 +133,44 @@ var configuracao_table = {
     buttons: [ 
         
         $.extend( true, {}, buttonCommon, {
-            extend: 'copy'
+            extend: "copy"
         } ),
 
         $.extend( true, {}, buttonCommon, {
-            extend: 'csv',
+            extend: "csv",
+            title: titulo_arquivo,
+            fieldBoundary: '"',
+            fieldSeparator: ',',
+        } ),
+
+        $.extend( true, {}, buttonCommon, {
+            extend: "excel",
             title: titulo_arquivo,
         } ),
 
         $.extend( true, {}, buttonCommon, {
-            extend: 'excel',
-            title: titulo_arquivo,
+            text: "JSON",
+            filename: titulo_arquivo,
+            action: function (e, dt, node, config) {
+                var data = dt.buttons.exportData();
+                var json = JSON.stringify(data, null, 2);
+                var blob = new Blob([json], {type: "application/json"});
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = (config.filename || 'datatable') + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
         } ),
 
         $.extend( true, {}, buttonCommon, {
-            extend: 'pdf',
+            extend: "pdf",
             title: titulo_arquivo,
-            orientation: 'landscape',
-            pageSize: 'A4',
+            orientation: "landscape",
+            pageSize: "A4",
             text: '<span class="fa fa-file-pdf-o">PDF</span>',
         } ),
         

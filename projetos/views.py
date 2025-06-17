@@ -896,7 +896,7 @@ def comite(request):
             "cabecalhos": [{"pt": "Nome", "en": "Name"}, {"pt": "e-mail", "en": "e-mail"}, {"pt": "Lattes", "en": "Lattes"}, ],
             "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
-    return render(request, "projetos/comite_pfe.html", context)
+    return render(request, "projetos/comite.html", context)
 
 
 @login_required
