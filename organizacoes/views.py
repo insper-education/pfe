@@ -112,13 +112,22 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def adiciona_despesa(request):
+def adiciona_despesa(request, despesa_id=None):
     """Adiciona uma Despesa na base de dados."""
 
+    if despesa_id:
+        despesa = get_object_or_404(Despesa, id=despesa_id)
+    else:
+        despesa = None
+
     if request.is_ajax() and request.method == "POST":
-        if "despesa_id" in request.POST:
-            despesa = get_object_or_404(Despesa, id=request.POST["despesa_id"])
-        else:
+        if despesa and "excluir" in request.POST:
+            despesa.delete()
+            return JsonResponse({"atualizado": True,})
+        # elif "atualiza" not in request.POST:
+        #     return HttpResponse("Atualização não realizada.", status=401)
+
+        if despesa is None:
             despesa = Despesa()
 
         if "data" in request.POST:
@@ -133,8 +142,10 @@ def adiciona_despesa(request):
         if valor and moeda:
             if moeda == "BRL":
                 despesa.valor_r = float(valor)
+                despesa.valor_d = None
             elif moeda == "USD":
                 despesa.valor_d = float(valor)
+                despesa.valor_r = None
 
         despesa.descricao = request.POST.get("descricao", None)
         despesa.fornecedor = request.POST.get("fornecedor", None)
@@ -163,7 +174,9 @@ def adiciona_despesa(request):
     context = {
         "tipo_despesas": Despesa.TIPO_DE_DESPESA,
         "Despesa": Despesa,
+        "despesa": despesa,
         "projetos": Projeto.objects.all(),
+        "documentos": Documento.objects.filter(tipo_documento__sigla="DESP"),
     }
     
     return render(request, "organizacoes/despesa_view.html", context=context)

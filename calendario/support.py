@@ -117,7 +117,7 @@ def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS"
                 documento.usuario = request.user
         documento.projeto = projeto
 
-        if projeto.organizacao:
+        if projeto and projeto.organizacao:
             documento.organizacao = projeto.organizacao
     
         if campo_arquivo and campo_arquivo in request.FILES:

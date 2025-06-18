@@ -7,6 +7,7 @@
 {% load static %}
 {% load linguas %}
 {% load get_field %}
+{% load l10n %}
 
 <style>
 
@@ -34,9 +35,7 @@
 
 </style>
 
-<form id="meuForm" method="post" enctype="multipart/form-data">
-
-  {% csrf_token %}
+<form id="meuForm" method="post" enctype="multipart/form-data">{% csrf_token %}
 
   <div class="modal-header">
     <h5 id="documentacao" class="modal-title">
@@ -54,7 +53,7 @@
       <div class="col2">
         <input class="form-control" type="number" style="display: block;" size="73" 
                 id="valor" name="valor" placeholder="R$ / US$" step="0.01" min="0"
-                {% if despesa.valor_r %}value="{{despesa.valor_r}}"{% elif despesa.valor_d %}value="{{despesa.valor_d}}"{% endif %}>
+                {% if despesa.valor_r %}value="{{despesa.valor_r|unlocalize}}"{% elif despesa.valor_d %}value="{{despesa.valor_d|unlocalize}}"{% endif %}>
       </div>
     </div>
 
@@ -64,8 +63,8 @@
       </label>
       <div class="col2">
         <select id="moeda" name="moeda" class="form-control" required="required" >
-          <option value="BRL" {% if moeda == "BRL" %}selected="selected"{% endif %}>Real</option>
-          <option value="USD" {% if moeda == "USD" %}selected="selected"{% endif %}>Dollar</option>
+          <option value="BRL" {% if despesa.valor_r %}selected="selected"{% endif %}>Real</option>
+          <option value="USD" {% if despesa.valor_d %}selected="selected"{% endif %}>Dollar</option>
         </select>
       </div>
     </div>
@@ -78,7 +77,7 @@
       {% else %}
         <label for="data" class="col1 col-form-label">{% lng "Data" "Date" %}</label>
         <div class="col2">
-          <input id="data" class="form-control" type="date" name="data" value="{{data|date:'Y-m-d'}}" required>
+          <input id="data" class="form-control" type="date" name="data" {% if despesa.data %}value="{{despesa.data|date:'Y-m-d'}}"{% endif %} required>
         </div>
       {% endif %}
     </div>
@@ -96,7 +95,7 @@
         <select id="tipo_despesa" name="tipo_despesa" class="form-control" required="required" >
           <option disabled selected value> -- selecione tipo de despesa -- </option>
           {% for retorno in tipo_despesas %}
-            <option value="{{retorno.0}}" {% if retorno.0 == tipo.id %}selected="selected"{% endif %}>
+            <option value="{{retorno.0}}" {% if retorno.0 == despesa.tipo_de_despesa %}selected="selected"{% endif %}>
               {{retorno.1}}
             </option>
           {% endfor %}
@@ -112,7 +111,7 @@
       <div class="col2">
         <input class="form-control" type="text" style="display: block;" size="73" 
                 maxlength="{% max_length Despesa "descricao" %}" id="descricao" name="descricao"
-                {% if descricao %}value="{{descricao}}"{% endif %}>
+                {% if despesa.descricao %}value="{{despesa.descricao}}"{% endif %}>
       </div>
     </div>
   
@@ -123,7 +122,7 @@
       <div class="col2">
         <input class="form-control" type="text" style="display: block;" size="73" 
                 maxlength="{% max_length Despesa "fornecedor" %}" id="fornecedor" name="fornecedor"
-                {% if fornecedor %}value="{{fornecedor}}"{% endif %}>
+                {% if despesa.fornecedor %}value="{{despesa.fornecedor}}"{% endif %}>
       </div>
     </div>
 
@@ -132,8 +131,8 @@
         <div class="col-sm form-label" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
           <span for="projeto">{% lng "Projeto" "Project" %}:</span>
           <input type="hidden" id="projeto" name="projeto" value="{{projeto.id}}"/>
-          {% if user.eh_prof_a %}<a href="{% url 'projeto_infos' projeto.id %}">{% endif %}
-          {{projeto.get_titulo}} ({{projeto.get_edicao}})
+          {% if user.eh_prof_a %}<a href="{% url 'projeto_infos' despesa.projeto.id %}">{% endif %}
+          {{despesa.projeto.get_titulo}} ({{despesa.projeto.get_edicao}})
           {% if user.eh_prof_a %}</a>{% endif %}
         </div>
       {% else %}
@@ -144,7 +143,7 @@
           <select id="projeto" name="projeto" class="form-control d-inline-block">
             <option selected value> -- selecione um projeto -- </option>
             {% for proj in projetos %}
-              <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == projeto.id %}selected="selected"{% endif %}>
+              <option class="proj org{{proj.organizacao.id}}" value="{{proj.id}}" data-org="{{proj.organizacao.id}}" {% if proj.id == despesa.projeto.id %}selected="selected"{% endif %}>
                 {{proj.organizacao}} - {{proj.get_titulo|slice:":90"}} ({{proj.ano}}.{{proj.semestre}})
                 {% include "tipo_projeto.html" with projeto=proj sem_cor=True %}
               </option>
@@ -167,7 +166,8 @@
             <select name="anexo_0" id="anexo_0" class="form-control" title="Selecione anexo">
               <option value id="nenhum"> -------- </option>
               {% for documento in documentos %}
-                <option value="{{documento.id}}">[{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
+                <option value="{{documento.id}}" {% if documento.id == despesa.documentos.first.id %}selected="selected"{% endif %}>
+                [{{documento.data|date:"d/m/y"}}] {{documento.filename}}</option>
               {% endfor %}
             </select>
             <input id="arquivo_0" type="file" name="arquivo_0" class="form-control" style="border: 0px; padding-left: 0px;"
@@ -184,11 +184,19 @@
 
   </div>
 
-  <div class="modal-footer">    
+  <div class="modal-footer">
+
+    {% if despesa %}
+      <button id="excluir" class="btn btn-warning mb-1" type="submit" name="excluir" formnovalidate
+        onClick="operacao = 'excluir'; return confirm('Tem certeza que deseja excluir despesa?');">
+        {% lng "Excluir" "Delete" %}
+      </button>
+    {% endif %}
+
     <button type="button" class="btn btn-secondary mb-1" data-dismiss="modal">
       {% lng "Fechar" "Close" %}
     </button>
-    <button id="atualiza" type="submit" class="btn btn-primary mb-1">
+    <button id="atualiza" type="submit" class="btn btn-primary mb-1" onclick="operacao = 'atualizar';">
       {% lng "Enviar" "Send" %}
     </button>
   </div>
@@ -207,10 +215,17 @@
       var form = $("form#meuForm").closest("form");
       var data = new FormData(form[0]);
 
+      // Adiciona o tipo de operação
+      data.append(operacao, "true");
+
       $.ajax({
         type: "POST",
         data: data,
-        url: "{% url 'adiciona_despesa' %}",
+        {% if despesa %}
+          url: "{% url 'adiciona_despesa' despesa.id %}",
+        {% else %}
+          url: "{% url 'adiciona_despesa' %}",
+        {% endif %}
         processData: false,
         contentType: false,   // verificar se isso é assim mesmo
         success: function(response){

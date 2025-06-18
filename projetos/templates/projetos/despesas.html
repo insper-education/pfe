@@ -18,9 +18,7 @@
 
     {% if user.eh_admin %}
       <span class="esconder">
-        <a href="#"
-        class="open-modal" style="cursor:pointer;"
-        data-url="{% url 'adiciona_despesa' %}">
+        <a href="#" class="open-modal" style="cursor:pointer;" data-url="{% url 'adiciona_despesa' %}">
           <i class="fas fa-plus"></i> 
           {% lng "Cadastrar Nova Despesa" "Register New Expense" %}
         </a>
@@ -32,7 +30,9 @@
       {% for despesa in despesas %} 
         <tr class="item">
           <td data-sort="{{despesa.data|date:"Y-m-d"}}">
-            {{despesa.data|date:"d/m/Y"}}
+            <a href="#" class="open-modal" style="cursor:pointer;" data-url="{% url 'adiciona_despesa' despesa.id %}">
+              {{despesa.data|date:"d/m/Y"}}
+            </a>
           </td>
           <th scope="row" data-sort="{{despesa.tipo_de_despesa}}">
             {{despesa.get_tipo_de_despesa_display}}
@@ -108,7 +108,7 @@
     <script>
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}      
-      };
+      }
       window.onload = carrega_site
     </script>
 

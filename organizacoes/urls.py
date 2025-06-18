@@ -18,6 +18,7 @@ urlpatterns = [
     path("anotacao/<int:organizacao_id>", views.anotacao, name="anotacao"),
     path("anotacao/<int:organizacao_id>/<int:anotacao_id>/", views.anotacao, name="anotacao"),
     path("adiciona_despesa/", views.adiciona_despesa, name="adiciona_despesa"),
+    path("adiciona_despesa/<int:despesa_id>", views.adiciona_despesa, name="adiciona_despesa"),
     path("adiciona_documento/", views.adiciona_documento, name="adiciona_documento"),
     path("edita_documento/<int:documento_id>", views.edita_documento, name="edita_documento"),
     path("adiciona_documento/<int:organizacao_id>", views.adiciona_documento, name="adiciona_documento"),
