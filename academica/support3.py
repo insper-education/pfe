@@ -109,11 +109,13 @@ def get_media_alocacao_i(alocacao):
     nota_individual = 0
     nota_grupo_inter = 0
     nota_grupo_final = 0
+    nota_bancas = 0
     peso_final = 0
     peso_individual = 0
     peso_grupo_inter = 0
     peso_grupo_final = 0
-    # for aval, nota, peso, _ in edicao:
+    peso_bancas = 0
+
     for aval in edicao:
         if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
             peso_final += aval["peso"]
@@ -127,6 +129,9 @@ def get_media_alocacao_i(alocacao):
             if aval["sigla"] in ("RFG", "AFG"):
                 peso_grupo_final += aval["peso"]
                 nota_grupo_final += aval["nota"] * aval["peso"]
+            if aval["sigla"] in ("BI", "BF"):
+                peso_bancas += aval["peso"]
+                nota_bancas += aval["nota"] * aval["peso"]
     peso_final = round(peso_final, 2)
 
     individual = None
@@ -149,6 +154,20 @@ def get_media_alocacao_i(alocacao):
     else:
         probation = False
 
+    media_grupo = 0
+    pesos_grupo = 0
+    if peso_grupo_inter > 0:
+        media_grupo += nota_grupo_inter
+        pesos_grupo += peso_grupo_inter
+    if peso_grupo_final > 0:
+        media_grupo += nota_grupo_final
+        pesos_grupo += peso_grupo_final
+    if peso_bancas > 0:
+        media_grupo += nota_bancas
+        pesos_grupo += peso_bancas
+    if pesos_grupo > 0:
+        media_grupo /= pesos_grupo
+
     return {
         "media": nota_final,
         "pesos": peso_final,
@@ -156,6 +175,9 @@ def get_media_alocacao_i(alocacao):
         "nota_grupo_inter": nota_grupo_inter,
         "peso_grupo_final": peso_grupo_final,
         "nota_grupo_final": nota_grupo_final,
+        "peso_bancas": peso_bancas,
+        "nota_bancas": nota_bancas,
         "individual": individual,
+        "media_grupo": media_grupo,
         "probation": probation,
     }

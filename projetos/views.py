@@ -598,10 +598,6 @@ def projetos_lista(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_lista_completa(request):
     """Lista todos os projetos (bem completa)."""
-
-    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
-    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
-
     if request.is_ajax():
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
@@ -611,26 +607,16 @@ def projetos_lista_completa(request):
                 ano, semestre = edicao.split('.')
                 projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
 
-            avancados = "avancados" in request.POST and request.POST["avancados"]=="true"
-            if not avancados:
-                projetos_filtrados = projetos_filtrados.filter(avancado__isnull=True)
-
-            curso = request.POST["curso"]
-            if curso != "TE":
-                if curso != 'T':
-                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__sigla_curta=curso).distinct()
-                else:
-                    projetos_filtrados = projetos_filtrados.filter(alocacao__aluno__curso2__in=cursos_insper).distinct()
-
             cabecalhos = [
                 { "pt": "Projeto", "en": "Project" },
                 { "pt": "Tipo de Projeto", "en": "Project Type" },
                 { "pt": "Organização", "en": "Sponsor" },
-                { "pt": "Orientador", "en": "Advisor" },
+                { "pt": "ID Orientador", "en": "Advisor ID" },
                 { "pt": "Período", "en": "Semester" },
                 { "pt": "Quantidade de Estudantes", "en": "Number of Students" },
                 { "pt": "Área de Interesse do Projeto", "en": "Project Area of Interest" },
                 { "pt": "Média CR", "en": "Average GPA" },
+                { "pt": "Média de Avaliações de Grupo", "en": "Average Group Evaluations" },
             ]
 
             estudantes_fields = [
@@ -661,10 +647,8 @@ def projetos_lista_completa(request):
     else:
 
         context = {
-            "titulo": { "pt": "Projetos", "en": "Projects"},
+            "titulo": { "pt": "Lista Completa dos Projetos", "en": "Complete Project List"},
             "edicoes": get_edicoes(Projeto)[0],
-            "cursos": cursos_insper,
-            "cursos_externos": cursos_externos,
         }
 
     return render(request, "projetos/projetos_lista_completa.html", context)

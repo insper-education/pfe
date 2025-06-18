@@ -11,6 +11,20 @@ from django import template
 
 register = template.Library()
 
+
+@register.filter
+def get_item(lista, index):
+    """
+    Retorna o item da lista na posição especificada pelo índice.
+    Se o índice for inválido, retorna None.
+    """
+    index = int(index)
+    try:
+        return lista[index]
+    except IndexError:
+        return None
+    
+
 @register.filter
 def get_selecao(estilo, usuario):
     if not usuario or not estilo:
