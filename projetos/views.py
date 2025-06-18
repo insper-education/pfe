@@ -628,61 +628,30 @@ def projetos_lista_completa(request):
                 { "pt": "Organização", "en": "Sponsor" },
                 { "pt": "Orientador", "en": "Advisor" },
                 { "pt": "Período", "en": "Semester" },
+                { "pt": "Quantidade de Estudantes", "en": "Number of Students" },
                 { "pt": "Área de Interesse do Projeto", "en": "Project Area of Interest" },
                 { "pt": "Média CR", "en": "Average GPA" },
-                
+            ]
 
-                { "pt": "ID Estudante 0", "en": "Student 0 ID" },
-                { "pt": "Curso Estudante 0", "en": "Student 0 Program" },
-                { "pt": "CR Estudante 0", "en": "Student 0 GPA" },
-                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 0", "en": "Student 0 Project Position in Selected Options" },
-                { "pt": "Média Individual Estudante 0", "en": "Student 0 Individual Average" },
-                { "pt": "Média Grupo Estudante 0", "en": "Student 0 Group Average" },
-                { "pt": "Áreas de Interesse Estudante 0", "en": "Student 0 Areas of Interest" },
-                { "pt": "Trabalho/Estágio Estudante 0", "en": "Student 0 Work/Internship" },
-                { "pt": "Atividades Estudantis/Sociais Estudante 0", "en": "Student 0 Student/Social Activities" },
+            estudantes_fields = [
+                ("ID Estudante {i}", "Student {i} ID"),
+                ("Curso Estudante {i}", "Student {i} Program"),
+                ("CR Estudante {i}", "Student {i} GPA"),
+                ("Posição do Projeto nas Opções Selecionadas Estudante {i}", "Student {i} Project Position in Selected Options"),
+                ("Média Individual Estudante {i}", "Student {i} Individual Grade"),
+                ("Média Final Estudante {i}", "Student {i} Final Grade"),
+                ("Áreas de Interesse Estudante {i}", "Student {i} Areas of Interest"),
+                ("Trabalho/Estágio Estudante {i}", "Student {i} Work/Internship"),
+                ("Atividades Estudantis/Sociais Estudante {i}", "Student {i} Student/Social Activities"),
+            ]
 
-                { "pt": "ID Estudante 1", "en": "Student 1 ID" },
-                { "pt": "Curso Estudante 1", "en": "Student 1 Program" },
-                { "pt": "CR Estudante 1", "en": "Student 1 GPA" },
-                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 1", "en": "Student 1 Project Position in Selected Options" },
-                { "pt": "Média Individual Estudante 1", "en": "Student 1 Individual Average" },
-                { "pt": "Média Grupo Estudante 1", "en": "Student 1 Group Average" },
-                { "pt": "Áreas de Interesse Estudante 1", "en": "Student 1 Areas of Interest" },
-                { "pt": "Trabalho/Estágio Estudante 1", "en": "Student 1 Work/Internship" },
-                { "pt": "Atividades Estudantis/Sociais Estudante 1", "en": "Student 1 Student/Social Activities" },
+            for i in range(5):
+                for pt, en in estudantes_fields:
+                    cabecalhos.append({
+                        "pt": pt.format(i=i),
+                        "en": en.format(i=i)
+                    })
 
-                { "pt": "ID Estudante 2", "en": "Student 2 ID" },
-                { "pt": "Curso Estudante 2", "en": "Student 2 Program" },
-                { "pt": "CR Estudante 2", "en": "Student 2 GPA" },
-                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 2", "en": "Student 2 Project Position in Selected Options" },
-                { "pt": "Média Individual Estudante 2", "en": "Student 2 Individual Average" },
-                { "pt": "Média Grupo Estudante 2", "en": "Student 2 Group Average" },
-                { "pt": "Áreas de Interesse Estudante 2", "en": "Student 2 Areas of Interest" },
-                { "pt": "Trabalho/Estágio Estudante 2", "en": "Student 2 Work/Internship" },
-                { "pt": "Atividades Estudantis/Sociais Estudante 2", "en": "Student 2 Student/Social Activities" },
-
-                { "pt": "ID Estudante 3", "en": "Student 3 ID" },
-                { "pt": "Curso Estudante 3", "en": "Student 3 Program" },
-                { "pt": "CR Estudante 3", "en": "Student 3 GPA" },
-                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 3", "en": "Student 3 Project Position in Selected Options" },
-                { "pt": "Média Individual Estudante 3", "en": "Student 3 Individual Average" },
-                { "pt": "Média Grupo Estudante 3", "en": "Student 3 Group Average" },
-                { "pt": "Áreas de Interesse Estudante 3", "en": "Student 3 Areas of Interest" },
-                { "pt": "Trabalho/Estágio Estudante 3", "en": "Student 3 Work/Internship" },
-                { "pt": "Atividades Estudantis/Sociais Estudante 3", "en": "Student 3 Student/Social Activities" },
-
-                { "pt": "ID Estudante 4", "en": "Student 4 ID" },
-                { "pt": "Curso Estudante 4", "en": "Student 4 Program" },
-                { "pt": "CR Estudante 4", "en": "Student 4 GPA" },
-                { "pt": "Posição do Projeto nas Opções Selecionadas Estudante 4", "en": "Student 4 Project Position in Selected Options" },
-                { "pt": "Média Individual Estudante 4", "en": "Student 4 Individual Average" },
-                { "pt": "Média Grupo Estudante 4", "en": "Student 4 Group Average" },
-                { "pt": "Áreas de Interesse Estudante 4", "en": "Student 4 Areas of Interest" },
-                { "pt": "Trabalho/Estágio Estudante 4", "en": "Student 4 Work/Internship" },
-                { "pt": "Atividades Estudantis/Sociais Estudante 4", "en": "Student 4 Student/Social Activities" },
-
-                ]
             context = {
                 "projetos": projetos_filtrados,
                 "cabecalhos": cabecalhos,

@@ -116,17 +116,15 @@ var textos_linguas = {
 
 function getVisibleTextInNode(node) {
   var text = '';
+  lingua = localStorage.getItem("lingua");
   $(node).contents().each(function() {
     if (this.nodeType === 3) { // Text node
-      // Only include if parent is visible
-      if ($(this).parent().is(':visible')) {
-        text += this.nodeValue;
-      }
-    } else if ($(this).is(':visible')) {
+      text += this.nodeValue;
+    } else if (!$(this).attr("lang") || $(this).attr("lang") === lingua) {
       text += $(this).text();
     }
   });
-  return text.trim();
+  return text.replace(/[\r\n]+/g, ' ').trim();
 }
 
 var configuracao_table = {
