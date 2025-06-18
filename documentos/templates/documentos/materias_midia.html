@@ -86,8 +86,9 @@
   <script>
     function carrega_pagina() {
       if($("#MateriasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#MateriasTable").dataTable();
+        var table = $("#MateriasTable").dataTable();
         if(table) {
+          table.fnSort([[0, "desc"]]); // para começar com as noticias mais recentes
           table.fnSetColumnVis( 4, false );  // esconde longa URL
         }
       }
