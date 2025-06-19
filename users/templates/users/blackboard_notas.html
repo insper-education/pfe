@@ -32,38 +32,30 @@
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
     
       <br>
-      {% lng "Criar no Blackboard colunas:" "Create columns in Blackboard:" %}      <br>
+      {% lng "Criar no Blackboard colunas:" "Create columns in Blackboard:" %}<br>
       <table>
         <thead>
           <tr>
-            <th>
-              {% lng "Nome da Coluna" "Column Name" %}            </th>
-            <th>
-              {% lng "Nome da Central de Notas" "Grade Center Name" %}            </th>
+            <th>{% lng "Sigla" "Acronym" %}</th>
+            <th>{% lng "Nome no Boletim de Notas" "Name in Grade Center" %}</th>
+            <th>{% lng "Código da Coluna" "Column Code" %}</th>
           </tr>
         </thead>
         <tbody>
           {% for exame in exames %}
             <tr>
-              <td>{{exame.titulo}}</td>
               <td>{{exame.sigla}}</td>
+              <td>{{exame.titulo}}</td>
+              <td><label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}></td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
       {% lng "Com:<br>- Exibição primária: Pontuação<br>- Pontos possíveis: 10<br>" "With:<br>- Primary Display: Score<br>- Possible Points: 10<br>" %}
       </span>
-
-      <br><br>
-      <b>
-        {% lng "Código da Coluna" "Column Code" %}      </b><br>
-      {% for exame in exames %}
-        <label for="{{exame.sigla}}" style="width: 2.3em;">{{exame.sigla}}: </label><input id="{{exame.sigla}}" type="text" size="8" name="{{exame.sigla}}" {% if colunas|get_exame:exame %}value="{{colunas|get_exame:exame}}"{% endif %}><br>
-      {% endfor %}
       <br>
-
-      <b>
-        {% lng "Cursos" "Programs" %}      </b><br>
+      
+      <b>{% lng "Cursos" "Programs" %}</b><br>
       {% for curso in cursos %}
         <input type="checkbox" id="curso{{curso.id}}" name="curso" value="{{curso.id}}" checked>
         <label for="curso{{curso.id}}">

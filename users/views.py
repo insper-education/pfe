@@ -12,6 +12,7 @@ import datetime
 import tablib
 import logging
 import json
+import csv
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
@@ -44,7 +45,6 @@ from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontr
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.messages import email
 from projetos.support3 import calcula_objetivos, get_objetivos_atuais, get_notas_alocacao
-
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
@@ -376,16 +376,16 @@ def blackboard_notas(request, anosemestre):
             # Convertendo lista de notas para dicionário
             avaliacao = {}
             for nota in notas:
-                avaliacao[nota[0]] = nota[1]
+                avaliacao[nota["sigla"]] = nota["nota"]
             
             for coluna in colunas:
                 if coluna in avaliacao:
-                    linha += [f"{avaliacao[coluna]:.4f}".replace('.',',')]
+                    linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
                 else:
                     if coluna == "M":
                         media = get_media_alocacao_i(alocacao)["media"]
                         if media:
-                            linha += [f"{media:.4f}".replace('.',',')]
+                            linha += [f"{media:.2f}".replace('.',',')]
                         else:
                             linha += [""]
                     else:
@@ -395,15 +395,15 @@ def blackboard_notas(request, anosemestre):
 
 
         if tipo == "xls":
-            xls = dataset.export("csv", delimiter="\t", quotechar='"', dialect="excel")
+            xls_dataset = dataset.export("csv", delimiter="\t", quotechar='"', dialect="excel", quoting=csv.QUOTE_ALL)
             response = HttpResponse(content_type="text/csv")
             response.write(u"\ufeff".encode("utf-16le"))
-            response.write(xls.encode("utf-16le"))  # Encode the content in UTF-16LE
+            response.write(xls_dataset.encode("utf-16le"))  # Encode the content in UTF-16LE
             response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".xls"
         elif tipo == "csv":
-            csv = dataset.export("csv", quotechar='"', dialect="excel")
-            #csv_with_trailing_commas = csv.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
-            response = HttpResponse(csv, content_type="text/csv")
+            csv_dataset = dataset.export("csv", quotechar='"', dialect="excel")
+            #csv_with_trailing_commas = csv_dataset.replace("\r\n", ",\r\n")  # Caso precise colocar uma vírgula no final de cada linha
+            response = HttpResponse(csv_dataset, content_type="text/csv")
             response.write(u"\ufeff".encode("utf-8-sig"))
             response["Content-Disposition"] = "attachment; filename=notas_"+str(ano)+"_"+str(semestre)+ext_cursos+".csv"
         
