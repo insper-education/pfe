@@ -382,7 +382,7 @@ def blackboard_notas(request, anosemestre):
                 if coluna in avaliacao:
                     linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
                 else:
-                    if coluna == "M":
+                    if coluna == "Média":
                         media = get_media_alocacao_i(alocacao)["media"]
                         if media:
                             linha += [f"{media:.2f}".replace('.',',')]
