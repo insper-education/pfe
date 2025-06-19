@@ -728,7 +728,7 @@ def edita_notas(request, primarykey):
         mensagem = "Notas de <b>" + alocacao.aluno.user.get_full_name()
         mensagem += "</b> atualizadas:<br>\n"
 
-        media = get_media_alocacao_i(alocacao)["media"]
+        media = get_media_alocacao_i(alocacao)
         if media is not None:
             if media["pesos"] is not None:
                 mensagem += "&nbsp;&nbsp;Peso Final = "
