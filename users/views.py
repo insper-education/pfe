@@ -344,9 +344,9 @@ def blackboard_notas(request, anosemestre):
                 if request.POST[exame.sigla] == "":
                     CodigoColuna.objects.filter(exame=exame, ano=ano, semestre=semestre).delete()
                 else:
-                    colunas[exame.sigla], _created = CodigoColuna.objects.get_or_create(exame=exame, ano=ano, semestre=semestre)
-                    colunas[exame.sigla].coluna = request.POST[exame.sigla]
-                    colunas[exame.sigla].save()
+                    colunas[exame.titulo], _ = CodigoColuna.objects.get_or_create(exame=exame, ano=ano, semestre=semestre)
+                    colunas[exame.titulo].coluna = request.POST[exame.sigla]
+                    colunas[exame.titulo].save()
 
         dataset = tablib.Dataset()
 
@@ -376,7 +376,7 @@ def blackboard_notas(request, anosemestre):
             # Convertendo lista de notas para dicionário
             avaliacao = {}
             for nota in notas:
-                avaliacao[nota["sigla"]] = nota["nota"]
+                avaliacao[nota["nome"]] = nota["nota"]
             
             for coluna in colunas:
                 if coluna in avaliacao:
