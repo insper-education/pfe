@@ -22,6 +22,8 @@ from .support import trata_aviso
 
 from administracao.models import TipoCertificado, TipoEvento
 
+from documentos.models import TipoDocumento
+
 from projetos.support import get_upload_path, simple_upload
 
 from projetos.models import Aviso, Certificado, Evento, Configuracao
@@ -244,6 +246,7 @@ def edita_aviso(request, primarykey=None):
         "eventos": TipoEvento.objects.all(),
         "variaveis": variaveis,
         "filtros": filtros,
+        "tipos": TipoDocumento.objects.all(),
     }
 
     return render(request, "operacional/edita_aviso.html", context)

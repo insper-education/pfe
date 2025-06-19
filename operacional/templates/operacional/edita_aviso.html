@@ -129,6 +129,12 @@
     {% for chave, valor in filtros.items %}
       |{{chave}}: - {% lng valor.pt valor.en %}<br>
     {% endfor %}
+    <br>
+    <b>{% lng "Link Documentos" "Document Links" %}</b>:<br>
+    base - {{request.scheme}}://{{request.get_host}}{% url 'doc' %}[DOC]<br>
+    {% for tipo in tipos %}
+      <i>{{tipo.sigla}}</i>: {% lng tipo.nome tipo.nome_en %}<br>
+    {% endfor %}
   </div>
 
 {% endblock %}

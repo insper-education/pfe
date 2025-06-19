@@ -229,8 +229,12 @@ def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usu
 
 
 # DEVERIA ESTAR NUMA VIEW ?????????
-def doc(request, tipo):
+def doc(request, tipo=None):
     """Acessa arquivos do servidor pelo tipo dele se for publico."""
+    if tipo is None:
+        return None  # Não deveria ser chamado sem o tipo, mas usada para pegar a url
+
+     # Verifica se o tipo de documento existe
     tipo_documento = get_object_or_404(TipoDocumento, sigla=tipo)
     documento = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False).order_by("data").last()
     if documento is None:

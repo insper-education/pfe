@@ -39,6 +39,7 @@ urlpatterns = [
     path("arquivos/<str:documentos>/<str:path>", arquivos.arquivos, name="arquivos"),
     path("arquivos/<str:organizacao>/<str:usuario>/<str:path>", arquivos.arquivos, name="arquivos"),
     path("arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>", arquivos.arquivos, name="arquivos"),
+    path("doc/", arquivos.doc, name="doc"),
     path("doc/<str:tipo>", arquivos.doc, name="doc"),
     path("manutencao/", manutencao, name="manutencao"),
     path("migracao/", migracao, name="migracao"),
