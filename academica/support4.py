@@ -133,9 +133,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
                             notas.append({
                                 "sigla": pa[0],
-                                #"nota": pnota,
                                 "nota": banca_info["media"],
-                                #"peso": ppeso/100 if ppeso else 0,
                                 "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
                                 "nome": pa[1],
                                 "banca": True,
@@ -149,9 +147,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
                             notas.append({
                                 "sigla": pa[0],
-                                #"nota": pnota,
                                 "nota": banca_info["media"],
-                                #"peso": ppeso/100 if ppeso else 0,
                                 "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
                                 "nome": pa[1],
                                 "banca": False,

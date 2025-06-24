@@ -20,13 +20,11 @@
 
   <div id="atualizar">
 
-    {% if periodo  and curso %}
-      {% with file_name="analise_objetivos_"|addstr:periodo.0|addstr:"_"|addstr:periodo.1|addstr:"_"|addstr:curso %}
-        <script>
-          var save_image_file_name = "{{file_name}}";
-        </script>  
-      {% endwith %}
-    {% endif %}
+    <script>
+      var edicao = $("#filterEdicao option:selected").attr("value");
+      var curso = $("#filterCurso option:selected").attr("value");
+      var save_image_file_name = "analise_notas_"+edicao+"_"+curso;
+    </script>
 
       <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 

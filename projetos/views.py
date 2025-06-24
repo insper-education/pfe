@@ -1190,7 +1190,7 @@ def projetos_vs_propostas(request):
         "total_org_projetos": len(total_org_projetos),
         "org_segmentos": org_segmentos,
         "total_org_segmentos": total_org_segmentos,
-        "loop_anos": edicoes,
+        # "loop_anos": edicoes,
         "edicoes": edicoes2,
     }
 
@@ -1201,36 +1201,26 @@ def projetos_vs_propostas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def analise_notas(request):
     """Mostra analise de notas."""
-    configuracao = get_object_or_404(Configuracao)
-    edicoes = get_edicoes(Avaliacao2)[0]
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
-
-        periodo = ["todo", "periodo"]
         
         medias_semestre = Alocacao.objects.all()
-        edicao = request.POST.get("edicao")
-        curso = request.POST.get("curso")
-
-        if edicao and curso:
-            if edicao != "todas":
-                periodo = edicao.split('.')
-                medias_semestre = medias_semestre.filter(projeto__ano=periodo[0],
-                                                         projeto__semestre=periodo[1])
-
-            curso = request.POST["curso"]
-
-            # Filtra para projetos com estudantes de um curso específico
-            if curso != "TE":
-                if curso != 'T':
-                    medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
-                else:
-                    medias_semestre = medias_semestre.filter(aluno__curso2__in=cursos_insper)
-                
-        else:
+        
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        
+        if request.POST["edicao"] != "todas":
+            ano, semestre = map(int, request.POST["edicao"].split('.'))
+            medias_semestre = medias_semestre.filter(projeto__ano=ano, projeto__semestre=semestre)
+        
+        curso = request.POST.get("curso")
+        if curso != "TE":  # Filtra para projetos com estudantes de um curso específico
+            if curso != 'T':
+                medias_semestre = medias_semestre.filter(aluno__curso2__sigla_curta=curso)
+            else:
+                medias_semestre = medias_semestre.filter(aluno__curso2__in=cursos_insper)
 
         valor = {"ideal": 7.0, "regular": 5.0}
 
@@ -1241,12 +1231,12 @@ def analise_notas(request):
         notas_lista = [get_notas_alocacao(x) for x in medias_semestre]
         for nota2 in notas_lista:
             for nota in nota2:
-                if nota[1] is not None:
-                    key = nota[0].lower()
+                if nota["nota"] is not None:
+                    key = nota["sigla"].lower()
                     if key:
-                        if nota[1] >= valor["ideal"]:
+                        if nota["nota"] >= valor["ideal"]:
                             notas[key]["ideal"] += 1
-                        elif nota[1] >= valor["regular"]:
+                        elif nota["nota"] >= valor["regular"]:
                             notas[key]["regular"] += 1
                         else:
                             notas[key]["inferior"] += 1
@@ -1262,20 +1252,15 @@ def analise_notas(request):
         medias["total"] = len(medias_validas)
 
         context = {
-            "periodo": periodo,
-            "ano": configuracao.ano,
-            "semestre": configuracao.semestre,
-            "loop_anos": edicoes,
             "medias": medias,
             "notas": notas,
-            "edicoes": edicoes,
             "curso": curso,
         }
 
     else:
         context = {
             "titulo": {"pt": "Análise de Notas/Conceitos", "en": "Analysis of Grades/Concepts"},
-            "edicoes": edicoes,
+            "edicoes": get_edicoes(Avaliacao2)[0],
             "cursos": cursos_insper,
             "cursos_externos": cursos_externos,
         }
@@ -1444,8 +1429,8 @@ def analise_objetivos(request):
         context = calcula_objetivos(alocacoes)
         context["edicoes"] = edicoes
         context["total_geral"] = len(alocacoes)
-        context["curso"] = curso
-        context["periodo"] = periodo
+        #context["curso"] = curso
+        #context["periodo"] = periodo
 
     else:
         context = {
