@@ -28,29 +28,22 @@ def get_banca_estudante(estudante, avaliacoes_banca):
     """Retorna média final das bancas informadas."""
     val_objetivos, pes_total, avaliadores = get_objetivos(estudante, avaliacoes_banca)
 
-    # if not val_objetivos:
-    #     return 0, None, None
-
-    # média dos objetivos
     media_local = 0.0
     peso_local = 0.0
-    for obj in val_objetivos:
-        if pes_total == 0:  # Não pesa na nota final
-            media_local += val_objetivos[obj][0]
-        else:
-            media_local += val_objetivos[obj][0]*val_objetivos[obj][1]
-        peso_local += val_objetivos[obj][1]
+
+    for valor, peso in val_objetivos.values():
+        media_local += valor if pes_total == 0 else valor * peso
+        peso_local += peso
 
     if val_objetivos:
-        peso_local = float(peso_local)
+        #peso_local = float(peso_local)
         if peso_local != 0:
-            media_local = float(media_local)/peso_local
+            media_local /= peso_local
         else:
-            media_local = float(media_local)/float(len(val_objetivos))
+            media_local /= len(val_objetivos)
     else:
         peso_local = None
 
-    #return media_local, peso_local, avaliadores
     return {
         "media": media_local,
         "peso": peso_local,
@@ -61,14 +54,15 @@ def get_banca_estudante(estudante, avaliacoes_banca):
 
 def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_banca=True):
     """Recuper as notas do Estudante."""
-    edicao = {}  # dicionário para cada alocação do estudante
-
+    
     if ano and semestre:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre)
     else:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk)
 
     now = datetime.datetime.now()
+
+    print("get_notas_estudante", estudante.user.get_full_name(), alocacoes.count(), "alocações")
 
     # Sigla, Nome, Grupo, Nota/Check, Banca
     pavaliacoes = [
@@ -89,6 +83,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
         # A principio não mostra aqui as notas da certificação Falconi
     ]
 
+    edicao = {}  # dicionário para cada alocação do estudante
     for alocacao in alocacoes:
         
         notas = []  # iniciando uma lista de notas vazia
@@ -128,9 +123,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                         valido = False
 
                         if valido:
-                            #pnota, ppeso, _ = get_banca_estudante(estudante, paval)
                             banca_info = get_banca_estudante(estudante, paval)
-                            #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
                             notas.append({
                                 "sigla": pa[0],
                                 "nota": banca_info["media"],
@@ -142,9 +135,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
                     else:
                         if pa[3]:  # Nota
-                            #pnota, ppeso, _ = get_banca_estudante(estudante, paval)
                             banca_info = get_banca_estudante(estudante, paval)
-                            #notas.append((pa[0], pnota, ppeso/100 if ppeso else 0, pa[1]))
                             notas.append({
                                 "sigla": pa[0],
                                 "nota": banca_info["media"],
@@ -155,7 +146,6 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             })
                         else:  # Check
                             pnp = paval.order_by("momento").last()
-                            #notas.append((pa[0], float(pnp.nota) if pnp.nota else None, pnp.peso/100 if pnp.peso else 0, pa[1]))
                             notas.append({
                                 "sigla": pa[0],
                                 "nota": float(pnp.nota) if pnp.nota else None,
