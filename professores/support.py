@@ -456,24 +456,14 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     
     bancas = bancas_0_1 | bancas_2 | bancas_3
 
-    exame_titles = {
-        "BF": "Banca Final",
-        "BI": "Banca Intermediária",
-        "F": "Certificação Falconi",
-        "P": "Probation"
-    }
 
     for banca in bancas:
-        exame_title = exame_titles.get(banca.composicao.exame.sigla)
-        if exame_title:
-            exame = Exame.objects.filter(titulo=exame_title).first()
-            if banca.alocacao:
-                avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame=exame, avaliador=user)
-            else:
-                avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame=exame, avaliador=user)
-        else:
-            avaliacoes = None
 
+        if banca.alocacao:
+            avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame__sigla=banca.composicao.exame.sigla, avaliador=user)
+        else:
+            avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame__sigla=banca.composicao.exame.sigla, avaliador=user)
+        
         if not avaliacoes:
             if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > PRAZO:
                 avaliar_bancas_cor = 'r'
