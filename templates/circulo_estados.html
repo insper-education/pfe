@@ -25,4 +25,9 @@
   {% else %}
     "">&#9899;
   {% endif %}
+
+  {% if com_atraso and estado.atraso > 0 %}
+    <span class="badge rounded-0 bg-warning text-danger" style="font-size: 0.85em;">{{ estado.atraso }}</span>
+  {% endif %}
+
 </span>

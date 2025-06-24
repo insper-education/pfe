@@ -34,7 +34,7 @@
                 {% with estado=pendencias|get_value:tipo.1 %}
                   {% if estado %}
                     <a href="{% url tipo.1 professor.id %}">
-                      <span class="circulo">{% include "circulo_estados.html" with estado=estado %}</span>
+                      <span class="circulo">{% include "circulo_estados.html" with estado=estado com_atraso=True %}</span>
                     </a>
                   {% endif %}
                 {% endwith %}

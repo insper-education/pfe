@@ -302,26 +302,36 @@ def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
 
 def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm o plano de orientação
-    tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
-    projetos_pendentes = [projeto for projeto in projetos if not Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists()]
+    cor = 'b'
+    itens = []
+    atraso = 0
+    today = datetime.date.today()
 
-    planos_de_orientacao__prazo = None
-    planos_de_orientacao_cor = 'b'
-    planos_de_orientacao_itens = []
-    if not projetos_pendentes:
-        planos_de_orientacao_cor = 'g'
-    else:
-        evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
-        if evento:
-            planos_de_orientacao__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+5))
-            if datetime.date.today() < evento.endDate:
-                planos_de_orientacao_cor = 'b'
-            elif datetime.date.today() > planos_de_orientacao__prazo:
-                planos_de_orientacao_cor = 'r'
-            else:
-                planos_de_orientacao_cor = 'y'
-            planos_de_orientacao_itens = [str(projeto) for projeto in projetos_pendentes]
-    return {"planos_de_orientacao": {"cor": planos_de_orientacao_cor, "prazo": planos_de_orientacao__prazo, "itens": planos_de_orientacao_itens}}
+    evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
+    prazo = evento.endDate + datetime.timedelta(days=(PRAZO + 5))
+
+    for projeto in projetos:
+        documentos = Documento.objects.filter(tipo_documento__nome="Plano de Orientação", projeto=projeto)
+        if not documentos.exists():
+            itens.append(str(projeto))
+            atraso = max(atraso, (today - prazo).days)
+        else:
+            documento = documentos.order_by("data").first()
+            atraso_tmp = (documento.data.date() - prazo).days
+            if documento.data.date() > prazo and atraso_tmp > atraso:
+                atraso = atraso_tmp
+
+    if not itens:
+        cor = 'g'
+    elif evento:
+        if today < evento.endDate:
+            cor = 'b'
+        elif today > prazo:
+            cor = 'r'
+        else:
+            cor = 'y'
+
+    return {"planos_de_orientacao": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
