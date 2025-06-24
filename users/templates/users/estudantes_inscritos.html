@@ -24,7 +24,7 @@
 
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}
 
-        {% for aluno, opcoes, opcoestemp in alunos_list %}
+        {% for aluno, opcoes, opcoestemp in estudantes %}
           <tr class="item">
             <td 
               class="text-center 
@@ -63,9 +63,9 @@
         <caption style="text-align: left">
           <text class="text-success">&#x2B24;</text>
           {% lng "Estudante já selecionou propostas" "Student already selected proposals" %}
-          ({{inscritos}}) [{% widthratio inscritos num_alunos 100 %}%]
+          ({{inscritos.sim|length}}) [{% widthratio inscritos.sim|length num_estudantes 100 %}%]
           <span class="emails esconder">
-            <a href="mailto:{% for email in inscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+            <a href="mailto:{% for usuario in inscritos.sim %}{{usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
               <i class="fas fa-mail-bulk"></i>
             </a>
           </span>
@@ -73,9 +73,9 @@
 
           <text class="text-warning">&#x2B24;</text> 
           {% lng "Estudante realizou seleção provisória" "Student performed temporary selection" %}
-          ({{tmpinscritos}}) [{% widthratio tmpinscritos num_alunos 100 %}%]
+          ({{inscritos.tmp|length}}) [{% widthratio inscritos.tmp|length num_estudantes 100 %}%]
           <span class="emails esconder">
-            <a href="mailto:{% for email in tmpinscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+            <a href="mailto:{% for usuario in inscritos.tmp %}{{usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
               <i class="fas fa-mail-bulk"></i>
             </a>
           </span>
@@ -83,9 +83,9 @@
           
           <text class="text-danger">&#x2B24;</text>
           {% lng "Estudante ainda precisa selecionar propostas" "Student still needs to select proposals" %}
-          ({{ninscritos}}) [{% widthratio ninscritos num_alunos 100 %}%]
+          ({{inscritos.nao|length}}) [{% widthratio inscritos.nao|length num_estudantes 100 %}%]
           <span class="emails esconder">
-            <a href="mailto:{% for email in ninscritos_emails %}{{email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
+            <a href="mailto:{% for usuario in inscritos.nao %}{{usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper" target="_blank">
               <i class="fas fa-mail-bulk"></i>
             </a>
           </span>
@@ -96,7 +96,7 @@
     </div>
     <br><br>
 
-    {% if prazo_vencido and tmpinscritos %}
+    {% if prazo_vencido and inscritos.tmp %}
       <div class="alert alert-warning" role="alert">
         {% lng "Atenção: O prazo para a seleção provisória de propostas foi encerrado, contudo ainda existem estudantes que não realizaram a seleção final.  Deseja converter as opções provisórias em definitivas?" "Attention: The deadline for the provisional selection of proposals has expired, however there are still students who have not made the final selection. Do you want to convert the provisional options into definitive ones?" %}
         <button type="button" class="btn btn-warning" onclick="window.location.href='{% url 'converte_opcoes' ano semestre %}'">
@@ -105,9 +105,9 @@
     {% endif %}
     <br>
 
-    {% if num_alunos %}
+    {% if num_estudantes %}
       <b>{% lng "Total de Estudantes Aplicando" "Total of Students Enrolled" %}:</b>
-      {{ num_alunos }}<br>
+      {{ num_estudantes }}<br>
     {% endif %}
 
     <div id="canvas-holder" class="chart-container mt-2">
@@ -122,8 +122,8 @@
             data: [{% for qtd in num_estudantes_curso.values %}{{qtd}},{% endfor %}],
             backgroundColor: [{% for curso in num_estudantes_curso %}"#{{curso.cor}}",{% endfor %}]
           }],
-          labels_pt: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome}} [{% widthratio qtd num_alunos 100 %}%]",{% endfor %}],
-          labels_en: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome_en}} [{% widthratio qtd num_alunos 100 %}%]",{% endfor %}]
+          labels_pt: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome}} [{% widthratio qtd num_estudantes 100 %}%]",{% endfor %}],
+          labels_en: [{% for curso, qtd in num_estudantes_curso.items %}"{{curso.nome_en}} [{% widthratio qtd num_estudantes 100 %}%]",{% endfor %}]
         },
         options: {
           responsive: true,

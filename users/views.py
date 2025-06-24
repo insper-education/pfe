@@ -538,41 +538,33 @@ def estudantes_inscritos(request):
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         ano, semestre = map(int, request.POST["edicao"].split('.'))
-        alunos = Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre)
-
-        # Conta estudantes de cada curso
-        cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
-        num_estudantes_curso = {}
-        for curso in cursos:
-            qtd = alunos.filter(curso2__sigla__exact=curso.sigla).count()
-            if qtd:
-                num_estudantes_curso[curso] = qtd
-
-        inscritos = 0
-        inscritos_emails = []
-        ninscritos = 0
-        ninscritos_emails = []
-        tmpinscritos = 0
-        tmpinscritos_emails = []
-        opcoes = []
-        opcoestemp = []
+        lista_estudantes = Aluno.objects.filter(trancado=False, ano=ano, semestre=semestre)
+        cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")  # Conta estudantes de cada curso
 
         min_props = configuracao.min_props
-        for aluno in alunos:
+
+        inscritos = {"sim": [], "nao": [], "tmp": []}
+        opcoes, opcoestemp = [], []
+
+        for aluno in lista_estudantes:
             opcao = Opcao.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
-            opcoes.append(opcao)
             opcaotmp = OpcaoTemporaria.objects.filter(aluno=aluno, proposta__ano=ano, proposta__semestre=semestre)
+            opcoes.append(opcao)
             opcoestemp.append(opcaotmp)
-            if opcao.count() >= min_props:
-                inscritos += 1
-                inscritos_emails.append(aluno.user.email)
+            if opcao.exists():
+                inscritos["sim"].append(aluno.user)
             elif opcaotmp.count() >= min_props:
-                tmpinscritos += 1
-                tmpinscritos_emails.append(aluno.user.email)
+                inscritos["tmp"].append(aluno.user)
             else:
-                ninscritos += 1
-                ninscritos_emails.append(aluno.user.email)
-        alunos_list = zip(alunos, opcoes, opcoestemp)
+                inscritos["nao"].append(aluno.user)
+
+        estudantes = zip(lista_estudantes, opcoes, opcoestemp)
+
+        num_estudantes_curso = {}
+        for curso in cursos:
+            qtd = lista_estudantes.filter(curso2__sigla__exact=curso.sigla).count()
+            if qtd:
+                num_estudantes_curso[curso] = qtd
 
         rano, rsemestre = retrocede_semestre(ano, semestre)
 
@@ -587,14 +579,9 @@ def estudantes_inscritos(request):
         ]
 
         context = {
-            "alunos_list": alunos_list,
-            "num_alunos": alunos.count(),  # Conta soh alunos,
+            "estudantes": estudantes,
+            "num_estudantes": lista_estudantes.count(),
             "inscritos": inscritos,
-            "ninscritos": ninscritos,
-            "tmpinscritos": tmpinscritos,
-            "inscritos_emails": inscritos_emails,
-            "ninscritos_emails": ninscritos_emails,
-            "tmpinscritos_emails": tmpinscritos_emails,
             "cursos": cursos,
             "num_estudantes_curso": num_estudantes_curso,
             "cabecalhos": cabecalhos,
