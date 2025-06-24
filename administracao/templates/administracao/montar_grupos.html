@@ -142,7 +142,7 @@
       <div id="proposta_vazia" class="sem_propostas imprimir_div" data-propostaid="-1" data-titulo="Estudantes sem escolhas de propostas de projetos" >
         <div id="titulo-1" class="etiqueta_proposta">
           <a target="_blank" rel="noopener noreferrer" class="ancora tip" data-tip="tip-1" style="color: #000062;">
-            <span class="titulo_proposta">Estudantes sem escolhas de propostas de projetos</span>
+            <span class="titulo_proposta">{% lng "Estudantes sem escolhas de propostas de projetos" "Students without project proposal choices" %}</span>
           </a>&nbsp;
           <a class="ancora" style="color: darkblue;"></a>
         </div>
@@ -159,17 +159,10 @@
         <div style="width: 68px; vertical-align:middle; margin-right: 8px;"
         data-toggle="tooltip" data-html="true" animation="true" 
         title="<b>{{proposta.get_titulo_org_periodo}}</b><br><br>
-        <b>Descrição</b>: {{proposta.descricao|linebreaks}}
-        <b>Expectativas</b>: {{proposta.expectativas|linebreaks}}
-        {% if proposta.recursos %}
-          <br><b>Recursos</b>: {{proposta.recursos|linebreaks}}
-        {% endif %}
-        {% if proposta.observacoes %}
-          <br><b>Observações</b>: {{proposta.observacoes|linebreaks}}
-        {% endif %}
-        "
-        >
-
+         <b>Descrição</b>: {{proposta.descricao|linebreaks}}
+         <b>Expectativas</b>: {{proposta.expectativas|linebreaks}}
+         {% if proposta.recursos %}<br><b>Recursos</b>: {{proposta.recursos|linebreaks}}{% endif %}
+         {% if proposta.observacoes %}<br><b>Observações</b>: {{proposta.observacoes|linebreaks}}{% endif %}">
           <div style="width: 64px; text-align: center;">
             <img class="logotipo_pequeno" 
               {% if proposta.organizacao.logotipo %}
@@ -197,7 +190,7 @@
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
-                            {% if estudante.com_reprovacao %} &reg;{% endif %}
+                            {% if opcaop.aluno.com_reprovacao %} &reg;{% endif %}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
                           #{{ opcaop.prioridade }}
@@ -206,7 +199,7 @@
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
-                            {% if estudante.com_reprovacao %} &reg;{% endif %}
+                            {% if opcaop.aluno.com_reprovacao %} &reg;{% endif %}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
                           #{{ opcaop.prioridade }}
@@ -215,7 +208,7 @@
                         {% if opcaop.aluno %}
                           {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                           {CR: {{opcaop.aluno.cr|floatformat:2}}}
-                          {% if estudante.com_reprovacao %} &reg;{% endif %}
+                          {% if opcaop.aluno.com_reprovacao %} &reg;{% endif %}
                           |{% mede_aderencia opcaop.aluno proposta %}%|
                         {% endif %}
                         #{{ opcaop.prioridade }}
@@ -625,11 +618,14 @@
         qtd_estudantes = $(target).children("div").length - 1
         if(qtd_estudantes == 0) {
             $(target).css("background-color", "tomato");
+            $(target).parent().css("opacity", "0.4");
         } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
             $(target).css("background-color", "yellow");
+            $(target).parent().css("opacity", "1.0");
         }
         else {
             $(target).css("background-color", "lime");
+            $(target).parent().css("opacity", "1.0");
         }
         atualizar_count_propostas();
     }
