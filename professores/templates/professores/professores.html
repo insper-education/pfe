@@ -27,22 +27,22 @@
 <h5>
   {% lng "Atividades do Orientador" "Advisor Activities" %}
 </h5>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">
   {% lng "Planos de Orientação" "Advisory Plans" %}
 </a></div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">
   {% lng "Relatos Quinzenais" "Biweekly Reports" %}
 </a></div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_entregas %}</span> <a href="{% url 'avaliar_entregas'%}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.avaliar_entregas %}</span> <a href="{% url 'avaliar_entregas'%}">
   {% lng "Avaliar Entregas" "Evaluate Deliveries" %}
 </a></div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=bancas_index %}</span> <a href="{% url 'bancas_index'%}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.bancas_index %}</span> <a href="{% url 'bancas_index'%}">
   {% lng "Agendar Bancas" "Schedule Examination Boards" %}
 </a></div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliar_bancas %}</span> <a href="{% url 'avaliar_bancas' %}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.avaliar_bancas %}</span> <a href="{% url 'avaliar_bancas' %}">
   {% lng "Avaliar Bancas" "Evaluate Examination Boards" %}
 </a></div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacoes_pares %}</span> <a href="{% url 'avaliacoes_pares' %}">
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.avaliacoes_pares %}</span> <a href="{% url 'avaliacoes_pares' %}">
   {% lng "Ver Avaliação de Pares" "Check Peer Evaluation" %}
 </a></div>
 <br>

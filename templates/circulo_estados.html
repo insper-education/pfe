@@ -5,11 +5,22 @@
 {% endcomment %}
 
 <span style="padding-right: 2px;" data-toggle="tooltip" data-html="true" animation="true" title=
-  {% if estado.0 == 'r' %}
-    "atrasado para concluir esse ponto{% if estado.1 %} (prazo={{estado.1}}){% endif %}">&#128308;
-  {% elif estado.0 == 'y' %}
-    "no prazo para concluir esse ponto{% if estado.1 %} (prazo={{estado.1}}){% endif %}">&#128993;
-  {% elif estado.0 == 'g' %}
+  {% if estado.cor == 'r' %}
+    "atrasado para concluir esse ponto
+    {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
+    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    ">&#128308;
+  {% elif estado.cor == 'y' %}
+    "no prazo para concluir esse ponto
+    {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
+    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    ">&#128993;
+  {% elif estado.cor == 'p' %}
+    "nova entrega realizada, verificar novamente
+    {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
+    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    ">&#128995;
+  {% elif estado.cor == 'g' %}
     "em dia com esse ponto">&#128994;
   {% else %}
     "">&#9899;

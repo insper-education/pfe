@@ -303,97 +303,91 @@ def move_avaliacoes(avaliacoes_anteriores=[], observacoes_anteriores=[]):
 def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm o plano de orientação
     tipo_documento = TipoDocumento.objects.get(nome="Plano de Orientação")
-    feito = all(Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists() for projeto in projetos)
+    projetos_pendentes = [projeto for projeto in projetos if not Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).exists()]
+
     planos_de_orientacao__prazo = None
-    planos_de_orientacao = 'b'
-    if feito:
-        planos_de_orientacao = 'g'
+    planos_de_orientacao_cor = 'b'
+    planos_de_orientacao_itens = []
+    if not projetos_pendentes:
+        planos_de_orientacao_cor = 'g'
     else:
         evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
         if evento:
             planos_de_orientacao__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+5))
             if datetime.date.today() < evento.endDate:
-                planos_de_orientacao = 'b'
+                planos_de_orientacao_cor = 'b'
             elif datetime.date.today() > planos_de_orientacao__prazo:
-                planos_de_orientacao = 'r'
+                planos_de_orientacao_cor = 'r'
             else:
-                planos_de_orientacao = 'y'
-    return {"planos_de_orientacao": (planos_de_orientacao, planos_de_orientacao__prazo)}
+                planos_de_orientacao_cor = 'y'
+            planos_de_orientacao_itens = [str(projeto) for projeto in projetos_pendentes]
+    return {"planos_de_orientacao": {"cor": planos_de_orientacao_cor, "prazo": planos_de_orientacao__prazo, "itens": planos_de_orientacao_itens}}
 
 
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
-    relatos_quinzenais = 'b'
+    relatos_quinzenais_cor = 'b'
+    relatos_quinzenais_itens = []
     for projeto in projetos:
         for evento, relatos, avaliados, _ in busca_relatos(projeto):
             if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                 if relatos:
-                    if avaliados and relatos_quinzenais not in ['r', 'y']:
-                        relatos_quinzenais = 'g'
+                    if avaliados and relatos_quinzenais_cor not in ['r', 'y']:
+                        relatos_quinzenais_cor = 'g'
                     elif (not avaliados) and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
-                        relatos_quinzenais = 'r'
-                    elif relatos_quinzenais != 'r':
-                        relatos_quinzenais = 'y'
-                elif relatos_quinzenais not in ['r', 'y']:
-                    relatos_quinzenais = 'g'
-    return {"relatos_quinzenais": (relatos_quinzenais, None)}
-
+                        relatos_quinzenais_cor = 'r'
+                        relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
+                    elif relatos_quinzenais_cor != 'r':
+                        relatos_quinzenais_cor = 'y'
+                        relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
+                elif relatos_quinzenais_cor not in ['r', 'y']:
+                    relatos_quinzenais_cor = 'g'
+    return {"relatos_quinzenais": {"cor": relatos_quinzenais_cor, "prazo": None, "itens": relatos_quinzenais_itens}}
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
-    # Verifica se todos os projetos do professor orientador têm as avaliações das entregas
-    avaliar_entregas = 'b'
+    def process_item(item, avals, docs, dias_passados):
+        nonlocal avaliar_entregas_cor
+        for documento in docs:
+            if avals:
+                diff_entrega = (documento.data - avals.first().momento)
+                if diff_entrega.total_seconds() > 0:
+                    if avaliar_entregas_cor not in ['r', 'y']:
+                        avaliar_entregas_cor = 'p'
+                    avaliar_entregas_itens.append(item["evento"])
+                else:
+                    if avaliar_entregas_cor == 'b':
+                        avaliar_entregas_cor = 'g'
+            else:
+                if dias_passados > PRAZO:
+                    avaliar_entregas_cor = 'r'
+                    avaliar_entregas_itens.append(item["evento"])
+                else:
+                    if avaliar_entregas_cor != 'r':
+                        avaliar_entregas_cor = 'y'
+                    avaliar_entregas_itens.append(item["evento"])
+
+    avaliar_entregas_cor = 'b'
+    avaliar_entregas_itens = []
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
     for projeto in projetos:
         entregas = filtra_entregas(composicoes, projeto)
         for item in entregas:
-            if item["evento"] and item["evento"].endDate:
-                dias_passados = (datetime.date.today() - item["evento"].data_aval()).days
-                if dias_passados > 0:
-                    if item["composicao"] and item["composicao"].exame:
-                        if item["composicao"].exame.grupo:
-                            for documento in item["documentos"]:
-                                if item["avaliacoes"]:
-                                    diff_entrega = (documento.data - item["avaliacoes"].first().momento)
-                                    if diff_entrega.days > PRAZO:
-                                        avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                    elif diff_entrega.total_seconds() > 0:
-                                        if avaliar_entregas != 'r':
-                                            avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                    else:
-                                        if avaliar_entregas not in ['r', 'y']:
-                                            avaliar_entregas = 'g'  # Avaliação feita!
-                                else:
-                                    if dias_passados > PRAZO:
-                                        avaliar_entregas = 'r'  # Avaliação urgente!
-                                    else:
-                                        if avaliar_entregas != 'r':
-                                            avaliar_entregas = 'y'  # Avaliação pendente!
-                        else:
-                            if item["alocacoes"]:
-                                for _, values in item["alocacoes"].items():
-                                    for documento in values["documentos"]:
-                                        if values["avaliacoes"]:
-                                            diff_entrega = (documento.data - values["avaliacoes"].first().momento)
-                                            if diff_entrega.days > PRAZO:
-                                                avaliar_entregas = 'r'  # Nova avaliação urgente!
-                                            elif diff_entrega.total_seconds() > 0:
-                                                if avaliar_entregas != 'r':
-                                                    avaliar_entregas = 'y'  # Nova avaliação pendente!
-                                            else:
-                                                if avaliar_entregas != 'r' and avaliar_entregas != 'y':
-                                                    avaliar_entregas = 'g'  # Avaliação feita!
-                                        else:
-                                            if dias_passados > PRAZO:
-                                                avaliar_entregas = 'r'  # Avaliação urgente!
-                                            else:
-                                                if avaliar_entregas != 'r':
-                                                    avaliar_entregas = 'y'  # Avaliação pendente!
-    return {"avaliar_entregas": (avaliar_entregas, None)}
+            evento = item.get("evento")
+            if evento and evento.endDate:
+                dias_passados = (datetime.date.today() - evento.data_aval()).days
+                if dias_passados > 0 and item.get("composicao") and item["composicao"].exame:
+                    if item["composicao"].exame.grupo:
+                        process_item(item, item.get("avaliacoes"), item.get("documentos", []), dias_passados)
+                    else:
+                        for values in (item.get("alocacoes") or {}).values():
+                            process_item(item, values.get("avaliacoes"), values.get("documentos", []), dias_passados)
+    return {"avaliar_entregas": {"cor": avaliar_entregas_cor, "prazo": None, "itens": avaliar_entregas_itens}}
 
 
 def check_bancas_index(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
-    bancas_index = 'b'
+    bancas_index_cor = 'b'
+    bancas_index_itens = []
     tipos_de_banca = [("BI", "BI"), ("BF", "BF")]  # (sigla banca, sigla evento)
 
     for projeto in projetos:
@@ -403,53 +397,53 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
             if evento:
                 days_diff = (datetime.date.today() - evento.startDate).days
                 if days_diff > -16:
-                    if banca_exists and bancas_index != 'r' and bancas_index != 'y':
-                        bancas_index = 'g'
+                    if banca_exists and bancas_index_cor not in ['r', 'y']:
+                        bancas_index_cor = 'g'
                     else:
                         if days_diff > -9:
-                            bancas_index = 'r'
-                        elif bancas_index != 'r':
-                            bancas_index = 'y'
-    return {"bancas_index": (bancas_index, None)}
+                            bancas_index_cor = 'r'
+                        elif bancas_index_cor != 'r':
+                            bancas_index_cor = 'y'
+                        bancas_index_itens.append(sigla_b + " -> " + str(projeto)) # Banca de Projeto não agendada
+
+    return {"bancas_index": {"cor": bancas_index_cor, "prazo": None, "itens": bancas_index_itens}}
 
 
 def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
-    # Verifica se todos os projetos do professor orientador têm as avaliações de pares conferidas
-    avaliacoes_pares = 'b'
-    evento = Evento.get_evento(sigla="API", ano=ano, semestre=semestre)  # "Avaliação de Pares Intermediária"
-    if evento and (datetime.date.today() - evento.startDate).days > 0:
+    def verifica_pares(sigla, tipo, cor_atual):
+        evento = Evento.get_evento(sigla=sigla, ano=ano, semestre=semestre)
+        if not evento or (datetime.date.today() - evento.startDate).days <= 0:
+            return cor_atual, []
         feito = True
+        projetos_pendentes = []
         for projeto in projetos:
             for alocacao in Alocacao.objects.filter(projeto=projeto):
-                if Pares.objects.filter(alocacao_de=alocacao, tipo=0).first():  # Intermediaria
-                    feito = feito and alocacao.avaliacao_intermediaria
-        if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
-            avaliacoes_pares = 'g'
-        else:
-            if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
-                avaliacoes_pares = 'r'
-            elif avaliacoes_pares != 'r':
-                avaliacoes_pares = 'y'
-    evento = Evento.get_evento(sigla="APF", ano=ano, semestre=semestre)  #"Avaliação de Pares Final"
-    if evento and (datetime.date.today() - evento.startDate).days > 0:
-        feito = True
-        for projeto in projetos:
-            for alocacao in Alocacao.objects.filter(projeto=projeto):
-                if Pares.objects.filter(alocacao_de=alocacao, tipo=1).first():  # Final
-                    feito = feito and alocacao.avaliacao_final
-        if feito and avaliacoes_pares != 'r' and avaliacoes_pares != 'y':
-            avaliacoes_pares = 'g'
-        else:
-            if evento and (datetime.date.today() - evento.endDate).days > PRAZO:
-                avaliacoes_pares = 'r'
-            elif avaliacoes_pares != 'r':
-                avaliacoes_pares = 'y'
-    return {"avaliacoes_pares": (avaliacoes_pares, None)}
+                if Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists():
+                    if not (alocacao.avaliacao_intermediaria if tipo == 0 else alocacao.avaliacao_final):
+                        feito = False
+                        projetos_pendentes.append(sigla + " -> " + str(projeto))
+                        break
+                
+        if feito and cor_atual not in ['r', 'y']:
+            return 'g', []
+        itens = [str(projeto) for projeto in projetos_pendentes]
+        if (datetime.date.today() - evento.endDate).days > PRAZO:
+            return 'r', itens
+        if cor_atual != 'r':
+            return 'y', itens
+        return cor_atual, itens
+
+    cor, itens = 'b', []
+    for sigla, tipo in [("API", 0), ("APF", 1)]:
+        cor, new_itens = verifica_pares(sigla, tipo, cor)
+        itens += new_itens
+    return {"avaliacoes_pares": {"cor": cor, "prazo": None, "itens": itens}}
 
 
 def check_avaliar_bancas(user, ano, semestre, PRAZO):
     # Verifica se todas as bancas do semestre foram avaliadas
-    avaliar_bancas = 'b'
+    avaliar_bancas_cor = 'b'
+    avaliar_bancas_itens = []
     
     bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
@@ -482,19 +476,20 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
 
         if not avaliacoes:
             if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > PRAZO:
-                avaliar_bancas = 'r'
-            elif banca.endDate and (datetime.date.today() - banca.endDate.date()).days >= 0 and avaliar_bancas != 'r':
-                avaliar_bancas = 'y'
-        elif avaliar_bancas not in ['r', 'y']:
-                avaliar_bancas = 'g'
-    return {"avaliar_bancas": (avaliar_bancas, None)}
+                avaliar_bancas_cor = 'r'
+            elif banca.endDate and (datetime.date.today() - banca.endDate.date()).days >= 0 and avaliar_bancas_cor != 'r':
+                avaliar_bancas_cor = 'y'
+            avaliar_bancas_itens.append(banca)
+        elif avaliar_bancas_cor not in ['r', 'y']:
+            avaliar_bancas_cor = 'g'
+    return {"avaliar_bancas": {"cor": avaliar_bancas_cor, "prazo": None, "itens": avaliar_bancas_itens}}
 
 
 def ver_pendencias_professor(user, ano, semestre):
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
     PRAZO_BANCA = 2
     context = {}
-    if user.tipo_de_usuario in [2,4]:  # Professor ou Administrador
+    if user.eh_prof_a:  # Professor ou Administrador
         projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
         if projetos:
             context.update(check_planos_de_orientacao(projetos, ano, semestre, PRAZO))

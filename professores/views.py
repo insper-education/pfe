@@ -67,8 +67,11 @@ logger = logging.getLogger("django")
 def index_professor(request):
     """Mostra página principal do usuário professor."""
     configuracao = get_object_or_404(Configuracao)
-    context = ver_pendencias_professor(request.user, configuracao.ano, configuracao.semestre)
-    context["titulo"] = {"pt": "Área dos Professores", "en": "Professors Area"}
+    pendencias = ver_pendencias_professor(request.user, configuracao.ano, configuracao.semestre)
+    context = {
+        "titulo": {"pt": "Área dos Professores", "en": "Professors Area"},
+        "pendencias": pendencias,
+    }
     if "/professores/professores" in request.path:
         return render(request, "professores/professores.html", context=context)
     else:

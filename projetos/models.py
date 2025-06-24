@@ -760,7 +760,7 @@ class Evento(models.Model):
         """Retorno padrão textual."""
         texto = self.get_title()
         if self.startDate:
-            texto += " (" + self.startDate.strftime("%d/%m/%Y") + ")"
+            texto += ": " + self.startDate.strftime("%d/%m/%Y")
         return texto
 
     def periodo(self):
