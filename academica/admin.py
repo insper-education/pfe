@@ -32,7 +32,7 @@ dup_composicao.short_description = "Duplicar Entrada(s)"
 @admin.register(Exame)
 class ExameAdmin(admin.ModelAdmin):
     """Exame."""
-    list_display = ("titulo", "titulo_en", "sigla", "grupo", "banca", "periodo_para_rubricas")
+    list_display = ("ordem", "titulo", "titulo_en", "sigla", "grupo", "banca", "periodo_para_rubricas")
 
 @admin.register(Composicao)
 class ComposicaoAdmin(admin.ModelAdmin):
