@@ -197,6 +197,7 @@
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                            {% if estudante.com_reprovacao %} &reg;{% endif %}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
                           #{{ opcaop.prioridade }}
@@ -205,6 +206,7 @@
                           {% if opcaop.aluno %}
                             {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                             {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                            {% if estudante.com_reprovacao %} &reg;{% endif %}
                             |{% mede_aderencia opcaop.aluno proposta %}%|
                           {% endif %}
                           #{{ opcaop.prioridade }}
@@ -213,6 +215,7 @@
                         {% if opcaop.aluno %}
                           {{opcaop.aluno.user.get_full_name}} [{{opcaop.aluno.curso2.sigla_curta}}]
                           {CR: {{opcaop.aluno.cr|floatformat:2}}}
+                          {% if estudante.com_reprovacao %} &reg;{% endif %}
                           |{% mede_aderencia opcaop.aluno proposta %}%|
                         {% endif %}
                         #{{ opcaop.prioridade }}
@@ -276,6 +279,7 @@
       {% endfor %}
       <br>
       <span class="estrela">&#9733;</span>: {% lng "Alguma observação sobre a alocação do estudante no projeto" "Some observation about the student's allocation in the project" %}
+      <span class="text-danger fw-bold">&reg;</span>: {% lng "Estudante com reprovação" "Student failed previous semester" %}
     </small>
   </div>
   <hr style="margin-top: 2px;">
@@ -437,7 +441,7 @@
         ">
         <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
         <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
-        <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>
+        <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>{% if estudante.com_reprovacao %}<span class="esconder text-danger fw-bold"> &reg;</span>{% endif %}
         <div class="opcao imprimir_div" style="float: right;"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
         <br></div>
       `

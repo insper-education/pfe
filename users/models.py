@@ -348,6 +348,15 @@ class Aluno(models.Model):
         if self.ano and self.semestre:
             return str(self.ano)+"."+str(self.semestre)
         return "SEM PERÍODO DEFINIDO"
+    
+    def com_reprovacao(self):
+        """Retorna verdade se estudante teve uma alocacao anterior em um projeto não avançado."""
+        if self.semestre == 1:
+            alocacoes = Alocacao.objects.filter(aluno=self.pk, projeto__ano__lt=self.ano, projeto__avancado__isnull=True)
+        else:
+            alocacoes = Alocacao.objects.filter(aluno=self.pk, projeto__ano__lt=self.ano, projeto__avancado__isnull=True) | \
+                        Alocacao.objects.filter(aluno=self.pk, projeto__ano=self.ano, projeto__semestre=1, projeto__avancado__isnull=True)
+        return alocacoes.exists()
 
 
 class Opcao(models.Model):
