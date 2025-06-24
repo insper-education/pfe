@@ -7,7 +7,13 @@
 
 {% block head %}
   {% load static %}
+  {% load l10n %}
+  {% load i18n %}
   {% load linguas %}
+  {% load get_item %}
+  {% load alocacao %}
+  {% load exibe_notas %}
+
   <script src="{% static 'js/sort.js' %}"></script>
   <style>
     .certificacao_excelencia {background-color:lightgreen !important;}
@@ -79,23 +85,38 @@
 {% block content %}
 
   {% include "edicoes.html" %}
+  
+  {% if regulamento and regulamento.documento %}
+    <a target="_blank" rel="noopener noreferrer" href="{{request.scheme}}://{{request.get_host}}{{regulamento.documento.url}}">
+      <i class="far fa-file-alt"></i> {{regulamento.tipo_documento}}
+    </a><br>
+  {% endif %}
+    <br>
+
+  <div class="alert alert-info">
+    <strong>{% lng "Certificação de Projetos" "Project Certification" %}</strong>    
+    O certificado será concedido apenas aos melhores projetos, limitados a no máximo 25% do total de projetos avaliados. Assim, mesmo projetos com nota superior a 8,0 poderão não receber o certificado de excelência, caso não estejam entre os mais bem avaliados dentro desse limite. 
+  </div>
+
   {% include "informacoes_ml.html" %}
+
 
   <div id="atualizar">
 
     <div class="table-responsive">
       <table id="ProjetosTable" class="projetos tabela-padrao table-striped">
 
-        {% if tabela %}
           <thead>
             <tr>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">{% lng "Projeto" "Project" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Período" "Semester" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">{% lng "Banca Inter." "Inter. Board" %}</th> {% comment %} Banca Intermediária {% endcomment %}
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">{% lng "Banca Final" "Final Board" %}</th> {% comment %} Banca Final {% endcomment %}
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">{% lng "Banca Falconi" "Falconi Board" %}</th> {% comment %} Banca Falconi {% endcomment %}
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Nota Certificado">{% lng "Nota Certificado" "Certificate Grade" %}</th> {% comment %} Nota Certificado {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">#</th> 
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Projeto" "Project" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Período" "Semester" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')">{% lng "Orientador" "Advisor" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">{% lng "Banca Inter." "Inter. Board" %}</th> {% comment %} Banca Intermediária {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">{% lng "Banca Final" "Final Board" %}</th> {% comment %} Banca Final {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)')">{% lng "Média Bancas" "Average Boards" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">{% lng "Banca Falconi" "Falconi Board" %}</th> {% comment %} Banca Falconi {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Nota Certificado">{% lng "Nota Certificado" "Certificate Grade" %}</th> {% comment %} Nota Certificado {% endcomment %}
             </tr>      
           </thead>
 
@@ -107,6 +128,11 @@
                 {% elif banca_falconi.certificacao == "D" %}
                   certificacao_destaque
                 {% endif %}">
+
+                  <td class="text-center">
+                    <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">{{ forloop.counter }}</a>
+                  </td>
+
                   <td>
                     [<a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
                     <a class="imprimir" href="{% url 'projeto_infos' projeto.id %}">
@@ -176,6 +202,16 @@
                     </a>
                   </td>
 
+                  {% with alocacao=projeto.alocacao_set.all.0 %}
+                    {% comment %} Só para pegar as notas só de grupo {% endcomment %}
+                    {% with media=alocacao|get_media_alocacao %}
+                    <td> {% comment %} <!-- Grupo --> {% endcomment %}
+                      <span lang="pt">{% language "pt-br" %}{{ media.media_grupo|floatformat:2}}{% endlanguage %}</span>
+                      <span lang="en" style="display:none">{% language "en" %}{{ media.media_grupo|floatformat:2}}{% endlanguage %}</span>
+                    </td>
+                    {% endwith %}
+                  {% endwith %}
+
                   {% comment %} Banca Falconi {% endcomment %}
                   <td class="align-top">
                     {% if banca_falconi.banca %}
@@ -214,13 +250,11 @@
               </tr>
 
             {% empty %}
-              <tr><td colspan="6">
+              <tr><td colspan="8">
                 {% lng "Não existem projetos disponíveis." "There are no projects available." %}
               </td></tr>
             {% endfor %}
           </tbody>
-
-        {% endif %}
 
       </table>
       
@@ -295,7 +329,7 @@
 
     <script>
       {% if edicao != "todas" %}
-        $("#ProjetosTable tr > *:nth-child(2)").hide();
+        $("#ProjetosTable tr > *:nth-child(3)").hide();
         $("#info_"+"Período").prop("checked", false);
       {% else %}
         $("#info_"+"Período").prop("checked", true);

@@ -2497,6 +2497,9 @@ def resultado_p_certificacao(request):
                     recomendacoes["Banca Intermediária"].append({"destaque_texto": "media BI e RIG >= 7"})
                     recomendacoes["Banca Final"].append({"destaque_texto": "media BF e RFG >= 7",})
 
+                # Banca Intermediária
+                aval_i = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="BI")  # BI
+
                 # Banca Falconi
                 aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
                 #nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
@@ -2551,11 +2554,16 @@ def resultado_p_certificacao(request):
         configuracao = get_object_or_404(Configuracao)
         selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
+        try:
+            regulamento = Documento.objects.filter(tipo_documento__sigla="RCF").order_by("-data").last()  # Regulamento da Certificação Falconi
+        except Documento.DoesNotExist:
+            regulamento = None
+
         informacoes = [
-            ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
-            ("#ProjetosTable tr > *:nth-child(3)", "Orientador", "Advisor"),
-            ("""#ProjetosTable tr > *:nth-child(4),
-                #ProjetosTable tr > *:nth-child(5)""", "Recomendações", "Recommendations"),
+            ("#ProjetosTable tr > *:nth-child(3)", "Período", "Semester"),
+            ("#ProjetosTable tr > *:nth-child(4)", "Orientador", "Advisor"),
+            ("""#ProjetosTable tr > *:nth-child(5),
+                #ProjetosTable tr > *:nth-child(6)""", "Recomendações", "Recommendations"),
             (".grupo", "Grupo", "Group"),
             (".email", "e-mail", "e-mail", "grupo"),
             (".curso", "curso", "program", "grupo"),
@@ -2566,6 +2574,7 @@ def resultado_p_certificacao(request):
             "edicoes": edicoes,
             "selecionada": selecionada,
             "informacoes": informacoes,
+            "regulamento": regulamento,
         }
 
     return render(request, "professores/resultado_p_certificacao.html", context)
