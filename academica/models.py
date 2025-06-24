@@ -31,6 +31,9 @@ class Exame(models.Model):
     banca = models.BooleanField("Banca", default=False,
                                 help_text="Caso Verdadeiro é um exame em formato de Banca")
     
+    ordem = models.PositiveSmallIntegerField("Ordem", default=999,
+                                             help_text="Ordem do Exame, usado para ordenar os exames")
+    
     PERIODOS_RUBRICAS = (
         (0, "Não Aplicável"),
         (1, "Intermediário"),

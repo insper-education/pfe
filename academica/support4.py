@@ -62,54 +62,68 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
     now = datetime.datetime.now()
 
-    print("get_notas_estudante", estudante.user.get_full_name(), alocacoes.count(), "alocações")
-
     # Sigla, Nome, Grupo, Nota/Check, Banca
-    pavaliacoes = [
-        ("RP", "Relatório Preliminar", True, False, None),
-        ("RII", "Relatório Intermediário Individual", False, True, None),
-        ("RIG", "Relatório Intermediário de Grupo", True, True, None),
-        ("BI", "Banca Intermediária", True, True, "BI"),
-        ("RFG", "Relatório Final de Grupo", True, True, None),
-        ("RFI", "Relatório Final Individual", False, True, None),
-        ("BF", "Banca Final", True, True, "BF"),
-        ("P", "Probation", False, True, "P"),
-        # ABAIXO NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES
-        ("PPF", "Planejamento Primeira Fase", True, False, None),
-        ("API", "Avaliação Parcial Individual", False, True, None),
-        ("AFI", "Avaliação Final Individual", False, True, None),
-        ("APG", "Avaliação Parcial de Grupo", True, True, None),
-        ("AFG", "Avaliação Final de Grupo", True, True, None),
-        # A principio não mostra aqui as notas da certificação Falconi
-    ]
+    # pavaliacoes = [
+    #     # NÃO MAIS USADAS, FORAM USADAS QUANDO AINDA EM DOIS SEMESTRES       
+    #     ("AFG", "Avaliação Final de Grupo", True, True, None),
+    #     ("AFI", "Avaliação Final Individual", False, True, None),
+    #     ("APG", "Avaliação Parcial de Grupo", True, True, None),
+    #     ("API", "Avaliação Parcial Individual", False, True, None),
+    #     # A principio não mostra aqui as notas da certificação Falconi
+    #     ("BF", "Banca Final", True, True, "BF"),
+    #     ("BI", "Banca Intermediária", True, True, "BI"),
+    #     ("P", "Probation", False, True, "P"),
+    #     ("PPF", "Planejamento Primeira Fase", True, False, None),   # ANTIGO
+    #     ("RFG", "Relatório Final de Grupo", True, True, None),
+    #     ("RFI", "Relatório Final Individual", False, True, None),
+    #     ("RIG", "Relatório Intermediário de Grupo", True, True, None),
+    #     ("RII", "Relatório Intermediário Individual", False, True, None),
+    #     #("RP", "Relatório Preliminar", True, False, None),
+    # ]
 
+    exames = Exame.objects.all().order_by("ordem")
+    exames = exames.exclude(sigla="F")  # Exclui o exame de certificação Falconi
+    
     edicao = {}  # dicionário para cada alocação do estudante
     for alocacao in alocacoes:
         
         notas = []  # iniciando uma lista de notas vazia
 
-        for pa in pavaliacoes:
+        #for pa in pavaliacoes:
+        for exame in exames:
             checa_b = checa_banca
             banca = None
-            if pa[4]:  # Banca
-                if pa[2]:  # Grupo - Intermediária/Final
-                    banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
+            #if pa[4]:  # Banca
+            if exame.banca:
+
+                #if pa[2]:  # Grupo - Intermediária/Final
+                if exame.grupo:  # Grupo - Intermediária/Final
+                    #banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
+                    banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=exame.sigla).last()
                 else:  # Individual - Probation
-                    banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
+                    #banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
+                    banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=exame.sigla).last()
             try:
-                exame=Exame.objects.get(sigla=pa[0])
-                if pa[2]:  # GRUPO
+                #exame=Exame.objects.get(sigla=pa[0])
+                #if pa[2]:  # GRUPO
+                if exame.grupo:  # GRUPO
                     paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
                 else:  # INDIVIDUAL
                     paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
 
                 if paval:
-                    if pa[4] and banca:  # Banca
+                    #if pa[4] and banca:  # Banca
+                    if exame.banca and banca:  # Banca
+                        
                         valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
                         # Verifica se já passou o evento de encerramento e assim liberar notas
                         evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
-                        if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
+
+                        #if pa[4] != "F" and  evento:  # Não é banca probation e tem evento de encerramento
+
+                        ### ACHO QUE É UM UM 'P' AQUI
+                        if exame.sigla != 'P' and  evento:  # Não é banca probation e tem evento de encerramento
                             # Após o evento de encerramento liberar todas as notas
                             if now.date() > evento.endDate:
                                 checa_b = False
@@ -125,32 +139,39 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         if valido:
                             banca_info = get_banca_estudante(estudante, paval)
                             notas.append({
-                                "sigla": pa[0],
+                                #"sigla": pa[0],
+                                "sigla": exame.sigla,
                                 "nota": banca_info["media"],
                                 "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                                "nome": pa[1],
+                                #"nome": pa[1],
+                                "nome": exame.titulo,
                                 "banca": True,
                                 "objetivos": banca_info["objetivos"]
                             })
 
                     else:
-                        if pa[3]:  # Nota
+                        #if pa[3]:  # Nota
+                        if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)
                             banca_info = get_banca_estudante(estudante, paval)
                             notas.append({
-                                "sigla": pa[0],
+                                #"sigla": pa[0],
+                                "sigla": exame.sigla,
                                 "nota": banca_info["media"],
                                 "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                                "nome": pa[1],
+                                #"nome": pa[1],
+                                "nome": exame.titulo,
                                 "banca": False,
                                 "objetivos": banca_info["objetivos"]
                             })
                         else:  # Check
                             pnp = paval.order_by("momento").last()
                             notas.append({
-                                "sigla": pa[0],
+                                #"sigla": pa[0],
+                                "sigla": exame.sigla,
                                 "nota": float(pnp.nota) if pnp.nota else None,
                                 "peso": pnp.peso/100 if pnp.peso else 0,
-                                "nome": pa[1],
+                                #"nome": pa[1],
+                                "nome": exame.titulo,
                                 "banca": False,
                                 "objetivos": None
                             })
