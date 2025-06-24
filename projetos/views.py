@@ -959,7 +959,7 @@ def lista_feedback_estudantes(request):
                 values("estudante").distinct().count()
             num_feedbacks.append(numb_feedb)
 
-        alocacoes = Alocacao.objects.filter(aluno__trancado=False)
+        alocacoes = Alocacao.objects.filter(aluno__trancado=False, aluno__externo__isnull=True)
 
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
