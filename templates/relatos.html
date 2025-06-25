@@ -9,12 +9,13 @@
 {% load relatos %}
 {% load linguas %}
 {% load alocacao %}
+{% load relatos %}
 
 <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
 
 {% if projeto %}
   <table class="tabela_redu_estu table-striped"><tbody>
-  {% for evento, relatos, avaliados, observacoes in projeto|traz_relatos %}
+  {% for evento, relatos, avaliados, observacoes in projeto|busca_relatos %}
     <tr style="padding-left: 18px;">
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>{{ forloop.counter }}&ordm;</a></td>
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>
@@ -45,17 +46,30 @@
           </span>
         {% else %}
           {% if relatos %}
-            {% if avaliados %}
+            {% with paval=avaliados|porcentagem_relatos_avaliados %}
+            {% if paval > 0 %}
               <a href="{% url 'relato_avaliar' projeto.id evento.id %}">
-                <span style="color:green">
-                  {% lng "Avaliado pelo orientador" "Evaluated by the advisor" %}
-                </span>
-                {% for avaliado in avaliados %}
+                {% if paval < 1 %}
+                  <span style="color:brown">
+                    {% lng "Avaliado parcialmente pelo orientador" "Partially evaluated by the advisor" %}
+                  </span>
+                {% else %}
+                  <span style="color:green">
+                    {% lng "Avaliado pelo orientador" "Evaluated by the advisor" %}
+                  </span>
+                {% endif %}
+
+                {% for alocacao, relato in avaliados.items %}
                   <script>
-                    {% if avaliado.0 %}
-                      $("#s{{avaliado.1.id}}_e{{evento.id}}").html("&#x1F44D;");
+                    {% comment %} O primeiro relato deveria ser o último avaliado pelo orientador (não está ordenado por data de avaliação) {% endcomment %}
+                    {% if relato.0.avaliacao > 0 %}
+                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44D;");
+                    {% elif relato.0.avaliacao == 0 %}
+                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44E;");
                     {% else %}
-                      $("#s{{avaliado.1.id}}_e{{evento.id}}").html("&#x1F44E;");
+                      {% comment %} Não avaliado ainda {% endcomment %}
+                      {% comment %} $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F937;"); {% endcomment %}
+                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#8987;");
                     {% endif %}
                   </script>
                 {% endfor %}
@@ -70,6 +84,7 @@
                 </span>
               </a>
             {% endif %}
+            {% endwith %}
           {% else %}
             <span style="color:red">
               {% lng "Sem relatos dos estudantes" "No reports from students" %}

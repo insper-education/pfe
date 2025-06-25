@@ -10,7 +10,7 @@ from django import template
 
 from estudantes.models import Relato
 from projetos.models import Evento
-from projetos.support2 import busca_relatos
+from projetos.support2 import busca_relatos as busca_relatos_external
 
 register = template.Library()
 
@@ -32,9 +32,9 @@ def get_relatos(alocacao):
 
 
 @register.filter
-def traz_relatos(projeto):
-    """Buscar os relatos."""
-    return busca_relatos(projeto)
+def busca_relatos(projeto):
+    """Busca relatos quinzenais de um projeto."""
+    return busca_relatos_external(projeto)
 
 @register.filter
 def has_relatos(projeto):
@@ -54,3 +54,14 @@ def get_relatos_edicao(edicao):
     
     return eventos
 
+@register.filter
+def porcentagem_relatos_avaliados(relatos):
+    """Verifica se todos os relatos quinzenais foram avaliados."""
+    total = len(relatos)
+    if total == 0:
+        return 0
+    avaliados = 0
+    for alocacao, relato in relatos.items():
+        if relato[0].avaliacao > -1:
+            avaliados += 1
+    return avaliados/total if total > 0 else 0

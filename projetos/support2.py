@@ -100,29 +100,27 @@ def busca_relatos(self):
     for index in range(len(eventos)):
     
         if not index: # index == 0:
-            relato = Relato.objects.filter(alocacao__projeto=self,
-                                            momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
+            relatos_evento = Relato.objects.filter(alocacao__projeto=self,
+                                                   momento__lte=eventos[0].endDate + datetime.timedelta(days=1))
 
             obs = Observacao.objects.filter(projeto=self, exame=exame,
                                             momento__lte=eventos[0].endDate + datetime.timedelta(days=1)).last()
         else:
-            relato = Relato.objects.filter(alocacao__projeto=self,
-                                            momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
-                                            momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
+            relatos_evento = Relato.objects.filter(alocacao__projeto=self,
+                                                   momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
+                                                   momento__lte=eventos[index].endDate + datetime.timedelta(days=1))
 
             obs = Observacao.objects.filter(projeto=self, exame=exame,
                                             momento__gt=eventos[index-1].endDate + datetime.timedelta(days=1), 
                                             momento__lte=eventos[index].endDate + datetime.timedelta(days=1)).last()
 
-        avaliado = []
-        for r in relato:
-            if r.avaliacao > 0:
-                avaliado.append([True, r.alocacao.aluno])  # Tupla informando que foi adequado para aluno
-            if r.avaliacao == 0:
-                avaliado.append([False, r.alocacao.aluno])   # Tupla informando que foi inadequado para aluno
-            # Senão não foi avaliado ainda
+        avaliado = {}
+        for relato in relatos_evento:
+            if relato.alocacao not in avaliado:
+                avaliado[relato.alocacao] = []
+            avaliado[relato.alocacao].append(relato)
 
-        relatos.append(relato)
+        relatos.append(relatos_evento)
         avaliados.append(avaliado)
         observacoes.append(obs)
 

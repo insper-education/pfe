@@ -40,6 +40,7 @@ class Relato(models.Model):
     class Meta:
         verbose_name = "Relato"
         verbose_name_plural = "Relatos"
+        #ordering # Ordena sequencial deveria ser respeitada para as datas
 
 
 class Pares(models.Model):

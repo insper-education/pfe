@@ -336,34 +336,36 @@ def check_planos_de_orientacao(projetos, ano, semestre, PRAZO):
 
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
-    relatos_quinzenais_cor = 'b'
-    relatos_quinzenais_itens = []
+    cor = 'b'
+    itens = []
     atraso = 0
+    today = datetime.date.today()
     for projeto in projetos:
         for evento, relatos, avaliados, _ in busca_relatos(projeto):
-            if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
-                if relatos:
-                    atraso_evento = 0
-                    for relato in relatos:
-                        if relato.momento_avaliacao:
-                            atraso_tmp = (relato.momento_avaliacao.date() - (evento.endDate + datetime.timedelta(days=PRAZO))).days
-                            if atraso_tmp > atraso_evento: # Pega o maior atraso dos estudantes em um evento
-                                atraso_evento = atraso_tmp
+            if not evento or evento.em_prazo():  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
+                continue
+            if relatos:
+                atraso_evento = 0
+                for alocacao, relato in avaliados.items():
+                    momento = relato[0].momento_avaliacao
+                    prazo_evento = evento.endDate + datetime.timedelta(days=PRAZO)
+                    atraso_tmp = ((momento.date() if momento else today) - prazo_evento).days
+                    atraso_evento = max(atraso_evento, atraso_tmp)
 
-                    if avaliados and relatos_quinzenais_cor not in ['r', 'y']:  # Verifica se a tupla (nota, aluno) foi informada
-                        relatos_quinzenais_cor = 'g'
-                    elif (not avaliados) and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
-                        relatos_quinzenais_cor = 'r'
-                        relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
-                    elif relatos_quinzenais_cor != 'r':
-                        relatos_quinzenais_cor = 'y'
-                        relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
+                    if relato[0].avaliacao > -1 and cor not in ['r', 'y']:
+                        cor = 'g'
+                    elif relato[0].avaliacao < 0 and today > prazo_evento:
+                        cor = 'r'
+                        itens.append(f"{projeto} - {evento}")
+                    elif cor != 'r':
+                        cor = 'y'
+                        itens.append(f"{projeto} - {evento}")
 
-                    atraso += atraso_evento
+                atraso += atraso_evento
 
-                elif relatos_quinzenais_cor not in ['r', 'y']:
-                    relatos_quinzenais_cor = 'g'
-    return {"relatos_quinzenais": {"cor": relatos_quinzenais_cor, "prazo": None, "itens": relatos_quinzenais_itens, "atraso": atraso}}
+            elif cor not in ['r', 'y']:
+                cor = 'g'
+    return {"relatos_quinzenais": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
     def process_item(item, avals, docs, dias_passados):
