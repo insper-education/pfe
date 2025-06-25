@@ -2192,12 +2192,12 @@ def relato_avaliar(request, projeto_id, evento_id):
                     relato.avaliacao = obj_nota
                     if( -0.5 < obj_nota < 0.5 ): # Para testar se zero (preciso melhorar isso)
                         avaliacao_negativa = True
-                    relato.momento_avaliacao = datetime.datetime.now()
+                    if relato.momento_avaliacao is None:  # Se o relato não tiver sido avaliado ainda
+                        relato.momento_avaliacao = datetime.datetime.now()
 
                 feedback = request.POST.get("feedback" + str(relato.id), None)
                 if feedback and feedback != "" and feedback != relato.feedback:
                     relato.feedback = feedback
-                    relato.momento_avaliacao = datetime.datetime.now()
 
                     # Manda mensagem para estudante
                     corpo_email = f"{relato.alocacao.aluno.user.get_full_name()},<br>\n<br>\n"

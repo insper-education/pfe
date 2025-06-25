@@ -338,11 +338,20 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm as avaliações dos relatos quinzenais
     relatos_quinzenais_cor = 'b'
     relatos_quinzenais_itens = []
+    atraso = 0
     for projeto in projetos:
         for evento, relatos, avaliados, _ in busca_relatos(projeto):
             if evento and (not evento.em_prazo()):  # Prazo para estudantes, assim ja deviam ter sido avaliados ou em vias de.
                 if relatos:
-                    if avaliados and relatos_quinzenais_cor not in ['r', 'y']:
+                    atraso_evento = 0
+                    for relato in relatos:
+                        if relato.momento_avaliacao:
+                            atraso_tmp = (relato.momento_avaliacao.date() - (evento.endDate + datetime.timedelta(days=PRAZO))).days
+                            if atraso_tmp > atraso_evento: # Pega o maior atraso dos estudantes em um evento
+                                atraso_evento = atraso_tmp
+                    atraso += atraso_evento
+                           
+                    if avaliados and relatos_quinzenais_cor not in ['r', 'y']:  # Verifica se a tupla (nota, aluno) foi informada
                         relatos_quinzenais_cor = 'g'
                     elif (not avaliados) and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
                         relatos_quinzenais_cor = 'r'
@@ -352,7 +361,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                         relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
                 elif relatos_quinzenais_cor not in ['r', 'y']:
                     relatos_quinzenais_cor = 'g'
-    return {"relatos_quinzenais": {"cor": relatos_quinzenais_cor, "prazo": None, "itens": relatos_quinzenais_itens}}
+    return {"relatos_quinzenais": {"cor": relatos_quinzenais_cor, "prazo": None, "itens": relatos_quinzenais_itens, "atraso": atraso}}
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
     def process_item(item, avals, docs, dias_passados):

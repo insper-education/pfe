@@ -22,4 +22,17 @@ def alocacoes_insper(projeto):
     except Alocacao.DoesNotExist:
         alocacoes = None
     return alocacoes
-    
+
+@register.filter
+def alocacoes_puxa_ids(relatos):
+    """
+    Retorna os IDs das alocações de um relato.
+    """
+    if not relatos:
+        return None
+    try:
+        alocacoes = [relato.alocacao.id for relato in relatos]
+    except AttributeError:
+        alocacoes = None
+    return alocacoes
+

@@ -117,14 +117,13 @@ def busca_relatos(self):
         avaliado = []
         for r in relato:
             if r.avaliacao > 0:
-                avaliado.append([True, r.alocacao.aluno])
-            if r.avaliacao == 0:
-                avaliado.append([False, r.alocacao.aluno])
+                avaliado.append([True, r.alocacao.aluno])  # Tupla informando que foi adequado para aluno
+            elif r.avaliacao == 0:
+                avaliado.append([False, r.alocacao.aluno])   # Tupla informando que foi inadequado para aluno
+            # Senão não foi avaliado ainda
 
-        relatos.append([u[0] for u in relato.order_by().values("alocacao").distinct().values_list("alocacao_id")])
-
+        relatos.append(relato)
         avaliados.append(avaliado)
-
         observacoes.append(obs)
 
     return zip(eventos, relatos, avaliados, observacoes)

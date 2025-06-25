@@ -8,18 +8,9 @@
 {% load i18n %}
 {% load relatos %}
 {% load linguas %}
+{% load alocacao %}
 
 <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">
-
-<style>
-  {% comment %} REMOVE vvvvv {% endcomment %}
-  @media screen and (max-width: 420px) {
-    .tabela_redu_estu td {
-        padding: 2px 3px;
-    }
-  }
-  {% comment %} REMOVER ^^^^^ {% endcomment %}
-</style>
 
 {% if projeto %}
   <table class="tabela_redu_estu table-striped"><tbody>
@@ -44,7 +35,7 @@
           <div style="white-space: nowrap;">{% for alocacao in alocacoes %}<a
           href="{% url 'relato_avaliar' projeto.id evento.id %}#{{alocacao.id}}"
                ><small><span style="width:20em;" class="eventor_{{evento.id}}" id="s{{alocacao.aluno.id}}_e{{evento.id}}" data-toggle="tooltip" data-html="true" animation="true" title="{{alocacao.aluno}}"
-               >{% if alocacao.id in relatos %}&#9989;{% else %}&#10060;{% endif %}</span></small></a
+               >{% if alocacao.id in relatos|alocacoes_puxa_ids %}&#9989;{% else %}&#10060;{% endif %}</span></small></a
            >{% endfor %}</div>
         </td>
         <td>
