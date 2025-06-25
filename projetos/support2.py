@@ -118,7 +118,7 @@ def busca_relatos(self):
         for r in relato:
             if r.avaliacao > 0:
                 avaliado.append([True, r.alocacao.aluno])  # Tupla informando que foi adequado para aluno
-            elif r.avaliacao == 0:
+            if r.avaliacao == 0:
                 avaliado.append([False, r.alocacao.aluno])   # Tupla informando que foi inadequado para aluno
             # Senão não foi avaliado ainda
 

@@ -349,8 +349,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                             atraso_tmp = (relato.momento_avaliacao.date() - (evento.endDate + datetime.timedelta(days=PRAZO))).days
                             if atraso_tmp > atraso_evento: # Pega o maior atraso dos estudantes em um evento
                                 atraso_evento = atraso_tmp
-                    atraso += atraso_evento
-                           
+
                     if avaliados and relatos_quinzenais_cor not in ['r', 'y']:  # Verifica se a tupla (nota, aluno) foi informada
                         relatos_quinzenais_cor = 'g'
                     elif (not avaliados) and datetime.date.today() > evento.endDate + datetime.timedelta(days=PRAZO):
@@ -359,6 +358,9 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                     elif relatos_quinzenais_cor != 'r':
                         relatos_quinzenais_cor = 'y'
                         relatos_quinzenais_itens.append(str(projeto) + " - " + str(evento))
+
+                    atraso += atraso_evento
+
                 elif relatos_quinzenais_cor not in ['r', 'y']:
                     relatos_quinzenais_cor = 'g'
     return {"relatos_quinzenais": {"cor": relatos_quinzenais_cor, "prazo": None, "itens": relatos_quinzenais_itens, "atraso": atraso}}
