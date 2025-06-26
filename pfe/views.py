@@ -45,19 +45,10 @@ def custom_400(request, exception):
     #t.render(Context({"exception_value": value,})
     return HttpResponse(mensagem)
 
-import datetime
-from projetos.models import Avaliacao2
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-        
-    for avaliacao in Avaliacao2.objects.all():
-        avaliacao.primeiro_momento = avaliacao.momento
-        avaliacao.save()
-
-    message = "Feito"
-
     return HttpResponse(message)
