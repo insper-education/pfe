@@ -1694,6 +1694,9 @@ class Avaliacao2(models.Model):
 
     na = models.BooleanField("Não Avaliado", default=False,
                              help_text="Caso o avaliador não tenha avaliado esse quesito")
+    
+    primeiro_momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
+                                            help_text="Data e hora da primeira ver que a avaliação foi feita (para controle de professores)")
 
     def __str__(self):
         return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"

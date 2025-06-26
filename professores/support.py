@@ -368,19 +368,30 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     return {"relatos_quinzenais": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
-    def process_item(item, avals, docs, dias_passados):
+    def process_item(item, avals, docs, dias_passados, evento):
         nonlocal avaliar_entregas_cor
+        nonlocal atraso
+        atraso_local = 0
         for documento in docs:
             if avals:
+                atraso_tmp = (avals.first().primeiro_momento.date() - evento.data_aval()).days - PRAZO
+                if atraso_tmp > atraso_local:
+                    atraso_local = atraso_tmp
+
                 diff_entrega = (documento.data - avals.first().momento)
                 if diff_entrega.total_seconds() > 0:
                     if avaliar_entregas_cor not in ['r', 'y']:
-                        avaliar_entregas_cor = 'p'
+                        avaliar_entregas_cor = 'p'  # Refazer a avaliação
                     avaliar_entregas_itens.append(item["evento"])
                 else:
                     if avaliar_entregas_cor == 'b':
                         avaliar_entregas_cor = 'g'
             else:
+
+                atraso_tmp = dias_passados - PRAZO
+                if atraso_tmp > atraso_local:
+                    atraso_local = atraso_tmp
+
                 if dias_passados > PRAZO:
                     avaliar_entregas_cor = 'r'
                     avaliar_entregas_itens.append(item["evento"])
@@ -388,9 +399,11 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
                     if avaliar_entregas_cor != 'r':
                         avaliar_entregas_cor = 'y'
                     avaliar_entregas_itens.append(item["evento"])
+        atraso += atraso_local
 
     avaliar_entregas_cor = 'b'
     avaliar_entregas_itens = []
+    atraso = 0
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
     for projeto in projetos:
         entregas = filtra_entregas(composicoes, projeto)
@@ -400,11 +413,11 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
                 dias_passados = (datetime.date.today() - evento.data_aval()).days
                 if dias_passados > 0 and item.get("composicao") and item["composicao"].exame:
                     if item["composicao"].exame.grupo:
-                        process_item(item, item.get("avaliacoes"), item.get("documentos", []), dias_passados)
+                        process_item(item, item.get("avaliacoes"), item.get("documentos", []), dias_passados, evento)
                     else:
                         for values in (item.get("alocacoes") or {}).values():
-                            process_item(item, values.get("avaliacoes"), values.get("documentos", []), dias_passados)
-    return {"avaliar_entregas": {"cor": avaliar_entregas_cor, "prazo": None, "itens": avaliar_entregas_itens}}
+                            process_item(item, values.get("avaliacoes"), values.get("documentos", []), dias_passados, evento)
+    return {"avaliar_entregas": {"cor": avaliar_entregas_cor, "prazo": None, "itens": avaliar_entregas_itens, "atraso": atraso}}
 
 
 def check_bancas_index(projetos, ano, semestre, PRAZO):

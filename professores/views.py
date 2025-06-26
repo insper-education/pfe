@@ -1383,7 +1383,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     julgamento[i].na = False
                 
                 julgamento[i].momento = datetime.datetime.now()
-
                 julgamento[i].save()
 
         else:
