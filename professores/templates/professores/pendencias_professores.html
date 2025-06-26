@@ -11,6 +11,11 @@
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <script src="{% static 'js/sort.js' %}"></script>
+  <style>
+    .link_circulo:hover, .link_circulo:focus {
+      text-decoration: none;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -33,7 +38,7 @@
               <td class="text-center">
                 {% with estado=pendencias|get_value:tipo.1 %}
                   {% if estado %}
-                    <a href="{% url tipo.1 professor.id %}">
+                    <a class="link_circulo" href="{% url tipo.1 professor.id %}">
                       <span class="circulo">{% include "circulo_estados.html" with estado=estado com_atraso=True %}</span>
                     </a>
                   {% endif %}
