@@ -49,7 +49,7 @@ from professores.support3 import get_banca_incompleta
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
 from projetos.models import Banca, Evento, Encontro, Documento, Certificado
 from projetos.models import Projeto, Configuracao, Organizacao
-from projetos.support3 import get_objetivos_atuais
+from projetos.support4 import get_objetivos_atuais
 from projetos.support2 import get_alocacoes, get_pares_colegas
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica
 from projetos.arquivos import le_arquivo

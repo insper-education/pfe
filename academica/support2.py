@@ -8,7 +8,7 @@ Data: 15 de Janeiro de 2024
 
 import logging
 
-from projetos.models import ObjetivosDeAprendizagem
+from projetos.support4 import get_objetivos_atuais
 
 
 # Get an instance of a logger
@@ -19,7 +19,9 @@ def get_objetivos(avaliado, avaliacoes):
     lista_objetivos = {}
     avaliadores = set()
 
-    for objetivo in ObjetivosDeAprendizagem.objects.all():
+    objetivos = get_objetivos_atuais(ano=avaliado.ano, semestre=avaliado.semestre)
+
+    for objetivo in objetivos:
         avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")
         if avaliacoes_p_obj:
             for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média

@@ -44,7 +44,8 @@ from operacional.models import Curso
 from projetos.models import Certificado, Configuracao, Projeto, Conexao, Encontro, Evento
 from projetos.models import Banca, Area, Coorientador, Avaliacao2, Observacao, Reprovacao
 from projetos.messages import email
-from projetos.support3 import calcula_objetivos, get_objetivos_atuais, get_notas_alocacao
+from projetos.support3 import calcula_objetivos, get_notas_alocacao
+from projetos.support4 import get_objetivos_atuais
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
