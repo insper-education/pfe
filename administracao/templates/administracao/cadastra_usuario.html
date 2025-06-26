@@ -29,7 +29,7 @@
     <label for="nome">
       {% lng "Nome do Usuário" "User Name" %}
     </label><br>
-    <input type="text" size="77" maxlength="120" id="nome" name="nome" value="{{usuario.first_name}} {{usuario.last_name}}"
+    <input type="text" size="77" maxlength="120" id="nome" name="nome" {% if usuario %}value="{{usuario.first_name}} {{usuario.last_name}}"{% elif nome %}value="{{nome}}"{% endif %}
       pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required>
     <br>
     
@@ -46,12 +46,14 @@
     </div>
     <br>
 
-    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required>
+    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% elif email %}value="{{email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required>
     <br><br>
     
     <label style="width: 4rem;" for="telefone">
       {% lng "telefone:" "phone:" %}
-    </label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% endif %}><br>
+    </label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% elif telefone %}value="{{telefone}}"{% endif %}><br>
+    
+    {% comment %} Celular {% endcomment %}
     <label style="width: 4rem;" for="celular">
       {% lng "celular:" "mobile:" %}
     </label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
@@ -215,7 +217,7 @@
       
       <label style="margin-top: 10px;" for="cargo">
         {% lng "Cargo:" "Position:" %}
-      </label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro 'cargo' %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% endif %}><br>
+      </label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro 'cargo' %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% elif cargo %}value="{{cargo}}"{% endif %}><br>
 
       <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
       <label for="principal_contato">

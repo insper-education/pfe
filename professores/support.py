@@ -356,10 +356,10 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                         cor = 'g'
                     elif relato[0].avaliacao < 0 and today > prazo_evento:
                         cor = 'r'
-                        itens.append(f"{projeto} - {evento}")
+                        itens.append(f"{evento} - {projeto.get_titulo_org()} - {alocacao.aluno.user.get_full_name()}")
                     elif cor != 'r':
                         cor = 'y'
-                        itens.append(f"{projeto} - {evento}")
+                        itens.append(f"{evento} - {projeto.get_titulo_org()} - {alocacao.aluno.user.get_full_name()}")
 
                 atraso += atraso_evento
 

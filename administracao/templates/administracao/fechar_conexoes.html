@@ -65,7 +65,7 @@
       <br>
       
       {% with conexoes=projeto.conexao_set.all %}
-      <table class="table table-borderless table-sm" style="width: 47em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
+      <table class="table table-borderless table-sm" style="width: 51.5em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
         <tbody>
           {% for parceiro in projeto.organizacao.parceiro_set.all %}
             <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
@@ -106,56 +106,146 @@
                                  name="recursos_humanos" value="{{parceiro.id}}" checked>AA</label>
                       </div>
                     </td>
-
               {% endwith %}
-            
             </tr>
-
           {% endfor %}
         </tbody>
       </table>
 
-      <div class="contatos_apres">
+      <div class="contatos_apres" style="background: #F5F5F5;">
+        <strong>{% lng "Proposta criado por" "Proposal created by" %}:</strong>
+        {{projeto.proposta.nome}} 
+        <a href="mailto:{{projeto.proposta.email}}">&lt;{{projeto.proposta.email}}&gt;</a>
+      </div>
+      <div class="contatos_apres" style="background: #F5F5F5;">
         <strong>
           {% lng "Contatos Técnicos apresentados na Proposta" "Technical Contacts presented in the Proposal" %}
         </strong><br>
-        {% if projeto.proposta.contatos_tecnicos %}
-          {{projeto.proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-        {% elif projeto.proposta|contatos_tec %}
-          {% for contato in projeto.proposta|contatos_tec %}
-            {{contato}}
-          {% endfor %}
-        {% else %}
-          <span style="color: red;">
-            {% lng "Não foram informados contatos técnicos na proposta." "No technical contacts were informed in the proposal." %}
-          </span>
-        {% endif %}
+        <div class="row g-2 ml-1 mt-2">
+          {% if projeto.proposta.contatos_tecnicos.strip %}
+            <div class="col-11">
+              <div class="card shadow-sm mb-2 border-primary">
+                <div class="card-body py-1 pl-2 pr-1">
+                  {{projeto.proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+                  <div style="margin-top: 2px;">
+                    <a class="btn btn-sm btn-success px-1 py-1 float-right" style="font-size: 0.6em; line-height: 1.0;" target="_blank" rel="noopener noreferrer"
+                      href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&proposta={{projeto.proposta.id}}'>
+                      <i class="fa fa-user-plus"></i> {% lng "Cadastrar" "Register" %}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% elif projeto.proposta|contatos_tec %}
+            {% for contato in projeto.proposta|contatos_tec %}
+              <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm mb-2 border-primary">
+                  <div class="card-body py-1 pl-2 pr-1">
+                    <h6 class="card-title mb-1">
+                      <i class="fa fa-user-circle text-primary"></i> {{ contato.nome }}
+                    </h6>
+                    <ul class="list-unstyled mb-0 small">
+                      {% if contato.email %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-envelope text-secondary"></i>
+                          <a href="mailto:{{ contato.email }}">{{ contato.email }}</a>
+                        </li>
+                      {% endif %}
+                      {% if contato.telefone %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-phone text-secondary"></i>
+                          {{ contato.telefone }}
+                        </li>
+                      {% endif %}
+                      {% if contato.cargo %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-briefcase text-secondary"></i>
+                          {{ contato.cargo }}
+                        </li>
+                      {% endif %}
+                    </ul>
+                    <div class="d-flex justify-content-end" style="margin-top: 2px;">
+                      <a class="btn btn-sm btn-success px-1 py-1" style="font-size: 0.6em; line-height: 1.0;" target="_blank" rel="noopener noreferrer"
+                        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&nome={{ contato.nome }}&email={{ contato.email }}&telefone={{ contato.telefone }}&cargo={{ contato.cargo }}'> 
+                        <i class="fa fa-user-plus"></i> {% lng "Cadastrar" "Register" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <span style="color: red;">
+              {% lng "Não foram informados contatos técnicos na proposta." "No technical contacts were informed in the proposal." %}
+            </span>
+          {% endif %}
+        </div>
       </div>
 
-      <div class="contatos_apres">
+      <div class="contatos_apres" style="background: #F5F5F5;">
         <strong>
           {% lng "Contatos Administrativos apresentados na Propota" "Administrative Contacts presented in the Proposal" %}
         </strong><br>
-        {% if projeto.proposta.contatos_administrativos %}
-          {{projeto.proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-        {% elif projeto.proposta|contatos_adm %}
-          {% for contato in projeto.proposta|contatos_adm %}
-            {{contato}}
-          {% endfor %}
-        {% else %}
-          <span style="color: red;">
-            {% lng "Não foram informados contatos administrativos na proposta." "No administrative contacts were informed in the proposal." %}
-          </span>
-        {% endif %}
+        <div class="row g-2 ml-1 mt-2">
+          {% if projeto.proposta.contatos_administrativos.strip %}
+            <div class="col-11">
+              <div class="card shadow-sm mb-2 border-primary">
+                <div class="card-body py-1 pl-2 pr-1">
+                  {{projeto.proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+                  <div style="margin-top: 2px;">
+                    <a class="btn btn-sm btn-success px-1 py-1 float-right" style="font-size: 0.6em; line-height: 1.0;" target="_blank" rel="noopener noreferrer"
+                      href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&proposta={{projeto.proposta.id}}'>
+                      <i class="fa fa-user-plus"></i> {% lng "Cadastrar" "Register" %}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% elif projeto.proposta|contatos_adm %}
+            {% for contato in projeto.proposta|contatos_adm %}
+              <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm mb-2 border-primary">
+                  <div class="card-body py-1 pl-2 pr-1">
+                    <h6 class="card-title mb-1">
+                      <i class="fa fa-user-circle text-primary"></i> {{ contato.nome }}
+                    </h6>
+                    <ul class="list-unstyled mb-0 small">
+                      {% if contato.email %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-envelope text-secondary"></i>
+                          <a href="mailto:{{ contato.email }}">{{ contato.email }}</a>
+                        </li>
+                      {% endif %}
+                      {% if contato.telefone %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-phone text-secondary"></i>
+                          {{ contato.telefone }}
+                        </li>
+                      {% endif %}
+                      {% if contato.cargo %}
+                        <li class="mb-0 mt-1">
+                          <i class="fa fa-briefcase text-secondary"></i>
+                          {{ contato.cargo }}
+                        </li>
+                      {% endif %}
+                    </ul>
+                    <div class="d-flex justify-content-end" style="margin-top: 2px;">
+                      <a class="btn btn-sm btn-success px-1 py-1" style="font-size: 0.6em; line-height: 1.0;" target="_blank" rel="noopener noreferrer"
+                        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&nome={{ contato.nome }}&email={{ contato.email }}&telefone={{ contato.telefone }}&cargo={{ contato.cargo }}'> 
+                        <i class="fa fa-user-plus"></i> {% lng "Cadastrar" "Register" %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
       </div>
 
       {% endwith %}
 
-      <small><a style="margin-left: 16px; padding: 2px 4px 2px 4px; background: lightgreen; border: 1px solid grey; border-radius: 3px;"
-        target="_blank" rel="noopener noreferrer" 
-        href='{% url "cadastrar_usuario" %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}&proposta={{projeto.proposta.id}}'>
-        {% lng "Cadastrar novo parceiro em" "Register new partner in" %} {{projeto.organizacao.nome}}
-      </a></small>
+
 
     </div>
     {% endfor %}

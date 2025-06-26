@@ -277,49 +277,43 @@ def cadastrar_usuario(request):
         "Professor": Professor,
         "Parceiro": Parceiro,
         "Estudante": Aluno,
+        "titulo": {"pt": "Cadastro de Usuário", "en": "User Registration"},
     }
 
     # Passado o tipo e nome da organização do parceiro (se o caso) a ser cadastrado
-    tipo = request.GET.get("tipo", None)
+    tipo = request.GET.get("tipo")
+    if tipo == "parceiro":
+        org_id = request.GET.get("organizacao")
+        if org_id:
+            try:
+                context["organizacao_selecionada"] = Organizacao.objects.get(id=int(org_id))
+            except (ValueError, Organizacao.DoesNotExist):
+                return HttpResponseNotFound("<h1>Organização não encontrada!</h1>")
+    elif tipo not in (None, "professor", "estudante"):
+        return HttpResponseNotFound("<h1>Tipo não reconhecido!</h1>")
     if tipo:
-        if tipo == "parceiro":
-            organizacao_str = request.GET.get("organizacao", None)
-            if organizacao_str:
-                try:
-                    organizacao_id = int(organizacao_str)
-                    organizacao_selecionada = Organizacao.objects.get(id=organizacao_id)
-                except (ValueError, Organizacao.DoesNotExist):
-                    return HttpResponseNotFound("<h1>Organização não encontrado!</h1>")
-                context["organizacao_selecionada"] = organizacao_selecionada
-
-        elif tipo == "professor":
-            pass
-        elif tipo == "estudante":
-            pass
-        else:
-            return HttpResponseNotFound("<h1>Tipo não reconhecido!</h1>")
         context["tipo"] = tipo
     
     proposta_id = request.GET.get("proposta", None)
     if proposta_id:
         proposta = get_object_or_404(Proposta, id=proposta_id)
         mensagem = ""
-        if proposta.contatos_tecnicos:
+        if proposta.contatos_tecnicos and proposta.contatos_tecnicos.strip():
             mensagem += "<b>Contatos Técnicos apresentados na Propota: " + str(proposta.id) + "</b><br>"
-            mensagem += proposta.contatos_tecnicos
-            mensagem += "<br>"
-        if proposta.contatos_administrativos:
+            mensagem += proposta.contatos_tecnicos + "<br>"
+        if proposta.contatos_administrativos and proposta.contatos_administrativos.strip():
             mensagem += "<b>Contatos Administrativos apresentados na Propota: " + str(proposta.id) + "</b><br>"
-            mensagem += proposta.contatos_administrativos
-            mensagem += "<br>"
-        if proposta.contatos:
+            mensagem += proposta.contatos_administrativos + "<br>"
+        contatos = proposta.contatos.all()
+        if contatos:
             mensagem += "<b>Contatos apresentados na Propota: " + str(proposta.id) + "</b><br>"
-            mensagem += proposta.contatos
-            mensagem += "<br>"
-
+            mensagem += "<br>".join(str(contato) for contato in contatos) + "<br>"
         context["mensagem_aviso"] = {"pt": mensagem, "en": mensagem}
 
-    context["titulo"] = {"pt": "Cadastro de Usuário", "en": "User Registration"}
+    for field in ["nome", "email", "telefone", "cargo"]:  # Outros campos que podem ser passados na URL
+        val = request.GET.get(field)
+        if val:
+            context[field] = val
 
     return render(request, "administracao/cadastra_usuario.html", context)
 
