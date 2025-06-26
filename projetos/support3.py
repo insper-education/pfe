@@ -83,7 +83,7 @@ def get_edicoes_aluno(estudante):
 
             if avaliacoes:
                 if tipo in ["O", "I", "NI"]:
-                    nota, peso, _ = get_objetivos(estudante, avaliacoes)
+                    nota, peso, _ = get_objetivos(avaliacoes, alocacao.projeto.ano, alocacao.projeto.semestre)
                     notas.append((sigla, nota, peso / 100 if peso else 0))
 
         edicao[f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"] = notas

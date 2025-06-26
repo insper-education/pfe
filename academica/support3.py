@@ -75,10 +75,10 @@ def em_probation(alocacao):
                                 valido = False
 
                     if valido:
-                        val_objetivos, _, _ = get_objetivos(alocacao, paval)
+                        val_objetivos, _, _ = get_objetivos(paval, alocacao.projeto.ano, alocacao.projeto.semestre)
 
                 else:
-                    val_objetivos, _, _ = get_objetivos(alocacao, paval)
+                    val_objetivos, _, _ = get_objetivos(paval, alocacao.projeto.ano, alocacao.projeto.semestre)
 
                 if pa[0] == "P":
                     if val_objetivos:

@@ -58,7 +58,7 @@ def get_oas_i(alocacao):
 def get_oas_g(projeto):
     """Retorna Objetivos de Aprendizagem do projeto (grupo) no semestre."""
     avaliacoes = Avaliacao2.objects.filter(projeto=projeto, exame__grupo=True)
-    resultados = get_objetivos(projeto, avaliacoes)[0]
+    resultados = get_objetivos(avaliacoes, projeto.ano, projeto.semestre)[0]
     objetivos = {}
     if resultados:
         for obj, val_pes in resultados.items():

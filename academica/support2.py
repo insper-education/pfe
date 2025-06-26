@@ -14,12 +14,12 @@ from projetos.support4 import get_objetivos_atuais
 # Get an instance of a logger
 logger = logging.getLogger("django")
 
-def get_objetivos(avaliado, avaliacoes):
+def get_objetivos(avaliacoes, ano, semestre):
     """Retorna objetivos de um conjunto de avaliações."""
     lista_objetivos = {}
     avaliadores = set()
 
-    objetivos = get_objetivos_atuais(ano=avaliado.ano, semestre=avaliado.semestre)
+    objetivos = get_objetivos_atuais(ano=ano, semestre=semestre)
 
     for objetivo in objetivos:
         avaliacoes_p_obj = avaliacoes.filter(objetivo=objetivo).order_by("avaliador", "-momento")

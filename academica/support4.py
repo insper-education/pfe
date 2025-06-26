@@ -24,9 +24,9 @@ from users.models import Alocacao
 logger = logging.getLogger("django")
 
 
-def get_banca_estudante(estudante, avaliacoes_banca):
+def get_banca_estudante(avaliacoes_banca, ano, semestre):
     """Retorna média final das bancas informadas."""
-    val_objetivos, pes_total, avaliadores = get_objetivos(estudante, avaliacoes_banca)
+    val_objetivos, pes_total, avaliadores = get_objetivos(avaliacoes_banca, ano, semestre)
 
     media_local = 0.0
     peso_local = 0.0
@@ -107,7 +107,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     break
 
                     if valido:
-                        banca_info = get_banca_estudante(estudante, paval)
+                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
                         notas.append({
                             "sigla": exame.sigla,
                             "nota": banca_info["media"],
@@ -119,7 +119,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
                 else:
                     if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)
-                        banca_info = get_banca_estudante(estudante, paval)
+                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
                         notas.append({
                             "sigla": exame.sigla,
                             "nota": banca_info["media"],

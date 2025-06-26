@@ -1225,14 +1225,18 @@ def analise_notas(request):
         valor = {"ideal": 7.0, "regular": 5.0}
 
         # Criando espaço para todos as notas
-        notas_keys = ["rii", "rig", "bi", "rfi", "rfg", "bf", "rp", "ppf", "api", "apg", "afg", "afi", "p"]
+        notas_keys = []
+        for exame in Exame.objects.all():
+            notas_keys.append(exame.sigla)
+
         notas = {key: {"ideal": 0, "regular": 0, "inferior": 0} for key in notas_keys}
 
         notas_lista = [get_notas_alocacao(x) for x in medias_semestre]
         for nota2 in notas_lista:
             for nota in nota2:
                 if nota["nota"] is not None:
-                    key = nota["sigla"].lower()
+                    #key = nota["sigla"].lower()
+                    key = nota["sigla"]
                     if key:
                         if nota["nota"] >= valor["ideal"]:
                             notas[key]["ideal"] += 1
@@ -1300,8 +1304,7 @@ def certificacao_falconi(request):
             if aval_banc_falconi:
                 projetos_selecionados.append(projeto)
 
-            #nota_banca_falconi, peso, avaliadores = get_banca_estudante(None, aval_banc_falconi)
-            banca_info = get_banca_estudante(None, aval_banc_falconi)
+            banca_info = get_banca_estudante(aval_banc_falconi, projeto.ano, projeto.semestre)
             nota_banca_falconi = banca_info["media"]
             peso = banca_info["peso"]
             avaliadores = banca_info["avaliadores"]

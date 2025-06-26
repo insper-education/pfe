@@ -2502,8 +2502,7 @@ def resultado_p_certificacao(request):
 
                 # Banca Falconi
                 aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
-                #nota_b, peso, avaliadores = get_banca_estudante(None, aval_b)
-                banca_info = get_banca_estudante(None, aval_b)
+                banca_info = get_banca_estudante(aval_b, ano=projeto.ano, semestre=projeto.semestre)
                 nota_b = banca_info["media"]
                 peso = banca_info["peso"]
                 avaliadores = banca_info["avaliadores"]
