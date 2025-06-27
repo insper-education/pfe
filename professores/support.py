@@ -462,32 +462,39 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
 def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
     def verifica_pares(sigla, tipo, cor_atual):
         evento = Evento.get_evento(sigla=sigla, ano=ano, semestre=semestre)
-        if not evento or (datetime.date.today() - evento.startDate).days <= 0:
-            return cor_atual, []
-        feito = True
-        projetos_pendentes = []
+        if not evento or (datetime.date.today() <= evento.startDate):
+            return cor_atual, [], 0
+        pendentes = []
+        atraso_local = 0
         for projeto in projetos:
+            atraso_aloc = 0
             for alocacao in Alocacao.objects.filter(projeto=projeto):
                 if Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists():
-                    if not (alocacao.avaliacao_intermediaria if tipo == 0 else alocacao.avaliacao_final):
-                        feito = False
-                        projetos_pendentes.append(sigla + " -> " + str(projeto))
+                    momento = (alocacao.avaliacao_intermediaria if tipo == 0 else alocacao.avaliacao_final)
+                    if not momento:
+                        pendentes.append(sigla + " -> " + str(projeto))
+                        atraso_tmp = (datetime.date.today() - evento.endDate).days
+                        atraso_aloc = max(atraso_aloc, atraso_tmp)
                         break
+                    else:
+                        atraso_tmp = (momento.date() - evento.endDate).days - PRAZO
+                        atraso_aloc = max(atraso_aloc, atraso_tmp)
+            atraso_local += atraso_aloc
                 
-        if feito and cor_atual not in ['r', 'y']:
-            return 'g', []
-        itens = [str(projeto) for projeto in projetos_pendentes]
+        if not pendentes and cor_atual not in ['r', 'y']:
+            return 'g', [], atraso_local
         if (datetime.date.today() - evento.endDate).days > PRAZO:
-            return 'r', itens
+            return 'r', pendentes, atraso_local
         if cor_atual != 'r':
-            return 'y', itens
-        return cor_atual, itens
+            return 'y', pendentes, atraso_local
+        return cor_atual, pendentes, atraso_local
 
-    cor, itens = 'b', []
+    cor, itens, atraso = 'b', [], 0
     for sigla, tipo in [("API", 0), ("APF", 1)]:
-        cor, new_itens = verifica_pares(sigla, tipo, cor)
+        cor, new_itens, novo_atraso = verifica_pares(sigla, tipo, cor)
         itens += new_itens
-    return {"avaliacoes_pares": {"cor": cor, "prazo": None, "itens": itens}}
+        atraso += novo_atraso
+    return {"avaliacoes_pares": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
 
 
 def check_avaliar_bancas(user, ano, semestre, PRAZO):
