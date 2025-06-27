@@ -499,8 +499,9 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
 
 def check_avaliar_bancas(user, ano, semestre, PRAZO):
     # Verifica se todas as bancas do semestre foram avaliadas
-    avaliar_bancas_cor = 'b'
-    avaliar_bancas_itens = []
+    cor = 'b'
+    itens = []
+    atraso = 0
     
     bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
@@ -521,15 +522,21 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
         else:
             avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame__sigla=banca.composicao.exame.sigla, avaliador=user)
         
-        if not avaliacoes:
-            if banca.endDate and (datetime.date.today() - banca.endDate.date()).days > PRAZO:
-                avaliar_bancas_cor = 'r'
-            elif banca.endDate and (datetime.date.today() - banca.endDate.date()).days >= 0 and avaliar_bancas_cor != 'r':
-                avaliar_bancas_cor = 'y'
-            avaliar_bancas_itens.append(banca)
-        elif avaliar_bancas_cor not in ['r', 'y']:
-            avaliar_bancas_cor = 'g'
-    return {"avaliar_bancas": {"cor": avaliar_bancas_cor, "prazo": None, "itens": avaliar_bancas_itens}}
+        if not avaliacoes.exists():
+            diff_data = (datetime.date.today() - banca.startDate.date()).days
+            if banca.endDate and diff_data > PRAZO:
+                cor = 'r'
+                atraso += diff_data - PRAZO
+            elif banca.endDate and diff_data >= 0 and cor != 'r':
+                cor = 'y'
+            itens.append(banca)
+        elif cor not in ['r', 'y']:
+            cor = 'g'
+            atraso_local = (avaliacoes.first().primeiro_momento - banca.startDate).days - PRAZO
+            if atraso_local > 0:
+                atraso += atraso_local
+
+    return {"avaliar_bancas": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
 
 
 def ver_pendencias_professor(user, ano, semestre):
