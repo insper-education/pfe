@@ -444,7 +444,7 @@ def banca_avaliar(request, slug, documento_id=None):
             return HttpResponseNotFound("<h1>Banca não registrada corretamente!</h1>")
         
         adm = PFEUser.objects.filter(pk=request.user.pk, tipo_de_usuario=4).exists()  # se adm
-        vencida = banca.endDate.date() + datetime.timedelta(days=configuracao.prazo_preencher_banca) < datetime.date.today()
+        vencida = banca.endDate.date() + datetime.timedelta(days=configuracao.prazo_avaliar_banca) < datetime.date.today()
 
         if vencida:  # prazo vencido
             mensagem += render_message("Banca Vencida", {"banca": banca, "configuracao": configuracao})
@@ -466,8 +466,8 @@ def banca_avaliar(request, slug, documento_id=None):
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
         diferenca = (datetime.date.today() - banca.endDate.date()).days
-        if diferenca > configuracao.prazo_preencher_banca:
-            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(configuracao.prazo_preencher_banca) + " dias após a data da banca!</h1>")
+        if diferenca > 2 * configuracao.prazo_avaliar_banca:
+            return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(2 * configuracao.prazo_avaliar_banca) + " dias após a data da banca!</h1>")
         return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
     objetivos = banca.composicao.pesos.all()

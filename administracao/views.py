@@ -499,7 +499,7 @@ def configurar(request):
                 configuracao.ano = int(request.POST["periodo_ano"])
                 configuracao.semestre = int(request.POST["periodo_semestre"])
                 configuracao.prazo_avaliar = int(request.POST["prazo_avaliar"])
-                configuracao.prazo_preencher_banca = int(request.POST["prazo_preencher_banca"])
+                configuracao.prazo_avaliar_banca = int(request.POST["prazo_avaliar_banca"])
 
                 configuracao.coordenacao = get_object_or_404(Administrador,
                                                              pk=int(request.POST["coordenacao"]))

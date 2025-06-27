@@ -545,7 +545,7 @@ class Configuracao(models.Model):
     prazo_avaliar = models.PositiveIntegerField("Prazo para avaliar", default=10,
                                            help_text="Prazo máximo para orientadores avaliarem entregas")
     
-    prazo_preencher_banca = models.PositiveIntegerField("Prazo para banca", default=30,
+    prazo_avaliar_banca = models.PositiveIntegerField("Prazo para banca", default=30,
                                            help_text="Prazo máximo para membros de uma banca colocarem suas avaliações")
     
     periodo_relato = models.PositiveIntegerField("Período Relato Quinzenal", default=10,

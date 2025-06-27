@@ -34,9 +34,9 @@
     <label for="prazo_avaliar">
       {% lng "Prazo máximo para orientadores avaliarem entregas:" "Maximum deadline for advisors to evaluate deliveries:" %}
     </label> <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/> dias<br>
-    <label for="prazo_preencher_banca">
+    <label for="prazo_avaliar_banca">
       {% lng "Prazo máximo para avaliadores preencherem a avaliação de banca:" "Maximum deadline for evaluators to fill out the evaluation of the examination board:" %}
-    </label> <input id="prazo_preencher_banca" name="prazo_preencher_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_preencher_banca}}"/> dias<br>
+    </label> <input id="prazo_avaliar_banca" name="prazo_avaliar_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar_banca}}"/> dias<br>
     {% lng "Os relatório ficarão disponíveis até o prazo definido, após o prazo, o sistema não permitirá mais a visualização do relatório de banca." "The reports will be available until the deadline defined, after the deadline, the system will no longer allow the visualization of the report to the examination board." %}
     
     <br><hr><br>

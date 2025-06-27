@@ -534,6 +534,9 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
             cor = 'g'
             atraso_local = (avaliacoes.first().primeiro_momento - banca.startDate).days - PRAZO
             if atraso_local > 0:
+                print(f"Atraso na avaliação da banca {banca}: {atraso_local} dias")
+                print(f"Data de início: {banca.startDate}, Data de avaliação: {avaliacoes.first().primeiro_momento}")
+                print(f"Prazo: {PRAZO} dias")
                 atraso += atraso_local
 
     return {"avaliar_bancas": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
@@ -541,7 +544,7 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
 
 def ver_pendencias_professor(user, ano, semestre):
     PRAZO = int(get_object_or_404(Configuracao).prazo_avaliar)  # prazo para preenchimentos de avaliações
-    PRAZO_BANCA = 2
+    PRAZO_BANCA = int(get_object_or_404(Configuracao).prazo_avaliar_banca)  # prazo para preenchimento de avaliações de bancas
     context = {}
     if user.eh_prof_a:  # Professor ou Administrador
         projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
