@@ -2020,7 +2020,7 @@ def editar_projeto(request, primarykey):
     context = {
         "titulo": {"pt": "Editar Projeto", "en": "Edit Project"},
         "projeto": projeto,
-        "professores": Professor.objects.all(),
+        "professores": Professor.objects.filter(user__is_active=True),
         "alocacoes": Alocacao.objects.filter(projeto=projeto),
         "estudantes": Aluno.objects.all(),
         "coorientadores": Coorientador.objects.filter(projeto=projeto),

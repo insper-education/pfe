@@ -1898,7 +1898,7 @@ def orientadores_tabela_completa(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
-    configuracao = get_object_or_404(Configuracao)
+    #configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax():
         if "edicao" in request.POST:
