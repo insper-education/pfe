@@ -19,11 +19,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse
+from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import Context, Template
 from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
+
 
 from .forms import PFEUserCreationForm
 from .models import PFEUser, Aluno, Professor, Parceiro, Opcao
@@ -758,7 +760,6 @@ def edita_notas(request, primarykey):
 
 
 @login_required
-#@permission_required("users.altera_professor", raise_exception=True)
 def estudante_detail(request, primarykey=None):
     """Mostra detalhes sobre o estudante."""
     if primarykey:
@@ -766,7 +767,10 @@ def estudante_detail(request, primarykey=None):
     elif request.user.eh_estud:
         estudante = request.user.aluno
     else:
-        return HttpResponse("Estudante não encontrado.", status=401)
+        raise Http404("Estudante não encontrado.")
+
+    if not estudante:
+        raise Http404("Estudante não encontrado.")
 
     if request.user.eh_estud and request.user.aluno != estudante:
         return HttpResponse("Você não tem permissão para acessar essa página.", status=401)
