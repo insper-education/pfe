@@ -422,27 +422,41 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
 
 def check_bancas_index(projetos, ano, semestre, PRAZO):
     # Verifica se todos os projetos do professor orientador têm os agendamentos das bancas
-    bancas_index_cor = 'b'
-    bancas_index_itens = []
-    tipos_de_banca = [("BI", "BI"), ("BF", "BF")]  # (sigla banca, sigla evento)
+    cor = 'b'
+    itens = []
+    atraso = 0
+    tipos_de_banca = [("ERI", "BI"), ("ERF", "BF")]
+    today = datetime.date.today()
 
     for projeto in projetos:
-        for sigla_b, sigla_e in tipos_de_banca:
-            banca_exists = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla_b).exists()
+        for sigla_e, sigla_b in tipos_de_banca:
             evento = Evento.get_evento(sigla=sigla_e, ano=ano, semestre=semestre)
-            if evento:
-                days_diff = (datetime.date.today() - evento.startDate).days
-                if days_diff > -16:
-                    if banca_exists and bancas_index_cor not in ['r', 'y']:
-                        bancas_index_cor = 'g'
-                    else:
-                        if days_diff > -9:
-                            bancas_index_cor = 'r'
-                        elif bancas_index_cor != 'r':
-                            bancas_index_cor = 'y'
-                        bancas_index_itens.append(sigla_b + " -> " + str(projeto)) # Banca de Projeto não agendada
+            if not evento:
+                continue
 
-    return {"bancas_index": {"cor": bancas_index_cor, "prazo": None, "itens": bancas_index_itens}}
+            banca = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla_b).first()
+            if banca:
+                atraso_local = (banca.data_marcacao - evento.startDate).days + (PRAZO // 2)
+            else:
+                atraso_local = (today - evento.startDate).days + (PRAZO // 2)
+            if atraso_local > 0:
+                atraso += atraso_local
+
+            days_diff = (evento.startDate - today).days
+            
+            if days_diff > (2 * PRAZO):
+                continue
+            if banca and cor not in ['r', 'y']:
+                cor = 'g'
+            else:
+                if days_diff > (PRAZO//2) and cor != 'r':
+                    cor = 'y'
+                else:
+                    cor = 'r'
+                
+                itens.append(f"{sigla_b} -> {projeto}")  # Banca de Projeto não agendada
+
+    return {"bancas_index": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
 
 
 def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):

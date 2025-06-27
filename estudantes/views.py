@@ -9,7 +9,7 @@ import datetime
 import logging
 import json
 import urllib.request
-import urllib.parse
+#import urllib.parse
 
 from hashids import Hashids
 
@@ -21,7 +21,7 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
+#from django.views.decorators.csrf import csrf_exempt
 
 from .models import Relato, Pares, EstiloComunicacao
 from .support import cria_area_estudante, ver_pendencias_estudante

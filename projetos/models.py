@@ -851,6 +851,9 @@ class Banca(models.Model):
     composicao = models.ForeignKey("academica.Composicao", null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text="tipo de composição para exame de avaliação da banca")
 
+    data_marcacao = models.DateField(default=datetime.date.today, blank=True,
+                                     help_text="Data em que a banca foi marcada")
+    
     def get_sigla(self):
         """Retorna a sigla do tipo de banca."""
         return self.composicao.exame.sigla
