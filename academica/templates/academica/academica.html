@@ -78,7 +78,7 @@
 {% if perms.projetos.view_avaliacao2 %}
   <h5>{% lng "Análises e Evoluções" "Analysis and Evolution" %}</h5>  
   <ul>
-    <li>{% lng "Áreas de Interesse" "Areas of Interest" %}</li>
+    <li>{% lng "Interesses" "Interests" %}</li>
     <li class="inside_ul">
       <ul>
         <a href="{% url 'lista_areas_interesse' %}"><li>
@@ -86,6 +86,9 @@
         </li></a>
         <a href="{% url 'evolucao_areas' %}"><li>
           {% lng "Evolução de Áreas de Interesse" "Evolution of Areas of Interest" %}
+        </li></a>
+        <a href="{% url 'prop_por_opcao' %}"><li>
+          {% lng "Proporção entre Opções Alocadas" "Proportion of Allocated Options" %}
         </li></a>
       </ul>
     </li>

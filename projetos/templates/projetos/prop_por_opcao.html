@@ -18,24 +18,18 @@
 
 {% block content %}
 
-  {% include "edicoes.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
-
-  <div id="atualizar">
-
     {% if curso and objetivo %}
-      {% with file_name="evolucao_por_objetivos_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
+      {% with file_name="prop_por_opcao_"|addstr:curso|addstr:"_"|addstr:objetivo|addstr:"_"|addstr:objetivo.data_inicial %}
         <script>
           var save_image_file_name = "{{file_name}}";
         </script>  
       {% endwith %}
     {% endif %}
 
-    <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
-
       <div class="container">
 
         <div style="max-width:860px; margin: auto;"> 
-            <canvas id="chart-medias"></canvas>
+            <canvas id="chart-medias" style="width:100%; height:600px;"></canvas>
         </div>
 
         <script>
@@ -43,8 +37,8 @@
           var labels_pt = [];
           var labels_en = [];
           {% for edicao, alocacoes in estudantes %}
-            labels_pt.push(["{{edicao}}", "({{alocacoes}} estudantes)"]);
-            labels_en.push(["{{edicao}}", "({{alocacoes}} students)"]);
+            labels_pt.push(["{{edicao}}", "({{alocacoes.count}} estudantes)"]);
+            labels_en.push(["{{edicao}}", "({{alocacoes.count}} students)"]);
           {% endfor %}
           
           var config_medias = {
@@ -52,29 +46,22 @@
             data: {
               labels_pt: labels_pt,
               labels_en: labels_en,
-              datasets: [{
-                  label: "< 5.0",
-                  data: [{% for nota in low %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(255,87,31)",
-                },
-                {
-                  label: ">= 5.0 & <= 7.0",
-                  data: [{% for nota in mid %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(204,204,0)",
-                },
-                {
-                  label: "> 7.0",
-                  data: [{% for nota in high %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(0,166,149)",
-                }
+              datasets: [
+                {% for opcao in opcoes %}
+                  {
+                    label: "{{opcao.indice|safe}}",
+                    data: [{% for qtd in opcao.qtds %}{{qtd|stringformat:".2f"|unlocalize}}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: "{{opcao.cor}}",
+                  }{% if not forloop.last %},{% endif %}
+                {% endfor %}
               ]
             },
             options: {
                 title: {
                     display: true,
-                    text_pt: "Proporção nos semestres",
-                    text_en: "Proportion in semesters"
-                }, 
+                    text_pt: "Proporção de opções alocadas por semestres",
+                    text_en: "Proportion of allocated options by semesters",
+                },
               scales: {
                 xAxes: [{
                   stacked: true,
@@ -89,12 +76,17 @@
               },
               plugins: {
                 datalabels: {
-                  color: "white",
+                  color: "black",
                   font: {
-                    weight: "bold"
+                    weight: "bold",
+                    size: 10
                   },
                   formatter: function(value, context) {
-                    return Math.round(value) + '%';
+                    if (value > 0) {
+                      return Math.round(value) + '%';
+                    } else {
+                      return '';
+                    }
                   }
                 }
               }
@@ -104,7 +96,6 @@
       </script>
 
     </div>
-  </div>
 
   <script>
 
@@ -129,7 +120,5 @@
     }
     window.onload = carrega_pagina
   </script>
-
-  {% include "edicoes_ajax.html" with sem_edicao=True com_cursos=True com_objetivos=True ind_grup=True so_finais=True %}
 
 {% endblock %}

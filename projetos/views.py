@@ -501,6 +501,7 @@ def projetos_fechados(request):
                 "numero_estudantes_avancado": numero_estudantes_avancado,
                 "numero_estudantes_externos": numero_estudantes_externos,
                 "configuracao": get_object_or_404(Configuracao),
+                "cores_opcoes": Estrutura.loads(nome="Cores Opcoes"),
             }
 
         else:
@@ -1893,6 +1894,64 @@ def evolucao_por_objetivo(request):
         }
 
     return render(request, "projetos/evolucao_por_objetivo.html", context)
+
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def prop_por_opcao(request):
+    """Mostra graficos da proporção por opção alocada em projeto."""
+    edicoes = list(get_edicoes(Projeto)[0])
+    cores_opcoes = Estrutura.loads(nome="Cores Opcoes")
+
+    estudantes = []    
+    opcoes = []
+    for edicao in edicoes:
+        periodo = edicao.split('.')
+        alocacoes = Alocacao.objects.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
+        estudantes.append([edicao, alocacoes])
+
+    for indice in range(1,7):
+        if indice <= 5:
+            opcoes.append({
+                "indice": f"#{indice}",
+                "qtds": [0] * len(edicoes),
+                "cor": cores_opcoes[indice-1],
+            })
+        else:
+            opcoes.append({
+                "indice": f"#>={indice}",
+                "qtds": [0] * len(edicoes),
+                "cor": cores_opcoes[indice-1],
+            })
+
+    for edicao, alocacoes in estudantes:
+        periodo = edicao.split('.')
+        for alocacao in alocacoes:
+            opcao = Opcao.objects.filter(proposta=alocacao.projeto.proposta, aluno=alocacao.aluno).last()
+            if opcao:
+                indice = opcao.prioridade
+            else:
+                continue  # Se não tiver opção, pula
+            if indice <= 5:
+                opcoes[indice-1]["qtds"][edicoes.index(edicao)] += 1
+            else:
+                opcoes[5]["qtds"][edicoes.index(edicao)] += 1
+
+    for indice in range(len(edicoes)):
+        total = sum(opcao["qtds"][indice] for opcao in opcoes)
+        if total > 0:
+            for opcao in opcoes:
+                opcao["qtds"][indice] = 100 * opcao["qtds"][indice] / total
+    
+    context = {
+        "titulo": {"pt": "Proporção por Opção Alocada em Projeto", "en": "Proportion by Option Allocated in Project"},
+        "estudantes": estudantes,
+        "opcoes": opcoes,
+    }
+
+    return render(request, "projetos/prop_por_opcao.html", context)
+
 
 
 @login_required

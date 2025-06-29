@@ -362,13 +362,13 @@ class Aluno(models.Model):
 class Opcao(models.Model):
     """Opções de Projetos pelos Alunos com suas prioridades."""
 
-    proposta = models.ForeignKey("projetos.Proposta", null=True, blank=True,
-                                 on_delete=models.SET_NULL)
+    proposta = models.ForeignKey("projetos.Proposta", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Proposta escolhida por estudante")
 
-    aluno = models.ForeignKey(Aluno, null=True, blank=True,
-                              on_delete=models.CASCADE)
+    aluno = models.ForeignKey(Aluno, null=True, blank=True, on_delete=models.CASCADE,
+                              help_text="Estudante que escolheu a proposta")
 
-    prioridade = models.PositiveSmallIntegerField()
+    prioridade = models.PositiveSmallIntegerField(help_text="Prioridade da proposta escolhida por estudante")
 
     class Meta:
         """Meta para Opcao."""

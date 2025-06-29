@@ -28,12 +28,8 @@
       type: "pie",
       data: {
         datasets: [{
-          data: [
-            prioridade1, prioridade2, prioridade3, prioridade4, prioridade5, prioridade6m,
-          ],
-          backgroundColor: [
-            "#2ecc71", "#3498db", "#95a5a6", "#9b59b6", "#f1c40f", "#e74c3c", "#34495e"
-          ],
+          data: [prioridade1, prioridade2, prioridade3, prioridade4, prioridade5, prioridade6m],
+          backgroundColor: [{% for cor in cores_opcoes %}"{{cor}}"{% if not forloop.last %}, {% endif %}{% endfor %}]
         }],
         labels: [
           '#1 ['+parseInt(prioridade1/diff)+'%]',
@@ -48,7 +44,8 @@
         responsive: true,
         title: {
               display: true,
-              text: 'Proporção entre opção alocada dos estudantes',
+              text_pt: "Proporção entre opção alocada dos estudantes",
+              text_en: "Proportion of students' allocated option",
               position: "top",
         },
         plugins: {
@@ -86,6 +83,18 @@
     if(count_alunos <= nao_definido){
       texto_a_ser_exibido = "Sem estudantes com opções válidas!";
     }
+    
+    function lingua_grafico() {
+      if(window.myPie == undefined) {return;}
+      if(localStorage.getItem("lingua") == "pt") {
+        window.myPie.options.title.text = window.myPie.options.title.text_pt;
+      } else {
+        window.myPie.options.title.text = window.myPie.options.title.text_en;
+      }
+      window.myPie.update();
+    }
+    lingua_grafico();
+    document.addEventListener("languageChanged", lingua_grafico);
 
   }
 
