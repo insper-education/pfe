@@ -340,11 +340,10 @@ class Proposta(models.Model):
                                     help_text="Organização parceira que propôs projeto")
 
     disponivel = models.BooleanField("Disponível", default=False,
-                                     help_text="Se projeto está atualmente disponível para alunos")
+                                     help_text="Se projeto está atualmente disponível para estudantes")
 
     autorizado = models.ForeignKey("users.PFEUser", null=True, blank=True,
-                                   on_delete=models.SET_NULL,
-                                   help_text="Quem autorizou a ser publicado para os alunos")
+                                   on_delete=models.SET_NULL, help_text="Quem autorizou a ser publicado para estudantes",)
 
     perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1", blank=True)
     perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2", blank=True)

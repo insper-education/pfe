@@ -77,19 +77,30 @@
           labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
           datasets: [
             {
-              label_pt: "propostas",
-              label_en: "proposals",
-              backgroundColor: "#8ebed2",
-              data: [{% for num in num_propostas %}{{num}}, {% endfor %}],
+              label_pt: "Propostas Submetidas",
+              label_en: "Submitted Proposals",
+              backgroundColor: "#b3d9ff",
+              data: [{% for num in num_propostas_submetidas %}{{num}}, {% endfor %}],
               projetos: [
-                  {% for proj in nome_propostas %}
+                  {% for proj in nome_propostas_submetidas %}
                     [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
                   {% endfor %}
               ],
             }, 
             {
-              label_pt: "projetos",
-              label_en: "projects",
+              label_pt: "Propostas Aceitas",
+              label_en: "Accepted Proposals",
+              backgroundColor: "#9299fe",
+              data: [{% for num in num_propostas_aceitas %}{{num}}, {% endfor %}],
+              projetos: [
+                  {% for proj in nome_propostas_aceitas %}
+                    [{% for nome in proj %}[`({{nome.organizacao}}) {{nome.titulo}}`],{% endfor %}],
+                  {% endfor %}
+              ],
+            }, 
+            {
+              label_pt: "Projetos",
+              label_en: "Projects",
               backgroundColor: "#656efd",
               data: [{% for num in num_projetos %}{{num}}, {% endfor %}],
               projetos: [
@@ -246,29 +257,30 @@
     function lingua_grafico() {
       if(localStorage.getItem("lingua") == "pt") {
         window.projeto.options.title.text = window.projeto.options.title.text_pt;
-        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_pt;
-        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_pt;
+        for (var i = 0; i < window.projeto.data.datasets.length; i++) {
+          window.projeto.data.datasets[i].label = window.projeto.data.datasets[i].label_pt;
+        }
         window.organizacoes.options.title.text = window.organizacoes.options.title.text_pt;
-        window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_pt;
-        window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_pt;
-        window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_pt;
-        window.segmentos.options.title.text = window.segmentos.options.title.text_pt;
-        {% for x in org_segmentos %}
-          window.segmentos.data.datasets[{{forloop.counter0}}].label = window.segmentos.data.datasets[{{forloop.counter0}}].label_pt;
-        {% endfor %}
-        
+        for (var i = 0; i < window.organizacoes.data.datasets.length; i++) {
+          window.organizacoes.data.datasets[i].label = window.organizacoes.data.datasets[i].label_pt;
+        }
+        window.segmentos.options.title.text = window.segmentos.options.title.text_pt;4
+        for (var i = 0; i < window.segmentos.data.datasets.length; i++) {
+          window.segmentos.data.datasets[i].label = window.segmentos.data.datasets[i].label_pt;
+        }
       } else {
         window.projeto.options.title.text = window.projeto.options.title.text_en;
-        window.projeto.data.datasets[0].label = window.projeto.data.datasets[0].label_en;
-        window.projeto.data.datasets[1].label = window.projeto.data.datasets[1].label_en;
+        for (var i = 0; i < window.projeto.data.datasets.length; i++) {
+          window.projeto.data.datasets[i].label = window.projeto.data.datasets[i].label_en;
+        }
         window.organizacoes.options.title.text = window.organizacoes.options.title.text_en;
-        window.organizacoes.data.datasets[0].label = window.organizacoes.data.datasets[0].label_en;
-        window.organizacoes.data.datasets[1].label = window.organizacoes.data.datasets[1].label_en;
-        window.organizacoes.data.datasets[2].label = window.organizacoes.data.datasets[2].label_en;
+        for (var i = 0; i < window.organizacoes.data.datasets.length; i++) {
+          window.organizacoes.data.datasets[i].label = window.organizacoes.data.datasets[i].label_en;
+        }
         window.segmentos.options.title.text = window.segmentos.options.title.text_en;
-        {% for x in org_segmentos %}
-          window.segmentos.data.datasets[{{forloop.counter0}}].label = window.segmentos.data.datasets[{{forloop.counter0}}].label_en;
-        {% endfor %}
+        for (var i = 0; i < window.segmentos.data.datasets.length; i++) {
+          window.segmentos.data.datasets[i].label = window.segmentos.data.datasets[i].label_en;
+        }
       }
       window.projeto.update();
       window.organizacoes.update();

@@ -1091,24 +1091,29 @@ def validate_aviso(request):
 @permission_required("projetos.view_projeto", raise_exception=True)
 def projetos_vs_propostas(request):
     """Mostra graficos das evoluções dos projetos e propostas."""
-    configuracao = get_object_or_404(Configuracao)
-    edicoes = range(2018, configuracao.ano+1)
-    edicoes2, _, _ = get_edicoes(Proposta)
+    edicoes = get_edicoes(Proposta)[0]
 
     total_org_propostas = {}
     total_org_projetos = {}
 
     # PROPOSTAS e ORGANIZACOES COM PROPOSTAS
-    num_propostas = []
+    num_propostas_submetidas = []
+    nome_propostas_submetidas = []
+    num_propostas_aceitas = []
+    nome_propostas_aceitas = []
     org_propostas = []
-    nome_propostas = []
-    for edicao in edicoes2:
+    for edicao in edicoes:
 
         ano_projeto, semestre = edicao.split('.')
 
         propostas = Proposta.objects.filter(ano=ano_projeto, semestre=semestre)
-        nome_propostas.append(propostas)
-        num_propostas.append(propostas.count())
+        num_propostas_submetidas.append(propostas.count())
+        nome_propostas_submetidas.append(propostas)
+
+        propostas_aceitas = propostas.filter(disponivel=True)
+        num_propostas_aceitas.append(propostas_aceitas.count())
+        nome_propostas_aceitas.append(propostas_aceitas)
+
         tmp_org = {}
         for projeto in propostas:
             if projeto.organizacao:
@@ -1128,7 +1133,7 @@ def projetos_vs_propostas(request):
         org_segmentos[segmento] = []
         total_org_segmentos[segmento] = 0
 
-    for edicao in edicoes2:
+    for edicao in edicoes:
 
         ano_projeto, semestre = edicao.split('.')
 
@@ -1154,8 +1159,9 @@ def projetos_vs_propostas(request):
     # ORGANIZACOES PROSPECTADAS
     org_prospectadas = []
     todas_organizacoes = Organizacao.objects.all()
-    for ano_projeto in edicoes:
+    for edicao in edicoes:
 
+        ano_projeto, _ = edicao.split('.')
         # Diferente dos outros, aqui se olha quem foi prospectado no semestre anterior
 
         # Primeiro Semestre
@@ -1178,11 +1184,13 @@ def projetos_vs_propostas(request):
 
     context = {
         "titulo": {"pt": "Organizações, Projetos e Propostas", "en": "Organizations, Projects and Proposals"},
-        "num_propostas": num_propostas,
-        "nome_propostas": nome_propostas,
+        "num_propostas_submetidas": num_propostas_submetidas,
+        "nome_propostas_submetidas": nome_propostas_submetidas,
+        "num_propostas_aceitas": num_propostas_aceitas,
+        "nome_propostas_aceitas": nome_propostas_aceitas,
         "num_projetos": num_projetos,
         "nome_projetos": nome_projetos,
-        "total_propostas": sum(num_propostas),
+        "total_propostas": sum(num_propostas_submetidas),
         "total_projetos": sum(num_projetos),
         "org_prospectadas": org_prospectadas,
         "org_propostas": org_propostas,
@@ -1191,8 +1199,7 @@ def projetos_vs_propostas(request):
         "total_org_projetos": len(total_org_projetos),
         "org_segmentos": org_segmentos,
         "total_org_segmentos": total_org_segmentos,
-        # "loop_anos": edicoes,
-        "edicoes": edicoes2,
+        "edicoes": edicoes,
     }
 
     return render(request, "projetos/projetos_vs_propostas.html", context)
