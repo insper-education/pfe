@@ -94,7 +94,7 @@
         <div style="width: fit-content; display: inline-block; margin-left: 20px;" {% if not documentos %}data-toggle="tooltip" data-html="true" animation="true" title="Documento não entregue"{% endif %}>
           <div class="custom-control custom-radio custom-control-inline">
             <input type="radio" id="customRadioInline0" name="decisao" class="custom-control-input" required
-                    value="1" {% if avaliacao and avaliacao > 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
+                    value="1" {% if avaliacao and avaliacao >= 5 %}checked="checked"{% endif %} {% if not documentos or not editor %}disabled {% endif %}>
             <label class="custom-control-label" for="customRadioInline0">
               {% lng "Adequado" "Adequate" %} 
             </label>

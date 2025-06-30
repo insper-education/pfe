@@ -116,8 +116,19 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             "banca": True,
                             "objetivos": banca_info["objetivos"]
                         })
+                elif exame.banca and (banca is None) and exame.sigla == 'P':  # Probation sem banca (NÃO DEVERIA ACONTECER MAS SERVE PARA VALIDAR NOTAS)
+                    pnp = paval.order_by("momento").last()   # USEI ISSO PARA PROJETOS ANTIGOS SEM REGISTRO DE BANCAS
+                    if pnp:  # Se não houver avaliação, não adiciona nota
+                        notas.append({
+                            "sigla": exame.sigla,
+                            "nota": float(pnp.nota) if pnp.nota else None,
+                            "peso": 0,
+                            "nome": exame.titulo,
+                            "banca": True,
+                            "objetivos": None
+                        })
 
-                else:
+                if not exame.banca:  # Exame sem banca (SERIA QUASE COMO UM ELSE DO ANTERIOR)
                     if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)
                         banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
                         notas.append({

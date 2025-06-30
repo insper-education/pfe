@@ -26,7 +26,7 @@ def get_objetivos(avaliacoes, ano, semestre):
         if avaliacoes_p_obj:
             for objtmp in lista_objetivos:  # Se já existe um objetivo com a mesma sigla haverá um erro na média
                 if objtmp.sigla == objetivo.sigla:
-                    logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! {avaliado} {objetivo.sigla}")
+                    logger.error(f"Erro, dois objetivos no mesmo semestre com a mesma sigla! ano={ano} semestre={semestre} => {objetivo.sigla}")
             lista_objetivos[objetivo] = {}
             for aval in avaliacoes_p_obj:
                 if aval.avaliador not in lista_objetivos[objetivo]:  # Se não for o mesmo avaliador
@@ -38,7 +38,22 @@ def get_objetivos(avaliacoes, ano, semestre):
                 # Senão é só uma avaliação de objetivo mais antiga (E IGNORAR)
 
     if not lista_objetivos:
-        return {}, None, None
+        # Se não houver objetivos, verifica se há avaliações sem objetivo (USANDO PARA CHECKAR SE INVALIDA PROBATÓTIO)
+        nota = 0.0
+        contador = 0
+        avaliacoes_sem_obj = avaliacoes.filter(objetivo__isnull=True).order_by("avaliador", "-momento")
+        if avaliacoes_sem_obj:
+            for aval in avaliacoes_sem_obj:
+                if aval.nota:
+                    nota += float(aval.nota)
+                    contador += 1
+                    # IGNORANDO PESO
+            if contador:
+                return {None: (nota/contador, 0.0)}, None, None
+            else:
+                return {}, None, None
+        else:  
+            return {}, None, None
 
     # média por objetivo
     val_objetivos = {}

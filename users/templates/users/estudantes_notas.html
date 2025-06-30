@@ -44,13 +44,9 @@
         </td>
 
         {% if aluno.curso2 %}
-          <td style="color:#{{ aluno.curso2.cor }};">
-            {{ aluno.curso2 }}
-          </td>
+          <td style="color:#{{ aluno.curso2.cor }};">{{ aluno.curso2 }}</td>
         {% else %}
-          <td>
-            {% lng "Indefinido" "Undefined" %}
-          </td>
+          <td>{% lng "Indefinido" "Undefined" %}</td>
         {% endif %}
 
         <td>
@@ -85,7 +81,7 @@
                   >={% if aval.peso > 0 %}<span
                       lang="pt">{% language "pt-br" %}{{aval.nota|floatformat:1}}{% endlanguage %}</span><span
                       lang="en" style="display:none">{% language "en" %}{{ aval.nota|floatformat:1}}{% endlanguage %}</span>
-                  {% else %}{% if aval.nota > 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+                  {% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                   {% if aval.nota == None %}
                     <span style="color:red">??,??</span>
                   {% endif %}

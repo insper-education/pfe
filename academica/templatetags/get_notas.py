@@ -5,11 +5,11 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 8 de Janeiro de 2025
 """
 
-from projetos.support3 import get_notas_alocacao
+from projetos.support3 import get_notas_alocacao as get_notas_alocacao_extern
 
 from django import template
 register = template.Library()
 
 @register.filter
-def get_notas_alocacao2(alocacao):
-    return get_notas_alocacao(alocacao)
+def get_notas_alocacao(alocacao):
+    return get_notas_alocacao_extern(alocacao)

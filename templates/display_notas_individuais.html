@@ -58,6 +58,9 @@
               document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
             {% elif alocado|probation %}
               document.getElementById("media{{alocado.id}}").innerHTML = "probation";
+              {% if user.eh_admin %}
+                document.getElementById("media{{alocado.id}}").innerHTML += " ({{media.media|floatformat:1}})";
+              {% endif %}
             {% else %}
               document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:1}}";
             {% endif %}

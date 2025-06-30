@@ -99,10 +99,6 @@ def em_probation(alocacao):
 
 def get_media_alocacao_i(alocacao):
     """Retorna média e peso final."""
-    reprovacao = Reprovacao.objects.filter(alocacao=alocacao)
-    if reprovacao:
-        return {"media": reprovacao.last().nota, "pesos": 1}
-
     edicao = get_notas_alocacao(alocacao)
 
     nota_final = 0
@@ -147,10 +143,9 @@ def get_media_alocacao_i(alocacao):
         if individual < nota_final:
             nota_final = individual
 
-    # Se a nota final permite passar, mas o estudante estiver em probation, a nota final é None
-    if nota_final > 5.0 and em_probation(alocacao):
+    # Se a nota final permite passar, mas o estudante estiver em probation, a nota não deveria ser visível para o estudante.
+    if nota_final >= 5.0 and em_probation(alocacao):
         probation = True
-        nota_final = None
     else:
         probation = False
 
@@ -167,6 +162,12 @@ def get_media_alocacao_i(alocacao):
         pesos_grupo += peso_bancas
     if pesos_grupo > 0:
         media_grupo /= pesos_grupo
+
+    # Ver se teve nota de reprovação e ajustar (não colocar antes para não interferir nos outros cálculos)
+    reprovacao = Reprovacao.objects.filter(alocacao=alocacao)
+    if reprovacao:
+        nota_final = reprovacao.last().nota
+        peso_final = 1
 
     return {
         "media": nota_final,
