@@ -416,7 +416,7 @@
 
             </div>
             
-            {% if configuracao.maxMB_filesize and user.tipo_de_usuario != 4 %}
+            {% if configuracao.maxMB_filesize and not user.eh_admin %}
               {% comment %} Administrador pode enviar arquivos maiores que limite. {% endcomment %}
               <script>
                 document.getElementById("arquivo").onchange = function() {
@@ -441,7 +441,7 @@
           </button>
           
           <button type="button" class="btn btn-primary mb-1" id="save-event"
-            {% if not user.eh_admin %}disabled{% endif %}
+            {% if not user.eh_admin %}disabled{% endif %}>
             {% lng "Atualizar" "Save" %}
           </button>
           
