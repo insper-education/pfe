@@ -442,7 +442,7 @@ class Alocacao(models.Model):
         """Retorno padrão textual do objeto."""
         if self.aluno and self.aluno.user and self.aluno.user.username:
             if self.projeto:
-                return self.aluno.user.username + " >>> " + self.projeto.get_titulo()
+                return self.aluno.user.username + " >>> " + self.projeto.get_titulo()[:12] + " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
             return self.aluno.user.username + " >>> Projeto sem título"
         return "Alocação sem aluno"
 

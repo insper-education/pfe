@@ -75,21 +75,21 @@ def get_medias_oo(alocacao):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)
     return context
 
 @register.filter
-def get_media_alocacao(alocacao):
+def get_media_alocacao(alocacao, request=None):
     """Retorna média individual de alocação."""
     if not alocacao:
         return None
-    return get_media_alocacao_i(alocacao)
+    return get_media_alocacao_i(alocacao, request=request)
 
 @register.filter
-def media(alocacao):
+def media(alocacao, request=None):
     """Retorna média final."""
-    return get_media_alocacao_i(alocacao)["media"]
+    return get_media_alocacao_i(alocacao, request=request)["media"]
 
 @register.filter
-def peso(alocacao):
+def peso(alocacao, request=None):
     """Retorna peso final."""
-    return get_media_alocacao_i(alocacao)["pesos"]
+    return get_media_alocacao_i(alocacao, request=request)["pesos"]
 
 @register.filter
 def recuper_notas_estudante(estudante):

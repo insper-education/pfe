@@ -91,9 +91,9 @@ def get_edicoes_aluno(estudante):
     return edicao
 
 
-def get_notas_alocacao(alocacao, checa_banca=True):
+def get_notas_alocacao(alocacao, checa_banca=True, request=None):
     """Retorna notas do estudante em um semestre e ano de projeto específico."""
-    edicoes = get_notas_estudante(alocacao.aluno, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca)
+    edicoes = get_notas_estudante(alocacao.aluno, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca, request=request)
     return edicoes[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)]
 
 def get_edicoes_alocacao(self):

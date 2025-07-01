@@ -1663,7 +1663,7 @@ class Avaliacao2(models.Model):
     """Avaliações realizadas durante o projeto."""
 
     # DEFINE O TIPO DE AVALIAÇÃO
-    exame = models.ForeignKey("academica.Exame", null=True, blank=True, on_delete=models.SET_NULL,
+    exame = models.ForeignKey("academica.Exame", null=True, on_delete=models.SET_NULL,
                                  help_text="Tipo de avaliação")
 
     momento = models.DateTimeField(default=datetime.datetime.now, blank=True,
@@ -1701,7 +1701,10 @@ class Avaliacao2(models.Model):
                                             help_text="Data e hora da primeira ver que a avaliação foi feita (para controle de professores)")
 
     def __str__(self):
-        return f"{str(self.exame.titulo)[:8]} > {str(self.projeto)[:12]} > {str(self.avaliador)}"
+        exame_titulo = str(self.exame.titulo)[:8] if self.exame and self.exame.titulo else "SEM_EXAME"
+        projeto_str = str(self.projeto.get_titulo_org())[:12] if self.projeto else "SEM_PROJETO"
+        avaliador_str = str(self.avaliador) if self.avaliador else "SEM_AVALIADOR"
+        return f"{exame_titulo} > {projeto_str} > {avaliador_str}"
 
     class Meta:
         verbose_name = "Avaliação2"

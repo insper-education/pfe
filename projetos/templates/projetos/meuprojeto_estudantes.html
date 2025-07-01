@@ -47,7 +47,7 @@
 
         {% include "projeto.html" %}
 
-        {% with notas=alocado|get_notas_alocacao %}
+        {% with notas=alocado|get_notas_alocacao:request %}
           {% if notas %}
             <div>
               <h5>{% lng "Resultados" "Results" %}</h5>

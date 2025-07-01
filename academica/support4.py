@@ -87,46 +87,57 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                 if not paval:
                     continue 
 
-                if exame.banca and banca:  # Banca
-                    valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+                if exame.banca:
+                    if banca:  # Banca
+                        valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
-                    # Verifica se já passou o evento de encerramento e assim liberar notas
-                    evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                        # Verifica se já passou o evento de encerramento e assim liberar notas
+                        evento_encerram = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
 
-                    if exame.sigla != 'P' and  evento:  # Não é banca probation e tem evento de encerramento
-                        # Após o evento de encerramento liberar todas as notas
-                        if now.date() > evento.endDate:
+                        if evento_encerram:  # Não é banca probation e tem evento de encerramento
+                            if exame.sigla != 'P': 
+                                if now.date() > evento_encerram.endDate:  # Após o evento de encerramento liberar todas as notas
+                                    checa_b = False
+                        # else:  # Não tem evento de encerramento
+
+                        # Verifica se já passou o semestre e assim liberar notas
+                        if now.date() > datetime.date(alocacao.projeto.ano, 6 if alocacao.projeto.semestre == 1 else 12, 30):
                             checa_b = False
 
-                    if checa_b:
-                        if (request is None) or (request.user.tipo_de_usuario not in [2,4]):  # Se não for professor/administrador
-                            for membro in banca.membros():
-                                avaliacao = paval.filter(avaliador=membro).last()
-                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                    valido = False
-                                    break
+                        if checa_b:
+                            if (request is None) or (not request.user.eh_prof_a):  # Se não for professor/administrador
+                                for membro in banca.membros():
+                                    avaliacao = paval.filter(avaliador=membro).last()
+                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                        valido = False
+                                        break
 
-                    if valido:
-                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
-                        notas.append({
-                            "sigla": exame.sigla,
-                            "nota": banca_info["media"],
-                            "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                            "nome": exame.titulo,
-                            "banca": True,
-                            "objetivos": banca_info["objetivos"]
-                        })
-                elif exame.banca and (banca is None) and exame.sigla == 'P':  # Probation sem banca (NÃO DEVERIA ACONTECER MAS SERVE PARA VALIDAR NOTAS)
-                    pnp = paval.order_by("momento").last()   # USEI ISSO PARA PROJETOS ANTIGOS SEM REGISTRO DE BANCAS
-                    if pnp:  # Se não houver avaliação, não adiciona nota
-                        notas.append({
-                            "sigla": exame.sigla,
-                            "nota": float(pnp.nota) if pnp.nota else None,
-                            "peso": 0,
-                            "nome": exame.titulo,
-                            "banca": True,
-                            "objetivos": None
-                        })
+                        if valido:
+                            banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                            notas.append({
+                                "sigla": exame.sigla,
+                                "nota": banca_info["media"],
+                                "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
+                                "nome": exame.titulo,
+                                "banca": True,
+                                "objetivos": banca_info["objetivos"]
+                            })
+                    else:
+                        if exame.sigla == 'P':  # Probation sem banca (NÃO DEVERIA ACONTECER MAS SERVE PARA VALIDAR NOTAS)
+                            pnp = paval.order_by("momento").last()   # USEI ISSO PARA PROJETOS ANTIGOS SEM REGISTRO DE BANCAS
+                            if pnp:  # Se não houver avaliação, não adiciona nota
+                                notas.append({
+                                    "sigla": exame.sigla,
+                                    "nota": float(pnp.nota) if pnp.nota else None,
+                                    "peso": 0,
+                                    "nome": exame.titulo,
+                                    "banca": True,
+                                    "objetivos": None
+                                })
+                        else:  # Exame sem banca (não deveria acontecer)
+                            logger.error(f"Erro, exame com banca mas sem banca registrada: {exame.sigla} => {alocacao.projeto.get_titulo_org_periodo()}")
+
+
 
                 if not exame.banca:  # Exame sem banca (SERIA QUASE COMO UM ELSE DO ANTERIOR)
                     if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)

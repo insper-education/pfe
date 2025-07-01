@@ -11,5 +11,6 @@ from django import template
 register = template.Library()
 
 @register.filter
-def get_notas_alocacao(alocacao):
-    return get_notas_alocacao_extern(alocacao)
+def get_notas_alocacao(alocacao, request=None):
+    """Recupera as notas de alocação."""
+    return get_notas_alocacao_extern(alocacao, request=request)

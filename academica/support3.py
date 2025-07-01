@@ -97,9 +97,9 @@ def em_probation(alocacao):
 
     return False
 
-def get_media_alocacao_i(alocacao):
+def get_media_alocacao_i(alocacao, request=None):
     """Retorna média e peso final."""
-    edicao = get_notas_alocacao(alocacao)
+    edicao = get_notas_alocacao(alocacao, request=request)
 
     nota_final = 0
     nota_individual = 0
@@ -113,6 +113,7 @@ def get_media_alocacao_i(alocacao):
     peso_bancas = 0
 
     for aval in edicao:
+        #print(f"Sigla: {aval['sigla']} Nota: {aval['nota']} Peso: {aval['peso']}")
         if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
             peso_final += aval["peso"]
             nota_final += aval["nota"] * aval["peso"]
@@ -128,6 +129,7 @@ def get_media_alocacao_i(alocacao):
             if aval["sigla"] in ("BI", "BF"):
                 peso_bancas += aval["peso"]
                 nota_bancas += aval["nota"] * aval["peso"]
+
     peso_final = round(peso_final, 2)
 
     individual = None
@@ -138,10 +140,11 @@ def get_media_alocacao_i(alocacao):
     nota_final = round(nota_final, 6)
     peso_final = round(peso_final, 9)
 
-    # Caso a nota individual seja menor que 5, a nota final é a menor das notas        
-    if individual is not None and individual < 5:
-        if individual < nota_final:
-            nota_final = individual
+    
+    if alocacao.projeto.ano > 2021:  # A partir de 2022, a nota final é a menor das notas individuais
+        if individual is not None and individual < 5:  # Caso a nota individual seja menor que 5, a nota final é a menor das notas
+            if individual < nota_final:
+                nota_final = individual
 
     # Se a nota final permite passar, mas o estudante estiver em probation, a nota não deveria ser visível para o estudante.
     if nota_final >= 5.0 and em_probation(alocacao):

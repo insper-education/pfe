@@ -159,7 +159,7 @@
         </a>
         <br>
         
-        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao %}
+        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao:request %}
         <br><br>
 
         {% with relatos=alocado|get_relatos %}
