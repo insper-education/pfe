@@ -4,126 +4,123 @@
   Data: 4 de Fevereiro de 2021
 {% endcomment %}
 
-{% comment %} {% if edicoes %} {% endcomment %}
-  <script>
+<script>
 
-    var request_ajax = null;
-     
-    var xhrCount = 0;  // Para contar as chamadas e usar somente a última
-
+  var request_ajax = null;
     
-    function recarregar_pagina() {
-      
-      var seqNumber = ++xhrCount;
+  var xhrCount = 0;  // Para contar as chamadas e usar somente a última
 
-      $(".filter").attr("disabled", true);
-      $(".to_label").addClass("label_animado");
-      {% if todos %}
-        var todos = $("#todos").is(':checked');
-      {% endif %}
-      {% if not sem_edicao %}
-        var edicao = $("#filterEdicao option:selected").attr("value");
-      {% endif %}
-      {% if com_cursos %}
-        var curso = $("#filterCurso option:selected").attr("value");
-      {% endif %}
-      {% if com_objetivos %}
-        var objetivo = $("#filterObjetivo option:selected").attr("value");
-      {% endif %}
-      {% if ind_grup %}
-        var individuais = $("#individuais").is(':checked');
-        var grupo = $("#grupo").is(':checked');
-      {% endif %}
-      {% if so_finais %}
-        var so_finais = $("#so_finais").is(':checked');
-      {% endif %}
-      {% if avancados %}
-        var avancados = $("#avancados").is(':checked');
-      {% endif %}
-      {% if com_tipo %}
-        var tipo = $("#filterTipo option:selected").attr("value");
-      {% endif %}
+  
+  function recarregar_pagina() {
+    
+    var seqNumber = ++xhrCount;
 
-      request_ajax = $.ajax({
-          type: "POST",
-          //url: "Normalmente a mesma página",
-          data: {
-              {% if todos %}
-                todos: todos,
-              {% endif %}
-              {% if not sem_edicao %}
-                edicao: edicao,
-              {% endif %}
-              {% if com_cursos %}
-                curso: curso,
-              {% endif %}
-              {% if com_objetivos %}
-                objetivo: objetivo,
-              {% endif %}
-              {% if ind_grup %}
-                individuais: individuais,
-                grupo: grupo,
-              {% endif %}
-              {% if so_finais %}
-                so_finais: so_finais,
-              {% endif %}
-              {% if avancados %}
-                avancados: avancados,
-              {% endif %}
-              {% if com_tipo %}
-                tipo: tipo,
-              {% endif %}
-              "csrfmiddlewaretoken": "{{ csrf_token }}",
-          },
-          success: function(response){
+    $(".filter").attr("disabled", true);
+    $(".to_label").addClass("label_animado");
+    {% if todos %}
+      var todos = $("#todos").is(':checked');
+    {% endif %}
+    {% if not sem_edicao %}
+      var edicao = $("#filterEdicao option:selected").attr("value");
+    {% endif %}
+    {% if com_cursos %}
+      var curso = $("#filterCurso option:selected").attr("value");
+    {% endif %}
+    {% if com_objetivos %}
+      var objetivo = $("#filterObjetivo option:selected").attr("value");
+    {% endif %}
+    {% if ind_grup %}
+      var individuais = $("#individuais").is(':checked');
+      var grupo = $("#grupo").is(':checked');
+    {% endif %}
+    {% if so_finais %}
+      var so_finais = $("#so_finais").is(':checked');
+    {% endif %}
+    {% if avancados %}
+      var avancados = $("#avancados").is(':checked');
+    {% endif %}
+    {% if com_tipo %}
+      var tipo = $("#filterTipo option:selected").attr("value");
+    {% endif %}
 
-            if (seqNumber === xhrCount) { // Processando resposta
-              $("#atualizar").replaceWith($("#atualizar", response));
-              $(".tooltip-inner").remove();
-              $(".tooltip-arrow").remove();
-              {% if tabela %}
-                {% include "tabelas_scripts.js" %}
-              {% endif %}
-              {% if graficos %}
-                if (typeof carrega_graficos === "function") {
-                  carrega_graficos();
-                }
-              {% endif %}
-              if (typeof carrega_pagina === "function") {
-                carrega_pagina();
+    request_ajax = $.ajax({
+        type: "POST",
+        //url: "Normalmente a mesma página",
+        data: {
+            {% if todos %}
+              todos: todos,
+            {% endif %}
+            {% if not sem_edicao %}
+              edicao: edicao,
+            {% endif %}
+            {% if com_cursos %}
+              curso: curso,
+            {% endif %}
+            {% if com_objetivos %}
+              objetivo: objetivo,
+            {% endif %}
+            {% if ind_grup %}
+              individuais: individuais,
+              grupo: grupo,
+            {% endif %}
+            {% if so_finais %}
+              so_finais: so_finais,
+            {% endif %}
+            {% if avancados %}
+              avancados: avancados,
+            {% endif %}
+            {% if com_tipo %}
+              tipo: tipo,
+            {% endif %}
+            "csrfmiddlewaretoken": "{{ csrf_token }}",
+        },
+        success: function(response){
+
+          if (seqNumber === xhrCount) { // Processando resposta
+            $("#atualizar").replaceWith($("#atualizar", response));
+            $(".tooltip-inner").remove();
+            $(".tooltip-arrow").remove();
+            {% if tabela %}
+              {% include "tabelas_scripts.js" %}
+            {% endif %}
+            {% if graficos %}
+              if (typeof carrega_graficos === "function") {
+                carrega_graficos();
               }
-              $(".to_label").removeClass("label_animado");
-              $(".filter").attr("disabled",false);
-              $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"}); // js/tooltip.js
-              {% include "linguas_ajax.html" %}
-              
-              // Enviando evento que mudou edição
-              var event = new CustomEvent("edicaoEvent", {
-                detail: {
-                  edicao:  typeof edicao !== 'undefined' ? edicao : null,
-                  curso: typeof curso !== 'undefined' ? curso : null,
-                },
-              });
-              document.dispatchEvent(event); 
-
+            {% endif %}
+            if (typeof carrega_pagina === "function") {
+              carrega_pagina();
             }
+            $(".to_label").removeClass("label_animado");
+            $(".filter").attr("disabled",false);
+            $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"}); // js/tooltip.js
+            {% include "linguas_ajax.html" %}
             
-          },
-          {% include "ajax_error_function.js" %}
-      });
-    }
+            // Enviando evento que mudou edição
+            var event = new CustomEvent("edicaoEvent", {
+              detail: {
+                edicao:  typeof edicao !== 'undefined' ? edicao : null,
+                curso: typeof curso !== 'undefined' ? curso : null,
+              },
+            });
+            document.dispatchEvent(event); 
 
-    $(".filter").change(recarregar_pagina);
-
-    // pequeno tempo para select voltar a funcionar
-    function recarregar() {
-      setTimeout(recarregar_pagina, 20);
-    }
-
-    $(document).ready(function() {
-      recarregar();
+          }
+          
+        },
+        {% include "ajax_error_function.js" %}
     });
+  }
 
-  </script>
+  $(".filter").change(recarregar_pagina);
 
-{% comment %} {% endif %} {% endcomment %}
+  // pequeno tempo para select voltar a funcionar
+  function recarregar() {
+    setTimeout(recarregar_pagina, 20);
+  }
+
+  $(document).ready(function() {
+    recarregar();
+  });
+
+</script>

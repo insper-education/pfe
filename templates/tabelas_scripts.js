@@ -5,44 +5,26 @@
 {% endcomment %}
 
 // Atualizar com: $.fn.dataTables.Buttons.stripData
-function stripData( str ) {
+function stripData(str) {
+    if (typeof str !== "string") return str;
+    return str
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')  {% comment %} Always remove script tags {% endcomment %}
+        .replace(/<!\-\-.*?\-\->/g, '') {% comment %} Always remove comments {% endcomment %}
+        .replace(/&nbsp;/g, ' ')
+        .replace(/🔗/g, '')
+        .replace(/&amp;/g, '&')
+        .replace(/<[^>]*>/g, '')
+        .replace(/^\s+|\s+$/g, '')
+        .replace(/\n/g, ' ')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
 
-	if ( typeof str !== "string" ) {
-		return str;
-	}
-
-	// Always remove script tags
-	str = str.replace( /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '' );
-
-	// Always remove comments
-	str = str.replace( /<!\-\-.*?\-\->/g, '' );
-
-    str = str.replace( /&nbsp;/g, ' ' );
-    str = str.replace( /🔗/g, '' );
-
-    str = str.replace( /&amp;/g, '&' );
-    
-
-    str = str.replace( /<[^>]*>/g, '' );
-	str = str.replace( /^\s+|\s+$/g, '' );
-	str = str.replace( /\n/g, ' ' );
-
-    str = str.replace( /&lt;/g, '<' );
-    str = str.replace( /&gt;/g, '>' );
-
-    //str = str.replace( /<br\s*\/?>/ig, "\r\n" );
-
-	return str;
-};
-
-var buttonCommon = {
+const buttonCommon = {
     exportOptions: {
         format: {
-            body: function ( data, row, column, node ) {
-                return stripData(data);
-            }
+            body: (data, row, column, node) => stripData(data)
         },
-        columns: ':visible'
+        columns: ":visible"
     }
 };
 
@@ -50,9 +32,7 @@ var buttonCommon = {
 var col = -1
 var headerObj = $("#{{tabela}}Table").find("th");
 for (var i = 0; i < headerObj.length; i +=1){
-    if(headerObj.eq(i).text() == "Período") {
-        col = i;
-    }
+    if(headerObj.eq(i).text() == "Período") col = i;
 }
 
 var titulo_arquivo = "Capstone";
@@ -114,13 +94,14 @@ var textos_linguas = {
     }
 };
 
+/** Quando exportando, função obtem o texto visível de um nó, considerando a língua atual. **/
 function getVisibleTextInNode(node) {
   var text = '';
-  lingua = localStorage.getItem("lingua");
+  const lingua = localStorage.getItem("lingua"); // Identifica a língua atual
   $(node).contents().each(function() {
-    if (this.nodeType === 3) { // Text node
+    if (this.nodeType === 3) { // Se for um texto puro só adiciona o texto
       text += this.nodeValue;
-    } else if (!$(this).attr("lang") || $(this).attr("lang") === lingua) {
+    } else if (!$(this).attr("lang") || $(this).attr("lang") === lingua) {  // Se não tiver atributo lang ou for igual à língua atual adiciona o texto
       text += $(this).text();
     }
   });
@@ -174,7 +155,6 @@ var configuracao_table = {
             text: "JSON",
             filename: titulo_arquivo,
             action: function (e, dt, node, config) {
-                //var data = dt.buttons.exportData();
                 var data = dt.buttons.exportData($.extend(true, {}, config.exportOptions));
                 var json = JSON.stringify(data, null, 2);
                 var blob = new Blob([json], {type: "application/json"});
@@ -242,32 +222,40 @@ var configuracao_table = {
 function getNumericColumnIndices(tableId) {
     var indices = [];
     $(tableId + " th").each(function(i) {
-        if ($(this).data("tipo") === "numeral") {
-            indices.push(i);
-        }
+        if ($(this).data("tipo") === "numeral") indices.push(i);
     });
     return indices;
 }
 
+// Function to convert notation based on language
 function convertNotation(data, type, row, meta, lang) {
     if (type === "display" || type === "filter") {
         if (lang === "en") return data.replace(',', '.');
-        else if (lang === "pt") return data.replace('.', ',');
+        if (lang === "pt") return data.replace('.', ',');
     }
     return data;
 }
 
+function updateTableLanguageSpans(lang) {
+    $("#{{tabela}}Table td, #{{tabela}}Table th").each(function() {
+        $(this).find("[lang]").each(function() {
+            $(this).css("display", $(this).attr("lang") === lang ? "initial" : "none");
+        });
+    });
+}
+
 // function to update the language
 function atualiza_lingua(lang) {
+
     // Primeiro Destruir a tabela
-    var tableId = "#{{tabela}}Table";
+    const tableId = "#{{tabela}}Table";
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().destroy();
     }
 
-    var numericColumnIndices = getNumericColumnIndices(tableId);
+    const numericColumnIndices = getNumericColumnIndices(tableId);
     configuracao_table["columnDefs"] = [{
-            targets: numericColumnIndices, // Replace with the indices of your numeric columns
+            targets: numericColumnIndices,
             render: function(data, type, row, meta) {
                 return convertNotation(data, type, row, meta, lang);
             }
@@ -276,26 +264,28 @@ function atualiza_lingua(lang) {
 
     // Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela
     document.querySelectorAll("th[data-lang-pt]").forEach(function(th) {
-        if (lang === "pt") {
-            th.innerHTML = th.getAttribute("data-lang-pt");
-        } else if (lang === "en") {
-            th.innerHTML = th.getAttribute("data-lang-en");
-        }
+        th.innerHTML = th.getAttribute(lang === "pt" ? "data-lang-pt" : "data-lang-en");
     });
   
 
     // Setar a nova linguagem
-    configuracao_table["language"] = textos_linguas[lang];
+    configuracao_table["language"] = textos_linguas[lang];  // Tabela gigante com os textos de cada língua
     table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
+
+    // Update all spans for the selected language
+    updateTableLanguageSpans(lang);
+
+    // Also update spans after every table redraw (e.g., after filtering)
+    table.on("draw", function() {
+        updateTableLanguageSpans(lang);
+    });
+
 }
 
 $(document).ready(function() {
-    $("body").on("click", "#language_button", function(e) {
-        lingua_atual = localStorage.getItem("lingua");
-        atualiza_lingua(lingua_atual);
+    $("body").on("click", "#language_button", function() {
+        atualiza_lingua(localStorage.getItem("lingua"));
     });
+    atualiza_lingua(localStorage.getItem("lingua"));
 });
-
-lingua_atual = localStorage.getItem("lingua");
-atualiza_lingua(lingua_atual);

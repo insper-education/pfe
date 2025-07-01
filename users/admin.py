@@ -57,11 +57,15 @@ class PFEUserAdmin(admin.ModelAdmin):
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     """Definição de usuário Estudante."""
-    list_display = ("user", "curso2", "ano", "semestre")
+    list_display = ("get_full_name", "curso2", "ano", "semestre", "cr")
     ordering = ("user__first_name", "user__last_name", )
     list_filter = ("curso2", FirstLetterFilter, )
     search_fields = ["user__first_name", "user__last_name", ]
 
+    def get_full_name(self, obj):
+        return obj.user.get_full_name()
+    get_full_name.short_description = "Nome completo"
+    get_full_name.admin_order_field = "user__first_name"
 
 @admin.register(Alocacao)
 class AlocacaoAdmin(admin.ModelAdmin):
