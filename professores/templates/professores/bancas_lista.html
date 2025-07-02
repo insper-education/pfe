@@ -38,18 +38,14 @@
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-      <div class="mt-2 mb-2 esconder">
-        {% if bancas and request.user.eh_admin %}
-          {% if request.user.eh_admin %}
-            <button onclick="return confirm('Você tem certeza que deseja enviar mensagem de bancas?');"
-             type="submit" class="btn btn-warning btn-sm btn-outline-secondary">
-              {% lng "Enviar Mensagem para Todas as Bancas Selecionadas" "Send Message to All Selected Examination Boards" %}
-            </button>
-          {% endif %}
-        {% else %}
-          {% lng "Não existem bancas definidas." "There are no defined examination boards." %}
-        {% endif %}
-      </div>
+      {% if bancas and request.user.eh_admin %}
+        <div class="mt-2 esconder">
+          <button onclick="return confirm('Você tem certeza que deseja enviar mensagem de bancas?');"
+            type="submit" class="btn btn-warning btn-sm btn-outline-secondary">
+            {% lng "Enviar Mensagem para Todas as Bancas Selecionadas" "Send Message to All Selected Examination Boards" %}
+          </button>
+        </div>
+      {% endif %}
 
       <table id="BancasTable" class="table table-borderless table-sm arredondado mb-1"><tbody>
         {% for banca in bancas %} 
@@ -144,7 +140,6 @@
               <div class="agendamento">
                 <div>
                   <b>{% lng "Mensagem:" "Message:" %}</b>
-                  {% comment %} checkbox {% endcomment %}
                   <input type="checkbox" name="banca" value="{{banca.pk}}" class="ml-1" checked="checked" />
                   <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal ml-2 border border-info" style="padding: 0px 2px;"
                     data-url="{% url 'mensagem_email' 'banca' banca.pk %}" href="{% url 'mensagem_email' 'banca' banca.pk %}"> 

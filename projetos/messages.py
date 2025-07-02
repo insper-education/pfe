@@ -7,7 +7,7 @@ Data: 18 de Outubro de 2019
 """
 
 from celery import shared_task
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 import logging
 
 from django.conf import settings
@@ -15,10 +15,11 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
-from django.utils.html import urlize
+#from django.utils.html import urlize
 
 from users.models import Opcao
-from projetos.models import Configuracao
+from projetos.models import Configuracao, Projeto, Banca, Certificado
+
 from .models import AreaDeInteresse
 
 from administracao.models import Carta
@@ -114,3 +115,75 @@ def message_cancelamento(encontro):
         "encontro": encontro,
     }
     return render_message("Cancelamento de Dinâmica", context_carta)
+
+
+def prepara_mensagem_email(request, tipo, primarykey):
+    
+    if tipo == "banca":
+    
+        banca = get_object_or_404(Banca, pk=primarykey)
+        projeto = banca.get_projeto()
+
+        para = ""
+        if banca:
+            for membro in banca.membros():
+                para += membro.get_full_name() + " <" + membro.email + ">; "
+                
+        if banca and banca.alocacao:
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " " + banca.alocacao.projeto.get_titulo_org()
+        else:
+            subject = "Capstone | Banca: " + projeto.get_titulo_org()
+        
+        context_carta = {
+            "request": request,
+            "projeto": projeto,
+            "banca": banca,
+        }
+        message = render_message("Mensagem Banca", context_carta)
+
+    if tipo == "banca_projeto":
+    
+        projeto = get_object_or_404(Projeto, pk=primarykey)
+        banca = None
+
+        para = ""
+        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
+            if projeto and projeto.orientador:
+                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
+                for coorientador in projeto.coorientador_set.all():
+                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
+        if banca:
+            for membro in banca.membros():
+                para += membro.get_full_name() + " <" + membro.email + ">; "
+        
+        if banca and banca.alocacao:
+            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
+        else:
+            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
+        
+        context_carta = {
+            "request": request,
+            "projeto": projeto,
+        }
+        message = render_message("Mensagem Banca", context_carta)
+
+    elif tipo == "certificado":
+    
+        certificado = get_object_or_404(Certificado, pk=primarykey)
+        configuracao = get_object_or_404(Configuracao)
+
+        para = ""
+        if certificado.usuario:
+            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
+
+        subject = "Capstone | Certificado: " + certificado.tipo_certificado.titulo
+        
+        context_carta = {
+            "request": request,
+            "configuracao": configuracao,
+            "certificado": certificado,
+        }
+        message = render_message("Mensagem Certificado", context_carta)
+
+    return subject, para, message
+

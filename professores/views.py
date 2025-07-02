@@ -47,11 +47,11 @@ from estudantes.models import Relato, Pares, FeedbackPares
 from professores.support3 import get_banca_incompleta
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
-from projetos.models import Banca, Evento, Encontro, Documento, Certificado
+from projetos.models import Banca, Evento, Encontro, Documento
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support4 import get_objetivos_atuais
 from projetos.support2 import get_alocacoes, get_pares_colegas
-from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica
+from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
 from projetos.arquivos import le_arquivo
 
 from users.models import PFEUser, Professor, Alocacao
@@ -1173,71 +1173,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
             }
         return JsonResponse(context)
     
-    if tipo == "banca":
-    
-        banca = get_object_or_404(Banca, pk=primarykey)
-        projeto = banca.get_projeto()
-
-        para = ""
-        if banca:
-            for membro in banca.membros():
-                para += membro.get_full_name() + " <" + membro.email + ">; "
-                
-        if banca and banca.alocacao:
-            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " " + banca.alocacao.projeto.get_titulo_org()
-        else:
-            subject = "Capstone | Banca: " + projeto.get_titulo_org()
-        
-        context_carta = {
-            "request": request,
-            "projeto": projeto,
-            "banca": banca,
-        }
-        message = render_message("Mensagem Banca", context_carta)
-
-    if tipo == "banca_projeto":
-    
-        projeto = get_object_or_404(Projeto, pk=primarykey)
-        banca = None
-
-        para = ""
-        if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
-            if projeto and projeto.orientador:
-                para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-                for coorientador in projeto.coorientador_set.all():
-                    para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
-        if banca:
-            for membro in banca.membros():
-                para += membro.get_full_name() + " <" + membro.email + ">; "
-        
-        if banca and banca.alocacao:
-            subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
-        else:
-            subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
-        
-        context_carta = {
-            "request": request,
-            "projeto": projeto,
-        }
-        message = render_message("Mensagem Banca", context_carta)
-
-    elif tipo == "certificado":
-    
-        certificado = get_object_or_404(Certificado, pk=primarykey)
-        configuracao = get_object_or_404(Configuracao)
-
-        para = ""
-        if certificado.usuario:
-            para += certificado.usuario.get_full_name() + " <" + certificado.usuario.email + ">"
-
-        subject = "Capstone | Certificado: " + certificado.tipo_certificado.titulo
-        
-        context_carta = {
-            "request": request,
-            "configuracao": configuracao,
-            "certificado": certificado,
-        }
-        message = render_message("Mensagem Certificado", context_carta)
+    subject, para, message = prepara_mensagem_email(request, tipo, primarykey)
 
     para = para.strip()
     if para[-1] == ";":

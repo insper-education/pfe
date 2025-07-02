@@ -47,55 +47,72 @@
 
   <div id="atualizar">
 
-    <div class="table-responsive">
-      <table id="certificados">
-        {% for certificado in certificados %}
-          <tr class="certificado{{certificado.tipo_certificado.grupo_certificado.sigla}} certificado">
-            <td>
-              <b style="font-weight: bold; font-size: 1.2em;">
-                {% if certificado.tipo_certificado %}
-                  {{certificado.tipo_certificado}}
-                {% else %}
-                  {% lng "Certificado" "Certificate" %}
+    <form id="certificados-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+      {% if certificados and request.user.eh_admin %}
+        <div class="mt-2 esconder">
+          <button onclick="return prepareCertificadosForSubmit();" type="submit"
+            class="btn btn-warning btn-sm btn-outline-secondary">
+            {% lng "Enviar Mensagem para Todos os Certificados Selecionados e Visíveis" "Send Message to All Selected and Visible Certificates" %}
+          </button>
+        </div>
+      {% endif %}
+
+      <div class="table-responsive">
+        <table id="certificados">
+          {% for certificado in certificados %}
+            <tr class="certificado{{certificado.tipo_certificado.grupo_certificado.sigla}} certificado">
+              <td>
+                <b style="font-weight: bold; font-size: 1.2em;">
+                  {% if certificado.tipo_certificado %}
+                    {{certificado.tipo_certificado}}
+                  {% else %}
+                    {% lng "Certificado" "Certificate" %}
+                  {% endif %}
+                </b><br>
+                <b>{% lng "Nome" "Name" %}</b>:
+                {% if certificado.usuario %}
+                  {% if certificado.usuario.eh_estud %}
+                    <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
+                  {% elif certificado.usuario.eh_prof_a %}
+                    <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
+                  {% else %}
+                    {{certificado.usuario.get_full_name}}<br>
+                  {% endif %}
                 {% endif %}
-              </b><br>
-              <b>{% lng "Nome" "Name" %}</b>:
-              {% if certificado.usuario %}
-                {% if certificado.usuario.eh_estud %}
-                  <a href="{% url 'estudante_detail' certificado.usuario.aluno.id %}">{{certificado.usuario.get_full_name}}</a> (estudante)<br>
-                {% elif certificado.usuario.eh_prof_a %}
-                  <a href="{% url 'professor_detail' certificado.usuario.professor.id %}">{{certificado.usuario.get_full_name}}</a> (professor)<br>
-                {% else %}
-                  {{certificado.usuario.get_full_name}}<br>
+
+                {% if certificado.projeto %}
+                  <b>{% lng "Data do certificado" "Certificate date" %}:</b>
+                  {{certificado.data|date:"DATE_FORMAT"}}<br>
                 {% endif %}
-              {% endif %}
 
-              {% if certificado.projeto %}
-                <b>{% lng "Data do certificado" "Certificate date" %}:</b>
-                {{certificado.data|date:"DATE_FORMAT"}}<br>
-              {% endif %}
+                {% include "cabecalho_projeto.html" with projeto=certificado.get_projeto com_semestre=True sem_email=True %}
 
-              {% include "cabecalho_projeto.html" with projeto=certificado.get_projeto com_semestre=True sem_email=True %}
+                {% if certificado.documento %}
+                  <b>{% lng "Certificado" "Certificate" %}:</b> 
+                  <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
+                {% endif %}
+                
+                <div>
+                  <input type="checkbox" name="certificado" value="{{certificado.pk}}" class="ml-1" checked="checked" />
+                  <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
+                    data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
+                    &#x2709; {% lng "Enviar certificado" "Send certificate" %}
+                  </a>
+                </div>
 
-              {% if certificado.documento %}
-                <b>{% lng "Certificado" "Certificate" %}:</b> 
-                <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer">{{ certificado.file_name }}</a><br>
-              {% endif %}
-              
-              <a data-toggle="tooltip" data-html="true" animation="true" title="Janela de Mensagem" class="open-modal"
-                data-url="{% url 'mensagem_email' 'certificado' certificado.id %}" href="{% url 'mensagem_email' 'certificado' certificado.id %}"> 
-                &#x2709; {% lng "Enviar certificado" "Send certificate" %}
-              </a>
-            </td>
-          </tr>
+              </td>
+            </tr>
 
-        {% empty %}
-          <tr><td style="border: 0px;">
-            {% lng "Não existem certificados." "There are no certificates." %}
-          </td></tr>
-        {% endfor %}
-      </table>
-    </div>
+          {% empty %}
+            <tr><td style="border: 0px;">
+              {% lng "Não existem certificados." "There are no certificates." %}
+            </td></tr>
+          {% endfor %}
+        </table>
+      </div>
+
+    </form>
 
   </div>
   
@@ -109,6 +126,22 @@
   </div>
 
   <script>
+
+    function prepareCertificadosForSubmit() {
+      // Enable all checkboxes first
+      document.querySelectorAll('input[type=checkbox][name=certificado]').forEach(cb => {
+        cb.disabled = false;
+      });
+      // Disable checkboxes in hidden rows
+      document.querySelectorAll('input[type=checkbox][name=certificado]').forEach(cb => {
+        const tr = cb.closest('tr');
+        if (tr && tr.offsetParent === null) {
+          cb.disabled = true;
+        }
+      });
+      return confirm('Você tem certeza que deseja enviar mensagem de certificados?');
+    }
+
     function conta() {
       {% for tipo in grupos_certificados %}
         $("#t_{{tipo.sigla}}").text($(".certificado{{tipo.sigla}}:visible").length);
@@ -135,10 +168,6 @@
       esconde_mostra_opcoes();
       conta();
     });
-    
-  </script>
-
-  <script>
 
     var request_ajax_c = null;
 

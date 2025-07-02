@@ -35,7 +35,7 @@ from operacional.models import Curso
 from professores.support import recupera_avaliadores_bancas
 
 from projetos.models import Documento, Configuracao, Projeto, Certificado, Coorientador, Encontro, Conexao
-
+from projetos.messages import email, prepara_mensagem_email
 from users.support import get_edicoes
 
 
@@ -87,18 +87,36 @@ def biblioteca_link(request, primarykey=None):
 def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     """Lista os Certificados Emitidos."""
 
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                context = { "certificados": Certificado.objects.all()}
-            else:
-                ano, semestre = request.POST["edicao"].split('.')
-                context = { "certificados": Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)}
+    if request.is_ajax() and "edicao" in request.POST:
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            context = { "certificados": Certificado.objects.all()}
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
-    else:
-    
+            ano, semestre = request.POST["edicao"].split('.')
+            context = { "certificados": Certificado.objects.filter(projeto__ano=ano, projeto__semestre=semestre)}
+
+    elif request.method == "POST":
+        aviso = ""
+        # pega todas os certificados marcados
+        dados = request.POST.getlist("certificado")
+        for primarykey in dados:
+            certificado = get_object_or_404(Certificado, pk=primarykey)
+            assunto, para, message = prepara_mensagem_email(request, "certificado", primarykey)
+            email(assunto, para, message)
+            aviso += "Mensagem de Certificado de " + str(certificado.tipo_certificado) + " para " + str(certificado.get_projeto()) + " enviado para: " + para + "<br>"
+
+        mensagem = {
+            "pt": "Mensagens de Certificados enviadas.<br><br>" + aviso,
+            "en": "Certificate messages sent.<br><br>" + aviso,
+        }
+        context = {
+            "voltar": True,
+            "area_principal": True,
+            "mensagem": mensagem,
+        }
+        return render(request, "generic_ml.html", context=context)
+
+    else:   
         context = {
             "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
             "grupos_certificados": GrupoCertificado.objects.all(),

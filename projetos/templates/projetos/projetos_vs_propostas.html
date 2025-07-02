@@ -77,8 +77,8 @@
           labels: [{% for edicao in edicoes %}"{{edicao}}", {% endfor %}],
           datasets: [
             {
-              label_pt: "Propostas Submetidas",
-              label_en: "Submitted Proposals",
+              label_pt: "Propostas Recebidas",
+              label_en: "Received Proposals",
               backgroundColor: "#b3d9ff",
               data: [{% for num in num_propostas_submetidas %}{{num}}, {% endfor %}],
               projetos: [
