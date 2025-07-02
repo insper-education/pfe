@@ -36,7 +36,7 @@ def adianta_semestre(ano, semestre):
 
 
 def retrocede_semestre(ano, semestre):
-    """Adiciona um semestre no par ano, semestre."""
+    """Retrocede um semestre no par ano, semestre."""
     if semestre == 2:
         semestre = 1
     else:

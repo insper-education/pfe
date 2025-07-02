@@ -25,12 +25,11 @@ from administracao.support import usuario_sem_acesso
 
 from calendario.support import cria_material_documento
 
-from users.support import adianta_semestre, get_edicoes
+from users.support import adianta_semestre, get_edicoes, retrocede_semestre
 from users.models import PFEUser, Parceiro, Aluno, Alocacao
 
 from projetos.models import Proposta, Organizacao, Projeto, Configuracao, Feedback
-from projetos.models import Anotacao, Conexao, Documento, TipoRetorno
-
+from projetos.models import Anotacao, Conexao, Documento, TipoRetorno, Evento
 from operacional.models import Curso
 from documentos.models import TipoDocumento
 
@@ -561,10 +560,13 @@ def organizacoes_projetos(request):
     if request.is_ajax() and "edicao" in request.POST:
         edicao = request.POST["edicao"]
         
+        evento = None
         projetos_periodo = Projeto.objects.all()
         if edicao not in ("todas",):
             ano, semestre = map(int, edicao.split('.'))
             projetos_periodo = projetos_periodo.filter(ano=ano, semestre=semestre)
+            ano_r, semestre_r = retrocede_semestre(ano, semestre)
+            evento = Evento.get_evento(sigla="RCMG", ano=ano_r, semestre=semestre_r)
 
         organizacoes = []
         for projeto in projetos_periodo:
@@ -575,8 +577,10 @@ def organizacoes_projetos(request):
         contato = []
         for organizacao in organizacoes:
             projetos.append(projetos_periodo.filter(proposta__organizacao=organizacao))
-            six_months_ago = datetime.datetime.now() - datetime.timedelta(days=6*30)
-            contatos = Anotacao.objects.filter(organizacao=organizacao, momento__gte=six_months_ago).order_by("-momento")
+            if evento:
+                contatos = Anotacao.objects.filter(organizacao=organizacao, momento__gte=evento.endDate).order_by("-momento")
+            else:
+                contatos = Anotacao.objects.filter(organizacao=organizacao).order_by("-momento")
             contato.append(contatos)
 
         organizacoes_list = list(zip(organizacoes, projetos, contato))
