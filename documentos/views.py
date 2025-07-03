@@ -21,6 +21,8 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
+from django.utils.html import escape
+
 
 from .support import atualiza_certificado, generate_unique_arcname, checa_documentos_certificado
 
@@ -103,7 +105,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
             certificado = get_object_or_404(Certificado, pk=primarykey)
             assunto, para, message = prepara_mensagem_email(request, "certificado", primarykey)
             email(assunto, para, message)
-            aviso += "Mensagem de Certificado de " + str(certificado.tipo_certificado) + " para " + str(certificado.get_projeto()) + " enviado para: " + para + "<br>"
+            aviso += "Mensagem de Certificado de " + str(certificado.tipo_certificado) + " para " + str(certificado.get_projeto()) + " enviado para: " + escape(para) + "<br>"
 
         mensagem = {
             "pt": "Mensagens de Certificados enviadas.<br><br>" + aviso,
