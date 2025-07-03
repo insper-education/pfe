@@ -104,7 +104,12 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
         for primarykey in dados:
             certificado = get_object_or_404(Certificado, pk=primarykey)
             assunto, para, message = prepara_mensagem_email(request, "certificado", primarykey)
-            email(assunto, para, message)
+            
+            recipient_list = para.split(';')
+            configuracao = get_object_or_404(Configuracao)
+            recipient_list.append(configuracao.coordenacao.user.email)
+
+            email(assunto, recipient_list, message)
             aviso += "Mensagem de Certificado de " + str(certificado.tipo_certificado) + " para " + str(certificado.get_projeto()) + " enviado para: " + escape(para) + "<br>"
 
         mensagem = {

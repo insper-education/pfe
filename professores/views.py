@@ -1163,7 +1163,8 @@ def mensagem_email(request, tipo=None, primarykey=None):
             return HttpResponse("Envio não realizado.", status=401)
 
         recipient_list = para.split(';')
-        recipient_list.append("Luciano Pereira Soares <lpsoares@insper.edu.br>")
+        configuracao = get_object_or_404(Configuracao)
+        recipient_list.append(configuracao.coordenacao.user.email)
 
         email(assunto, recipient_list, mensagem)
 
@@ -1174,10 +1175,6 @@ def mensagem_email(request, tipo=None, primarykey=None):
         return JsonResponse(context)
     
     subject, para, message = prepara_mensagem_email(request, tipo, primarykey)
-
-    para = para.strip()
-    if para[-1] == ";":
-        para = para[:-1]  # tirando o ultimo ";"
 
     context = {
         "assunto": subject,

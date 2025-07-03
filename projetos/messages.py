@@ -185,5 +185,9 @@ def prepara_mensagem_email(request, tipo, primarykey):
         }
         message = render_message("Mensagem Certificado", context_carta)
 
+    para = para.strip()
+    if para[-1] == ";":
+        para = para[:-1]  # tirando o ultimo ";"
+
     return subject, para, message
 
