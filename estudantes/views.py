@@ -505,13 +505,17 @@ def estudante_feedback(request):
 def estudante_feedback_hashid(request, hashid):
     """Para Feedback finais dos Estudantes."""
     hashids = Hashids(salt=settings.SALT, min_length=8)
-
     try:
-        id = hashids.decode(hashid)[0]
-        usuario = get_object_or_404(PFEUser, pk=id)
+        decoded = hashids.decode(hashid)[0]
+        if not decoded and len(decoded) > 1:
+            logger.warning(f"Hashid recebido é inválido: {hashid}")
+            return HttpResponseNotFound("<h1>Usuário não encontrado! (hash inválido)</h1>")
+        user_id = decoded[0]
+        usuario = get_object_or_404(PFEUser, pk=user_id)
         return estudante_feedback_geral(request, usuario)
 
-    except (ValueError, TypeError, PFEUser.DoesNotExist):
+    except Exception as e:
+        logger.error(f"Erro no hashid do Feedback de usuário: {e} | hashid: {hashid}")
         return HttpResponseNotFound("<h1>Usuário não encontrado!</h1>")
 
 
