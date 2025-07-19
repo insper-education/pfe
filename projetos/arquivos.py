@@ -231,14 +231,14 @@ def arquivos(request, path, documentos=None, organizacao=None, projeto=None, usu
 # DEVERIA ESTAR NUMA VIEW ?????????
 def doc(request, tipo=None):
     """Acessa arquivos do servidor pelo tipo dele se for publico."""
-    if tipo is None:
-        return None  # Não deveria ser chamado sem o tipo, mas usada para pegar a url
+    if tipo is None: # Não deveria ser chamado sem o tipo, mas preciso para pegar a url em templates
+        raise Http404("Tipo de documento não especificado.")
 
      # Verifica se o tipo de documento existe
     tipo_documento = get_object_or_404(TipoDocumento, sigla=tipo)
     documento = Documento.objects.filter(tipo_documento=tipo_documento, confidencial=False).order_by("data").last()
     if documento is None:
-        raise Http404
+        raise Http404("Documento não encontrado.")
     if documento.documento:
         path = str(documento.documento).split('/')[-1]
         local_path = os.path.join(settings.MEDIA_ROOT, "{0}".format(documento.documento))
@@ -246,4 +246,4 @@ def doc(request, tipo=None):
     elif documento.link:
         return redirect(documento.link)
 
-    raise Http404
+    raise Http404("Erro ao recuperar o documento.")
