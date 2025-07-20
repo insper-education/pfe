@@ -1906,14 +1906,14 @@ def orientadores_tabela(request):
 def coorientadores_tabela_completa(request):
     """Alocação dos Coorientadores por semestre."""
     configuracao = get_object_or_404(Configuracao)
-    coorientadores = recupera_coorientadores_por_semestre(configuracao)
+    coorientadores_ano = recupera_coorientadores_por_semestre(configuracao)
 
     cabecalhos = [{"pt": "Nome", "en": "Name"},
                   {"pt": "Grupos", "en": "Groups"},]
 
     context = {
         "titulo": {"pt": "Alocação de Coorientadores", "en": "Co-Advisor Allocation"},
-        "anos": coorientadores,
+        "coorientadores_ano": coorientadores_ano,
         "cabecalhos": cabecalhos,
         
     }
