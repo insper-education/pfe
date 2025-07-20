@@ -1,0 +1,136 @@
+{% load static %}
+{% load linguas %}
+
+<style>
+    .ListaUsuarios {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        margin-left: 12px;
+        margin-right: 102px;
+        table-layout: fixed;
+        max-width: 95%;
+        width: 740px;
+    }
+
+    .ListaUsuarios tr {
+        border: 0px solid black;
+    }
+
+    .ListaUsuarios td {
+        border: 0px solid black;
+    }
+</style>
+
+<table id="Alocacao{{nomes_col}}" class="ListaUsuarios">
+  <thead>
+    <tr><td style="text-align: center; width: 7.5em;"><small>
+    {% lng nomes_col nomes_col_en %}
+    #</small></td>
+    <td style="text-align: center;"><small>
+      {% lng desc_col desc_col_en %}
+    </small></td>
+    <td style="width: 1em;"><span class="AddNew{{nomes_col}}" style="cursor:pointer; margin-left: 4px;">&#10753;</span></td></tr>
+  </thead>
+  <tbody>
+    {% for usuario_selecionado in usuarios_selecionados %}
+    <tr>
+      <td>
+        <label for="Sel{{nomes_col}}{{forloop.counter}}" style="white-space: nowrap; width: 1%;">
+          {% lng nomes_col nomes_col_en %}
+          <span style="width:1em; text-align:left; display:inline-block;">{{forloop.counter}}:</span></label>
+      </td>
+      <td>
+        <select class="selectpicker show-tick Sel{{nomes_col}}" name="Sel{{nomes_col}}" id="Sel{{nomes_col}}{{forloop.counter}}" 
+         {% comment %} title="Selecione membro do projeto" {% endcomment %}
+         data-live-search="true" data-width="100%">
+          <option selected value> -- selecione usuário -- </option>
+          <optgroup label="Semestre Capstone">
+          {% for pessoa in pessoas %}
+            <option value="{{pessoa.id}}" {% if pessoa.id == usuario_selecionado.id %}selected{% endif %}>
+              {{pessoa.get_full_name}}
+            </option>
+          {% endfor %}
+          </optgroup>
+        </select>
+      </td>
+      <td>
+        <span class="RemoveRow{{nomes_col}}" style="cursor:pointer; margin-left: 4px;">&#8861;</span>
+      </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% comment %} Nó usado para criar novas alocações (será clonado) {% endcomment %}
+<table style="display:none;">
+  <tr id="novo_no{{nomes_col}}">
+    <td>{% lng nomes_col nomes_col_en %} 0: </td>
+    <td>
+      <select class="selectpicker show-tick Sel{{nomes_col}}" name="Sel{{nomes_col}}"
+        data-live-search="true" data-width="100%">
+        <option selected value> -- selecione usuário -- </option>
+        <optgroup label="Semestre Capstone">
+          {% for pessoa in pessoas %}
+            <option value="{{pessoa.id}}">{{pessoa.get_full_name}}</option>
+          {% endfor %}
+          </optgroup>
+      </select>
+    </td>
+    <td><span class="RemoveRow{{nomes_col}}" style="cursor:pointer; margin-left: 4px;">&#8861;</span></td>
+  </tr>
+</table>
+
+
+<script>
+
+  function renumera{{nomes_col}}() {
+    $("#Alocacao{{nomes_col}} tr").each(function(){
+      var position= $("#Alocacao{{nomes_col}} tr").index($(this))
+      if(position!=0) {
+        texto = '<label for="Sel{{nomes_col}}' + position + '">{% lng nomes_col nomes_col_en %} <span style="width:1em;text-align:left;display:inline-block;">' + position + ':</span></label>';
+        $(this).children("td").first().html(texto);
+        {% include "linguas_ajax.html" %}
+      }
+    })
+  }
+
+  $(".AddNew{{nomes_col}}").click(function(){        
+    var $cloned = $("#novo_no{{nomes_col}}").clone();
+    $cloned.find(".bootstrap-select").replaceWith(function() { return $("select", this); })    
+    $cloned.find(".selectpicker").selectpicker("render"); 
+    $("#Alocacao{{nomes_col}} tr:last").after($cloned);
+    renumera{{nomes_col}}();
+    check_duplicado{{nomes_col}}();
+  });
+  
+  $("#Alocacao{{nomes_col}}").on("click", ".RemoveRow{{nomes_col}}", function(){
+    $(this).closest("tr").remove();
+    renumera{{nomes_col}}();
+    check_duplicado{{nomes_col}}();
+  });
+
+  function check_duplicado{{nomes_col}}() {
+    $(".Sel{{nomes_col}}").change(function(){
+      var usuarios_sel  = $(".Sel{{nomes_col}} > select")
+      var dic = {};
+      for(est in usuarios_sel){
+        var chave = usuarios_sel.eq(est).val()
+
+        if(typeof chave !== "undefined" && chave != "") {
+          if(chave in dic) {
+            $("#submit").prop("disabled",true);
+            $("#mensagem").html("Nomes indicados devem ser diferentes");
+            return;
+          } else {
+            dic[chave] = true;
+          }
+        }
+      }
+      $("#submit").prop("disabled",false);
+      $("#mensagem").html("");
+    });  
+  }
+
+  check_duplicado{{nomes_col}}();
+
+</script>

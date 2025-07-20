@@ -2040,39 +2040,42 @@ def editar_projeto(request, primarykey):
     if request.method == "POST":
         
         # Realoca orientador
-        orientador_id = request.POST.get("orientador", None)
-        if orientador_id:
-            orientador = get_object_or_404(Professor, pk=orientador_id)
+        orientador_user_id = request.POST.get("orientador", None)
+        if orientador_user_id:
+            orientador = get_object_or_404(Professor, user_id=orientador_user_id)
             projeto.orientador = orientador
         else:
             projeto.orientador = None
 
-        # Realoca coorientador
-        coorientador_id = request.POST.get("coorientador", None)
-        if coorientador_id:
-            coorientador = get_object_or_404(PFEUser, pk=coorientador_id)
-            (reg, _) = Coorientador.objects.get_or_create(projeto=projeto)
-            reg.usuario = coorientador
-            reg.save()
-        else:
-            coorientadores = Coorientador.objects.filter(projeto=projeto)
-            for coorientador in coorientadores:
-                coorientador.delete()
+
+        # Realoca coorientadores
+        coorientadores_user_ids = []
+        coorientadores = request.POST.getlist("SelCoorientador")
+        for coorientador_user_id in coorientadores:
+            if coorientador_user_id:
+                coorientadores_user_ids.append(int(coorientador_user_id))
+        # Apaga os coorientadores que não estão mais no projeto
+        Coorientador.objects.filter(projeto=projeto).exclude(usuario__id__in=coorientadores_user_ids).delete()
+        # Aloca os coorientadores que não estavam alocados
+        for coorientador_user_id in coorientadores_user_ids:
+            if not Coorientador.objects.filter(projeto=projeto, usuario__id=coorientador_user_id).exists():
+                coorientador = get_object_or_404(PFEUser, id=coorientador_user_id)
+                coorientacao = Coorientador(usuario=coorientador, projeto=projeto)
+                coorientacao.save()
+
 
         # Realoca estudantes
-        estudantes_ids = []
-        estudantes = request.POST.getlist("estudante")
-        for estudante_id in estudantes:
-            if estudante_id:
-                estudantes_ids.append(int(estudante_id))
-
+        estudantes_user_ids = []
+        estudantes = request.POST.getlist("SelEstudante")
+        for estudante_user_id in estudantes:
+            if estudante_user_id:
+                estudantes_user_ids.append(int(estudante_user_id))
         # Apaga os estudantes que não estão mais no projeto
-        Alocacao.objects.filter(projeto=projeto).exclude(aluno__id__in=estudantes_ids).delete()
-
+        Alocacao.objects.filter(projeto=projeto).exclude(aluno__user__id__in=estudantes_user_ids).delete()
         # Aloca os estudantes que não estavam alocados
-        for estudante_id in estudantes_ids:
-            if not Alocacao.objects.filter(projeto=projeto, aluno__id=estudante_id).exists():
-                estudante = get_object_or_404(Aluno, pk=estudante_id)
+        for estudante_user_id in estudantes_user_ids:
+            if not Alocacao.objects.filter(projeto=projeto, aluno__user__id=estudante_user_id).exists():
+                estudante = get_object_or_404(Aluno, user__id=estudante_user_id)
                 alocacao = Alocacao(aluno=estudante, projeto=projeto)
                 alocacao.save()
 
@@ -2086,10 +2089,11 @@ def editar_projeto(request, primarykey):
     context = {
         "titulo": {"pt": "Editar Projeto", "en": "Edit Project"},
         "projeto": projeto,
-        "professores": Professor.objects.filter(user__is_active=True),
-        "alocacoes": Alocacao.objects.filter(projeto=projeto),
-        "estudantes": Aluno.objects.all(),
+        "usuarios_professores": PFEUser.objects.filter(tipo_de_usuario=2),
+        "usuarios_estudantes_alocados": PFEUser.objects.filter(aluno__alocacao__projeto=projeto).distinct(),
+        "estudantes": PFEUser.objects.filter(tipo_de_usuario=1),
         "coorientadores": Coorientador.objects.filter(projeto=projeto),
+        "usuarios_coorientadores": PFEUser.objects.filter(coorientador__projeto=projeto).distinct(),
     }
     return render(request, "projetos/editar_projeto.html", context)
 
