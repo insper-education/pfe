@@ -54,48 +54,51 @@ def cria_area_estudante(request, estudante):
 
 def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     # Verifica se todas as bancas do semestre foram avaliadas
-    alocacao_semanal = 'b'
-    alocacao_semanal__prazo = None
+    cor = 'b'
+    prazo = None
     hoje = datetime.date.today()
     if alocacao and alocacao.horarios and len(alocacao.horarios) >= 11*8:
-        alocacao_semanal = 'g'
+        cor = 'g'
     else:
         evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
         if evento:
-            alocacao_semanal__prazo = evento.endDate + datetime.timedelta(days=(PRAZO+4))
+            prazo = evento.endDate + datetime.timedelta(days=(PRAZO+4))
             if hoje < evento.endDate + datetime.timedelta(days=4):
-                alocacao_semanal = 'b'
-            elif hoje > alocacao_semanal__prazo:
-                alocacao_semanal = 'r'
+                cor = 'b'
+            elif hoje > prazo:
+                cor = 'r'
             else:
-                alocacao_semanal = 'y'
-    return {"alocacao_semanal": (alocacao_semanal, alocacao_semanal__prazo)}
+                cor = 'y'
+    return {"alocacao_semanal": {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
+
 
 
 def check_relato_quinzenal(alocacao):
     # Verifica se o relato quinzenal foi submetido
     configuracao = get_object_or_404(Configuracao)
-    relato_quinzenal = 'b'
-    relato_quinzenal__prazo = None
+    cor = 'b'
+    prazo = None
     hoje = datetime.date.today()
     tevento = TipoEvento.objects.get(nome="Relato quinzenal (Individual)")
-    prazo = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
+    evento = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
 
-    if prazo and prazo.endDate - hoje <= datetime.timedelta(days=configuracao.periodo_relato):
+    if evento and evento.endDate - hoje <= datetime.timedelta(days=configuracao.periodo_relato):
         relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
         prazo_anterior = relato_anterior.endDate if relato_anterior else None
         relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).exists() if prazo_anterior else False
         if relato:
-            relato_quinzenal = 'g'
+            cor = 'g'
         else:
-            relato_quinzenal__prazo = prazo.endDate
-            relato_quinzenal = 'r' if prazo.endDate == hoje else 'y'
-    return {"relato_quinzenal": (relato_quinzenal, relato_quinzenal__prazo)}
+            prazo = evento.endDate
+            cor = 'r' if evento.endDate == hoje else 'y'
+    return {"relato_quinzenal": {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
+
 
 def check_submissao_documento(alocacao, ano, semestre):
     # Verifica se documentos foram submetido no prazo
-    submissao_documento = 'b'
-    submissao_documento__prazo = None
+    cor = 'b'
+    prazo = None
+    itens = []
     hoje = datetime.date.today()
     projeto = alocacao.projeto  
     if projeto:
@@ -105,46 +108,53 @@ def check_submissao_documento(alocacao, ano, semestre):
             if "evento" in entrega and entrega["evento"] and entrega["evento"].endDate:
                 diff = (entrega["evento"].endDate - hoje).days
                 if diff < 7:  # 7 dias antes do prazo já avisa o estudante (Eventos são mostrados duas semanas antes do prazo)
-                    if entrega["documentos"] and submissao_documento not in ['y', 'r']:
-                        submissao_documento = 'g'
+                    if entrega["documentos"] and cor not in ['y', 'r']:
+                        cor = 'g'
                     else:
-                        if not submissao_documento__prazo:
-                            submissao_documento__prazo = entrega["evento"].endDate
+                        if not prazo:
+                            prazo = entrega["evento"].endDate
                         if diff < 0:
-                            submissao_documento = 'r'
-                        elif submissao_documento != 'r':
-                            submissao_documento = 'y'
-    return {"submissao_documento": (submissao_documento, submissao_documento__prazo)}
+                            cor = 'r'
+                        elif cor != 'r':
+                            cor = 'y'
+                        itens.append( entrega["evento"] )
+    return {"submissao_documento": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": None}}
+
 
 def check_encontros_marcar(alocacao):
     # Verifica se encontros foram marcados
-    encontros_marcar = 'b'
-    encontros_marcar__prazo = None
-    hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gt=hoje).order_by("startDate")
+    cor = 'b'
+    prazo = None
+    agora = datetime.datetime.now()
+    encontros = Encontro.objects.filter(startDate__gt=agora).order_by("startDate")
     if encontros:
-        encontros_marcar__prazo = encontros.first().startDate - datetime.timedelta(days=1)
+        prazo = encontros.first().startDate - datetime.timedelta(days=1)
         if encontros.filter(projeto=alocacao.projeto).exists():
-            encontros_marcar = 'g'
+            cor = 'g'
+        elif prazo > agora:
+            cor = 'y'
         else:
-            encontros_marcar = 'y'
-    return {"encontros_marcar": (encontros_marcar, encontros_marcar__prazo)}
+            cor = 'r'
+    return {"encontros_marcar": {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
+
 
 
 def check_avaliacao_pares(alocacao, sigla, chave):
     # Verifica se avaliação de pares intermediária foi submetida no prazo
-    avaliacao_pares = 'b'
-    avaliacao_pares_prazo = None
+    cor = 'b'
+    prazo = None
     hoje = datetime.date.today()
-    prazo = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje).order_by("startDate").first()
-    if prazo and prazo.endDate - hoje <= datetime.timedelta(days=7):
-        pares = Pares.objects.filter(alocacao_de=alocacao, tipo=0).exists()  # (0, "intermediaria"),   # (1, "final"),
+    evento = Evento.objects.filter(tipo_evento__sigla=sigla, startDate__gte=hoje).order_by("startDate").first()
+    if evento and evento.endDate - hoje <= datetime.timedelta(days=7):
+        tipo = 0 if sigla == "API" else 1
+        pares = Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists()  # (0, "intermediaria"),   # (1, "final"),
         if pares:
-            avaliacao_pares = 'g'
+            cor = 'g'
         else:
-            avaliacao_pares_prazo = prazo.endDate
-            avaliacao_pares = 'r' if prazo.endDate == hoje else 'y'
-    return {chave: (avaliacao_pares, avaliacao_pares_prazo)}
+            prazo = evento.endDate
+            cor = 'r' if evento.endDate == hoje else 'y'
+    return {chave: {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
+
 
 
 def check_avaliacao_pares_intermediaria(alocacao,):
