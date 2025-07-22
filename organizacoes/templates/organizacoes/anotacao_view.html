@@ -121,6 +121,7 @@
                 if(response.novo) {
                   $("#mostra_anot_"+organizacao_id).prepend(
                     '<div style="background-color:#' + response.cor + ';"' +
+                    'data-toggle="tooltip" data-html="true" animation="true" title="' + response.tipo_retorno_nome + '"' +
                     'class="acompanhamentos quad_anot anot_' + response.tipo_retorno_id + '" data-type="' + response.tipo_retorno_id + '">' +
                       '<span id="contato_autor_' + response.anotacao_id + '">' + response.autor_nome + ':</span> ' +
                       '<a id="anotacao_' + response.anotacao_id + '"' +
@@ -130,6 +131,7 @@
                           'data-url="' + "{% url 'anotacao' %}" + organizacao_id + '/' + response.anotacao_id + '" ' +
                         '>' + texto + '</a>' +
                     '</div>');
+                  $('[data-toggle="tooltip"]').tooltip('dispose').tooltip();
                 } else {
                   $("#data_"+organizacao_id).text(response.data);
                   $("#contato_autor_{{anotacao.id}}").text(response.autor_nome+": ");

@@ -29,7 +29,8 @@
 <div class="container2">
   <div id="mostra_anot_{{organizacao.id}}" class="mostra_anot">
     {% for anotacao in anotacoes %}
-      <div style="background-color:#{{anotacao.tipo_retorno.cor}};"
+      <div style="background-color:#{{anotacao.tipo_retorno.cor}};" 
+       data-toggle="tooltip" data-html="true" animation="true" title="{{anotacao.tipo_retorno.nome}}"
        class="acompanhamentos quad_anot anot_{{anotacao.tipo_retorno.id}}" data-type="{{anotacao.tipo_retorno.id}}">
         <span id="contato_autor_{{anotacao.id}}">{{anotacao.autor.first_name}}:</span>
         <a id="anotacao_{{anotacao.id}}"
