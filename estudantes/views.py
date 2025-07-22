@@ -134,7 +134,7 @@ def alinhamentos_gerais(request):
 def alocacao_semanal(request):
     """Para passar links de alinhamentos gerais de início de semestre."""
     configuracao = get_object_or_404(Configuracao)
-    if request.user.tipo_de_usuario == 1:  # Estudante
+    if request.user.eh_estud:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=configuracao.ano , semestre=configuracao.semestre).last()
         if not projeto:
             context = {
@@ -142,7 +142,7 @@ def alocacao_semanal(request):
                 "mensagem_erro": { "pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated in a project this semester."},
             }
             return render(request, "generic_ml.html", context=context)
-    elif request.user.tipo_de_usuario in (2, 4):
+    elif request.user.eh_prof_a:  # Professor ou Administrador
         projeto = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano , semestre=configuracao.semestre).last()
     else:
         context = {
@@ -161,10 +161,12 @@ def alocacao_semanal(request):
 @login_required
 def alocacao_hora(request):
     """Ajax para definir horarios dos estudantes."""
-    if request.user.tipo_de_usuario == 1:
+    if request.user.eh_estud:  # Estudante
         configuracao = get_object_or_404(Configuracao)
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
         alocacao.horarios = json.loads(request.POST.get("horarios", None))
+        if not alocacao.agendado_horarios:  # Salva data do primeiro agendamento
+            alocacao.agendado_horarios = datetime.datetime.now()
         alocacao.save()
     else:
         return JsonResponse({"atualizado": False}, status=500)

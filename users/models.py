@@ -430,6 +430,8 @@ class Alocacao(models.Model):
                                             help_text="Momento em que o orientador verificou a avaliação final de par do estudante")
 
     horarios = models.CharField(max_length=512, null=True, blank=True, help_text="Horários alocados para trabalhar no projeto")
+    agendado_horarios = models.DateTimeField("Agendamento de Horários", default=None, blank=True, null=True,
+                                             help_text="Data e hora do primeiro agendamento dos horários de trabalho no projeto")
     
     class Meta:
         """Meta para Alocacao."""

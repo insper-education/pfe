@@ -296,6 +296,7 @@ def estudantes_notas(request, professor=None):
                         {"pt": "Projeto", "en": "Project"},
                         {"pt": "Notas", "en": "Grades"},
                         {"pt": "Indi.", "en": "Indi."},
+                        {"pt": "Desc.", "en": "Disc."},
                         {"pt": "Média", "en": "Average"},
                     ]
 

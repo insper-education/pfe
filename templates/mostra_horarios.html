@@ -9,21 +9,6 @@
 {% load linguas %}
 <link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
 
-{% comment %} REMOVER vvvvvvv {% endcomment %}
-<style>
-  .highlight {
-    background-color: yellow !important;
-  }
-  .aexterno {
-    background-color: rgba(0, 0, 255, 0.1);
-  }
-  .tabela_horarios thead tr th {
-    border: 2px solid black;
-  }
-</style>
-{% comment %} REMOVER ^^^^^^^ {% endcomment %}
-
-
 {% with alocacoes=projeto.alocacao_set.all %}
   {% for alocacao in alocacoes %}
     <b>

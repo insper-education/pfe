@@ -66,10 +66,6 @@
     <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
   {% endif %}
 
-  {% comment %} {% if aluno.social %}
-    <b>{{aluno.get_social_help_text }}</b> {{ aluno.social|linebreaks }}<br>
-  {% endif %}   {% endcomment %}
-
   {% if aluno.atividades %}
     <b>{{aluno.get_atividades_help_text }}</b> {{ aluno.atividades|linebreaks }}<br>
   {% endif %}

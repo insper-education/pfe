@@ -14,6 +14,7 @@ from . import views
 urlpatterns = [
     path("", views.index_academica, name="index_academica"),  # pagina inicial
     path("academica", views.index_academica, name="academica"),
+    path("descontos", views.descontos, name="descontos"),
     path("dinamicas_grupos", views.dinamicas_grupos, name="dinamicas_grupos"),
     path("lista_areas_interesse", views.lista_areas_interesse, name="lista_areas_interesse"),
 ]

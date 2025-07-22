@@ -94,7 +94,9 @@ def check_relato_quinzenal(alocacao):
     return {"relato_quinzenal": {"cor": cor, "prazo": prazo, "itens": None, "atraso": None}}
 
 
-def check_submissao_documento(alocacao, ano, semestre):
+
+
+def check_submissao_documentos(alocacao, ano, semestre):
     # Verifica se documentos foram submetido no prazo
     cor = 'b'
     prazo = None
@@ -173,7 +175,7 @@ def ver_pendencias_estudante(user, ano, semestre):
         if alocacao:
             context.update(check_alocacao_semanal(alocacao, ano, semestre, PRAZO))
             context.update(check_relato_quinzenal(alocacao))
-            context.update(check_submissao_documento(alocacao, ano, semestre))
+            context.update(check_submissao_documentos(alocacao, ano, semestre))
             context.update(check_encontros_marcar(alocacao))
             context.update(check_avaliacao_pares_intermediaria(alocacao))
             context.update(check_avaliacao_pares_final(alocacao))

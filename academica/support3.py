@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 from academica.models import Exame
 from academica.support2 import get_objetivos
 
-from projetos.models import Reprovacao, Avaliacao2, Banca, Evento
+from projetos.models import Reprovacao, Avaliacao2, Banca, Evento, Desconto
 from projetos.support3 import get_notas_alocacao
 
 
@@ -111,9 +111,9 @@ def get_media_alocacao_i(alocacao, request=None):
     peso_grupo_inter = 0
     peso_grupo_final = 0
     peso_bancas = 0
+    nota_descontos = 0
 
     for aval in edicao:
-        #print(f"Sigla: {aval['sigla']} Nota: {aval['nota']} Peso: {aval['peso']}")
         if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
             peso_final += aval["peso"]
             nota_final += aval["nota"] * aval["peso"]
@@ -136,11 +136,21 @@ def get_media_alocacao_i(alocacao, request=None):
     if peso_individual > 0:
         individual = nota_individual/peso_individual
 
+    # Recupera os descontos
+    descontos = Desconto.objects.filter(alocacao=alocacao) | Desconto.objects.filter(projeto=alocacao.projeto)
+    if descontos:
+        for desconto in descontos:
+            if desconto.nota is not None:
+                nota_descontos += desconto.nota
+    # Aplica qualquer desconto na nota final
+    nota_final -= float(nota_descontos)
+    if nota_final < 0:
+        nota_final = 0
+
     # Arredonda os valores finais para auxiliar do check de peso 100% e média 5.
     nota_final = round(nota_final, 6)
     peso_final = round(peso_final, 9)
 
-    
     if alocacao.projeto.ano > 2021:  # A partir de 2022, a nota final é a menor das notas individuais
         if individual is not None and individual < 5:  # Caso a nota individual seja menor que 5, a nota final é a menor das notas
             if individual < nota_final:
@@ -184,4 +194,5 @@ def get_media_alocacao_i(alocacao, request=None):
         "individual": individual,
         "media_grupo": media_grupo,
         "probation": probation,
+        "descontos": nota_descontos,
     }

@@ -1718,6 +1718,38 @@ class Avaliacao2(models.Model):
         return converte_letra(self.nota, mais="X")
 
 
+
+class Desconto(models.Model):
+    """Descontos em notas devido a atrasos de entregas em um projeto."""
+
+    # Valor numérico do desconto
+    nota = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+
+    evento = models.ForeignKey(Evento, null=True, blank=True, on_delete=models.SET_NULL,
+                               help_text="Evento que gerou o desconto")
+
+    # Para Entregas em Grupo (Relatório Preliminar)
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="projeto em questão")
+    
+    # Alocação na qual o desconto deve ser aplicado
+    alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True,
+                                 on_delete=models.SET_NULL,
+                                 related_name="projeto_alocado_desconto",
+                                 help_text="relacao de alocação entre projeto e estudante")
+
+    def __str__(self):
+        if self.projeto:
+            return f"{str(self.projeto)[:28]} > {str(self.nota)}"
+        else:
+            return f"{str(self.alocacao)[:28]} > {str(self.nota)}"
+
+    class Meta:
+        verbose_name = "Desconto"
+        verbose_name_plural = "Descontos"
+
+
+
 class Avaliacao_Velha(models.Model):
     """Quando avaliações de banca são refeitas, as antigas vem para essa base de dados."""
 

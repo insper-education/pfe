@@ -472,3 +472,5 @@ class TipoRetornoAdmin(admin.ModelAdmin):
 admin.site.register(Entidade)       # Para ser preenchido com as entidades estudantis
 
 admin.site.register(PropostaContato)
+
+admin.site.register(Desconto)

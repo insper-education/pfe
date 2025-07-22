@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 20 de Julho de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load i18n %}
+  {% load l10n %}
+  {% load linguas %}
+{% endblock %}
+
+{% block content %}
+
+  <div id="atualizar">
+    
+    {% for desconto in descontos %}
+      <div class="desconto">
+        {% if desconto.projeto %}
+          Projeto: {{ desconto.projeto }}
+        {% else %}
+          Alocação: {{ desconto.alocacao }}
+        {% endif %} -- 
+        Evento: {{ desconto.evento }} --
+        Nota: {{ desconto.nota }}
+      </div>
+    {% endfor %}
+
+  </div>
+
+{% endblock %}
