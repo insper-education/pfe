@@ -23,6 +23,8 @@ from calendario.support import get_calendario_context
 from .models import Aviso, Evento, Configuracao, Projeto
 from .messages import email, htmlizar
 
+from academica.support import lanca_descontos
+
 from users.models import Aluno, Professor, PFEUser
 
 logger = logging.getLogger("django")  # Get an instance of a logger
@@ -268,4 +270,9 @@ def apaga_tmp():
     """Rotina que apaga quaisquer arquivos que esteja na pasta 'tmp'."""
     pasta_tmp = settings.MEDIA_ROOT + "/tmp"
     subprocess.call(f"sudo rm -rf {pasta_tmp}/*", shell=True)
-    
+
+
+@shared_task
+def decontos():
+    """Calcula descontos para estudantes do semestre."""
+    lanca_descontos()

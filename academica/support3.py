@@ -12,9 +12,9 @@ import datetime
 from django.core.exceptions import ValidationError
 
 from academica.models import Exame
-from academica.support2 import get_objetivos
+from academica.support2 import get_objetivos, get_descontos_alocacao
 
-from projetos.models import Reprovacao, Avaliacao2, Banca, Evento, Desconto
+from projetos.models import Reprovacao, Avaliacao2, Banca, Evento
 from projetos.support3 import get_notas_alocacao
 
 
@@ -97,6 +97,8 @@ def em_probation(alocacao):
 
     return False
 
+
+
 def get_media_alocacao_i(alocacao, request=None):
     """Retorna média e peso final."""
     edicao = get_notas_alocacao(alocacao, request=request)
@@ -136,14 +138,9 @@ def get_media_alocacao_i(alocacao, request=None):
     if peso_individual > 0:
         individual = nota_individual/peso_individual
 
-    # Recupera os descontos
-    descontos = Desconto.objects.filter(alocacao=alocacao) | Desconto.objects.filter(projeto=alocacao.projeto)
-    if descontos:
-        for desconto in descontos:
-            if desconto.nota is not None:
-                nota_descontos += desconto.nota
-    # Aplica qualquer desconto na nota final
-    nota_final -= float(nota_descontos)
+    # Recupera os descontos e aplica na nota final
+    nota_descontos, _ = get_descontos_alocacao(alocacao)
+    nota_final -= nota_descontos
     if nota_final < 0:
         nota_final = 0
 

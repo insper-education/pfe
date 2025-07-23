@@ -241,6 +241,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'projetos.tasks.apaga_tmp',
         'schedule': crontab(minute=0, hour=0, day_of_week=2),
     },
+    'decontos': {
+        'task': 'projetos.tasks.decontos',
+        'schedule': crontab(hour=5, minute=10),
+    },
 }
 
 SITE_ID = 1

@@ -339,6 +339,7 @@ def blackboard_notas(request, anosemestre):
     exames = set()
     for composicao in composicoes:
         exames.add(composicao.exame)
+    exames.add(Exame.objects.get(sigla="D"))  # Descontos
     exames.add(Exame.objects.get(sigla="M"))  # Média
 
     if request.method == "POST":
@@ -382,14 +383,19 @@ def blackboard_notas(request, anosemestre):
             for nota in notas:
                 avaliacao[nota["nome"]] = nota["nota"]
             
+            media = get_media_alocacao_i(alocacao)
             for coluna in colunas:
                 if coluna in avaliacao:
                     linha += [f"{avaliacao[coluna]:.2f}".replace('.',',')]
                 else:
                     if coluna == "Média":
-                        media = get_media_alocacao_i(alocacao)["media"]
-                        if media:
-                            linha += [f"{media:.2f}".replace('.',',')]
+                        if media["media"]:
+                            linha += [f"{media['media']:.2f}".replace('.',',')]
+                        else:
+                            linha += [""]
+                    elif coluna == "Descontos":
+                        if media["descontos"]:
+                            linha += [f"{media['descontos']:.2f}".replace('.',',')]
                         else:
                             linha += [""]
                     else:

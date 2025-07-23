@@ -15,6 +15,7 @@
   {% load bancas %}
   {% load documentos %}
   {% load get_notas %}
+  {% load get_descontos %}
   {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -154,8 +155,8 @@
           {% include "tipo_projeto.html" with projeto=alocado.projeto %}
         </a>
         <br>
-        
-        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao:request %}
+
+        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao:request descontos=alocado|get_descontos_alocacao:request %}
         <br><br>
 
         {% with relatos=alocado|get_relatos %}

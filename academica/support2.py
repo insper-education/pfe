@@ -8,6 +8,8 @@ Data: 15 de Janeiro de 2024
 
 import logging
 
+
+from projetos.models import Desconto
 from projetos.support4 import get_objetivos_atuais
 
 
@@ -75,3 +77,16 @@ def get_objetivos(avaliacoes, ano, semestre):
                 val_objetivos[obj] = (valor, peso)
 
     return val_objetivos, pes_total, avaliadores
+
+
+def get_descontos_alocacao(alocacao):
+    # Recupera os descontos
+    nota_descontos = 0
+    eventos = []
+    descontos = Desconto.objects.filter(alocacao=alocacao) | Desconto.objects.filter(projeto=alocacao.projeto)
+    if descontos:
+        for desconto in descontos:
+            if desconto.nota is not None:
+                nota_descontos += desconto.nota
+                eventos.append(desconto.evento)
+    return float(nota_descontos), eventos

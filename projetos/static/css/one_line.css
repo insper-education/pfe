@@ -23,6 +23,12 @@
   padding: 1px 5px 1px 5px;
 }
 
+.one-line .td_desc{
+  background-color: #ffe5e5;
+  font-weight: 500;
+  padding: 1px 5px;
+}
+
 .one-line td .long{
   display: none;
 }

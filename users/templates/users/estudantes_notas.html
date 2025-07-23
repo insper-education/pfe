@@ -75,7 +75,9 @@
             </script>
             {% comment %} {% for aval, nota, peso, descr in aluno|recuper_notas_estudante|dict_key:ano_semestre %} <!-- Notas --> {% endcomment %}
             {% for aval in aluno|recuper_notas_estudante|dict_key:ano_semestre %} <!-- Notas -->
-                <span data-toggle="tooltip" data-html="true" animation="true" 
+                <span
+                style="white-space: nowrap;"
+                data-toggle="tooltip" data-html="true" animation="true" 
                 title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
                   {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
                   >={% if aval.peso > 0 %}<span

@@ -8,16 +8,16 @@ Data: 10 de Abril de 2023
 
 
 from datetime import timedelta
-import datetime
-import math
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
+from academica.support import lanca_descontos
+
 from estudantes.models import Relato, Pares
-from projetos.models import Evento, Area, Projeto, Configuracao, Documento, Desconto
+from projetos.models import Evento, Area, Configuracao
 
 from operacional.models import Curso
 
@@ -166,74 +166,6 @@ def lista_areas_interesse(request):
     }
 
     return render(request, "academica/lista_areas_interesse.html", context)
-
-
-def lanca_descontos(ano=None, semestre=None):
-    """Lança os descontos para os estudantes de acordo com as regras definidas."""
-
-    if ano is None or semestre is None:
-        configuracao = get_object_or_404(Configuracao)
-        ano, semestre = configuracao.ano, configuracao.semestre
-
-    hoje = datetime.date.today()
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre)
-    eventos = {
-        "erp": Evento.get_evento(sigla="ERP", ano=ano, semestre=semestre),  # Entrega de Relatório Preliminar (Grupo)
-        "api": Evento.get_evento(sigla="API", ano=ano, semestre=semestre),  # Avaliação de Pares Intermediária
-        "apf": Evento.get_evento(sigla="APF", ano=ano, semestre=semestre),  # Avaliação de Pares Final
-        "rqs": Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre),  # Relatos Quinzenais
-        "pas": Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre),  # Preenchimento de Alocação Semanal
-    }
-
-    descontos = []
-
-    def add_desconto(obj, evento, nota):
-        desconto, _ = Desconto.objects.get_or_create(**obj, evento=evento)
-        desconto.nota = nota
-        desconto.save()
-        descontos.append(desconto)
-    
-    for projeto in projetos:
-
-        # Verifica se o relatório preliminar foi entregue
-        if eventos["erp"]:
-            relatorioPreliminar = Documento.objects.filter(projeto=projeto, tipo_documento__sigla="RPR").last()
-            data_entrega = relatorioPreliminar.data.date() if relatorioPreliminar else hoje
-            atraso_dias = (data_entrega - eventos["erp"].endDate).days
-            semanas_atraso = math.ceil(atraso_dias / 7)
-            if semanas_atraso > 0:
-                add_desconto({"projeto": projeto}, eventos["erp"], 0.5 * semanas_atraso)
-
-        for alocacao in Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True):
-
-            # Avaliação de Pares (Intermediária e Final)
-            for tipo, evento_key in [(0, "api"), (1, "apf")]:
-                evento = eventos[evento_key]
-                if evento and hoje > evento.endDate:
-                    if not Pares.objects.filter(alocacao_de=alocacao, tipo=tipo).exists():
-                        add_desconto({"alocacao": alocacao}, evento, 0.5)
-        
-            # Relato Quinzenal
-            evento_anterior = None
-            for evento in eventos["rqs"]:
-                if hoje > evento.endDate:
-                    if evento_anterior:
-                        if not Relato.objects.filter(alocacao=alocacao, momento__date__gt=evento_anterior.endDate, momento__date__lte=evento.endDate).exists():
-                            add_desconto({"alocacao": alocacao}, evento, 0.25)
-                    else:
-                        if not Relato.objects.filter(alocacao=alocacao, momento__date__lte=evento.endDate).exists():
-                            add_desconto({"alocacao": alocacao}, evento, 0.25)
-                evento_anterior = evento
-
-            # Planejamento de Alocação Semanal
-            if eventos["pas"] and hoje > eventos["pas"].endDate:
-                agendado_horarios = alocacao.agendado_horarios.date() if alocacao.agendado_horarios else hoje
-                atraso_dias = (agendado_horarios - eventos["pas"].endDate).days
-                semanas_atraso = math.ceil(atraso_dias / 7)
-                if semanas_atraso > 0:
-                    add_desconto({"alocacao": alocacao}, eventos["pas"], 0.25 * semanas_atraso)
-
-    return descontos
 
 
 @login_required

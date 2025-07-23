@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Avaliacao2, ObjetivosDeAprendizagem, Configuracao
 from academica.models import Exame
-from academica.support2 import get_objetivos
+from academica.support2 import get_objetivos, get_descontos_alocacao
 from academica.support4 import get_notas_estudante
 
 from users.models import Alocacao
@@ -95,6 +95,12 @@ def get_notas_alocacao(alocacao, checa_banca=True, request=None):
     """Retorna notas do estudante em um semestre e ano de projeto específico."""
     edicoes = get_notas_estudante(alocacao.aluno, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre, checa_banca=checa_banca, request=request)
     return edicoes[str(alocacao.projeto.ano)+"."+str(alocacao.projeto.semestre)]
+
+def get_descontos_alocacao(alocacao, request=None):
+    """Retorna descontos do estudante em um semestre e ano de projeto específico."""
+    nota_descontos, eventos = get_descontos_alocacao(alocacao)
+    return nota_descontos, eventos
+
 
 def get_edicoes_alocacao(self):
     """Retorna objetivos."""
