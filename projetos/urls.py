@@ -22,6 +22,8 @@ urlpatterns = [
     path("certificacao_falconi",views.certificacao_falconi, name="certificacao_falconi"),
     path("comite/", views.comite, name="comite"),
     path("correlacao_medias_cr", views.correlacao_medias_cr, name="correlacao_medias_cr"),
+    path("cria_reuniao/", views.reuniao, name="cria_reuniao"),
+    path("edita_reuniao/<int:reuniao_id>", views.reuniao, name="edita_reuniao"),
     path("despesas/", views.despesas, name="despesas"),
     path("distribuicao_areas/", views.distribuicao_areas, name="distribuicao_areas"),
     path("evolucao_areas/", views.evolucao_areas, name="evolucao_areas"),
@@ -48,6 +50,7 @@ urlpatterns = [
     path("prop_por_opcao/", views.prop_por_opcao, name="prop_por_opcao"),
     path("reembolso_pedir/", views.reembolso_pedir, name="reembolso_pedir"),
     path("reenvia_avisos/", views.reenvia_avisos, name="reenvia_avisos"),
+    path("reunioes", views.reunioes, name="reunioes"),
     path("upload_estudantes_projeto/<int:projeto_id>", views.upload_estudantes_projeto, name="upload_estudantes_projeto"),
 
     path("ajax/validate_aviso/", views.validate_aviso, name="validate_aviso"),

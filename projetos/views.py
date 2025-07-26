@@ -8,6 +8,7 @@ Data: 15 de Maio de 2019
 
 import datetime
 import csv
+from multiprocessing import context
 import dateutil.parser
 import json
 import logging
@@ -29,7 +30,7 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
-from .models import Area, AreaDeInteresse, Banca
+from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante
 
 from .support import simple_upload
 from .support2 import get_areas_propostas, get_areas_estudantes
@@ -851,6 +852,166 @@ def comite(request):
             "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
     return render(request, "projetos/comite.html", context)
+
+
+@login_required
+def reunioes(request):
+    """Exibe as reuniões do Capstone."""
+    configuracao = get_object_or_404(Configuracao)
+    if request.user.eh_estud:
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        if not alocacao:
+            return HttpResponse("Nenhuma alocação encontrada.", status=404)
+        reunioes = Reuniao.objects.filter(projeto=alocacao.projeto)
+    elif request.user.eh_prof_a:
+        projetos_orientados = Projeto.objects.filter(orientador=request.user.professor, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+        reunioes = Reuniao.objects.filter(projeto__in=projetos_orientados)
+    else:
+        return HttpResponse("Acesso não autorizado.", status=401)
+
+    context = {
+            "cabecalhos": [
+                {"pt": "Título", "en": "Title"},
+                {"pt": "Projeto", "en": "Project"},
+                {"pt": "Data", "en": "Date"},
+                {"pt": "Local", "en": "Location"},
+                {"pt": "Participantes", "en": "Participants"}
+            ],
+            "titulo": {"pt": "Reuniões do Projeto", "en": "Project Meetings"},
+            "reunioes": reunioes,
+        }
+    return render(request, "projetos/reunioes.html", context)
+
+
+def recupera_envolvidos(projeto, reuniao=None):
+    """Recupera os envolvidos em uma reunião de um projeto."""
+    pessoas = []
+    if projeto.orientador:
+        pessoas.append(projeto.orientador.user)
+
+    for coorientador in Coorientador.objects.filter(projeto=projeto):
+        pessoas.append(coorientador)
+
+    for integrante in Alocacao.objects.filter(projeto=projeto):
+        pessoas.append(integrante.aluno.user)
+
+    for conexao in Conexao.objects.filter(projeto=projeto):
+        pessoas.append(conexao.parceiro.user)
+
+    envolvidos = []
+    for pessoa in pessoas:
+        if reuniao:
+            # Verifica se a pessoa já está na reunião
+            rp = ReuniaoParticipante.objects.filter(participante=pessoa, reuniao=reuniao).first()
+            if rp:
+                envolvidos.append(rp)
+            else:
+                rp = ReuniaoParticipante(participante=pessoa, situacao=0)
+                envolvidos.append(rp)
+        else:
+            rp = ReuniaoParticipante(participante=pessoa, situacao=0)  # 0 = Não Convocado
+            envolvidos.append(rp)
+
+    return envolvidos
+
+@login_required
+@transaction.atomic
+def reuniao(request, reuniao_id=None):
+    """Formulário para estudantes preencherem os relatos quinzenais."""
+    usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
+    configuracao = get_object_or_404(Configuracao)
+
+    context = {
+        "titulo": {"pt": "Registra Reunião", "en": "Register Meeting"},
+        "area_principal": True,
+        "Reuniao": Reuniao,
+    }
+    
+    if request.user.eh_estud:  # Estudante
+
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
+                                           projeto__ano=configuracao.ano,
+                                           projeto__semestre=configuracao.semestre).last()
+
+        if not alocacao:
+            context["mensagem"] = {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated to a project this semester."}
+            context["area_aluno"] = True
+            return render(request, "generic_ml.html", context=context)
+
+        context["projetos"] = [alocacao.projeto]
+
+    elif request.user.eh_prof_a:  # Professor
+        if request.user.eh_admin:
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
+        else:
+            projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+
+        if not projetos:
+            context["mensagem"] = {"pt": "Você não tem projetos para registrar reuniões nesse semestre.", "en": "You do not have projects to register meetings this semester."}
+            context["area_principal"] = True
+            return render(request, "generic_ml.html", context=context)
+
+        context["projetos"] = projetos
+
+    if reuniao_id:
+        reuniao = get_object_or_404(Reuniao, id=reuniao_id)
+        context["reuniao"] = reuniao
+        context["titulo"]["pt"] = "Editar Reunião"
+        context["titulo"]["en"] = "Edit Meeting"
+        context["envolvidos"] = recupera_envolvidos(reuniao.projeto, reuniao)
+    else:
+        reuniao = None
+        context["envolvidos"] = recupera_envolvidos(context["projetos"][0])
+
+    if request.method == "POST":
+
+        if reuniao is None:
+            reuniao = Reuniao.objects.create()
+        projeto_id = request.POST.get("projeto", None)
+        reuniao.projeto = get_object_or_404(Projeto, id=projeto_id)
+
+        if reuniao.projeto not in context["projetos"]:
+            context["mensagem"] = {"pt": "Você não tem permissão para registrar reuniões nesse projeto.", "en": "You do not have permission to register meetings for this project."}
+            return render(request, "generic_ml.html", context=context)
+
+        if request.user.eh_estud and reuniao.travado:
+            context["mensagem"] = {"pt": "Você não pode editar reuniões travadas.", "en": "You cannot edit locked meetings."}
+            return render(request, "generic_ml.html", context=context)
+
+        reuniao.titulo = request.POST.get("titulo", "")
+        reuniao.data_hora = datetime.datetime.strptime(request.POST["data_hora"], "%Y-%m-%dT%H:%M")
+        reuniao.local = request.POST.get("local", "")
+        reuniao.anotacoes = request.POST.get("anotacoes", None)
+        
+        reuniao.travado = "travado" in request.POST
+        reuniao.usuario = request.user
+        reuniao.save()
+
+        # Recupera os participantes
+        for envolvido in context["envolvidos"]:
+            situacao = int(request.POST.get("envolvido_" + str(envolvido.participante.id), "0"))
+            if situacao != 0:
+                envolvido.situacao = situacao
+                envolvido.reuniao = reuniao
+                envolvido.save()
+
+        mensagem = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
+                    "en": "Meeting successfully registered!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}
+        context["mensagem"] = mensagem
+        context = {
+            "area_aluno": True,
+            "area_principal": True,
+            "voltar": True,
+            "mensagem": mensagem
+        }
+
+        return render(request, "generic_ml.html", context=context)
+
+    # else:  # Não é estudante nem professor
+    #     context["mensagem_aviso"] = {"pt": "Você não tem permissão para acessar essa página.", "en": "You do not have permission to access this page."}
+    #     context["area_principal"] = True
+
+    return render(request, "projetos/reuniao.html", context=context)
 
 
 @login_required

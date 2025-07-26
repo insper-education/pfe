@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 24 de Julho de 2025
+{% endcomment %}
+
+{% load static %}
+{% load get_field %}
+{% load get_prazo %}
+{% load linguas %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
+
+<style>
+    .modern-card {
+      max-width: 1600px;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+      background: #FAFAFA;
+      padding: 1.5rem 1rem 1rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-floating label {
+      color: #888;
+    }
+    .form-floating > .form-control:focus ~ label {
+      color: #6a82fb;
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .compact-input {
+      max-width: 320px;
+      min-width: 180px;
+      border: 1px solid #ced4da;
+    }
+
+    .med-input {
+      width: 640px;
+      max-width: 100%;
+      min-width: 180px;
+      border: 1px solid #ced4da;
+    }
+
+    .form_label {
+      color: #333;
+      width: 8em;
+    }
+    
+    .tab_participantes {
+      border-collapse: collapse;
+      font-size: 0.97em;
+      background: transparent;
+    }
+    .tab_participantes th, .tab_participantes td {
+      padding: 0.1rem 0.5rem;
+      text-align: center;
+    }
+    .tab_participantes th {
+      font-weight: 500;
+      border-bottom: 1px solid #e5e5e5;
+      min-width: 9em;
+    }
+    @media (max-width: 850px) {
+      .tab_participantes th {
+        min-width: 1em;
+        font-size: 0.75em;
+        padding: 0.1rem 0.2rem;
+      }
+      
+    }
+
+    .tab_participantes td {
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tab_participantes td input[type="radio"] {
+      margin: 0 auto;
+      accent-color: #6a82fb;
+    }
+    .tab_participantes td:first-child {
+      text-align: left;
+      padding-left: 0.7em;
+      color: #333;
+      font-weight: 400;
+    }
+    .tab_participantes tr:last-child td {
+      border-bottom: none;
+    }
+    .box_table {
+      display: inline-block;
+      padding: 0.25rem 0.15rem;
+      border: 1px solid #e5e5e5;
+      border-radius: 0.5rem;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .disabled {
+      background-color: #fff0f0;
+      color: #888;
+      cursor: not-allowed;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="modern-card">
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+
+      <div class="form-floating mb-2">
+        <label class="form-label mb-1" for="projeto" style="font-size:0.97em;">
+                  {% lng "Projeto" "Project" %}:</label>
+        {% if projetos|length == 1 %}
+          {% with projeto=projetos.0 %}
+            <input type="hidden" id="projeto" name="projeto" value="{{ projeto.id }}">
+            <span style="font-size:0.97em;">{{ projeto }}</span>
+          {% endwith %}
+        {% else %}
+          <select id="projeto" name="projeto" class="form-select form-select-sm med-input" required>
+            {% for projeto in projetos %}
+              <option value="{{ projeto.id }}" {% if projeto.id == reuniao.projeto.id %}selected{% endif %}>{{ projeto }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+      </div>
+      
+      {% if user.eh_prof_a %}
+        <div class="form-floating mb-2">
+          <label for="criacao" class="form_label" style="font-size:0.97em;">{% lng "Data de Criação" "Creation Date" %}</label>
+          <span class="form-control-sm">{{ reuniao.criacao|date:"d/m/Y H:i" }}</span>
+        </div>
+      {% endif %}
+
+      <div class="form-floating mb-2">
+        <label for="data_hora" class="form_label" style="font-size:0.97em;">{% lng "Data da reunião" "Meeting date" %}</label>
+        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar"
+              value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
+      </div>
+
+      <div class="form-floating mb-2">
+        <label for="local" class="form_label" style="font-size:0.97em;">{% lng "Local da reunião" "Meeting location" %}</label>
+        <input type="text" id="local" name="local" class="form-control-sm med-input ptravar"
+              value="{% if reuniao.local %}{{reuniao.local}}{% endif %}" placeholder="Opcional">
+      </div>
+
+      <div class="form-floating mb-2">
+        <label for="titulo" class="form_label" style="font-size:0.97em;">{% lng "Título da reunião" "Meeting title" %}</label>
+        <input type="text" id="titulo" name="titulo" class="med-input ptravar"
+              value="{% if reuniao.titulo %}{{reuniao.titulo}}{% endif %}" required>
+      </div>
+
+      <div class="form-floating mb-3">
+        <label for="anotacoes" class="form-label mt-1" style="font-size:0.97em;">
+          {% lng "Anotações (máx " "Notes (max " %}
+          {% max_length Reuniao "anotacoes" %}
+          {% lng "caracteres)" "characters)" %}
+        </label>
+        <textarea id="anotacoes" name="anotacoes" rows="10" maxlength="{% max_length Reuniao "anotacoes" %}"
+          class="form-control form-control-sm ptravar"
+          style="width:100%;">{% if reuniao.anotacoes %}{{reuniao.anotacoes}}{% endif %}</textarea>
+      </div>
+
+      <div class="form-floating mb-2">
+        <label for="participantes" class="form_label" style="font-size:0.97em;">{% lng "Participantes" "Participants" %}</label><br>
+        <div class="box_table">
+          <table class="tab_participantes">
+            <thead>
+              <tr>
+                <th scope="col">{% lng "Nome" "Name" %}</th>
+                <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
+                <th scope="col">{% lng "Presente" "Present" %}</th>
+                <th scope="col">{% lng "Faltou" "Absent" %}</th>
+                <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for envolvido in envolvidos %}
+                <tr>
+                  <td>{{ envolvido.participante.get_full_name }}</td>
+                  <td>
+                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="0" class="ptravar"
+                      {% if envolvido.situacao == 0 %}checked{% endif %}>
+                  </td>
+                  <td>
+                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="1" class="ptravar"
+                      {% if envolvido.situacao == 1 %}checked{% endif %}>
+                  </td>
+                  <td>
+                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="2" class="ptravar"
+                      {% if envolvido.situacao == 2 %}checked{% endif %}>
+                  </td>
+                  <td>
+                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="3" class="ptravar"
+                      {% if envolvido.situacao == 3 %}checked{% endif %}>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center" style="gap: 1rem;">
+
+        {% if user.eh_prof_a or not reuniao.travado %}
+          <button class="btn btn-primary mb-1 mt-4 px-4" type="submit">
+            {% lng "Enviar" "Send" %}
+          </button>
+        {% endif %}
+        
+        <div class="form-check form-switch mb-1 mt-4">
+          {% if user.eh_prof_a %}
+            <label for="travado" class="form_label mb-0" style="font-size:0.97em;">
+              {% lng "Travar Alterações" "Lock Changes" %}
+            </label>
+            <span style="cursor:pointer; font-size:1.1em;" onclick="toggleTravado()" title="Travar Alterações">
+              <i id="icone_travar" class="fas {% if reuniao.travado %}fa-lock{% else %}fa-unlock{% endif %}"></i>
+            </span>
+          {% endif %}
+          <input type="checkbox" id="travado" name="travado" class="d-none"
+            {% if reuniao.travado %}checked{% endif %} onchange="trava_tudo()" />
+        </div>
+        
+      </div>
+
+    </form>
+  </div>
+
+
+
+  <script>
+    function toggleTravado() {
+      const checkbox = document.getElementById("travado");
+      checkbox.checked = !checkbox.checked;
+      checkbox.dispatchEvent(new Event("change"));
+    }
+    function trava_tudo() {
+      const inputs = document.querySelectorAll(".ptravar");
+      const isChecked = document.getElementById("travado").checked;
+      inputs.forEach(input => {
+        {% if user.eh_estud %}
+          input.disabled = isChecked;
+        {% else %}
+          if (isChecked) {
+            input.classList.add("disabled");
+          } else {
+            input.classList.remove("disabled");
+          }
+        {% endif %}
+      });
+      {% if user.eh_prof_a %}
+        document.getElementById("travado").disabled = false;
+        const icone = document.getElementById("icone_travar");
+        if (isChecked) {
+          icone.classList.remove("fa-unlock");
+          icone.classList.add("fa-lock");
+        } else {
+          icone.classList.remove("fa-lock");
+          icone.classList.add("fa-unlock");
+        }
+      {% endif %}
+    }
+    window.onload = function() {
+      trava_tudo();
+    };
+  </script>
+
+{% endblock %}

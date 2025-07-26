@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Julho de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load linguas %}
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <span class="esconder">
+    <a href="{% url 'cria_reuniao' %}"
+     {% comment %} class="open-modal" {% endcomment %}
+     style="cursor:pointer;"
+    data-url="{% url 'cria_reuniao' %}">
+      <i class="fas fa-plus"></i>
+      {% lng "Registrar Nova Reunião" "Register New Meeting" %}
+    </a>
+  </span>
+
+  {% include "tabelas_top_ml.html" with tabela="Reunioes" cabecalhos=cabecalhos %}
+    {% for reuniao in reunioes %} 
+      <tr class="item">
+        <th scope="row"><a href="{% url 'edita_reuniao' reuniao.id %}">{{reuniao.titulo}}</a></th>
+        <td><a href="{% url 'projeto_infos' reuniao.projeto.id %}">{{reuniao.projeto}}</a></td>
+        <td data-sort="{{reuniao.data_hora}}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
+        <td>{{reuniao.local}}</td>
+        <td>
+          {% for participante in reuniao.participantes.all %}
+            {{participante}}
+            {% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% include "tabelas_bottom.html" %}
+
+  <script>
+    function carrega_pagina(){
+      {% include "tabelas_scripts.html" with tabela="Reunioes" %}
+    }
+    window.onload = carrega_pagina
+  </script>
+
+{% endblock %}

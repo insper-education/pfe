@@ -474,3 +474,14 @@ admin.site.register(Entidade)       # Para ser preenchido com as entidades estud
 admin.site.register(PropostaContato)
 
 admin.site.register(Desconto)
+
+admin.site.register(Reuniao)
+
+@admin.register(ReuniaoParticipante)
+class ReuniaoParticipanteAdmin(admin.ModelAdmin):
+    """Participantes das Reuniões."""
+    list_display = ("reuniao", "participante", "situacao")
+    list_filter = ("reuniao__projeto__ano", "reuniao__projeto__semestre",)
+    search_fields = ["reuniao__projeto__titulo_final", "participante__user__username",]
+    actions = [dup_entrada]
+

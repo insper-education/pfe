@@ -2023,3 +2023,55 @@ class AreaDeInteresse(models.Model):
         if self.outras:
             return self.outras
         return str(self.area)
+
+
+class ReuniaoParticipante(models.Model):
+    """Relacionamento entre Reunião e Participante."""
+
+    reuniao = models.ForeignKey("Reuniao", on_delete=models.CASCADE)
+    participante = models.ForeignKey("users.PFEUser", on_delete=models.CASCADE)
+
+    TIPO_PARTICIPANTE = (
+        (0, "Não Convocado"),
+        (1, "Presente"),
+        (2, "Faltou"),
+        (3, "Falta Justificada"),
+    )
+    situacao = models.PositiveSmallIntegerField(choices=TIPO_PARTICIPANTE, null=True, blank=True,
+                                                    help_text="Situação do participante na reunião.")
+
+    class Meta:
+        verbose_name = "Reunião Participante"
+        verbose_name_plural = "Reuniões Participantes"
+
+    def __str__(self):
+        """Retorno padrão textual."""
+        return self.reuniao.titulo + " >>> " + self.participante.get_full_name()
+
+
+class Reuniao(models.Model):
+    """Modelo para representar uma reunião."""
+
+    titulo = models.CharField("Título", max_length=256, null=True, blank=True,
+                               help_text="Título da reunião")
+    anotacoes = models.TextField("Descrição", max_length=9000, null=True, blank=True,
+                                 help_text="Anotações ou descrição da reunião")
+    criacao = models.DateTimeField("Data de Criação", default=datetime.datetime.now,
+                                   help_text="Data e hora de quando a reunião foi criada")
+    usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Usuário que criou ou atualizou a reunião", related_name="reuniao_usuario")
+    data_hora = models.DateTimeField("Data e Hora", null=True, blank=True)
+    local = models.CharField("Local", max_length=128, blank=True)
+    participantes = models.ManyToManyField("users.PFEUser", verbose_name="Participantes", blank=True, help_text="Participantes da reunião", through="ReuniaoParticipante")
+
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+                                help_text="Projeto relacionado à reunião")
+    travado = models.BooleanField("Travado", default=False,
+                                             help_text="Se a reunião está travada")
+
+    def __str__(self):
+        return self.titulo
+
+    class Meta:
+        verbose_name = "Reunião"
+        verbose_name_plural = "Reuniões"
