@@ -473,7 +473,11 @@ admin.site.register(Entidade)       # Para ser preenchido com as entidades estud
 
 admin.site.register(PropostaContato)
 
-admin.site.register(Desconto)
+@admin.register(Desconto)
+class DescontoAdmin(admin.ModelAdmin):
+    """Descontos nas notas dos estudantes."""
+    list_display = ("evento", "reuniao", "projeto", "alocacao", "nota")
+    actions = [dup_entrada]
 
 admin.site.register(Reuniao)
 

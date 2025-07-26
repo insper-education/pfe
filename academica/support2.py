@@ -88,5 +88,8 @@ def get_descontos_alocacao(alocacao):
         for desconto in descontos:
             if desconto.nota is not None:
                 nota_descontos += desconto.nota
-                eventos.append(desconto.evento)
+                if desconto.evento:
+                    eventos.append(desconto.evento)
+                elif desconto.reuniao:
+                    eventos.append(desconto.reuniao)
     return float(nota_descontos), eventos

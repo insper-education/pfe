@@ -31,9 +31,8 @@
         <td data-sort="{{reuniao.data_hora}}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
         <td>{{reuniao.local}}</td>
         <td>
-          {% for participante in reuniao.participantes.all %}
-            {{participante}}
-            {% if not forloop.last %}, {% endif %}
+          {% for rp in reuniao.reuniaoparticipante_set.all %}
+              &bull; {{ rp.participante.get_full_name }} ({{ rp.get_situacao_display }})<br>
           {% endfor %}
         </td>
       </tr>

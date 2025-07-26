@@ -29,7 +29,7 @@ from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
-from .models import Banco, Reembolso, Aviso, Conexao
+from .models import Banco, Reembolso, Aviso, Conexao, Desconto
 from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante
 
 from .support import simple_upload
@@ -855,8 +855,12 @@ def comite(request):
 
 
 @login_required
-def reunioes(request):
+def reunioes(request, todos=None):
     """Exibe as reuniões do Capstone."""
+
+    if todos and not request.user.eh_admin:
+        return HttpResponse("Acesso não autorizado.", status=401)
+
     configuracao = get_object_or_404(Configuracao)
     if request.user.eh_estud:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
@@ -864,8 +868,11 @@ def reunioes(request):
             return HttpResponse("Nenhuma alocação encontrada.", status=404)
         reunioes = Reuniao.objects.filter(projeto=alocacao.projeto)
     elif request.user.eh_prof_a:
-        projetos_orientados = Projeto.objects.filter(orientador=request.user.professor, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
-        reunioes = Reuniao.objects.filter(projeto__in=projetos_orientados)
+        if todos:
+            reunioes = Reuniao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+        else:
+            projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
+            reunioes = Reuniao.objects.filter(projeto__in=projetos)
     else:
         return HttpResponse("Acesso não autorizado.", status=401)
 
@@ -886,38 +893,36 @@ def reunioes(request):
 def recupera_envolvidos(projeto, reuniao=None):
     """Recupera os envolvidos em uma reunião de um projeto."""
     pessoas = []
-    if projeto.orientador:
-        pessoas.append(projeto.orientador.user)
-
-    for coorientador in Coorientador.objects.filter(projeto=projeto):
-        pessoas.append(coorientador)
-
     for integrante in Alocacao.objects.filter(projeto=projeto):
         pessoas.append(integrante.aluno.user)
-
+    if projeto.orientador:
+        pessoas.append(projeto.orientador.user)
+    for coorientador in Coorientador.objects.filter(projeto=projeto):
+        pessoas.append(coorientador.usuario)
     for conexao in Conexao.objects.filter(projeto=projeto):
         pessoas.append(conexao.parceiro.user)
 
     envolvidos = []
-    for pessoa in pessoas:
-        if reuniao:
-            # Verifica se a pessoa já está na reunião
-            rp = ReuniaoParticipante.objects.filter(participante=pessoa, reuniao=reuniao).first()
-            if rp:
-                envolvidos.append(rp)
-            else:
-                rp = ReuniaoParticipante(participante=pessoa, situacao=0)
-                envolvidos.append(rp)
-        else:
-            rp = ReuniaoParticipante(participante=pessoa, situacao=0)  # 0 = Não Convocado
-            envolvidos.append(rp)
+    if reuniao:
+        participantes_reuniao = {rp.participante: rp for rp in ReuniaoParticipante.objects.filter(reuniao=reuniao)}
+        envolvidos = [
+            participantes_reuniao.get(pessoa) or ReuniaoParticipante(participante=pessoa, situacao=0)
+            for pessoa in pessoas
+        ]
+        # AAdiciona os participantes que estavam marcados na reunião, mas não estão mais no projeto
+        extras = ReuniaoParticipante.objects.filter(reuniao=reuniao).exclude(participante__in=pessoas)
+        envolvidos.extend(extras)
+    else:
+        envolvidos = [ReuniaoParticipante(participante=pessoa, situacao=0) for pessoa in pessoas]
 
     return envolvidos
+
+
 
 @login_required
 @transaction.atomic
 def reuniao(request, reuniao_id=None):
-    """Formulário para estudantes preencherem os relatos quinzenais."""
+    """Formulário para estudantes preencherem os anotações de reuniões."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
 
@@ -925,6 +930,7 @@ def reuniao(request, reuniao_id=None):
         "titulo": {"pt": "Registra Reunião", "en": "Register Meeting"},
         "area_principal": True,
         "Reuniao": Reuniao,
+        "envolvidos": {},
     }
     
     if request.user.eh_estud:  # Estudante
@@ -935,10 +941,9 @@ def reuniao(request, reuniao_id=None):
 
         if not alocacao:
             context["mensagem"] = {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated to a project this semester."}
-            context["area_aluno"] = True
             return render(request, "generic_ml.html", context=context)
 
-        context["projetos"] = [alocacao.projeto]
+        projetos = [alocacao.projeto]
 
     elif request.user.eh_prof_a:  # Professor
         if request.user.eh_admin:
@@ -948,29 +953,38 @@ def reuniao(request, reuniao_id=None):
 
         if not projetos:
             context["mensagem"] = {"pt": "Você não tem projetos para registrar reuniões nesse semestre.", "en": "You do not have projects to register meetings this semester."}
-            context["area_principal"] = True
             return render(request, "generic_ml.html", context=context)
 
-        context["projetos"] = projetos
 
-    if reuniao_id:
-        reuniao = get_object_or_404(Reuniao, id=reuniao_id)
+    else:  # Outros usuários (não estudantes ou professores)
+        context["mensagem"] = {"pt": "Você não tem permissão para registrar reuniões.", "en": "You do not have permission to register meetings."}
+        return render(request, "generic_ml.html", context=context)
+
+    context["projetos"] = projetos
+
+    reuniao = get_object_or_404(Reuniao, id=reuniao_id) if reuniao_id else None
+    if reuniao:
         context["reuniao"] = reuniao
-        context["titulo"]["pt"] = "Editar Reunião"
-        context["titulo"]["en"] = "Edit Meeting"
-        context["envolvidos"] = recupera_envolvidos(reuniao.projeto, reuniao)
-    else:
-        reuniao = None
-        context["envolvidos"] = recupera_envolvidos(context["projetos"][0])
+        context["titulo"] = {"pt": "Editar Reunião", "en": "Edit Meeting"}
+
+    for projeto in context["projetos"]:
+        context["envolvidos"][projeto.id] = recupera_envolvidos(projeto, reuniao)
 
     if request.method == "POST":
 
         if reuniao is None:
             reuniao = Reuniao.objects.create()
+        elif "remover" in request.POST:
+            ReuniaoParticipante.objects.filter(reuniao=reuniao).delete()
+            reuniao.delete()
+            context["mensagem"] = {"pt": "Reunião removida!", "en": "Meeting removed!"}
+            return render(request, "generic_ml.html", context=context)
+
+        
         projeto_id = request.POST.get("projeto", None)
         reuniao.projeto = get_object_or_404(Projeto, id=projeto_id)
 
-        if reuniao.projeto not in context["projetos"]:
+        if reuniao.projeto not in projetos:
             context["mensagem"] = {"pt": "Você não tem permissão para registrar reuniões nesse projeto.", "en": "You do not have permission to register meetings for this project."}
             return render(request, "generic_ml.html", context=context)
 
@@ -982,34 +996,46 @@ def reuniao(request, reuniao_id=None):
         reuniao.data_hora = datetime.datetime.strptime(request.POST["data_hora"], "%Y-%m-%dT%H:%M")
         reuniao.local = request.POST.get("local", "")
         reuniao.anotacoes = request.POST.get("anotacoes", None)
-        
         reuniao.travado = "travado" in request.POST
         reuniao.usuario = request.user
         reuniao.save()
 
-        # Recupera os participantes
-        for envolvido in context["envolvidos"]:
-            situacao = int(request.POST.get("envolvido_" + str(envolvido.participante.id), "0"))
-            if situacao != 0:
-                envolvido.situacao = situacao
-                envolvido.reuniao = reuniao
-                envolvido.save()
+        # Salva participantes
+        for key, value in request.POST.items():
+            if key.startswith("envolvido_"):
+                _, projeto_id, participante_id = key.split("_", 2)
+                if projeto_id == str(reuniao.projeto.id):
+                    situacao = int(value)
+                    participante = get_object_or_404(PFEUser, id=participante_id)
+                    if situacao != 0:
+                        ReuniaoParticipante.objects.update_or_create(
+                            reuniao=reuniao,
+                            participante=participante,
+                            defaults={"situacao": situacao}
+                        )
+                    else:
+                        ReuniaoParticipante.objects.filter(
+                            reuniao=reuniao,
+                            participante=participante
+                        ).delete()
+                    if participante.eh_estud:
+                        alocacao = Alocacao.objects.get(aluno=participante.aluno, projeto=reuniao.projeto)
+                        if situacao == 2:  # Se faltou sem justificativa
+                            Desconto.objects.update_or_create(
+                                reuniao=reuniao,
+                                alocacao=alocacao,
+                                nota=0.25
+                            )
+                        else:
+                            # Remove desconto se o participante é estudante e não faltou
+                            Desconto.objects.filter(
+                                reuniao=reuniao,
+                                alocacao=alocacao
+                            ).delete()
 
-        mensagem = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
-                    "en": "Meeting successfully registered!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}
-        context["mensagem"] = mensagem
-        context = {
-            "area_aluno": True,
-            "area_principal": True,
-            "voltar": True,
-            "mensagem": mensagem
-        }
-
+        context["mensagem"] = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
+                               "en": "Meeting successfully registered!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}
         return render(request, "generic_ml.html", context=context)
-
-    # else:  # Não é estudante nem professor
-    #     context["mensagem_aviso"] = {"pt": "Você não tem permissão para acessar essa página.", "en": "You do not have permission to access this page."}
-    #     context["area_principal"] = True
 
     return render(request, "projetos/reuniao.html", context=context)
 
@@ -2193,7 +2219,7 @@ def correlacao_medias_cr(request):
 def editar_projeto(request, primarykey):
     """Editar Projeto."""
 
-    if request.user.tipo_de_usuario != 4:  # Administrador
+    if not request.user.eh_admin:  # Administrador
         return HttpResponse("Somente administradores podem editar projetos.", status=401)
 
     projeto = Projeto.objects.get(id=primarykey)
@@ -2250,7 +2276,7 @@ def editar_projeto(request, primarykey):
     context = {
         "titulo": {"pt": "Editar Projeto", "en": "Edit Project"},
         "projeto": projeto,
-        "usuarios_professores": PFEUser.objects.filter(tipo_de_usuario=2),
+        "usuarios_professores": PFEUser.objects.filter(tipo_de_usuario__in=[2, 4]),  # Professores e Administradores
         "usuarios_estudantes_alocados": PFEUser.objects.filter(aluno__alocacao__projeto=projeto).distinct(),
         "estudantes": PFEUser.objects.filter(tipo_de_usuario=1),
         "coorientadores": Coorientador.objects.filter(projeto=projeto),

@@ -184,26 +184,28 @@
               </tr>
             </thead>
             <tbody>
-              {% for envolvido in envolvidos %}
-                <tr>
-                  <td>{{ envolvido.participante.get_full_name }}</td>
-                  <td>
-                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="0" class="ptravar"
-                      {% if envolvido.situacao == 0 %}checked{% endif %}>
-                  </td>
-                  <td>
-                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="1" class="ptravar"
-                      {% if envolvido.situacao == 1 %}checked{% endif %}>
-                  </td>
-                  <td>
-                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="2" class="ptravar"
-                      {% if envolvido.situacao == 2 %}checked{% endif %}>
-                  </td>
-                  <td>
-                    <input type="radio" name="envolvido_{{ envolvido.participante.id }}" value="3" class="ptravar"
-                      {% if envolvido.situacao == 3 %}checked{% endif %}>
-                  </td>
-                </tr>
+              {% for projeto_id, envolvido_projeto in envolvidos.items %}
+                {% for envolvido in envolvido_projeto %}
+                  <tr class="envolvidos projeto_{{ projeto_id }}">
+                    <td>{{ envolvido.participante.get_full_name }}</td>
+                    <td>
+                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
+                        {% if envolvido.situacao == 0 %}checked{% endif %}>
+                    </td>
+                    <td>
+                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
+                        {% if envolvido.situacao == 1 %}checked{% endif %}>
+                    </td>
+                    <td>
+                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
+                        {% if envolvido.situacao == 2 %}checked{% endif %}>
+                    </td>
+                    <td>
+                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
+                        {% if envolvido.situacao == 3 %}checked{% endif %}>
+                    </td>
+                  </tr>
+                {% endfor %}
               {% endfor %}
             </tbody>
           </table>
@@ -213,12 +215,20 @@
       <div class="d-flex align-items-center" style="gap: 1rem;">
 
         {% if user.eh_prof_a or not reuniao.travado %}
-          <button class="btn btn-primary mb-1 mt-4 px-4" type="submit">
+          <button class="btn btn-primary mb-1" type="submit">
             {% lng "Enviar" "Send" %}
           </button>
         {% endif %}
+
+        {% if user.eh_prof_a and reuniao %}
+          <button type="submit" class="btn btn-warning mb-1" name="remover"
+            onclick="return confirm('Você tem certeza que deseja remover esta reunião?');"
+            {% if vencida %}disabled{% endif %}>
+            {% lng "Remover" "Remove" %}
+          </button>
+        {% endif %}
         
-        <div class="form-check form-switch mb-1 mt-4">
+        <div class="form-check form-switch mb-1">
           {% if user.eh_prof_a %}
             <label for="travado" class="form_label mb-0" style="font-size:0.97em;">
               {% lng "Travar Alterações" "Lock Changes" %}
@@ -270,7 +280,23 @@
         }
       {% endif %}
     }
+
+    // Filtra envolvidos por projeto
+    function filtraEnvolvidos() {
+      const projetoSelect = document.getElementById("projeto");
+      const projetoId = projetoSelect.value;
+      document.querySelectorAll(".envolvidos").forEach(row => {
+        if (row.classList.contains("projeto_" + projetoId)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+    document.getElementById("projeto").addEventListener("change", filtraEnvolvidos);
+    
     window.onload = function() {
+      filtraEnvolvidos();
       trava_tudo();
     };
   </script>
