@@ -14,10 +14,18 @@
 {% block content %}
 
   <span class="esconder">
-    <a href="{% url 'cria_reuniao' %}"
+    {% if todos %}
+      <a href="{% url 'cria_reuniao' 'todos' %}"
+    {% else %}
+      <a href="{% url 'cria_reuniao' %}"
+    {% endif %}
      {% comment %} class="open-modal" {% endcomment %}
      style="cursor:pointer;"
-    data-url="{% url 'cria_reuniao' %}">
+     {% if todos %}
+      data-url="{% url 'cria_reuniao' 'todos' %}"
+     {% else %}
+      data-url="{% url 'cria_reuniao' %}"
+     {% endif %}>
       <i class="fas fa-plus"></i>
       {% lng "Registrar Nova Reunião" "Register New Meeting" %}
     </a>

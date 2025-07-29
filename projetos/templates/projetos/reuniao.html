@@ -156,7 +156,8 @@
       <div class="form-floating mb-2">
         <label for="titulo" class="form_label" style="font-size:0.97em;">{% lng "Título da reunião" "Meeting title" %}</label>
         <input type="text" id="titulo" name="titulo" class="med-input ptravar"
-              value="{% if reuniao.titulo %}{{reuniao.titulo}}{% endif %}" required>
+              value="{% if reuniao.titulo %}{{reuniao.titulo}}{% endif %}" 
+              placeholder="Sprint semana do dia x" required>
       </div>
 
       <div class="form-floating mb-3">

@@ -886,6 +886,7 @@ def reunioes(request, todos=None):
             ],
             "titulo": {"pt": "Reuniões do Projeto", "en": "Project Meetings"},
             "reunioes": reunioes,
+            "todos": todos if todos else "",  # Usado para o criar reunioes
         }
     return render(request, "projetos/reunioes.html", context)
 
@@ -913,7 +914,12 @@ def recupera_envolvidos(projeto, reuniao=None):
         extras = ReuniaoParticipante.objects.filter(reuniao=reuniao).exclude(participante__in=pessoas)
         envolvidos.extend(extras)
     else:
-        envolvidos = [ReuniaoParticipante(participante=pessoa, situacao=0) for pessoa in pessoas]
+        for pessoa in pessoas:
+            if pessoa.eh_estud:
+                situacao = 1  # Presente
+            else:
+                situacao = 0  # Não convocado
+            envolvidos.append(ReuniaoParticipante(participante=pessoa, situacao=situacao))
 
     return envolvidos
 
@@ -921,7 +927,7 @@ def recupera_envolvidos(projeto, reuniao=None):
 
 @login_required
 @transaction.atomic
-def reuniao(request, reuniao_id=None):
+def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None para criar nova ou TODOS para listar todos projetos
     """Formulário para estudantes preencherem os anotações de reuniões."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     configuracao = get_object_or_404(Configuracao)
@@ -946,7 +952,7 @@ def reuniao(request, reuniao_id=None):
         projetos = [alocacao.projeto]
 
     elif request.user.eh_prof_a:  # Professor
-        if request.user.eh_admin:
+        if request.user.eh_admin and reuniao_id_g == "todos":
             projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
         else:
             projetos = Projeto.objects.filter(orientador=request.user.professor, ano=configuracao.ano, semestre=configuracao.semestre)
@@ -962,7 +968,7 @@ def reuniao(request, reuniao_id=None):
 
     context["projetos"] = projetos
 
-    reuniao = get_object_or_404(Reuniao, id=reuniao_id) if reuniao_id else None
+    reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
     if reuniao:
         context["reuniao"] = reuniao
         context["titulo"] = {"pt": "Editar Reunião", "en": "Edit Meeting"}
