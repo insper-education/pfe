@@ -134,7 +134,7 @@
         {% endif %}
       </div>
       
-      {% if user.eh_prof_a %}
+      {% if user.eh_prof_a and reuniao %}
         <div class="form-floating mb-2">
           <label for="criacao" class="form_label" style="font-size:0.97em;">{% lng "Data de Criação" "Creation Date" %}</label>
           <span class="form-control-sm">{{ reuniao.criacao|date:"d/m/Y H:i" }}</span>
