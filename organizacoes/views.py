@@ -419,7 +419,7 @@ def parceiro_propostas(request):
 
     if hasattr(request.user, "parceiro"):
         organizacao = request.user.parceiro.organizacao
-        propostas = Proposta.objects.filter(organizacao=organizacao)
+        propostas = Proposta.objects.filter(organizacao=organizacao).order_by("-ano", "-semestre")
     else:  # Supostamente professor
         organizacao = get_object_or_404(Organizacao, sigla="INSPER")
         propostas = None
