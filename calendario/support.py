@@ -43,11 +43,12 @@ def get_calendario_context(user=None):
         "eventos": eventos.exclude(tipo_evento__sigla__in=["A", "L", "SP", "RQ", "FE", "FERI", "M", "MA"]).exclude(tipo_evento__coordenacao=True),
         "aulas": eventos.filter(tipo_evento__sigla="A"), # Aula
         "laboratorios": eventos.filter(tipo_evento__sigla="L"),  # Laboratório
-        "provas": eventos.filter(tipo_evento__sigla="SP"),  # Semana de Provas
         "quinzenais": eventos.filter(tipo_evento__sigla="RQ"),  # Relato Quinzenal
         "feedbacks": eventos.filter(tipo_evento__sigla="FE"),  # Feedback dos Estudantes sobre Capstone
+        "mentorias_profissionais": eventos.filter(tipo_evento__sigla="M"),  # Mentorias (Profissional)
+        "mentorias_academicas": eventos.filter(tipo_evento__sigla="MA"),  # Mentorias (Acadêmica)
+        "provas": eventos.filter(tipo_evento__sigla="SP"),  # Semana de Provas
         "feriados": eventos.filter(tipo_evento__sigla="FERI"),  # Feriado
-        "mentorias": eventos.filter(tipo_evento__sigla__in=["M", "MA"]),  # Mentorias (Profissional e Acadêmica)
     }
     
     context = {
@@ -56,6 +57,7 @@ def get_calendario_context(user=None):
         "coordenacao": Evento.objects.filter(tipo_evento__coordenacao=True),  # Eventos da coordenação
         "tipos_eventos": tipos_eventos,
         "Evento": Evento,
+        "mentorias": Evento.objects.filter(tipo_evento__sigla__in=["M", "MA"]),
     }
 
     return context  # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
