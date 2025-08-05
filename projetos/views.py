@@ -1875,7 +1875,7 @@ def evolucao_objetivos(request):
     else:
 
         context = {
-            "titulo": {"pt": "Evolução por Objetivos de Aprendizado", "en": "Evolution by Learning Goals"},
+            "titulo": {"pt": "Evolução nos Objetivos de Aprendizado", "en": "Evolution in Learning Goals"},
             "edicoes": edicoes,
             "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
         }
