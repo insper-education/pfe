@@ -88,7 +88,8 @@ def avisos_listar(request):
 
     cabecalhos = [
         {"pt": "&#10003;", "en": "&#10003;"},
-        {"pt": "Data", "en": "Date"},
+        {"pt": "Data do Aviso/Lembrete", "en": "Notice/Reminder Date"},
+        {"pt": "Ponto de Referência", "en": "Reference Point"},
         {"pt": "Público", "en": "Target"},
         {"pt": "Título", "en": "Title"},
     ]

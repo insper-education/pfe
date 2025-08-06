@@ -1303,6 +1303,12 @@ class Aviso(models.Model):
             return self.tipo_evento.nome
         return "Sem evento"
     
+    def get_evento_curto(self):
+        """Retorna em string cortada."""
+        if self.tipo_evento:
+            return self.tipo_evento.nome[:20] + "..." if len(self.tipo_evento.nome) > 20 else self.tipo_evento.nome
+        return "Sem evento"
+    
     def __str__(self):
         return str(self.titulo)
 

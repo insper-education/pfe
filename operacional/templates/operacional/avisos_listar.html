@@ -52,6 +52,7 @@
             <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
               <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
             </td>
+            <td></td>
             <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
               <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co
                 {% comment %} Isso precisa ser feito de forma adequada {% endcomment %}
@@ -105,6 +106,21 @@
             </label>
           </td>
 
+          <td>
+            <label style="line-height: 1;" for="{{forloop.counter}}">
+              {% if a.aviso.tipo_evento %}
+                {{a.aviso.get_evento_curto}} 
+                {% if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}
+              {% else %}
+                {% lng "Sem referência" "No reference" %}
+              {% endif %}
+            </label>
+          </td>
+
+          
+        
+
+          {% comment %} Publico alvo {% endcomment %}
           <td>
             {% if a.aviso.coordenacao %}
               <span data-toggle="tooltip" data-html="true" animation="true" title="Coordenação">Co</span>
