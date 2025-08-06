@@ -104,7 +104,7 @@ def avisos_listar(request):
     ]
 
     context = {
-        "titulo": { "pt": "Avisos", "en": "Notices" },
+        "titulo": { "pt": "Agenda de Avisos Automáticos", "en": "Automatic Notices Agenda" },
         "avisos": avisos,
         "hoje" : datetime.date.today(),
         "filtro" : "todos",
