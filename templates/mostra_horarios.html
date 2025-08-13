@@ -87,17 +87,25 @@
   {% if request.user.eh_estud %}
     <br>
     {% lng "Instruções" "Instructions" %}:<br>
-    {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 17:45 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 5:45 pm from Monday to Friday, excluding Friday's class)." %}
+    {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 18:30 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 6:30 pm from Monday to Friday, excluding Friday's class)." %}
     <br>
     
     <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
-    <span id="horas_alocadas">0</span><br><br>
+    <span id="horas_alocadas">
+      <span id="horas_alocadas_diurno">0</span>
+      {% lng "horas periodo diurno (total = " "hours daytime period (total = " %}
+      <span id="horas_alocadas_total">0</span>
+      {% lng " horas)" " hours)" %}<br><br>
+    </span><br><br>
     {% lng "- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos." "- We suggest a minimum of 8 hours that all group members can work together." %}
     <br>
   {% endif %}
 
   <b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
-  <span id="horas_juntos">0</span><br>
+  <span id="horas_juntos">
+    <span id="horas_juntos_total">0</span>
+    {% lng " horas" " hours" %}<br>
+  </span><br>
 
   <br>							
 
@@ -105,7 +113,8 @@
 
     function set_horas(horas_comerciais, horas_outras) {
       {% if request.user.eh_estud %}
-        document.getElementById("horas_alocadas").innerText = horas_comerciais*2 + " horas (total = " + (horas_comerciais+horas_outras)*2 + " horas)";
+        document.getElementById("horas_alocadas_diurno").innerText = horas_comerciais*2;
+        document.getElementById("horas_alocadas_total").innerText = (horas_comerciais+horas_outras)*2;
         if(horas_comerciais < 22/2) {
           document.getElementById("horas_alocadas").style.color = "red";
         } else {
@@ -146,7 +155,7 @@
       }
       {% if alocacoes %}
         contador--; // descontando aula regular
-        document.getElementById("horas_juntos").innerText = contador*2 + " horas";
+        document.getElementById("horas_juntos_total").innerText = contador*2;
         if(contador < 4) {
           document.getElementById("horas_juntos").style.color = "red";
         } else {
@@ -185,7 +194,13 @@
               const element = document.getElementById(`h_${i}_${j}`);
               if (element && element.classList.contains("highlight")) {
                 horarios.push( [i,j] );
-                if(j == 0 || j == 1 || j == 3 || j == 4) {
+                if (
+                  [
+                    {% for inicio, fim, dark in horarios %}
+                      {% if not dark %}{{forloop.counter0}},{% endif %}
+                    {% endfor %}
+                  ].includes(j)
+                ) {
                   horas_comerciais++;
                 } else {
                   horas_outras++;
@@ -225,7 +240,13 @@
           var horas_outras = 0;
           for (let i = 0; i < horarios.length; i++) {
             const [dia, horario] = horarios[i];
-            if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
+            if (
+              [
+                {% for inicio, fim, dark in horarios %}
+                  {% if not dark %}{{forloop.counter0}},{% endif %}
+                {% endfor %}
+              ].includes(horario)
+            ) {
               horas_comerciais++;
             } else {
               horas_outras++;
@@ -278,7 +299,13 @@
                 var horas_outras = 0;
                 for (let i = 0; i < horarios.length; i++) {
                   const [dia, horario] = horarios[i];
-                  if(horario == 0 || horario == 1 || horario == 3 || horario == 4) {
+                  if (
+                    [
+                      {% for inicio, fim, dark in horarios %}
+                        {% if not dark %}{{forloop.counter0}},{% endif %}
+                      {% endfor %}
+                    ].includes(horario)
+                  ) {
                     horas_comerciais++;
                   } else {
                     horas_outras++;
