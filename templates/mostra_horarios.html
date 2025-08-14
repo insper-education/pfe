@@ -79,6 +79,28 @@
         {% endfor %}
 
       </tbody>
+
+      <caption>
+
+        {% if user.eh_estud %}
+          <span class="text-nowrap mr-3">
+            <span class="badge rounded-0" style="font-size: 0.85em; border: 1px solid red;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            {% lng "seu horário" "your schedule" %}
+          </span>
+        {% endif %}
+
+        <span class="text-nowrap mr-3">
+          <span class="badge rounded-0" style="font-size: 0.85em; background-color: #FFFF00;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          {% lng "horário alocado" "hours allocated" %}
+        </span>
+
+        <span class="text-nowrap mr-3">
+          <span class="badge rounded-0" style="font-size: 0.85em; background-color: #00FF00;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          {% lng "horário alocado comum para grupo" "common allocated hours for group" %}
+        </span>
+
+      </caption>
+
     </table>
 
     
