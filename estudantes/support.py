@@ -60,10 +60,10 @@ def check_alocacao_semanal(alocacao, ano, semestre, PRAZO):
     if alocacao and alocacao.horarios and len(alocacao.horarios) >= 11*8:
         cor = 'g'
     else:
-        evento = Evento.get_evento(sigla="IA", ano=ano, semestre=semestre)  # Início das aulas
+        evento = Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre)  # Preenchimento de Alocação Semanal
         if evento:
-            prazo = evento.endDate + datetime.timedelta(days=(PRAZO+4))
-            if hoje < evento.endDate + datetime.timedelta(days=4):
+            prazo = evento.endDate
+            if hoje < prazo - datetime.timedelta(days=9):
                 cor = 'b'
             elif hoje > prazo:
                 cor = 'r'
@@ -102,7 +102,7 @@ def check_submissao_documentos(alocacao, ano, semestre):
     prazo = None
     itens = []
     hoje = datetime.date.today()
-    projeto = alocacao.projeto  
+    projeto = alocacao.projeto if alocacao else None
     if projeto:
         composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
         entregas = filtra_entregas(composicoes, projeto, alocacao.aluno.user)
@@ -170,14 +170,15 @@ def check_avaliacao_pares_final(alocacao):
 def ver_pendencias_estudante(user, ano, semestre):
     PRAZO = 7
     context = {}
-    if user.tipo_de_usuario in [1,2,4]:  # Estudante, Professor ou Administrador
+    if user and user.tipo_de_usuario in [1,2,4]:  # Estudante, Professor ou Administrador
         alocacao = Alocacao.objects.filter(aluno=user.aluno, projeto__ano=ano, projeto__semestre=semestre).last()
-        if alocacao:
-            context.update(check_alocacao_semanal(alocacao, ano, semestre, PRAZO))
-            context.update(check_relato_quinzenal(alocacao))
-            context.update(check_submissao_documentos(alocacao, ano, semestre))
-            context.update(check_encontros_marcar(alocacao))
-            context.update(check_avaliacao_pares_intermediaria(alocacao))
-            context.update(check_avaliacao_pares_final(alocacao))
+    else:
+        alocacao = None
+    context.update(check_alocacao_semanal(alocacao, ano, semestre, PRAZO))
+    context.update(check_relato_quinzenal(alocacao))
+    context.update(check_submissao_documentos(alocacao, ano, semestre))
+    context.update(check_encontros_marcar(alocacao))
+    context.update(check_avaliacao_pares_intermediaria(alocacao))
+    context.update(check_avaliacao_pares_final(alocacao))
     return context
 

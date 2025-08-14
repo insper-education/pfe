@@ -102,6 +102,8 @@ def index_estudantes(request):
     # Caso professor ou administrador
     elif request.user.eh_prof_a:
         context["fase_final"] = True
+        context_pend = ver_pendencias_estudante(None, configuracao.ano, configuracao.semestre)  # Permite professor ver prazos para estudantes
+        context.update(context_pend)
 
     else:  # Caso parceiro
         return HttpResponse("Usuário sem acesso.", status=401)
