@@ -25,12 +25,8 @@
 {% block content %}
 
   {% include "edicoes.html" with com_cursos=True com_trancou=True %}
-  <span class="esconder">
-    <a href="{% url 'cadastrar_usuario' %}?tipo=estudante" style="cursor:pointer;">
-      <i class="fas fa-plus"></i>
-      {% lng "Adicionar usuário" "Add user" %}
-    </a>
-  </span>
+
+  {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path="?tipo=estudante" txt_pt="Cadastrar Novo Usuário" txt_en="Register New User" %}
   
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Estudantes" cabecalhos=cabecalhos %}

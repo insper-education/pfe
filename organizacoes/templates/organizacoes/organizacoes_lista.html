@@ -13,12 +13,7 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'cadastrar_organizacao' %}">
-      <i class="fas fa-plus"></i> 
-      {% lng "Cadastrar Nova Organização" "Register New Organization" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="cadastrar_organizacao" txt_pt="Cadastrar Nova Organização" txt_en="Register New Organization" %}
 
   {% include "tabelas_top_ml.html" with tabela="Organizacoes" captions=captions cabecalhos=cabecalhos %}
     {% for organizacao, fechados, desde, contato, grupos in organizacoes_list %} 

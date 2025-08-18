@@ -17,12 +17,7 @@
   <div id="atualizar">
 
     {% if user.eh_admin %}
-      <span class="esconder">
-        <a href="#" class="open-modal" style="cursor:pointer;" data-url="{% url 'adiciona_despesa' %}">
-          <i class="fas fa-plus"></i> 
-          {% lng "Cadastrar Nova Despesa" "Register New Expense" %}
-        </a>
-      </span>
+      {% include "botao_adiciona.html" with url_add="adiciona_despesa" txt_pt="Cadastrar Nova Despesa" txt_en="Register New Expense" open_modal=True %}
       {% include "base-modal.html" %}
     {% endif %}
 

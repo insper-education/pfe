@@ -30,11 +30,7 @@
   <br>
 
   {% if user.eh_prof_a %}
-    <span class="esconder">
-      <a href="{% url 'cadastrar_usuario' %}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Cadastrar Novo Usuário" "Register New User" %}</a>
-    </span><br>
+    {% include "botao_adiciona.html" with url_add="cadastrar_usuario" txt_pt="Cadastrar Novo Usuário" txt_en="Register New User" %}
   {% endif %}
   
   <div id="atualizar">

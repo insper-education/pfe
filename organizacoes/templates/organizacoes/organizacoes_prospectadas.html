@@ -27,15 +27,7 @@
 
   {% include "edicoes.html" with com_periodo=True com_acompanhamento=True %}
 
-  <span class="esconder">
-    <a 
-    href="{% url 'anotacao' %}"
-    class="open-modal" style="cursor:pointer;"
-    data-url={% url 'anotacao' %}
-    ><i class="fas fa-plus"></i>
-      {% lng "Cadastrar Nova Anotação" "Register New Note" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="anotacao" txt_pt="Cadastrar Nova Anotação" txt_en="Register New Note" open_modal=True %}
 
   <div id="atualizar">
 

@@ -13,12 +13,7 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'cadastrar_usuario' %}?tipo=professor" style="cursor:pointer;">
-      <i class="fas fa-plus"></i>
-      {% lng "Cadastrar Usuário" "Register User" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path="?tipo=professor" txt_pt="Cadastrar Novo Professor" txt_en="Register New Professor" %}
     
   {% include "tabelas_top_ml.html" with tabela="Professores" cabecalhos=cabecalhos %}
     {% for professor in professores %} 

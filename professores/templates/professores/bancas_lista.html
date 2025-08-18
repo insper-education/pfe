@@ -25,14 +25,7 @@
     </script>
   {% endif %}
 
-  <span class="esconder">
-    <a href="{% url 'bancas_criar'%}"
-     class="open-modal" style="cursor:pointer;"
-     data-url="{% url 'bancas_criar' %}">
-      <i class="fas fa-plus"></i>
-      {% lng "Cadastrar Nova Banca" "Register New Examination Board" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="bancas_criar" txt_pt="Cadastrar Nova Banca" txt_en="Register New Examination Board" open_modal=True %}
 
   <div id="atualizar">
 

@@ -13,23 +13,7 @@
 
 {% block content %}
 
-  <span class="esconder">
-    {% if todos %}
-      <a href="{% url 'cria_reuniao' 'todos' %}"
-    {% else %}
-      <a href="{% url 'cria_reuniao' %}"
-    {% endif %}
-     {% comment %} class="open-modal" {% endcomment %}
-     style="cursor:pointer;"
-     {% if todos %}
-      data-url="{% url 'cria_reuniao' 'todos' %}"
-     {% else %}
-      data-url="{% url 'cria_reuniao' %}"
-     {% endif %}>
-      <i class="fas fa-plus"></i>
-      {% lng "Registrar Nova Reunião" "Register New Meeting" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="cria_reuniao" url_param=todos txt_pt="Registrar Nova Reunião" txt_en="Register New Meeting" %}
 
   {% include "tabelas_top_ml.html" with tabela="Reunioes" cabecalhos=cabecalhos %}
     {% for reuniao in reunioes %} 
