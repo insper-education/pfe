@@ -14,14 +14,9 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'proposta_submissao'%}" style="cursor:pointer;">
-      <i class="fas fa-plus"></i>
-      {% lng "Adicionar Proposta" "Add Proposal" %}
-    </a>
-  </span>
-
   {% include "edicoes.html" %}
+
+  {% include "botao_adiciona.html" with url_add="proposta_submissao" txt_pt="Adicionar Proposta" txt_en="Add Proposal" %}
 
   {% comment %} Tabela com todos as propostas selecionadas pelo filtro {% endcomment %}
   <div id="atualizar">

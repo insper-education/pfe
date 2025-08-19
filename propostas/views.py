@@ -429,8 +429,6 @@ def propostas_lista(request):
             "edicao": edicao,
             "cabecalhos": cabecalhos,
         }
-
-        
             
     else:
         context = {

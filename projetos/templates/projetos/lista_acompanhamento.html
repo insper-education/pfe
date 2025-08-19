@@ -13,13 +13,7 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'acompanhamento_view'%}" class="open-modal" style="cursor:pointer;"
-    data-url="{% url 'acompanhamento_view' %}">
-      <i class="fas fa-plus"></i>
-      {% lng "Adicionar Acompanhamento" "Add Follow-up" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="acompanhamento_view" txt_pt="Adicionar Acompanhamento" txt_en="Add Follow-up" open_modal=True %}
 
   <div class="table-responsive">
     <table id="AcompanhamentoTable" class="tabela-padrao">

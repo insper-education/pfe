@@ -102,6 +102,8 @@ def index_estudantes(request):
     # Caso professor ou administrador
     elif request.user.eh_prof_a:
         context["fase_final"] = True
+        context_pend = ver_pendencias_estudante(None, configuracao.ano, configuracao.semestre)  # Permite professor ver prazos para estudantes
+        context.update(context_pend)
 
     else:  # Caso parceiro
         return HttpResponse("Usuário sem acesso.", status=401)
@@ -508,8 +510,8 @@ def estudante_feedback_hashid(request, hashid):
     """Para Feedback finais dos Estudantes."""
     hashids = Hashids(salt=settings.SALT, min_length=8)
     try:
-        decoded = hashids.decode(hashid)[0]
-        if not decoded and len(decoded) > 1:
+        decoded = hashids.decode(hashid)
+        if not decoded:
             logger.warning(f"Hashid recebido é inválido: {hashid}")
             return HttpResponseNotFound("<h1>Usuário não encontrado! (hash inválido)</h1>")
         user_id = decoded[0]

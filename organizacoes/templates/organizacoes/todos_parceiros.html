@@ -16,11 +16,8 @@
   {% include "edicoes.html" with com_cursos=True %}
 
   {% if user.eh_prof_a %}
-    <span class="esconder">
-      <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}</a>
-    </span><br>
+    {% comment %} <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}"> {% endcomment %}
+    {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path="?tipo=parceiro" txt_pt="Cadastrar Novo Parceiro" txt_en="Register New Partner" %}
   {% endif %}
 
   <div id="atualizar">

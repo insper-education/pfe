@@ -14,14 +14,7 @@
 {% block content %}
 
   {% if user.eh_admin %}
-    <span class="esconder">
-      <a href="#"
-      class="open-modal" style="cursor:pointer;"
-      data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Cadastrar Nova Entrada" "Register New Entry" %}
-      </a>
-    </span>
+    {% include "botao_adiciona.html" with url_add="adiciona_documento_tipo" url_param=tipo.sigla txt_pt="Cadastrar Nova Entrada" txt_en="Register New Entry" open_modal=True %}
     {% include "base-modal.html" %}
   {% endif %}
   

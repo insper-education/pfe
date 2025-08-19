@@ -8,17 +8,17 @@
   {% if estado.cor == 'r' %}
     "atrasado para concluir esse ponto
     {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
-    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    {% for item in estado.itens %}- {{item}}{% endfor %}
     ">&#128308;
   {% elif estado.cor == 'y' %}
     "no prazo para concluir esse ponto
     {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
-    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    {% for item in estado.itens %}- {{item}}{% endfor %}
     ">&#128993;
   {% elif estado.cor == 'p' %}
     "nova entrega realizada, verificar novamente
     {% if estado.prazo %}(prazo={{estado.prazo}}){% endif %}
-    {% for item in estado.itens %}<br>- {{item}}{% endfor %}
+    {% for item in estado.itens %}- {{item}}{% endfor %}
     ">&#128995;
   {% elif estado.cor == 'g' %}
     "em dia com esse ponto">&#128994;

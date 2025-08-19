@@ -1,0 +1,81 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 18 de Agosto de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+
+  {% comment %} <span class="esconder">
+    {% if todos %}
+      <a href="{% url 'cria_reuniao' 'todos' %}"
+    {% else %}
+      <a href="{% url 'cria_reuniao' %}"
+    {% endif %}
+     // class="open-modal" 
+     style="cursor:pointer;"
+     {% if todos %}
+      data-url="{% url 'cria_reuniao' 'todos' %}"
+     {% else %}
+      data-url="{% url 'cria_reuniao' %}"
+     {% endif %}>
+      <i class="fas fa-plus"></i>
+      {% lng "Registrar Nova Reunião" "Register New Meeting" %}
+    </a>
+  </span> {% endcomment %}
+
+
+<style>
+    
+  .add-btn {
+    background: #f54945;
+    color: #fff !important;
+    border: 2px solid #c62828; /* slightly darker red for soft merge */
+    border-radius: 14px;
+    padding: 1px 10px 1px 9px;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: 
+      background 0.18s, 
+      border-color 0.18s, 
+      box-shadow 0.18s, 
+      transform 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 6px;
+    margin-right: 6px;
+    margin-top: 4px;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.08); /* subtle blue shadow for accent */
+  }
+  .add-btn:hover, .add-btn:focus {
+    background: #d32f2f;
+    border-color: #b71c1c;
+    box-shadow: 0 4px 16px 0 rgba(33,150,243,0.13);
+    transform: translateY(-1px) scale(1.03);
+    text-decoration: none;
+  }
+  .add-btn i {
+    font-size: 1em;
+    filter: none;
+  }
+</style>
+
+<span class="esconder">
+  {% if url_param %}
+    <a href="{% url url_add url_param %}{{ url_path }}"
+  {% else %}
+    <a href="{% url url_add %}{{ url_path }}"
+  {% endif %}
+    class="add-btn {% if open_modal %}open-modal{% endif %}"
+     {% if url_param %}
+      data-url="{% url url_add url_param %}{{ url_path }}"
+     {% else %}
+      data-url="{% url url_add %}{{ url_path }}"
+     {% endif %}>
+    <i class="fas fa-plus-circle"></i> {% lng txt_pt txt_en %}
+  </a>
+</span>

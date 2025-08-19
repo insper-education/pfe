@@ -16,13 +16,8 @@
 {% block content %}
 
   {% if user.eh_admin %}
-    <span class="esconder">
-      <a href="#"
-       class="open-modal"
-       data-url="{% url 'adiciona_documento_tipo' tipo.sigla %}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Adicionar nova Ata" "Add new Meeting Minutes" %}</a>
-    </span><br>
+    {% include "botao_adiciona.html" with url_add="adiciona_documento_tipo" url_param=tipo.sigla txt_pt="Adicionar Nova Ata" txt_en="Add New Meeting Minutes" open_modal=True %}
+    {% include "base-modal.html" %}<br>
   {% endif %}
 
   {% if template and template.documento %}
@@ -76,9 +71,5 @@
       </tbody>
     </table>
   </div>
-
-  {% if user.eh_admin %}
-    {% include "base-modal.html" %}
-  {% endif %}
 
 {% endblock %}

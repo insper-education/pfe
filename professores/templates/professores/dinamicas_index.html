@@ -15,13 +15,7 @@
 
 {% block content %}
 
-  <span class="esconder">
-    <a href="{% url 'dinamicas_criar'%}" class="open-modal" style="cursor:pointer;"
-    data-url="{% url 'dinamicas_criar' %}">
-      <i class="fas fa-plus"></i>
-      {% lng "Agendar Mentoria" "Schedule Mentoring" %}
-    </a>
-  </span>
+  {% include "botao_adiciona.html" with url_add="dinamicas_criar" txt_pt="Agendar Mentoria" txt_en="Schedule Mentoring" open_modal=True %}
   <br><br>
   
   <div id="atualizar">

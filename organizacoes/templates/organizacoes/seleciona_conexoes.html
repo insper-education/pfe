@@ -52,11 +52,11 @@
   <div class="mb-2">{% lng "Projeto" "Project" %}: {{projeto}}</div>
 
   {% if user.eh_prof_a %}
-    <span class="esconder">
-      <a href="{% url 'cadastrar_usuario' %}?tipo=parceiro&organizacao={{projeto.organizacao.id}}">
-        <i class="fas fa-plus"></i> 
-        {% lng "Cadastrar Novo Parceiro" "Register New Partner" %}</a>
-    </span><br>
+    {% with org_id=projeto.organizacao.id|stringformat:"s" %}
+      {% with url_path="?tipo=parceiro&organizacao="|add:org_id %}
+        {% include "botao_adiciona.html" with url_add="cadastrar_usuario" url_path=url_path txt_pt="Adicionar Novo Parceiro" txt_en="Add New Partner" %}
+      {% endwith %}
+    {% endwith %}
   {% endif %}
 
   <form method="post" id="conexoesform" enctype="multipart/form-data"> {% csrf_token %}
