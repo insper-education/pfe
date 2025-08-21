@@ -173,44 +173,7 @@
 
       <div class="form-floating mb-2">
         <label for="participantes" class="form_label" style="font-size:0.97em;">{% lng "Participantes" "Participants" %}</label><br>
-        <div class="box_table">
-          <table class="tab_participantes">
-            <thead>
-              <tr>
-                <th scope="col">{% lng "Nome" "Name" %}</th>
-                <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
-                <th scope="col">{% lng "Presente" "Present" %}</th>
-                <th scope="col">{% lng "Faltou" "Absent" %}</th>
-                <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for projeto_id, envolvido_projeto in envolvidos.items %}
-                {% for envolvido in envolvido_projeto %}
-                  <tr class="envolvidos projeto_{{ projeto_id }}">
-                    <td>{{ envolvido.participante.get_full_name }}</td>
-                    <td>
-                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
-                        {% if envolvido.situacao == 0 %}checked{% endif %}>
-                    </td>
-                    <td>
-                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
-                        {% if envolvido.situacao == 1 %}checked{% endif %}>
-                    </td>
-                    <td>
-                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
-                        {% if envolvido.situacao == 2 %}checked{% endif %}>
-                    </td>
-                    <td>
-                      <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
-                        {% if envolvido.situacao == 3 %}checked{% endif %}>
-                    </td>
-                  </tr>
-                {% endfor %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+        {% include "participantes.html" %}
       </div>
 
       <div class="d-flex align-items-center" style="gap: 1rem;">

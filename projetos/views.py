@@ -894,13 +894,13 @@ def reunioes(request, todos=None):
 def recupera_envolvidos(projeto, reuniao=None):
     """Recupera os envolvidos em uma reunião de um projeto."""
     pessoas = []
-    for integrante in Alocacao.objects.filter(projeto=projeto):
+    for integrante in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name"):
         pessoas.append(integrante.aluno.user)
     if projeto.orientador:
         pessoas.append(projeto.orientador.user)
-    for coorientador in Coorientador.objects.filter(projeto=projeto):
+    for coorientador in Coorientador.objects.filter(projeto=projeto).order_by("usuario__full_name"):
         pessoas.append(coorientador.usuario)
-    for conexao in Conexao.objects.filter(projeto=projeto):
+    for conexao in Conexao.objects.filter(projeto=projeto).order_by("parceiro__user__full_name"):
         pessoas.append(conexao.parceiro.user)
 
     envolvidos = []
@@ -910,7 +910,7 @@ def recupera_envolvidos(projeto, reuniao=None):
             participantes_reuniao.get(pessoa) or ReuniaoParticipante(participante=pessoa, situacao=0)
             for pessoa in pessoas
         ]
-        # AAdiciona os participantes que estavam marcados na reunião, mas não estão mais no projeto
+        # Adiciona os participantes que estavam marcados na reunião, mas não estão mais no projeto
         extras = ReuniaoParticipante.objects.filter(reuniao=reuniao).exclude(participante__in=pessoas)
         envolvidos.extend(extras)
     else:

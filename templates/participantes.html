@@ -1,0 +1,58 @@
+
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Agosto de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+<div class="box_table">
+  <table class="tab_participantes">
+    <thead>
+      <tr>
+        <th scope="col">{% lng "Nome" "Name" %}</th>
+        <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
+        <th scope="col">{% lng "Presente" "Present" %}</th>
+        <th scope="col">{% lng "Faltou" "Absent" %}</th>
+        <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for projeto_id, envolvido_projeto in envolvidos.items %}
+        {% for envolvido in envolvido_projeto %}
+          <tr class="envolvidos projeto_{{ projeto_id }}"
+              style="background-color:
+                {% if envolvido.participante.eh_prof_a %}
+                  #f2f9fdff
+                {% elif envolvido.participante.eh_estud %}
+                  #fdfff5ff
+                {% elif envolvido.participante.eh_parc %}
+                  #f8f5fdff
+                {% else %}
+                  #fcdddd
+                {% endif %};
+              ">
+            <td>{{ envolvido.participante.get_full_name }}</td>
+            <td>
+              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
+                {% if envolvido.situacao == 0 %}checked{% endif %}>
+            </td>
+            <td>
+              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
+                {% if envolvido.situacao == 1 %}checked{% endif %}>
+            </td>
+            <td>
+              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
+                {% if envolvido.situacao == 2 %}checked{% endif %}>
+            </td>
+            <td>
+              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
+                {% if envolvido.situacao == 3 %}checked{% endif %}>
+            </td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
