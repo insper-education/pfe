@@ -92,4 +92,6 @@ def get_descontos_alocacao(alocacao):
                     eventos.append(desconto.evento)
                 elif desconto.reuniao:
                     eventos.append(desconto.reuniao)
+                elif desconto.encontro:
+                    eventos.append(desconto.encontro)
     return float(nota_descontos), eventos

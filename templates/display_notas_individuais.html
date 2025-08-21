@@ -17,6 +17,7 @@
 <script>
   var nota = 0.0;
   var peso = 0.0;
+  var descontos = 0.0;
 </script>
 
 {% if user.eh_admin %}
@@ -52,6 +53,9 @@
                 title="{% for e in descontos.1 %}&bull; {{e}}<br>{% endfor %}">
               {% lng "Descontos" "Discounts" %} = {{descontos.0|floatformat:2}}
             </td>
+            <script>
+              descontos = {{descontos.0|unlocalize}};
+            </script>
           {% endif %}
           
           <td>
@@ -77,7 +81,7 @@
           {% endif %}
         {% endwith %}
         if(peso < 0.99) {
-            document.getElementById("aviso{{alocado.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc(nota/peso) +  ")</span>";
+            document.getElementById("aviso{{alocado.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc( (nota/peso) - descontos ) +  ")</span>";
         }
       }
     </script>

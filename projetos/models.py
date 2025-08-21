@@ -1145,7 +1145,11 @@ class Encontro(models.Model):
         return self.projeto
 
     def __str__(self):
-        return str(self.startDate)
+        return "Encontro/Mentoria: " + self.startDate.strftime('%d/%m/%Y %H:%M')
+
+    class Meta:
+        verbose_name = "Encontro/Mentoria"
+        verbose_name_plural = "Encontros/Mentorias"
 
 
 class TipoRetorno(models.Model):

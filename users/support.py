@@ -11,16 +11,12 @@ import unicodedata
 
 from django.db.models import F
 from django.utils import timezone
-#from django.shortcuts import get_object_or_404
-
-#from .models import Aluno
 
 from administracao.support import get_limite_propostas
 
 from estudantes.models import Relato, Pares
 
 from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Documento, Conexao
-#from projetos.models import Projeto
 
 
 

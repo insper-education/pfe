@@ -218,6 +218,26 @@ def ajax_atualiza_dinamica(request):
     return HttpResponse("Erro.", status=400)
 
 
+
+
+def get_edicoes_orientador(orientador, configuracao_ate):
+    """Função usada para recuperar todas as edições de orientação de um professor."""
+
+    pares = Projeto.objects.filter(orientador=orientador).values("ano", "semestre")
+
+    edicoes = []
+    ano, semestre = None, None
+    for pair in pares.distinct("ano", "semestre"):
+        ano = pair.get("ano")
+        semestre = pair.get("semestre")
+        if ano == None or semestre == None:
+            continue
+        edicoes.append(f"{ano}.{semestre}")
+        if ano == configuracao_ate.ano and semestre == configuracao_ate.semestre:
+            break
+
+    return edicoes, ano, semestre
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliar_entregas(request, prof_id=None, selecao=None):
@@ -277,7 +297,7 @@ def avaliar_entregas(request, prof_id=None, selecao=None):
 
         context = {
                 "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
-                "edicoes": get_edicoes(Relato)[0],
+                "edicoes": get_edicoes_orientador(request.user.professor, configuracao)[0],
                 "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
                 "tipos_entregas": exames if selecao else None,
             }
