@@ -1042,6 +1042,56 @@ class Banca(models.Model):
         return bancas
 
 
+
+class Participante(models.Model):
+    """ Base abstrata para participantes em reuniões e encontros."""
+    TIPO_PARTICIPANTE = (
+        (0, "Não Convocado"),
+        (1, "Presente"),
+        (2, "Faltou"),
+        (3, "Falta Justificada"),
+    )
+    participante = models.ForeignKey("users.PFEUser", on_delete=models.CASCADE, related_name="%(class)s_participante")
+    situacao = models.PositiveSmallIntegerField(choices=TIPO_PARTICIPANTE, null=True, blank=True,
+                                                    help_text="Situação do participante.")
+
+    class Meta:
+        abstract = True
+    
+    @property
+    def situacao_display(self):
+        return self.get_situacao_display()
+    
+    def __str__(self):
+        return self.participante.get_full_name()
+
+class ReuniaoParticipante(Participante):
+    """Relacionamento entre Reunião e Participante."""
+    reuniao = models.ForeignKey("Reuniao", on_delete=models.CASCADE, related_name="participantes_reuniao")
+    class Meta:
+        verbose_name = "Reunião Participante"
+        verbose_name_plural = "Reuniões Participantes"
+
+    def __str__(self):
+        """Retorno padrão textual."""
+        titulo = self.reuniao.titulo if self.reuniao and self.reuniao.titulo else "Reunião sem título"
+        return f"{titulo} >>> {self.participante.get_full_name()}"
+
+class EncontroParticipante(Participante):
+    """Relacionamento entre Encontro e Participante."""
+    encontro = models.ForeignKey("Encontro", on_delete=models.CASCADE, related_name="participantes_encontro")
+
+    class Meta:
+        verbose_name = "Encontro Participante"
+        verbose_name_plural = "Encontros Participantes"
+
+    def __str__(self):
+        """Retorno padrão textual."""
+        projeto = getattr(self.encontro, "projeto", None)
+        titulo = projeto.get_titulo_org() if projeto else "Encontro sem projeto"
+        return f"{titulo} >>> {self.participante.get_full_name()}"
+
+
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
 
@@ -1066,6 +1116,9 @@ class Encontro(models.Model):
 
     observacoes_estudantes = models.TextField(max_length=5000, null=True, blank=True,
                                    help_text="Observações a serem compartilhadas com os estudantes do projeto")
+
+
+    participantes = models.ManyToManyField("users.PFEUser", verbose_name="Participantes", blank=True, help_text="Participantes do encontro", through="EncontroParticipante")
 
     def hora_fim(self):
         """Mostra só a hora final do encontro."""
@@ -2000,30 +2053,6 @@ class AreaDeInteresse(models.Model):
         return str(self.area)
 
 
-class ReuniaoParticipante(models.Model):
-    """Relacionamento entre Reunião e Participante."""
-
-    reuniao = models.ForeignKey("Reuniao", on_delete=models.CASCADE)
-    participante = models.ForeignKey("users.PFEUser", on_delete=models.CASCADE)
-
-    TIPO_PARTICIPANTE = (
-        (0, "Não Convocado"),
-        (1, "Presente"),
-        (2, "Faltou"),
-        (3, "Falta Justificada"),
-    )
-    situacao = models.PositiveSmallIntegerField(choices=TIPO_PARTICIPANTE, null=True, blank=True,
-                                                    help_text="Situação do participante na reunião.")
-
-    class Meta:
-        verbose_name = "Reunião Participante"
-        verbose_name_plural = "Reuniões Participantes"
-
-    def __str__(self):
-        """Retorno padrão textual."""
-        return self.reuniao.titulo + " >>> " + self.participante.get_full_name()
-
-
 class Reuniao(models.Model):
     """Modelo para representar uma reunião."""
 
@@ -2064,6 +2093,9 @@ class Desconto(models.Model):
 
     reuniao = models.ForeignKey(Reuniao, null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="Reunião que gerou o desconto")
+
+    encontro = models.ForeignKey(Encontro, null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="Encontro que gerou o desconto")
 
     # Para Entregas em Grupo (Relatório Preliminar)
     projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,

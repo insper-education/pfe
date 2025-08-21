@@ -29,11 +29,11 @@ from .models import Projeto, Proposta, Configuracao, Observacao
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
-from .models import Banco, Reembolso, Aviso, Conexao, Desconto
+from .models import Banco, Reembolso, Aviso, Conexao
 from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante
 
 from .support import simple_upload
-from .support2 import get_areas_propostas, get_areas_estudantes
+from .support2 import get_areas_propostas, get_areas_estudantes, recupera_envolvidos, anota_participacao
 from .support3 import calcula_objetivos, cap_name, media
 from .support3 import divide57, get_notas_alocacao
 from .support3 import get_medias_oa, is_projeto_liberado
@@ -52,7 +52,7 @@ from operacional.models import Curso
 from organizacoes.models import Segmento
 
 from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
-from users.support import adianta_semestre, get_edicoes, adianta_semestre_conf
+from users.support import get_edicoes, adianta_semestre_conf
 
 
 # Get an instance of a logger
@@ -891,40 +891,6 @@ def reunioes(request, todos=None):
     return render(request, "projetos/reunioes.html", context)
 
 
-def recupera_envolvidos(projeto, reuniao=None):
-    """Recupera os envolvidos em uma reunião de um projeto."""
-    pessoas = []
-    for integrante in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name"):
-        pessoas.append(integrante.aluno.user)
-    if projeto.orientador:
-        pessoas.append(projeto.orientador.user)
-    for coorientador in Coorientador.objects.filter(projeto=projeto).order_by("usuario__full_name"):
-        pessoas.append(coorientador.usuario)
-    for conexao in Conexao.objects.filter(projeto=projeto).order_by("parceiro__user__full_name"):
-        pessoas.append(conexao.parceiro.user)
-
-    envolvidos = []
-    if reuniao:
-        participantes_reuniao = {rp.participante: rp for rp in ReuniaoParticipante.objects.filter(reuniao=reuniao)}
-        envolvidos = [
-            participantes_reuniao.get(pessoa) or ReuniaoParticipante(participante=pessoa, situacao=0)
-            for pessoa in pessoas
-        ]
-        # Adiciona os participantes que estavam marcados na reunião, mas não estão mais no projeto
-        extras = ReuniaoParticipante.objects.filter(reuniao=reuniao).exclude(participante__in=pessoas)
-        envolvidos.extend(extras)
-    else:
-        for pessoa in pessoas:
-            if pessoa.eh_estud:
-                situacao = 1  # Presente
-            else:
-                situacao = 0  # Não convocado
-            envolvidos.append(ReuniaoParticipante(participante=pessoa, situacao=situacao))
-
-    return envolvidos
-
-
-
 @login_required
 @transaction.atomic
 def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None para criar nova ou TODOS para listar todos projetos
@@ -974,7 +940,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         context["titulo"] = {"pt": "Editar Reunião", "en": "Edit Meeting"}
 
     for projeto in context["projetos"]:
-        context["envolvidos"][projeto.id] = recupera_envolvidos(projeto, reuniao)
+        context["envolvidos"][projeto.id] = recupera_envolvidos(projeto, reuniao=reuniao)
 
     if request.method == "POST":
 
@@ -1006,38 +972,7 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.usuario = request.user
         reuniao.save()
 
-        # Salva participantes
-        for key, value in request.POST.items():
-            if key.startswith("envolvido_"):
-                _, projeto_id, participante_id = key.split("_", 2)
-                if projeto_id == str(reuniao.projeto.id):
-                    situacao = int(value)
-                    participante = get_object_or_404(PFEUser, id=participante_id)
-                    if situacao != 0:
-                        ReuniaoParticipante.objects.update_or_create(
-                            reuniao=reuniao,
-                            participante=participante,
-                            defaults={"situacao": situacao}
-                        )
-                    else:
-                        ReuniaoParticipante.objects.filter(
-                            reuniao=reuniao,
-                            participante=participante
-                        ).delete()
-                    if participante.eh_estud:
-                        alocacao = Alocacao.objects.get(aluno=participante.aluno, projeto=reuniao.projeto)
-                        if situacao == 2:  # Se faltou sem justificativa
-                            Desconto.objects.update_or_create(
-                                reuniao=reuniao,
-                                alocacao=alocacao,
-                                nota=0.25
-                            )
-                        else:
-                            # Remove desconto se o participante é estudante e não faltou
-                            Desconto.objects.filter(
-                                reuniao=reuniao,
-                                alocacao=alocacao
-                            ).delete()
+        anota_participacao(request.POST, reuniao=reuniao)
 
         context["mensagem"] = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
                                "en": "Meeting successfully registered!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}

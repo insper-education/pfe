@@ -64,10 +64,12 @@
     {% include "professores/includes/ver_site.html" %}
 
     {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-    <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
+    <label for="observacoes_estudantes">
+      <b data-toggle="tooltip" data-html="true" animation="true"
           title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-      {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
-    </b></label><br>
+        {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
+      </b>
+    </label><br>
     <textarea id="observacoes_estudantes" name="observacoes_estudantes"
      rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_estudantes' %}"
      {% if not encontro.projeto %}disabled{% endif %}
@@ -75,10 +77,12 @@
     <br><br>
   
     {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-    <label for="observacoes_orientador"><b data-toggle="tooltip" data-html="true" animation="true"
-            title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-      {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
-    </b></label><br>
+    <label for="observacoes_orientador">
+      <b data-toggle="tooltip" data-html="true" animation="true"
+          title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+        {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
+      </b>
+    </label><br>
     <textarea id="observacoes_orientador" name="observacoes_orientador"
      rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_orientador' %}"
      {% if not encontro.projeto %}disabled{% endif %}
@@ -96,7 +100,18 @@
       </div><br>
     {% endif %}
 
-    <button class="btn btn-primary mb-1" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
+
+    <div class="form-floating mb-2">
+      <label for="participantes">
+        <b data-toggle="tooltip" data-html="true" animation="true" title="Indique os estudantes presentes no encontro">
+          {% lng "Participantes" "Participants" %}:
+        </b>
+    </label><br>
+      {% include "participantes.html" %}
+    </div>
+
+
+    <button class="btn btn-primary mb-1 mt-2" type="submit">{% lng "Enviar Feedbacks" "Submit Feedbacks" %}</button>
 
   </form>
 

@@ -7,52 +7,109 @@
 
 {% load linguas %}
 
+<style>
+
+  .tab_participantes {
+    border-collapse: collapse;
+    font-size: 0.97em;
+    background: transparent;
+  }
+  .tab_participantes th, .tab_participantes td {
+    padding: 0.1rem 0.5rem;
+    text-align: center;
+  }
+  .tab_participantes th {
+    font-weight: 500;
+    border-bottom: 1px solid #e5e5e5;
+    min-width: 9em;
+    background-color: #ffffff;
+  }
+  @media (max-width: 850px) {
+    .tab_participantes th {
+      min-width: 1em;
+      font-size: 0.75em;
+      padding: 0.1rem 0.2rem;
+    }
+  }
+
+  .tab_participantes td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .tab_participantes td input[type="radio"] {
+    margin: 0 auto;
+    accent-color: #6a82fb;
+  }
+  .tab_participantes td:first-child {
+    text-align: left;
+    padding-left: 0.7em;
+    color: #333;
+    font-weight: 400;
+  }
+  .tab_participantes tr:last-child td {
+    border-bottom: none;
+  }
+  .box_table {
+    display: inline-block;
+    padding: 0.25rem 0.15rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.5rem;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+</style>
+
 <div class="box_table">
-  <table class="tab_participantes">
-    <thead>
-      <tr>
-        <th scope="col">{% lng "Nome" "Name" %}</th>
-        <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
-        <th scope="col">{% lng "Presente" "Present" %}</th>
-        <th scope="col">{% lng "Faltou" "Absent" %}</th>
-        <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for projeto_id, envolvido_projeto in envolvidos.items %}
-        {% for envolvido in envolvido_projeto %}
-          <tr class="envolvidos projeto_{{ projeto_id }}"
-              style="background-color:
-                {% if envolvido.participante.eh_prof_a %}
-                  #f2f9fdff
-                {% elif envolvido.participante.eh_estud %}
-                  #fdfff5ff
-                {% elif envolvido.participante.eh_parc %}
-                  #f8f5fdff
-                {% else %}
-                  #fcdddd
-                {% endif %};
-              ">
-            <td>{{ envolvido.participante.get_full_name }}</td>
-            <td>
-              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
-                {% if envolvido.situacao == 0 %}checked{% endif %}>
-            </td>
-            <td>
-              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
-                {% if envolvido.situacao == 1 %}checked{% endif %}>
-            </td>
-            <td>
-              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
-                {% if envolvido.situacao == 2 %}checked{% endif %}>
-            </td>
-            <td>
-              <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
-                {% if envolvido.situacao == 3 %}checked{% endif %}>
-            </td>
-          </tr>
+  {% if envolvidos %}
+    <table class="tab_participantes">
+      <thead>
+        <tr>
+          <th scope="col">{% lng "Nome" "Name" %}</th>
+          <th scope="col">{% lng "Não Convocado" "Not Invited" %}</th>
+          <th scope="col">{% lng "Presente" "Present" %}</th>
+          <th scope="col">{% lng "Faltou" "Absent" %}</th>
+          <th scope="col">{% lng "Falta Justificada" "Justified Absence" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for projeto_id, envolvido_projeto in envolvidos.items %}
+          {% for envolvido in envolvido_projeto %}
+            <tr class="envolvidos projeto_{{ projeto_id }}"
+                style="background-color:
+                  {% if envolvido.participante.eh_prof_a %}
+                    #f2f9fdff
+                  {% elif envolvido.participante.eh_estud %}
+                    #fdfff5ff
+                  {% elif envolvido.participante.eh_parc %}
+                    #f8f5fdff
+                  {% else %}
+                    #fcdddd
+                  {% endif %};
+                ">
+              <td>{{ envolvido.participante.get_full_name }}</td>
+              <td>
+                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="0" class="ptravar"
+                  {% if envolvido.situacao == 0 %}checked{% endif %}>
+              </td>
+              <td>
+                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="1" class="ptravar"
+                  {% if envolvido.situacao == 1 %}checked{% endif %}>
+              </td>
+              <td>
+                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="2" class="ptravar"
+                  {% if envolvido.situacao == 2 %}checked{% endif %}>
+              </td>
+              <td>
+                <input type="radio" name="envolvido_{{projeto_id}}_{{ envolvido.participante.id }}" value="3" class="ptravar"
+                  {% if envolvido.situacao == 3 %}checked{% endif %}>
+              </td>
+            </tr>
+          {% endfor %}
         {% endfor %}
-      {% endfor %}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% lng "Nenhum participante encontrado." "No participants found." %}</p>
+  {% endif %}
 </div>

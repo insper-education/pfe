@@ -8,7 +8,11 @@ Data: 4 de Janeiro de 2025
 
 import datetime
 
-from .models import Area, AreaDeInteresse, Observacao
+from django.shortcuts import get_object_or_404
+
+
+from .models import Area, AreaDeInteresse, Observacao, Coorientador, Conexao
+from .models import ReuniaoParticipante, EncontroParticipante, Desconto
 
 from academica.models import Exame
 
@@ -16,7 +20,7 @@ from estudantes.models import Pares, Relato, FeedbackPares
 
 from operacional.models import Curso
 
-from users.models import Alocacao
+from users.models import Alocacao, PFEUser, Alocacao
 
 
 def get_areas_estudantes(alunos):
@@ -125,3 +129,94 @@ def busca_relatos(self):
         observacoes.append(obs)
 
     return zip(eventos, relatos, avaliados, observacoes)
+
+
+def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 'C', 'P']):
+    """Recupera os envolvidos em uma reunião de um projeto."""
+    pessoas = []
+    if 'E' in filtro:
+        for integrante in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name"):
+            pessoas.append(integrante.aluno.user)
+    if 'O' in filtro:
+        if projeto.orientador:
+            pessoas.append(projeto.orientador.user)
+    if 'C' in filtro:
+        for coorientador in Coorientador.objects.filter(projeto=projeto).order_by("usuario__full_name"):
+            pessoas.append(coorientador.usuario)
+    if 'P' in filtro:
+        for conexao in Conexao.objects.filter(projeto=projeto).order_by("parceiro__user__full_name"):
+            pessoas.append(conexao.parceiro.user)
+
+    envolvidos = []
+    if reuniao:
+        participantes_reuniao = {rp.participante: rp for rp in ReuniaoParticipante.objects.filter(reuniao=reuniao)}
+        envolvidos = [
+            participantes_reuniao.get(pessoa) or {"participante": pessoa, "situacao": 0}
+            for pessoa in pessoas
+        ]
+        # Adiciona os participantes que estavam marcados na reunião, mas não estão mais no projeto
+        extras = ReuniaoParticipante.objects.filter(reuniao=reuniao).exclude(participante__in=pessoas)
+        envolvidos.extend(extras)
+
+    elif encontro:
+        participantes_encontro = {ep.participante: ep for ep in EncontroParticipante.objects.filter(encontro=encontro)}
+        envolvidos = [
+            participantes_encontro.get(pessoa) or {"participante": pessoa, "situacao": 0}
+            for pessoa in pessoas
+        ]
+        # Adiciona os participantes que estavam marcados no encontro, mas não estão mais no projeto
+        extras = EncontroParticipante.objects.filter(encontro=encontro).exclude(participante__in=pessoas)
+        envolvidos.extend(extras)
+
+    else:
+        for pessoa in pessoas:
+            if pessoa.eh_estud:
+                situacao = 1  # Presente
+            else:
+                situacao = 0  # Não convocado
+            envolvidos.append({"participante": pessoa,"situacao": situacao})
+
+    return envolvidos
+
+
+def anota_participacao(POST, reuniao=None, encontro=None):
+    """Salva a participação dos envolvidos em uma reunião ou encontro."""
+    if not (reuniao or encontro):
+        return
+
+    if reuniao:
+        parent = reuniao
+        parent_field = "reuniao"
+        participante_model = ReuniaoParticipante
+        desconto_filter = {"reuniao": reuniao}
+        projeto = reuniao.projeto
+    else:
+        parent = encontro
+        parent_field = "encontro"
+        participante_model = EncontroParticipante
+        desconto_filter = {"encontro": encontro}
+        projeto = encontro.projeto
+
+    for key, value in POST.items():
+        if key.startswith("envolvido_"):
+            _, projeto_id, participante_id = key.split("_", 2)
+            if projeto_id == str(projeto.id):
+                situacao = int(value)
+                participante = get_object_or_404(PFEUser, id=participante_id)
+                filter_kwargs = {parent_field: parent, "participante": participante}
+                if situacao != 0:
+                    participante_model.objects.update_or_create(**filter_kwargs, defaults={"situacao": situacao})
+                else:
+                    participante_model.objects.filter(**filter_kwargs).delete()
+
+                # Lógica para estudantes
+                if getattr(participante, "eh_estud", False):
+                    alocacao = Alocacao.objects.get(aluno=participante.aluno, projeto=projeto)
+                    desconto_filter_with_aloc = dict(desconto_filter, alocacao=alocacao)
+                    if situacao == 2:  # Faltou sem justificativa
+                        Desconto.objects.update_or_create(
+                            **desconto_filter_with_aloc,
+                            defaults={"nota": 0.25}
+                        )
+                    else:
+                        Desconto.objects.filter(**desconto_filter_with_aloc).delete()

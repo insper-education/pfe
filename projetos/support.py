@@ -75,4 +75,3 @@ def simple_upload(arquivo, path="", prefix="", valida=None):
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
 
-

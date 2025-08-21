@@ -489,3 +489,11 @@ class ReuniaoParticipanteAdmin(admin.ModelAdmin):
     search_fields = ["reuniao__projeto__titulo_final", "participante__user__username",]
     actions = [dup_entrada]
 
+@admin.register(EncontroParticipante)
+class EncontroParticipanteAdmin(admin.ModelAdmin):
+    """Participantes dos Encontros."""
+    list_display = ("encontro", "participante", "situacao")
+    list_filter = ("encontro__projeto__ano", "encontro__projeto__semestre",)
+    search_fields = ["encontro__projeto__titulo_final", "participante__user__username",]
+    actions = [dup_entrada]
+

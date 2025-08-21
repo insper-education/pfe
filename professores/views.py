@@ -50,7 +50,7 @@ from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, O
 from projetos.models import Banca, Evento, Encontro, Documento
 from projetos.models import Projeto, Configuracao, Organizacao
 from projetos.support4 import get_objetivos_atuais
-from projetos.support2 import get_alocacoes, get_pares_colegas
+from projetos.support2 import get_alocacoes, get_pares_colegas, recupera_envolvidos, anota_participacao
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
 from projetos.arquivos import le_arquivo
 
@@ -400,11 +400,17 @@ def banca(request, slug):
 def encontro_feedback(request, pk):
     """Cria uma tela para preencher feedbacks das mentorias."""
     encontro = get_object_or_404(Encontro, pk=pk)
+    if not encontro.projeto:
+        return HttpResponseNotFound("<h1>Nenhum Projeto foi definido para esse encontro/mentoria!</h1>")
+
+    envolvidos = recupera_envolvidos(encontro.projeto, encontro=encontro, filtro=['E'])
 
     if request.method == "POST":
         encontro.observacoes_estudantes = request.POST.get("observacoes_estudantes")
         encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
         encontro.save()
+
+        anota_participacao(request.POST, encontro=encontro)
 
         # Mensagem para facilitador
         subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
@@ -427,6 +433,7 @@ def encontro_feedback(request, pk):
     context = {
             "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
             "encontro": encontro,
+            "envolvidos": {encontro.projeto.id: envolvidos},
         }
 
     return render(request, "professores/encontro_feedback.html", context=context)
