@@ -2117,6 +2117,14 @@ class Desconto(models.Model):
         else:
             return f"{str(self.alocacao)[:28]} > {str(self.nota)}"
 
+    def get_mensagem(self):
+        if self.evento:
+            return self.evento
+        elif self.reuniao:
+            return self.reuniao
+        elif self.encontro:
+            return self.encontro
+
     class Meta:
         verbose_name = "Desconto"
         verbose_name_plural = "Descontos"

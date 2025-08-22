@@ -10,6 +10,7 @@
   {% load certificados %}
   {% load get_notas %}
   {% load linguas %}
+  {% load get_descontos %}
 
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
@@ -47,12 +48,12 @@
 
         {% include "projeto.html" %}
 
-        {% with notas=alocado|get_notas_alocacao:request %}
-          {% if notas %}
+        {% with notas=alocado|get_notas_alocacao:request descontos=alocado|get_descontos_alocacao:request %}
+          {% if notas or descontos %}
             <div>
               <h5>{% lng "Resultados" "Results" %}</h5>
               <div style="background: #FFFFFF; padding: 6px;">
-              {% include "display_notas_individuais.html" %}
+              {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
               </div>
             </div>
           {% endif %}

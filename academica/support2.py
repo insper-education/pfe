@@ -8,6 +8,7 @@ Data: 15 de Janeiro de 2024
 
 import logging
 
+from django.db.models import Q
 
 from projetos.models import Desconto
 from projetos.support4 import get_objetivos_atuais
@@ -80,18 +81,15 @@ def get_objetivos(avaliacoes, ano, semestre):
 
 
 def get_descontos_alocacao(alocacao):
-    # Recupera os descontos
-    nota_descontos = 0
-    eventos = []
-    descontos = Desconto.objects.filter(alocacao=alocacao) | Desconto.objects.filter(projeto=alocacao.projeto)
-    if descontos:
-        for desconto in descontos:
-            if desconto.nota is not None:
-                nota_descontos += desconto.nota
-                if desconto.evento:
-                    eventos.append(desconto.evento)
-                elif desconto.reuniao:
-                    eventos.append(desconto.reuniao)
-                elif desconto.encontro:
-                    eventos.append(desconto.encontro)
-    return float(nota_descontos), eventos
+    """
+    Recupera os descontos de uma alocação, somando as notas e coletando mensagens.
+    Retorna (soma das notas, lista de mensagens).
+    """
+    descontos = Desconto.objects.filter(Q(alocacao=alocacao) | Q(projeto=alocacao.projeto))
+    nota_descontos = 0.0
+    mensagens = []
+    for desconto in descontos:
+        if desconto.nota is not None:
+            nota_descontos += float(desconto.nota)
+            mensagens.append(desconto.get_mensagem())
+    return nota_descontos, mensagens

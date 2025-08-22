@@ -24,7 +24,7 @@
   <a style="color:black" href="{% url 'edita_notas' alocado.id %}">
 {% endif %}
 
-{% if notas %}
+{% if notas or descontos %}
 
   <div style="overflow-x: auto; width: 100%;">
     <table class="one-line" style="max-width: 100%;">
@@ -59,7 +59,7 @@
           {% endif %}
           
           <td>
-            <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocado.id}}"></span> <span id="aviso{{alocado.id}}"></span></b>    
+            <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocado.id}}">0.0</span> <span id="aviso{{alocado.id}}"></span></b>    
           </td>    
 
         </tr>
