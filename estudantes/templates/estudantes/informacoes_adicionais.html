@@ -33,57 +33,30 @@
     <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">Selecionar suas áreas de interesse:</span><br>
     {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all com_borda=True %}<br>
     
-    <br>
-    <label for="trabalhou">
-    Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?<br>
-    Se sim, qual/quais? Indique o nome, a área de atuação e sua situação atual com a empresa.<br> 
-    </label><br>
-    <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="{% max_length Aluno 'trabalhou' %}" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
-    <br><br>
+    {% include "estudantes/includes/trab_ativ_famil.html" %}
 
-    {% comment %} <label for="social">
-    Você já participou de atividades sociais? Por exemplo trabalhos voluntários ou ações em comunidades.<br>
-    Se sim, qual/quais? <small>[Esse campo é importante se você está aplicando para um projeto de Inovação Social]</small>
-    </label><br>
-    <textarea id="social" name="social" rows="4" cols="80" maxlength="{% max_length Aluno 'social' %}" {% if vencido %}disabled{% endif %}>{% if estudante.social %}{{estudante.social}}{% endif %}</textarea>
-    <br><br> {% endcomment %}
-
-    <label for="atividades">
-    Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?<br>
-    Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?
-    </label><br>
-    <textarea id="atividades" name="atividades" rows="4" cols="80" maxlength="{% max_length Aluno 'atividades' %}" {% if vencido %}disabled{% endif %}>{% if estudante.atividades %}{{estudante.atividades}}{% endif %}</textarea>
-    <br><br>
-    {% comment %} <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small> {% endcomment %}
-    <!-- Pega Script para preencher entidades automaticamente -->
-    {% comment %} <br><br> {% endcomment %}
-
-    <label for="familia">
-    Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
-    Se sim, qual/quais? Qual seu grau de relacionamento.
-    <small>[Só preencher depois de selecionar os projetos]</small>
-    </label><br>
-    <textarea id="familia" name="familia" rows="4" cols="80" maxlength="{% max_length Aluno 'familia' %}" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
-    <br><br>
-
-    <label for="linkedin">
-      {% lng "Caso desejar, você pode informar seu LinkedIn: (opcional)" "If you wish, you can inform your LinkedIn: (optional)" %}
-    </label><br>
-    <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}>
-    <br><br>
+    <div class="mt-3">
+      <label for="linkedin">
+        {% lng "Caso desejar, você pode informar seu LinkedIn: (opcional)" "If you wish, you can inform your LinkedIn: (optional)" %}
+      </label><br>
+      <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}>
+    </div>
     
-    <label for="conta_github">
-      {% lng "Informe seu usuário GitHub: (pode ser informado posteriormente para uso do GitHub)" "Inform your GitHub user: (can be informed later for GitHub use)" %}
-    </label><br>
-    <input type="text" size="38" id="conta_github" name="conta_github" maxlength="{% max_length PFEUser 'conta_github' %}" {% if estudante.user.conta_github %}value="{{estudante.user.conta_github}}"{% endif %} {% if vencido %}disabled{% endif %}>
-    <br><br>
+    <div class="mt-3">
+      <label for="conta_github">
+        {% lng "Informe seu usuário GitHub: (pode ser informado posteriormente para uso do GitHub)" "Inform your GitHub user: (can be informed later for GitHub use)" %}
+      </label><br>
+      <input type="text" size="38" id="conta_github" name="conta_github" maxlength="{% max_length PFEUser 'conta_github' %}" {% if estudante.user.conta_github %}value="{{estudante.user.conta_github}}"{% endif %} {% if vencido %}disabled{% endif %}>
+    </div>
 
-    <label for="celular">
-      Caso desejar, você pode informar seu telefone celular: (opcional)<br>
-    </label><br>
-    <input type="text" size="20" maxlength="{% max_length PFEUser 'celular' %}" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
-    <br><small><b class="text-danger">Iremos usar esse número para enviar avisos de forma não oficial pelo WhatsApp. A comunicação oficial é pelo seu e-mail de estudante!</b></small>
-
+    <div class="mt-3">
+      <label for="celular">
+        Caso desejar, você pode informar seu telefone celular: (opcional)<br>
+      </label><br>
+      <input type="text" size="20" maxlength="{% max_length PFEUser 'celular' %}" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
+      <br><small><b class="text-danger">Iremos usar esse número para enviar avisos de forma não oficial pelo WhatsApp. A comunicação oficial é pelo seu e-mail de estudante!</b></small>
+    </div>
+   
     <br><br>
     <input class="btn btn-primary mb-1" {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">
 

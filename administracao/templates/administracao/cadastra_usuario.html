@@ -155,6 +155,8 @@
         <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
       </label><br>
 
+      {% include "estudantes/includes/trab_ativ_famil.html" with estudante=usuario.aluno %}
+
     </div>
 
     {% comment %} Professor {% endcomment %}

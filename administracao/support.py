@@ -218,6 +218,11 @@ def registro_usuario(request, user=None):
 
         estudante.trancado = "estudante_trancado" in request.POST
 
+
+
+
+
+
         estudante.save()
         
         usuario.groups.add(Group.objects.get(name="Estudante"))  # Grupo de permissões

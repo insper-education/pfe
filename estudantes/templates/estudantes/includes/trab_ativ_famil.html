@@ -1,0 +1,36 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 22 de Agosto de 2025
+{% endcomment %}
+
+{% load get_field %}
+{% load linguas %}
+
+<div class="mt-3">
+  <label for="trabalhou">
+  Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?<br>
+  Se sim, qual/quais? Indique o nome, a área de atuação e sua situação atual com a empresa.<br> 
+  </label><br>
+  <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="{% max_length Aluno 'trabalhou' %}" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
+</div>
+
+<div class="mt-3">
+  <label for="atividades">
+  Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?<br>
+  Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?
+  </label><br>
+  <textarea id="atividades" name="atividades" rows="4" cols="80" maxlength="{% max_length Aluno 'atividades' %}" {% if vencido %}disabled{% endif %}>{% if estudante.atividades %}{{estudante.atividades}}{% endif %}</textarea>
+  {% comment %} <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small> {% endcomment %}
+  <!-- Pega Script para preencher entidades automaticamente -->
+  {% comment %} <br><br> {% endcomment %}
+</div>
+
+<div class="mt-3">
+  <label for="familia">
+  Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
+  Se sim, qual/quais? Qual seu grau de relacionamento.
+  <small>[Só preencher depois de selecionar os projetos]</small>
+  </label><br>
+  <textarea id="familia" name="familia" rows="4" cols="80" maxlength="{% max_length Aluno 'familia' %}" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
+</div>
