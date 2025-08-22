@@ -22,7 +22,7 @@ class Relato(models.Model):
                                  related_name="projeto_alocado_relato",
                                  help_text="relacao de alocação entre projeto e estudante")
 
-    texto = models.TextField("Texto", max_length=2100, null=True, blank=True,
+    texto = models.TextField("Texto", max_length=3100, null=True, blank=True,
                                    help_text="Texto do relato")
     
     momento_avaliacao = models.DateTimeField("Momento da Avaliação", null=True, blank=True,
