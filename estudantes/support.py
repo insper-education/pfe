@@ -129,7 +129,7 @@ def check_encontros_marcar(alocacao):
     prazo = None
     agora = datetime.datetime.now()
     encontros = Encontro.objects.filter(startDate__gt=agora).order_by("startDate")
-    if encontros:
+    if encontros and alocacao and alocacao.projeto:
         prazo = encontros.first().startDate - datetime.timedelta(days=1)
         if encontros.filter(projeto=alocacao.projeto).exists():
             cor = 'g'
