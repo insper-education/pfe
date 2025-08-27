@@ -477,6 +477,7 @@ admin.site.register(PropostaContato)
 class DescontoAdmin(admin.ModelAdmin):
     """Descontos nas notas dos estudantes."""
     list_display = ("evento", "reuniao", "projeto", "alocacao", "nota")
+    list_filter = ("projeto__ano", "projeto__semestre","alocacao__projeto__ano", "alocacao__projeto__semestre",)
     actions = [dup_entrada]
 
 admin.site.register(Reuniao)
