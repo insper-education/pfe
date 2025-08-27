@@ -1641,10 +1641,9 @@ def dinamicas_criar(request, data=None):
                     if encontro.projeto or encontro.facilitador:
                         subject = "Capstone | Dinâmica agendada"
                         recipient_list = []
-                        if encontro.projeto:
-                            alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
-                            for alocacao in alocacoes:
-                                recipient_list.append(alocacao.aluno.user.email)
+                        alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                        for alocacao in alocacoes:
+                            recipient_list.append(alocacao.aluno.user.email)
                         if encontro.facilitador:
                             recipient_list.append(encontro.facilitador.email)
                         recipient_list.append(str(configuracao.coordenacao.user.email))

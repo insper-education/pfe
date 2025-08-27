@@ -9,6 +9,7 @@ Data: 15 de Maio de 2019
 import datetime
 import csv
 from multiprocessing import context
+from urllib import request
 import dateutil.parser
 import json
 import logging
@@ -48,6 +49,8 @@ from administracao.models import Estrutura, Despesa
 from administracao.support import usuario_sem_acesso
 
 from operacional.models import Curso
+
+from projetos.messages import email, render_message
 
 from organizacoes.models import Segmento
 
@@ -973,6 +976,19 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.save()
 
         anota_participacao(request.POST, reuniao=reuniao)
+
+        if "enviar_mensagem" in request.POST:
+            if reuniao.projeto:
+                subject = "Capstone | Anotações de Reunião (" + reuniao.titulo + ")"
+                recipient_list = []
+                alocacoes = Alocacao.objects.filter(projeto=reuniao.projeto)
+                for alocacao in alocacoes:
+                    recipient_list.append(alocacao.aluno.user.email)
+                if reuniao.projeto.orientador:
+                    recipient_list.append(reuniao.projeto.orientador.user.email)
+                # recipient_list.append(str(configuracao.coordenacao.user.email))
+                message = render_message("Anotações de Reunião", {"reuniao": reuniao})
+                email(subject, recipient_list, message)
 
         context["mensagem"] = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
                                "en": "Meeting successfully registered!<br><b>Submission time:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S')}
