@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 
 from .models import Area, AreaDeInteresse, Observacao, Coorientador, Conexao
-from .models import ReuniaoParticipante, EncontroParticipante, Desconto
+from .models import Participante, ReuniaoParticipante, EncontroParticipante, Desconto
 
 from academica.models import Exame
 
@@ -197,6 +197,8 @@ def anota_participacao(POST, reuniao=None, encontro=None):
         desconto_filter = {"encontro": encontro}
         projeto = encontro.projeto
 
+    participantes = []
+
     for key, value in POST.items():
         if key.startswith("envolvido_"):
             _, projeto_id, participante_id = key.split("_", 2)
@@ -206,6 +208,7 @@ def anota_participacao(POST, reuniao=None, encontro=None):
                 filter_kwargs = {parent_field: parent, "participante": participante}
                 if situacao != 0:
                     participante_model.objects.update_or_create(**filter_kwargs, defaults={"situacao": situacao})
+                    participantes.append( (participante, dict(Participante.TIPO_PARTICIPANTE).get(situacao, "")) )
                 else:
                     participante_model.objects.filter(**filter_kwargs).delete()
 
@@ -220,3 +223,4 @@ def anota_participacao(POST, reuniao=None, encontro=None):
                         )
                     else:
                         Desconto.objects.filter(**desconto_filter_with_aloc).delete()
+    return participantes

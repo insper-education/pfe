@@ -430,18 +430,24 @@ def encontro_feedback(request, pk):
         encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
         encontro.save()
 
-        anota_participacao(request.POST, encontro=encontro)
+        participantes = anota_participacao(request.POST, encontro=encontro)
 
         # Mensagem para facilitador
         subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
         configuracao = get_object_or_404(Configuracao)
         recipient_list = [encontro.facilitador.email, encontro.projeto.orientador.user.email, configuracao.coordenacao.user.email]
         mensagem = encontro.facilitador.get_full_name() + ",<br>\n<br>\n"
-        mensagem = "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por facilitar a mentoria no Capstone do Insper.<br>\n<br>\n"
-        mensagem += "Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n<br>\n"
-        mensagem += "<b>Observações para Estudantes</b>: " + encontro.observacoes_estudantes + "<br>\n<br>\n"
-        mensagem += "<b>Observações para Orientador</b>: " + encontro.observacoes_orientador + "<br>\n"
-        
+        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por facilitar a mentoria no Capstone do Insper.<br>\n<br>\n"
+        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n<br>\n"
+        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Observações para Estudantes</b>: " + encontro.observacoes_estudantes + "<br>\n<br>\n"
+        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Observações para Orientador</b>: " + encontro.observacoes_orientador + "<br>\n"
+        if participantes:
+            mensagem += "<br>"
+            mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Participantes</b>:<br>\n"
+            for participante, tipo in participantes:
+                mensagem += f"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; {participante.get_full_name()} ({tipo})<br>\n"
+            mensagem += "<br>\n"
+
         email(subject, recipient_list, mensagem)
 
         if request.user.is_authenticated:
