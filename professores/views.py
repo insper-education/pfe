@@ -1686,6 +1686,7 @@ def dinamicas_criar(request, data=None):
         "falconis": falconis,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
+        "Encontro": Encontro,
     }
 
     if data:
@@ -1718,6 +1719,7 @@ def dinamicas_editar_edicao(request, edicao):
         "todas": True,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
+        "Encontro": Encontro,
     }
     return render(request, "professores/dinamicas_view.html", context)
 
@@ -1836,6 +1838,7 @@ def dinamicas_editar(request, primarykey=None):
         "encontro": encontro,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
+        "Encontro": Encontro,
     }
     return render(request, "professores/dinamicas_view.html", context)
 
