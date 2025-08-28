@@ -4,17 +4,21 @@
   Data: 26 de Setembro de 2024
 {% endcomment %}
 
+{% load linguas %}
+
 {% if alocacao %}
   {% if user.is_authenticated %}
     <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
   {% else %}
     {{alocacao.aluno.user.get_full_name}}
   {% endif %}
-  <span class="texto-longo curso unselectable">[{{ alocacao.aluno.curso2 }}]</span>
-  <span class="texto-curto curso unselectable">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+  <span class="cursos"> {% comment %} para esconde todos os cursos {% endcomment %}
+    <span class="texto-longo curso unselectable">[{{ alocacao.aluno.curso2 }}]</span>
+    <span class="texto-curto curso unselectable">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+  </span>
   {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
   <span class="texto-longo emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}">&lt;{{alocacao.aluno.user.email}}&gt;</a></span>
   <span class="texto-curto emails"><a class="email" href="mailto:{{alocacao.aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
 {% else %}
-  <span class="texto-longo">Estudante não alocado</span>
+  <span class="texto-longo">{% lng "Estudante não alocado" "Student not allocated" %}</span>
 {% endif %}
