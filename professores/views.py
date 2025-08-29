@@ -436,17 +436,13 @@ def encontro_feedback(request, pk):
         subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
         configuracao = get_object_or_404(Configuracao)
         recipient_list = [encontro.facilitador.email, encontro.projeto.orientador.user.email, configuracao.coordenacao.user.email]
-        mensagem = encontro.facilitador.get_full_name() + ",<br>\n<br>\n"
-        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;Obrigado por facilitar a mentoria no Capstone do Insper.<br>\n<br>\n"
-        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;Anotações de Mentoria - Projeto: " + encontro.projeto.get_titulo_org_periodo() + "<br>\n<br>\n"
-        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Observações para Estudantes</b>: " + encontro.observacoes_estudantes + "<br>\n<br>\n"
-        mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Observações para Orientador</b>: " + encontro.observacoes_orientador + "<br>\n"
-        if participantes:
-            mensagem += "<br>"
-            mensagem += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Participantes</b>:<br>\n"
-            for participante, tipo in participantes:
-                mensagem += f"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; {participante.get_full_name()} ({tipo})<br>\n"
-            mensagem += "<br>\n"
+        context_email = {
+            "encontro": encontro,
+            "participantes": participantes,
+            "configuracao": configuracao,
+        }
+
+        mensagem = render_message("Anotações de Mentoria", context_email)
 
         email(subject, recipient_list, mensagem)
 
@@ -1067,6 +1063,7 @@ def dinamicas_lista(request, edicao=None):
     else:
 
         informacoes = [
+                (".tema", "tema", "theme"),
                 (".local", "local", "local"),
                 (".grupo", "grupo", "group"),
                 (".orientacao", "orientação", "supervision"),
@@ -1611,6 +1608,7 @@ def dinamicas_criar(request, data=None):
 
             vezes = int(request.POST["vezes"])
             local = request.POST.get("local", None)
+            tema = request.POST.get("tema")
             projeto_id = request.POST.get("projeto", None)
             if projeto_id and projeto_id != "0":
                 try:
@@ -1631,6 +1629,9 @@ def dinamicas_criar(request, data=None):
             for vez in range(vezes):
 
                 encontro = Encontro(startDate=startDate+(vez*diferenca), endDate=endDate+(vez*diferenca))
+
+                if tema:
+                    encontro.tema = tema
 
                 if local:
                     encontro.location = local
@@ -1705,6 +1706,7 @@ def dinamicas_editar_edicao(request, edicao):
         encontros = puxa_encontros(edicao)
         for encontro in encontros:
             encontro.location = request.POST.get("local")
+            encontro.tema = request.POST.get("tema")
             facilitador_id = request.POST.get("facilitador")
             if facilitador_id:
                 encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
@@ -1782,6 +1784,7 @@ def dinamicas_editar(request, primarykey=None):
                     encontro.endDate = endDate_novo
 
                     encontro.location = request.POST.get("local")
+                    encontro.tema = request.POST.get("tema")
                 except (ValueError, OverflowError):
                     return HttpResponse("Erro com data da Dinâmica!", status=401)
                 encontro.save()

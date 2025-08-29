@@ -43,6 +43,13 @@
                   <a class="email" href="mailto:{{e.facilitador.email}}">&lt;{{e.facilitador.email}}&gt;</a>&nbsp;
                 </div>
               {% endif %}
+
+              {% if e.tema %}
+                <div class="tema" style="margin: 4px 0px 4px 0px;">
+                  <b>Tema:</b> {{ e.tema }}
+                </div>
+              {% endif %}
+
               {% if e.location %}
                 <div class="local" style="margin: 4px 0px 4px 0px;">
                   <b>Local/Link:</b>
