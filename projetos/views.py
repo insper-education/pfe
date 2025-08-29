@@ -987,7 +987,12 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                 if reuniao.projeto.orientador:
                     recipient_list.append(reuniao.projeto.orientador.user.email)
                 # recipient_list.append(str(configuracao.coordenacao.user.email))
-                message = render_message("Anotações de Reunião", {"reuniao": reuniao})
+                context_email = {
+                    "reuniao": reuniao,
+                    "configuracao": configuracao
+                }
+                message = render_message("Anotações de Reunião", context_email)
+
                 email(subject, recipient_list, message)
 
         context["mensagem"] = {"pt": "Reunião registrada com sucesso!<br><b>Horário de recebimento:</b> " + reuniao.criacao.strftime('%d/%m/%Y, %H:%M:%S'), 
