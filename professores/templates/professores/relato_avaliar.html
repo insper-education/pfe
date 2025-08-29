@@ -183,16 +183,25 @@
 
     {% endfor %}
 
-    <div style="max-width: 1222px;">
-      <label for="observacoes">
+    <hr><br>
+
+    <div class="div_arredondado_azulado"  style="width: 1222px;">
+
+      <label for="observacoes" style="font-weight: 600; letter-spacing: 0.04em; color: #40515cff; margin-bottom: 4px; display: block;">
         {% lng "Informe suas observações para a coordenação do Capstone (opcional)" "Inform your observations to the Capstone coordination (optional)" %}:
-      </label><br>
-      <textarea id="observacoes" name="observacoes" rows="18" cols="164" maxlength="{% max_length Observacao 'observacoes_orientador' %}" {% if not editor %}disabled{% endif %} class="troca_lingua"
-        data-pt="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar." data-en="If you identify any difficulty with any student or the group, describe here that the Capstone coordination will assist you."
-        placeholder=""
+      </label>
+      <textarea id="observacoes" name="observacoes"
+        rows="9"
+        style="width: 100%; min-width: 120px; font-size: 0.95em; border-radius: 5px; border: 1px solid #b0bec5; background: #fff; margin-top: 4px; padding: 6px 8px; resize: vertical;"
+        maxlength="{% max_length Observacao 'observacoes_orientador' %}"
+        {% if not editor %}disabled{% endif %}
+        class="troca_lingua"
+        data-pt="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar."
+        data-en="If you identify any difficulty with any student or the group, describe here that the Capstone coordination will assist you."
+        placeholder="Descreva aqui suas observações..."
       >{% if observacoes %}{{observacoes}}{% endif %}</textarea>
     </div>
-    
+
     <p>&nbsp;</p>
 
     {% if editor %}

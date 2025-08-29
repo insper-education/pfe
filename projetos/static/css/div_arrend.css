@@ -35,6 +35,23 @@
   margin-bottom: 10px;
 }
 
+.div_arredondado_azulado {
+        background: #eff8ffff;
+        vertical-align: middle;
+        border: 1.2px dashed #90a4ae;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        max-width: 100%;
+        width: 800px;
+        padding: 8px;
+        box-shadow: none;
+      }
+
+.div_arredondado_azulado > div {
+  display: block;
+  max-width: 100%;
+}
+
 .pintern {
   border: 1px solid grey;
   display: block;
