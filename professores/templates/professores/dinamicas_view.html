@@ -72,15 +72,6 @@
             required>
           </label>
 
-          {% if not encontro %}
-            <label for="vezes" style="margin-right: 2rem;">
-              <span style="display:inline-block; width:5.5ex; text-align:right">
-                {% lng "Vezes" "Times" %}:
-              </span>
-              <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
-            </label>
-          {% endif %} 
-        
           <script>
             // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
             Date.prototype.toDatetimeLocal =
@@ -110,6 +101,39 @@
             });
 
           </script>
+
+          {% if not encontro %}
+            <label for="vezes" style="margin-right: 2rem;">
+              <span style="display:inline-block; width:5.5ex; text-align:right">
+                {% lng "Vezes" "Times" %}:
+              </span>
+              <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
+            </label>
+
+            <label for="intervalo" style="margin-right: 2rem; float: right; display: none;">
+              <span style="display:inline-block; text-align:right">
+                {% lng "Intervalo (minutos)" "Interval (minutes)" %}:
+              </span>
+              <input id="intervalo" type="number" name="intervalo" value="0" min="1" max="60" style="display:inline-block; width:2.7rem;" required>
+            </label>
+
+            <script>
+              $(document).ready(function() {
+                function toggleIntervalo() {
+                  if ($("#vezes").val() > 1) {
+                    $("#intervalo").parent("label").show();
+                  } else {
+                    $("#intervalo").parent("label").hide();
+                  }
+                }
+                $("#vezes").on("input", toggleIntervalo);
+              });
+            </script>
+
+          {% endif %}
+
+
+        
 
         {% endif %}
 

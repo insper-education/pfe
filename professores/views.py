@@ -1607,6 +1607,7 @@ def dinamicas_criar(request, data=None):
                 return HttpResponse("Erro com data da Dinâmica!")
 
             vezes = int(request.POST["vezes"])
+            intervalo = int(request.POST["intervalo"])
             local = request.POST.get("local", None)
             tema = request.POST.get("tema")
             projeto_id = request.POST.get("projeto", None)
@@ -1628,7 +1629,10 @@ def dinamicas_criar(request, data=None):
                     
             for vez in range(vezes):
 
-                encontro = Encontro(startDate=startDate+(vez*diferenca), endDate=endDate+(vez*diferenca))
+                encontro = Encontro(startDate=startDate, endDate=endDate)
+
+                startDate += diferenca +  datetime.timedelta(minutes=intervalo)
+                endDate += diferenca +  datetime.timedelta(minutes=intervalo)
 
                 if tema:
                     encontro.tema = tema
