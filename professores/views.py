@@ -1076,10 +1076,12 @@ def dinamicas_lista(request, edicao=None):
                 (".sem_agendamento", "sem agendamento", "without schedule"),
             ]
 
+        configuracao = get_object_or_404(Configuracao)
         context = {
                 "titulo": {"pt": "Listagem das Mentorias", "en": "List of Mentoring"},
                 "edicoes": get_edicoes(Projeto)[0],
                 "informacoes": informacoes,
+                "configuracao": configuracao,
             }
         
         if edicao:
@@ -1093,6 +1095,23 @@ def dinamicas_lista(request, edicao=None):
     context["root_page_url"] = request.session["root_page_url"]
 
     return render(request, "professores/dinamicas_lista.html", context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_permite_agendar_mentorias(request):
+    """Atualiza uma configuração de agendamento de mentorias."""
+
+    if request.is_ajax():
+        configuracao = get_object_or_404(Configuracao)
+        configuracao.permite_agendar_mentorias = request.POST.get("permite_agendar_mentorias") == "true"
+        configuracao.save()
+        return JsonResponse({"atualizado": True})
+
+    return HttpResponse("Erro não identificado.", status=401)
+
+
 
 
 @login_required

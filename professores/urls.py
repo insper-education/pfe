@@ -80,4 +80,5 @@ urlpatterns = [
     path("ajax_bancas/", views.ajax_bancas, name="ajax_bancas"),
     path("ajax_atualiza_banca/", views.ajax_atualiza_banca, name="ajax_atualiza_banca"),
     path("ajax_atualiza_dinamica/", views.ajax_atualiza_dinamica,name="ajax_atualiza_dinamica"),
+    path("ajax_permite_agendar_mentorias/", views.ajax_permite_agendar_mentorias, name="ajax_permite_agendar_mentorias"),
 ]

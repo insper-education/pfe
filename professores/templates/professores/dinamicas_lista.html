@@ -16,6 +16,39 @@
 
 {% block content %}
 
+  {% if user.eh_admin %}
+    <div class="custom-control custom-switch esconder">
+      <input type="checkbox" class="custom-control-input esconder" 
+             id="agendamentos" name="agendamentos" onchange="carrega_pagina()"
+             {% if configuracao.permite_agendar_mentorias %}checked{% endif %}
+             />
+      <label class="custom-control-label" for="agendamentos">
+        {% lng "Permite Agendamentos" "Allows Scheduling" %}
+      </label>
+    </div>
+  {% endif %}
+
+
+  <script>
+    $("#agendamentos").change(function(evt){
+
+      $.ajax({
+        url: "{% url 'ajax_permite_agendar_mentorias' %}",
+        data: {
+          "csrfmiddlewaretoken": "{{ csrf_token }}",
+          "permite_agendar_mentorias": evt.target.checked
+        },
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+          {% comment %} if (data.atualizado) {} {% endcomment %}
+        },
+        {% include "ajax_error_function.js" %}
+      });
+
+    });
+  </script>
+
   {% include "edicoes.html" with com_proximas=True %}
   {% include "informacoes_ml.html" %}<br>
 
