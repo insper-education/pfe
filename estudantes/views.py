@@ -222,24 +222,33 @@ def encontros_marcar(request):
 
         else:    
             for encontro in encontros:
-                if str(encontro.id) == check_values[0]:
+                if str(encontro.id) == check_values[0]:  # Agenda Encontro
                     
-                    if encontro.startDate.date() <= hoje:
+                    if encontro.bloqueado:
+                        aviso = "Horário está bloqueado para agendamento."
+                        break
+
+                    elif encontro.startDate.date() <= hoje:
                         aviso = "Horário já vencido."
+                        break
 
                     elif encontro.projeto is None or encontro.projeto == projeto:
                         # Se projeto estava sem seleção ainda, selecionar
                         encontro.projeto = projeto
                         encontro.save()
                         agendado = encontro
+                        break
 
                     elif encontro.projeto != projeto:
                         # Se projeto foi selecionad por outro grupo
                         aviso = "Infelizmente nesse meio tempo algum grupo selecionou o horário indicado!\nPor favor, selecione outro horário."
+                        break
 
-                else:
+            if aviso is None:
+                for encontro in encontros:  # Cancela encontro
+
                     # Limpa seleção caso haja uma mudança
-                    if encontro.projeto == projeto:
+                    if encontro != agendado and encontro.projeto == projeto:
                         cancelado = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
                         encontro.projeto = None
                         encontro.save()
@@ -276,6 +285,7 @@ def encontros_marcar(request):
         "aviso": aviso,
         "agendado": agendado,
         "hoje": hoje,
+        "configuracao": configuracao,
     }
     return render(request, "estudantes/encontros_marcar.html", context)
 

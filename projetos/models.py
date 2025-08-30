@@ -1110,6 +1110,8 @@ class Encontro(models.Model):
 
     participantes = models.ManyToManyField("users.PFEUser", verbose_name="Participantes", blank=True, help_text="Participantes do encontro", through="EncontroParticipante")
 
+    bloqueado = models.BooleanField(default=False)
+
     def hora_fim(self):
         """Mostra só a hora final do encontro."""
         return self.endDate.strftime("%H:%M")

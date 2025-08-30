@@ -1093,6 +1093,7 @@ def dinamicas_lista(request, edicao=None):
     # Usando para #atualizar a página raiz no edit da banca
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
+    context["hoje"] = datetime.date.today()
 
     return render(request, "professores/dinamicas_lista.html", context)
 
@@ -1110,8 +1111,6 @@ def ajax_permite_agendar_mentorias(request):
         return JsonResponse({"atualizado": True})
 
     return HttpResponse("Erro não identificado.", status=401)
-
-
 
 
 @login_required
@@ -1761,6 +1760,8 @@ def dinamicas_editar(request, primarykey=None):
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax() and request.method == "POST":
+        encontro.bloqueado = False  # Desbloqueia o encontro
+        encontro.save()
 
         mensagem = ""
         if "atualizar" in request.POST:
@@ -1848,14 +1849,17 @@ def dinamicas_editar(request, primarykey=None):
                 email(subject, recipient_list, message)
 
             encontro.delete()
-        else:
-            return HttpResponse("Atualização não realizada.", status=401)
+        # else Atualização não realizada. / Serve para desbloquear agendamento
 
         context = {
             "atualizado": True,
             "mensagem": mensagem,
         }
         return JsonResponse(context)
+    
+    else:  # Não é POST
+        encontro.bloqueado = True  # Bloqueia para evitar edição concorrente
+        encontro.save()
 
     context = {
         "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),

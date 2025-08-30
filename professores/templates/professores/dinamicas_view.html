@@ -305,6 +305,21 @@
       $("#organizacao").text(organizacao);
       $("#orientador").text(orientador);
     })
+
+    
+    $("#popup").on("hidden.bs.modal", function (e) {
+        // Para desbloquer encontro
+        $.ajax({
+        type: "POST",
+        url: "{{ url }}",
+        data: { "csrfmiddlewaretoken": "{{ csrf_token }}" },
+        success: function(response){
+          location.reload();  // Atualizar página
+        },
+        {% include "ajax_error_function.js" %}
+      });
+    });
+    
   });
 
   var operacao = "agendar";
@@ -318,57 +333,57 @@
   });
 
   
-$("form#dinamicasform").submit(function(e){
-  e.preventDefault();
+  $("form#dinamicasform").submit(function(e){
+    e.preventDefault();
 
-  {% if not todas %}
-    if($("#inicio").val() == $("#fim").val()) {
-      alert("Datas e horários de início e fim são iguais!");
-      return false;
-    }
-
-    d_inicio = new Date($("#inicio").val());
-    d_fim = new Date($("#fim").val());
-    if(d_inicio > d_fim) {
-      alert("Data de início depois da data final!");
-      return false;
-    }
-  {% endif %}
-
-  $.ajaxSetup({
-    headers: { "X-CSRFToken": "{{csrf_token}}" }
-  });
-
-  var form = $("form#dinamicasform").closest("form");
-  var formData = new FormData(form[0]);
-
-  // Adiciona o tipo de operação
-  formData.append(operacao, "true");
-  
-  {% comment %} {% include "load_content.html" %} {% endcomment %}
-
-  $.ajax({
-    type: "POST",
-    url: "{{ url }}",
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function(response){
-      if (response.atualizado) {
-        $("#submit").hide();
-        $("#excluir").hide();
-        // Atualizar página
-        location.reload();         
-        {% comment %} loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" ); {% endcomment %}
-      } else {
-        alert(response.mensagem);
+    {% if not todas %}
+      if($("#inicio").val() == $("#fim").val()) {
+        alert("Datas e horários de início e fim são iguais!");
+        return false;
       }
-    },
-    {% include "ajax_error_function.js" %}
+
+      d_inicio = new Date($("#inicio").val());
+      d_fim = new Date($("#fim").val());
+      if(d_inicio > d_fim) {
+        alert("Data de início depois da data final!");
+        return false;
+      }
+    {% endif %}
+
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#dinamicasform").closest("form");
+    var formData = new FormData(form[0]);
+
+    // Adiciona o tipo de operação
+    formData.append(operacao, "true");
+    
+    {% comment %} {% include "load_content.html" %} {% endcomment %}
+
+    $.ajax({
+      type: "POST",
+      url: "{{ url }}",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        if (response.atualizado) {
+          $("#submit").hide();
+          $("#excluir").hide();
+          // Atualizar página
+          location.reload();         
+          {% comment %} loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" ); {% endcomment %}
+        } else {
+          alert(response.mensagem);
+        }
+      },
+      {% include "ajax_error_function.js" %}
+    });
+
+    return false;
+
   });
-
-  return false;
-
-});
 
 </script>

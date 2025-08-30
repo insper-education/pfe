@@ -63,54 +63,71 @@
     {% endif %}
 
     <div id="horarios">
-      <table class="table table-borderless table-sm arredondado">
-        <tbody>
-        {% for e in encontros %}
-          <tr><td style="display: flex;"><div class="botao">
-            <input id="din{{e.id}}" type="radio" name="selection" value="{{e.id}}" 
-            {% if e.projeto == projeto %}checked{% endif %}
-            {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
-            {% if e.startDate.date == hoje %}disabled{% endif %}
-            ></div>
-              {% if e.projeto and e.projeto != projeto %}
-                <div class="tag_intern" style="color:lightgrey;">
-                <label title="Horário já selecionado por outro grupo!" 
-              {% elif e.projeto and e.projeto == projeto %}
-                <div class="tag_intern" style="color:Red;">
-                <label title="Horário selecionado por seu grupo!"
-              {% elif e.startDate.date == hoje %}
-                <label title="Opção de horário vencida!"
-              {% else %}
-                <div class="tag_intern" style="color:Green;">
-                <label title="Horário livre!"
-              {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" for="din{{e.id}}">
-                <span class="spa_1">
-                  <span class="texto-longo">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
-                  <span class="texto-curto">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
-                </span>
-                {% if e.facilitador %}<div class="bot_tag">
-                  {% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
-                  {{e.facilitador.get_full_name}}</div>{% endif %}
-                {% if e.location %}
-                  <div class="bot_tag">
-                    Local:
-                    {% if e.url_location %}
-                      {% lng "Vídeo-conferência" "Video-conference" %}
-                    {% else %}
-                      {{e.location}}
-                    {% endif %}
-                  </div>
-                {% endif %}
-                {% if e.projeto and e.projeto == projeto %}
-                  <div style="text-decoration: underline; margin-left: 0.5em; margin-right: 0.5em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
-                {% endif %}
-              </label>
-              {% endfor %}
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+
+      {% if configuracao.permite_agendar_mentorias %}
+
+        <table class="table table-borderless table-sm arredondado">
+          <tbody>
+          {% for e in encontros %}
+            <tr><td style="display: flex;"><div class="botao">
+              <input id="din{{e.id}}" type="radio" name="selection" value="{{e.id}}" 
+              {% if e.projeto == projeto %}checked{% endif %}
+              {% if e.projeto and e.projeto != projeto %}disabled{% endif %}
+              {% if e.startDate.date == hoje %}disabled{% endif %}
+              {% if e.bloqueado %}disabled{% endif %}
+              ></div>
+                {% if e.projeto and e.projeto != projeto %}
+                  <div class="tag_intern" style="color:lightgrey;">
+                  <label title="Horário já selecionado por outro grupo!" 
+                {% elif e.projeto and e.projeto == projeto %}
+                  <div class="tag_intern" style="color:Red;">
+                  <label title="Horário selecionado por seu grupo!"
+                {% elif e.startDate.date == hoje %}
+                  <div class="tag_intern" style="color:lightgrey;">
+                  <label title="Opção de horário vencida!"
+                {% elif e.bloqueado %}
+                  <div class="tag_intern" style="color:lightgrey;">
+                  <label title="Horário bloqueado para agendamento!"
+                {% else %}
+                  <div class="tag_intern" style="color:Green;">
+                  <label title="Horário livre!"
+                {% endif %}class="radio" data-toggle="tooltip" data-placement="bottom" for="din{{e.id}}">
+                  <span class="spa_1">
+                    <span class="texto-longo">{{e.startDate|date:"d \d\e E \d\e Y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                    <span class="texto-curto">{{e.startDate|date:"d/m/y \d\a\s H:i"}} às {{e.endDate|date:"H:i"}}</span>
+                  </span>
+                  {% if e.facilitador %}<div class="bot_tag">
+                    {% lng_g e.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
+                    {{e.facilitador.get_full_name}}</div>{% endif %}
+                  {% if e.location %}
+                    <div class="bot_tag">
+                      Local:
+                      {% if e.url_location %}
+                        {% lng "Vídeo-conferência" "Video-conference" %}
+                      {% else %}
+                        {{e.location}}
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                  {% if e.projeto and e.projeto == projeto %}
+                    <div style="text-decoration: underline; margin-left: 0.5em; margin-right: 0.5em; display: inline-block; text-wrap: nowrap;">Horário Confirmado para seu grupo!</div>
+                  {% endif %}
+                </label>
+                {% endfor %}
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+        {% else %}
+          <br>
+          {% comment %} RED {% endcomment %}
+          <div class="alert alert-danger" role="alert">
+            <p>{% lng "Horários de agendamento estão temporariamente bloqueados." "Scheduling time slots are temporarily blocked." %}</p>
+          </div>
+
+        {% endif %}
     </div>
 
     {% if encontros %}
