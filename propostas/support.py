@@ -225,7 +225,6 @@ def preenche_proposta(request, proposta):
     proposta.save()  # Senão o set não funciona	
     proposta.contatos.set(contatos)
 
-
     proposta.descricao = request.POST.get("desc_projeto", "")
     proposta.expectativas = request.POST.get("expectativas", "")
     proposta.recursos = request.POST.get("recursos", "")
@@ -431,3 +430,12 @@ def retorna_ternario(propostas, cursos):
             if not found:
                 ternario.append([33, 33, 33, 5, sigla])
     return vagas, ternario
+
+def contem_caracteres_invalidos(texto):
+    # Bloqueia NUL, ASCII de controle exceto \n, \r, \t, e DEL
+    if re.search(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', texto):
+        return True
+    # Bloqueia alguns unicode problemáticos
+    if re.search(r'[\u202E\u200B\u200E\u200F\u2028\u2029\uFFFD]', texto):
+        return True
+    return False

@@ -91,46 +91,46 @@ def gera_descricao_banca(banca, estudantes):
 
 
 def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS", confidencial=True, projeto=None, prefix="", usuario=None):
-        """Cria documento."""
+    """Cria documento."""
 
-        # ESSE CODIGO É MUITO SEMELHANTE AO DE CRIA_DOCUMENTO NO ORGANIZACOES / SUPPORT.PY
+    # ESSE CODIGO É MUITO SEMELHANTE AO DE CRIA_DOCUMENTO NO ORGANIZACOES / SUPPORT.PY
 
-        max_length_link = Documento._meta.get_field("link").max_length
-        if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
-            raise ValueError("Erro: Link maior que " + str(max_length_link) + " caracteres.")
+    max_length_link = Documento._meta.get_field("link").max_length
+    if campo_link in request.POST and len(request.POST[campo_link]) > max_length_link - 1:
+        raise ValueError("Erro: Link maior que " + str(max_length_link) + " caracteres.")
 
-        max_length_doc = Documento._meta.get_field("documento").max_length
-        if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
-            raise ValueError("Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.")
-        
-        # if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
-        #     return "<h1>Sem privilégios para gravar tipo de arquivo!</h1>"
-
-        documento = Documento()  # Criando documento na base de dados
-        documento.tipo_documento = get_object_or_404(TipoDocumento, sigla=sigla)
-        documento.data = datetime.datetime.now()
-        
-        documento.lingua_do_documento = 0  # (0, "Português")
-        documento.confidencial = confidencial
-        if usuario:
-            documento.usuario = usuario
-        else:
-            if request.user.is_authenticated:
-                documento.usuario = request.user
-        documento.projeto = projeto
-
-        if projeto and projeto.organizacao:
-            documento.organizacao = projeto.organizacao
+    max_length_doc = Documento._meta.get_field("documento").max_length
+    if campo_arquivo in request.FILES and len(request.FILES[campo_arquivo].name) > max_length_doc - 1:
+        raise ValueError("Erro: Nome do arquivo maior que " + str(max_length_doc) + " caracteres.")
     
-        if campo_arquivo and campo_arquivo in request.FILES:
-            arquivo = simple_upload(request.FILES[campo_arquivo],
-                                    path=get_upload_path(documento, ""),
-                                    prefix=prefix)
-            documento.documento = arquivo[len(settings.MEDIA_URL):]
+    # if request.user.tipo_de_usuario not in json.loads(tipo.gravar):  # Verifica se usuário tem privilégios para gravar tipo de arquivo
+    #     return "<h1>Sem privilégios para gravar tipo de arquivo!</h1>"
 
-        if campo_link and campo_link in request.POST:
-            link = request.POST.get(campo_link, "")
-            documento.link = link
+    documento = Documento()  # Criando documento na base de dados
+    documento.tipo_documento = get_object_or_404(TipoDocumento, sigla=sigla)
+    documento.data = datetime.datetime.now()
+    
+    documento.lingua_do_documento = 0  # (0, "Português")
+    documento.confidencial = confidencial
+    if usuario:
+        documento.usuario = usuario
+    else:
+        if request.user.is_authenticated:
+            documento.usuario = request.user
+    documento.projeto = projeto
 
-        documento.save()
-        return documento
+    if projeto and projeto.organizacao:
+        documento.organizacao = projeto.organizacao
+
+    if campo_arquivo and campo_arquivo in request.FILES:
+        arquivo = simple_upload(request.FILES[campo_arquivo],
+                                path=get_upload_path(documento, ""),
+                                prefix=prefix)
+        documento.documento = arquivo[len(settings.MEDIA_URL):]
+
+    if campo_link and campo_link in request.POST:
+        link = request.POST.get(campo_link, "")
+        documento.link = link
+
+    documento.save()
+    return documento

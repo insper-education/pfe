@@ -21,10 +21,13 @@ from django.shortcuts import redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils import timezone
 
+from ratelimit.decorators import ratelimit
+
 from .models import PerguntasRespostas
 
 from .support import ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf
+from .support import contem_caracteres_invalidos
 
 from administracao.models import Estrutura
 from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
@@ -647,9 +650,18 @@ def proposta_detalhes(request, primarykey):
     return render(request, "propostas/proposta_detalhes.html", context=context)
 
 
-# @login_required
+@ratelimit(key="ip", rate="4/m", block=False)
 def proposta_editar(request, slug=None):
     """Formulário de Submissão de Proposta de Projetos."""
+    if getattr(request, 'limited', False):
+        mensagem_erro = {
+            "pt": "Você enviou propostas demais em pouco tempo. Por favor, aguarde um instante antes de tentar novamente.",
+            "en": "You have submitted too many proposals in a short period. Please wait a moment before trying again.",
+        }
+        context = {"voltar": True, "mensagem_erro": mensagem_erro}
+        return render(request, "generic_ml.html", context=context, status=429)  # 429 Too Many Requests
+
+
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
@@ -687,6 +699,15 @@ def proposta_editar(request, slug=None):
             
             if "new" in request.POST:
                 titulo = request.POST.get("titulo_prop", "").strip()
+
+                if contem_caracteres_invalidos(titulo):
+                    mensagem_erro = {
+                        "pt": "O título contém caracteres inválidos. Por favor, remova-os e tente novamente.",
+                        "en": "The title contains invalid characters. Please remove them and try again.",
+                    }
+                    context = {"voltar": True, "mensagem_erro": mensagem_erro}
+                    return render(request, "generic_ml.html", context=context)
+
                 if titulo and Proposta.objects.filter(titulo=titulo, ano=ano, semestre=semestre).exists():
                     mensagem_erro = {
                         "pt": "Uma proposta com este título já existe para o próximo semestre e aparentemente está sendo duplicada.<br> Caso considere que isso não deveria acontecer, por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> A proposta não foi salva.",
@@ -727,10 +748,22 @@ def proposta_editar(request, slug=None):
                 return HttpResponse("Erro não identificado.", status=401)
 
             if "arquivo" in request.FILES:
-                arquivo = simple_upload(request.FILES["arquivo"],
-                                        path=get_upload_path(proposta, ""))
-                proposta.anexo = arquivo[len(settings.MEDIA_URL):]
-                proposta.save()
+                try:
+                    arquivo = simple_upload(request.FILES["arquivo"],
+                                            path=get_upload_path(proposta, ""))
+                    proposta.anexo = arquivo[len(settings.MEDIA_URL):]
+                    proposta.save()
+                except Exception as e:
+                    logger.error(f"Erro ao fazer upload do arquivo: {e}")
+                    mensagem_erro = {
+                        "pt": f"Erro no upload do arquivo: {e}",
+                        "en": f"Error uploading file: {e}",
+                    }
+                    context = {
+                        "voltar": True,
+                        "mensagem_erro": mensagem_erro,
+                    }
+                    return render(request, "generic_ml.html", context=context)
 
             # Só faz essa parte se usuário logado e professor ou administrador:
             if request.user.is_authenticated and request.user.eh_prof_a:
@@ -845,9 +878,20 @@ def proposta_remover(request, slug):
     }
     return render(request, "generic_ml.html", context=context)
 
-#@login_required
+
+
+@ratelimit(key="ip", rate="4/m", block=False)
 def carrega_proposta(request):
     """Página para carregar Proposta de Projetos em PDF."""
+
+    if getattr(request, 'limited', False):
+        mensagem_erro = {
+            "pt": "Você enviou propostas demais em pouco tempo. Por favor, aguarde um instante antes de tentar novamente.",
+            "en": "You have submitted too many proposals in a short period. Please wait a moment before trying again.",
+        }
+        context = {"voltar": True, "mensagem_erro": mensagem_erro}
+        return render(request, "generic_ml.html", context=context, status=429)  # 429 Too Many Requests
+
     configuracao = get_object_or_404(Configuracao)
     ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
 
@@ -874,7 +918,16 @@ def carrega_proposta(request):
                                         path=get_upload_path(None, ""),
                                         valida="pdf")
             except Exception as e:
-                return HttpResponse("Erro ao processar o arquivo: " + str(e), status=401)
+                logger.error(f"Erro ao fazer upload do arquivo de proposta: {e}")
+                mensagem_erro = {
+                    "pt": f"Erro ao processar o arquivo: {e}",
+                    "en": f"Error processing file: {e}",
+                }
+                context = {
+                    "voltar": True,
+                    "mensagem_erro": mensagem_erro,
+                }
+                return render(request, "generic_ml.html", context=context)
 
             if arquivo is None:
                 return HttpResponse("Arquivo não reconhecido.", status=401)

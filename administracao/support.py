@@ -11,6 +11,7 @@ import datetime
 import dateutil.parser
 import string
 import random
+import logging
 
 from git import Repo
 
@@ -31,6 +32,9 @@ from operacional.models import Curso
 from organizacoes.models import Segmento
 
 from users.models import PFEUser, Aluno, Professor, Parceiro
+
+# Get an instance of a logger
+logger = logging.getLogger("django")
 
 def limpa_texto(texto):
     """Remove caracteres especiais do texto."""
@@ -101,9 +105,12 @@ def registra_organizacao(request, organizacao=None):
     organizacao.ramo_atividade = request.POST.get("ramo_atividade", None)
 
     if "logo" in request.FILES:
-        logotipo = simple_upload(request.FILES["logo"],
-                                    path=get_upload_path(organizacao, ""))
-        organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
+        try:
+            logotipo = simple_upload(request.FILES["logo"],
+                                      path=get_upload_path(organizacao, ""))
+            organizacao.logotipo = logotipo[len(settings.MEDIA_URL):]
+        except Exception as e:
+            logger.error(f"Erro ao fazer upload do arquivo: {e}")
 
     organizacao.save()
 

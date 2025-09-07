@@ -6,7 +6,9 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 15 de Dezembro de 2020
 """
 
+import uuid
 import re
+import os
 
 from django.core.files.storage import FileSystemStorage
 from django.template.defaultfilters import slugify
@@ -64,13 +66,15 @@ def simple_upload(arquivo, path="", prefix="", valida=None):
     filename = str(arquivo.name.encode("utf-8").decode("ascii", "ignore"))
     while ".." in filename:  # Remove .. do nome do arquivo
         filename = filename.replace("..", ".")
+    filename = filename.strip()
 
     sanitized_filename = text.get_valid_filename(filename)
-
-    if not sanitized_filename:
-        raise ValueError(f"Erro com nome do arquivo: {arquivo.name}")
     
-    name = path+prefix+sanitized_filename
+    ext = os.path.splitext(filename)[1]
+    if not sanitized_filename or sanitized_filename in {".", ".."}:
+        sanitized_filename = f"{uuid.uuid4().hex}{ext or '.file'}"
+    
+    name = os.path.join(path, prefix + sanitized_filename)
     filename = file_system_storage.save(name, arquivo)
     uploaded_file_url = file_system_storage.url(filename)
     return uploaded_file_url
