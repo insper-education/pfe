@@ -466,12 +466,12 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
             else:
                 if days_diff > (PRAZO//2) and cor != 'r':
                     cor = 'y'
-                    if not prazo or (evento.startDate + datetime.timedelta(days=PRAZO)) < prazo:
-                        prazo = evento.startDate + datetime.timedelta(days=PRAZO)
+                    if not prazo or (evento.startDate - datetime.timedelta(days=PRAZO//2)) < prazo:
+                        prazo = evento.startDate - datetime.timedelta(days=PRAZO//2)
                 else:
                     cor = 'r'
-                    if not prazo or (evento.startDate + datetime.timedelta(days=PRAZO)) < prazo:
-                        prazo = evento.startDate + datetime.timedelta(days=PRAZO)
+                    if not prazo or (evento.startDate - datetime.timedelta(days=PRAZO//2)) < prazo:
+                        prazo = evento.startDate - datetime.timedelta(days=PRAZO//2)
                 
                 itens.append(f"{sigla_b} -> {projeto}")  # Banca de Projeto não agendada
 
