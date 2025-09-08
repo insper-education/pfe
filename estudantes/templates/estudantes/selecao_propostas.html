@@ -190,7 +190,7 @@
 
                       </a>
                       
-                      <i class="anteriores" style="float:right;"><span class="seta seta-cima"></span></i>
+                      <i class="anteriores" style="float:right;"><span class="seta seta-baixo"></span></i>
                       <div id="relato{{item.id}}" style="display: none; background-color: #f9f9f2; padding: 5px;" class="relato">
                         {{proposta.descricao|linebreaks}}
                       </div>
@@ -358,7 +358,7 @@
   <script>
     $(".anteriores").on("click", function() {
       $(this).siblings("div").toggle(200);
-      $("span", this).toggleClass("seta-baixo seta-cima");
+      $("span.seta", this).toggleClass("seta-baixo seta-cima");
     });
   </script>
 

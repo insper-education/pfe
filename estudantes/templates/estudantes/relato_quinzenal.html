@@ -186,7 +186,7 @@
             <i class="anteriores" style="display: block;">
               {% lng "Entregue:" "Delivered:" %}
               {{item.momento}}
-              <span class="seta seta-cima"></span>
+              <span class="seta seta-baixo"></span>
             </i>
             <div id="relato{{item.id}}" style="display: none;" class="relato">{{item.texto|linebreaks}}</div>
           </td></tr>
@@ -200,7 +200,7 @@
   <script>
     $(".anteriores").on("click", function() {
       $(this).siblings("div").toggle(200);
-      $("span", this).toggleClass("seta-baixo seta-cima");
+      $("span.seta", this).toggleClass("seta-baixo seta-cima");
     });
   </script>
 
