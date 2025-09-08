@@ -339,6 +339,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
     cor = 'b'
     itens = []
     atraso = 0
+    prazo = None
     today = datetime.date.today()
     for projeto in projetos:
         for evento, relatos, avaliados, _ in busca_relatos(projeto):
@@ -349,6 +350,7 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                 for alocacao, relato in avaliados.items():
                     momento = relato[0].momento_avaliacao
                     prazo_evento = evento.endDate + datetime.timedelta(days=PRAZO)
+
                     atraso_tmp = ((momento.date() if momento else today) - prazo_evento).days
                     atraso_evento = max(atraso_evento, atraso_tmp)
 
@@ -357,20 +359,25 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
                     elif relato[0].avaliacao < 0 and today > prazo_evento:
                         cor = 'r'
                         itens.append(f"{evento} - {projeto.get_titulo_org()} - {alocacao.aluno.user.get_full_name()}")
+                        if not prazo or prazo_evento < prazo:
+                            prazo = prazo_evento
                     elif cor != 'r':
                         cor = 'y'
                         itens.append(f"{evento} - {projeto.get_titulo_org()} - {alocacao.aluno.user.get_full_name()}")
+                        if not prazo or prazo_evento < prazo:
+                            prazo = prazo_evento
 
                 atraso += atraso_evento
 
             elif cor not in ['r', 'y']:
                 cor = 'g'
-    return {"relatos_quinzenais": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
+    return {"relatos_quinzenais": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
     def process_item(item, avals, docs, dias_passados, evento):
         nonlocal avaliar_entregas_cor
         nonlocal atraso
+        nonlocal prazo
         atraso_local = 0
         for documento in docs:
             if avals:
@@ -395,15 +402,20 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
                 if dias_passados > PRAZO:
                     avaliar_entregas_cor = 'r'
                     avaliar_entregas_itens.append(item["evento"])
+                    if not prazo or (evento.data_aval() + datetime.timedelta(days=PRAZO)) < prazo:
+                        prazo = evento.data_aval() + datetime.timedelta(days=PRAZO)
                 else:
                     if avaliar_entregas_cor != 'r':
                         avaliar_entregas_cor = 'y'
                     avaliar_entregas_itens.append(item["evento"])
+                    if not prazo or (evento.data_aval() + datetime.timedelta(days=PRAZO)) < prazo:
+                        prazo = evento.data_aval() + datetime.timedelta(days=PRAZO)
         atraso += atraso_local
 
     avaliar_entregas_cor = 'b'
     avaliar_entregas_itens = []
     atraso = 0
+    prazo = None
     composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), ano, semestre)
     for projeto in projetos:
         entregas = filtra_entregas(composicoes, projeto)
@@ -411,13 +423,15 @@ def check_avaliar_entregas(projetos, ano, semestre, PRAZO):
             evento = item.get("evento")
             if evento and evento.endDate:
                 dias_passados = (datetime.date.today() - evento.data_aval()).days
+                
+
                 if dias_passados > 0 and item.get("composicao") and item["composicao"].exame:
                     if item["composicao"].exame.grupo:
                         process_item(item, item.get("avaliacoes"), item.get("documentos", []), dias_passados, evento)
                     else:
                         for values in (item.get("alocacoes") or {}).values():
                             process_item(item, values.get("avaliacoes"), values.get("documentos", []), dias_passados, evento)
-    return {"avaliar_entregas": {"cor": avaliar_entregas_cor, "prazo": None, "itens": avaliar_entregas_itens, "atraso": atraso}}
+    return {"avaliar_entregas": {"cor": avaliar_entregas_cor, "prazo": prazo, "itens": avaliar_entregas_itens, "atraso": atraso}}
 
 
 def check_bancas_index(projetos, ano, semestre, PRAZO):
@@ -425,6 +439,7 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
     cor = 'b'
     itens = []
     atraso = 0
+    prazo = None
     tipos_de_banca = [("ERI", "BI"), ("ERF", "BF")]
     today = datetime.date.today()
 
@@ -451,16 +466,21 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
             else:
                 if days_diff > (PRAZO//2) and cor != 'r':
                     cor = 'y'
+                    if not prazo or (evento.startDate + datetime.timedelta(days=PRAZO)) < prazo:
+                        prazo = evento.startDate + datetime.timedelta(days=PRAZO)
                 else:
                     cor = 'r'
+                    if not prazo or (evento.startDate + datetime.timedelta(days=PRAZO)) < prazo:
+                        prazo = evento.startDate + datetime.timedelta(days=PRAZO)
                 
                 itens.append(f"{sigla_b} -> {projeto}")  # Banca de Projeto não agendada
 
-    return {"bancas_index": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
+    return {"bancas_index": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 
 def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
     def verifica_pares(sigla, tipo, cor_atual):
+        nonlocal prazo
         evento = Evento.get_evento(sigla=sigla, ano=ano, semestre=semestre)
         if not evento or (datetime.date.today() <= evento.startDate):
             return cor_atual, [], 0
@@ -484,17 +504,21 @@ def check_avaliacoes_pares(projetos, ano, semestre, PRAZO):
         if not pendentes and cor_atual not in ['r', 'y']:
             return 'g', [], atraso_local
         if (datetime.date.today() - evento.endDate).days > PRAZO:
+            if not prazo or (evento.endDate + datetime.timedelta(days=PRAZO)) < prazo:
+                prazo = evento.endDate + datetime.timedelta(days=PRAZO)
             return 'r', pendentes, atraso_local
         if cor_atual != 'r':
+            if not prazo or (evento.endDate + datetime.timedelta(days=PRAZO)) < prazo:
+                prazo = evento.endDate + datetime.timedelta(days=PRAZO)
             return 'y', pendentes, atraso_local
         return cor_atual, pendentes, atraso_local
 
-    cor, itens, atraso = 'b', [], 0
+    cor, itens, atraso, prazo = 'b', [], 0, None
     for sigla, tipo in [("API", 0), ("APF", 1)]:
         cor, new_itens, novo_atraso = verifica_pares(sigla, tipo, cor)
         itens += new_itens
         atraso += novo_atraso
-    return {"avaliacoes_pares": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
+    return {"avaliacoes_pares": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 
 def check_avaliar_bancas(user, ano, semestre, PRAZO):
@@ -502,6 +526,7 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     cor = 'b'
     itens = []
     atraso = 0
+    prazo = None
     
     bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
@@ -527,19 +552,20 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
             if banca.endDate and diff_data > PRAZO:
                 cor = 'r'
                 atraso += diff_data - PRAZO
+                if not prazo or (banca.startDate.date() + datetime.timedelta(days=PRAZO)) < prazo:
+                    prazo = banca.startDate.date() + datetime.timedelta(days=PRAZO)
             elif banca.endDate and diff_data >= 0 and cor != 'r':
                 cor = 'y'
+                if not prazo or (banca.startDate.date() + datetime.timedelta(days=PRAZO)) < prazo:
+                    prazo = banca.startDate.date() + datetime.timedelta(days=PRAZO)
             itens.append(banca)
         elif cor not in ['r', 'y']:
             cor = 'g'
             atraso_local = (avaliacoes.first().primeiro_momento - banca.startDate).days - PRAZO
             if atraso_local > 0:
-                print(f"Atraso na avaliação da banca {banca}: {atraso_local} dias")
-                print(f"Data de início: {banca.startDate}, Data de avaliação: {avaliacoes.first().primeiro_momento}")
-                print(f"Prazo: {PRAZO} dias")
                 atraso += atraso_local
 
-    return {"avaliar_bancas": {"cor": cor, "prazo": None, "itens": itens, "atraso": atraso}}
+    return {"avaliar_bancas": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 
 def ver_pendencias_professor(user, ano, semestre):
