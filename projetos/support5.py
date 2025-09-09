@@ -42,7 +42,7 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
     for evento in eventos:
         for aviso in Aviso.objects.filter(tipo_evento=evento.tipo_evento):
             if aviso_id:
-                if aviso.id == aviso_id:
+                if not avisos and aviso.id == aviso_id:  # Se for um aviso específico, envia só ele
                     avisos.append([aviso, evento])
             else:  # Se não for um aviso específico, checa todos os avisos
                 data_evento = evento.get_data() + datetime.timedelta(days=aviso.delta)
