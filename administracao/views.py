@@ -18,6 +18,9 @@ import sys
 import django
 import celery
 import pkg_resources
+import chardet
+import csv
+
 
 from celery import Celery
 
@@ -421,21 +424,57 @@ def carrega_arquivo(request, dado):
         dataset = tablib.Dataset()
 
         if "arquivo" in request.FILES:
-            new_data = request.FILES["arquivo"].readlines()
-            if ';' in str(new_data)[:32]:
-                return HttpResponseNotFound("<h1>Arquivo de dados possui ponto e vírgula (;) !</h1>")
+            file_bytes = request.FILES["arquivo"].read()
+            # Detecta a codificação
+            result = chardet.detect(file_bytes)
+            encoding = result["encoding"] or "utf-8"  # fallback para utf-8
+            # Divide em linhas já decodificadas
+            file_data = file_bytes.decode(encoding, errors="replace")
+            file_lines = file_data.splitlines(keepends=False)
+
+            if len(file_lines) < 2:
+                return HttpResponseNotFound("<h1>Arquivo de dados está vazio ou só tem cabeçalho!</h1>")
+
         else:
             return HttpResponseNotFound("<h1>Arquivo não reconhecido!</h1>")
 
+        # Usando as primeiras linhas para detecção de delimitador
+        amostra = "\n".join(file_lines[:5])
+        try:
+            dialect = csv.Sniffer().sniff(amostra, delimiters=";,")
+            delimiter = dialect.delimiter
+        except Exception:
+            # fallback: tenta vírgula, senão ponto e vírgula
+            delimiter = ',' if ',' in amostra else ';'
+
         entradas = ""
-        for i in new_data:
-            texto = i.decode("utf-8")
-            entradas += re.sub("[^A-Za-z0-9À-ÿ, \r\n@._]+", '', texto)  # Limpa caracteres especiais
+        for linha in file_lines:
+            linha_limpa = re.sub(f"[^A-Za-z0-9À-ÿ{delimiter} \r\n@._,]+", '', linha)  # Limpa caracteres especiais
+            entradas += linha_limpa + "\n"
+
+        if delimiter == ';':
+            if delimiter == ';':
+                entradas = re.sub(r'(?<=\d),(?=\d)', '.', entradas)  # troca vírgula por ponto em números decimais
+            entradas = entradas.replace(';', ',')
 
         dataset.load(entradas, format="csv")
         dataset.insert_col(0, col=lambda row: None, header="id")
 
-        result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={"dry_run": True})
+        try:
+            result = resource.import_data(dataset, dry_run=True, raise_errors=True, before_import_kwargs={"dry_run": True})
+        except ValueError as e:
+            context = {
+                "area_principal": True,
+                "mensagem_erro": {
+                    "pt": f"Erro ao importar arquivo: {str(e)}",
+                    "en": f"Error importing file: {str(e)}"
+                },
+            }
+            return render(request, "generic_ml.html", context=context)
+        
+        print(result.__dict__)
+        print(result.has_errors())
+        print("FOI")
 
         if result.has_errors():
             context = {

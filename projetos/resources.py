@@ -325,7 +325,10 @@ def get_EstudantesResource(field_names=None):
                 atualizar_campo(user, "first_name", row.get("nome"))
                 atualizar_campo(user, "last_name", row.get("sobrenome"))
                 
-                atualizar_campo(user, "genero", row.get("gênero"))
+                genero = row.get("gênero").upper().strip()
+                if genero not in ("M", "F", ""):
+                    raise ValueError(f"Gênero informado inválido: {genero}. Só pode ser M, F ou vazio.")
+                atualizar_campo(user, "genero", genero)
 
                 atualizar_campo(user, "nome_social", row.get("nome_social"))
                 atualizar_campo(user, "pronome_tratamento", row.get("pronome_tratamento"))
@@ -342,14 +345,22 @@ def get_EstudantesResource(field_names=None):
                 aluno, _created = Aluno.objects.get_or_create(user=user)
 
                 try:
-                    aluno.curso2 = Curso.objects.get(sigla=row.get("curso"))
+                    aluno.curso2 = Curso.objects.get(sigla=row.get("curso").upper().strip())
                 except Curso.DoesNotExist: # Não encontrou o curso, deixa vazio
                     aluno.curso2 = None
 
                 atualizar_campo(aluno, "matricula", row.get("matrícula"))
                 atualizar_campo(aluno, "cr", row.get("cr"))
-                atualizar_campo(aluno, "ano", row.get("ano"))
-                atualizar_campo(aluno, "semestre", row.get("semestre"))
+
+                ano = row.get("ano")[:4]  # só os 4 primeiros dígitos
+                if not ano.isdigit() or len(ano) != 4:
+                    raise ValueError(f"Ano informado inválido: {ano}. Deve ser um ano com 4 dígitos.")
+                atualizar_campo(aluno, "ano", ano)
+
+                semestre = row.get("semestre")[:1]  # só o primeiro dígito
+                if semestre not in ('1', '2'):
+                    raise ValueError(f"Semestre informado inválido: {semestre}. Só pode ser 1 ou 2.")
+                atualizar_campo(aluno, "semestre", semestre)
 
                 if "familia" in row:
                     aluno.familia = row["familia"]

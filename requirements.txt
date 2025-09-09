@@ -44,6 +44,7 @@ urllib3==2.3.0  # manipulação de URLs
 charset_normalizer==3.4.1  # normalização de caracteres
 idna==3.7  # conversão entre nomes de domínio internacionalizados e ASCII
 webencodings==0.5.1  # algoritmos de codificação de caracteres
+chardet==3.0.4  # detecção de codificação de caracteres
 
 # Segurança
 certifi==2025.1.31  # certificados SSL
