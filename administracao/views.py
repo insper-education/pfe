@@ -471,10 +471,6 @@ def carrega_arquivo(request, dado):
                 },
             }
             return render(request, "generic_ml.html", context=context)
-        
-        print(result.__dict__)
-        print(result.has_errors())
-        print("FOI")
 
         if result.has_errors():
             context = {

@@ -24,237 +24,255 @@
 
   {% include "edicoes.html" with com_cursos=True com_externos=True %}
   {% include "informacoes_ml.html" %}
+
+  <i style="cursor: pointer; user-select: none; float: right; margin-right: 6px; margin-top: 6px;" class="projslines esconder">
+    {% lng "Expandir Todos" "Expand All" %}
+    <span class="seta seta-baixo"></span>
+  </i>
   <br>
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
   <div id="atualizar">
     
+
     {% if projetos %}
-      <table id="projetos" class="table table-borderless table-sm arredondado">
+
+      <table id="projetos" class="table table-borderless table-sm arredondado" style="width: 100%;">
         {% for projeto, prioridades, cooperacoes, conexoes, qtd_est in projetos %}
           <tr class="linha no-gutters {% if projeto.avancado %}avancado{% endif %} {% if qtd_est == 0 %}sem_estudantes{% endif %}"
            data-type="{{projeto.ano}}.{{projeto.semestre}}"
            >
               
             <td>
-            {% comment %} <td class="projline"> {% endcomment %}
+
+                <i style="cursor: pointer; user-select: none; float: right; margin-right: 6px; margin-top: 6px;" class="projline esconder">
+                  <span class="seta seta-baixo"></span>
+                </i>
               
-              {% if projeto.organizacao %}
-                <div class="logo">
-                  <p>
-                    <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                      <img class="logotipo" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
-                    </a>
-                    {% for conexao in cooperacoes %}
-                      {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-                        &nbsp;
-                        <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-                          <img class="logotipo" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
-                        </a>
-                      {% endif %}
-                    {% endfor %}
-                  </p>
-                </div>
-              {% endif %}
+                {% if projeto.organizacao %}
+                  <div class="logo">
 
-              <div>
-                <p>
-                  <b>{% lng "Projeto:" "Project:" %}</b>
-                  <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> 
-                  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-                    {{projeto.titulo_final}}</a>
-                    <small class="titulo_original">
-                      <br>Título original da proposta: 
-                      <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> {{projeto.proposta.titulo}}</a>
-                    </small>
-                  {% else %}
-                    {{projeto.get_titulo}}</a>
-                  {% endif %}
-                </p>
-              </div>
-              
-              {% if projeto.resumo or projeto.abstract or projeto.palavras_chave %}
-
-                {% if projeto.resumo %}
-                  <div class="resumo linha-concisa mt-1"><b>{% lng "Resumo:" "Abstract(pt):" %}</b> <p class="texto-alinhado">{{projeto.resumo}}</p></div>
-                {% endif %}
-
-                {% if projeto.abstract %}
-                  <div class="abstract linha-concisa mt-1"><b>Abstract:</b> <p class="texto-alinhado">{{projeto.abstract}}</p></div>
-                {% endif %}
-
-                {% if projeto.palavras_chave %}
-                  <div class="palavras_chave linha-concisa mt-1"><b>{% lng "Palavras-chave:" "Keywords:" %}</b>{{projeto.palavras_chave}}</div>
-                {% endif %}
-
-                <hr>
-
-              {% endif %}
-
-              {% if projeto.proposta.descricao %}
-                <div class="descricao linha-concisa mt-1">
-                  <b>{% lng "Descrição da proposta de projeto:" "Project proposal description:" %}</b>
-                  <p class="texto-alinhado">{{projeto.proposta.descricao}}</p>
-                </div>
-              {% endif %}
-
-              {% if projeto.proposta.descricao_organizacao %}
-                <div class="apresentacao_organizacao apresentacao linha-concisa mt-1"><b>{% lng "Apresentação da Organização Parceira:" "Partner Organization Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.descricao_organizacao}}</p></div>  
-              {% endif %}
-
-              {% if projeto.proposta.departamento %}
-                <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b>{% lng "Apresentação do Departamento:" "Department Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
-              {% endif %}
-
-              <div class="ml-1 mb-1">
-                {% include "tipo_projeto.html" with com_tipo=True %}
-              </div>
-
-              <p class="semestre ml-1" style="display: none;">
-                <b>{% lng "Semestre:" "Semester:" %}</b> {{projeto.ano}}.{{projeto.semestre}}
-              </p>
-
-              <div class="orientador ml-1 mb-1">
-                {% if projeto.orientador %}
-                  <b>
-                    {% if projeto.proposta.intercambio %}
-                      {% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:
-                    {% else %}
-                      {% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
-                    {% endif %}
-                  </b>
-                  <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
-                  <span class="emails">
-                    <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
-                    <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
-                  </span>
-                {% else %}
-                  {% lng "Orientador: Não definido" "Advisor: Not defined" %}
-                {% endif %}
-              </div>
-
-              {% with coorientadores=projeto.coorientador_set.all %}
-                {% if coorientadores %}
-                  <div class="mb-2">
-                  {% for coorientador in coorientadores %}
-                    <div class="coorientador ml-1"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
-                      <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
-                        {{ coorientador.usuario.get_full_name }}
+                    <p>
+                      <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                        <img class="logotipo" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
                       </a>
-                      <span class="emails">
-                        <span class="texto-longo"><a href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a></span>
-                        <span class="texto-curto"><a href="mailto:{{coorientador.usuario.email}}"><i class="far fa-envelope"></i></a></span>
-                      </span>
-                    </div>
-                  {% endfor %}
+                      {% for conexao in cooperacoes %}
+                        {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+                          &nbsp;
+                          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+                            <img class="logotipo" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+                          </a>
+                        {% endif %}
+                      {% endfor %}
+                    </p>
                   </div>
                 {% endif %}
-              {% endwith %}
 
-              <div class="estudantes ml-1 mb-1">
-                <b>{% lng "Estudantes:" "Students:" %}</b>
-                {% with alocacoes=projeto.alocacao_set.all %}
-                  {% if alocacoes %}
-                    <span class="emails esconder">
-                      <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
-                        <i class="fas fa-mail-bulk"></i>
-                      </a>
+                <div>
+                  <p>
+                    <b>{% lng "Projeto:" "Project:" %}</b>
+                    <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> 
+                    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+                      {{projeto.titulo_final}}</a>
+                      <small class="titulo_original">
+                        <br>Título original da proposta: 
+                        <a class="imprimir dark-blue-bold" target="_blank" rel="noopener noreferrer" href="{% url 'projeto_infos' projeto.id %}"> {{projeto.proposta.titulo}}</a>
+                      </small>
+                    {% else %}
+                      {{projeto.get_titulo}}</a>
+                    {% endif %}
+                  </p>
+                </div>
+                
+
+              <div class="projblock" style="display: none;">
+
+                
+                {% if projeto.resumo or projeto.abstract or projeto.palavras_chave %}
+
+                  {% if projeto.resumo %}
+                    <div class="resumo linha-concisa mt-1"><b>{% lng "Resumo:" "Abstract(pt):" %}</b> <p class="texto-alinhado">{{projeto.resumo}}</p></div>
+                  {% endif %}
+
+                  {% if projeto.abstract %}
+                    <div class="abstract linha-concisa mt-1"><b>Abstract:</b> <p class="texto-alinhado">{{projeto.abstract}}</p></div>
+                  {% endif %}
+
+                  {% if projeto.palavras_chave %}
+                    <div class="palavras_chave linha-concisa mt-1"><b>{% lng "Palavras-chave:" "Keywords:" %}</b>{{projeto.palavras_chave}}</div>
+                  {% endif %}
+
+                  <hr>
+
+                {% endif %}
+
+                {% if projeto.proposta.descricao %}
+                  <div class="descricao linha-concisa mt-1">
+                    <b>{% lng "Descrição da proposta de projeto:" "Project proposal description:" %}</b>
+                    <p class="texto-alinhado">{{projeto.proposta.descricao}}</p>
+                  </div>
+                {% endif %}
+
+                {% if projeto.proposta.descricao_organizacao %}
+                  <div class="apresentacao_organizacao apresentacao linha-concisa mt-1"><b>{% lng "Apresentação da Organização Parceira:" "Partner Organization Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.descricao_organizacao}}</p></div>  
+                {% endif %}
+
+                {% if projeto.proposta.departamento %}
+                  <div class="apresentacao_departamento apresentacao linha-concisa mt-1"><b>{% lng "Apresentação do Departamento:" "Department Presentation:" %}</b> <p class="texto-alinhado">{{projeto.proposta.departamento}}</p></div>
+                {% endif %}
+
+                <div class="ml-1 mb-1">
+                  {% include "tipo_projeto.html" with com_tipo=True %}
+                </div>
+
+                <p class="semestre ml-1" style="display: none;">
+                  <b>{% lng "Semestre:" "Semester:" %}</b> {{projeto.ano}}.{{projeto.semestre}}
+                </p>
+
+                <div class="orientador ml-1 mb-1">
+                  {% if projeto.orientador %}
+                    <b>
+                      {% if projeto.proposta.intercambio %}
+                        {% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:
+                      {% else %}
+                        {% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
+                      {% endif %}
+                    </b>
+                    <a class="imprimir" href="{% url 'professor_detail' projeto.orientador.id %}"> {{projeto.orientador.user.get_full_name}}</a>
+                    <span class="emails">
+                      <span class="texto-longo"><a href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+                      <span class="texto-curto"><a href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
                     </span>
+                  {% else %}
+                    {% lng "Orientador: Não definido" "Advisor: Not defined" %}
+                  {% endif %}
+                </div>
+
+                {% with coorientadores=projeto.coorientador_set.all %}
+                  {% if coorientadores %}
+                    <div class="mb-2">
+                    {% for coorientador in coorientadores %}
+                      <div class="coorientador ml-1"><b>Coorientador{% if coorientador.usuario.genero == 'F' %}a{% endif %}:</b>
+                        <a class="imprimir" href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
+                          {{ coorientador.usuario.get_full_name }}
+                        </a>
+                        <span class="emails">
+                          <span class="texto-longo"><a href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a></span>
+                          <span class="texto-curto"><a href="mailto:{{coorientador.usuario.email}}"><i class="far fa-envelope"></i></a></span>
+                        </span>
+                      </div>
+                    {% endfor %}
+                    </div>
                   {% endif %}
                 {% endwith %}
-                <ol class="estudantes">
-                {% for aluno,prioridade in prioridades %}
-                  <li><a class="imprimir" href="{% url 'estudante_detail' aluno.id %}"
-                      data-toggle="tooltip" data-html="true" animation="true" title="
-                      {% if prioridade == 0 %}
-                        opção não definida
-                      {% else %}
-                        opção #{{prioridade}}
-                      {% endif %}">
-                        {{aluno.user.get_full_name}}
-                        <span class="curso">
-                          <span class="texto-longo">[{{ aluno.curso2 }}]</span>
-                          <span class="texto-curto">[{{ aluno.curso2.sigla_curta }}]</span>
-                        </span>
-                      </a>
-                      {% if aluno.externo %}<span class="red-normal">[{{aluno.externo}}]</span>{% endif %}
-                      <div class="prioridade hidden">{{prioridade}}</div> <!-- para contar para  mostrar no gráfico -->
-                      <span class="emails">
-                        <span class="texto-longo"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
-                        <span class="texto-curto"><a href="mailto:{{aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+
+                <div class="estudantes ml-1 mb-1">
+                  <b>{% lng "Estudantes:" "Students:" %}</b>
+                  {% with alocacoes=projeto.alocacao_set.all %}
+                    {% if alocacoes %}
+                      <span class="emails esconder">
+                        <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+                          <i class="fas fa-mail-bulk"></i>
+                        </a>
                       </span>
+                    {% endif %}
+                  {% endwith %}
+                  <ol class="estudantes">
+                  {% for aluno,prioridade in prioridades %}
+                    <li><a class="imprimir" href="{% url 'estudante_detail' aluno.id %}"
+                        data-toggle="tooltip" data-html="true" animation="true" title="
+                        {% if prioridade == 0 %}
+                          opção não definida
+                        {% else %}
+                          opção #{{prioridade}}
+                        {% endif %}">
+                          {{aluno.user.get_full_name}}
+                          <span class="curso">
+                            <span class="texto-longo">[{{ aluno.curso2 }}]</span>
+                            <span class="texto-curto">[{{ aluno.curso2.sigla_curta }}]</span>
+                          </span>
+                        </a>
+                        {% if aluno.externo %}<span class="red-normal">[{{aluno.externo}}]</span>{% endif %}
+                        <div class="prioridade hidden">{{prioridade}}</div> <!-- para contar para  mostrar no gráfico -->
+                        <span class="emails">
+                          <span class="texto-longo"><a href="mailto:{{aluno.user.email}}">&lt;{{aluno.user.email}}&gt;</a></span>
+                          <span class="texto-curto"><a href="mailto:{{aluno.user.email}}"><i class="far fa-envelope"></i></a></span>
+                        </span>
+                    </li>
+                  {% endfor %}
+                  </ol>
+                </div>
+                
+                {% comment %} Separador (conveniente para copiar e colar o texto) {% endcomment %}
+                <div style="height: 1px;">&nbsp;</div>
+
+                <div class="organizacao ml-1 mb-1">
+                  <b>{% lng "Organização:" "Organization:" %}</b>
+                  {% if projeto.organizacao %}
+                    <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
+                      {{ projeto.organizacao.nome }}
+                    </a>
+                    {% if projeto.organizacao.website %}
+                      <span class="website">
+                        <span class="texto-longo">(<a href="{{projeto.organizacao.website|add_http}}"
+                          >{{ projeto.organizacao.website }}</a>)</a></span>
+                        <span class="texto-curto"><a href="{{projeto.organizacao.website|add_http}}"
+                          ><i class="fas fa-link"></i></a></span>
+                      </span>
+                    {% endif %}
+                    {% for cooperacao in cooperacoes %}
+                      {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
+                        &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
+                        <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
+                          {{ cooperacao.parceiro.organizacao.nome }}</a>
+                          {% if cooperacao.parceiro.organizacao.website %}
+                            <span class="website">
+                              <span class="texto-longo">(<a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
+                                >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
+                              <span class="texto-curto"><a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
+                                ><i class="fas fa-link"></i></a></span>
+                            </span>
+                          {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    NÃO DEFINIDA
+                  {% endif %}
+
+                  {% if conexoes %}
+                  <span class="emails esconder"><a 
+                    href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank"><i class="fas fa-mail-bulk"></i></a></span>
+                  {% endif %}
+                </div>
+
+                <ol class="conexoes">
+                {% for conexao in conexoes %}
+                  <li {% if not conexao.parceiro.user.is_active %}class="links-claros"{% endif %}>
+                    <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
+                      {{ conexao.parceiro.user.get_full_name }}
+                      <span class="papeis">
+
+                        {% for papel in conexao.get_papeis %}
+                          <span class="texto-longo">[{{papel.0}}]</span>
+                          <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                        {% endfor %}
+                                      
+                        {% if conexao.observacao %}
+                          &nbsp;&nbsp;obs: {{conexao.observacao}}
+                        {% endif %}
+                      
+                      </span>
+                    </a>
+                    <span class="emails">
+                      <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
+                      <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
+                    </span>
                   </li>
                 {% endfor %}
                 </ol>
-              </div>
-              
-              {% comment %} Separador (conveniente para copiar e colar o texto) {% endcomment %}
-              <div style="height: 1px;">&nbsp;</div>
 
-              <div class="organizacao ml-1 mb-1">
-                <b>{% lng "Organização:" "Organization:" %}</b>
-                {% if projeto.organizacao %}
-                  <a class="imprimir" href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                    {{ projeto.organizacao.nome }}
-                  </a>
-                  {% if projeto.organizacao.website %}
-                    <span class="website">
-                      <span class="texto-longo">(<a href="{{projeto.organizacao.website|add_http}}"
-                        >{{ projeto.organizacao.website }}</a>)</a></span>
-                      <span class="texto-curto"><a href="{{projeto.organizacao.website|add_http}}"
-                        ><i class="fas fa-link"></i></a></span>
-                    </span>
-                  {% endif %}
-                  {% for cooperacao in cooperacoes %}
-                    {% if cooperacao.parceiro and cooperacao.parceiro.organizacao %}
-                      &nbsp;&nbsp;&nbsp;&nbsp;colaboração:
-                      <a href="{% url 'organizacao_completo' cooperacao.parceiro.organizacao.id %}">
-                        {{ cooperacao.parceiro.organizacao.nome }}</a>
-                        {% if cooperacao.parceiro.organizacao.website %}
-                          <span class="website">
-                            <span class="texto-longo">(<a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
-                              >{{ cooperacao.parceiro.organizacao.website }}</a>)</a></span>
-                            <span class="texto-curto"><a href="{{cooperacao.parceiro.organizacao.website|add_http}}"
-                              ><i class="fas fa-link"></i></a></span>
-                          </span>
-                        {% endif %}
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  NÃO DEFINIDA
-                {% endif %}
-
-                {% if conexoes %}
-                <span class="emails esconder"><a 
-                  href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %},{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank"><i class="fas fa-mail-bulk"></i></a></span>
-                {% endif %}
               </div>
 
-              <ol class="conexoes">
-              {% for conexao in conexoes %}
-                <li {% if not conexao.parceiro.user.is_active %}class="links-claros"{% endif %}>
-                  <a class="imprimir" href="{% url 'parceiro_detail' conexao.parceiro.id %}">
-                    {{ conexao.parceiro.user.get_full_name }}
-                    <span class="papeis">
-
-                      {% for papel in conexao.get_papeis %}
-                        <span class="texto-longo">[{{papel.0}}]</span>
-                        <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-                      {% endfor %}
-                                    
-                      {% if conexao.observacao %}
-                        &nbsp;&nbsp;obs: {{conexao.observacao}}
-                      {% endif %}
-                    
-                    </span>
-                  </a>
-                  <span class="emails">
-                    <span class="texto-longo"><a href="mailto:{{conexao.parceiro.user.email}}">&lt;{{conexao.parceiro.user.email}}&gt;</a></span>
-                    <span class="texto-curto"><a href="mailto:{{conexao.parceiro.user.email}}"><i class="far fa-envelope"></i></a></span>
-                  </span>
-                </li>
-              {% endfor %}
-              </ol>
             </td>
           </tr>
         {% endfor %}
@@ -348,9 +366,35 @@
   
     {% endif %}
 
+
+    <script>
+      $(".projline").on("click", function() {
+        $(this).siblings("div.projblock").toggle(200);
+        $("span.seta", this).toggleClass("seta-baixo seta-cima");
+      });
+    </script>
+
   </div>
 
   <script>
+    $(".projslines").on("click", function() {
+      console.log("clicou");
+      var seta = $("span.seta", this);
+      if(seta.hasClass("seta-baixo")) {
+        $(".projblock").show(200);
+        $(".projslines span.seta").removeClass("seta-baixo").addClass("seta-cima");
+        $("i.projline").each(function() {
+          $("span.seta", this).removeClass("seta-baixo").addClass("seta-cima");
+        });
+      } else {
+        $(".projblock").hide(200);
+        $(".projslines span.seta").removeClass("seta-cima").addClass("seta-baixo");
+        $("i.projline").each(function() {
+          $("span.seta", this).removeClass("seta-cima").addClass("seta-baixo");
+        });
+      }
+    });
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     };
