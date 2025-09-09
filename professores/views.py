@@ -1344,14 +1344,14 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                     avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                                  exame=composicao.exame, 
                                                                                  objetivo=objetivo,
-                                                                                 avaliador=projeto.orientador.user)
+                                                                                 avaliador=request.user)
                 else:
                     if not estudante or not alocacao:
                         return HttpResponseNotFound("<h1>Estudante não encontrado!</h1>")
                     avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                                  exame=composicao.exame, 
                                                                                  objetivo=objetivo,
-                                                                                 avaliador=projeto.orientador.user,
+                                                                                 avaliador=request.user,
                                                                                  alocacao=alocacao)
 
                 julgamento[i] = avaliacao
@@ -1371,7 +1371,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             avaliacao, nova_avaliacao = Avaliacao2.objects.get_or_create(projeto=projeto, 
                                                                     exame=composicao.exame, 
                                                                     objetivo=None,
-                                                                    avaliador=projeto.orientador.user)
+                                                                    avaliador=request.user)
             julgamento[0] = avaliacao
 
             if "decisao" in request.POST:
@@ -1392,13 +1392,13 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             if composicao.exame.grupo:
                 observacao, _ = Observacao.objects.get_or_create(projeto=projeto,
                                                                         exame=composicao.exame,
-                                                                        avaliador=projeto.orientador.user)
+                                                                        avaliador=request.user)
             else:
                 if not estudante or not alocacao:
                     return HttpResponseNotFound('<h1>Estudante não encontrado!</h1>')
                 observacao, _ = Observacao.objects.get_or_create(projeto=projeto,
                                                                         exame=composicao.exame,
-                                                                        avaliador=projeto.orientador.user,
+                                                                        avaliador=request.user,
                                                                         alocacao=alocacao)
 
             julgamento_observacoes = observacao
@@ -1406,6 +1406,33 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")
             julgamento_observacoes.momento = datetime.datetime.now()
             julgamento_observacoes.save()
+
+
+        if "arquivo" in request.FILES:
+            # Envia documento com anotações para os envolvidos intantanemente
+            documento = cria_material_documento(request, "arquivo", sigla="RAO", confidencial=False,
+                                                projeto=projeto, usuario=request.user,
+                                                prefix="rev_"+str(request.user.first_name)+"_"+str(composicao.exame.sigla)+"_")
+            if documento:
+                documento.anotacao = composicao.exame.titulo
+                documento.save()
+                subject = "Capstone | Documento com anotações - " + composicao.exame.titulo + " "
+                subject += projeto.get_titulo_org()
+                mensagem_anot = "Anotações em Relatório<br>\n<br>\n"
+                mensagem_anot += "Anotações realizadas por: " + request.user.get_full_name() + "<br>\n"
+                mensagem_anot += "Exame: " + composicao.exame.titulo + "<br>\n"
+                mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
+                mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
+                mensagem_anot += "Documento com Anotações: "
+                mensagem_anot += "<a href='" + request.scheme + "://" + request.get_host() + documento.documento.url + "' target='_blank' rel='noopener noreferrer'>"
+                mensagem_anot += request.scheme + "://" + request.get_host() + documento.documento.url + "</a><br>\n<br>\n<br>\n"
+                recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
+                recipient_list.append(request.user.email)
+                # recipient_list.append(projeto.orientador.user.email)
+                # recipient_list.append(configuracao.coordenacao.user.email)
+                print(mensagem_anot)
+                email(subject, recipient_list, mensagem_anot)
+
 
         resposta = {"pt": "Avaliação concluída com sucesso.<br>", 
                    "en": "Evaluation completed successfully.<br>"}
@@ -1510,6 +1537,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
         
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
 
+        relatorio_revisado_orientador = Documento.objects.filter(projeto=projeto, tipo_documento__sigla="RAO").last()
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Entrega", "en": "Delivery Evaluation Form"},
             "projeto": projeto,
@@ -1527,6 +1556,7 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
             "atrasado": atrasado,
             "sem_documentos": sem_documentos,
             "niveis_objetivos": niveis_objetivos,
+            "relatorio_revisado_orientador": relatorio_revisado_orientador,
         }
     
         return render(request, "professores/entrega_avaliar.html", context=context)

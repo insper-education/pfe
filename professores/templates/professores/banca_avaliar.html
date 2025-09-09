@@ -110,10 +110,18 @@
           </b></label><br>
           <textarea id="observacoes_estudantes" name="observacoes_estudantes" rows="8" cols="100" maxlength="2048">{{observacoes_estudantes}}</textarea>
 
-          <label for="arquivo">
-            {% lng "Envio de relatório com anotações do membro da banca para revisão do grupo (opcional e será enviada automaticamente para o grupo)" "Submission of report with notes from the board member for group review (optional and will be automatically sent to the group)" %}
-          </label>
-          <input id="arquivo" type="file" name="arquivo" {% include "formatos_suportados.html" %}>
+          <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+            <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+            </span>
+            <div style="flex: 1;">
+              <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
+                {% lng "Envio de relatório com anotações do membro da banca para revisão do grupo (opcional e será enviado automaticamente para o grupo)" "Submission of report with notes from the board member for group review (optional and will be automatically sent to the group)" %}
+              </label>
+              <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+            </div>
+          </div>
+
         </div>
       {% endif %}
 

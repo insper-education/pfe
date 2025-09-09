@@ -112,29 +112,52 @@
 
 
       {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-      <label for="observacoes_estudantes"><span data-toggle="tooltip" data-html="true" animation="true"
-             title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
-        <b>{% lng "Observações Estudantes" "Evaluation Observations for Students" %}</b>
-        {% if composicao.exame.grupo %}
-          {% lng "(enviada para todo o grupo)" "(will be sent to all students)" %}:
-        {% else %}
-          {% lng "(enviada para estudante)" "(will be sent to student)" %}:
-        {% endif %}
-      </label><br>
-      <textarea id="observacoes_estudantes" name="observacoes_estudantes" 
-       {% if not editor %}disabled{% endif %}
-       rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
-      <br><br>
+      <div class="mb-3">
+        <label for="observacoes_estudantes"><span data-toggle="tooltip" data-html="true" animation="true"
+              title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
+          <b>{% lng "Observações Estudantes" "Evaluation Observations for Students" %}</b>
+          {% if composicao.exame.grupo %}
+            {% lng "(enviada para todo o grupo)" "(will be sent to all students)" %}:
+          {% else %}
+            {% lng "(enviada para estudante)" "(will be sent to student)" %}:
+          {% endif %}
+        </label><br>
+        <textarea id="observacoes_estudantes" name="observacoes_estudantes" 
+        {% if not editor %}disabled{% endif %}
+        rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
+        
+        <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+          <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+            <i class="fas fa-paperclip" aria-hidden="true"></i>
+          </span>
+          <div style="flex: 1;">
+            <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
+              {% lng "Envio de relatório com anotações (opcional e será enviado automaticamente para o grupo)" "Submission of report with notes (optional and will be automatically sent to the group)" %}
+            </label>
+            <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+            {% if relatorio_revisado_orientador %}
+              <span style="font-size: 0.8em; color: #1976d2; margin-top: 4px;  white-space: nowrap;">
+                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio_revisado_orientador.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  [{% lng "última anotação" "last note" %} {{ relatorio_revisado_orientador.data|date:"d/m" }}]
+                </a>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
 
       {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-      <label for="observacoes_orientador"><span data-toggle="tooltip" data-html="true" animation="true"
-             title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
-        {% lng "<b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenação)" "<b>Evaluation Observations</b> (to document/note or send coordinator)" %}:
-      </label><br>
-      <textarea id="observacoes_orientador" name="observacoes_orientador" 
-       {% if not editor %}disabled{% endif %}
-       rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
-      <br><br>
+      <div class="mb-3">
+        <label for="observacoes_orientador"><span data-toggle="tooltip" data-html="true" animation="true"
+              title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
+          {% lng "<b>Observações Orientador/Coordenação</b> (para documentar/anotar ou enviar coordenação)" "<b>Evaluation Observations</b> (to document/note or send coordinator)" %}:
+        </label><br>
+        <textarea id="observacoes_orientador" name="observacoes_orientador" 
+        {% if not editor %}disabled{% endif %}
+        rows="8" cols="100" maxlength="2048">{{observacao.observacoes_orientador}}</textarea>
+      </div>
       
       {% if evento.startDate.date > today.date %}
         <div style="display: inline-block; border:2px solid red; margin-bottom: 4px; padding: 4px;">
