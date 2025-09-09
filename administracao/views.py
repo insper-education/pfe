@@ -22,7 +22,7 @@ import chardet
 import csv
 
 
-from celery import Celery
+# from celery import Celery
 
 from decimal import Decimal
 

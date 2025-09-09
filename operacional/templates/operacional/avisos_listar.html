@@ -156,10 +156,10 @@
     {% include "tabelas_bottom.html" %}
 
     <div class="mt-4">
-      <a href="{% url 'edita_aviso' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario != 4 %} disabled{% endif %}">
+      <a href="{% url 'edita_aviso' %}" class="cria btn btn-primary mb-1{% if not user.eh_admin %} disabled{% endif %}">
         {% lng "Cria Aviso" "Create Notice" %}
       </a>
-      <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.tipo_de_usuario == 4 %}"{% else %} disabled"{% endif %}"
+      <a href="{% url 'reenvia_avisos' %}" class="cria btn btn-primary mb-1{% if user.eh_admin %}"{% else %} disabled"{% endif %}"
         onClick="return confirm('Tem certeza que deseja reenviar os avisos do dia para todos os envolvidos?')">
         {% lng "Reenviar Avisos do Dia" "Resend Daily Notices" %}
       </a>

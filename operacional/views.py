@@ -33,6 +33,7 @@ from users.models import PFEUser, Aluno, Professor, Parceiro
 from users.support import get_edicoes
 
 from projetos.tipos import TIPO_EVENTO
+from projetos.support5 import envia_mensagens_avisos
 
 from academica.models import Composicao
 from academica.support import filtra_composicoes
@@ -208,9 +209,20 @@ def edita_aviso(request, primarykey=None):
         if "mensagem" in request.POST:
             if primarykey is None:
                 aviso = Aviso()
-            erro = trata_aviso(aviso, request)
-            if erro:
-                return erro            
+            try:
+                aviso = trata_aviso(aviso, request)
+            except (ValueError, OverflowError):
+                return HttpResponse("Algum erro não identificado.", status=401)
+            aviso.save()
+
+            if "acao" in request.POST and request.POST["acao"] == "teste":
+                envia_mensagens_avisos(aviso_id=aviso.id if aviso else None, endereco=request.user.email)
+                context = {
+                    "area_principal": True,
+                    "mensagem": {"pt": "Mensagem enviada.", "en": "Message sent."},
+                }
+                return render(request, "generic_ml.html", context=context)
+
             return redirect("avisos_listar")
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)

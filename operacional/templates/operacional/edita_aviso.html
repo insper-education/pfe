@@ -91,13 +91,12 @@
     </div><br>
 
     <br>
-    <button class="btn btn-primary mb-1" type="submit" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+    <button class="btn btn-primary mb-1" type="submit" {% if not user.eh_admin %}disabled{% endif %}>
       {% lng_b aviso "Atualizar Aviso" "Criar Aviso" "Update Notice" "Create Notice" %}
     </button>
 
     {% if aviso %}
-      &nbsp;&nbsp;
-      <button class="btn btn-primary mb-1" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+      <button class="btn btn-warning mb-1 ml-3" type="button" id="apagar" {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
         {% lng "Apagar Aviso" "Delete Notice" %}
       </button>
 
@@ -110,6 +109,10 @@
         });
       </script>
     {% endif %}
+
+    <button class="btn btn-info mb-1 ml-3" type="submit" name="acao" value="teste" {% if not user.eh_admin %}disabled{% endif %}>
+      {% lng "Enviar Teste para Mim" "Send Test to Me" %}
+    </button>
 
   </form>
   
