@@ -91,11 +91,21 @@
         {% endif %}      
         <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>{% comment %} Deixa qualquer pessoa ver para submeter um projeto {% endcomment %}
         {% if user.is_authenticated %}
+
           {% if perms.users.altera_professor %}
-            <a href="{% url 'index_professor'%}">{% lng "Área do Professor" "Professor's Area" %}</a>
+            <a href="{% url 'index_professor'%}">{% lng "Área dos Professores" "Professor's Area" %}</a>
+          {% endif %}
+          {% if perms.users.view_administrador %}
+            <a href="{% url 'index_coordenacao' %}">{% lng "Área da Coordenação" "Coordination Area" %}</a>
+          {% endif %}
+          {% if perms.users.altera_professor %}
             <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
             <a href="{% url 'index_operacional'%}">{% lng "Área Operacional" "Operational Area" %}</a>
+          {% endif %}
+          {% if perms.users.view_administrador %}
             <a href="{% url 'index_administracao'%}">{% lng "Área Administrativa" "Administrative Area" %}</a>
+          {% endif %}
+          {% if perms.users.altera_professor %}
             <a href="{% url 'index_propostas'%}">{% lng "Propostas" "Proposals" %}</a>
             <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
           {% endif %}

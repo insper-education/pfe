@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'operacional.apps.OperacionalConfig',
     'calendario.apps.CalendarioConfig',
     'academica.apps.AcademicaConfig',
+    'coordenacao.apps.CoordenacaoConfig',
     'django.contrib.sites',
     'dbbackup',
     'axes',

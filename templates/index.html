@@ -59,6 +59,16 @@
           <div class="card-content"></div>
         </div>
       {% endif %}
+      {% if perms.users.view_administrador %}
+          <div class="card">
+            <div class="card-body" onclick="loadContent(this, '{% url 'coordenacao' %}')">
+              <h5 class="card-title">
+                <i class="fas fa-user-tie"></i> {% lng "Área da Coordenação" "Coordination Area" %}
+              </h5>
+            </div>
+            <div class="card-content"></div>
+          </div>
+        {% endif %}
       
       {% if perms.projetos.view_avaliacao2 or perms.users.change_professor %}
         <div class="extra-space"></div>

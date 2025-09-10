@@ -1,0 +1,44 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 10 de Setembro de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+{% if perms.users.view_administrador %}
+  <h5>{% lng "Informes" "Reports" %}</h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'plano_aulas' %}">
+    {% lng "Plano de Aulas" "Syllabus" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'planos_de_orientacao_todos' %}">
+    {% lng "Planos de Orientação" "Advisoring Plans" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'relatos_quinzenais' 'todos' %}">
+    {% lng "Relatos Quinzenais" "Biweekly Reports" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliar_entregas' 'todos' %}">
+    {% lng "Avaliações de Entregas" "Deliveries Evaluation" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' "BI" %}">
+    {% lng "Bancas Intermediárias" "Intermediate Examination Boards" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informe_bancas' "BF" %}">
+    {% lng "Bancas Finais" "Final Examination Boards" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'avaliacoes_pares' 'todos' %}">
+    {% lng "Avaliações de Pares" "Peer Evaluations" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'reunioes' 'todos' %}">
+    {% lng "Acompanhar Reuniões" "Track Meetings" %}
+  </a></div>
+  <br>
+
+  <h5>
+    {% lng "Controles" "Control" %}
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'pendencias_professores' %}">
+    {% lng "Pendências professores" "Professors' pending tasks" %}
+  </a></div>
+
+{% endif %}

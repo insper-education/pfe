@@ -32,6 +32,7 @@ urlpatterns = [
     path("operacional/", include("operacional.urls")),
     path("calendario/", include("calendario.urls")),
     path("academica/", include("academica.urls")),
+    path("coordenacao/", include("coordenacao.urls")),
     path("users/", include("users.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("users/", include("django.contrib.auth.urls")), #Transferir tudo para accounts (NO FUTURO)
     path("accounts/", include("django.contrib.auth.urls")),

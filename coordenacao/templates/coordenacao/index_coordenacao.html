@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
+  {% include "reload.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "coordenacao/coordenacao.html" %}
+  
+{% endblock %}
