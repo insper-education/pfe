@@ -650,7 +650,7 @@ def proposta_detalhes(request, primarykey):
     return render(request, "propostas/proposta_detalhes.html", context=context)
 
 
-@ratelimit(key="ip", rate="4/m", block=False)
+@ratelimit(key="ip", rate="5/m", block=False)
 def proposta_editar(request, slug=None):
     """Formulário de Submissão de Proposta de Projetos."""
     if getattr(request, 'limited', False):
@@ -880,7 +880,7 @@ def proposta_remover(request, slug):
 
 
 
-@ratelimit(key="ip", rate="4/m", block=False)
+@ratelimit(key="ip", rate="5/m", block=False)
 def carrega_proposta(request):
     """Página para carregar Proposta de Projetos em PDF."""
 

@@ -30,7 +30,6 @@
       var primeira_opcao = {{primeira_opcao}};
       var proposta = {{proposta}};
       var trabalhando = {{trabalhando}};
-      //var comentarios = {{comentarios}};
       var comentarios = [];
     </script>
 
@@ -57,7 +56,7 @@
             {% endif %}
           </td>
           {% if feedback.outros %}
-            <script>comentarios.push(`{{feedback.outros}}`);</script>
+            <script>comentarios.push(`<b>[{{feedback.projeto.organizacao.sigla}}]</b> {{feedback.outros}}`);</script>
           {% endif %}
 
           <td style="font-size:80%" class="text-center">
