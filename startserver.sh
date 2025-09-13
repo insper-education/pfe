@@ -1,11 +1,24 @@
 #!/bin/bash
+set -e  # Para o script se qualquer comando falhar
+
+# Configurações
+VENV_PATH="$HOME/pfe/env"
+LOG_FILE="pfe.log"
+DJANGO_USER="ubuntu"
+PROJECT_PATH="$HOME/pfe"
+MANAGE="$PROJECT_PATH/manage.py"
+
+# Configurações do UFW (Firewall)
+sudo ufw allow 443
+sudo ufw allow 22
+sudo ufw enable
 
 # Script para iniciar todos os serviços.
 # Ativa o ambiente virtual, inicia os workers do Celery, o servidor Apache e executa os comandos de gerenciamento do Django.
 # Também inicia o serviço PostgreSQL caso ele não esteja em execução.
 
 echo "Ativando o virtual environment..."
-source ~/pfe/env/bin/activate
+source "$VENV_PATH/bin/activate"
 
 # Descomente se precisar iniciar o PostgreSQL
 # echo "Iniciando o PostgreSQL..."
@@ -13,20 +26,22 @@ source ~/pfe/env/bin/activate
 # sudo systemctl enable postgresql.service
 
 echo "Preparando o arquivo de log..."
-touch pfe.log
-sudo chown ubuntu.ubuntu pfe.log
-sudo chmod a+w pfe.log
+touch "$LOG_FILE"
+sudo chown $DJANGO_USER:$DJANGO_USER "$LOG_FILE"
+sudo chmod 640 "$LOG_FILE"
+
 
 echo "Iniciando o Celery..."
-celery worker -A pfe -l info &
-celery beat -A pfe -l info &
+sudo -u $DJANGO_USER celery worker -A pfe -l info >> "$LOG_FILE" 2>&1 &
+sudo -u $DJANGO_USER celery beat -A pfe -l info >> "$LOG_FILE" 2>&1 &
 #rabbitmqctl purge_queue celery
 
 echo "Preparando o Django..."
-sudo python3 manage.py axes_reset
-sudo python3 manage.py makemigrations
-sudo python3 manage.py migrate
-sudo python3 manage.py collectstatic --no-input
+sudo -u $DJANGO_USER python3 "$MANAGE" axes_reset
+sudo -u $DJANGO_USER python3 "$MANAGE" makemigrations
+sudo -u $DJANGO_USER python3 "$MANAGE" migrate
+sudo -u $DJANGO_USER python3 "$MANAGE" collectstatic --no-input
+
 
 echo "Iniciando o servidor Apache..."
 sudo systemctl start apache2
