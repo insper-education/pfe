@@ -3,7 +3,7 @@ set -e  # Para o script se qualquer comando falhar
 
 # Configurações
 VENV_PATH="$HOME/pfe/env"
-LOG_FILE="pfe.log"
+LOG_FILE="logs/pfe.log"
 DJANGO_USER="ubuntu"
 PROJECT_PATH="$HOME/pfe"
 MANAGE="$PROJECT_PATH/manage.py"
