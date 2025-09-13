@@ -49,9 +49,9 @@ sudo chmod 664 "$CELERY_BEAT_LOG"
 
 
 echo "Iniciando o Celery Worker..."
-sudo -u $DJANGO_USER celery worker -A pfe -l info >> "$CELERY_WORKER_LOG" 2>&1 &
+sudo -u $DJANGO_USER $VENV_PATH/bin/celery worker -A pfe -l info >> "$CELERY_WORKER_LOG" 2>&1 &
 echo "Iniciando o Celery Beat..."
-sudo -u $DJANGO_USER celery beat -A pfe -l info >> "$CELERY_BEAT_LOG" 2>&1 &
+sudo -u $DJANGO_USER $VENV_PATH/bin/celery beat -A pfe -l info >> "$CELERY_BEAT_LOG" 2>&1 &
 #rabbitmqctl purge_queue celery
 
 echo "Preparando o Django..."
