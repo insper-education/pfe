@@ -3,7 +3,8 @@ set -e  # Para o script se qualquer comando falhar
 
 # Configurações
 VENV_PATH="$HOME/pfe/env"
-LOG_FILE="logs/pfe.log"
+LOG_FOLDER="logs"
+LOG_FILE="$LOG_FOLDER/pfe.log"
 DJANGO_USER="ubuntu"
 PROJECT_PATH="$HOME/pfe"
 MANAGE="$PROJECT_PATH/manage.py"
@@ -27,8 +28,10 @@ source "$VENV_PATH/bin/activate"
 
 echo "Preparando o arquivo de log..."
 touch "$LOG_FILE"
-sudo chown $DJANGO_USER:$DJANGO_USER "$LOG_FILE"
-sudo chmod 640 "$LOG_FILE"
+sudo chown -R $DJANGO_USER:www-data "$LOG_FOLDER"
+sudo chmod 775 "$LOG_FOLDER"
+sudo chown $DJANGO_USER:www-data "$LOG_FILE"
+sudo chmod 664 "$LOG_FILE"
 
 
 echo "Iniciando o Celery..."
