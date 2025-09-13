@@ -62,6 +62,7 @@ sudo -u $DJANGO_USER python3 "$MANAGE" collectstatic --no-input
 
 
 echo "Iniciando o servidor Apache..."
+sudo a2enmod headers
 sudo systemctl start apache2
 #sudo python3 manage.py runserver 0.0.0.0:80 &
 
