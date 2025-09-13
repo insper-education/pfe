@@ -8,10 +8,10 @@ DJANGO_USER="ubuntu"
 PROJECT_PATH="$HOME/pfe"
 MANAGE="$PROJECT_PATH/manage.py"
 
-# Configurações do UFW (Firewall)
-sudo ufw allow 443
-sudo ufw allow 22
-sudo ufw enable
+# Configurações do UFW (Firewall) [rodar apenas na primeira vez]
+# sudo ufw allow 443
+# sudo ufw allow 22
+# sudo ufw enable
 
 # Script para iniciar todos os serviços.
 # Ativa o ambiente virtual, inicia os workers do Celery, o servidor Apache e executa os comandos de gerenciamento do Django.
