@@ -3,8 +3,14 @@ set -e  # Para o script se qualquer comando falhar
 
 # Configurações
 VENV_PATH="$HOME/pfe/env"
-LOG_FOLDER="logs"
-LOG_FILE="$LOG_FOLDER/pfe.log"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_FOLDER="$SCRIPT_DIR/logs"
+
+DJANGO_LOG="$LOG_FOLDER/django.log"
+CELERY_WORKER_LOG="$LOG_FOLDER/celery_worker.log"
+CELERY_BEAT_LOG="$LOG_FOLDER/celery_beat.log"
+
 DJANGO_USER="ubuntu"
 PROJECT_PATH="$HOME/pfe"
 MANAGE="$PROJECT_PATH/manage.py"
@@ -26,17 +32,26 @@ source "$VENV_PATH/bin/activate"
 # sudo systemctl start postgresql.service
 # sudo systemctl enable postgresql.service
 
-echo "Preparando o arquivo de log..."
-touch "$LOG_FILE"
+echo "Preparando os arquivos de log..."
+touch "$DJANGO_LOG" "$CELERY_WORKER_LOG" "$CELERY_BEAT_LOG"
+
 sudo chown -R $DJANGO_USER:www-data "$LOG_FOLDER"
+mkdir -p "$LOG_FOLDER"
 sudo chmod 775 "$LOG_FOLDER"
-sudo chown $DJANGO_USER:www-data "$LOG_FILE"
-sudo chmod 664 "$LOG_FILE"
+sudo chown $DJANGO_USER:www-data "$DJANGO_LOG"
+sudo chown $DJANGO_USER:www-data "$CELERY_WORKER_LOG"
+sudo chown $DJANGO_USER:www-data "$CELERY_BEAT_LOG"
+sudo chmod 664 "$DJANGO_LOG"
+sudo chmod 664 "$CELERY_WORKER_LOG"
+sudo chmod 664 "$CELERY_BEAT_LOG"
+ln -s /var/log/apache2/error.log "$LOG_FOLDER/apache_error.log"
+ln -s /var/log/apache2/access.log "$LOG_FOLDER/apache_access.log"
 
 
-echo "Iniciando o Celery..."
-sudo -u $DJANGO_USER celery worker -A pfe -l info >> "$LOG_FILE" 2>&1 &
-sudo -u $DJANGO_USER celery beat -A pfe -l info >> "$LOG_FILE" 2>&1 &
+echo "Iniciando o Celery Worker..."
+sudo -u $DJANGO_USER celery worker -A pfe -l info >> "$CELERY_WORKER_LOG" 2>&1 &
+echo "Iniciando o Celery Beat..."
+sudo -u $DJANGO_USER celery beat -A pfe -l info >> "$CELERY_BEAT_LOG" 2>&1 &
 #rabbitmqctl purge_queue celery
 
 echo "Preparando o Django..."
