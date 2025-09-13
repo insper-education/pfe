@@ -7,7 +7,7 @@
 import os
 import logging
 from celery.schedules import crontab
-
+from django.core.exceptions import DisallowedHost
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -175,6 +175,15 @@ class TimingFormatter(logging.Formatter):
             record.message = f"{record.message} | Time taken: {record.duration:.2f} seconds"
         return super().format(record)
 
+class IgnoreDisallowedHost(logging.Filter):
+    def filter(self, record):
+        # Só filtra se a exceção for DisallowedHost
+        if record.exc_info:
+            exc_type, exc_value, exc_traceback = record.exc_info
+            if isinstance(exc_value, DisallowedHost):
+                return False  # Não loga esse erro
+        return True
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -185,11 +194,16 @@ LOGGING = {
             'style': '{',
         },
     },
+    'filters': {
+        'ignore_disallowed_host': {
+            '()': IgnoreDisallowedHost,
+        },
+    },
     'handlers': {
         'file': {
             'level': 'WARNING',
             'class': 'logging.FileHandler',
-            'filename': os.path.join('pfe.log'),
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
             'formatter': 'verbose',
         },
         'console': {
@@ -200,6 +214,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['ignore_disallowed_host'],
         }
     },
     'loggers': {
