@@ -44,8 +44,8 @@ sudo chown $DJANGO_USER:www-data "$CELERY_BEAT_LOG"
 sudo chmod 664 "$DJANGO_LOG"
 sudo chmod 664 "$CELERY_WORKER_LOG"
 sudo chmod 664 "$CELERY_BEAT_LOG"
-ln -s /var/log/apache2/error.log "$LOG_FOLDER/apache_error.log"
-ln -s /var/log/apache2/access.log "$LOG_FOLDER/apache_access.log"
+[ -L "$LOG_FOLDER/apache_error.log" ] || ln -s /var/log/apache2/error.log "$LOG_FOLDER/apache_error.log"
+[ -L "$LOG_FOLDER/apache_access.log" ] || ln -s /var/log/apache2/access.log "$LOG_FOLDER/apache_access.log"
 
 
 echo "Iniciando o Celery Worker..."
