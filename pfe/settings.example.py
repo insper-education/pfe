@@ -223,6 +223,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True
         },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
     },
 }
 
