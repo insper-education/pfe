@@ -224,9 +224,15 @@ LOGGING = {
             'propagate': True
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['file', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
+            'filters': ['ignore_disallowed_host'],
+        },
+        'django.security.DisallowedHost': {
+            'handlers': ['file'],
+            'propagate': False,
+            'level': 'ERROR',
         },
     },
 }
