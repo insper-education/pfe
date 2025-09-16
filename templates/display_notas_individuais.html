@@ -50,7 +50,7 @@
 
           {% if descontos.0 > 0 %}
             <td class="td_desc" style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
-                title="{% for e in descontos.1 %}&bull; {{e}}<br>{% endfor %}">
+                title="{% for e in descontos.1 %}{{e}}<br>{% endfor %}">
               {% lng "Descontos" "Discounts" %} = {{descontos.0|floatformat:2}}
             </td>
             <script>
