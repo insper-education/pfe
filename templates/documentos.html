@@ -12,9 +12,9 @@
 
       <div style="white-space: nowrap;">
         {% if documento.confidencial %}
-          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-lock" title="confidencial" ></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-lock" title="confidencial" style="color: #500000;"></i>
         {% else %}
-          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-unlock" title="público" ></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" class="fa fa-unlock" title="público" style="color: #005000;"></i>
         {% endif %}
         {% if documento.documento and documento.link %}
             {{documento.tipo_documento}}

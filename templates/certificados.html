@@ -24,9 +24,9 @@
     <div style="display: flex; align-items: flex-start;">
       <div style="white-space: nowrap;">
         {% if documento.confidencial %} {% comment %} Para certificados nunca está confidencial. {% endcomment %}
-          <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock" style="color: #500000;"></i>
         {% else %}
-          <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
+          <i data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock" style="color: #005000;"></i>
         {% endif %}
         {% if documento.documento and documento.link %}
             <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">({% lng "documento" "document" %})</a>

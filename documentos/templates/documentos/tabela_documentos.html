@@ -58,10 +58,10 @@
               {% for documento in projeto.documento_set.all %} 
                 {% if documento.confidencial %}
                   <span class="confidencial">
-                    <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock"></i>
+                    <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="confidencial" class="fa fa-lock" style="color: #500000;"></i>
                 {% else %}
                   <span class="publico">
-                  <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock"></i>
+                  <i style="font-size: 0.8em;" data-toggle="tooltip" data-html="true" animation="true" title="público" class="fa fa-unlock" style="color: #005000;"></i>
                 {% endif %}
                 {% if documento.documento and documento.link %}
                   {{documento.tipo_documento}}
