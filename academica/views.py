@@ -17,7 +17,7 @@ from django.http import HttpResponse
 from academica.support import lanca_descontos
 
 from estudantes.models import Relato, Pares
-from projetos.models import Evento, Area, Configuracao
+from projetos.models import Evento, Area, Desconto
 
 from operacional.models import Curso
 
@@ -172,14 +172,30 @@ def lista_areas_interesse(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def descontos(request):
     """Mostra tabela com os possíveis descontos."""
-    configuracao = get_object_or_404(Configuracao)
-    ano, semestre = configuracao.ano, configuracao.semestre
-    descontos = lanca_descontos(ano, semestre)
+    
+    if request.is_ajax():
+        if "edicao" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
+        
+        ano, semestre = request.POST["edicao"].split('.')
+        descontos = lanca_descontos(ano, semestre)
 
-    context = {
-        "titulo": {"pt": "Lista de Descontos", "en": "Discounts List"},
-        "descontos": descontos,
-    }
+        cabecalhos = [{"pt": "Referência", "en": "Reference"},
+                      {"pt": "Evento", "en": "Event"},
+                      {"pt": "Nota", "en": "Grade"},
+                     ]
+        
+        context = {
+            "descontos": descontos,
+            "cabecalhos": cabecalhos,
+        }
+        
+    else:
+
+        context = {
+            "titulo": {"pt": "Lista de Descontos", "en": "Discounts List"},
+            "edicoes": get_edicoes(Desconto)[0],
+        }
 
     return render(request, "academica/descontos.html", context)
 

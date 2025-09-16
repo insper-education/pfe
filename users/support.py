@@ -9,15 +9,16 @@ Data: 2 de Outubro de 2020
 import datetime
 import unicodedata
 
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils import timezone
 
 from administracao.support import get_limite_propostas
 
 from estudantes.models import Relato, Pares
 
-from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Documento, Conexao
+from projetos.models import Configuracao, Certificado, Avaliacao2, Evento, Documento, Conexao, Desconto
 
+from users.models import Alocacao
 
 
 def adianta_semestre(ano, semestre):
@@ -106,17 +107,24 @@ def configuracao_pares_vencida(estudante, sigla, prazo=10):
 
 
 
-def get_edicoes(tipo, anual=False):
+def get_edicoes(tipo, anual=False, minimo=None):  # Minimo no formato "ano.semestre"
     """Função usada para recuperar todas as edições conforme objeto desejado."""
     
-    if tipo in [Certificado, Avaliacao2, Documento, Conexao]:
+    if tipo in [Certificado, Avaliacao2, Documento, Conexao, Alocacao]:
         pares = tipo.objects.values(ano=F("projeto__ano"), semestre=F("projeto__semestre"))
-    elif tipo == Relato:
+    elif tipo in [Relato, Desconto]:
         pares = tipo.objects.values(ano=F("alocacao__projeto__ano"), semestre=F("alocacao__projeto__semestre"))
     elif tipo == Pares:
         pares = tipo.objects.values(ano=F("alocacao_de__projeto__ano"), semestre=F("alocacao_de__projeto__semestre"))
     else:
         pares = tipo.objects.values("ano", "semestre")
+
+    if minimo:
+        m_ano, m_semestre = map(int, minimo.split('.'))
+        pares = pares.filter(
+            Q(ano__gt=m_ano) | 
+            (Q(ano=m_ano) & Q(semestre__gte=m_semestre))
+        )
 
     edicoes = []
     ano, semestre = None, None
