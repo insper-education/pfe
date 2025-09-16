@@ -115,29 +115,7 @@
     </button>
 
   </form>
-  
-  <div class="mt-4 alert alert-light p-2" style="max-width: 854px;">
-    <b>{% lng "Variáveis" "Variables" %}</b>:<br>
-    {% for chave, valor in variaveis.items %}
-      &#123;&#123;{{chave}}&#125;&#125; - {% lng valor.pt valor.en %}<br>
-      {% if valor.atributos %}
-        <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
-      {% endif %}
-      {% if valor.exemplos %}
-        <small>&nbsp;&nbsp;{% lng "exemplos" "examples" %}: {{valor.exemplos}}<br></small>
-      {% endif %}
-    {% endfor %}
-    <br>
-    <b>{% lng "Filtros" "Filters" %}</b>:<br>
-    {% for chave, valor in filtros.items %}
-      |{{chave}}: - {% lng valor.pt valor.en %}<br>
-    {% endfor %}
-    <br>
-    <b>{% lng "Link Documentos" "Document Links" %}</b>:<br>
-    base - {{request.scheme}}://{{request.get_host}}{% url 'doc' %}[DOC]<br>
-    {% for tipo in tipos %}
-      <i>{{tipo.sigla}}</i>: {% lng tipo.nome tipo.nome_en %}<br>
-    {% endfor %}
-  </div>
+
+  {% include "mostra_variaveis_filtros.html" %}
 
 {% endblock %}
