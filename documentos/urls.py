@@ -21,6 +21,7 @@ urlpatterns = [
     path("certificados_submetidos/<str:edicao>/<str:tipos>/<int:gerados>", views.certificados_submetidos, name="certificados_submetidos"),
     path("contratos_assinados/", views.contratos_assinados, name="contratos_assinados"),
     path("documentos", views.index_documentos, name="documentos"),
+    path("duplicar_publicar/<int:relatorio_id>/", views.duplicar_publicar, name="duplicar_publicar"),
     path("exibir_ocultar_notas/", views.exibir_ocultar_notas, name="exibir_ocultar_notas"),
     path("exportar_documentos_projetos/", views.exportar_documentos_projetos, name="exportar_documentos_projetos"),
     path("gerar_certificados/", views.gerar_certificados, name="gerar_certificados"),

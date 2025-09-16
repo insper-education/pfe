@@ -8,11 +8,11 @@ Data: 15 de Dezembro de 2020
 
 import os
 import re
-# import json
 import zipfile
 import tempfile
 import random
 import string
+from datetime import datetime
 
 from django.http import FileResponse
 from django.conf import settings
@@ -591,3 +591,40 @@ def contratos_assinados(request):
             }
 
     return render(request, "documentos/contratos_assinados.html", context)
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def duplicar_publicar(request, relatorio_id):
+    """Duplica um relatório final de revisão, tornando-o público."""
+    if not request.user.is_authenticated or not request.user.eh_admin:
+        return HttpResponse("Sem privilégios necessários", status=401)
+
+    relatorio = get_object_or_404(Documento, pk=relatorio_id)
+    if relatorio.tipo_documento.sigla != "RFR":
+        return HttpResponse("Apenas Relatórios Finais de Revisão podem ser duplicados.", status=401)
+
+    novo_relatorio = Documento()
+    novo_relatorio.projeto = relatorio.projeto
+    novo_relatorio.tipo_documento = get_object_or_404(TipoDocumento, sigla="RPU")  # Relatório Público
+    novo_relatorio.usuario = relatorio.usuario
+    novo_relatorio.confidencial = False
+    novo_relatorio.data = datetime.now().date()
+    novo_relatorio.anotacao = "Duplicado de " + str(relatorio.tipo_documento) +  ( (" - " + relatorio.anotacao ) if relatorio.anotacao else "")
+    if relatorio.documento:
+        novo_relatorio.documento = relatorio.documento
+    if relatorio.link:
+        novo_relatorio.link = relatorio.link
+    novo_relatorio.save()
+
+    mensagem = {
+        "pt": "Relatório Final de Revisão duplicado como Relatório Público.",
+        "en": "Final Review Report duplicated as Public Report.",
+    }
+    context = {
+        "voltar": True,
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, "generic_ml.html", context=context)
+
