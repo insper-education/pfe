@@ -453,7 +453,7 @@ class Alocacao(models.Model):
 class Associado(models.Model):
     """Associação de Estudante a Projeto."""
 
-    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    estudante = models.ForeignKey(Aluno, on_delete=models.CASCADE)
     projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE)
         
     class Meta:
@@ -461,14 +461,14 @@ class Associado(models.Model):
         verbose_name = "Associação"
         verbose_name_plural = "Associações"
         permissions = (("altera_professor", "Professor altera valores"), )
-        ordering = ["projeto__ano", "projeto__semestre", "-aluno__externo",]
+        ordering = ["projeto__ano", "projeto__semestre", "-estudante__externo",]
 
     def __str__(self):
         """Retorno padrão textual do objeto."""
-        if self.aluno and self.aluno.user and self.aluno.user.username:
+        if self.estudante and self.estudante.user and self.estudante.user.username:
             if self.projeto:
-                return self.aluno.user.username + " &&& " + self.projeto.get_titulo()[:12] + " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
-            return self.aluno.user.username + " &&& Projeto sem título"
+                return self.estudante.user.username + " &&& " + self.projeto.get_titulo()[:12] + " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
+            return self.estudante.user.username + " &&& Projeto sem título"
         return "Associação sem estudante"
 
 
