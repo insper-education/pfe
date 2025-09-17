@@ -7,6 +7,8 @@ Data: 15 de Maio de 2019
 """
 
 import datetime
+import unicodedata
+
 from import_export import resources, fields
 from django.core.exceptions import SuspiciousOperation  # Para erro 400
 from django.contrib.auth.models import Group
@@ -24,6 +26,15 @@ from academica.support_notas import converte_conceito
 from academica.models import Exame
 
 
+def get_row_value(row, key):
+    """Busca valor na row ignorando maiúsculas/minúsculas e acentos."""
+    def normalize(s):
+        return unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode().lower()
+    key_norm = normalize(key)
+    for k in row.keys():
+        if normalize(k) == key_norm:
+            return row[k]
+    return None
 
 # class ProjetosResource(resources.ModelResource):
 #     """Model Resource para tratar dados de Projetos."""
@@ -293,6 +304,7 @@ def get_EstudantesResource(field_names=None):
             self.registros["novos"] = []
             self.registros["atualizados"] = []
 
+
         def before_import_row(self, row, **kwargs):
             """Forma que arrumei para evitar preencher com o mesmo dado."""
             EMAIL_ESTUDANTE = "@al.insper.edu.br"
@@ -302,8 +314,8 @@ def get_EstudantesResource(field_names=None):
                 dry_run = before_import_kwargs.get("dry_run", True)
             else:
                 dry_run = True
-            
-            email = row.get("email")
+
+            email = get_row_value(row, "email")
             if email is None:
                 pass  # "Erro ao recuperar o e-mail do usuário [email]"
             elif EMAIL_ESTUDANTE in email:
@@ -316,22 +328,22 @@ def get_EstudantesResource(field_names=None):
                                                                 email=email.strip(),
                                                                 tipo_de_usuario=1)
 
-                nome_compl = row.get("nome_compl")
+                nome_compl = get_row_value(row, "nome_compl")
                 if (nome_compl is not None) and (nome_compl != ""):
                     nome_compl_txt = nome_compl.split(" ",1)
                     user.first_name = nome_compl_txt[0].strip()
                     user.last_name = nome_compl_txt[1].strip()
 
-                atualizar_campo(user, "first_name", row.get("nome"))
-                atualizar_campo(user, "last_name", row.get("sobrenome"))
-                
-                genero = row.get("gênero").upper().strip()
+                atualizar_campo(user, "first_name", get_row_value(row, "nome"))
+                atualizar_campo(user, "last_name", get_row_value(row, "sobrenome"))
+
+                genero = get_row_value(row, "gênero").upper().strip()
                 if genero not in ("M", "F", ""):
                     raise ValueError(f"Gênero informado inválido: {genero}. Só pode ser M, F ou vazio.")
                 atualizar_campo(user, "genero", genero)
 
-                atualizar_campo(user, "nome_social", row.get("nome_social"))
-                atualizar_campo(user, "pronome_tratamento", row.get("pronome_tratamento"))
+                atualizar_campo(user, "nome_social", get_row_value(row, "nome_social"))
+                atualizar_campo(user, "pronome_tratamento", get_row_value(row, "pronome_tratamento"))
 
                 user.save()
                 if not dry_run:
@@ -349,15 +361,15 @@ def get_EstudantesResource(field_names=None):
                 except Curso.DoesNotExist: # Não encontrou o curso, deixa vazio
                     aluno.curso2 = None
 
-                atualizar_campo(aluno, "matricula", row.get("matrícula"))
-                atualizar_campo(aluno, "cr", row.get("cr"))
+                atualizar_campo(aluno, "matricula", get_row_value(row, "matrícula"))
+                atualizar_campo(aluno, "cr", get_row_value(row, "cr"))
 
-                ano = row.get("ano")[:4]  # só os 4 primeiros dígitos
+                ano = get_row_value(row, "ano")[:4]  # só os 4 primeiros dígitos
                 if not ano.isdigit() or len(ano) != 4:
                     raise ValueError(f"Ano informado inválido: {ano}. Deve ser um ano com 4 dígitos.")
                 atualizar_campo(aluno, "ano", ano)
 
-                semestre = row.get("semestre")[:1]  # só o primeiro dígito
+                semestre = get_row_value(row, "semestre")[:1]  # só o primeiro dígito
                 if semestre not in ('1', '2'):
                     raise ValueError(f"Semestre informado inválido: {semestre}. Só pode ser 1 ou 2.")
                 atualizar_campo(aluno, "semestre", semestre)

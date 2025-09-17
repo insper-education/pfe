@@ -418,7 +418,7 @@ class OpcaoTemporaria(models.Model):
 
 
 class Alocacao(models.Model):
-    """Projeto em que o aluno está alocado."""
+    """Alocação de Estudante em Projeto."""
 
     projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE)
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
@@ -446,7 +446,31 @@ class Alocacao(models.Model):
             if self.projeto:
                 return self.aluno.user.username + " >>> " + self.projeto.get_titulo()[:12] + " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
             return self.aluno.user.username + " >>> Projeto sem título"
-        return "Alocação sem aluno"
+        return "Alocação sem estudante"
+
+
+
+class Associado(models.Model):
+    """Associação de Estudante a Projeto."""
+
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.CASCADE)
+        
+    class Meta:
+        """Meta para Associado."""
+        verbose_name = "Associação"
+        verbose_name_plural = "Associações"
+        permissions = (("altera_professor", "Professor altera valores"), )
+        ordering = ["projeto__ano", "projeto__semestre", "-aluno__externo",]
+
+    def __str__(self):
+        """Retorno padrão textual do objeto."""
+        if self.aluno and self.aluno.user and self.aluno.user.username:
+            if self.projeto:
+                return self.aluno.user.username + " &&& " + self.projeto.get_titulo()[:12] + " (" + str(self.projeto.ano) + "." + str(self.projeto.semestre) + ")"
+            return self.aluno.user.username + " &&& Projeto sem título"
+        return "Associação sem estudante"
+
 
 
 class UsuarioEstiloComunicacao(models.Model):
