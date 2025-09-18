@@ -147,8 +147,9 @@
     {% if alocacoes.count > 0 %}
       <hr>
       <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
+
       {% for alocado in alocacoes %}
-        <b>{% lng "Projeto" "Project" %}:</b>
+        <b>{% lng "Projeto" "Project" %}{% if alocacoes.count > 1 %} {{forloop.revcounter}}{% endif %}:</b>
         <a href="{% url 'projeto_infos' alocado.projeto.id %}">
           [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
           ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
@@ -224,7 +225,7 @@
         {% endwith %}
 
         {% if not forloop.last %}
-          <hr style="border-top: 3px dotted #8c8b8b;"><br><br>
+          <hr style="border-top: 3px dotted #8c8b8b;">
         {% endif %}
       
       {% endfor %}
