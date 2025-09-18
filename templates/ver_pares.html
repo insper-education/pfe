@@ -7,6 +7,8 @@
 {% load static %}
 {% load linguas %}
 {% load get_field %}
+{% load cores %}
+
 
 <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
@@ -80,6 +82,13 @@
       </div>
 
       <hr>
+      <div class="legend" style="margin-left: 14px; margin-bottom: 10px; font-size: 0.8rem;">
+        {% for par in pares %}
+          <span style="background-color: {{ par.alocacao_de.aluno.id|hash_color }}; width: 10px; height: 10px; display: inline-block; margin-right: 4px;"></span>
+          <span style="margin-right: 15px;">{{ par.alocacao_de.aluno }}</span>
+        {% endfor %}
+      </div>
+
       <div class="pergunta">
         {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
         {{colega.aluno}}<br>
@@ -87,8 +96,12 @@
           {% for entrega in entregas %}
             <tr>
               {% with linha=forloop.counter0 %}
-                {% for par in pares %}<td class="align-middle" style="width: 12px;">
-                  {% if par.entrega == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+                {% for par in pares %}<td class="align-middle" style="width: 6px; padding: 0 2px 0 8px;">
+                  {% if par.entrega == linha %}
+                    <span style="cursor: pointer; color: {{ par.alocacao_de.aluno.id|hash_color }}; font-weight: bold;"
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>
+                  {% else %}&nbsp;{% endif %}
+                </td>
                 {% endfor %}
                 <td class="nome_item">{{entrega}}</td>
               {% endwith %}
@@ -105,8 +118,12 @@
           {% for iniciativa in iniciativas %}
             <tr>
               {% with linha=forloop.counter0 %}
-                {% for par in pares %}<td class="align-middle" style="width: 12px;">
-                  {% if par.iniciativa == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+                {% for par in pares %}<td class="align-middle" style="width: 6px; padding: 0 2px 0 8px;">
+                  {% if par.iniciativa == linha %}
+                    <span style="cursor: pointer; color: {{ par.alocacao_de.aluno.id|hash_color }}; font-weight: bold;"
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>
+                  {% else %}&nbsp;{% endif %}
+                </td>
                 {% endfor %}
                 <td class="nome_item">{{iniciativa}}</td>
               {% endwith %}
@@ -120,16 +137,22 @@
         {% lng_g colega.aluno.user.genero "Comunicação do" "Comunicação da" "Communication of" %}
         {{colega.aluno}}<br>
         <table class="table table-borderless table-striped">
+
           {% for comunicacao in comunicacoes %}
             <tr>
               {% with linha=forloop.counter0 %}
-                {% for par in pares %}<td class="align-middle" style="width: 12px;">
-                  {% if par.comunicacao == linha %}<span style="cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>{%else%}&nbsp;{% endif %}</td>
+                {% for par in pares %}<td class="align-middle" style="width: 6px; padding: 0 2px 0 8px;">
+                  {% if par.comunicacao == linha %}
+                    <span style="cursor: pointer; color: {{ par.alocacao_de.aluno.id|hash_color }}; font-weight: bold;"
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{par.alocacao_de.aluno}}">&#10003;</span>
+                  {% else %}&nbsp;{% endif %}
+                </td>
                 {% endfor %}
                 <td class="nome_item">{{comunicacao}}</td>
               {% endwith %}
             </tr>
           {% endfor %}
+
         </table>
       </div>
 

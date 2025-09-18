@@ -38,8 +38,10 @@
   {% include "cabecalho_projeto.html" with com_tit_original=True com_semestre=True %}
   <br>
 
-  <b>{% lng "Orientações passadas aos estudantes:" "Guidelines given to students:" %}</b>
-  <div style="max-width: 700px;">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
+  <div class="div_arredondado_azulado">
+    <b>{% lng "Orientações passadas aos estudantes:" "Guidelines given to students:" %}</b>
+    <div style="max-width: 700px; color: #777;">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
+  </div>
   <hr>
 
   {% include "ver_pares.html" %}
