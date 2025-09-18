@@ -324,6 +324,42 @@
   {% endfor %}
   </ul>
 
+
+  {% if associados %}  
+    <div class="mt-3">
+    <h5 style="display: inline;" class="mt-5">
+      {% lng_n associados.count "Participante associado" "Participantes associados" "Associated participant" "Associated participants" %}:
+    </h5>
+    <span class="emails esconder">
+      <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+        <i class="fas fa-mail-bulk"></i>
+      </a>
+    </span>
+    <ul>
+    {% for associado in associados %}
+      <li>
+        {% if user.eh_prof_a %}
+          <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
+        {% else %}
+          {{associado.estudante.user.get_full_name}}
+        {% endif %}
+        <span class="texto-longo">[{{ associado.estudante.curso2 }}]</span>
+        <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
+
+        <a href="mailto:{{associado.estudante.user.email}}">
+          <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
+          <span class="texto-curto"><i class="far fa-envelope"></i></span>
+        </a>
+
+        {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    </div>
+  {% endif %}
+
+
+
   {% if medias_oo %}
     <hr>
     <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>

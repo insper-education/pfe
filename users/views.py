@@ -863,6 +863,9 @@ def parceiro_detail(request, primarykey=None):
 def contas_senhas(request, edicao=None):
     """permite selecionar os estudantes para enviar conta e senha."""
     usuario_sem_acesso(request, (4,)) # Soh Adm
+    
+    cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
+    cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     if request.is_ajax():
         if "edicao" not in request.POST:
@@ -872,6 +875,20 @@ def contas_senhas(request, edicao=None):
         if edicao != "todas":
             ano, semestre = edicao.split('.')
             estudantes = estudantes.filter(ano=ano, semestre=semestre, trancado=False)
+
+        
+        print(request.POST)
+            
+
+        curso = request.POST.get("curso")
+        print(curso)
+        if curso != "TE":  # Filtra para projetos com estudantes de um curso específico
+            if curso != 'T':
+                estudantes = estudantes.filter(curso2__sigla_curta=curso)
+            else:
+                estudantes = estudantes.filter(curso2__in=cursos_insper)
+
+
         context = {
                 "estudantes": estudantes,
                 "template": Carta.objects.filter(template="Envio de Conta para Estudantes").last(),
@@ -891,6 +908,8 @@ def contas_senhas(request, edicao=None):
             "titulo": {"pt": "Enviar Contas e Senhas para Estudantes", "en": "Send Accounts and Passwords to Students"},
             "edicoes": get_edicoes(Aluno)[0],
             "variaveis": variaveis,
+            "cursos": cursos_insper,
+            "cursos_externos": cursos_externos,
         }
         if edicao:
             context["selecionada"] = edicao

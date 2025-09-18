@@ -54,7 +54,7 @@ from projetos.messages import email, render_message
 
 from organizacoes.models import Segmento
 
-from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro
+from users.models import PFEUser, Aluno, Professor, Opcao, Alocacao, Parceiro, Associado
 from users.support import get_edicoes, adianta_semestre_conf
 
 
@@ -77,11 +77,13 @@ def projeto_infos(request, primarykey):
     """Mostra um projeto com detalhes conforme tipo de usuário."""    
     projeto = get_object_or_404(Projeto, pk=primarykey)
     alocacoes = Alocacao.objects.filter(projeto=projeto)
+    associados = Associado.objects.filter(projeto=projeto)
 
     context = {
         "titulo": { "pt": "Informações sobre Projeto", "en": "Project Information"},
         "projeto": projeto,
-        "alocacoes": alocacoes
+        "alocacoes": alocacoes,
+        "associados": associados
     }
 
     if request.user.eh_estud:  # Se usuário é estudante
