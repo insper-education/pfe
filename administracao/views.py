@@ -318,6 +318,17 @@ def cadastrar_usuario(request):
         if val:
             context[field] = val
 
+    endpoints = [
+        {"path": "administracao/cadastrar_usuario?tipo={valor}", "method": "GET", "description": "seleciona o tipo de usuário a ser cadastrado. Exemplo: tipo=professor ou tipo=estudante ou tipo=parceiro"},
+        {"path": "administracao/cadastrar_usuario?organizacao={id}", "method": "GET", "description": "seleciona a organização do parceiro a ser cadastrado. Exemplo: organizacao=3"},
+        {"path": "administracao/cadastrar_usuario?proposta={id}", "method": "GET", "description": "puxa os contatos da proposta para facilitar o cadastro. Exemplo: proposta=10"},
+        {"path": "administracao/cadastrar_usuario?nome={valor}", "method": "GET", "description": "preenche o campo nome no formulário. Exemplo: nome=Fulano da Silva"},
+        {"path": "administracao/cadastrar_usuario?email={valor}", "method": "GET", "description": "preenche o campo email no formulário. Exemplo: email=fulano@exemplo.com"},
+        {"path": "administracao/cadastrar_usuario?telefone={valor}", "method": "GET", "description": "preenche o campo telefone no formulário. Exemplo: telefone=11999999999"},
+        {"path": "administracao/cadastrar_usuario?cargo={valor}", "method": "GET", "description": "preenche o campo cargo no formulário. Exemplo: cargo=Gerente de TI"},
+    ]
+    context["endpoints"] = json.dumps(endpoints)
+
     return render(request, "administracao/cadastra_usuario.html", context)
 
 
@@ -1101,7 +1112,7 @@ def servico(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def pre_alocar_estudante(request):
     """Ajax para pre-alocar estudates em propostas."""
-    if request.user.tipo_de_usuario == 4:  # admin
+    if request.user.eh_admin:  # admin
 
         estudante = request.GET.get("estudante", None)
         estudante_id = int(estudante[len("estudante"):])
@@ -1114,7 +1125,7 @@ def pre_alocar_estudante(request):
         estudante.pre_alocacao = proposta
         estudante.save()
 
-    elif request.user.tipo_de_usuario == 2:  # professor
+    elif request.user.eh_prof:  # professor
         # atualizações não serão salvas
         pass
 

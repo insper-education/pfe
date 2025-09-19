@@ -18,9 +18,11 @@ $(document).ready(function() {
     if (now > item.expiry + prazo) {  // Verifica se não venceu
       localStorage.removeItem("filterEdicao");
     } else {
-      if(filterEdicao != "todas") { // Evita todas pois é muito lento
-        document.getElementById("filterEdicao").value = filterEdicao;
-      }
+      {% if not selecionada_edicao %}  // Só faz se não tiver nada selecionado
+        if(filterEdicao != "todas") { // Evita todas pois é muito lento
+          document.getElementById("filterEdicao").value = filterEdicao;
+        }
+      {% endif %}
     }
   }
 });

@@ -173,8 +173,8 @@
               {% endif %}
               {% for edicao in edicoes %}
                   <option class="opt_edi" value="{{edicao}}" 
-                      {% if selecionada %}
-                        {% if selecionada == edicao %}selected{% endif %}
+                      {% if selecionada_edicao %}
+                        {% if selecionada_edicao == edicao %}selected{% endif %}
                       {% else %}
                         {% if forloop.last %}selected{% endif %}
                       {% endif %}
@@ -184,7 +184,7 @@
                 <option class="opt_edi troca_lingua" value="trancou" data-pt="trancou" data-en="on hold">trancou</option>
               {% endif %}
               {% if com_proximas %}
-                <option class="opt_edi troca_lingua" value="proximas" data-pt="próximas" data-en="next" {% if not selecionada %}selected{% endif %}>próximas</option>
+                <option class="opt_edi troca_lingua" value="proximas" data-pt="próximas" data-en="next" {% if not selecionada_edicao %}selected{% endif %}>próximas</option>
               {% endif %}
               </optgroup>
             </select>
@@ -414,9 +414,28 @@
             </div>
             <select id="filterLingua" class="selectpicker form-control form-control-sm" data-style="mr-sm border" data-width="10em"
                     title="Nada selecionado" multiple>
-              <option class="troca_lingua" selected="selected" value="pt" data-pt="Português" data-en="Portuguese">Português</option>
-              <option class="troca_lingua" selected="selected" value="en" data-pt="Inglês" data-en="English">Inglês</option>
+              <option class="troca_lingua" 
+              {% if selecionada_lingua %}
+                {% if 'pt' in selecionada_lingua %}selected="selected"{% endif %}
+              {% else %}
+                selected="selected" 
+              {% endif %}
+              value="pt" data-pt="Português" data-en="Portuguese">Português</option>
+              <option class="troca_lingua" 
+              {% if selecionada_lingua %}
+                {% if 'en' in selecionada_lingua %}selected="selected"{% endif %}
+              {% else %}
+                selected="selected" 
+              {% endif %}
+              value="en" data-pt="Inglês" data-en="English">Inglês</option>
             </select>
+
+
+
+                      
+                      
+
+
         </div>
       {% endif %}
 

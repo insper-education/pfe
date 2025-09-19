@@ -608,7 +608,7 @@ def estudantes_inscritos(request):
         context = {
             "titulo": {"pt": "Estudantes Inscritos", "en": "Enrolled Students"},
             "edicoes": get_edicoes(Aluno)[0],
-            "selecionada": f"{ano}.{semestre}",
+            "selecionada_edicao": f"{ano}.{semestre}",
         }
 
     return render(request, "users/estudantes_inscritos.html", context=context)
@@ -907,7 +907,7 @@ def contas_senhas(request, edicao=None):
             "cursos_externos": cursos_externos,
         }
         if edicao:
-            context["selecionada"] = edicao
+            context["selecionada_edicao"] = edicao
 
     return render(request, "users/contas_senhas.html", context=context)
 

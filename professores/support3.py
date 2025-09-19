@@ -207,10 +207,10 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         edicoes = get_edicoes(Projeto)[0]
 
         if ano and semestre:
-            selecionada = str(ano) + "." + str(semestre)
+            selecionada_edicao = str(ano) + "." + str(semestre)
         else:
             configuracao = get_object_or_404(Configuracao)
-            selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
+            selecionada_edicao = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
         informacoes = [
             ("#ProjetosTable tr > *:nth-child(2)", "Período", "Semester"),
@@ -227,7 +227,7 @@ def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
         context = {
             "titulo": {"pt": "Resultado dos Projetos", "en": "Projects Results"},
             "edicoes": edicoes,
-            "selecionada": selecionada,
+            "selecionada_edicao": selecionada_edicao,
             "informacoes": informacoes,
         }
 

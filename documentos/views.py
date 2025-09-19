@@ -12,6 +12,7 @@ import zipfile
 import tempfile
 import random
 import string
+import json
 from datetime import datetime
 
 from django.http import FileResponse
@@ -128,7 +129,7 @@ def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
             "titulo": {"pt": "Certificados Emitidos", "en": "Issued Certificates"},
             "grupos_certificados": GrupoCertificado.objects.all(),
             "edicoes": get_edicoes(Certificado)[0],
-            "selecionada": edicao,
+            "selecionada_edicao": edicao,
             "tipos": tipos.split(',') if tipos else None,
             "gerados": gerados,
         }
@@ -145,7 +146,7 @@ def selecao_geracao_certificados(request):
     context = {
         "titulo": {"pt": "Seleção de Geração de Certificados", "en": "Certificate Generation Selection"},
         "edicoes": get_edicoes(Projeto)[0],
-        "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
+        "selecionada_edicao": f"{configuracao.ano}.{configuracao.semestre}",
         "grupos": GrupoCertificado.objects.all(),
         }
     return render(request, "documentos/selecao_geracao_certificados.html", context)
@@ -268,10 +269,28 @@ def relatorios_publicos(request, edicao=None):
             relatorios = relatorios.values_list("projeto__ano", "projeto__semestre").distinct()
             edicoes = [f"{ano}.{semestre}" for ano, semestre in relatorios]
 
+        selecionada_edicao = edicao
+        get_edicao = request.GET.get("edicao", None)
+        if get_edicao and get_edicao in edicoes:
+            selecionada_edicao = get_edicao
+
+        selecionada_lingua = request.GET.get("lingua", None)
+        selecionado_orientador = request.GET.get("orientador", None)
+
+        endpoints = [
+            {"path": "documentos/relatorios_publicos/todas", "method": "GET", "description": "Lista todos os projetos com relatórios públicos."},
+            {"path": "documentos/relatorios_publicos?edicao={valor}", "method": "GET", "description": "Filtra projetos pela edição. Exemplo: edicao=2025.2"},
+            {"path": "documentos/relatorios_publicos?lingua={valores}", "method": "GET", "description": "Filtra projetos pelas línguas. Exemplo: lingua=pt ou lingua=en"},
+            {"path": "documentos/relatorios_publicos?orientador={id}", "method": "GET", "description": "Filtra projetos pelo orientador. Exemplo: orientador=31"}
+        ]
+
         context = {
             "titulo": {"pt": "Documentos Públicos", "en": "Public Documents"},
             "edicoes": edicoes,  #relatorios publicos
-            "selecionada": edicao,
+            "selecionada_edicao": selecionada_edicao,
+            "selecionada_lingua": selecionada_lingua,
+            "selecionado_orientador": selecionado_orientador,
+            "endpoints": json.dumps(endpoints),
         }
     
     return render(request, "documentos/relatorios_publicos.html", context) 
@@ -481,7 +500,7 @@ def exibir_ocultar_notas(request):
             ano, semestre = request.POST["edicao"].split('.')
 
         context["edicao"] = edicao
-        context["selecionada"] = edicao
+        context["selecionada_edicao"] = edicao
 
         if request.is_ajax():
             pass

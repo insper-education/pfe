@@ -118,56 +118,6 @@
 
   {% include "base-modal.html" %}
   {% include "edicoes_ajax.html" with tabela="Relatorios" %}
-
-
-  <div id="api-docs" 
-     style="display:none" 
-     data-endpoints='[
-       {"path": "/api/projects", "method": "GET", "description": "Lista todos os projetos públicos"},
-       {"path": "/api/projects", "method": "POST", "description": "Cria um novo projeto"},
-       {"path": "/api/projects/{id}", "method": "DELETE", "description": "Remove um projeto pelo ID"}
-     ]'>
-  </div>
-
-  <script>
-    // Adicione ao seu arquivo JavaScript ou dentro de uma tag script
-    (function() {
-      const isDevToolsOpen = () => {
-        // Várias técnicas para detectar DevTools
-        return window.outerWidth - window.innerWidth > 160 || 
-              window.outerHeight - window.innerHeight > 160;
-      };
-      
-      if (isDevToolsOpen() || 
-    window.location.search.includes('debug=true') || 
-    localStorage.getItem('showApiDocs')) {
-    
-    const docs = JSON.parse(document.getElementById('api-docs').dataset.endpoints);
-    
-    // Transformar array de objetos em objetos indexados por um caminho único
-    // Isso remove o "index" da tabela e usa o path como identificador
-    const formattedDocs = {};
-    docs.forEach(doc => {
-        // Cria uma chave única combinando método e caminho
-        const key = `${doc.method} ${doc.path}`;
-        formattedDocs[key] = {
-            method: doc.method,
-            description: doc.description
-        };
-    });
-    
-    console.log('%c📚 API Documentation', 'color: #0366d6; font-size: 16px; font-weight: bold;');
-    console.table(formattedDocs);
-    
-    // Dica discreta no final
-    console.log('%cUse "?debug=true" ou localStorage.setItem("showApiDocs", true) para ativar docs', 'color: #586069; font-size: 11px;');
-}
-    })();
-
-  </script>
-
-
-
-
+  {% include "mostra_api.html" with endpoints=endpoints %}
 
 {% endblock %}

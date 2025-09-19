@@ -11,6 +11,7 @@ import datetime
 import dateutil.parser
 import logging
 import requests
+import json
 
 from urllib.parse import unquote
 
@@ -117,7 +118,7 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
     else:
         configuracao = get_object_or_404(Configuracao)
         context["edicoes"] = get_edicoes(Pares)[0]
-        context["selecionada"] = f"{configuracao.ano}.{configuracao.semestre}"
+        context["selecionada_edicao"] = f"{configuracao.ano}.{configuracao.semestre}"
     
     context["administracao"] = request.user.eh_admin
 
@@ -298,7 +299,7 @@ def avaliar_entregas(request, prof_id=None, selecao=None):
         context = {
                 "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
                 "edicoes": get_edicoes_orientador(request.user.professor, configuracao)[0],
-                "selecionada": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
+                "selecionada_edicao": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
                 "tipos_entregas": exames if selecao else None,
             }
 
@@ -375,7 +376,7 @@ def avaliar_bancas(request, prof_id=None):
         context = {
             "titulo": {"pt": "Avaliar Bancas", "en": "Evaluate Examination Boards"},
             "edicoes": get_edicoes(Projeto)[0],
-            "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
+            "selecionada_edicao": f"{configuracao.ano}.{configuracao.semestre}",
         }
     return render(request, "professores/resultado_bancas.html", context=context)
 
@@ -668,6 +669,15 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
+        endpoints = [
+            {"path": "professores/banca_avaliar?avaliador={valor}", "method": "GET", "description": "Seleciona o avaliador."},
+            {"path": "professores/banca_avaliar?objetivo{num}={id}&conceito{num}={conceito}", "method": "GET", "description": "Preenche um conceito para um objetivo."},
+            {"path": "professores/banca_avaliar?observacoes_orientador={texto}", "method": "GET", "description": "Preenche as observações do orientador."},
+            {"path": "professores/banca_avaliar?observacoes_estudantes={texto}", "method": "GET", "description": "Preenche as observações dos estudantes."},
+            {"path": "professores/banca_avaliar?destaque={valor}", "method": "GET", "description": "Marca que o avaliador quer destacar o projeto."},
+            {"path": "professores/banca_avaliar/{slug}/{documento_id}", "method": "GET", "description": "Baixa o documento de avaliação da banca."},
+        ]
+
         context = {
             "titulo": {"pt": "Formulário de Avaliação de Bancas", "en": "Examination Board Evaluation Form"},
             "projeto": projeto,
@@ -687,6 +697,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
             "niveis_objetivos": niveis_objetivos,
             "destaque": destaque,
+            "endpoints": json.dumps(endpoints),
         }
 
         if mensagem:
@@ -1085,7 +1096,7 @@ def dinamicas_lista(request, edicao=None):
         
         if edicao:
             if '.' in edicao:
-                context["selecionada"] = edicao
+                context["selecionada_edicao"] = edicao
             elif edicao != "proximas" and edicao != "todas":
                 context["projeto"] = get_object_or_404(Projeto, id=edicao)
         
@@ -1183,7 +1194,7 @@ def bancas_lista(request, edicao=None):
 
         if edicao:
             if '.' in edicao:
-                context["selecionada"] = edicao
+                context["selecionada_edicao"] = edicao
             elif edicao != "proximas" and edicao != "todas":
                 context["projeto"] = get_object_or_404(Projeto, id=edicao)
 
@@ -2165,7 +2176,7 @@ def relatos_quinzenais(request, todos=None):
                 "titulo": {"pt": "Relatos Quinzenais", "en": "Biweekly Reports"},
                 "administracao": True,
                 "edicoes": get_edicoes(Relato)[0],
-                "selecionada": f"{configuracao.ano}.{configuracao.semestre}",
+                "selecionada_edicao": f"{configuracao.ano}.{configuracao.semestre}",
             }
 
     return render(request, "professores/relatos_quinzenais.html", context=context)
@@ -2576,7 +2587,7 @@ def resultado_p_certificacao(request):
         edicoes = get_edicoes(Projeto)[0]
 
         configuracao = get_object_or_404(Configuracao)
-        selecionada = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
+        selecionada_edicao = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
         try:
             regulamento = Documento.objects.filter(tipo_documento__sigla="RCF").order_by("-data").last()  # Regulamento da Certificação Falconi
@@ -2596,7 +2607,7 @@ def resultado_p_certificacao(request):
         context = {
             "titulo": {"pt": "Resultado para Certificação", "en": "Certification Results"},
             "edicoes": edicoes,
-            "selecionada": selecionada,
+            "selecionada_edicao": selecionada_edicao,
             "informacoes": informacoes,
             "regulamento": regulamento,
         }

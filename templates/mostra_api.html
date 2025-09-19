@@ -1,0 +1,55 @@
+
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 19 de Setembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{# Dados para documentação da API interna (mantenha aspas simples) #}
+<div id="api-docs" style="display:none" data-endpoints='{{ endpoints|safe }}'></div>
+
+<script>
+  (function() {
+    const isDevToolsOpen = () => {
+      // Técnicas para detectar DevTools
+      return window.outerWidth - window.innerWidth > 160 || 
+            window.outerHeight - window.innerHeight > 160;
+    };
+    
+    if (isDevToolsOpen()) {
+    
+      const apiDocsDiv = document.getElementById("api-docs");
+      const endpointsData = apiDocsDiv ? apiDocsDiv.dataset.endpoints : "";
+
+      if (endpointsData && endpointsData.trim().length > 0) {
+        try {
+          const docs = JSON.parse(endpointsData);
+          const formattedDocs = {};
+          docs.forEach(doc => {
+              const key = `${doc.path}`;
+              formattedDocs[key] = {
+                  method: doc.method,
+                  description: doc.description
+              };
+          });
+          
+          console.log('%c📚 API Documentation', 'color: #0366d6; font-size: 14px; font-weight: bold;');
+          console.table(formattedDocs);
+          
+          // Dica discreta no final
+          //console.log('%cdocs', 'color: #586069; font-size: 11px;');
+          
+        } catch (e) {
+          console.warn("API Docs JSON inválido:", e);
+        }
+      } else {
+        console.warn("API Docs não encontrados ou vazios.");
+      }
+
+    }
+  })();
+</script>
+
