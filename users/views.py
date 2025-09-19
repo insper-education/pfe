@@ -876,12 +876,7 @@ def contas_senhas(request, edicao=None):
             ano, semestre = edicao.split('.')
             estudantes = estudantes.filter(ano=ano, semestre=semestre, trancado=False)
 
-        
-        print(request.POST)
-            
-
         curso = request.POST.get("curso")
-        print(curso)
         if curso != "TE":  # Filtra para projetos com estudantes de um curso específico
             if curso != 'T':
                 estudantes = estudantes.filter(curso2__sigla_curta=curso)

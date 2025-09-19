@@ -991,8 +991,6 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.save()
 
         participantes = anota_participacao(request.POST, reuniao=reuniao)
-        print(participantes)
-        print("----")
         
         if "enviar_mensagem" in request.POST:
             if reuniao.projeto:
@@ -1011,7 +1009,6 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                         recipient_list.append(usuario.email)
                 # recipient_list.append(str(configuracao.coordenacao.user.email))
 
-                print(recipient_list)
                 context_email = {
                     "reuniao": reuniao,
                     "configuracao": configuracao

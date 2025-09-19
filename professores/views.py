@@ -443,7 +443,6 @@ def encontro_feedback(request, pk):
         }
 
         mensagem = render_message("Anotações de Mentoria", context_email)
-
         email(subject, recipient_list, mensagem)
 
         if request.user.is_authenticated:
@@ -1430,7 +1429,6 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
                 recipient_list.append(request.user.email)
                 # recipient_list.append(projeto.orientador.user.email)
                 # recipient_list.append(configuracao.coordenacao.user.email)
-                print(mensagem_anot)
                 email(subject, recipient_list, mensagem_anot)
 
 
