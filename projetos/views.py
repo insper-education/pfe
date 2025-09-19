@@ -710,7 +710,7 @@ def meuprojeto(request, primarykey=None):
     }
     
     # Caso seja Professor ou Administrador
-    if request.user.tipo_de_usuario in (2, 4):
+    if request.user.eh_prof_a:
         context["professor"] = request.user.professor
 
         # Pegando um estudante de um projeto quando orientador
@@ -733,10 +733,12 @@ def meuprojeto(request, primarykey=None):
 
     if primarykey:
         context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"], projeto__id=primarykey)
+        context["associados"] = Associado.objects.filter(estudante=context["aluno"], projeto__id=primarykey).last()
     else:
         context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"]).order_by("id")
+        context["associados"] = Associado.objects.filter(estudante=context["aluno"]).order_by("id")
 
-    if context["alocados"].count() > 1:
+    if context["alocados"].count() > 1 or context["associados"].count() > 1:
         context["titulo"] = { "pt": "Meus Projetos", "en": "My Projects"}
     else:
         context["titulo"] = { "pt": "Meu Projeto", "en": "My Project"}
@@ -869,9 +871,14 @@ def reunioes(request, todos=None):
     configuracao = get_object_or_404(Configuracao)
     if request.user.eh_estud:
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
-        if not alocacao:
+        associado = Associado.objects.filter(estudante=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        if alocacao:
+            reunioes = Reuniao.objects.filter(projeto=alocacao.projeto)
+        elif associado:
+            reunioes = Reuniao.objects.filter(projeto=associado.projeto)
+        else:
             return HttpResponse("Nenhuma alocação encontrada.", status=404)
-        reunioes = Reuniao.objects.filter(projeto=alocacao.projeto)
+        
     elif request.user.eh_prof_a:
         if todos:
             reunioes = Reuniao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
@@ -916,11 +923,17 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                                            projeto__ano=configuracao.ano,
                                            projeto__semestre=configuracao.semestre).last()
 
-        if not alocacao:
+        associados = Associado.objects.filter(estudante=request.user.aluno,
+                                             projeto__ano=configuracao.ano, 
+                                             projeto__semestre=configuracao.semestre)
+
+        if alocacao:
+            projetos = [alocacao.projeto]
+        elif associados:
+            projetos = [associado.projeto for associado in associados]
+        else:
             context["mensagem"] = {"pt": "Você não está alocado em um projeto esse semestre.", "en": "You are not allocated to a project this semester."}
             return render(request, "generic_ml.html", context=context)
-
-        projetos = [alocacao.projeto]
 
     elif request.user.eh_prof_a:  # Professor
         if request.user.eh_admin and reuniao_id_g == "todos":

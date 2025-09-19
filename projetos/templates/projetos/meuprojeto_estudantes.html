@@ -35,52 +35,122 @@
     </h5><br>
   {% endif %}
 
-  {% for alocado in alocados %}
+  {% if alocados or associados %}
 
-    <div class="div_arredondado_100">
-      {% if alocado.projeto.ano > configuracao.ano or alocado.projeto.ano == configuracao.ano and alocado.projeto.semestre > configuracao.semestre %}
-        {% lng "Projetos" "Projects" %}
-        {{alocado.projeto.ano}}.{{alocado.projeto.semestre}}
-        {% lng "em fase de alocação." "in the allocation phase." %}
-        <br>
+    {% for alocacao in alocados %}
 
-      {% else %}
+      <div class="div_arredondado_100">
+        {% if alocacao.projeto.ano > configuracao.ano or alocacao.projeto.ano == configuracao.ano and alocacao.projeto.semestre > configuracao.semestre %}
+          {% lng "Projetos" "Projects" %}
+          {{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}}
+          {% lng "em fase de alocação." "in the allocation phase." %}
+          <br>
 
-        {% include "projeto.html" %}
+        {% else %}
 
-        {% with notas=alocado|get_notas_alocacao:request descontos=alocado|get_descontos_alocacao:request %}
-          {% if notas or descontos %}
-            <div>
-              <h5>{% lng "Resultados" "Results" %}</h5>
-              <div style="background: #FFFFFF; padding: 6px;">
-              {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
+          {% include "projeto.html" with projeto=alocacao.projeto alocacao=alocacao %}
+
+          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+            {% if notas or descontos %}
+              <div>
+                <h5>{% lng "Resultados" "Results" %}</h5>
+                <div style="background: #FFFFFF; padding: 6px;">
+                {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
+                </div>
               </div>
-            </div>
-          {% endif %}
-        {% endwith %}
+            {% endif %}
+          {% endwith %}
 
-        {% with encontros=alocado.projeto.encontro_set.all %}
-        {% if encontros %}
-        <div>
-          <h5>{% lng "Mentorias Marcadas" "Scheduled Mentoring Sessions" %}</h5>
-          <ul>
-            {% for dinamica in encontros %} 
-              <li>
-                {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
-                {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
-                {% if dinamica.facilitador %}|
-                  {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
-                  {{dinamica.facilitador.get_full_name}}
-                  {% if dinamica.observacoes_estudantes %}
-                    <ul>
-                      <li>
-                        <strong>{% lng "Observações" "Observations" %}:</strong>
-                        {{dinamica.observacoes_estudantes|safe|linebreaks}}
-                      </li>
-                    </ul>
+          {% with encontros=alocacao.projeto.encontro_set.all %}
+          {% if encontros %}
+          <div>
+            <h5>{% lng "Mentorias Marcadas" "Scheduled Mentoring Sessions" %}</h5>
+            <ul>
+              {% for dinamica in encontros %} 
+                <li>
+                  {{dinamica.startDate}} - {{dinamica.endDate|date:'H:i'}}
+                  {% if dinamica.location %}; em: <span style="word-break: break-all;">{{dinamica.location}}</span> {% endif %}
+                  {% if dinamica.facilitador %}|
+                    {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
+                    {{dinamica.facilitador.get_full_name}}
+                    {% if dinamica.observacoes_estudantes %}
+                      <ul>
+                        <li>
+                          <strong>{% lng "Observações" "Observations" %}:</strong>
+                          {{dinamica.observacoes_estudantes|safe|linebreaks}}
+                        </li>
+                      </ul>
+                    {% endif %}
+
                   {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          {% endwith %}
 
-                {% endif %}
+          {% with certificados=alocacao|get_certificados_est %}
+          {% if certificados %}
+          <div>
+            <h5>{% lng "Certificados Recebidos" "Certificates Received" %}</h5>
+            <ul>
+              {% for documento in certificados %} 
+                <li>
+                  {% if documento.documento and documento.link %}
+                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
+                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
+                  {% else %}
+                    {% if documento.documento %}
+                      <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>
+                    {% endif %}
+                    {% if documento.link %}
+                      <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
+                    {% endif %}
+                  {% endif %}
+                  ({{documento.data}})
+                  </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          {% endwith %}
+
+          {% with documentos=alocacao.projeto.get_documentos %}
+          {% if documentos %}
+          <div>
+            <h5>{% lng "Documentos" "Documents" %}</h5>
+            <ul>
+              {% for documento in documentos %}
+                <li>
+                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+                  ({{documento.data}})
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          {% endwith %}
+
+        {% endif %}
+
+      </div>
+
+    {% endfor %}
+
+    {% for associado in associados %}
+      <div class="div_arredondado_100">
+        {% include "projeto.html" with projeto=associado.projeto %}
+
+        {% with documentos=associado.projeto.get_documentos %}
+        {% if documentos %}
+        <div>
+          <h5>{% lng "Documentos" "Documents" %}</h5>
+          <ul>
+            {% for documento in documentos %}
+              <li>
+                <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
+                ({{documento.data}})
               </li>
             {% endfor %}
           </ul>
@@ -88,38 +158,12 @@
         {% endif %}
         {% endwith %}
 
-        {% with certificados=alocado|get_certificados_est %}
-        {% if certificados %}
-        <div>
-          <h5>{% lng "Certificados Recebidos" "Certificates Received" %}</h5>
-          <ul>
-            {% for documento in certificados %} 
-              <li>
-                {% if documento.documento and documento.link %}
-                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">(documento)</a>
-                  <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">(link)</a>
-                {% else %}
-                  {% if documento.documento %}
-                    <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_certificado}}</a>
-                  {% endif %}
-                  {% if documento.link %}
-                    <a href="{{documento.link}}" target="_blank" rel="noopener noreferrer">{{documento}}</a>
-                  {% endif %}
-                {% endif %}
-                ({{documento.data}})
-                </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        {% endwith %}
+      </div>
 
-      {% endif %}
+    {% endfor %}
 
-    </div>
-
-  {% empty %}
-    {% lng "Nenhuma alocação em projetos encontrada para você." "No project allocation found for you." %}
-  {% endfor %}
+  {% else %}
+    {% lng "Nenhum projeto encontrado para você." "No project found for you." %}
+  {% endif %}
 
 {% endblock %}

@@ -25,7 +25,7 @@
           <br>
         {% else %}
           <input type="text" size="73" maxlength="{% max_length Projeto "site" %}" 
-                 {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+                 {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
                  style="max-width: 95%;" id="site" name="site" {% if projeto.site %}
                  value="{{projeto.site}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
           <div style="font-size: 12px; line-height:1.0;">site do projeto em repositório externo</div>
@@ -33,7 +33,7 @@
         {% endif %}
       </div>
       <div class="col-md-6">
-        <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+        <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
         <input class="btn btn-info btn-sm" type="submit" id="Carregar" name="Carregar" value="Carregar" disabled>
         {% if projeto %}
           <script>
@@ -47,7 +47,7 @@
           </script>
         {% endif %}
         {% if site %}
-          <input class="btn btn-danger btn-sm" type="submit" name="Remover" value="Remover" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+          <input class="btn btn-danger btn-sm" type="submit" name="Remover" value="Remover" {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
         {% endif %}
         <br>
         <div style="font-size: 12px; line-height:1.0;">
@@ -62,14 +62,14 @@
       {% lng "Pastas do projeto (opcional)" "Project folders (optional)" %}
     </b></label><br>
     <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
-    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
     >{% if projeto.pastas_do_projeto %}{{projeto.pastas_do_projeto}}{% endif %}</textarea>
     <div style="font-size: 12px; line-height:1.0;">
       {% lng "Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado se não tiver autorização da organização parceira para deixar público)" "Links to repositories with project data/code (for advisor access / keep private if you do not have authorization from the partner organization to make it public)" %}
     </div>
 
-    <div class="text-right">
-      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+    <div class="text-right mt-2">
+      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
         {% lng "Salvar" "Save" %}
       </button>
     </div>

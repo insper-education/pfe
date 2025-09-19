@@ -10,186 +10,192 @@
   .return {margin-left: 0.4em;}
 </style>
 
-<h5>
-  {% lng "Pré-projeto" "Pre-project" %}
-</h5>
+<div class="mb-4">
+  <h5>
+    {% lng "Pré-projeto" "Pre-project" %}
+  </h5>
 
-<div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informacoes_adicionais' %}">
-  {% lng "Indicar Interesses e Experiências" "Indicate Interests and Experiences" %}
-</a></div>
-<div class="item_lista"><span class="circulo">&#9899;</span> <a 
-  {% comment %} Caso Professor {% endcomment %}
-  {% if user.tipo_de_usuario == 2 or user.tipo_de_usuario == 4 %}
-      {% if vencido %}
-          style="color:grey"
-      {% elif not liberadas_propostas %}
-          style="color:grey"
-      {% endif %}
-      href="{% url 'selecao_propostas' %}"
-
-  {% comment %} Caso Estudante {% endcomment %}
-  {% else %}
-      {% if vencido %}
-          class="disabled" onclick="showMessage('vencido')" 
-      {% elif not liberadas_propostas %}
-          class="disabled" onclick="showMessage('liberado')" 
-      {% else %}
-          href="{% url 'selecao_propostas' %}"
-      {% endif %}
-  {% endif %}
-  >
-    {% lng "Selecionar Propostas de Projetos" "Select Project Proposals" %}
-  </a>
-</div>
-{% if ano == user.aluno.ano and semestre == user.aluno.semestre %}
-  <div style="color: red;">
-    {% if liberadas_propostas and limite_propostas %}
-      {% lng "Prazo para a seleção das propostas" "Deadline for selecting proposals" %}
-      {{ano}}.{{semestre}}: <b>{{limite_propostas}}</b>
-    {% else %}
-      {% lng "Propostas para" "Proposals for" %}  
-      {{ano}}.{{semestre}}
-      {% lng "ainda não liberadas, previsão de liberação" "not yet released, forecast release" %}:  
-      <b>{{liberacao_visualizacao}}</b>
-    {% endif %}      
-  </div>
-{% endif %}    
-<br>
-
-<h5>
-  {% lng "Projeto" "Project" %}
-</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  <a
-    {% if user.eh_parc %}  {% comment %} Caso Organização {% endcomment %}
-        class="disabled" onclick="showMessage('projeto_organizacao')"
-    {% elif user.eh_estud %}  {% comment %} Caso Estudante {% endcomment %}
-        {% if not projeto %} 
-            class="disabled" onclick="showMessage('projeto')"
-        {% else %}
-            href="{% url 'meuprojeto' %}"
-        {% endif %}
-    {% else %}
-      href="{% url 'meuprojeto' %}"
-    {% endif %}
-  >
-    {% lng "Meu Projeto" "My Project" %}
-  </a>
-</div>
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  <a {% if not user.eh_prof_a and not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
-    {% lng "Informações das Bancas" "Information of the Examination Boards" %}
-  </a>
-</div>
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=submissao_documento %}</span>
-  <a {% comment %} Submissão de Documentos {% endcomment %}
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a href="{% url 'informacoes_adicionais' %}">
+    {% lng "Indicar Interesses e Experiências" "Indicate Interests and Experiences" %}
+  </a></div>
+  <div class="item_lista"><span class="circulo">&#9899;</span> <a 
+    {% comment %} Caso Professor {% endcomment %}
     {% if user.eh_prof_a %}
-        href="{% url 'submissao_documento' %}"
+        {% if vencido %}
+            style="color:grey"
+        {% elif not liberadas_propostas %}
+            style="color:grey"
+        {% endif %}
+        href="{% url 'selecao_propostas' %}"
+
+    {% comment %} Caso Estudante {% endcomment %}
     {% else %}
-        {% if not projeto %} 
-            class="disabled" onclick="showMessage('projeto')"
+        {% if vencido %}
+            class="disabled" onclick="showMessage('vencido')" 
+        {% elif not liberadas_propostas %}
+            class="disabled" onclick="showMessage('liberado')" 
         {% else %}
-            href="{% url 'submissao_documento' %}"
+            href="{% url 'selecao_propostas' %}"
         {% endif %}
     {% endif %}
-  >
-    {% lng "Submissão de Documentos" "Document Submission" %}
-  </a>
+    >
+      {% lng "Selecionar Propostas de Projetos" "Select Project Proposals" %}
+    </a>
+  </div>
+  {% if ano == user.aluno.ano and semestre == user.aluno.semestre %}
+    <div style="color: red;">
+      {% if liberadas_propostas and limite_propostas %}
+        {% lng "Prazo para a seleção das propostas" "Deadline for selecting proposals" %}
+        {{ano}}.{{semestre}}: <b>{{limite_propostas}}</b>
+      {% else %}
+        {% lng "Propostas para" "Proposals for" %}  
+        {{ano}}.{{semestre}}
+        {% lng "ainda não liberadas, previsão de liberação" "not yet released, forecast release" %}:  
+        <b>{{liberacao_visualizacao}}</b>
+      {% endif %}      
+    </div>
+  {% endif %}    
 </div>
 
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=alocacao_semanal %}</span>
-  <a 
-    {% if not request.user.eh_prof_a and not projeto %}
-      class="disabled" onclick="showMessage('projeto')"
-    {% else %}
-      href="{% url 'alocacao_semanal' %}"
-    {% endif %}
-  >
-    {% lng "Alocação Semanal" "Weekly Allocation" %}
-  </a>
+<div class="mb-4">
+  <h5>
+    {% lng "Projeto" "Project" %}
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span>
+    <a
+      {% if user.eh_parc %}  {% comment %} Caso Organização {% endcomment %}
+          class="disabled" onclick="showMessage('projeto_organizacao')"
+      {% elif user.eh_estud %}  {% comment %} Caso Estudante {% endcomment %}
+          {% if not projeto and not associado %}
+              class="disabled" onclick="showMessage('projeto')"
+          {% else %}
+              href="{% url 'meuprojeto' %}"
+          {% endif %}
+      {% else %}
+        href="{% url 'meuprojeto' %}"
+      {% endif %}
+    >
+      {% lng "Meu Projeto" "My Project" %}
+    </a>
+  </div>
+
+  {% if projeto or user.eh_prof_a %}
+    <div class="item_lista"><span class="circulo">&#9899;</span>
+      <a {% if not user.eh_prof_a and not projeto %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'minhas_bancas' %}" {% endif %} >
+        {% lng "Informações das Bancas" "Information of the Examination Boards" %}
+      </a>
+    </div>
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=submissao_documento %}</span>
+      <a {% comment %} Submissão de Documentos {% endcomment %}
+        {% if user.eh_prof_a %}
+            href="{% url 'submissao_documento' %}"
+        {% else %}
+            {% if not projeto %} 
+                class="disabled" onclick="showMessage('projeto')"
+            {% else %}
+                href="{% url 'submissao_documento' %}"
+            {% endif %}
+        {% endif %}
+      >
+        {% lng "Submissão de Documentos" "Document Submission" %}
+      </a>
+    </div>
+
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=alocacao_semanal %}</span>
+      <a 
+        {% if not request.user.eh_prof_a and not projeto %}
+          class="disabled" onclick="showMessage('projeto')"
+        {% else %}
+          href="{% url 'alocacao_semanal' %}"
+        {% endif %}
+      >
+        {% lng "Alocação Semanal" "Weekly Allocation" %}
+      </a>
+    </div>  
+  {% endif %}
+
+  <div class="item_lista"><span class="circulo">&#9899;</span>
+    <a {% if not projeto and not associado and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'reunioes' %}" {% endif %} >
+      {% lng "Registro de Reuniões" "Meeting Records" %}
+    </a>
+  </div>
 </div>
 
 
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  <a {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'reunioes' %}" {% endif %} >
-    {% lng "Registro de Reuniões" "Meeting Records" %}
-  </a>
-</div>
 
-<br>
+{% if projeto or user.eh_prof_a %}
+  <div class="mb-4">
+    <h5>
+      {% lng "Suporte a Grupos" "Group Support" %}
+    </h5>
 
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relato_quinzenal %}</span>
+      <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
+        {% lng "Relato Quinzenal" "Biweekly Report" %}
+      </a>
+    </div>
 
-<h5>
-  {% lng "Suporte a Grupos" "Group Support" %}
-</h5>
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
+      <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
+          {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
+          href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
+          {% lng "Avaliação de Pares Intermediária" "Intermediate Peer Evaluation" %}
+      </a>
+    </div>
 
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=relato_quinzenal %}</span>
-  <a {% if not projeto and user.tipo_de_usuario == 1 %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'relato_quinzenal' %}" {% endif %} >
-    {% lng "Relato Quinzenal" "Biweekly Report" %}
-  </a>
-</div>
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
+      <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
+          {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %}
+          href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
+            {% lng "Avaliação de Pares Final" "Final Peer Evaluation" %}
+      </a>
+    </div>
 
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_intermediaria %}</span>
-  <a {% if fora_fase_feedback_intermediario %} class="disabled" onclick="showMessage('feedback')" {% else %}
-      {% if not projeto and user.tipo_de_usuario == 1%} class="disabled" onclick="showMessage('projeto')" {% else %}
-      href="{% url 'avaliacao_pares' 'intermediaria' %}" {% endif %}{% endif %} >
-      {% lng "Avaliação de Pares Intermediária" "Intermediate Peer Evaluation" %}
-  </a>
-</div>
+    <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=encontros_marcar %}</span>
+      <a {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')"
+          {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
+        {% lng "Agendar Mentorias" "Schedule Mentoring" %}
+      </a>
+    </div>
 
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=avaliacao_pares_final %}</span>
-  <a {% if fora_fase_feedback_final %} class="disabled" onclick="showMessage('feedback')" {% else %}
-      {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %}
-      href="{% url 'avaliacao_pares' 'final' %}" {% endif %}{% endif %} >
-        {% lng "Avaliação de Pares Final" "Final Peer Evaluation" %}
-  </a>
-</div>
-
-<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=encontros_marcar %}</span>
-  <a {% if not projeto and user.eh_estud %} class="disabled" onclick="showMessage('projeto')"
-      {% else %} href="{% url 'encontros_marcar' %}" {% endif %} >
-    {% lng "Agendar Mentorias" "Schedule Mentoring" %}
-  </a>
-</div>
-
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  {% lng "Formulários para Dinâmicas de Grupo" "Forms for Group Dynamics" %}
-</div>
-        
-<div class="item_lista"><span class="return">&#x21B3;</span>
-  <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'estilo_comunicacao' %}"{% endif %}>
-    {% lng "Estilos de Comunicação (individual)" "Communication Styles (individual)" %}
-  </a>
-</div>
-<div class="item_lista"><span class="return">&#x21B3;</span>
-  <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'codigo_conduta' %}"{% endif %}>
-    {% lng "Código de Conduta Individual (individual)" "Individual Code of Conduct (individual)" %}
-  </a>
-</div>
-<div class="item_lista"><span class="return">&#x21B3;</span>
-  <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'codigo_conduta_projeto' %}"{% endif %}>
-    {% lng "Código de Conduta do Grupo (grupo)" "Group Code of Conduct (group)" %}
-  </a>
-</div>
-<div class="item_lista"><span class="return">&#x21B3;</span>
-  <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'funcionalidade_grupo' %}"{% endif %}>
-    {% lng "Funcionalidade de Grupo (individual)" "Group Functionality (individual)" %}
-  </a>
-</div>
-
-<br>
+    <div class="item_lista"><span class="circulo">&#9899;</span>
+      {% lng "Formulários para Dinâmicas de Grupo" "Forms for Group Dynamics" %}
+    </div>
+            
+    <div class="item_lista"><span class="return">&#x21B3;</span>
+      <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'estilo_comunicacao' %}"{% endif %}>
+        {% lng "Estilos de Comunicação (individual)" "Communication Styles (individual)" %}
+      </a>
+    </div>
+    <div class="item_lista"><span class="return">&#x21B3;</span>
+      <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'codigo_conduta' %}"{% endif %}>
+        {% lng "Código de Conduta Individual (individual)" "Individual Code of Conduct (individual)" %}
+      </a>
+    </div>
+    <div class="item_lista"><span class="return">&#x21B3;</span>
+      <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'codigo_conduta_projeto' %}"{% endif %}>
+        {% lng "Código de Conduta do Grupo (grupo)" "Group Code of Conduct (group)" %}
+      </a>
+    </div>
+    <div class="item_lista"><span class="return">&#x21B3;</span>
+      <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'funcionalidade_grupo' %}"{% endif %}>
+        {% lng "Funcionalidade de Grupo (individual)" "Group Functionality (individual)" %}
+      </a>
+    </div>
+  </div>
+{% endif %}
 
 
-<h5>
-  {% lng "Pós-projeto" "Post-project" %}
-</h5>
-<div class="item_lista"><span class="circulo">&#9899;</span>
-  <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %} >
-    {% lng "Feedback de encerramento" "Closing Feedback" %}
-  </a>
-</div>
-<br>
-
+{% if fase_final %}
+  <h5>
+    {% lng "Pós-projeto" "Post-project" %}
+  </h5>
+  <div class="item_lista"><span class="circulo">&#9899;</span>
+    <a {% if not fase_final %} class="disabled" onclick="showMessage('final')" {% else %} href="{% url 'estudante_feedback' %}" {% endif %}>
+      {% lng "Feedback de encerramento" "Closing Feedback" %}
+    </a>
+  </div>
+{% endif %}
 
 
 {% comment %} <a href=" reembolso " > <h5> Pedido de Reembolso </h5> </a> {% endcomment %}

@@ -21,7 +21,7 @@
     data-en="Indicate the final title of the project used in the report (if different from the original title of the proposal)"
     placeholder="Indique o título final do projeto usado no relatório (se diferente do título original da proposta)"
     class="troca_lingua"
-    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
     >{% if projeto.titulo_final %}{{projeto.titulo_final}}{% endif %}</textarea>
     <br><br>
 
@@ -33,7 +33,7 @@
     data-en="Inform the summary in Portuguese of the project of the report. Copy directly from your report."
     placeholder="Informe o resumo em português do projeto do relatório. Copie diretamente do seu relatório."
     class="troca_lingua"
-    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    {% if  not alocacao or not request.user.eh_estud %}disabled{% endif %}
     >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
     <br><br>
 
@@ -45,7 +45,7 @@
     data-en="Inform the summary in English of the project of the report. Copy directly from your report."
     placeholder="Informe o resumo em inglês do projeto do relatório. Copie diretamente do seu relatório."
     class="troca_lingua"
-    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
     >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
     <br><br>
 
@@ -53,7 +53,7 @@
       {% lng "Palavras-chave" "Keywords" %}
     </b></label><br>
     <textarea id="palavras_chave" name="palavras_chave" rows="1" maxlength="{% max_length Projeto 'palavras_chave' %}"
-    {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}
+    {% if  not alocacao or not request.user.eh_estud %}disabled{% endif %}
     data-pt="Informe as palavras-chave do projeto do relatório. Copie diretamente do seu relatório."
     data-en="Inform the keywords of the project of the report. Copy directly from your report."
     placeholder="Informe as palavras-chave do projeto do relatório. Copie diretamente do seu relatório."
@@ -63,8 +63,8 @@
     <small>
       {% lng "Ao final do semestre, inserir/atualizar o resumo, abstract e palavras-chave para indexação do relatório. Copie diretamente do seu relatório." "At the end of the semester, insert/update the summary, abstract and keywords for indexing the report. Copy directly from your report." %}
     </small>
-    <div class="text-right">
-      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if estudante_view and not request.user.eh_estud %}disabled{% endif %}>
+    <div class="text-right mt-2">
+      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
         {% lng "Salvar" "Save" %}
       </button>
     </div>

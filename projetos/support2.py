@@ -20,7 +20,7 @@ from estudantes.models import Pares, Relato, FeedbackPares
 
 from operacional.models import Curso
 
-from users.models import Alocacao, PFEUser, Alocacao
+from users.models import Alocacao, PFEUser, Alocacao, Associado
 
 
 def get_areas_estudantes(alunos):
@@ -131,12 +131,16 @@ def busca_relatos(self):
     return zip(eventos, relatos, avaliados, observacoes)
 
 
-def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 'C', 'P']):
+def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 'C', 'P', 'A']):
     """Recupera os envolvidos em uma reunião de um projeto."""
     pessoas = []
+    integrantes = []
     if 'E' in filtro:
-        for integrante in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name"):
-            pessoas.append(integrante.aluno.user)
+        integrantes = [alocacao.aluno.user for alocacao in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name")]
+        pessoas.extend(integrantes)
+    if 'A' in filtro:
+        for associado in Associado.objects.filter(projeto=projeto).order_by("estudante__user__full_name"):
+            pessoas.append(associado.estudante.user)
     if 'O' in filtro:
         if projeto.orientador:
             pessoas.append(projeto.orientador.user)
@@ -146,6 +150,7 @@ def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 
     if 'P' in filtro:
         for conexao in Conexao.objects.filter(projeto=projeto).order_by("parceiro__user__full_name"):
             pessoas.append(conexao.parceiro.user)
+
 
     envolvidos = []
     if reuniao:
@@ -170,11 +175,13 @@ def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 
 
     else:
         for pessoa in pessoas:
-            if pessoa.eh_estud:
+            if pessoa in integrantes:
                 situacao = 1  # Presente
+                integrante = True
             else:
                 situacao = 0  # Não convocado
-            envolvidos.append({"participante": pessoa,"situacao": situacao})
+                integrante = False
+            envolvidos.append({"participante": pessoa,"situacao": situacao, "integrante": integrante})
 
     return envolvidos
 

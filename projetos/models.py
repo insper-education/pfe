@@ -218,8 +218,11 @@ class Projeto(models.Model):
     def get_banca_final(self):
         banca = Banca.objects.filter(projeto=self, composicao__exame__titulo="Banca Final").last()
         return banca
-
-
+    
+    def get_documentos(self):  # Alguns documentos de interesse dos alunos
+        tipos_documentos_siglas = ["APE", "COP", "CC", "COE", "RFA", "RFR", "RFG", "RIG", "RPR", "RPU", "VP"]
+        return Documento.objects.filter(projeto=self, tipo_documento__sigla__in=tipos_documentos_siglas).order_by("tipo_documento", "-data")
+    
 class PropostaContato(models.Model):
     """Relacionamento entre Proposta e Contato."""
 

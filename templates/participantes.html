@@ -80,7 +80,11 @@
                   {% if envolvido.participante.eh_prof_a %}
                     #f2f9fdff
                   {% elif envolvido.participante.eh_estud %}
-                    #fdfff5ff
+                    {% if envolvido.integrante %}
+                      #fdfff5ff
+                    {% else %}
+                      #f5fff1ff
+                    {% endif %}
                   {% elif envolvido.participante.eh_parc %}
                     #f8f5fdff
                   {% else %}

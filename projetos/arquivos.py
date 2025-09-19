@@ -19,7 +19,7 @@ from django.http import Http404, HttpResponse
 from django.http.response import StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-from users.models import PFEUser, Alocacao, Administrador
+from users.models import PFEUser, Alocacao, Administrador, Associado
 from documentos.models import TipoDocumento
 
 from .models import Documento, Organizacao, Proposta, Reembolso, Certificado
@@ -161,7 +161,10 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
                     if user.tipo_de_usuario == 1:
                         # Verificar se o documento é do estudante ou do grupo dele
                         alocado_no_projeto = Alocacao.objects.filter(projeto=doc.projeto, aluno=user.aluno).exists()
-                        if (doc.tipo_documento.individual and doc.usuario != user) or not alocado_no_projeto:
+                        associado_ao_projeto = Associado.objects.filter(projeto=doc.projeto, estudante=user.aluno).exists()
+                        if (doc.tipo_documento.individual and doc.usuario != user):
+                            return render(request, "generic_ml.html", context=context)
+                        if not alocado_no_projeto and not associado_ao_projeto:
                             return render(request, "generic_ml.html", context=context)
 
                     elif user.tipo_de_usuario == 3:

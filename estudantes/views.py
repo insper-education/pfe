@@ -43,7 +43,7 @@ from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprend
 from projetos.messages import email, message_agendamento_dinamica, create_message, message_cancelamento
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
-from users.models import UsuarioEstiloComunicacao
+from users.models import UsuarioEstiloComunicacao, Associado
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 from users.support import adianta_semestre_conf
 
@@ -71,6 +71,9 @@ def index_estudantes(request):
 
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
         context["projeto"] = projeto
+
+        associado = Associado.objects.filter(estudante=request.user.aluno, projeto__ano=ano, projeto__semestre=semestre).last()
+        context["associado"] = associado
 
         # Estudantes de processos passados sempre terrão seleção vencida
         if request.user.aluno.ano and request.user.aluno.semestre:

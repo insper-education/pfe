@@ -11,68 +11,68 @@
 {% load linguas %}
 
 <span style="display: block; margin-bottom: 14px">
-  {% if alocado.projeto.titulo_final and alocado.projeto.titulo_final != alocado.projeto.proposta.titulo %}
-    <h3>[{{alocado.projeto.organizacao}}]
-       {{alocado.projeto.titulo_final}} ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})</h3>
+  {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+    <h4>[{{projeto.organizacao}}]
+       {{projeto.titulo_final}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
     <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>
       {% lng "Título original da proposta" "Original title of the proposal" %}
-    </b>: {{alocado.projeto.proposta.titulo}}</small><br>
+    </b>: {{projeto.proposta.titulo}}</small><br>
   {% else %}
-    <h3>{{alocado.projeto.get_titulo}} [{{alocado.projeto.ano}}.{{alocado.projeto.semestre}}]</h3>
+    <h4>[{{projeto.organizacao}}] {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
   {% endif %}
 </span>
 
-{% include "projetos/includes/bloco_titulo_resumo_pchave.html" with projeto=alocado.projeto estudante_view=True %}
+{% include "projetos/includes/bloco_titulo_resumo_pchave.html" with projeto=projeto %}
 
-{% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=alocado.projeto estudante_view=True %}
+{% include "projetos/includes/bloco_site_pasta_proj.html" with projeto=projeto %}
 
 <div>
   <b>{% lng "Descrição da proposta (escrito pela organização parceira):" "Proposal description (written by the partner organization):" %}</b>
-  {{alocado.projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
+  {{projeto.proposta.descricao|linebreaks|bleach_urlize|safe}}<br>
 
-  {% if alocado.projeto.proposta.expectativas %}
+  {% if projeto.proposta.expectativas %}
     <b>{% lng "Expectativas de resultados/entregas:" "Expectations of results/deliverables:" %}</b>
-    {{alocado.projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
+    {{projeto.proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
   {% endif %}
 
-  {% if alocado.projeto.proposta.recursos %}
+  {% if projeto.proposta.recursos %}
     <b>{% lng "Recursos a serem disponibilizados aos Estudantes:" "Resources to be made available to Students:" %}</b>
-    {{ alocado.projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
-    {% if alocado.projeto.proposta.observacoes %}
+    {{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe}}
+    {% if projeto.proposta.observacoes %}
       <b>{% lng "Outras observações:" "Other observations:" %}</b>
-      {{ alocado.projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
+      {{ projeto.proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
     {% endif %}
   {% endif %}
 </div>
 
 <div>
-  {% if alocado.projeto.organizacao.logotipo %}
-    <img id="logotipo" class="logotipo flutua_dir" src="{{ alocado.projeto.organizacao.logotipo.url }}" alt="{{ alocado.projeto.organizacao.sigla }}">
+  {% if projeto.organizacao.logotipo %}
+    <img id="logotipo" class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
   {% endif %}
 
   <h5>
     {% lng "Organização:" "Organization:" %}
-    {{ alocado.projeto.organizacao.nome }}
+    {{ projeto.organizacao.nome }}
   </h5>
   <b>{% lng "endereço:" "address:" %}</b>
-  {{ alocado.projeto.organizacao.endereco|linebreaks }}<br>
-  <b>website:</b> <a href="{{ alocado.projeto.organizacao.website|add_http }}">{{ alocado.projeto.organizacao.website }}</a><br>
+  {{ projeto.organizacao.endereco|linebreaks }}<br>
+  <b>website:</b> <a href="{{ projeto.organizacao.website|add_http }}">{{ projeto.organizacao.website }}</a><br>
 </div>
 
 <div>
-  {% if alocado.projeto.orientador %}
-    <h5 style="margin-bottom: 4px;">{% lng_g alocado.projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}</h5>
+  {% if projeto.orientador %}
+    <h6 style="margin-bottom: 4px;">{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}</h6>
     <ul>
-      <li><a href="mailto:{{alocado.projeto.orientador.user.email}}">{{ alocado.projeto.orientador.user.get_full_name}}</a>
-        <span class="texto-longo emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}">&lt;{{alocado.projeto.orientador.user.email}}&gt;</a></span>
-        <span class="texto-curto emails"><a class="email" href="mailto:{{alocado.projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
+      <li><a href="mailto:{{projeto.orientador.user.email}}">{{ projeto.orientador.user.get_full_name}}</a>
+        <span class="texto-longo emails"><a class="email" href="mailto:{{projeto.orientador.user.email}}">&lt;{{projeto.orientador.user.email}}&gt;</a></span>
+        <span class="texto-curto emails"><a class="email" href="mailto:{{projeto.orientador.user.email}}"><i class="far fa-envelope"></i></a></span>
       </li>
     </ul>
   {% endif %}
 
-  <h5 style="margin-bottom: 4px;">{% lng "Estudantes do Grupo" "Group Students" %}</h5>
+  <h6 style="margin-bottom: 4px;">{% lng "Estudantes do Grupo" "Group Students" %}</h6>
   <ul>
-    {% for membro in alocado.projeto.alocacao_set.all %} 
+    {% for membro in projeto.alocacao_set.all %}
       <li>
         <a href="mailto:{{membro.aluno.user.email}}">{{membro.aluno.user.get_full_name}}</a>
         <span class="texto-longo curso unselectable">[{{ membro.aluno.curso2 }}]</span>
@@ -83,7 +83,28 @@
       </a></li>
     {% endfor %}
   </ul>
+
+
+  {% with associados=projeto.associado_set.all %}
+    {% if associados %}
+      <h6 style="margin-bottom: 4px;">{% lng "Participante associado" "Associated Participant" %}</h6>
+      <ul>
+        {% for associado in associados %}
+          <li>
+            <a href="mailto:{{associado.estudante.user.email}}">{{ associado.estudante.user.get_full_name}}</a>
+            <span class="texto-longo curso unselectable">[{{ associado.estudante.curso2 }}]</span>
+            <span class="texto-curto curso unselectable">[{{ associado.estudante.curso2.sigla_curta }}]</span>
+            {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
+            <span class="texto-longo emails"><a class="email" href="mailto:{{associado.estudante.user.email}}">&lt;{{associado.estudante.user.email}}&gt;</a></span>
+            <span class="texto-curto emails"><a class="email" href="mailto:{{associado.estudante.user.email}}"><i class="far fa-envelope"></i></a></span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  
 </div>
+
 
 <script>
   $(document).ready(function(){	
