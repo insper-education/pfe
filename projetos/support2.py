@@ -221,13 +221,17 @@ def anota_participacao(POST, reuniao=None, encontro=None):
 
                 # Lógica para estudantes
                 if getattr(participante, "eh_estud", False):
-                    alocacao = Alocacao.objects.get(aluno=participante.aluno, projeto=projeto)
-                    desconto_filter_with_aloc = dict(desconto_filter, alocacao=alocacao)
-                    if situacao == 2:  # Faltou sem justificativa
-                        Desconto.objects.update_or_create(
-                            **desconto_filter_with_aloc,
-                            defaults={"nota": 0.25}
-                        )
-                    else:
-                        Desconto.objects.filter(**desconto_filter_with_aloc).delete()
+                    alocacao = Alocacao.objects.filter(aluno=participante.aluno, projeto=projeto).last()
+                    if alocacao:
+                        # Se o estudante faltou sem justificativa, aplica desconto de 0.25 na próxima avaliação
+                        # Caso contrário, remove qualquer desconto existente para essa reunião/encontro
+                        desconto_filter_with_aloc = dict(desconto_filter, alocacao=alocacao)
+                        if situacao == 2:  # Faltou sem justificativa
+                            Desconto.objects.update_or_create(
+                                **desconto_filter_with_aloc,
+                                defaults={"nota": 0.25}
+                            )
+                        else:
+                            Desconto.objects.filter(**desconto_filter_with_aloc).delete()
+
     return participantes

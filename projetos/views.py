@@ -990,8 +990,10 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         reuniao.usuario = request.user
         reuniao.save()
 
-        anota_participacao(request.POST, reuniao=reuniao)
-
+        participantes = anota_participacao(request.POST, reuniao=reuniao)
+        print(participantes)
+        print("----")
+        
         if "enviar_mensagem" in request.POST:
             if reuniao.projeto:
                 subject = "Capstone | Anotações de Reunião (" + reuniao.titulo + ")"
@@ -1001,7 +1003,15 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
                     recipient_list.append(alocacao.aluno.user.email)
                 if reuniao.projeto.orientador:
                     recipient_list.append(reuniao.projeto.orientador.user.email)
+                for coorientador in Coorientador.objects.filter(projeto=reuniao.projeto):
+                    recipient_list.append(coorientador.usuario.email)
+                for participante in participantes:
+                    usuario, situacao = participante
+                    if situacao == "Presente" and  usuario.email not in recipient_list:
+                        recipient_list.append(usuario.email)
                 # recipient_list.append(str(configuracao.coordenacao.user.email))
+
+                print(recipient_list)
                 context_email = {
                     "reuniao": reuniao,
                     "configuracao": configuracao
