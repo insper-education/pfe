@@ -138,9 +138,6 @@ def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 
     if 'E' in filtro:
         integrantes = [alocacao.aluno.user for alocacao in Alocacao.objects.filter(projeto=projeto).order_by("aluno__user__full_name")]
         pessoas.extend(integrantes)
-    if 'A' in filtro:
-        for associado in Associado.objects.filter(projeto=projeto).order_by("estudante__user__full_name"):
-            pessoas.append(associado.estudante.user)
     if 'O' in filtro:
         if projeto.orientador:
             pessoas.append(projeto.orientador.user)
@@ -150,6 +147,9 @@ def recupera_envolvidos(projeto, reuniao=None, encontro=None, filtro=['E', 'O', 
     if 'P' in filtro:
         for conexao in Conexao.objects.filter(projeto=projeto).order_by("parceiro__user__full_name"):
             pessoas.append(conexao.parceiro.user)
+    if 'A' in filtro:
+        for associado in Associado.objects.filter(projeto=projeto).order_by("estudante__user__full_name"):
+            pessoas.append(associado.estudante.user)
 
 
     envolvidos = []

@@ -1993,7 +1993,7 @@ class Certificado(models.Model):
 
 
 class Area(models.Model):
-    """Projeto em que o aluno está alocado."""
+    """Areas de interesse para projetos e pessoas."""
 
     titulo = models.CharField("Título", max_length=48, null=True, blank=True,
                               help_text="Titulo da área de interesse")
