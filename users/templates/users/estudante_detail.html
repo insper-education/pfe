@@ -148,21 +148,21 @@
       <hr>
       <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
 
-      {% for alocado in alocacoes %}
+      {% for alocacao in alocacoes %}
         <b>{% lng "Projeto" "Project" %}{% if alocacoes.count > 1 %} {{forloop.revcounter}}{% endif %}:</b>
-        <a href="{% url 'projeto_infos' alocado.projeto.id %}">
-          [{{alocado.projeto.organizacao.nome}}] {{alocado.projeto.get_titulo}}
-          ({{alocado.projeto.ano}}.{{alocado.projeto.semestre}})
-          {% include "tipo_projeto.html" with projeto=alocado.projeto %}
+        <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
+          [{{alocacao.projeto.organizacao.nome}}] {{alocacao.projeto.get_titulo}}
+          ({{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}})
+          {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
         </a>
         <br>
 
-        {% include "display_notas_individuais.html" with notas=alocado|get_notas_alocacao:request descontos=alocado|get_descontos_alocacao:request %}
+        {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
         <br><br>
 
-        {% with relatos=alocado|get_relatos %}
+        {% with relatos=alocacao|get_relatos %}
 
-          {% if alocado.projeto.ano > 2021 and relatos %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
+          {% if alocacao.projeto.ano > 2021 and relatos %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
             <span class="tit_rel ml-2">{% lng "Relatos Quinzenais" "Biweekly Reports" %}</span><br>
             {% for evento, relato, ordem in relatos %}
               <div style="padding-left: 0.8em;">
@@ -202,11 +202,11 @@
         {% endwith %}
 
         <!-- BANCAS -->
-        {% with bancas=alocado|get_bancas %}
+        {% with bancas=alocacao|get_bancas %}
           {% if bancas %}
             <span class="tit_rel ml-2">{% lng "Participação em Bancas" "Examination Boards" %}</span><br>
             <ul>
-            {% for banca in alocado|get_bancas %}
+            {% for banca in alocacao|get_bancas %}
               <li><a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">{{banca.composicao.exame}}</a></li>
             {% endfor %}
             </ul>
@@ -215,7 +215,7 @@
         {% endwith %}
 
 
-        {% with documentos=alocado|get_documentos_individuais %}
+        {% with documentos=alocacao|get_documentos_individuais %}
           {% if documentos %}
             <span class="tit_rel ml-2">{% lng "Documentos Individuais" "Individual Documents" %}</span><br>
             <div class="caixa_rolante">

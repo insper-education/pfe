@@ -20,8 +20,8 @@
   var descontos = 0.0;
 </script>
 
-{% if user.eh_admin %}
-  <a style="color:black" href="{% url 'edita_notas' alocado.id %}">
+{% if user.eh_admin and alocacao %}
+  <a style="color:black" href="{% url 'edita_notas' alocacao.id %}">
 {% endif %}
 
 {% if notas or descontos %}
@@ -33,7 +33,7 @@
           <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
           {% comment %} {% for aval, nota, peso, descr in notas %} {% endcomment %}
           {% for aval in notas %}
-            {% if alocado|exibe_notas:aval.sigla or not user.eh_estud  %} <!-- Filtra certas avaliações para estudantes não verem -->
+            {% if alocacao|exibe_notas:aval.sigla or not user.eh_estud  %} <!-- Filtra certas avaliações para estudantes não verem -->
               <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
                 <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
@@ -59,7 +59,7 @@
           {% endif %}
           
           <td>
-            <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocado.id}}">0.0</span> <span id="aviso{{alocado.id}}"></span></b>    
+            <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocacao.id}}">0.0</span> <span id="aviso{{alocacao.id}}"></span></b>    
           </td>    
 
         </tr>
@@ -68,43 +68,43 @@
 
     <script>
       if(peso > 0.0) {
-        {% with media=alocado|get_media_alocacao:request %}
+        {% with media=alocacao|get_media_alocacao:request %}
           {% if media %}
             {% if media.probation %}
-              document.getElementById("media{{alocado.id}}").innerHTML = "probatório";
+              document.getElementById("media{{alocacao.id}}").innerHTML = "probatório";
               {% if user.eh_admin %}
-                document.getElementById("media{{alocado.id}}").innerHTML += " ({{media.media|floatformat:2}})";
+                document.getElementById("media{{alocacao.id}}").innerHTML += " ({{media.media|floatformat:2}})";
               {% endif %}
             {% else %}
-              document.getElementById("media{{alocado.id}}").innerHTML = "{{media.media|floatformat:2}}";
+              document.getElementById("media{{alocacao.id}}").innerHTML = "{{media.media|floatformat:2}}";
             {% endif %}
           {% endif %}
         {% endwith %}
         if(peso < 0.99) {
-            document.getElementById("aviso{{alocado.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc( (nota/peso) - descontos ) +  ")</span>";
+            document.getElementById("aviso{{alocacao.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc( (nota/peso) - descontos ) +  ")</span>";
         }
       }
     </script>
   </div>
 {% endif %}
 
-{% if user.eh_admin %}
+{% if user.eh_admin and alocacao %}
   </a>
 {% endif %}
 
-{% if alocado|peso:request > 0 %}
+{% if alocacao|peso:request > 0 %}
   <div class="table-responsive">
     <div class="row mt-1" style="width: 99%; justify-content: center;">
-      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-geral{{alocado.id}}"></canvas></div>
-      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-individual{{alocado.id}}"></canvas></div>
-      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-grupo{{alocado.id}}"></canvas></div>
+      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-geral{{alocacao.id}}"></canvas></div>
+      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-individual{{alocacao.id}}"></canvas></div>
+      <div style="position: relative; height:203px; width:406px;"><canvas id="radial-grupo{{alocacao.id}}"></canvas></div>
     </div>
   </div>
   <small>{% lng "Obs: Exibição radar supõe mesmo peso para todas as avaliações" "Note: Radar display assumes same weight for all evaluations" %}</small>
 
-  {% with medias_oo=alocado|get_medias_oo %}
+  {% with medias_oo=alocacao|get_medias_oo %}
     <script>
-      var config_radial_individual{{alocado.id}} = {
+      var config_radial_individual{{alocacao.id}} = {
         type: "radar",
         data: {
             labels: [
@@ -154,7 +154,7 @@
         }
       }
 
-      var config_radial_grupo{{alocado.id}} = {
+      var config_radial_grupo{{alocacao.id}} = {
           type: "radar",
           data: {
               labels: [
@@ -208,7 +208,7 @@
           }
       }
 
-      var config_radial_geral{{alocado.id}} = {
+      var config_radial_geral{{alocacao.id}} = {
           type: 'radar',
           data: {
               labels: [
@@ -263,14 +263,14 @@
       }
 
       // Chart radial do nível nos objetivos de aprendizagem
-      var radial_geral{{alocado.id}} = document.getElementById("radial-geral{{alocado.id}}").getContext("2d");
-      new Chart(radial_geral{{alocado.id}}, config_radial_geral{{alocado.id}});
+      var radial_geral{{alocacao.id}} = document.getElementById("radial-geral{{alocacao.id}}").getContext("2d");
+      new Chart(radial_geral{{alocacao.id}}, config_radial_geral{{alocacao.id}});
 
-      var radial_individual{{alocado.id}} = document.getElementById("radial-individual{{alocado.id}}").getContext("2d");
-      new Chart(radial_individual{{alocado.id}}, config_radial_individual{{alocado.id}});
+      var radial_individual{{alocacao.id}} = document.getElementById("radial-individual{{alocacao.id}}").getContext("2d");
+      new Chart(radial_individual{{alocacao.id}}, config_radial_individual{{alocacao.id}});
 
-      var radial_grupo{{alocado.id}} = document.getElementById("radial-grupo{{alocado.id}}").getContext("2d");
-      new Chart(radial_grupo{{alocado.id}}, config_radial_grupo{{alocado.id}});
+      var radial_grupo{{alocacao.id}} = document.getElementById("radial-grupo{{alocacao.id}}").getContext("2d");
+      new Chart(radial_grupo{{alocacao.id}}, config_radial_grupo{{alocacao.id}});
 
     </script>
   {% endwith %}
