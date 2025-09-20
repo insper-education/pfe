@@ -318,14 +318,15 @@ def cadastrar_usuario(request):
         if val:
             context[field] = val
 
+    base_url = reverse("cadastrar_usuario")
     endpoints = [
-        {"path": "administracao/cadastrar_usuario?tipo={valor}", "method": "GET", "description": "seleciona o tipo de usuário a ser cadastrado. Exemplo: tipo=professor ou tipo=estudante ou tipo=parceiro"},
-        {"path": "administracao/cadastrar_usuario?organizacao={id}", "method": "GET", "description": "seleciona a organização do parceiro a ser cadastrado. Exemplo: organizacao=3"},
-        {"path": "administracao/cadastrar_usuario?proposta={id}", "method": "GET", "description": "puxa os contatos da proposta para facilitar o cadastro. Exemplo: proposta=10"},
-        {"path": "administracao/cadastrar_usuario?nome={valor}", "method": "GET", "description": "preenche o campo nome no formulário. Exemplo: nome=Fulano da Silva"},
-        {"path": "administracao/cadastrar_usuario?email={valor}", "method": "GET", "description": "preenche o campo email no formulário. Exemplo: email=fulano@exemplo.com"},
-        {"path": "administracao/cadastrar_usuario?telefone={valor}", "method": "GET", "description": "preenche o campo telefone no formulário. Exemplo: telefone=11999999999"},
-        {"path": "administracao/cadastrar_usuario?cargo={valor}", "method": "GET", "description": "preenche o campo cargo no formulário. Exemplo: cargo=Gerente de TI"},
+        {"path": f"{base_url}?tipo={{valor}}", "method": "GET", "description": "seleciona o tipo de usuário a ser cadastrado. Exemplo: tipo=professor ou tipo=estudante ou tipo=parceiro"},
+        {"path": f"{base_url}?organizacao={{id}}", "method": "GET", "description": "seleciona a organização do parceiro a ser cadastrado. Exemplo: organizacao=3"},
+        {"path": f"{base_url}?proposta={{id}}", "method": "GET", "description": "puxa os contatos da proposta para facilitar o cadastro. Exemplo: proposta=10"},
+        {"path": f"{base_url}?nome={{valor}}", "method": "GET", "description": "preenche o campo nome no formulário. Exemplo: nome=Fulano da Silva"},
+        {"path": f"{base_url}?email={{valor}}", "method": "GET", "description": "preenche o campo email no formulário. Exemplo: email=fulano@exemplo.com"},
+        {"path": f"{base_url}?telefone={{valor}}", "method": "GET", "description": "preenche o campo telefone no formulário. Exemplo: telefone=11999999999"},
+        {"path": f"{base_url}?cargo={{valor}}", "method": "GET", "description": "preenche o campo cargo no formulário. Exemplo: cargo=Gerente de TI"},
     ]
     context["endpoints"] = json.dumps(endpoints)
 

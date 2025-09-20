@@ -54,7 +54,6 @@
       $(document).ready(function(){
         $(".bancas").on("click", function() {
           $(this).closest("div").siblings("div").toggle(200);
-          //next("div").toggle(200);
           $("span", this).toggleClass("seta-baixo seta-cima");
         });
       });
@@ -66,4 +65,6 @@
   </div>
 
   {% include "edicoes_ajax.html" %}
+  {% include "mostra_api.html" with endpoints=endpoints %}
+
 {% endblock %}

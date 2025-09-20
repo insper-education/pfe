@@ -22,6 +22,7 @@ from django.db.models import Case, When, Value, F, Func, FloatField
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 
@@ -669,13 +670,14 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
+        base_url = reverse("banca_avaliar", kwargs={"slug": slug})
         endpoints = [
-            {"path": "professores/banca_avaliar?avaliador={valor}", "method": "GET", "description": "Seleciona o avaliador."},
-            {"path": "professores/banca_avaliar?objetivo{num}={id}&conceito{num}={conceito}", "method": "GET", "description": "Preenche um conceito para um objetivo."},
-            {"path": "professores/banca_avaliar?observacoes_orientador={texto}", "method": "GET", "description": "Preenche as observações do orientador."},
-            {"path": "professores/banca_avaliar?observacoes_estudantes={texto}", "method": "GET", "description": "Preenche as observações dos estudantes."},
-            {"path": "professores/banca_avaliar?destaque={valor}", "method": "GET", "description": "Marca que o avaliador quer destacar o projeto."},
-            {"path": "professores/banca_avaliar/{slug}/{documento_id}", "method": "GET", "description": "Baixa o documento de avaliação da banca."},
+            {"path": f"{base_url}?avaliador={{valor}}", "method": "GET", "description": "Seleciona o avaliador."},
+            {"path": f"{base_url}?objetivo{{num}}={{id}}&conceito{{num}}={{conceito}}", "method": "GET", "description": "Preenche um conceito para um objetivo."},
+            {"path": f"{base_url}?observacoes_orientador={{texto}}", "method": "GET", "description": "Preenche as observações do orientador."},
+            {"path": f"{base_url}?observacoes_estudantes={{texto}}", "method": "GET", "description": "Preenche as observações dos estudantes."},
+            {"path": f"{base_url}?destaque={{valor}}", "method": "GET", "description": "Marca que o avaliador quer destacar o projeto."},
+            {"path": f"{base_url}/{{slug}}/{{documento_id}}", "method": "GET", "description": "Baixa o documento de avaliação da banca."},
         ]
 
         context = {
@@ -1636,11 +1638,18 @@ def resultado_bancas(request):
     else:
         return HttpResponseNotFound("<h1>Bancas não encontradas!</h1>")
 
+    base_url = reverse("resultado_bancas")
+    endpoints = [
+        {"path": f"{base_url}?projeto={{valor}}", "method": "GET", "description": "Filtra projetos pelo ID do projeto. Exemplo: projeto=1"},
+        {"path": f"{base_url}?banca={{valor}}", "method": "GET", "description": "Filtra projetos pelo ID da banca. Exemplo: banca=1"}
+    ]
+
     context = {
         "titulo": {"pt": "Resultado Bancas", "en": "Examination Boards Result"},
         "objetivos": ObjetivosDeAprendizagem.objects.all(),
         "bancas": bancas,
         "projeto": projeto,
+        "endpoints": json.dumps(endpoints),
     }
     return render(request, "professores/resultado_bancas.html", context=context)
 

@@ -1030,40 +1030,26 @@ def publicar_propostas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def validate_alunos(request):
     """Ajax para validar vaga de estudantes em propostas."""
-    proposta_id = int(request.GET.get("proposta", None))
-    vaga = request.GET.get("vaga", " - ").split('-')
-    checked = request.GET.get("checked", None) == "true"
-
     try:
+        proposta_id = int(request.GET.get("proposta"))
+        vaga = request.GET.get("vaga", " - ").split('-')
+        checked = request.GET.get("checked") == "true"
         proposta = Proposta.objects.select_for_update().get(id=proposta_id)
-
-        curso_selecionado = Curso.objects.get(sigla_curta=vaga[0])
-        if vaga[1] == '1':
+        curso = Curso.objects.get(sigla_curta=vaga[0])
+        perfil_num = vaga[1]
+        if perfil_num in {'1', '2', '3', '4'}:
+            perfil_attr = f'perfil{perfil_num}'
+            perfil = getattr(proposta, perfil_attr)
             if checked:
-                proposta.perfil1.add(curso_selecionado)
+                perfil.add(curso)
             else:
-                proposta.perfil1.remove(curso_selecionado)
-        elif vaga[1] == '2':
-            if checked:
-                proposta.perfil2.add(curso_selecionado)
-            else:
-                proposta.perfil2.remove(curso_selecionado)
-        elif vaga[1] == '3':
-            if checked:
-                proposta.perfil3.add(curso_selecionado)
-            else:
-                proposta.perfil3.remove(curso_selecionado)
-        elif vaga[1] == '4':
-            if checked:
-                proposta.perfil4.add(curso_selecionado)
-            else:
-                proposta.perfil4.remove(curso_selecionado)
-
-        proposta.save()
-    except Proposta.DoesNotExist:
-        return HttpResponseNotFound("<h1>Proposta não encontrada!</h1>")
-
-    return JsonResponse({"atualizado": True,})
+                perfil.remove(curso)
+            proposta.save()
+            return JsonResponse({"atualizado": True})
+        else:
+            return HttpResponse("Perfil inválido.", status=400)
+    except (Proposta.DoesNotExist, Curso.DoesNotExist, ValueError, TypeError):
+        return HttpResponseNotFound("Erro ao validar vaga.")
 
 @login_required
 @transaction.atomic

@@ -22,6 +22,7 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
+from django.urls import reverse
 from django.utils.html import escape
 
 
@@ -277,11 +278,12 @@ def relatorios_publicos(request, edicao=None):
         selecionada_lingua = request.GET.get("lingua", None)
         selecionado_orientador = request.GET.get("orientador", None)
 
+        base_url = reverse("relatorios_publicos")
         endpoints = [
-            {"path": "documentos/relatorios_publicos/todas", "method": "GET", "description": "Lista todos os projetos com relatórios públicos."},
-            {"path": "documentos/relatorios_publicos?edicao={valor}", "method": "GET", "description": "Filtra projetos pela edição. Exemplo: edicao=2025.2"},
-            {"path": "documentos/relatorios_publicos?lingua={valores}", "method": "GET", "description": "Filtra projetos pelas línguas. Exemplo: lingua=pt ou lingua=en"},
-            {"path": "documentos/relatorios_publicos?orientador={id}", "method": "GET", "description": "Filtra projetos pelo orientador. Exemplo: orientador=31"}
+            {"path": f"{base_url}/todas", "method": "GET", "description": "Lista todos os projetos com relatórios públicos."},
+            {"path": f"{base_url}?edicao={{valor}}", "method": "GET", "description": "Filtra projetos pela edição. Exemplo: edicao=2025.2"},
+            {"path": f"{base_url}?lingua={{valores}}", "method": "GET", "description": "Filtra projetos pelas línguas. Exemplo: lingua=pt ou lingua=en"},
+            {"path": f"{base_url}?orientador={{id}}", "method": "GET", "description": "Filtra projetos pelo orientador. Exemplo: orientador=31"}
         ]
 
         context = {
