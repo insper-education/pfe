@@ -44,6 +44,16 @@
           {{professor.professor_orientador.count|stringformat:"02d"}}
         </td>
 
+        <td class="text-center">
+          {{professor.user.coorientador_set.all.count|stringformat:"02d"}}
+        </td>
+
+        <td class="text-center">
+          <a href="{% url 'relatorios_publicos' 'todas' %}?orientador={{professor.id}}">
+            Link
+          </a>
+        </td>
+
         <td>
           {% if professor.lattes %}
             <a rel="noopener noreferrer" target="_blank" href="{{professor.lattes}}"

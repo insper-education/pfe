@@ -237,7 +237,12 @@ def relatorios_publicos(request, edicao=None):
             except ValueError:
                 return HttpResponse("Erro ao carregar dados!", status=401)
             projetos = projetos.filter(ano=ano, semestre=semestre)
-        
+        if "orientador" in request.GET:
+            orientador = request.GET.get("orientador", "").strip()
+            if orientador.isdigit():
+                projetos = projetos.filter(orientador__id=int(orientador))
+            else:
+                return HttpResponse("Erro ao carregar dados!", status=401)
         
         cabecalhos = [{"pt": "Projeto", "en": "Project"},
                       {"pt": "Estudantes", "en": "Students"},

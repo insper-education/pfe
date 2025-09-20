@@ -2636,6 +2636,8 @@ def todos_professores(request):
                            { "pt": "Área", "en": "Area", },
                            { "pt": "Bancas", "en": "Examination Boards", },
                            { "pt": "Orientações", "en": "Advising", },
+                           { "pt": "Coorientações", "en": "Co-Advising", },
+                           { "pt": "Documentos Públicos", "en": "Public Documents", },
                            { "pt": "Lattes", "en": "Lattes", },],
             "titulo": { "pt": "Professores", "en": "Professors", },
         }
