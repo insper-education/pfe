@@ -16,11 +16,11 @@ def tipo_usuario(objeto, lingua):
     if lingua == "pt":
         """Retorna o tipo de usuário."""
         if objeto.tipo_de_usuario == 1:
-            return "Estudante"
+            return f"Estudante ({objeto.aluno.curso2})"
         elif objeto.tipo_de_usuario == 2:
-            return "Professor"
+            return f"Professor ({objeto.professor.dedicacao})"
         elif objeto.tipo_de_usuario == 3:
-            return "Parceiro"
+            return f"Parceiro ({objeto.parceiro.organizacao.sigla})"
         elif objeto.tipo_de_usuario == 4:
             return "Administrador"
         else:
@@ -29,11 +29,11 @@ def tipo_usuario(objeto, lingua):
     elif lingua == "en":
         """Retorna o tipo de usuário em inglês."""
         if objeto.tipo_de_usuario == 1:
-            return "Student"
+            return f"Student ({objeto.aluno.curso2})"
         elif objeto.tipo_de_usuario == 2:
-            return "Professor"
+            return f"Professor ({objeto.professor.dedicacao})"
         elif objeto.tipo_de_usuario == 3:
-            return "Partner"
+            return f"Partner ({objeto.parceiro.organizacao.sigla})"
         elif objeto.tipo_de_usuario == 4:
             return "Administrator"
         else:
