@@ -36,10 +36,12 @@
         {% endif %}
       {% endfor %}
     {% include "tabelas_bottom.html" %}
+    <script>
+      {% include "seleciona_linha_tabelas.html" with select="usuario" tabela="Aulas" data="user" %}
+    </script>
   </div>
 
   <script>
-    {% include "seleciona_linha_tabelas.html" with select="usuario" tabela="Aulas" data="user" %}
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
     };

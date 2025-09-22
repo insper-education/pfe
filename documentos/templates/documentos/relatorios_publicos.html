@@ -96,11 +96,14 @@
         {% endwith %}
       {% endfor %}
     {% include "tabelas_bottom.html" %}
+
+    <script>
+      {% include "seleciona_linha_tabelas.html" with select="filterLingua" tabela="Relatorios" data="lingua" %}
+    </script>
   </div>
 
   <script>
-    {% include "seleciona_linha_tabelas.html" with select="filterLingua" tabela="Relatorios" data="lingua" %}
-
+    
     function carrega_pagina() {
       if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
         table = $("#RelatoriosTable").dataTable();

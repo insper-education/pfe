@@ -4,9 +4,30 @@
   Data: 26 de Março de 2025
 {% endcomment %}
 
-$(document).ready(function () {
+{% comment %} Somente mostra elemento selecionado {% endcomment %}
+var incluir_default = false;  // Incluir "default" na lista de opções do selectpicker se não existir
+$("#{{tabela}}Table tbody tr").each(function() {   // Garantir que todas as linhas tenham o atributo data-{{data}}
+  if (!$(this).attr("data-{{data}}")) {
+    $(this).attr("data-{{data}}", "default");
+    incluir_default = true;
+  }
+});
+
+if (incluir_default) {  // Se alguma linha foi alterada, atualizar o selectpicker
+  if ($("#{{select}} option[value='default']").length === 0) {
+    $("#{{select}}").append('<option value="default">Sem classificação</option>');
+    $("#{{select}}").selectpicker('refresh');
+  }
+} else { // remove se existir
+  $("#{{select}} option[value='default']").remove();
+  $("#{{select}}").selectpicker('refresh');
+}
+
+
+$(document).ready(function () {  
   {% comment %} Somente mostra elemento selecionado {% endcomment %}
-  function mostra_elem_selecionado() {  // (e, clickedIndex, isSelected, previousValue)
+  function mostra_elem_selecionado() {
+    // Código original sem alterações
     table = $("#{{tabela}}Table").DataTable();
     $.fn.dataTable.ext.search.push(
       function(settings, data, dataIndex) {
@@ -24,4 +45,3 @@ $(document).ready(function () {
   $("#{{select}}").on("changed.bs.select", mostra_elem_selecionado);
   document.addEventListener("edicaoEvent", mostra_elem_selecionado);
 });
-

@@ -40,32 +40,36 @@
   <div id="atualizar">
     {% include "tabelas_top_ml.html" with tabela="Bancas" cabecalhos=cabecalhos %}
       {% for membro, bancas in membros.items %}
-        {% if membro.tipo_de_usuario == 2 or membro.tipo_de_usuario == 4 %}
+        {% if membro.eh_prof_a %}
           <tr class="item" data-user="Insper">
             <td data-sort="{{membro.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">{{membro.get_full_name}}</a>
-        {% elif membro.tipo_de_usuario == 3 %}
+        {% elif membro.eh_parc2 %}
           <tr class="item" data-user="Externo">
             <td data-sort="{{membro.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">{{membro.get_full_name}}</a>
         {% else %}
-          <tr class="item"><td>Erro ao identificar usuário
+          <tr class="item" >
+            <td>{% lng "Erro ao identificar usuário" "Error identifying user" %}
+          
         {% endif %}</td>
           <td><a href="mailto:{{membro.email}}">{{membro.email}}</a></td>
           <td style="text-align: center;"> {{bancas|length}}</td>
           <td style="text-align: left;">
             <small><ul>{% for banca in bancas %}
               <li>
-                {% if banca.get_tipo %}Banca {{banca.get_tipo}}: {% endif %}
+                {% if banca.get_tipo %}{{banca.get_tipo}}{% endif %}
+                {% if banca.projeto.orientador.user == membro %}(Orientador){% else %}(Membro){% endif %}:
                 [{{banca.projeto.organizacao}}] {{banca.projeto.get_titulo}} ({{banca.startDate}})</li>
             {% endfor %}</ul></small>
           </td>
         </tr>
       {% endfor %}
     {% include "tabelas_bottom.html" %}
-  </div>
 
-  <script>
-    {% include "seleciona_linha_tabelas.html" with select="avaliador" tabela="Bancas" data="user" %}
-  </script>
+    <script>
+      {% include "seleciona_linha_tabelas.html" with select="avaliador" tabela="Bancas" data="user" %}
+    </script>
+    
+  </div>
 
   {% include "edicoes_ajax.html" with tabela="Bancas" %}
 
