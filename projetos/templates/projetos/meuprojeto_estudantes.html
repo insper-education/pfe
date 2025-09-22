@@ -37,6 +37,7 @@
 
   {% if alocados or associados %}
 
+    {% comment %} Só para estudantes alocados para o desenvolvimento do projeto em tempo integral. {% endcomment %}
     {% for alocacao in alocados %}
 
       <div class="div_arredondado_100">
@@ -120,14 +121,9 @@
           {% if documentos %}
           <div>
             <h5>{% lng "Documentos" "Documents" %}</h5>
-            <ul>
-              {% for documento in documentos %}
-                <li>
-                  <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
-                  ({{documento.data}})
-                </li>
-              {% endfor %}
-            </ul>
+            <div class="caixa_rolante">
+              {% include "documentos.html" with documentos=documentos %}
+            </div>
           </div>
           {% endif %}
           {% endwith %}
@@ -138,6 +134,7 @@
 
     {% endfor %}
 
+    {% comment %} Só para estudantes que estão dando apoio ao projeto ou participante de forma não da equipe principal. {% endcomment %}
     {% for associado in associados %}
       <div class="div_arredondado_100">
         {% include "projeto.html" with projeto=associado.projeto %}
@@ -146,14 +143,9 @@
         {% if documentos %}
         <div>
           <h5>{% lng "Documentos" "Documents" %}</h5>
-          <ul>
-            {% for documento in documentos %}
-              <li>
-                <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer">{{documento.tipo_documento}}</a>
-                ({{documento.data}})
-              </li>
-            {% endfor %}
-          </ul>
+          <div class="caixa_rolante">
+            {% include "documentos.html" with documentos=documentos %}
+          </div>
         </div>
         {% endif %}
         {% endwith %}
