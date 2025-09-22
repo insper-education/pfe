@@ -1405,17 +1405,19 @@ class Feedback(models.Model):
     email = models.EmailField(max_length=80, null=True, blank=True,
                               help_text="e-mail de quem está dando o Feedback")
     
-    #isso esta bem baguncado
+
     empresa = models.CharField(max_length=120, null=True, blank=True,
                                help_text="Empresa de quem está dando o Feedback")
+    
+
     tecnico = models.TextField(max_length=1000, null=True, blank=True,
-                               help_text="Feedback Técnico")
+                               help_text="Feedback sobre a competência Técnica dos estudantes no projeto")
     comunicacao = models.TextField(max_length=1000, null=True, blank=True,
-                                   help_text="Feedback Comunicação")
+                                   help_text="Feedback sobre a competência de Comunicação dos estudantes no projeto")
     organizacao = models.TextField(max_length=1000, null=True, blank=True,
-                                   help_text="Feedback Organização")
+                                   help_text="Feedback sobre a competência de Organização dos estudantes no projeto")
     outros = models.TextField(max_length=1000, null=True, blank=True,
-                              help_text="Feedback Outros")
+                              help_text="Feedback sobre a outras competência e pontos dos estudantes no projeto")
 
     nps = models.PositiveIntegerField("NPS", null=True, blank=True,
                                       validators=[MinValueValidator(0), MaxValueValidator(10)],

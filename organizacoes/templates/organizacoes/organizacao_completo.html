@@ -16,12 +16,6 @@
 
 {% block content %}
   
-
-
-
-
-
-
   {% if organizacao.logotipo %}
     <img id="logotipo" class="logotipo flutua_dir" src="{{ organizacao.logotipo.url }}" alt="{{ organizacao.sigla }}">
   {% endif %}
@@ -205,7 +199,28 @@
     </ol>
     </div>
   {% endif %}
-  
+
+  {% if user.eh_admin and feedbacks_estudantes %}
+    <hr>
+    <div class="mb-3">
+      <h5>
+        {% lng "Feedbacks dos estudantes sobre organização" "Student feedbacks about organization" %}
+      </h5>
+      {% for feedback in feedbacks_estudantes %}
+        <a href="{% url 'mostra_feedback_estudante' feedback.id %}"
+          data-toggle="tooltip" data-html="true" animation="true" title="{{feedback.projeto}} - {{feedback.estudante.user.get_full_name}}">
+          {% if feedback.recomendaria == 1 %}
+            <i class="fas fa-ban text-danger{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+          {% elif feedback.recomendaria == 2 %}
+            <i class="fas fa-exclamation-triangle text-warning{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+          {% elif feedback.recomendaria == 3 %}
+            <i class="fas fa-check-circle text-success{% if feedback.outros %} border-bottom border-primary{% endif %}"></i>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <hr>
   <h3>
     {% lng "Anotações" "Annotations" %}
