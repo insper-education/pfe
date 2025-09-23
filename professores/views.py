@@ -240,47 +240,64 @@ def get_edicoes_orientador(orientador, configuracao_ate):
 
     return edicoes, ano, semestre
 
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def avaliar_entregas(request, prof_id=None, selecao=None):
+def avaliar_entregas(request, prof_id=None):
     """Página para fzer e ver avaliação de entregas dos estudantes."""
 
-    if selecao == "todos" and request.user.tipo_de_usuario != 4:  # Administrador
-        return HttpResponse("Acesso negado.", status=401)
+    # Identifica o professor
+    professor = None
+    if prof_id:
+        if prof_id == "todos":
+            if not request.user.eh_admin:  # Administrador
+                raise PermissionDenied("Sem acesso a estes projetos.")
+        else:
+            professor = get_object_or_404(Professor, pk=prof_id)
+    else:
+        professor = request.user.professor
+
+    # Identifica o projeto, se houver
+    projeto_id = request.GET.get("projeto", None)
 
     if request.is_ajax():
 
         projetos = Projeto.objects.all()
-        if prof_id is not None:
-            if prof_id == "todos":
-                if request.user.tipo_de_usuario != 4:
-                    raise PermissionDenied("Sem acesso a estes projetos.")
+
+        # Se projeto especificado
+        if projeto_id:
+            edicao = None
+            projetos = projetos.filter(id=projeto_id)
+            if (projetos.first().orientador != request.user.professor) and (not request.user.eh_admin):
+                raise PermissionDenied("Sem acesso a este projeto.")
+
+        else:
+            # Filtrando projetos conforme o professor orientador
+            if prof_id is not None:
+                if prof_id != "todos":
+                    if (professor != request.user.professor) and (not request.user.eh_admin):
+                        raise PermissionDenied("Sem acesso a estes projetos.")
+                    projetos = projetos.filter(orientador=professor)
             else:
-                professor = get_object_or_404(Professor, pk=prof_id)
-                if (professor != request.user.professor) and (request.user.tipo_de_usuario != 4):
-                    raise PermissionDenied("Sem acesso a estes projetos.")
                 projetos = projetos.filter(orientador=professor)
-                if selecao:
-                    projetos = projetos.filter(id=selecao)
-        else:
-            projetos = projetos.filter(orientador=request.user.professor)
 
-        edicao = None
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-        else:
-            projetos = projetos.filter(orientador=request.user.professor)
-            
+            # Filtrando projetos conforme a edição
+            edicao = request.POST.get("edicao", None)
+            if edicao and edicao != "todas":
+                try:
+                    ano, semestre = map(int, edicao.split('.'))
+                    projetos = projetos.filter(ano=ano, semestre=semestre)
+                except ValueError:
+                    return HttpResponse("Edição inválida.", status=400)
 
-        entregas = []
-        for projeto in projetos:
-            composicoes = filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre)
-            entregas.append(filtra_entregas(composicoes, projeto))
-
-        avaliacoes = zip(projetos, entregas)
+        # Coletando entregas por projeto
+        avaliacoes = [
+            (projeto, filtra_entregas(
+                filtra_composicoes(Composicao.objects.filter(entregavel=True), projeto.ano, projeto.semestre),
+                projeto
+            ))
+            for projeto in projetos
+        ]
 
         context = {
             "avaliacoes": avaliacoes,
@@ -289,19 +306,47 @@ def avaliar_entregas(request, prof_id=None, selecao=None):
             "hoje": datetime.date.today(),
         }
 
-    else:
+    else:  # Não é AJAX
         
-        exames = set()
-        for composicao in Composicao.objects.filter(entregavel=True):
-            exames.add(composicao.exame)
-
         configuracao = get_object_or_404(Configuracao)
+        if projeto_id:
+            edicoes = None
+        elif professor and prof_id != "todos":
+            edicoes = get_edicoes_orientador(professor, configuracao)[0]
+        else:
+            edicoes = get_edicoes(Projeto, configuracao)[0]
+
+        # Coletando os tipos de entregas que podem ser avaliadas
+        exames = {c.exame for c in Composicao.objects.filter(entregavel=True)}
+
+        selecionada_edicao = None
+        edicao = request.GET.get("edicao", None)
+        if edicao:
+            if edicao == "todas":
+                selecionada_edicao = "todas"
+            else:
+                try:
+                    ano, semestre = map(int, edicao.split('.'))
+                    selecionada_edicao = f"{ano}.{semestre}"
+                except ValueError:
+                    raise PermissionDenied("Acesso negado.")        
+        if edicoes and selecionada_edicao not in edicoes:  # Precisa estar entre as possíveis
+            selecionada_edicao = None
+        
+        base_url = reverse("avaliar_entregas")
+        endpoints = [
+            {"path": f"{base_url}{{valor}}", "method": "GET", "description": "acessa o cadastro do professor com id igual a valor."},
+            {"path": f"{base_url}?edicao={{valor}}", "method": "GET", "description": "seleciona a edição dos projetos a ser apresentado. Exemplo: selecao=2023.1"},
+            {"path": f"{base_url}?edicao=todas", "method": "GET", "description": "seleciona todas as edições."},
+            {"path": f"{base_url}?projeto={{valor}}", "method": "GET", "description": "seleciona o projeto com id igual a valor."},
+        ]
 
         context = {
                 "titulo": {"pt": "Avaliar Entregas", "en": "Evaluate Deliveries"},
-                "edicoes": get_edicoes_orientador(request.user.professor, configuracao)[0],
-                "selecionada_edicao": "{0}.{1}".format(configuracao.ano, configuracao.semestre),
-                "tipos_entregas": exames if selecao else None,
+                "edicoes": edicoes,
+                "selecionada_edicao": selecionada_edicao,
+                "tipos_entregas": exames if (prof_id=="todos") else None,
+                "endpoints": json.dumps(endpoints),
             }
 
     return render(request, "professores/avaliar_entregas.html", context=context)

@@ -19,7 +19,6 @@ urlpatterns = [
     path("avaliacoes_pares/<str:prof_id>/<str:proj_id>", views.avaliacoes_pares, name="avaliacoes_pares"),
     path("avaliar_entregas/", views.avaliar_entregas, name="avaliar_entregas"),
     path("avaliar_entregas/<str:prof_id>", views.avaliar_entregas, name="avaliar_entregas"),
-    path("avaliar_entregas/<str:prof_id>/<str:selecao>", views.avaliar_entregas, name="avaliar_entregas"),
     path("aulas_tabela/", views.aulas_tabela, name="aulas_tabela"),
     path("avaliar_bancas/", views.avaliar_bancas, name="avaliar_bancas"),
     path("avaliar_bancas/<str:prof_id>", views.avaliar_bancas, name="avaliar_bancas"),

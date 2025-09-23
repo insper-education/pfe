@@ -615,7 +615,7 @@
        <a class="btn btn-primary wbtn"
         data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
         {% if projeto.orientador %}
-         href="{% url 'avaliar_entregas' projeto.orientador.id projeto.id %}"
+         href="{% url 'avaliar_entregas' projeto.orientador.id %}?projeto={{projeto.id}}"
         {% else %}
          disabled
         {% endif %}
