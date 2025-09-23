@@ -540,7 +540,11 @@ class Configuracao(models.Model):
     operacao = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                  related_name="operacao",
                                  help_text="responsável pela operação do Capstone")
-    
+
+    tecnico = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                 related_name="tecnico",
+                                 help_text="responsável pela parte técnica do Capstone")
+
     lingua = models.CharField(max_length=2, blank=True, default="pt",
                               help_text="Língua deafult do sistema")
 
