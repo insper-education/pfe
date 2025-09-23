@@ -66,7 +66,7 @@ logger = logging.getLogger("django")
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def index_professor(request):
+def index_professores(request):
     """Mostra página principal do usuário professor."""
     configuracao = get_object_or_404(Configuracao)
     pendencias = ver_pendencias_professor(request.user, configuracao.ano, configuracao.semestre)

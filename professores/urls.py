@@ -12,8 +12,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index_professor, name="index_professor"),  # pagina inicial
-    path("professores", views.index_professor, name="professores"),
+    path("", views.index_professores, name="index_professores"),  # pagina inicial
+    path("professores", views.index_professores, name="professores"),
     path("avaliacoes_pares/", views.avaliacoes_pares, name="avaliacoes_pares"),
     path("avaliacoes_pares/<str:prof_id>", views.avaliacoes_pares, name="avaliacoes_pares"),
     path("avaliacoes_pares/<str:prof_id>/<str:proj_id>", views.avaliacoes_pares, name="avaliacoes_pares"),

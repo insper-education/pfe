@@ -87,17 +87,17 @@
           <a href="{% url 'index' %}">{% lng "Página Geral" "General Page" %}</a>
 
           {% for item in nav_menu_items %}
-            <a href="{% url item.url %}">{% lng item.title.pt item.title.en %}</a>
+            <a href="{% url 'index_'|add:item.url %}">{% lng item.title.pt item.title.en %}</a>
           {% endfor %}
         {% endif %}
 
 
-{% comment %} 
+{% comment %}         
           <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
           {% if user.eh_admin or user.eh_estud %}
             <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
           {% endif %}
-        
+          
           {% if user.eh_admin or user.eh_parc or request.user.membro_comite %}
             <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>
           {% endif %}
