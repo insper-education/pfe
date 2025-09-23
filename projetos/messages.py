@@ -139,7 +139,8 @@ def prepara_mensagem_email(request, tipo, primarykey):
             "projeto": projeto,
             "banca": banca,
         }
-        message = render_message("Mensagem Banca", context_carta)
+
+        message = render_message("Mensagem Banca", context_carta, urlize=False)
 
     #### NÃO PARECE FAZER SENTIDO ENVIAR MENSAGEM PARA UMA BANCA DE PROJETO SEM TER UMA BANCA ####
     # if tipo == "banca_projeto":

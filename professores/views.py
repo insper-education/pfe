@@ -1208,7 +1208,7 @@ def bancas_lista(request, edicao=None):
                 "projeto": projeto,
                 "banca": banca,
             }
-            mensagem = render_message("Mensagem Banca", context_carta)
+            mensagem = render_message("Mensagem Banca", context_carta, urlize=False)
             email(assunto, recipient_list, mensagem)
             aviso += "Banca de " + projeto.get_titulo_org() + " enviada para: " + str(recipient_list) + "<br>"
 
