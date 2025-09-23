@@ -58,6 +58,12 @@ class PFEUser(AbstractUser):
     membro_comite = \
         models.BooleanField("Membro do Comitê", default=False, help_text="caso membro do comitê")
 
+    membro_operacional = \
+        models.BooleanField("Membro da Equipe Operacional", default=False, help_text="caso membro da equipe operacional")
+
+    membro_tecnico = \
+        models.BooleanField("Membro do Corpo Técnico", default=False, help_text="caso membro do corpo técnico")
+
     GENERO_CHOICES = (
         ('X', "Não Informado"),
         ('M', "Masculino"),

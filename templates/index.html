@@ -26,7 +26,8 @@
       
       <div class="extra-space"></div>
 
-      {% if perms.estudantes %}
+      {% comment %} {% if perms.estudantes %} {% endcomment %}
+      {% if user.eh_admin or user.eh_estud %}
         <div class="card">
           <div class="card-body {% if user.eh_estud %}c_destaque{% endif %}" 
            onclick="loadContent(this, '{% url 'estudantes' %}')">
@@ -37,7 +38,8 @@
           <div class="card-content"></div>
         </div>
       {% endif %}
-      {% if perms.projetos.add_proposta %}
+      {% if user.eh_admin or user.eh_parc or request.user.membro_comite %}
+      {% comment %} {% if perms.projetos.add_proposta %} {% endcomment %}
         <div class="card ">
           <div class="card-body {% if user.eh_parc %}c_destaque{% endif %}"
            onclick="loadContent(this, '{% url 'organizacoes' %}')">
@@ -73,7 +75,8 @@
       {% if perms.projetos.view_avaliacao2 or perms.users.change_professor %}
         <div class="extra-space"></div>
         
-        {% if perms.projetos.view_avaliacao2 %}
+        {% comment %} {% if perms.projetos.view_avaliacao2 %} {% endcomment %}
+        {% if user.eh_admin or request.user.membro_comite %}
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'academica' %}')">
               <h5 class="card-title">
@@ -83,7 +86,8 @@
             <div class="card-content"></div>
           </div>
         {% endif %}
-        {% if perms.users.change_professor %}
+        {% comment %} {% if perms.users.change_professor %} {% endcomment %}
+        {% if user.eh_admin or user.membro_operacional or user.membro_tecnico %}
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'operacional' %}')">
               <h5 class="card-title">
@@ -107,7 +111,7 @@
       
       {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
         <div class="extra-space"></div>
-        {% if perms.projetos.view_proposta %}
+        {% if perms.projetos.view_proposta and request.user.membro_comite %}
           <div class="card">
             <div class="card-body" onclick="loadContent(this, '{% url 'propostas' %}')">
               <h5 class="card-title">
