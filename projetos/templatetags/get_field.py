@@ -33,7 +33,7 @@ def get_attr(instance, field):
     """ Retorna o campo """
     if instance is None or not hasattr(instance, field):
         return None
-    return getattr(instance, field)
+    return getattr(instance, field, None)
 
 @register.simple_tag()
 def slice_max_length(instance, field):
