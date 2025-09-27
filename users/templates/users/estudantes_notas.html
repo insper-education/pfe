@@ -147,13 +147,13 @@
                     title="Estudante em Probatório">P
                   {% elif alocacao.projeto_alocado_reprovacao.all %}
                     style="color:red;"
-                    title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">R
+                    title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">
                   {% else %}
                     {% if media.pesos != 1 %}
                       style="color:orange;"
                       title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                     {% elif media.media < 5 %}
-                      style="color:red;">R
+                      style="color:red;">
                     {% else %}
                       >
                     {% endif %}
