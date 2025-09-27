@@ -19,6 +19,16 @@ def get_planos_de_orientacao(projeto):
     documentos = Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto)
     return documentos
 
+
+
+@register.filter()
+def get_parecer_de_probatorio(projeto):
+    """Retorna todos os pareceres de probatório do projeto."""
+    tipo_documento = TipoDocumento.objects.get(sigla="PPP")
+    documento = Documento.objects.filter(tipo_documento=tipo_documento, projeto=projeto).last()
+    return documento
+
+
 @register.filter()
 def get_documentos_publicos(self):
     """Retorna certos documentos publicos do projeto."""

@@ -8,7 +8,9 @@ Data: 23 de Junho de 2024
 from django import template
 
 from academica.models import ExibeNota
-from academica.support3 import get_media_alocacao_i, em_probation
+from academica.support3 import get_media_alocacao_i
+from academica.support3 import em_probation as em_probation_support
+from academica.support3 import probations as probations_support
 from academica.support4 import get_notas_estudante
 
 from projetos.support3 import calcula_objetivos
@@ -62,10 +64,14 @@ def exibe_notas_semestre(edicao, exame):
 
 
 @register.filter
-def probation(alocacao):
-    """Retorna se em probation."""
-    return em_probation(alocacao)
+def em_probation(alocacao):
+    """Retorna se a alocação está em probation (mas não verifica se já reprovado, a menos que reprovado direto)."""
+    return em_probation_support(alocacao)
 
+@register.filter
+def probations(alocacoes, request=None):
+    """Retorna se as alocações estão em probation (verifica se já reprovado)."""
+    return probations_support(alocacoes, request=request)
 
 @register.filter
 def get_medias_oo(alocacao):  # EVITAR USAR POIS MISTURA SEMESTRES (VER GET_OAS)

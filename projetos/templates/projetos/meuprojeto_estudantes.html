@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  <style>
+  {% comment %} <style>
     hr.style-five {
       border: 0;
       height: 0;
@@ -23,7 +23,10 @@
     hr.style-five:after {
       content: "\00a0";
     }
-  </style>
+    p {
+      margin-bottom: 0.1em;
+    }
+  </style> {% endcomment %}
 {% endblock %}
 
 
@@ -57,6 +60,7 @@
                 <h5>{% lng "Resultados" "Results" %}</h5>
                 <div style="background: #FFFFFF; padding: 6px;">
                 {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
+                {% include "display_graficos_individuais.html" %}
                 </div>
               </div>
             {% endif %}

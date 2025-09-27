@@ -12,6 +12,7 @@
   {% load i18n %}
   {% load linguas %}
   {% load exibe_notas %}
+  {% load documentos %}
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -119,21 +120,40 @@
 
               <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
 
-                <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
-                data-toggle="tooltip" data-html="true" animation="true" 
-                  
+                  {% if media.probation and user == alocacao.projeto.orientador.user %}
+                    {% with parecer=alocacao.projeto|get_parecer_de_probatorio %}
+                      <a class="open-modal" title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
+                      data-toggle="tooltip" data-html="true" animation="true" style="cursor: pointer;"
+                      {% if not parecer %}
+                        data-url="{% url 'adiciona_documento' alocacao.projeto.organizacao.id alocacao.projeto.id 'PPP' %}">
+                        <span class="badge badge-warning align-items-center px-2 py-1" style="font-size:1em; box-shadow:0 2px 8px rgba(255,193,7,0.15);">
+                          &#9888;<br>{% lng "enviar<br>parecer" "send<br>report" %}
+                        </span>
+                      {% else %}
+                        data-url="{% url 'adiciona_documento' alocacao.projeto.organizacao.id alocacao.projeto.id 'PPP' parecer.id %}">
+                        <span class="badge badge-info align-items-center px-2 py-1" style="font-size:1em; box-shadow:0 2px 8px rgba(23,162,184,0.15);">
+                          &#127383;<br>{% lng "ver<br>parecer" "see<br>report" %}
+                        </span>
+                      {% endif %}
+                      </a><br>
+                    {% endwith %}
+                  {% endif %}
+
+                  <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
+                   data-toggle="tooltip" data-html="true" animation="true"
+     
                   {% if media.probation %}
-                    style="color:#e6a10f;" title="Estudante em Probatório">P
+                    style="color:#e6a10f;"
+                    title="Estudante em Probatório">P
                   {% elif alocacao.projeto_alocado_reprovacao.all %}
                     style="color:red;"
-                    title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente"
-                    >
+                    title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">R
                   {% else %}
                     {% if media.pesos != 1 %}
                       style="color:orange;"
                       title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                     {% elif media.media < 5 %}
-                      style="color:red;">
+                      style="color:red;">R
                     {% else %}
                       >
                     {% endif %}
@@ -222,5 +242,6 @@
   </div>
 
   {% include "edicoes_ajax.html" with tabela="Estudantes" %}
+  {% include "base-modal.html" %}
   
 {% endblock %}

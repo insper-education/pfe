@@ -15,9 +15,11 @@
 }
 
 .div_arredondado_100 {
-  background: #F0F0F0;
+
+  background: #f8fafc; /* azul bem claro */
+  border: 1px solid #cfd8dc; /* cinza-azulado claro */
+  box-shadow: 0 2px 8px rgba(90, 120, 150, 0.05); /* sombra leve */
   vertical-align: middle;
-  border: 1px solid grey;
   border-radius: 6px;
   margin-bottom: 12px;
   max-width: 100%;
@@ -28,24 +30,24 @@
 .div_arredondado_100 > div {
   display: block;
   max-width: 100%;
-  border: 1px solid grey;
+  border: 1px solid #e0e0e0;
   border-radius: 6px;
-  background: #FAFAFA;
+  background: #FBFBFB;
   padding: 8px;
   margin-bottom: 10px;
 }
 
 .div_arredondado_azulado {
-        background: #eff8ffff;
-        vertical-align: middle;
-        border: 1.2px dashed #90a4ae;
-        border-radius: 6px;
-        margin-bottom: 12px;
-        max-width: 100%;
-        width: 800px;
-        padding: 8px;
-        box-shadow: none;
-      }
+  background: #eff8ffff;
+  vertical-align: middle;
+  border: 1.2px dashed #90a4ae;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  max-width: 100%;
+  width: 800px;
+  padding: 8px;
+  box-shadow: none;
+}
 
 .div_arredondado_azulado > div {
   display: block;

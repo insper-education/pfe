@@ -13,10 +13,15 @@
   {% load relatos %}
   {% load addhttp %}
   {% load linguas %}
-  
+  {% load get_notas %}
+  {% load get_descontos %}
+  {% load exibe_notas %}
+  {% load documentos %}
+
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <link rel="stylesheet" href="{% static 'css/mostra_horarios.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
 
   {% include "reload.html" %}  {% comment %} Atualiza as conexões quando se da um back {% endcomment %}
@@ -42,677 +47,739 @@
     <h1 class="text-danger">{% lng "Erro grave - Projeto sem organização" "Serious error - Project without organization" %}</h1>
   {% endif %}
 
-  <h4>
-    {{ projeto.get_titulo_org }}
-    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      <span style="font-size: small; padding-left: 0.7em; display: block;">
-        <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}
-      </span>
-    {% endif %}
-  </h4>
+  <div class="div_arredondado_100">
 
-  <b>{% lng "Semestre" "Semester" %}</b>
-  {{projeto.ano}}.{{projeto.semestre}}<br>
-
-  {% include "tipo_projeto.html" with com_tipo=True %}
-
-  {% if projeto.resumo %}
-    <br><div class="resumo mt-3">
-      <strong>{% lng "Resumo do Projeto (escrito por estudantes)" "Project Summary (written by students)" %}:</strong>
-      {{ projeto.resumo|linebreaks }}
-    </div>
-  {% endif %}
-
-  {% if projeto.abstract %}
-    <br><div class="abstract mt-3">
-      <strong>{% lng "Resumo em Inglês do Projeto (escrito por estudantes)" "Project Summary in English (written by students)" %}:</strong>
-      {{ projeto.abstract|linebreaks }}
-    </div>
-  {% endif %}
-
-  {% if projeto.palavras_chave %}
-    <br><div class="palavras_chave mt-3">
-      <strong>{% lng "Palavras-chave (escrito por estudantes)" "Keywords (written by students)" %}:</strong>
-      {{ projeto.palavras_chave|linebreaks }}
-    </div>
-  {% endif %}
-
-  <hr>
-
-  {% for conexao in cooperacoes %}
-    {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-      <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-        <img class="logotipo flutua_dir" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
-      </a>
-    {% endif %}
-  {% endfor %}
-
-  {% if projeto.organizacao and projeto.organizacao.logotipo %}
-    <img class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
-  {% endif %}
-
-  <h5>
-    {% lng "Organização" "Organization" %}:
-    {% if projeto.organizacao %}
-      {% if user.eh_prof_a %}
-        <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
-      {% else %}
-        {{ projeto.organizacao.nome }}
+    <h4>
+      {{ projeto.get_titulo_org }}
+      {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+        <span style="font-size: small; padding-left: 0.7em; display: block;">
+          <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}
+        </span>
       {% endif %}
-    {% else %}
-      {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
-    {% endif %}
-  </h5>
+    </h4>
 
-  {% for conexao in cooperacoes %}
-    {% if conexao.parceiro and conexao.parceiro.organizacao %}
-      <span class="ml-4">
-        {% lng "Colaboração" "Collaboration" %}:
+    <b>{% lng "Semestre" "Semester" %}</b>
+    {{projeto.ano}}.{{projeto.semestre}}
+
+    {% include "tipo_projeto.html" with com_tipo=True %}
+
+    {% if projeto.resumo %}
+      <div class="resumo mt-3">
+        <strong>{% lng "Resumo do Projeto (escrito por estudantes)" "Project Summary (written by students)" %}:</strong>
+        {{ projeto.resumo|linebreaks }}
+      </div>
+    {% endif %}
+
+    {% if projeto.abstract %}
+      <div class="abstract mt-3">
+        <strong>{% lng "Resumo em Inglês do Projeto (escrito por estudantes)" "Project Summary in English (written by students)" %}:</strong>
+        {{ projeto.abstract|linebreaks }}
+      </div>
+    {% endif %}
+
+    {% if projeto.palavras_chave %}
+      <div class="palavras_chave mt-3">
+        <strong>{% lng "Palavras-chave (escrito por estudantes)" "Keywords (written by students)" %}:</strong>
+        {{ projeto.palavras_chave|linebreaks }}
+      </div>
+    {% endif %}
+
+    <hr>
+
+    {% for conexao in cooperacoes %}
+      {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
         <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-          {{conexao.parceiro.organizacao}}
+          <img class="logotipo flutua_dir" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
         </a>
-      </span>
-    {% endif %}
-  {% endfor %}
-
-  <div class="endereco mt-3">
-    <strong>{% lng "Endereço" "Address" %}:</strong><br>
-    <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
-  </div>
-  
-  {% if projeto.organizacao.website or projeto.proposta.website %}
-    <div class="website mt-3">
-      <strong>website:</strong>
-      {% if projeto.organizacao and projeto.organizacao.website %}
-        <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
-      {% elif projeto.proposta and projeto.proposta.website %}
-        <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
       {% endif %}
-    </div>
-  {% endif %}
-  <br>
+    {% endfor %}
 
-  {% if projeto.proposta.descricao %}
-    <div class="descricao mt-3">
-      <strong>{% lng "Descrição da Proposta do Projeto (escrito por parceiro)" "Description of the Project Proposal (written by partner)" %}:</strong>
-      {{ projeto.proposta.descricao|linebreaks|bleach_urlize|safe }}
-    </div>
-  {% else %}
-    <p><u>Campo de descrição ausente.<u></p>
-    <!-- Campo deveria ser obrigatório -->
-  {% endif %}
+    {% if projeto.organizacao and projeto.organizacao.logotipo %}
+      <img class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
+    {% endif %}
 
-  {% if projeto.proposta.expectativas %}
-    <div class="expectativas mt-3">
-      <strong>{% lng "Expectativas de resultados/entregas (escrito por parceiro)" "Expectations of results/deliverables (written by partner)" %}</strong>
-      {{ projeto.proposta.expectativas|linebreaks|bleach_urlize|safe }}
-    </div>
-  {% else %}
-    <p><u>Campo de expectativas ausente.<u></p>
-    <!-- Campo deveria ser obrigatório -->
-  {% endif %}
-
-  {% if projeto.proposta.recursos %}
-    <div class="recusos mt-3">
-      <strong>{% lng "Recursos a serem disponibilizados aos estudantes (escrito por parceiro)" "Resources to be made available to students (written by partner)" %}</strong>
-      {{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
-    </div><br>
-  {% endif %}
-
-  {% if projeto.proposta.observacoes %}
-    <div class="observacoes mt-3">
-      <strong>{% lng "Outras Observações (escrito por parceiro)" "Other Observations (written by partner)" %}</strong>
-      {{ projeto.proposta.observacoes|linebreaks|bleach_urlize|safe }}
-    </div><br>
-  {% endif %}
-
-  {% if projeto.organizacao.informacoes %}
-    <div class="informacoes mt-3">
-      <strong>{% lng "Informações sobre a organização" "Information about the organization" %}</strong>
-      {{ projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe }}
-    </div><br>
-  {% endif %}
-
-  {% if projeto.proposta.departamento %}
-    <div class="departamento mt-3">
-      <strong>{% lng "Informações sobre o departamento na organização" "Information about the department in the organization" %}</strong> {{ projeto.proposta.departamento|linebreaks|bleach_urlize|safe }}
-    </div>
-  {% endif %}
-
-  {% if projeto.proposta.anexo %}
-    <br>
-    <strong>{% lng "Anexo (fornecido por parceiro)" "Attachment (provided by partner)" %}:</strong>
-    <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
-    <br><br>
-  {% endif %}
-  
-  <div class="conexoes" style="margin-top: 8px;">
-    <strong>{% lng "Conexões" "Connections" %}:</strong>
-    {% if user.eh_prof_a %}
-      <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
-    {% endif %}<br>
-    {% if conexoes %}
-      <ul>
-      {% for conexao in conexoes %}
-        {% if conexao.parceiro.user.is_active %}
-          <li>
-            {% if conexao.parceiro %}
-              {% if user.eh_prof_a %}
-                <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
-              {% else %}
-                {{ conexao.parceiro.user.get_full_name }}
-              {% endif %}
-
-              <a href="mailto:{{conexao.parceiro.user.email}}">
-                <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
-                <span class="texto-curto"><i class="far fa-envelope"></i></span>
-              </a>
-
-            {% else %}
-              {% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}
-            {% endif %}
-            {% for papel in conexao.get_papeis %}
-              <span class="texto-longo">[{{papel.0}}]</span>
-              <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-            {% endfor %}
-            {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-          </li>
+    <h5>
+      {% lng "Organização" "Organization" %}:
+      {% if projeto.organizacao %}
+        {% if user.eh_prof_a %}
+          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
         {% else %}
-          <li>
-            {% if conexao.parceiro %}
-              <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
-                {{ conexao.parceiro.user.get_full_name }}
-              </a>
-              <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">
-                <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
-                <span class="texto-curto"><i class="far fa-envelope"></i></span>
-              </a>
-            {% else %}
-              <span style="color: lightgrey;">{% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}</span>
-            {% endif %}
-            <span style="color: lightgrey; border: 0px; ">
+          {{ projeto.organizacao.nome }}
+        {% endif %}
+      {% else %}
+        {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
+      {% endif %}
+    </h5>
+
+    {% for conexao in cooperacoes %}
+      {% if conexao.parceiro and conexao.parceiro.organizacao %}
+        <span class="ml-4">
+          {% lng "Colaboração" "Collaboration" %}:
+          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+            {{conexao.parceiro.organizacao}}
+          </a>
+        </span>
+      {% endif %}
+    {% endfor %}
+
+    <div class="endereco mt-3">
+      <strong>{% lng "Endereço" "Address" %}:</strong><br>
+      <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
+    </div>
+    
+    {% if projeto.organizacao.website or projeto.proposta.website %}
+      <div class="website mt-3">
+        <strong>website:</strong>
+        {% if projeto.organizacao and projeto.organizacao.website %}
+          <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
+        {% elif projeto.proposta and projeto.proposta.website %}
+          <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if projeto.proposta.descricao %}
+      <div class="descricao mt-3">
+        <strong>{% lng "Descrição da Proposta do Projeto (escrito por parceiro)" "Description of the Project Proposal (written by partner)" %}:</strong>
+        {{ projeto.proposta.descricao|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% else %}
+      <div><u>{% lng "Campo de descrição ausente." "Field description missing." %}</u></div>
+      <!-- Campo deveria ser obrigatório -->
+    {% endif %}
+
+    {% if projeto.proposta.expectativas %}
+      <div class="expectativas mt-3">
+        <strong>{% lng "Expectativas de resultados/entregas (escrito por parceiro)" "Expectations of results/deliverables (written by partner)" %}</strong>
+        {{ projeto.proposta.expectativas|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% else %}
+      <div><u>{% lng "Campo de expectativas ausente." "Field expectations missing." %}</u></div>
+      <!-- Campo deveria ser obrigatório -->
+    {% endif %}
+
+    {% if projeto.proposta.recursos %}
+      <div class="recusos mt-3">
+        <strong>{% lng "Recursos a serem disponibilizados aos estudantes (escrito por parceiro)" "Resources to be made available to students (written by partner)" %}</strong>
+        {{ projeto.proposta.recursos|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% endif %}
+
+    {% if projeto.proposta.observacoes %}
+      <div class="observacoes mt-3">
+        <strong>{% lng "Outras Observações (escrito por parceiro)" "Other Observations (written by partner)" %}</strong>
+        {{ projeto.proposta.observacoes|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% endif %}
+
+    {% if projeto.organizacao.informacoes %}
+      <div class="informacoes mt-3">
+        <strong>{% lng "Informações sobre a organização" "Information about the organization" %}</strong>
+        {{ projeto.organizacao.informacoes|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% endif %}
+
+    {% if projeto.proposta.departamento %}
+      <div class="departamento mt-3">
+        <strong>{% lng "Informações sobre o departamento na organização" "Information about the department in the organization" %}</strong> {{ projeto.proposta.departamento|linebreaks|bleach_urlize|safe }}
+      </div>
+    {% endif %}
+
+    {% if projeto.proposta.anexo %}
+      <br>
+      <strong>{% lng "Anexo (fornecido por parceiro)" "Attachment (provided by partner)" %}:</strong>
+      <a class="text-success" href="http://{{request.get_host}}{{projeto.proposta.anexo.url}}">{{projeto.proposta.anexo}}</a>
+      <br>
+    {% endif %}
+    
+    <div class="conexoes" style="margin-top: 8px;">
+      <strong>{% lng "Conexões" "Connections" %}:</strong>
+      {% if user.eh_prof_a %}
+        <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
+      {% endif %}<br>
+      {% if conexoes %}
+        <ul>
+        {% for conexao in conexoes %}
+          {% if conexao.parceiro.user.is_active %}
+            <li>
+              {% if conexao.parceiro %}
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
+                {% else %}
+                  {{ conexao.parceiro.user.get_full_name }}
+                {% endif %}
+
+                <a href="mailto:{{conexao.parceiro.user.email}}">
+                  <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
+
+              {% else %}
+                {% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}
+              {% endif %}
               {% for papel in conexao.get_papeis %}
                 <span class="texto-longo">[{{papel.0}}]</span>
                 <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
               {% endfor %}
               {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-            </span>
-          </li>
-        {% endif %}        
-      {% endfor %}
-      </ul>
-    {% else %}
-      {% lng "Nenhuma conexão específica para esse projeto declarada." "No specific connection declared for this project." %}
-    {% endif %}
-    
-  </div>
-
-  <hr>
-  {% if projeto.orientador %}
-    {% if projeto.proposta.intercambio %}
-      <h5>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</h5>
-    {% else %}
-      <h5>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</h5>
-    {% endif %}
-    <div class="ml-1">
-      &#8614;
-      {% if user.eh_prof_a %}
-        <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
+            </li>
+          {% else %}
+            <li>
+              {% if conexao.parceiro %}
+                <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
+                  {{ conexao.parceiro.user.get_full_name }}
+                </a>
+                <a href="mailto:{{conexao.parceiro.user.email}}" style="color: LightBlue;">
+                  <span class="texto-longo">&lt;{{conexao.parceiro.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
+              {% else %}
+                <span style="color: lightgrey;">{% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}</span>
+              {% endif %}
+              <span style="color: lightgrey; border: 0px; ">
+                {% for papel in conexao.get_papeis %}
+                  <span class="texto-longo">[{{papel.0}}]</span>
+                  <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                {% endfor %}
+                {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
+              </span>
+            </li>
+          {% endif %}        
+        {% endfor %}
+        </ul>
       {% else %}
-        {{projeto.orientador.user.get_full_name}}
+        {% lng "Nenhuma conexão específica para esse projeto declarada." "No specific connection declared for this project." %}
       {% endif %}
-      <a href="mailto:{{projeto.orientador.user.email}}">
-        <span class="texto-longo">&lt;{{projeto.orientador.user.email}}&gt;</span>
-        <span class="texto-curto"><i class="far fa-envelope"></i></span>
-      </a>
-    </div>
-  {% else %}
-    <h4>{% lng "Orientador não definido" "Advisor not defined" %}</h4>
-  {% endif %}
-
-  {% if coorientadores %}
-    <div class="mt-2 ml-2">
-      <strong>{% lng "coorientação" "co-advisoring" %}:</strong>
-    </div>
-    <ul>
-    {% for coorientador in coorientadores %}
-      <li>
-      <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
-        {{ coorientador.usuario.get_full_name }}
-      </a>
-      <a href="mailto:{{coorientador.usuario.email}}">
-        <span class="texto-longo">&lt;{{coorientador.usuario.email}}&gt;</span>
-        <span class="texto-curto"><i class="far fa-envelope"></i></span>
-      </a>
-      {% if coorientador.observacao %}
-        <div class="ml-2">obs: {{coorientador.observacao}}</div>
-      {% endif %}
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-
-  <hr>
-  <h5 style="display: inline;">
-    {% lng_n alocacoes.count "Estudante" "Estudantes" "Student" "Students" %}:
-  </h5>
-  {% if alocacoes %}
-    <span class="emails esconder">
-      <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
-        <i class="fas fa-mail-bulk"></i>
-      </a>
-    </span>
-  {% endif %}
-  <ul>
-  {% for alocacao in alocacoes %}
-    <li>
-      {% if user.eh_prof_a %}
-        <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
-      {% else %}
-        {{alocacao.aluno.user.get_full_name}}
-      {% endif %}
-      <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-      <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
       
-      <a href="mailto:{{alocacao.aluno.user.email}}">
-        <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
-        <span class="texto-curto"><i class="far fa-envelope"></i></span>
-      </a>
+    </div>
 
-      {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-    </li>
-  {% endfor %}
-  </ul>
-
-
-  {% if associados %}  
-    <div class="mt-3">
-    <h5 style="display: inline;" class="mt-5">
-      {% lng_n associados.count "Participante associado" "Participantes associados" "Associated participant" "Associated participants" %}:
-    </h5>
-    <span class="emails esconder">
-      <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
-        <i class="fas fa-mail-bulk"></i>
-      </a>
-    </span>
-    <ul>
-    {% for associado in associados %}
-      <li>
+    <hr>
+    {% if projeto.orientador %}
+      {% if projeto.proposta.intercambio %}
+        <h5>{% lng_g projeto.orientador.user.genero "Professor Responsável" "Professora Responsável" "Responsible Professor" %}:</h5>
+      {% else %}
+        <h5>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</h5>
+      {% endif %}
+      <div class="ml-1">
+        &#8614;
         {% if user.eh_prof_a %}
-          <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
+          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
         {% else %}
-          {{associado.estudante.user.get_full_name}}
+          {{projeto.orientador.user.get_full_name}}
         {% endif %}
-        <span class="texto-longo">[{{ associado.estudante.curso2 }}]</span>
-        <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
-
-        <a href="mailto:{{associado.estudante.user.email}}">
-          <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
+        <a href="mailto:{{projeto.orientador.user.email}}">
+          <span class="texto-longo">&lt;{{projeto.orientador.user.email}}&gt;</span>
           <span class="texto-curto"><i class="far fa-envelope"></i></span>
         </a>
-
-        {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
-      </li>
-    {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-
-
-
-  {% if medias_oo %}
-    <hr>
-    <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>
-
-    <span class="medias-title">{% lng "Médias" "Averages" %}:</span>
-    {% for key, value in medias_oo.media_grupo.items %}
-      {% if value.media >= 0 %}
-        <span class="badge badge-secondary" style="white-space: nowrap;">{% lng key.titulo key.titulo_en %} = {{value.media|stringformat:".1f"}}</span>
-      {% endif %}
-    {% endfor %}
-    
-    <span class="badge badge-info" style="white-space: nowrap;">
-      {% lng "Média Grupo Geral" "General Group Average" %} =
-      {{medias_oo.media_grupo_geral|stringformat:".1f"}}
-    </span>
-    <br>
-
-    <div class="table-responsive">
-      <div style="position: relative; height:203px; width:406px">
-        <canvas id="radial-grupo"></canvas>
       </div>
+    {% else %}
+      <h4>{% lng "Orientador não definido" "Advisor not defined" %}</h4>
+    {% endif %}
+
+    {% if coorientadores %}
+      <div class="mt-2 ml-2">
+        <strong>{% lng "coorientação" "co-advisoring" %}:</strong>
+      </div>
+      <ul>
+      {% for coorientador in coorientadores %}
+        <li>
+        <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
+          {{ coorientador.usuario.get_full_name }}
+        </a>
+        <a href="mailto:{{coorientador.usuario.email}}">
+          <span class="texto-longo">&lt;{{coorientador.usuario.email}}&gt;</span>
+          <span class="texto-curto"><i class="far fa-envelope"></i></span>
+        </a>
+        {% if coorientador.observacao %}
+          <div class="ml-2">obs: {{coorientador.observacao}}</div>
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+
+    <hr>
+    <h5 style="display: inline;">
+      {% lng_n alocacoes.count "Estudante" "Estudantes" "Student" "Students" %}:
+    </h5>
+    {% if alocacoes %}
+      <span class="emails esconder">
+        <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+          <i class="fas fa-mail-bulk"></i>
+        </a>
+      </span>
+    {% endif %}
+    <div class="mt-2">
+      <ul style="padding-left: 16px; margin: 0;">
+        {% if not alocacoes %}
+          <li><span class="text-danger">{% lng "Nenhum estudante alocado." "No student allocated." %}</span></li>
+        {% endif %}
+        {% for alocacao in alocacoes %}
+          <li>
+            {% if user.eh_prof_a %}
+              <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
+            {% else %}
+              {{alocacao.aluno.user.get_full_name}}
+            {% endif %}
+            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
+            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+            
+            <a href="mailto:{{alocacao.aluno.user.email}}">
+              <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+              <span class="texto-curto"><i class="far fa-envelope"></i></span>
+            </a>
+
+            {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+
+            {% if user.eh_prof_a %}
+              {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+                {% if notas or descontos %}
+                  <div style="background: #FFFFFF; padding: 0px;">
+                  {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
+                  </div>
+                {% endif %}
+              {% endwith %}
+            {% endif %}
+            
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if associados %}  
+        <div class="mt-3">
+        <h5 style="display: inline;" class="mt-5">
+          {% lng_n associados.count "Participante associado" "Participantes associados" "Associated participant" "Associated participants" %}:
+        </h5>
+        <span class="emails esconder">
+          <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+            <i class="fas fa-mail-bulk"></i>
+          </a>
+        </span>
+        <ul>
+        {% for associado in associados %}
+          <li>
+            {% if user.eh_prof_a %}
+              <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
+            {% else %}
+              {{associado.estudante.user.get_full_name}}
+            {% endif %}
+            <span class="texto-longo">[{{ associado.estudante.curso2 }}]</span>
+            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
+
+            <a href="mailto:{{associado.estudante.user.email}}">
+              <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
+              <span class="texto-curto"><i class="far fa-envelope"></i></span>
+            </a>
+
+            {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
+          </li>
+        {% endfor %}
+        </ul>
+        </div>
+      {% endif %}
+
+
+      {% if user.eh_prof_a and alocacoes|probations %}
+        <div style="cursor: pointer; display: inline-block; background: #fff3cd; border: 2px solid #ffc107; border-radius: 6px; padding: 0.5em 0.5em; margin-left: 0.5em; box-shadow: 0 2px 8px rgba(255,193,7,0.15);">
+          {% with parecer=projeto|get_parecer_de_probatorio %}
+            <a class="open-modal" title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
+              data-toggle="tooltip" data-html="true" animation="true"
+              {% if parecer %}
+                style="color: #856404;"
+                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' parecer.id %}"
+              {% else %}
+                style="color: red;"
+                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' %}"
+              {% endif %}
+            >
+              <span class="badge badge-warning" style="font-size: 1.1em; margin-right: 0.5em; margin-left: 0.0em;">
+                <i class="fas fa-exclamation-triangle" style="color: #856404;"></i>
+                {% lng "probatório" "probatory" %}
+              </span>
+              <span style="font-weight: bold; color: #856404;" class="mr-2">
+                {% lng "Estudantes em probatório, orientador deve enviar parecer para a Banca de Probatório." "Students on probation, advisor must send opinion to the Probation Committee." %}
+              </span>
+              {% if parecer %}
+                <i class="fas fa-file-alt"></i>
+                {% lng "(clique para atualizar)" "(click to update)" %}</a>
+                (<a href="{{request.scheme}}://{{request.get_host}}{{parecer.documento.url}}" target="_blank" rel="noopener noreferrer">
+                  {% lng "Enviado" "Sent" %}: {{parecer}}
+                </a>)
+              {% else %}
+                <i class="far fa-file"></i>
+                {% lng "(clique para enviar)" "(click to send)" %}</a>
+              {% endif %}
+            
+          {% endwith %}
+        </div>
+            
+        {% comment %} href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer" {% endcomment %}
+        {% comment %} data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}" {% endcomment %}
+
+      {% endif %}
+
     </div>
 
-    <script>
-      var config_radial_grupo = {
-        type: "radar",
-        data: {
-            labels_pt: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}{% endfor %}],
-            labels_en: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo_en}}",{% else %}"",{% endif %}{% endfor %}],
-            datasets: [{
-                label: "Objetivos de Aprendizagem",
-                pointBackgroundColor: [{% for key, value in medias_oo.media_grupo.items %}"{{value.cor}}",{% endfor %}],
-                data: [{% for key, value in medias_oo.media_grupo.items %}
-                        {% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}},{% else %} null,{% endif %}
-                      {% endfor %}],
-                scaleOverride: true,
-                pointRadius: 5,
-                backgroundColor: "rgba(0,0,240,0.1)",
-                },
-            ]
-        },
-        options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text_pt: "Avaliação Grupo",
-                text_en: "Group Evaluation",
-            },
-            scale: {
-                responsive: true,
-                angleLines: {
-                    display: false
-                },
-                ticks: {
-                    beginAtZero: true,
-                    suggestedMin: 0,
-                    suggestedMax: 10
-                }
-            },
-        }
-      }
 
-      var radial_grupo = document.getElementById("radial-grupo").getContext("2d");
-      window.medias = new Chart(radial_grupo, config_radial_grupo);
-
-      function lingua_grafico() {
-        if(localStorage.getItem("lingua") == "pt") {
-          window.medias.options.title.text = window.medias.options.title.text_pt;
-          window.medias.data.labels = window.medias.data.labels_pt;
-        } else {
-          window.medias.options.title.text = window.medias.options.title.text_en;
-          window.medias.data.labels = window.medias.data.labels_en;
-        }
-        window.medias.update();
-      }
-      lingua_grafico();
-      document.addEventListener("languageChanged", lingua_grafico);
-
-    </script>
-
-  {% endif %}
-
-  {% if user.eh_prof_a %}
-    {% if projeto|has_relatos %}  
+    {% if medias_oo %}
       <hr>
-      <h4>{% lng "Relatos Quinzenais" "Biweekly Reports" %}:</h4>
-      {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
-    {% endif %}
-  {% endif %}
+      <h4>{% lng "Médias de Grupo" "Group Averages" %}:</h4>
 
-  {% if documentos or user.eh_prof_a %}
-    <hr>
-    <h4>
-      {% lng "Documentos" "Documents" %}:
-      {% if user.eh_prof_a %}
-        {% if projeto and projeto.organizacao %}
+      <span class="medias-title">{% lng "Médias" "Averages" %}:</span>
+      {% for key, value in medias_oo.media_grupo.items %}
+        {% if value.media >= 0 %}
+          <span class="badge badge-secondary" style="white-space: nowrap;">{% lng key.titulo key.titulo_en %} = {{value.media|stringformat:".1f"}}</span>
+        {% endif %}
+      {% endfor %}
+      
+      <span class="badge badge-info" style="white-space: nowrap;">
+        {% lng "Média Grupo Geral" "General Group Average" %} =
+        {{medias_oo.media_grupo_geral|stringformat:".1f"}}
+      </span>
+      <br>
+
+      <div class="table-responsive">
+        <div style="position: relative; height:203px; width:406px">
+          <canvas id="radial-grupo"></canvas>
+        </div>
+      </div>
+
+      <script>
+        var config_radial_grupo = {
+          type: "radar",
+          data: {
+              labels_pt: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo}}",{% else %}"",{% endif %}{% endfor %}],
+              labels_en: [{% for key, value in medias_oo.media_grupo.items %}{% if value.media >= 0 %}"{{key.titulo_en}}",{% else %}"",{% endif %}{% endfor %}],
+              datasets: [{
+                  label: "Objetivos de Aprendizagem",
+                  pointBackgroundColor: [{% for key, value in medias_oo.media_grupo.items %}"{{value.cor}}",{% endfor %}],
+                  data: [{% for key, value in medias_oo.media_grupo.items %}
+                          {% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}},{% else %} null,{% endif %}
+                        {% endfor %}],
+                  scaleOverride: true,
+                  pointRadius: 5,
+                  backgroundColor: "rgba(0,0,240,0.1)",
+                  },
+              ]
+          },
+          options: {
+              legend: { display: false },
+              title: {
+                  display: true,
+                  text_pt: "Avaliação Grupo",
+                  text_en: "Group Evaluation",
+              },
+              scale: {
+                  responsive: true,
+                  angleLines: {
+                      display: false
+                  },
+                  ticks: {
+                      beginAtZero: true,
+                      suggestedMin: 0,
+                      suggestedMax: 10
+                  }
+              },
+          }
+        }
+
+        var radial_grupo = document.getElementById("radial-grupo").getContext("2d");
+        window.medias = new Chart(radial_grupo, config_radial_grupo);
+
+        function lingua_grafico() {
+          if(localStorage.getItem("lingua") == "pt") {
+            window.medias.options.title.text = window.medias.options.title.text_pt;
+            window.medias.data.labels = window.medias.data.labels_pt;
+          } else {
+            window.medias.options.title.text = window.medias.options.title.text_en;
+            window.medias.data.labels = window.medias.data.labels_en;
+          }
+          window.medias.update();
+        }
+        lingua_grafico();
+        document.addEventListener("languageChanged", lingua_grafico);
+
+      </script>
+
+    {% endif %}
+
+    {% if user.eh_prof_a %}
+      {% if projeto|has_relatos %}  
+        <hr>
+        <h4>{% lng "Relatos Quinzenais" "Biweekly Reports" %}:</h4>
+        {% include "relatos.html" with alocacoes=alocacoes|sem_externos %}
+      {% endif %}
+    {% endif %}
+
+    {% if documentos or user.eh_prof_a %}
+      <hr>
+      <h4>
+        {% lng "Documentos" "Documents" %}:
+        {% if user.eh_prof_a %}
+          {% if projeto and projeto.organizacao %}
+            <small class="esconder">
+              <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+            </small>
+          {% endif %}
+        {% endif %}
+      </h4>
+      <div class="caixa_rolante">
+        {% include "documentos.html" %}
+      </div>
+    {% endif %}
+    
+    <div class="mt-3">
+      {% include "professores/includes/ver_site.html" %}
+      {% include "professores/includes/ver_pastas_projeto.html" %}
+    </div>
+
+    {% if user.eh_prof_a %}
+      <hr>
+      <h4>
+        {% lng "Certificados" "Certificates" %}:
+        {% if user.eh_prof_a %}
           <small class="esconder">
-            <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+            <a href="{% url 'carregar_certificado' %}">&#10133;</a>
           </small>
         {% endif %}
-      {% endif %}
-    </h4>
-    <div class="caixa_rolante">
-      {% include "documentos.html" %}
-    </div>
-  {% endif %}
+      </h4>
+      <div class="caixa_rolante">
+        {% include "certificados.html" with certificados=projeto.certificado_set.all %}
+      </div>
+    {% endif %}
+
+    {% if user.eh_prof_a %}
+    {% if projeto.encontro_set.all %}
+        <hr>
+        <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
+        <ul>
+            {% for dinamica in projeto.encontro_set.all %} 
+                <li>
+                    {{dinamica.startDate|date:'j \d\e F \d\e Y \d\a\s H:i'}} às {{dinamica.endDate|date:'H:i'}}
+                    <ul>
+                      {% if dinamica.location %}
+                        <li>
+                          {% lng "Local" "Location" %}:
+                          {% if dinamica.url_location %}
+                            <a href="{{dinamica.location}}">{% lng "link vídeo-conferência" "video-conference link" %}</a>
+                          {% else %}
+                            <span style="word-break: break-all;">{{dinamica.location}}</span>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                      {% if dinamica.facilitador %}
+                        <li>
+                          {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
+                          <a href="{% url 'user_detail' dinamica.facilitador.id %}">
+                            {{dinamica.facilitador}}
+                          </a>
+                        </li>
+                      {% endif %}
+                      {% if dinamica.observacoes_orientador or dinamica.observacoes_estudantes %}
+                          <ul>
+                            {% if dinamica.observacoes_estudantes %}
+                              <li>
+                                <strong>{% lng "Observações para Estudantes" "Observations for Students" %}:</strong>
+                                {{dinamica.observacoes_estudantes|safe|linebreaks}}
+                              </li>
+                            {% endif %}
+                            {% if dinamica.observacoes_orientador %}
+                              <li>
+                                <strong>{% lng "Observações para Orientador" "Observations for Advisor" %}:</strong>
+                                {{dinamica.observacoes_orientador|safe|linebreaks}}
+                              </li>
+                            {% endif %}
+                          </ul>
+                      {% endif %}
+                      {% if dinamica.documento %}
+                        <li>
+                          <strong>{% lng "Documento" "Document" %}:</strong>
+                          <a href="{{dinamica.documento.url}}">{{dinamica.documento}}</a>
+                        </li>
+                      {% endif %}
+                      {% if dinamica.link %}
+                        <li>
+                          <strong>{% lng "Link" "Link" %}:</strong>
+                          <a href="{{dinamica.link}}">{{dinamica.link}}</a>
+                        </li>
+                      {% endif %}
+                      {% if dinamica.feedback %}
+                        <li>
+                          <strong>{% lng "Feedback" "Feedback" %}:</strong>
+                          {{dinamica.feedback}}
+                        </li>
+                      {% endif %}
+                      {% if dinamica.feedback_estudantes %}
+                        <li>
+                          <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
+                          {{dinamica.feedback_estudantes}}
+                        </li>
+                      {% endif %}
+                      {% if dinamica.feedback_orientador %}
+                        <li>
+                          <strong>{% lng "Feedback do Orientador" "Advisor Feedback" %}:</strong>
+                          {{dinamica.feedback_orientador}}
+                        </li>
+                      {% endif %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endif %}
+
+    
+    {% if user.eh_prof_a %}
+      <hr>
+      <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
+      {% include "mostra_horarios.html" %}
+    {% endif %}
+
+
+    {% if user.eh_prof_a %}
+      {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}
+      {% include "estudantes/includes/funcionalidade_respostas.html" with mostra_estudante=True %}
+      {% include "estudantes/includes/pares_respostas.html" %}
+    {% endif %}
+
+    {% if user.eh_prof_a %}
+      {% with despesas=projeto.despesa_set.all %}
+        {% if despesas %}
+          <hr>
+          <h4>{% lng "Despesas Financeiras do Projeto" "Financial Expenses of the Project" %}:</h4>
+          <ul>
+            {% for despesa in projeto.despesa_set.all %}
+              <li>
+                {% if despesa.data %}{{despesa.data}}{% else %}{% lng "DATA INDEFINIDA" "UNDEFINED DATE" %}{% endif %}
+                {% if despesa.descricao %} - [{{despesa.descricao}}]{% endif %}
+                = 
+                {% if despesa.valor_r %} R$ {{despesa.valor_r|stringformat:".2f"}}{% endif %}
+                {% if despesa.valor_d %} U$ {{despesa.valor_d|stringformat:".2f"}}{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
+
+    {% if user.eh_prof_a %}
+
+      <hr>
+
+      
+      <div class="card mb-3 text-muted font-weight-bold">
+        <div class="card-header py-1 pl-2">
+          {% lng "Avaliações e Resultados" "Evaluations and Results" %}
+        </div>
+        <div class="card-body p-2">
   
-  <div class="mt-3">
-    {% include "professores/includes/ver_site.html" %}
-    {% include "professores/includes/ver_pastas_projeto.html" %}
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
+          {% if projeto.orientador %}
+          href="{% url 'avaliar_entregas' projeto.orientador.id %}?projeto={{projeto.id}}"
+          {% else %}
+          disabled
+          {% endif %}
+        >
+          {% lng "Resultados Entregas" "Deliveries Results" %}
+        </a>
+
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
+          href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
+          {% lng "Resultado Bancas" "Exam. Boards Results" %}
+        </a>
+
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
+          {% if projeto.orientador %}
+            href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
+          {% else %}
+            disabled
+          {% endif %}
+          >
+            {% lng "Avaliação de Pares" "Peer Evaluation" %}
+          </a>
+
+        </div>
+      </div>
+
+      <div class="card mb-3 text-muted font-weight-bold">
+        <div class="card-header py-1 pl-2">
+          {% lng "Agendamentos" "Schedules" %}
+        </div>
+        <div class="card-body p-2">
+
+          <a class="btn btn-primary wbtn"
+            data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
+            href="{% url 'bancas_lista' projeto.id %}">
+            {% lng "Bancas" "Exam. Boards" %}
+          </a>
+
+          <a class="btn btn-primary wbtn"
+            data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das mentorias"
+            href="{% url 'dinamicas_lista' projeto.id %}">
+            {% lng "Mentorias" "Mentorships" %}
+          </a>
+  
+        </div>
+      </div>
+
+      <div class="card mb-3 text-muted font-weight-bold">
+        <div class="card-header py-1 pl-2">
+          {% lng "Edições" "Editions" %}
+        </div>
+        <div class="card-body p-2">
+          <a class="btn btn-primary wbtn"
+            data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
+            href="{% url 'proposta_completa' projeto.proposta.id %}">
+            {% lng "Proposta" "Proposal" %}
+          </a>
+
+          {% if projetos_avancados %}
+            <a class="btn btn-primary wbtn" 
+            data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
+            href="{% url 'projeto_avancado' projeto.id %}">
+              {% lng "Versão Avançada" "Advanced Version" %}
+            </a>
+          {% else %}
+            <a class="btn btn-primary wbtn" 
+            data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
+            onclick="cria_avancado()" style="color:white;">
+              {% lng "Cria Avançado" "Create Advanced" %}
+            </a>
+          {% endif %}
+          
+          <a class="btn btn-primary wbtn"
+            data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
+            href="{% url 'editar_projeto' projeto.id %}">
+            {% lng "Editar" "Edit" %}
+          </a>
+        </div>
+      </div>
+
+      {% if not projetos_avancados %}
+        <script>
+          function cria_avancado() {
+            {% if user.eh_admin %} 
+              if (confirm("Não existe uma versão avançada desse projeto, deseja criar?")) {
+                window.open("{% url 'projeto_avancado' projeto.id %}");
+              }
+            {% else %}
+              alert("Você não tem permissão para criar uma versão avançada desse projeto.");
+            {% endif %}
+          }
+        </script>
+      {% endif %}
+
+      
+
+    {% endif %}
+
   </div>
 
   {% if user.eh_prof_a %}
-    <hr>
-    <h4>
-      {% lng "Certificados" "Certificates" %}:
-      {% if user.eh_prof_a %}
-        <small class="esconder">
-          <a href="{% url 'carregar_certificado' %}">&#10133;</a>
-        </small>
-      {% endif %}
-    </h4>
-    <div class="caixa_rolante">
-      {% include "certificados.html" with certificados=projeto.certificado_set.all %}
-    </div>
-  {% endif %}
-
-  {% if user.eh_prof_a %}
-  {% if projeto.encontro_set.all %}
-      <hr>
-      <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
-      <ul>
-          {% for dinamica in projeto.encontro_set.all %} 
-              <li>
-                  {{dinamica.startDate|date:'j \d\e F \d\e Y \d\a\s H:i'}} às {{dinamica.endDate|date:'H:i'}}
-                  <ul>
-                    {% if dinamica.location %}
-                      <li>
-                        {% lng "Local" "Location" %}:
-                        {% if dinamica.url_location %}
-                          <a href="{{dinamica.location}}">{% lng "link vídeo-conferência" "video-conference link" %}</a>
-                        {% else %}
-                          <span style="word-break: break-all;">{{dinamica.location}}</span>
-                        {% endif %}
-                      </li>
-                    {% endif %}
-                    {% if dinamica.facilitador %}
-                      <li>
-                        {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
-                        <a href="{% url 'user_detail' dinamica.facilitador.id %}">
-                          {{dinamica.facilitador}}
-                        </a>
-                      </li>
-                    {% endif %}
-                    {% if dinamica.observacoes_orientador or dinamica.observacoes_estudantes %}
-                        <ul>
-                          {% if dinamica.observacoes_estudantes %}
-                            <li>
-                              <strong>{% lng "Observações para Estudantes" "Observations for Students" %}:</strong>
-                              {{dinamica.observacoes_estudantes|safe|linebreaks}}
-                            </li>
-                          {% endif %}
-                          {% if dinamica.observacoes_orientador %}
-                            <li>
-                              <strong>{% lng "Observações para Orientador" "Observations for Advisor" %}:</strong>
-                              {{dinamica.observacoes_orientador|safe|linebreaks}}
-                            </li>
-                          {% endif %}
-                        </ul>
-                    {% endif %}
-                    {% if dinamica.documento %}
-                      <li>
-                        <strong>{% lng "Documento" "Document" %}:</strong>
-                        <a href="{{dinamica.documento.url}}">{{dinamica.documento}}</a>
-                      </li>
-                    {% endif %}
-                    {% if dinamica.link %}
-                      <li>
-                        <strong>{% lng "Link" "Link" %}:</strong>
-                        <a href="{{dinamica.link}}">{{dinamica.link}}</a>
-                      </li>
-                    {% endif %}
-                    {% if dinamica.feedback %}
-                      <li>
-                        <strong>{% lng "Feedback" "Feedback" %}:</strong>
-                        {{dinamica.feedback}}
-                      </li>
-                    {% endif %}
-                    {% if dinamica.feedback_estudantes %}
-                      <li>
-                        <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
-                        {{dinamica.feedback_estudantes}}
-                      </li>
-                    {% endif %}
-                    {% if dinamica.feedback_orientador %}
-                      <li>
-                        <strong>{% lng "Feedback do Orientador" "Advisor Feedback" %}:</strong>
-                        {{dinamica.feedback_orientador}}
-                      </li>
-                    {% endif %}
-                  </ul>
-              </li>
-          {% endfor %}
-      </ul>
-  {% endif %}
-  {% endif %}
-
-  
-  {% if user.eh_prof_a %}
-    <hr>
-    <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
-    {% include "mostra_horarios.html" %}
-  {% endif %}
-
-
-  {% if user.eh_prof_a %}
-    {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}
-    {% include "estudantes/includes/funcionalidade_respostas.html" with mostra_estudante=True %}
-    {% include "estudantes/includes/pares_respostas.html" %}
-  {% endif %}
-
-  {% if user.eh_prof_a %}
-    {% with despesas=projeto.despesa_set.all %}
-      {% if despesas %}
-        <hr>
-        <h4>{% lng "Despesas Financeiras do Projeto" "Financial Expenses of the Project" %}:</h4>
-        <ul>
-          {% for despesa in projeto.despesa_set.all %}
-            <li>
-              {% if despesa.data %}{{despesa.data}}{% else %}{% lng "DATA INDEFINIDA" "UNDEFINED DATE" %}{% endif %}
-              {% if despesa.descricao %} - [{{despesa.descricao}}]{% endif %}
-              = 
-              {% if despesa.valor_r %} R$ {{despesa.valor_r|stringformat:".2f"}}{% endif %}
-              {% if despesa.valor_d %} U$ {{despesa.valor_d|stringformat:".2f"}}{% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-  {% endif %}
-
-  {% if user.eh_prof_a %}
-
-    <hr>
-
-    
-    <div class="card mb-3 text-muted font-weight-bold">
-      <div class="card-header py-1 pl-2">
-        {% lng "Avaliações e Resultados" "Evaluations and Results" %}
-      </div>
-      <div class="card-body p-2">
- 
-       <a class="btn btn-primary wbtn"
-        data-toggle="tooltip" data-html="true" animation="true" title="Permite avaliar as entregas do projeto"
-        {% if projeto.orientador %}
-         href="{% url 'avaliar_entregas' projeto.orientador.id %}?projeto={{projeto.id}}"
-        {% else %}
-         disabled
-        {% endif %}
-       >
-         {% lng "Resultados Entregas" "Deliveries Results" %}
-       </a>
-
-       <a class="btn btn-primary wbtn"
-        data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
-        href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-         {% lng "Resultado Bancas" "Exam. Boards Results" %}
-       </a>
-
-       <a class="btn btn-primary wbtn"
-        data-toggle="tooltip" data-html="true" animation="true" title="Visualiza as avaliações de pares"
-        {% if projeto.orientador %}
-          href="{% url 'avaliacoes_pares' projeto.orientador.id projeto.id %}"
-        {% else %}
-          disabled
-        {% endif %}
-        >
-          {% lng "Avaliação de Pares" "Peer Evaluation" %}
-        </a>
-
-      </div>
-    </div>
-
-    <div class="card mb-3 text-muted font-weight-bold">
-      <div class="card-header py-1 pl-2">
-        {% lng "Agendamentos" "Schedules" %}
-      </div>
-      <div class="card-body p-2">
-
-        <a class="btn btn-primary wbtn"
-          data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das bancas"
-          href="{% url 'bancas_lista' projeto.id %}">
-          {% lng "Bancas" "Exam. Boards" %}
-        </a>
-
-        <a class="btn btn-primary wbtn"
-          data-toggle="tooltip" data-html="true" animation="true" title="Acessa os agendamentos das mentorias"
-          href="{% url 'dinamicas_lista' projeto.id %}">
-          {% lng "Mentorias" "Mentorships" %}
-        </a>
- 
-      </div>
-    </div>
-
-    <div class="card mb-3 text-muted font-weight-bold">
-      <div class="card-header py-1 pl-2">
-        {% lng "Edições" "Editions" %}
-      </div>
-      <div class="card-body p-2">
-        <a class="btn btn-primary wbtn"
-          data-toggle="tooltip" data-html="true" animation="true" title="Acessa a poposta do projeto"
-          href="{% url 'proposta_completa' projeto.proposta.id %}">
-          {% lng "Proposta" "Proposal" %}
-        </a>
-
-        {% if projetos_avancados %}
-          <a class="btn btn-primary wbtn" 
-          data-toggle="tooltip" data-html="true" animation="true" title="Acessa a versão avançada desse projeto"
-          href="{% url 'projeto_avancado' projeto.id %}">
-            {% lng "Versão Avançada" "Advanced Version" %}
-          </a>
-        {% else %}
-          <a class="btn btn-primary wbtn" 
-          data-toggle="tooltip" data-html="true" animation="true" title="Cria uma versão avançada desse projeto"
-          onclick="cria_avancado()" style="color:white;">
-            {% lng "Cria Avançado" "Create Advanced" %}
-          </a>
-        {% endif %}
-        
-        <a class="btn btn-primary wbtn"
-          data-toggle="tooltip" data-html="true" animation="true" title="Permite editar alguns campos do projeto"
-          href="{% url 'editar_projeto' projeto.id %}">
-          {% lng "Editar" "Edit" %}
-        </a>
-      </div>
-    </div>
-
-    {% if not projetos_avancados %}
-      <script>
-        function cria_avancado() {
-          {% if user.eh_admin %} 
-            if (confirm('Não existe uma versão avançada desse projeto, deseja criar?')) {
-              window.open("{% url 'projeto_avancado' projeto.id %}");
-            }
-          {% else %}
-            alert('Você não tem permissão para criar uma versão avançada desse projeto.');
-          {% endif %}
-        }
-      </script>
-    {% endif %}
-
     {% include "base-modal.html" %}
-
   {% endif %}
 
 {% endblock %}

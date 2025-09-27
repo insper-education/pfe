@@ -1,5 +1,9 @@
 /* Tem os parâmetros para o topnav e outros elementos comuns a todas as páginas. */
 
+p {
+  margin-bottom: 0.1em;
+}
+
 .titulo {
   font-size: 30px;
   display: block;

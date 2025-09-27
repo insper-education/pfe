@@ -212,13 +212,13 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
             return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
    
     lingua = 0
+    data = datetime.datetime.now()
     if documento:
-        data = documento.data
+        #data = documento.data
         confidencial = documento.confidencial
         anotacao = documento.anotacao
         lingua = documento.lingua_do_documento
     else:
-        data = datetime.datetime.now()
         confidencial = None
         anotacao = None
         
@@ -278,13 +278,13 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
             return HttpResponse("<h1>Sem privilégios para gravar tipo de arquivo!</h1>", status=401)
    
     lingua = 0
+    data = datetime.datetime.now()
     if documento:
-        data = documento.data
+        # data = documento.data
         confidencial = documento.confidencial
         anotacao = documento.anotacao
         lingua = documento.lingua_do_documento
     else:
-        data = datetime.datetime.now()
         confidencial = None
         anotacao = None
         
@@ -368,12 +368,11 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
         tipo = documento.tipo_documento
   
     lingua = 0
+    data = datetime.datetime.now()
     if documento:
-        data = documento.data
         anotacao = documento.anotacao
         lingua = documento.lingua_do_documento
     else:
-        data = datetime.datetime.now()
         anotacao = None
 
     context = {

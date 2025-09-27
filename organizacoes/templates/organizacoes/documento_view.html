@@ -168,7 +168,7 @@
           updateDateTime();
           setInterval(updateDateTime, 1000);
         </script>
-      {% else %}
+      {% elif data %}
         <label for="data" class="col1 col-form-label">{% lng "Data" "Date" %}</label>
         <div class="col2">
           <input id="data" class="form-control" type="datetime-local" name="data" value="{{data|date:'Y-m-d\TH:i'}}">

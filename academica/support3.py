@@ -23,7 +23,7 @@ logger = logging.getLogger("django")
 
 
 def em_probation(alocacao):
-    """Retorna se em probation."""
+    """Retorna se alocação está em probation (mas não verifica se já reprovado, a menos que reprovado direto)."""
     reprovacao = Reprovacao.objects.filter(alocacao=alocacao).exists()
     if reprovacao:
         return False
@@ -97,6 +97,14 @@ def em_probation(alocacao):
 
     return False
 
+
+def probations(alocacoes, request=None):
+    """Retorna se alguma das alocações está em probation (verifica se já reprovado)."""
+    for alocacao in alocacoes:
+        probatorio = get_media_alocacao_i(alocacao, request=request)["probation"]
+        if probatorio:
+            return True
+    return False
 
 
 def get_media_alocacao_i(alocacao, request=None):

@@ -158,6 +158,7 @@
         <br>
 
         {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+        {% include "display_graficos_individuais.html" %}
         <br><br>
 
         {% with relatos=alocacao|get_relatos %}
