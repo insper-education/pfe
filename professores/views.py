@@ -1172,6 +1172,59 @@ def ajax_permite_agendar_mentorias(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
+def ajax_verifica_membro_banca(request):
+    """Verifica se o usuário é membro de alguma banca."""
+    membro_id = request.POST.get("membro_id", None)
+    edicao = request.POST.get("edicao", None)
+    tipo = [request.POST.get("tipo", None)]  # "BI", "BF", "P", "F"
+    remove_banca = request.POST.get("remove_banca", None)
+    if request.is_ajax() and membro_id and tipo:
+        try:
+            membro = get_object_or_404(PFEUser, pk=int(membro_id))
+        except ValueError:
+            return HttpResponse("Membro não encontrado.", status=404)
+        bancas = Banca.get_bancas_com_membro(membro, siglas=tipo)
+
+        if edicao and '.' in edicao:
+            ano, semestre = edicao.split('.')
+            bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+        else:
+            configuracao = get_object_or_404(Configuracao)
+            bancas = bancas.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+        
+        if remove_banca:
+            remove_banca = int(remove_banca)
+            bancas = bancas.exclude(id=remove_banca)
+
+        lista_bancas = []
+        for banca in bancas:
+            if banca.alocacao:
+                aluno_nome = banca.alocacao.aluno.user.get_full_name()
+                aluno_email = banca.alocacao.aluno.user.email
+                projeto_titulo = banca.alocacao.projeto.get_titulo_org()
+            else:
+                aluno_nome = ""
+                aluno_email = ""
+                projeto_titulo = banca.projeto.get_titulo_org() if banca.projeto else ""
+            data = banca.startDate.strftime("%d/%m %H:%M") if banca.startDate else ""
+            data += " às " + banca.endDate.strftime("%H:%M") if banca.endDate else ""
+            lista_bancas.append({
+                "id": banca.id,
+                "data": data,
+                "tipo": banca.composicao.exame.titulo if banca.composicao and banca.composicao.exame else "",
+                "projeto": projeto_titulo,
+                "aluno_nome": aluno_nome,
+                "aluno_email": aluno_email,
+                "local": banca.location if banca.location else "",
+                "link": banca.link if banca.link else "",
+            })
+
+        return JsonResponse({"lista_bancas": lista_bancas})
+    return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, edicao=None):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
     configuracao = get_object_or_404(Configuracao)

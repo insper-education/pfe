@@ -1021,7 +1021,8 @@ class Banca(models.Model):
         return None
     
     @staticmethod
-    def get_bancas_com_membro(membro):
+    def get_bancas_com_membro(membro, siglas=("BI", "BF")):
+        """Retorna as bancas que o membro participa (ou é orientador)."""
         bancas = (Banca.objects.filter(membro1=membro) |
                   Banca.objects.filter(membro2=membro) |
                   Banca.objects.filter(membro3=membro))
@@ -1029,7 +1030,9 @@ class Banca(models.Model):
         # if hasattr(membro, "Professor"):
         if membro.eh_prof_a:
             # Orientador é automaticamente membro de banca final e intermediária
-            bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla__in=("BI", "BF"))
+            bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor)
+
+        bancas = bancas.filter(composicao__exame__sigla__in=siglas)
         return bancas
 
 

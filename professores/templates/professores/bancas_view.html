@@ -42,8 +42,7 @@
   }
 </style>
 
-  <form id="criarbancasform" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+  <form id="criarbancasform" method="post" enctype="multipart/form-data">{% csrf_token %}
 
     <div class="modal-header">
       <h5 id="documentacao" class="modal-title">
@@ -67,40 +66,38 @@
 
     {% if not banca.projeto %}
       <div id="div_projetos" class="form-group">
-      <span style="margin-top: 12px;" for="projeto">
-        {% lng "Projeto:" "Project:" %}
-      </span>
-      <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-      data-width="75%" data-size="5"
-      {% comment %} required {% endcomment %}
-      {% if request.user.eh_admin %}data-live-search="true"{% endif %}
-      >
-        {% for projeto in projetos %}
-          {% if projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
-            <option value="{{projeto.id}}"
-            style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
-            data-titulo="{{projeto.get_titulo}}"
-            data-titulo_link="{% url 'projeto_infos' projeto.id %}"
-            data-organizacao="{{projeto.organizacao}}"
-            data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
-            data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-            data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
-            data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
-            {% if projeto.id == banca.projeto.id %} selected {% endif %}
-            data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-            {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada:
-            {% with banca_agendada=projeto.banca_set.all.0 %}
-              {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
-            {% endwith %}
-            "{% endif %}
-            >
-              {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
-              ({{projeto.organizacao}}) {{projeto.get_titulo}}
-              {% include "tipo_projeto.html" with sem_cor="True" %}
-            </option>
-          {% endif %}
-        {% endfor %}
-      </select>
+        <span style="margin-top: 12px;" for="projeto">{% lng "Projeto:" "Project:" %}</span>
+        <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
+        data-width="75%" data-size="5"
+        {% comment %} required {% endcomment %}
+        {% if request.user.eh_admin %}data-live-search="true"{% endif %}
+        >
+          {% for projeto in projetos %}
+            {% if projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
+              <option value="{{projeto.id}}"
+              style="font-size: 0.75em;{% if projeto.id in projetos_agendados %}color: lightgrey;{% endif %}"
+              data-titulo="{{projeto.get_titulo}}"
+              data-titulo_link="{% url 'projeto_infos' projeto.id %}"
+              data-organizacao="{{projeto.organizacao}}"
+              data-organizacao_link="{% url 'organizacao_completo' projeto.organizacao.id %}"
+              data-orientador="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+              data-orientador_link="{% if projeto.orientador %}{% url 'professor_detail' projeto.orientador.id %}{% endif %}"
+              data-orientador_id="{% if projeto.orientador %}{{projeto.orientador.user.id}}{% else %}0{% endif %}"
+              {% if projeto.id == banca.projeto.id %} selected {% endif %}
+              data-subtext="{% if projeto.orientador %}{{projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+              {% if projeto.id in projetos_agendados %}data-mensagem="Banca já agendada:
+              {% with banca_agendada=projeto.banca_set.all.0 %}
+                {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
+              {% endwith %}
+              "{% endif %}
+              >
+                {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
+                ({{projeto.organizacao}}) {{projeto.get_titulo}}
+                {% include "tipo_projeto.html" with sem_cor="True" %}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
       </div>
     {% else %}
       <input type="hidden" name="projeto" value="{{banca.projeto.id}}">
@@ -108,121 +105,122 @@
 
     {% if not banca.alocacao %}
       <div id="div_alocacoes" class="form-group">
-      <span style="margin-top: 12px;" for="alocacao">
-        {% lng "Alocação:" "Allocation:" %}
-      </span>
-      <select class="selectpicker" name="alocacao" id="alocacao" title="Selecione a alocação"
-      data-width="75%" data-size="5" 
-      {% comment %} required {% endcomment %}
-      {% if request.user.eh_admin %}data-live-search="true"{% endif %}
-      >
-        {% for alocacao in alocacoes %}
-          {% if alocacao.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
-            <option value="{{alocacao.id}}"
-            style="font-size: 0.75em;{% comment %} {% if alocacao.id in alocacaos_agendados %}color: lightgrey;{% endif %} {% endcomment %}"
-            data-titulo="{{alocacao.projeto.get_titulo}}"
-            data-titulo_link="{% url 'projeto_infos' alocacao.projeto.id %}"
-            data-organizacao="{{alocacao.projeto.organizacao}}"
-            data-organizacao_link="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}"
-            data-orientador="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
-            data-orientador_link="{% if alocacao.projeto.orientador %}{% url 'professor_detail' alocacao.projeto.orientador.id %}{% endif %}"
-            data-orientador_id="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador.user.id}}{% else %}0{% endif %}"
-            data-estudante="{{alocacao.aluno}}"
-            data-estudante_link="{% if alocacao.aluno %}{% url 'estudante_detail' alocacao.aluno.id %}{% endif %}"
-            {% if alocacao.id == banca.alocacao.id %} selected {% endif %}
-            data-subtext="[{{alocacao.projeto.organizacao}}] {{alocacao.projeto.get_titulo}}"
-            {% comment %} {% if alocacao.id in projetos_agendados %}data-mensagem="Banca já agendada:
-            {% with banca_agendada=projeto.banca_set.all.0 %}
-              {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
-            {% endwith %}
-            "{% endif %} {% endcomment %}
-            >
-              {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
-              {% comment %} ({{projeto.organizacao}}) {{projeto.get_titulo}} {% endcomment %}
-              {% comment %} {% include "tipo_projeto.html" %} {% endcomment %}
-              {{alocacao.aluno.user.get_full_name}}
-            </option>
-          {% endif %}
-        {% endfor %}
-      </select>
+        <span style="margin-top: 12px;" for="alocacao">{% lng "Alocação:" "Allocation:" %}</span>
+        <select class="selectpicker" name="alocacao" id="alocacao" title="Selecione a alocação"
+        data-width="75%" data-size="5" 
+        {% comment %} required {% endcomment %}
+        {% if request.user.eh_admin %}data-live-search="true"{% endif %}
+        >
+          {% for alocacao in alocacoes %}
+            {% if alocacao.projeto.orientador.user == request.user or request.user.tipo_de_usuario == 4 %}
+              <option value="{{alocacao.id}}"
+              style="font-size: 0.75em;{% comment %} {% if alocacao.id in alocacaos_agendados %}color: lightgrey;{% endif %} {% endcomment %}"
+              data-titulo="{{alocacao.projeto.get_titulo}}"
+              data-titulo_link="{% url 'projeto_infos' alocacao.projeto.id %}"
+              data-organizacao="{{alocacao.projeto.organizacao}}"
+              data-organizacao_link="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}"
+              data-orientador="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador}}{% else %}SEM ORIENTADOR{% endif %}"
+              data-orientador_link="{% if alocacao.projeto.orientador %}{% url 'professor_detail' alocacao.projeto.orientador.id %}{% endif %}"
+              data-orientador_id="{% if alocacao.projeto.orientador %}{{alocacao.projeto.orientador.user.id}}{% else %}0{% endif %}"
+              data-estudante="{{alocacao.aluno}}"
+              data-estudante_link="{% if alocacao.aluno %}{% url 'estudante_detail' alocacao.aluno.id %}{% endif %}"
+              {% if alocacao.id == banca.alocacao.id %} selected {% endif %}
+              data-subtext="[{{alocacao.projeto.organizacao}}] {{alocacao.projeto.get_titulo}}"
+              {% comment %} {% if alocacao.id in projetos_agendados %}data-mensagem="Banca já agendada:
+              {% with banca_agendada=projeto.banca_set.all.0 %}
+                {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
+              {% endwith %}
+              "{% endif %} {% endcomment %}
+              >
+                {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
+                {% comment %} ({{projeto.organizacao}}) {{projeto.get_titulo}} {% endcomment %}
+                {% comment %} {% include "tipo_projeto.html" %} {% endcomment %}
+                {{alocacao.aluno.user.get_full_name}}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
       </div>
     {% else %}
       <input type="hidden" name="alocacao" value="{{banca.alocacao.id}}">
     {% endif %}
 
-    {% lng "Título:" "Title:" %}
-    <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_infos' banca.get_projeto.id %}"{% endif %}>
-      <span id="titulo" name="titulo">
-        {% if banca and banca.get_projeto %}
-          {{banca.get_projeto.get_titulo}}
-          {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
-        {% else %}
-          {% lng "Título de Projeto não definido" "Project Title not defined" %}
-        {% endif %}
-      </span>
-    </a>
-    <br>
+    <div class="mb-3" style="line-height: 1.3;">
 
-    {% lng "Organização:" "Organization:" %}
-    <a id="organizacao_link" name="organizacao_link" {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}"{% endif %}>
-      <span id="organizacao" name="organizacao">
-        {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}
-          {{banca.get_projeto.organizacao}}
-        {% else %}
-          {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
-        {% endif %}
-      </span>
-    </a>
-    <br>
-    
-    {% lng_g banca.get_projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
-    <a id="orientador_link" name="orientador_link" {% if banca and banca.get_projeto and banca.get_projeto.orientador %}href="{% url 'professor_detail' banca.get_projeto.orientador.id %}"{% endif %}>
-      <span id="orientador" name="orientador">
-        {% if banca and banca.get_projeto and banca.get_projeto.orientador %}
-          {{banca.get_projeto.orientador}}
-        {% else %}
-          {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
-        {% endif %}
-      </span>
-    </a>
-    <span hidden id="orientador_id"></span>
-    <br>
-
-    {% with coorientadores=banca.get_projeto.coorientador_set.all %}
-      {% if coorientadores %}
-        <div class="coorientacao">
-          {% lng "Coorientação:" "Co-advisoring:" %}
-            {% for coorientador in coorientadores %}
-              <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
-                {{coorientador.usuario.get_full_name}} 
-              </a>
-              <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
-              {% if not forloop.last %}; {% endif %}
-            {% endfor %}
-        </div>
-        <div style="font-size: small; color: darkgoldenrod; line-height:1;">
-          {% lng "Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca." "Co-advisors are not automatically scheduled for the examination board, select below to invite co-advisor to the examination board." %}
-        </div>
-      {% endif %}
-    {% endwith %}
-    
-    <div id="div_estudante">
-      {% lng "Estudante:" "Student:" %}
-      <a id="estudante_link" name="estudante_link" {% if banca and banca.alocacao and banca.alocacao.aluno %}href="{% url 'estudante_detail' banca.alocacao.aluno.id %}"{% endif %}>
-        <span id="estudante" name="estudante">
-          {% if banca and banca.alocacao and banca.alocacao.aluno %}
-            {{banca.alocacao.aluno}}
+      {% comment %} Mostra informações do projeto selecionado {% endcomment %}
+      {% lng "Título:" "Title:" %}
+      <a style="display: inline;" id="titulo_link" name="titulo_link" {% if banca and banca.get_projeto %}href="{% url 'projeto_infos' banca.get_projeto.id %}"{% endif %}>
+        <span id="titulo" name="titulo">
+          {% if banca and banca.get_projeto %}
+            {{banca.get_projeto.get_titulo}}
+            {% include "tipo_projeto.html" with projeto=banca.get_projeto %}
           {% else %}
-            {% lng "Sem estudante" "No student" %}
+            {% lng "Título de Projeto não definido" "Project Title not defined" %}
           {% endif %}
         </span>
       </a>
-      <span hidden id="estudante_id"></span>
       <br>
-    </div>
-    <br>
 
-    <div style="line-height: 1;">
+      {% lng "Organização:" "Organization:" %}
+      <a id="organizacao_link" name="organizacao_link" {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}"{% endif %}>
+        <span id="organizacao" name="organizacao">
+          {% if banca and banca.get_projeto and banca.get_projeto.organizacao %}
+            {{banca.get_projeto.organizacao}}
+          {% else %}
+            {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
+          {% endif %}
+        </span>
+      </a>
+      <br>
+      
+      {% lng_g banca.get_projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:
+      <a id="orientador_link" name="orientador_link" {% if banca and banca.get_projeto and banca.get_projeto.orientador %}href="{% url 'professor_detail' banca.get_projeto.orientador.id %}"{% endif %}>
+        <span id="orientador" name="orientador">
+          {% if banca and banca.get_projeto and banca.get_projeto.orientador %}
+            {{banca.get_projeto.orientador}}
+          {% else %}
+            {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
+          {% endif %}
+        </span>
+      </a>
+      <span hidden id="orientador_id"></span>
+      <br>
+
+      {% with coorientadores=banca.get_projeto.coorientador_set.all %}
+        {% if coorientadores %}
+          <div class="coorientacao">
+            {% lng "Coorientação:" "Co-advisoring:" %}
+              {% for coorientador in coorientadores %}
+                <a class="imprimir" href="{% url 'user_detail' coorientador.usuario.id %}">
+                  {{coorientador.usuario.get_full_name}} 
+                </a>
+                <a class="email" href="mailto:{{coorientador.usuario.email}}">&lt;{{coorientador.usuario.email}}&gt;</a>
+                {% if not forloop.last %}; {% endif %}
+              {% endfor %}
+          </div>
+          <div style="font-size: small; color: darkgoldenrod; line-height:1;">
+            {% lng "Coorientadores não são automaticamente agendados na banca, selecione abaixo para convidar coorientador para a banca." "Co-advisors are not automatically scheduled for the examination board, select below to invite co-advisor to the examination board." %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      
+      <div id="div_estudante">
+        {% lng "Estudante:" "Student:" %}
+        <a id="estudante_link" name="estudante_link" {% if banca and banca.alocacao and banca.alocacao.aluno %}href="{% url 'estudante_detail' banca.alocacao.aluno.id %}"{% endif %}>
+          <span id="estudante" name="estudante">
+            {% if banca and banca.alocacao and banca.alocacao.aluno %}
+              {{banca.alocacao.aluno}}
+            {% else %}
+              {% lng "Sem estudante" "No student" %}
+            {% endif %}
+          </span>
+        </a>
+        <span hidden id="estudante_id"></span>
+        <br>
+      </div>
+    </div>
+
+    <div class="mb-3" style="line-height: 1;">
       <span style="display: inline-block; margin-bottom: 8px;">
         <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
       </span>
@@ -280,8 +278,7 @@
     });
     </script>
 
-    <br>
-    <div>
+    <div class="mb-3">
         <label for="inicio" style="white-space: nowrap; display:inline-block; margin-bottom: 3px;">
         <span style="display:inline-block; width:5.5ex; text-align:right;">
           {% lng "Início:" "Start:" %}
@@ -310,7 +307,7 @@
         {% endif %} 
         required>
         </label>
-    </div><br>
+    </div>
 
     <script>
       // https://webreflection.medium.com/using-the-input-datetime-local-9503e7efdce
@@ -340,18 +337,17 @@
       });
     </script>
 
-    <label for="local">
-      {% lng "Local:" "Local:" %}
-    </label> 
-    <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
-     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-     placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
-     {% if banca and banca.location %}
-      value="{{banca.location}}"
-     {% endif %}
-    />
-    <span id="aviso_local" style="color: red;"></span>
-    <br><br>
+    <div class="mb-3">
+      <label for="local">{% lng "Local:" "Local:" %}</label> 
+      <input id="local" name="local" type="text" size="36" maxlength="{% max_length Banca "location" %}" class="troca_lingua"
+      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+      placeholder="" data-pt="alocado pela equipe de reservas" data-en="allocated by the facilities team"
+      {% if banca and banca.location %}
+        value="{{banca.location}}"
+      {% endif %}
+      />
+      <span id="aviso_local" style="color: red;"></span>
+    </div>
 
     {% if banca.location %}
       <script>
@@ -368,79 +364,73 @@
       </script>
     {% endif %}
 
-    <label for="link">
-      {% lng "Link de Vídeo-conferência:" "Video-conference Link:" %}
-    </label>
-    <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
-     {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-     placeholder="" data-pt="somente se necessário" data-en="only if necessary"
-     {% if banca and banca.link %}
-      value="{{banca.link}}"
-     {% endif %} 
-    />
-    <br><br>
-
-    <table>
-      <tr>
-        <td>
-          <label for="membro1">
-            <span lang="pt">Membro&nbsp;1<span class="texto-longo"> da Banca</span>:</span>
-            <span lang="en"><span class="texto-longo">Board </span> Member&nbsp;1:</span>
-          </label>
-        </td>
-        <td>
-          <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
-            {% if not user.eh_admin %}required{% endif %}
-            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-            oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
-            oninput="this.setCustomValidity('')"
-            >
-              <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <label for="membro2">
-            <span lang="pt">Membro&nbsp;2<span class="texto-longo"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="texto-longo">Board </span> Member&nbsp;2:</span>
-          </label>
-        </td>
-        <td>
-          <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca"
-            {% if user.tipo_de_usuario != 4 %}required{% endif %}
-            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
-            oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
-            oninput="this.setCustomValidity('')"
-            >
-            <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <label for="membro3">
-            <span lang="pt">Membro&nbsp;3<span class="texto-longo"> da Banca</span>:</span>
-            <span lang="en" style="display: none;"><span class="texto-longo">Board </span> Member&nbsp;3:</span>
-          </label>
-        </td>
-        <td>
-          <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca"
-            {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}>
-            <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
-          </select>
-        </td>
-      </tr>
-      <caption style="line-height: 1; padding: 4px 0px;">
-        <small>
-          {% lng "Indique duas pessoas para a banca. Para três pessoas peça autorização previamente." "Select two people for the examination board. For three people, ask for prior authorization." %}
-        </small>
-      </caption>
-    </table>
+    <div class="mb-3">
+      <label for="link">{% lng "Vídeo-conferência:" "Video-conference:" %}</label>
+      <input id="link" name="link" type="text" size="36" maxlength="{% max_length Banca "link" %}" class="troca_lingua"
+      {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+      placeholder="" data-pt="somente se necessário" data-en="only if necessary"
+      {% if banca and banca.link %}
+        value="{{banca.link}}"
+      {% endif %} 
+      />
+    </div>
+    
+    <div class="mb-3">
+      <table>
+        <thead>
+          <tr>
+            <th colspan="2"><b>{% lng "Membros da Banca" "Board Members" %}:</b></th>
+            <th><small id="horarios_outros_bancas" style="display: none;">{% lng "Horários de outras bancas agendadas" "Scheduled Times of Other Committees" %}:</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><label for="membro1">#1</label></td>
+            <td>
+              <select name="membro1" class="pessoas custom-select custom-select-sm membros" id="membro1" title="Selecione membro da banca"
+                {% if not user.eh_admin %}required{% endif %}
+                {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+                oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+                oninput="this.setCustomValidity('')"
+                >
+                  <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
+              </select>
+            </td>
+            <td id="membro1_bancas" style="padding-left: 8px; font-size: small; color: gray;"></td>
+          </tr>
+          <tr>
+            <td><label for="membro2">#2</label></td>
+            <td>
+              <select name="membro2" class="pessoas custom-select custom-select-sm membros" id="membro2" title="Selecione membro da banca"
+                {% if user.tipo_de_usuario != 4 %}required{% endif %}
+                {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
+                oninvalid="this.setCustomValidity('Selecione ao menos duas pessoas para a banca')"
+                oninput="this.setCustomValidity('')"
+                >
+                <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
+              </select>
+            </td>
+            <td id="membro2_bancas" style="padding-left: 8px; font-size: small; color: gray;"></td>
+          </tr>
+          <tr>
+            <td><label for="membro3">#3</label></td>
+            <td>
+              <select name="membro3" class="pessoas custom-select custom-select-sm membros" id="membro3" title="Selecione membro da banca"
+                {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}>
+                <option selected value class="troca_lingua" data-pt="-- selecione membro da banca --" data-en="-- select board member --">-- selecione membro da banca --</option>
+              </select>
+            </td>
+            <td id="membro3_bancas" style="padding-left: 8px; font-size: small; color: gray;"></td>
+          </tr>
+        </tbody>
+      </table>
+      <small style="line-height: 1; padding: 4px 0px;">
+        {% lng "Indique duas pessoas para a banca. Para três pessoas peça autorização previamente." "Select two people for the examination board. For three people, ask for prior authorization." %}
+      </small>
+    </div>
 
     {% if banca %}
-      <br>
-      <div style="overflow-wrap: break-word;">
+      <div class="mb-2" style="overflow-wrap: break-word;">
         &#9733;
         {% lng "Formulário de Avaliação" "Evaluation Form" %}:
         <a class="url_reativo" target="_blank" rel="noopener noreferrer" 
@@ -450,7 +440,6 @@
       </div>
     {% endif %}
 
-    <br>
     <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
     <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
 
@@ -528,8 +517,8 @@
     var mensagem = $("#projeto").children(":selected").data("mensagem");
     if(mensagem) { 
       $("#mensagem").html(mensagem);
-      {% if request.user.tipo_de_usuario != 4 %}
-        $("#submit").prop("disabled",true); // Se há mensagem é que a banca já foi agendada
+      {% if not request.user.eh_admin %}
+        $("#submit").prop("disabled", true); // Se há mensagem é que a banca já foi agendada
       {% endif %}
       return;
     }
@@ -538,7 +527,59 @@
     $("#submit").prop("disabled",false);
   }
 
+  
+  function consulta_bancas_ajax(objeto, membro_id) {
+    var membro_bancas = $("#"+objeto+"_bancas");
+    
+    // Limpa o campo e coloca cinza enquanto carrega
+    membro_bancas.html("");
+    membro_bancas.css("color", "gray");
+
+    {% if banca and banca.projeto %}
+      var edicao = "{{ banca.projeto.get_edicao }}";
+      var remove_banca = "{{ banca.id }}";
+    {% else %}
+      var edicao = null;
+      var remove_banca = null;
+    {% endif %}
+    
+    var tipo = $("input[name='tipo']:checked").val();
+
+    $.ajax({
+      url: "{% url 'ajax_verifica_membro_banca' %}",
+      data: {
+        "csrfmiddlewaretoken": "{{ csrf_token }}",
+        "membro_id": membro_id,
+        "tipo": tipo,
+        "edicao": edicao,
+        "remove_banca": remove_banca,
+      },
+      type: "POST",
+      dataType: "json",
+      success: function (data) {
+        membro_bancas.html("");
+        if(data.lista_bancas.length > 0) {
+          $("#horarios_outros_bancas").show();
+          var textos = [];
+          for(var i=0; i < data.lista_bancas.length; i++) {
+            var banca = data.lista_bancas[i];
+            var texto = banca.data;
+            textos.push(texto);
+          }
+          membro_bancas.html(textos.join("; "));
+          if(data.lista_bancas.length == 3) {
+            membro_bancas.css("color", "orange");
+          } else if(data.lista_bancas.length > 3) {
+            membro_bancas.css("color", "red");
+          }
+        }
+      },
+      {% include "ajax_error_function.js" %}
+    });
+  }
+
   $(".membros").change(function(){
+    consulta_bancas_ajax(this.id, $(this).val());
     verifica_certo();
   });
 
@@ -562,9 +603,9 @@
       $("#alocacao").prop("required",true);
       $("#projeto").prop("required",false);
     } else {
-      // Hide div_alocacoes
-      $("#div_alocacoes").hide();
+      // Hide div_alocacoes e div_estudante
       $("#div_projetos").show();
+      $("#div_alocacoes").hide();
       $("#div_estudante").hide();
       // Make projeto required and alocacao not required
       $("#projeto").prop("required",true);
@@ -578,7 +619,7 @@
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for pessoa in falconis %}
-          $(".pessoas").append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa}}"));
+          $(".pessoas").append($("<option></option>").attr("value",{{pessoa.id}}).text("{{pessoa.get_full_name}}"));
         {% endfor %}
         recupera_selecao();
       } else {
@@ -586,7 +627,7 @@
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for professor in professores %}
-          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor.get_full_name}}"));
         {% endfor %}
         recupera_selecao();
       }
@@ -596,19 +637,36 @@
         $(".pessoas").empty();
         $(".pessoas").append($("<option selected value></option>").text("-- selecione membro da banca --"));
         {% for professor in professores %}
-          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor}}"));
+          $(".pessoas").append($("<option></option>").attr("value",{{professor.id}}).text("{{professor.get_full_name}}"));
         {% endfor %}
         recupera_selecao();
       }
     }
     botao_anterior = tipo;
+    puxe_bancas();
+  }
+
+
+  function puxe_bancas() {
+    var membros  = $(".membros")
+    for(mem in membros){
+      elem = membros.eq(mem);
+      
+      // Limpa o campo e coloca cinza enquanto carrega
+      var membro_bancas = $("#"+elem.attr("id")+"_bancas");
+      membro_bancas.html("");
+      membro_bancas.css("color", "gray");
+
+      var membro_id = elem.val()
+      if(typeof membro_id !== "undefined" && membro_id != "") {
+        consulta_bancas_ajax(elem.attr("id"), membro_id);
+      }
+    }
   }
 
   $(document).ready(function () {
     {% if banca %}
       botao_anterior = {% if banca.composicao.exame.sigla == "F" %}"BI"{% else %}"F"{% endif %};
-    {% else %}
-
     {% endif %}
     carrega_modal();
     $("#projeto").change(function(){
@@ -651,6 +709,11 @@
       $("#estudante_link").attr("href", estudante_link);
       verifica_certo();
     })
+
+
+    {% if banca %}
+      puxe_bancas();
+    {% endif %}
 
   });
  
@@ -712,5 +775,5 @@
     return false;
 
   });
-        
+      
 </script>
