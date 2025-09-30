@@ -107,14 +107,14 @@
               <span style="display:inline-block; width:5.5ex; text-align:right">
                 {% lng "Vezes" "Times" %}:
               </span>
-              <input id="vezes" type="number" name="vezes" value="1" min="1" max="16" style="display:inline-block; width:2.7rem;" required>
+              <input id="vezes" type="number" name="vezes" value="1" min="1" max="32" style="display:inline-block; width:2.7rem;" required>
             </label>
 
             <label for="intervalo" style="margin-right: 2rem; float: right; display: none;">
               <span style="display:inline-block; text-align:right">
                 {% lng "Intervalo (minutos)" "Interval (minutes)" %}:
               </span>
-              <input id="intervalo" type="number" name="intervalo" value="0" min="1" max="60" style="display:inline-block; width:2.7rem;" required>
+              <input id="intervalo" type="number" name="intervalo" value="0" min="0" max="1440" style="display:inline-block; width:3.7rem;" required>
             </label>
 
             <script>
@@ -131,9 +131,6 @@
             </script>
 
           {% endif %}
-
-
-        
 
         {% endif %}
 
@@ -160,105 +157,106 @@
           </label>
         </div>
 
-        <br>
-        {% lng "Facilitador" "Facilitator" %}:<br>
-        <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
-          data-live-search="true" data-width="90%" data-size="10">
-            <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
-            <optgroup label="Professores">
-              {% for pessoa in professores %}
-                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-              {% endfor %}
-            </optgroup>
-            <optgroup label="Falconi">
-              {% for pessoa in falconis %}
-                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-              {% endfor %}
-            </optgroup>
-            {% comment %} <optgroup label="Outros">
-              {% for pessoa in pessoas %}
-                <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
-              {% endfor %}
-            </optgroup> {% endcomment %}
-        </select>
-
-      </div>
-
-    </div>
-  
-    {% if not todas %}
-
-      <div class="container">
-        
-        <hr>
-
-        <label for="projeto">{% lng "Projeto" "Project" %}:</label>
-        <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
-          data-live-search="true" data-width="75%" data-size="10">
-          <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
-          {% for projeto in projetos %}
-            <option value="{{projeto.id}}"
-            style="font-size: 0.75em;"
-            data-titulo="{{projeto.get_titulo}}"
-            data-organizacao="{{projeto.organizacao}}"
-            data-orientador="{{projeto.orientador}}"
-            {% if projeto.id == encontro.projeto.id %} selected {% endif %}
-            data-subtext="{{projeto.orientador}}"
-            >
-              {{projeto.ano}}.{{projeto.semestre}}
-              ({{projeto.organizacao}})
-              {{projeto.get_titulo}}
-            </option>  
-          {% endfor %}
-        </select><br><br>
-
-        {% lng "Título" "Title" %}:
-        <label id="titulo" name="titulo">
-          {% if encontro and encontro.projeto %}
-            {{encontro.projeto.get_titulo}}
-          {% else %}
-            {% lng "Título de Projeto não definido" "Project Title not defined" %}
-          {% endif %}
-        </label><br>
-
-        {% lng "Organização" "Organization" %}:
-        <label id="organizacao" name="organizacao">
-          {% if encontro and encontro.projeto and encontro.projeto.organizacao %}
-            {{encontro.projeto.organizacao}}
-          {% else %}
-            {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
-          {% endif %}
-        </label><br>
-        
-        {% lng "Orientador(a)" "Advisor" %}:
-        <label id="orientador" name="orientador">
-          {% if encontro and encontro.projeto and encontro.projeto.orientador %}
-            {{encontro.projeto.orientador}}
-          {% else %}
-            {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
-          {% endif %}
-        </label><br>
-
+        <div class="form-group mt-2">
+          {% lng "Facilitador" "Facilitator" %}:<br>
+          <select name="facilitador" class="pessoas selectpicker" id="facilitador" title="Selecione o facilitador"
+            data-live-search="true" data-width="85%" data-size="10">
+              <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
+              <optgroup label="Professores">
+                {% for pessoa in professores %}
+                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}}</option>
+                {% endfor %}
+              </optgroup>
+              <optgroup label="Falconi">
+                {% for pessoa in falconis %}
+                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}}</option>
+                {% endfor %}
+              </optgroup>
+              {% comment %} <optgroup label="Outros">
+                {% for pessoa in pessoas %}
+                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa}}</option>
+                {% endfor %}
+              </optgroup> {% endcomment %}
+          </select>
         </div>
 
-        {% if encontro %}
-          <br>
-          <div class="container" style="overflow-wrap: break-word;">
-            &#9733;
-            {% lng "Formulário de feedback" "Feedback form" %}:
-            <a class="url_reativo" target="_blank" rel="noopener noreferrer" 
-              href="{% url 'encontro_feedback' encontro.id %}">
-              https://{{ request.get_host }}{% url 'encontro_feedback' encontro.id %}
-            </a>
-          </div>
-        {% endif %}
-    
-        <br>
-        <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
-        <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
       </div>
+  
+      {% if not todas %}
 
-    {% endif %}
+        <div class="container">
+          
+          <hr>
+
+          <label for="projeto">{% lng "Projeto" "Project" %}:</label>
+          <select class="selectpicker" name="projeto" id="projeto" title="Selecione o projeto"
+            data-live-search="true" data-width="75%" data-size="10">
+            <option {% if not encontro %}selected{% endif %} value="0"> -- selecione um projeto -- </option>
+            {% for projeto in projetos %}
+              <option value="{{projeto.id}}"
+              style="font-size: 0.75em;"
+              data-titulo="{{projeto.get_titulo}}"
+              data-organizacao="{{projeto.organizacao}}"
+              data-orientador="{{projeto.orientador}}"
+              {% if projeto.id == encontro.projeto.id %} selected {% endif %}
+              data-subtext="{{projeto.orientador}}"
+              >
+                {{projeto.ano}}.{{projeto.semestre}}
+                ({{projeto.organizacao}})
+                {{projeto.get_titulo}}
+              </option>  
+            {% endfor %}
+          </select><br><br>
+
+          {% lng "Título" "Title" %}:
+          <label id="titulo" name="titulo">
+            {% if encontro and encontro.projeto %}
+              {{encontro.projeto.get_titulo}}
+            {% else %}
+              {% lng "Título de Projeto não definido" "Project Title not defined" %}
+            {% endif %}
+          </label><br>
+
+          {% lng "Organização" "Organization" %}:
+          <label id="organizacao" name="organizacao">
+            {% if encontro and encontro.projeto and encontro.projeto.organizacao %}
+              {{encontro.projeto.organizacao}}
+            {% else %}
+              {% lng "Organização Parceira não definida" "Partner Organization not defined" %}
+            {% endif %}
+          </label><br>
+          
+          {% lng "Orientador(a)" "Advisor" %}:
+          <label id="orientador" name="orientador">
+            {% if encontro and encontro.projeto and encontro.projeto.orientador %}
+              {{encontro.projeto.orientador}}
+            {% else %}
+              {% lng "Sem identificação de Orientador(a)" "No Advisor identified" %}
+            {% endif %}
+          </label><br>
+
+          </div>
+
+          {% if encontro %}
+            <br>
+            <div class="container" style="overflow-wrap: break-word;">
+              &#9733;
+              {% lng "Formulário de feedback" "Feedback form" %}:
+              <a class="url_reativo" target="_blank" rel="noopener noreferrer" 
+                href="{% url 'encontro_feedback' encontro.id %}">
+                https://{{ request.get_host }}{% url 'encontro_feedback' encontro.id %}
+              </a>
+            </div>
+          {% endif %}
+      
+          <br>
+          <span id="mensagem" style="color: red; font-weight: bold; display: block;"></span>
+          <span id="mensagem2" style="color: red; font-weight: bold; display: block;"></span>
+        </div>
+
+      {% endif %}
+
+    </div>
 
     <div id="div_botao" class="modal-footer" style="display: flex; justify-content: space-between; gap: 20px;">
 
