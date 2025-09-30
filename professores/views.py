@@ -1760,99 +1760,93 @@ def dinamicas_criar(request, data=None):
     configuracao = get_object_or_404(Configuracao)
     
     if request.is_ajax() and request.method == "POST":
-        
-        if ("inicio" in request.POST) and ("fim" in request.POST):
+        print( request.POST )
+        mensagem = ""
+        if "criar" in request.POST:
 
-            try:
-                startDate = dateutil.parser.parse(request.POST["inicio"])
-                endDate = dateutil.parser.parse(request.POST["fim"])
-                diferenca = endDate - startDate
-            except (ValueError, OverflowError):
-                return HttpResponse("Erro com data da Dinâmica!")
+            if ("inicio" in request.POST) and ("fim" in request.POST):
 
-            vezes = int(request.POST["vezes"])
-            intervalo = int(request.POST["intervalo"])
-            local = request.POST.get("local", None)
-            tema = request.POST.get("tema")
-            projeto_id = request.POST.get("projeto", None)
-            if projeto_id and projeto_id != "0":
                 try:
-                    projeto = Projeto.objects.get(id=projeto_id)
-                except Projeto.DoesNotExist:
-                    return HttpResponse("Projeto não encontrado.", status=401)
+                    startDate = dateutil.parser.parse(request.POST["inicio"])
+                    endDate = dateutil.parser.parse(request.POST["fim"])
+                    diferenca = endDate - startDate
+                except (ValueError, OverflowError):
+                    return HttpResponse("Erro com data da Dinâmica!")
+
+                vezes = int(request.POST["vezes"])
+                intervalo = int(request.POST["intervalo"])
+                local = request.POST.get("local", None)
+                tema = request.POST.get("tema")
+                projeto_id = request.POST.get("projeto", None)
+                if projeto_id and projeto_id != "0":
+                    try:
+                        projeto = Projeto.objects.get(id=projeto_id)
+                    except Projeto.DoesNotExist:
+                        return HttpResponse("Projeto não encontrado.", status=401)
+                else:
+                    projeto = None
+                facilitador_id = request.POST.get("facilitador", None)
+                if facilitador_id and facilitador_id != "0":
+                    try:
+                        facilitador = PFEUser.objects.get(id=facilitador_id)
+                    except PFEUser.DoesNotExist:
+                        return HttpResponse("Facilitador não encontrado.", status=401)
+                else:
+                    facilitador = None
+                        
+                for vez in range(vezes):
+
+                    encontro = Encontro(startDate=startDate, endDate=endDate)
+
+                    startDate += diferenca +  datetime.timedelta(minutes=intervalo)
+                    endDate += diferenca +  datetime.timedelta(minutes=intervalo)
+
+                    if tema:
+                        encontro.tema = tema
+
+                    if local:
+                        encontro.location = local
+
+                    if projeto:
+                        encontro.projeto = projeto
+                        
+                    if facilitador:
+                        encontro.facilitador = facilitador
+
+                    encontro.save()
+
+                    if "enviar_mensagem" in request.POST:
+                        if encontro.projeto or encontro.facilitador:
+                            subject = "Capstone | Dinâmica agendada"
+                            recipient_list = []
+                            alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                            for alocacao in alocacoes:
+                                recipient_list.append(alocacao.aluno.user.email)
+                            if encontro.facilitador:
+                                recipient_list.append(encontro.facilitador.email)
+                            recipient_list.append(str(configuracao.coordenacao.user.email))
+                            message = message_agendamento_dinamica(encontro, False) # Atualizada
+                            email(subject, recipient_list, message)
+
+                if vezes > 1:
+                    mensagem = "Dinâmicas criadas."
+                else:
+                    mensagem = "Dinâmica criada."
             else:
-                projeto = None
-            facilitador_id = request.POST.get("facilitador", None)
-            if facilitador_id and facilitador_id != "0":
-                try:
-                    facilitador = PFEUser.objects.get(id=facilitador_id)
-                except PFEUser.DoesNotExist:
-                    return HttpResponse("Facilitador não encontrado.", status=401)
-            else:
-                facilitador = None
-                    
-            for vez in range(vezes):
+                return HttpResponse("Dinâmica não registrada, erro!", status=401)
 
-                encontro = Encontro(startDate=startDate, endDate=endDate)
+        # else Atualização não realizada.
 
-                startDate += diferenca +  datetime.timedelta(minutes=intervalo)
-                endDate += diferenca +  datetime.timedelta(minutes=intervalo)
-
-                if tema:
-                    encontro.tema = tema
-
-                if local:
-                    encontro.location = local
-
-                if projeto:
-                    encontro.projeto = projeto
-                    
-                if facilitador:
-                    encontro.facilitador = facilitador
-
-                encontro.save()
-
-                if "enviar_mensagem" in request.POST:
-                    if encontro.projeto or encontro.facilitador:
-                        subject = "Capstone | Dinâmica agendada"
-                        recipient_list = []
-                        alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
-                        for alocacao in alocacoes:
-                            recipient_list.append(alocacao.aluno.user.email)
-                        if encontro.facilitador:
-                            recipient_list.append(encontro.facilitador.email)
-                        recipient_list.append(str(configuracao.coordenacao.user.email))
-                        message = message_agendamento_dinamica(encontro, False) # Atualizada
-                        email(subject, recipient_list, message)
-
-            if vezes > 1:
-                mensagem = "Dinâmicas criadas."
-            else:
-                mensagem = "Dinâmica criada."
-            
-            context = {
-                "atualizado": True,
-                "mensagem": mensagem,
-            }
-            return JsonResponse(context)
-
-        return HttpResponse("Dinâmica não registrada, erro!", status=401)
-
-    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-
-    # Buscando pessoas para lista de Facilitadores
-    professores_tmp = PFEUser.objects.filter(tipo_de_usuario=2)  # (2, 'professor')
-    administradores = PFEUser.objects.filter(tipo_de_usuario=4)  # (4, 'administrador')
-    professores = (professores_tmp | administradores).order_by(Lower("first_name"), Lower("last_name"))
-
-    parceiros = PFEUser.objects.filter(tipo_de_usuario=3)
-    organizacao = get_object_or_404(Organizacao, sigla="Falconi")
-    falconis = parceiros.filter(parceiro__organizacao=organizacao).order_by(Lower("first_name"), Lower("last_name"))
+        context = {
+            "atualizado": True,
+            "mensagem": mensagem,
+        }
+        return JsonResponse(context)
 
     context = {
-        "projetos": projetos,
-        "professores": professores,
-        "falconis": falconis,
+        "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
+        "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
+        "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
@@ -1863,35 +1857,6 @@ def dinamicas_criar(request, data=None):
 
     return render(request, "professores/dinamicas_view.html", context)
 
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def dinamicas_editar_edicao(request, edicao):
-    """Edita vários encontros."""
-    
-    if request.is_ajax() and request.method == "POST":
-        encontros = puxa_encontros(edicao)
-        for encontro in encontros:
-            encontro.location = request.POST.get("local")
-            encontro.tema = request.POST.get("tema")
-            facilitador_id = request.POST.get("facilitador")
-            if facilitador_id:
-                encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
-            encontro.save()
-
-        context = {"atualizado": True,}
-        return JsonResponse(context)
-    
-    context = {
-        "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
-        "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
-        "todas": True,
-        "url": request.get_full_path(),
-        "root_page_url": request.session.get("root_page_url", '/'),
-        "Encontro": Encontro,
-    }
-    return render(request, "professores/dinamicas_view.html", context)
 
 @login_required
 @transaction.atomic
@@ -1995,6 +1960,7 @@ def dinamicas_editar(request, primarykey=None):
                 email(subject, recipient_list, message)
 
             encontro.delete()
+
         # else Atualização não realizada. / Serve para desbloquear agendamento
 
         context = {
@@ -2012,6 +1978,36 @@ def dinamicas_editar(request, primarykey=None):
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
         "encontro": encontro,
+        "url": request.get_full_path(),
+        "root_page_url": request.session.get("root_page_url", '/'),
+        "Encontro": Encontro,
+    }
+    return render(request, "professores/dinamicas_view.html", context)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def dinamicas_editar_edicao(request, edicao):
+    """Edita vários encontros."""
+    
+    if request.is_ajax() and request.method == "POST":
+        encontros = puxa_encontros(edicao)
+        for encontro in encontros:
+            encontro.location = request.POST.get("local")
+            encontro.tema = request.POST.get("tema")
+            facilitador_id = request.POST.get("facilitador")
+            if facilitador_id:
+                encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
+            encontro.save()
+
+        context = {"atualizado": True,}
+        return JsonResponse(context)
+    
+    context = {
+        "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
+        "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "todas": True,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,

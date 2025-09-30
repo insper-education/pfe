@@ -274,7 +274,11 @@
       </button>
 
       <button id="submit" class="btn btn-primary mb-1" type="submit" name="atualizar"
-        {% if encontro %}onclick="operacao = 'atualizar';"{% endif %}>
+        {% if encontro %}
+          onclick="operacao = 'atualizar';"
+        {% else %}
+          onclick="operacao = 'criar';"
+        {% endif %}>
         {% if encontro %}
           {% lng "Atualizar" "Update" %}
         {% elif todas %}
@@ -307,6 +311,8 @@
     
     $("#popup").on("hidden.bs.modal", function (e) {
         // Para desbloquer encontro
+        // Isso é usado quando o encontro se sai da edição e deve ser mantido.
+        // Só serve para a flag de bloqueio ser liberada.
         $.ajax({
         type: "POST",
         url: "{{ url }}",
@@ -317,7 +323,6 @@
         {% include "ajax_error_function.js" %}
       });
     });
-    
   });
 
   var operacao = "agendar";
@@ -326,9 +331,10 @@
   window.onload = carrega_pagina;
 
   // Atualiza a página quando o popup é aberto
-  $("#popup").on("show.bs.modal", function() {
+  // PARECE DESNECESSÁRIO
+  {% comment %} $("#popup").on("show.bs.modal", function() {
     carrega_pagina();
-  });
+  }); {% endcomment %}
 
   
   $("form#dinamicasform").submit(function(e){
@@ -358,7 +364,7 @@
     // Adiciona o tipo de operação
     formData.append(operacao, "true");
     
-    {% comment %} {% include "load_content.html" %} {% endcomment %}
+    {% include "load_content.html" %}
 
     $.ajax({
       type: "POST",
@@ -370,9 +376,9 @@
         if (response.atualizado) {
           $("#submit").hide();
           $("#excluir").hide();
-          // Atualizar página
-          location.reload();         
-          {% comment %} loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" ); {% endcomment %}
+          $("#popup").modal("hide");
+          {% comment %} location.reload();          {% endcomment %}
+          loadContent( "#atualizar", "{{ root_page_url }}", "#atualizar" );
         } else {
           alert(response.mensagem);
         }
