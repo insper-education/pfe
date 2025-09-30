@@ -197,7 +197,11 @@ def refresh_hora(request):
 @login_required
 @transaction.atomic
 def encontros_marcar(request):
-    """Encontros a serem agendados pelos estudantes."""
+    """Encontros a serem agendados pelos estudantes.
+    Somente estudantes podem agendar encontros com esse caminho,
+    criar e editar os encontros por administração é feito em caminho de professores.
+    """
+    
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano
     semestre = configuracao.semestre
@@ -265,7 +269,7 @@ def encontros_marcar(request):
                 recipient_list.append(alocacao.aluno.user.email)
             
             # coordenação
-            recipient_list.append(str(configuracao.coordenacao.user.email))
+            #recipient_list.append(str(configuracao.coordenacao.user.email))
 
             message = message_agendamento_dinamica(agendado, cancelado)
             email(subject, recipient_list, message)
