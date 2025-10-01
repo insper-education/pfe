@@ -117,6 +117,8 @@ def projeto_infos(request, primarykey):
         funcionalidade_grupo = {}
         for alocacao in alocacoes:
             funcionalidade_grupo[alocacao.aluno.user] = alocacao.aluno.user.funcionalidade_grupo
+        if alocacao.projeto.orientador:
+            funcionalidade_grupo[alocacao.projeto.orientador.user] = alocacao.projeto.orientador.user.funcionalidade_grupo
         if funcionalidade_grupo:
             context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
             context["funcionalidade_grupo"] = funcionalidade_grupo
