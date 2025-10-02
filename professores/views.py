@@ -622,7 +622,7 @@ def banca_avaliar(request, slug, documento_id=None):
                     recipient_list = [alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all()]
                     recipient_list.append(avaliador.email)
                     recipient_list.append(projeto.orientador.user.email)
-                    recipient_list.append(configuracao.coordenacao.user.email)
+                    #recipient_list.append(configuracao.coordenacao.user.email)
                     email(subject, recipient_list, mensagem_anot)
 
             subject = "Capstone | Avaliação de Banca - " + banca.composicao.exame.titulo + " "
