@@ -1864,10 +1864,19 @@ def dinamicas_criar(request, data=None):
 def dinamicas_editar(request, primarykey=None):
     """Edita um encontro."""
 
-    if primarykey is None:
-        return HttpResponseNotFound('<h1>Erro!</h1>')
-    
-    encontro = get_object_or_404(Encontro, pk=primarykey)
+    encontro = Encontro.objects.filter(pk=primarykey).first()
+
+    if encontro is None or primarykey is None:
+        if "desbloquear" in request.POST:
+            #return None # Encontro foi excluído
+            context = {
+                "atualizado": True,
+                "mensagem": "Encontro não encontrado, pode ter sido excluído.",
+            }
+            return JsonResponse(context)
+        else:
+            return HttpResponseNotFound('<h1>Erro na busca de encontro!</h1>')
+
     configuracao = get_object_or_404(Configuracao)
 
     if request.is_ajax() and request.method == "POST":
@@ -1962,14 +1971,13 @@ def dinamicas_editar(request, primarykey=None):
             encontro.delete()
 
         # else Atualização não realizada. / Serve para desbloquear agendamento
-
         context = {
             "atualizado": True,
             "mensagem": mensagem,
         }
         return JsonResponse(context)
     
-    else:  # Não é POST
+    else:  # Não é POST (e GET)
         encontro.bloqueado = True  # Bloqueia para evitar edição concorrente
         encontro.save()
 

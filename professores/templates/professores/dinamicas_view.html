@@ -308,20 +308,19 @@
       $("#orientador").text(orientador);
     })
 
-    
     $("#popup").on("hidden.bs.modal", function (e) {
-        // Para desbloquer encontro
-        // Isso é usado quando o encontro se sai da edição e deve ser mantido.
-        // Só serve para a flag de bloqueio ser liberada.
-        $.ajax({
+      // Para desbloquer encontro
+      // Isso é usado quando o encontro se sai da edição e deve ser mantido.
+      // Só serve para a flag de bloqueio ser liberada.
+      $.ajax({
         type: "POST",
         url: "{{ url }}",
-        data: { "csrfmiddlewaretoken": "{{ csrf_token }}" },
+        data: { "csrfmiddlewaretoken": "{{ csrf_token }}", "desbloquear": "true" },
         success: function(response){
           location.reload();  // Atualizar página
         },
         {% include "ajax_error_function.js" %}
-      });
+      }); 
     });
   });
 
