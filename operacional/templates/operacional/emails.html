@@ -10,6 +10,12 @@
   {% load escape_emails %}
   {% load linguas %}
 
+  <style>
+    .botao {
+      margin-bottom: 11px;
+      margin-top: 5px;
+    }
+
   {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
 
   <script>
@@ -67,6 +73,7 @@
 
 {% block content %}
 
+  <div class="container" style="width: 100%; max-width: 100%;">
   {% if membros_comite %}
     <b>{% lng "Comitês" "Committees" %}</b>
     <div class="row align-items-start mb-2">
@@ -96,7 +103,7 @@
   {% endif %}
 
   <b>{% lng "Por semestre" "By semester" %}</b>
-  <div class="row align-items-start mb-2 table-responsive">
+  <div class="row align-items-start mb-2">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
@@ -119,37 +126,37 @@
         </div>
         <div class="meio_separador input-group-addon"></div>
 
-        <div class="input-group-append">
+        <div class="input-group-append table-responsive" style="overflow-x: auto; display: block;">
           <a id="Estudantes" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Estudantes" "Students" %}
             </button>
           </a>
 
           <a id="EstudantesInsper" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Só Estudantes Insper" "Only Insper Students" %}
             </button>
           </a>
 
           <a id="EstudantesNaoAlocados" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Estudantes não alocados" "Students not allocated" %}
             </button>
           </a>
 
           <a id="Orientadores" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Orientadores" "Advisors" %}
             </button>
           </a>
           <a id="Parceiros" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Parceiros" "Partners" %}
             </button>
           </a>
           <a id="Bancas" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
               {% lng "Bancas" "Examination Boards" %}
             </button>
           </a>
@@ -186,7 +193,7 @@
     </div>
   </small>
 
-  <div class="row align-items-start mb-2 table-responsive">
+  <div class="row align-items-start mb-2">
     <div class="ml-3">
       <div class="input-group input-group-sm">
         <div class="input-group-prepend">
@@ -206,8 +213,9 @@
             <span class="sr-only input-group-text">Carregando...</span>
           </div>
         </div>
+
         <div class="meio_separador input-group-addon"></div>
-        <div id="sequenc_projetos" class="input-group-append"></div>
+        <div id="sequenc_projetos" class="input-group-append table-responsive" style="overflow-x: auto; display: block;"></div>
       </div>
     </div>
   </div>
@@ -256,6 +264,7 @@
     {% endif %}
 
   {% endif %}
+  </div>
 
   <script>
 
@@ -401,7 +410,8 @@
             "csrfmiddlewaretoken": "{{ csrf_token }}",
         },
         success: function(response){
-            $("#sequenc_projetos").replaceWith($("#sequenc_projetos", response));
+            {% comment %} $("#sequenc_projetos").replaceWith($("#sequenc_projetos", response)); {% endcomment %}
+            $("#sequenc_projetos").html($("#sequenc_projetos", response).html());
             $(".tooltip-inner").remove();
             $(".tooltip-arrow").remove();
             $("#spinnerProjetos").hide();    

@@ -14,7 +14,7 @@
 
   {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
 
-  <div id="sequenc_projetos" class="input-group-append">
+  <div id="sequenc_projetos" class="input-group-append table-responsive">
     {% for projeto in projetos %}
       <a onclick="event.preventDefault(); coleta_usuario_envia($(this));"
         data-estudantes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}"        
@@ -27,7 +27,7 @@
         data-avancado="{% if projeto.avancado %}true{% else %}false{% endif %}"
         data-toggle="tooltip" data-html="true" animation="true" title="{{projeto}}"
       >
-        <button class="btn btn-outline-secondary btn-sm ml-1" type="button">
+        <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
           p{{projeto.pk}}
         </button>
       </a>
