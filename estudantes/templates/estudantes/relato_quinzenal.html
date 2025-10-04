@@ -131,6 +131,11 @@
     <button {% if fora_periodo or not prazo %}disabled{% endif %} {% if not user.eh_estud %}disabled{% endif %} class="btn btn-primary mb-1 mt-4" type="submit">
       {% lng "Enviar" "Send" %}
     </button>
+    <br>    
+    <small class="text-muted">
+      {% lng "Você pode reenviar seu relato quantas vezes quiser até o prazo final." "You can resend your report as many times as you want until the deadline." %}
+    </small>
+    
 
   </form>
 
