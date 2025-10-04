@@ -415,7 +415,7 @@ def estilo_comunicacao(request):
 @login_required
 def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""   
-    if request.is_ajax():
+    if request.is_ajax():  # Trata uma questão por vez via Ajax
         if not request.user.funcionalidade_grupo:
             request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
             request.user.save()
@@ -429,6 +429,24 @@ def funcionalidade_grupo(request):
                 return JsonResponse({"atualizado": True})
 
         return JsonResponse({"atualizado": False})
+    
+    elif request.method == "POST":  # Trata todas as questões de uma vez
+
+        if not request.user.funcionalidade_grupo:
+            request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
+            request.user.save()
+        for linha in Estrutura.loads(nome="Questões de Funcionalidade")["questoes"]:
+            if request.user.tipo_de_usuario in linha["usuarios"]:
+                question_key = "question_{}".format(linha["numero"])
+                valor = request.POST.get(question_key, None)
+                if valor:
+                    setattr(request.user.funcionalidade_grupo, question_key, valor)
+        request.user.funcionalidade_grupo.save()
+        context = {
+            "area_principal": True,
+            "mensagem": {"pt": "Dados salvos com sucesso!", "en": "Data saved successfully!"},
+        }
+        return render(request, "generic_ml.html", context=context)
 
     context = {
         "titulo": {"pt": "Funcionalidade de Grupo", "en": "Group Functionality"},
