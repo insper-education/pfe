@@ -973,9 +973,8 @@ class Banca(models.Model):
     def get_cor(self):
         return f"#{self.composicao.exame.cor}"
 
-    def get_avaliadores(self):
+    def get_avaliadores(self, avaliadores={}):
         objetivos = ObjetivosDeAprendizagem.objects.all()
-        avaliadores = {}
         projeto = self.get_projeto()
         try:
             exame = self.composicao.exame
@@ -1011,6 +1010,15 @@ class Banca(models.Model):
                 avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
 
         return avaliadores
+    
+    def get_avaliadores_todos(self):
+        """Retorna todos os avaliadores, mesmo que não tenham avaliado ainda."""
+        avaliadores = {}
+        membros = self.membros()
+        for membro in membros:
+            avaliadores[membro] = {}
+        return self.get_avaliadores(avaliadores=avaliadores)
+
 
     def get_projeto(self):
         """Retorna o projeto da banca."""

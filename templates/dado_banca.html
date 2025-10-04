@@ -45,10 +45,10 @@
       <a href="{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}">{{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" banca.slug %}</a>
     </div>
   </div>
-  {% include "membros_da_banca.html" %}
+  {% comment %} {% include "membros_da_banca.html" %} {% endcomment %}
 
   <table class="table table-bordered table-striped" style="margin-bottom: 2px;">
-    {% for avaliador, objs in banca.get_avaliadores.items %}
+    {% for avaliador, objs in banca.get_avaliadores_todos.items %}
 
       {% if avaliador == user %}
         {% comment %} Quer dizer que o usuário preencheu a avaliação {% endcomment %}
@@ -61,52 +61,66 @@
         <b>{% lng_g avaliador.genero "Avaliador" "Avaliadora" "Evaluator" %}:</b>
         <a href="{% url 'user_detail' avaliador.id %}">
           {{avaliador.get_full_name}}
-        </a><br>
-        {% if objs.momento %}
-          <b>{% lng "Avaliado em" "Evaluated on" %}:</b>
-          {{objs.momento}}<br>
+        </a>
+        {% if banca.projeto.orientador.user == avaliador %}
+          <span class="badge badge-info ml-1">{% lng "Orientador" "Advisor" %}</span>
         {% endif %}
-        {% if objs.items %}
-          <b>{% lng "Conceitos" "Grades" %}:</b><br>
-          <ul style="list-style-type: '&#x21A3; ';">
-            {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
-              <li>
-                <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
-                <span data-toggle="tooltip" data-html="true" animation="true" title=
-                {% if banca.composicao.exame.sigla == "BI" %} 
-                  "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
-                {% else %}
-                  "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
-                {% endif %}>
-              <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
-              <script>
-                $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
-                  {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
-                );
-                objetivo_tmp = new Objetivo();
-                objetivo_tmp.titulo = "{{objetivo.titulo}}"
-                banca.add_objetivo(objetivo_tmp)
-                {% if conceito.nota is not None %}
-                  banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
-                {% endif %}
-              </script>
+        <a href="mailto:{{avaliador.email}}">&lt;{{avaliador.email}}&gt;</a>
+        <br>
 
-            {% endif %}{% endfor %}
-          </ul>
-        {% endif %}
-        {% if objs.observacoes_estudantes %}  
-          &nbsp;<u><span style="font-weight: 500;">
-            {% lng "Observações para Estudantes" "Observations for Students" %}:
-          </span></u> {{objs.observacoes_estudantes}}<br>
-          {% if objs.observacoes_orientador %}<br>{% endif %}
-        {% endif %}
-        {% if user.eh_prof_a %}
-          {% if objs.observacoes_orientador %}
-            &nbsp;<u><span style="font-weight: 500;">
-              {% lng "Observações para Orientador" "Observations for Advisor" %}:
-            </span></u> {{objs.observacoes_orientador}}<br>
+        {% if objs %}
+
+          {% if objs.momento %}
+            <b>{% lng "Avaliado em" "Evaluated on" %}:</b>
+            {{objs.momento}}<br>
           {% endif %}
+          {% if objs.items %}
+            <b>{% lng "Conceitos" "Grades" %}:</b><br>
+            <ul style="list-style-type: '&#x21A3; ';">
+              {% for objetivo, conceito in objs.items %}{% if objetivo != "momento" and objetivo|slice:11 != "observacoes" %}
+                <li>
+                  <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
+                  <span data-toggle="tooltip" data-html="true" animation="true" title=
+                  {% if banca.composicao.exame.sigla == "BI" %} 
+                    "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
+                  {% else %}
+                    "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
+                  {% endif %}>
+                <span id="banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}"></span></span></li>
+                <script>
+                  $("#banca{{banca.id}}_{{avaliador.id}}_{{objetivo.id}}").html(
+                    {% if conceito.nota is not None %}converteN({{conceito.nota}}){% else %}"N/A"{% endif %}
+                  );
+                  objetivo_tmp = new Objetivo();
+                  objetivo_tmp.titulo = "{{objetivo.titulo}}"
+                  banca.add_objetivo(objetivo_tmp)
+                  {% if conceito.nota is not None %}
+                    banca.dict[objetivo_tmp.titulo].soma_nota({{conceito.nota}});
+                  {% endif %}
+                </script>
+
+              {% endif %}{% endfor %}
+            </ul>
+          {% endif %}
+          {% if objs.observacoes_estudantes %}  
+            &nbsp;<u><span style="font-weight: 500;">
+              {% lng "Observações para Estudantes" "Observations for Students" %}:
+            </span></u> {{objs.observacoes_estudantes}}<br>
+            {% if objs.observacoes_orientador %}<br>{% endif %}
+          {% endif %}
+          {% if user.eh_prof_a %}
+            {% if objs.observacoes_orientador %}
+              &nbsp;<u><span style="font-weight: 500;">
+                {% lng "Observações para Orientador" "Observations for Advisor" %}:
+              </span></u> {{objs.observacoes_orientador}}<br>
+            {% endif %}
+          {% endif %}
+
+        {% else %}
+          <span class="text-muted">{% lng "Ainda não avaliou." "Has not evaluated yet." %}</span>
+
         {% endif %}
+
       </td></tr>
     {% endfor %}
 
