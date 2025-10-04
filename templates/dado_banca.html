@@ -63,7 +63,7 @@
           {{avaliador.get_full_name}}
         </a>
         {% if banca.projeto.orientador.user == avaliador %}
-          <span class="badge badge-info ml-1">{% lng "Orientador" "Advisor" %}</span>
+          <span class="badge badge-info">{% lng "Orientador" "Advisor" %}</span>
         {% endif %}
         <a href="mailto:{{avaliador.email}}">&lt;{{avaliador.email}}&gt;</a>
         <br>
@@ -138,6 +138,16 @@
         }
         $("#banca{{banca.id}}").html(banca.media_calculada());
       </script>
+
+      {% with recomendacao=banca.get_recomendacao_destaque %}
+        {% if recomendacao %}
+          <span style="white-space: nowrap;">
+            <br>&#10149; {% lng "Recomendações" "Recommendations" %}:
+            {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao %}
+          </span>
+        {% endif %}
+      {% endwith %}
+
     </td></tr>
   </table>
 

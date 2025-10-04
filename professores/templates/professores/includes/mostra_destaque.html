@@ -1,0 +1,21 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 4 de Outubro de 2025
+{% endcomment %}
+
+{% load linguas %}
+<span 
+  {% if recomendacao.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
+    style="background-color: darkgrey; font-weight: bold;"
+  {% elif recomendacao.destaque_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
+    style="background-color: orange; font-weight: bold;"
+  {% elif recomendacao.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
+    style="background-color: pink; font-weight: bold;"
+  {% endif %}
+  >
+  {% if recomendacao.destaque_incompleta %}
+    <i class="fas fa-exclamation-triangle esconder"></i>
+  {% endif %}
+  {{ recomendacao.destaque_texto|safe }}
+</span>

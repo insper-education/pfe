@@ -121,11 +121,11 @@
           </thead>
 
           <tbody>
-            {% for projeto, banca_intermediaria, banca_final, banca_falconi in tabela %} 
+            {% for projeto, recomendacao_bi, recomendacao_bf, notas_falconi in tabela %} 
               <tr class="item
-                {% if banca_falconi.certificacao == "E" %}
+                {% if notas_falconi.certificacao == "E" %}
                   certificacao_excelencia
-                {% elif banca_falconi.certificacao == "D" %}
+                {% elif notas_falconi.certificacao == "D" %}
                   certificacao_destaque
                 {% endif %}">
 
@@ -169,36 +169,15 @@
 
                   {% comment %} Banca Intermediária {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
-                      {% if banca_intermediaria.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="background-color: darkgrey; font-weight: bold;"
-                      {% elif banca_intermediaria.destaque_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="background-color: orange; font-weight: bold;"
-                      {% elif banca_intermediaria.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="background-color: pink; font-weight: bold;"
-                      {% endif %}
-                      >
-                      {% if banca_intermediaria.destaque_incompleta %}
-                        <i class="fas fa-exclamation-triangle esconder"></i>
-                      {% endif %}
-                      {{ banca_intermediaria.destaque_texto|safe }}
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
+                      {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao_bi %}
                     </a>
                   </td>
 
                   {% comment %} Banca Final {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
-                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}"
-                      {% if banca_final.destaque_incompleta == 1 %} {% comment %} no inicio {% endcomment %}
-                        style="background-color: darkgrey; font-weight: bold;"
-                      {% elif banca_final.destaque_incompleta == 2 %} {% comment %} no prazo {% endcomment %}
-                        style="background-color: orange; font-weight: bold;"
-                      {% elif banca_final.destaque_incompleta == 3 %} {% comment %} fora do prazo {% endcomment %}
-                        style="background-color: pink; font-weight: bold;"
-                      {% endif %}>
-                      {% if banca_final.destaque_incompleta %}
-                        <i class="fas fa-exclamation-triangle esconder"></i>
-                      {% endif %}
-                      {{ banca_final.destaque_texto|safe }}
+                    <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
+                      {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao_bf %}
                     </a>
                   </td>
 
@@ -214,14 +193,14 @@
 
                   {% comment %} Banca Falconi {% endcomment %}
                   <td class="align-top">
-                    {% if banca_falconi.banca %}
+                    {% if notas_falconi.banca %}
                       <span style="white-space: nowrap;">
-                        <span class="texto-longo">{% lng_dl_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}</span>
-                        <span class="texto-curto">{% lng_d_de_ate banca_falconi.banca.startDate banca_falconi.banca.endDate %}</span>
+                        <span class="texto-longo">{% lng_dl_de_ate notas_falconi.banca.startDate notas_falconi.banca.endDate %}</span>
+                        <span class="texto-curto">{% lng_d_de_ate notas_falconi.banca.startDate notas_falconi.banca.endDate %}</span>
                       </span>
                     {% endif %}
                     <ul class="membros">
-                      {% for avaliador in banca_falconi.avaliadores %}
+                      {% for avaliador in notas_falconi.avaliadores %}
                         <li>
                           <span style="white-space: nowrap;">
                             <a class="imprimir" href="{% url 'parceiro_detail' avaliador.id %}">{{avaliador.get_full_name}}</a>
@@ -238,11 +217,11 @@
                   {% comment %} Nota Banca Falconi {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-                      {% if banca_falconi %}  
-                        {% if banca_falconi.nota_incompleta > 0 %}
+                      {% if notas_falconi %}  
+                        {% if notas_falconi.nota_incompleta > 0 %}
                           <i class="fas fa-exclamation-triangle esconder"></i>
                         {% endif %}
-                        {{ banca_falconi.nota_texto|safe }}
+                        {{ notas_falconi.nota_texto|safe }}
                       {% endif %}
                     </a>
                   </td>

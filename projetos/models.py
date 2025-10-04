@@ -1044,6 +1044,31 @@ class Banca(models.Model):
         return bancas
 
 
+    def get_recomendacao_destaque(self):
+        """Retorna a recomendação de destaque para o projeto da banca."""
+        if self:
+            if self.projeto.ano >= 2025:
+                sb, tb = "", False
+                if self:
+                    observacoes = Observacao.objects.filter(projeto=self.projeto, exame__sigla=self.composicao.exame.sigla)
+                    tb = len(self.membros()) != len(observacoes)
+                    sb = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
+                return {"destaque_texto": sb, "destaque_incompleta": tb}
+
+            elif self.projeto.ano >= 2023:
+                if self.composicao.exame.sigla == "BI":
+                    return {"destaque_texto": "media BI e RIG >= 8"}
+                else:
+                    return {"destaque_texto": "media BF e RFG >= 8"}
+
+            else:
+                if self.composicao.exame.sigla == "BI":
+                    return {"destaque_texto": "media BI e RIG >= 7"}
+                else:
+                    return {"destaque_texto": "media BF e RFG >= 7"}
+
+        return None     
+
 
 class Participante(models.Model):
     """ Base abstrata para participantes em reuniões e encontros."""

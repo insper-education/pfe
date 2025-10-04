@@ -2617,32 +2617,10 @@ def resultado_p_certificacao(request):
             notas = {nome: [] for nome in ["Falconi"]}
 
             for projeto in projetos:
-
-                if ano >= 2025:
-                    # Banca Intermediária
-                    sbi, tbi = "", False
-                    bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
-                    if bi:
-                        observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BI")
-                        tbi = len(bi.membros()) != len(observacoes)
-                        sbi = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
-                    recomendacoes["Banca Intermediária"].append({"destaque_texto": sbi, "destaque_incompleta": tbi,})
-
-                    # Banca Final
-                    sbf, tbf = "", False
-                    bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
-                    if bf:
-                        observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla="BF")
-                        tbf = len(bf.membros()) != len(observacoes)
-                        sbf = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
-                    recomendacoes["Banca Final"].append({"destaque_texto": sbf, "destaque_incompleta": tbf,})
-            
-                elif ano >= 2023:
-                    recomendacoes["Banca Intermediária"].append({"destaque_texto": "media BI e RIG >= 8"})
-                    recomendacoes["Banca Final"].append({"destaque_texto": "media BF e RFG >= 8",})
-                else:
-                    recomendacoes["Banca Intermediária"].append({"destaque_texto": "media BI e RIG >= 7"})
-                    recomendacoes["Banca Final"].append({"destaque_texto": "media BF e RFG >= 7",})
+                bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
+                recomendacoes["Banca Intermediária"].append(bi.get_recomendacao_destaque() if bi else None)
+                bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
+                recomendacoes["Banca Final"].append(bf.get_recomendacao_destaque() if bf else None)
 
                 # Banca Intermediária
                 aval_i = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="BI")  # BI
