@@ -9,7 +9,7 @@ import datetime
 import logging
 import json
 import urllib.request
-#import urllib.parse
+from collections import defaultdict
 
 from hashids import Hashids
 
@@ -208,9 +208,6 @@ def encontros_marcar(request):
 
     aviso = None  # Mensagem de aviso caso algum problema
 
-    hoje = datetime.date.today()
-    encontros = Encontro.objects.filter(startDate__gte=hoje).order_by("startDate")
-
     if request.user.eh_estud:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=ano, semestre=semestre).last()
     elif request.user.eh_prof_a: # caso Professor ou Administrador
@@ -218,9 +215,34 @@ def encontros_marcar(request):
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
 
+    hoje = datetime.date.today()
+    #encontros = Encontro.objects.filter(startDate__gte=hoje).order_by("tema", "startDate")
+    meses = [1,2,3,4,5,6] if semestre == 1 else [7,8,9,10,11,12]
+    encontros = Encontro.objects.filter(startDate__year=ano, startDate__month__in=meses).order_by("tema", "startDate")
+
+    encontros_por_tema = {}
+    for encontro in encontros:
+        encontros_por_tema.setdefault(encontro.tema, []).append(encontro)
+
+    # Remove temas cujos encontros são todos no passado
+    encontros_por_tema = {
+        tema: lista for tema, lista in encontros_por_tema.items()
+        if any(e.startDate.date() >= hoje for e in lista)
+    }
+
+    encontros_por_tema_agendamento = {}
+    for tema, lista in encontros_por_tema.items():
+        agendado = next((e for e in lista if e.projeto == projeto), None)
+        encontros_por_tema_agendamento[tema] = {
+            "encontros": lista,
+            "agendado": agendado,
+        }
+
     if request.method == "POST":
         check_values = request.POST.getlist("selection")
-        
+        selecao = get_object_or_404(Encontro, pk=check_values[0]) if check_values else None
+        encontros_do_tema = encontros_por_tema.get(selecao.tema, []) if selecao else []
+
         agendado = None
         cancelado = None
 
@@ -228,7 +250,7 @@ def encontros_marcar(request):
             aviso = "Selecione um horário."
 
         else:    
-            for encontro in encontros:
+            for encontro in encontros_do_tema:
                 if str(encontro.id) == check_values[0]:  # Agenda Encontro
                     
                     if encontro.bloqueado:
@@ -252,7 +274,7 @@ def encontros_marcar(request):
                         break
 
             if aviso is None:
-                for encontro in encontros:  # Cancela encontro
+                for encontro in encontros_do_tema:  # Cancela outro encontro
 
                     # Limpa seleção caso haja uma mudança
                     if encontro != agendado and encontro.projeto == projeto:
@@ -283,14 +305,11 @@ def encontros_marcar(request):
         if not aviso:
             return HttpResponse("Problema! Por favor reportar.")
 
-    agendado = encontros.filter(projeto=projeto).last()
-
     context = {
         "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentoring"},
-        "encontros": encontros,
+        "encontros_por_tema_agendamento": encontros_por_tema_agendamento,
         "projeto": projeto,
         "aviso": aviso,
-        "agendado": agendado,
         "hoje": hoje,
         "configuracao": configuracao,
     }

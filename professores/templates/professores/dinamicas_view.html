@@ -138,7 +138,7 @@
           <label for="tema">
             {% lng "Tema" "Subject" %}:
             <input id="tema" name="tema" type="text" size="56" style="width: 100%;" maxlength="{% max_length Encontro 'tema' %}"
-            placeholder="exemplo: Apoio a Grupos 1"
+            placeholder="exemplo: Apoio a Grupos 1" required
             {% if encontro and encontro.tema %}
               value="{{encontro.tema}}"
             {% endif %} 
