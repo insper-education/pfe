@@ -1119,6 +1119,20 @@ class EncontroParticipante(Participante):
         return f"{titulo} >>> {self.participante.get_full_name()}"
 
 
+class TematicaEncontro(models.Model):
+    """Temáticas para encontros (dinâmicas de grupo)."""
+
+    nome = models.CharField(max_length=64, help_text="nome da temática")
+
+    visibilidade = models.BooleanField(default=True, help_text="Se a temática está visível para seleção")
+
+    def __str__(self):
+        return self.nome
+    class Meta:
+        verbose_name = "Temática de Encontro"
+        verbose_name_plural = "Temáticas de Encontros"
+        ordering = ["nome"]
+
 class Encontro(models.Model):
     """Encontros (para dinâmicas de grupos)."""
 
@@ -1128,8 +1142,8 @@ class Encontro(models.Model):
     alocacao = models.ForeignKey("users.Alocacao", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="alocação do estudante (para mentorias individuais)")
 
-    tema = models.CharField(max_length=280, blank=True,
-                             help_text="Tema da dinâmica")
+    tematica = models.ForeignKey("TematicaEncontro", null=True, blank=True, on_delete=models.SET_NULL,
+                                  help_text="Tema da dinâmica", default=None)
 
     location = models.CharField(blank=True, max_length=280,
                                 help_text="sala em que vai ocorrer a dinâmica")

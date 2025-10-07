@@ -37,6 +37,13 @@
       color: #333;
       display: inline-block;
     }
+    .lista_mentorias > li > ul > li {
+      margin-bottom: 0.1em;
+    }
+    .lista_mentorias > li {
+      margin-top: 0.8em;
+    }
+
   </style>
 
 {% endblock %}
@@ -552,7 +559,7 @@
     {% if projeto.encontro_set.all %}
         <hr>
         <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
-        <ul>
+        <ul class="lista_mentorias">
             {% for dinamica in projeto.encontro_set.all %} 
                 <li>
                     {{dinamica.startDate|date:'j \d\e F \d\e Y \d\a\s H:i'}} às {{dinamica.endDate|date:'H:i'}}
@@ -565,6 +572,12 @@
                           {% else %}
                             <span style="word-break: break-all;">{{dinamica.location}}</span>
                           {% endif %}
+                        </li>
+                      {% endif %}
+                      {% if dinamica.tematica %}
+                        <li>
+                          {% lng "Temática" "Theme" %}:
+                          <span style="word-break: break-all;">{{dinamica.tematica.nome}}</span>
                         </li>
                       {% endif %}
                       {% if dinamica.facilitador %}

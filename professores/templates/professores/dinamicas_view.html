@@ -135,14 +135,14 @@
         {% endif %}
 
         <div class="form-group mt-2">
-          <label for="tema">
-            {% lng "Tema" "Subject" %}:
-            <input id="tema" name="tema" type="text" size="56" style="width: 100%;" maxlength="{% max_length Encontro 'tema' %}"
-            placeholder="exemplo: Apoio a Grupos 1" required
-            {% if encontro and encontro.tema %}
-              value="{{encontro.tema}}"
-            {% endif %} 
-            />
+          <label for="tematica">
+            {% lng "Temática" "Thematic" %}:<br>
+            <select name="tematica" id="tematica" title="Selecione a temática da mentoria" required>
+              <option value="" disabled selected> -- selecione a temática -- </option>
+              {% for tematica in tematicas %}
+                <option value="{{tematica.id}}" {% if tematica.id == encontro.tematica.id %} selected {% endif %}>{{tematica.nome}}</option>
+              {% endfor %}
+            </select>
           </label>
         </div>
 

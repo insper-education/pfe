@@ -218,22 +218,27 @@ def encontros_marcar(request):
     hoje = datetime.date.today()
     #encontros = Encontro.objects.filter(startDate__gte=hoje).order_by("tema", "startDate")
     meses = [1,2,3,4,5,6] if semestre == 1 else [7,8,9,10,11,12]
-    encontros = Encontro.objects.filter(startDate__year=ano, startDate__month__in=meses).order_by("tema", "startDate")
+    encontros = Encontro.objects.filter(startDate__year=ano, startDate__month__in=meses).order_by("tematica", "startDate")
 
-    encontros_por_tema = {}
+    encontros_por_tematica = {}
     for encontro in encontros:
-        encontros_por_tema.setdefault(encontro.tema, []).append(encontro)
+        if encontro.tematica and encontro.tematica.nome:
+            if encontro.tematica.visibilidade:
+                nome = encontro.tematica.nome
+                encontros_por_tematica.setdefault(nome, []).append(encontro)
+        else:
+            encontros_por_tematica.setdefault("", []).append(encontro)
 
-    # Remove temas cujos encontros são todos no passado
-    encontros_por_tema = {
-        tema: lista for tema, lista in encontros_por_tema.items()
+    # Remove tematicas cujos encontros são todos no passado
+    encontros_por_tematica = {
+        tematica: lista for tematica, lista in encontros_por_tematica.items()
         if any(e.startDate.date() >= hoje for e in lista)
     }
 
-    encontros_por_tema_agendamento = {}
-    for tema, lista in encontros_por_tema.items():
+    encontros_por_tematica_agendamento = {}
+    for tematica, lista in encontros_por_tematica.items():
         agendado = next((e for e in lista if e.projeto == projeto), None)
-        encontros_por_tema_agendamento[tema] = {
+        encontros_por_tematica_agendamento[tematica] = {
             "encontros": lista,
             "agendado": agendado,
         }
@@ -241,7 +246,7 @@ def encontros_marcar(request):
     if request.method == "POST":
         check_values = request.POST.getlist("selection")
         selecao = get_object_or_404(Encontro, pk=check_values[0]) if check_values else None
-        encontros_do_tema = encontros_por_tema.get(selecao.tema, []) if selecao else []
+        encontros_da_tematica = encontros_por_tematica.get(selecao.tematica.nome, []) if selecao else []
 
         agendado = None
         cancelado = None
@@ -250,7 +255,7 @@ def encontros_marcar(request):
             aviso = "Selecione um horário."
 
         else:    
-            for encontro in encontros_do_tema:
+            for encontro in encontros_da_tematica:
                 if str(encontro.id) == check_values[0]:  # Agenda Encontro
                     
                     if encontro.bloqueado:
@@ -274,7 +279,7 @@ def encontros_marcar(request):
                         break
 
             if aviso is None:
-                for encontro in encontros_do_tema:  # Cancela outro encontro
+                for encontro in encontros_da_tematica:  # Cancela outro encontro
 
                     # Limpa seleção caso haja uma mudança
                     if encontro != agendado and encontro.projeto == projeto:
@@ -307,7 +312,7 @@ def encontros_marcar(request):
 
     context = {
         "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentoring"},
-        "encontros_por_tema_agendamento": encontros_por_tema_agendamento,
+        "encontros_por_tematica_agendamento": encontros_por_tematica_agendamento,
         "projeto": projeto,
         "aviso": aviso,
         "hoje": hoje,

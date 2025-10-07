@@ -69,15 +69,15 @@
 
   <div id="horarios">
 
-    {% for tema, dados in encontros_por_tema_agendamento.items %}
+    {% for tematica, dados in encontros_por_tematica_agendamento.items %}
     
       <div class="bloco_externo">
 
         <form method="post"> {% csrf_token %}
 
           {% if dados.encontros %}
-            {% if tema %}
-              {% lng "Horários disponíveis para agendamento de" "Available times for scheduling" %} <b>{{ tema }}</b>:
+            {% if tematica %}
+              {% lng "Horários disponíveis para agendamento de" "Available times for scheduling" %} <b>{{ tematica }}</b>:
             {% else %}
               {% lng "Horários disponíveis para agendamento" "Available times for scheduling" %}:
             {% endif %}

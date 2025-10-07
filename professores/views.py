@@ -49,8 +49,8 @@ from estudantes.models import Relato, Pares, FeedbackPares
 from professores.support3 import get_banca_incompleta
 
 from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, Observacao
-from projetos.models import Banca, Evento, Encontro, Documento
-from projetos.models import Projeto, Configuracao, Organizacao
+from projetos.models import Banca, Evento, Encontro, Documento, TematicaEncontro
+from projetos.models import Projeto, Configuracao
 from projetos.support4 import get_objetivos_atuais
 from projetos.support2 import get_alocacoes, get_pares_colegas, recupera_envolvidos, anota_participacao
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
@@ -1120,7 +1120,7 @@ def dinamicas_lista(request, edicao=None):
     else:
 
         informacoes = [
-                (".tema", "tema", "theme"),
+                (".tematica", "tematica", "theme"),
                 (".local", "local", "local"),
                 (".grupo", "grupo", "group"),
                 (".orientacao", "orientação", "supervision"),
@@ -1139,6 +1139,7 @@ def dinamicas_lista(request, edicao=None):
                 "edicoes": get_edicoes(Projeto)[0],
                 "informacoes": informacoes,
                 "configuracao": configuracao,
+                "tematicas": TematicaEncontro.objects.all().order_by("nome"),
             }
         
         if edicao:
@@ -1168,6 +1169,28 @@ def ajax_permite_agendar_mentorias(request):
         return JsonResponse({"atualizado": True})
 
     return HttpResponse("Erro não identificado.", status=401)
+
+
+@login_required
+@transaction.atomic
+@permission_required("users.altera_professor", raise_exception=True)
+def ajax_atualiza_visibilidade_tematica(request):
+    """Atualiza uma configuração de visibilidade de temáticas de mentorias."""
+
+    if request.is_ajax():
+        tematica_id = request.POST.get("tematica_id", None)
+        visibilidade = request.POST.get("visibilidade", None)
+        if tematica_id and visibilidade is not None:
+            try:
+                tematica = get_object_or_404(TematicaEncontro, pk=int(tematica_id))
+            except ValueError:
+                return HttpResponse("Temática não encontrada.", status=404)
+            tematica.visibilidade = True if visibilidade == "true" else False
+            tematica.save()
+            return JsonResponse({"atualizado": True})
+
+    return HttpResponse("Erro não identificado.", status=401)
+
 
 
 @login_required
@@ -1760,7 +1783,7 @@ def dinamicas_criar(request, data=None):
     configuracao = get_object_or_404(Configuracao)
     
     if request.is_ajax() and request.method == "POST":
-        print( request.POST )
+
         mensagem = ""
         if "criar" in request.POST:
 
@@ -1776,7 +1799,12 @@ def dinamicas_criar(request, data=None):
                 vezes = int(request.POST["vezes"])
                 intervalo = int(request.POST["intervalo"])
                 local = request.POST.get("local", None)
-                tema = request.POST.get("tema")
+                tematica_id = request.POST.get("tematica", None)
+                if tematica_id:
+                    try:
+                        tematica = TematicaEncontro.objects.get(id=tematica_id)
+                    except TematicaEncontro.DoesNotExist:
+                        return HttpResponse("Temática não encontrada.", status=401)
                 projeto_id = request.POST.get("projeto", None)
                 if projeto_id and projeto_id != "0":
                     try:
@@ -1801,8 +1829,11 @@ def dinamicas_criar(request, data=None):
                     startDate += diferenca +  datetime.timedelta(minutes=intervalo)
                     endDate += diferenca +  datetime.timedelta(minutes=intervalo)
 
-                    if tema:
-                        encontro.tema = tema
+                    if tematica_id:
+                        try:
+                            encontro.tematica = TematicaEncontro.objects.get(id=tematica_id)
+                        except TematicaEncontro.DoesNotExist:
+                            return HttpResponse("Temática não encontrada.", status=401)
 
                     if local:
                         encontro.location = local
@@ -1850,6 +1881,7 @@ def dinamicas_criar(request, data=None):
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
+        "tematicas": TematicaEncontro.objects.all().order_by("nome"),
     }
 
     if data:
@@ -1928,7 +1960,13 @@ def dinamicas_editar(request, primarykey=None):
                     encontro.endDate = endDate_novo
 
                     encontro.location = request.POST.get("local")
-                    encontro.tema = request.POST.get("tema")
+                    tematica_id = request.POST.get("tematica", None)
+                    if tematica_id:
+                        try:
+                            encontro.tematica = TematicaEncontro.objects.get(id=tematica_id)
+                        except TematicaEncontro.DoesNotExist:
+                            return HttpResponse("Temática não encontrada.", status=401)
+                    
                 except (ValueError, OverflowError):
                     return HttpResponse("Erro com data da Dinâmica!", status=401)
                 encontro.save()
@@ -1989,6 +2027,7 @@ def dinamicas_editar(request, primarykey=None):
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
+        "tematicas": TematicaEncontro.objects.all().order_by("nome"),
     }
     return render(request, "professores/dinamicas_view.html", context)
 
@@ -2003,7 +2042,7 @@ def dinamicas_editar_edicao(request, edicao):
         encontros = puxa_encontros(edicao)
         for encontro in encontros:
             encontro.location = request.POST.get("local")
-            encontro.tema = request.POST.get("tema")
+            encontro.tematica = request.POST.get("tematica")
             facilitador_id = request.POST.get("facilitador")
             if facilitador_id:
                 encontro.facilitador = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
@@ -2019,6 +2058,7 @@ def dinamicas_editar_edicao(request, edicao):
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
+        "tematicas": TematicaEncontro.objects.all().order_by("nome"),
     }
     return render(request, "professores/dinamicas_view.html", context)
 

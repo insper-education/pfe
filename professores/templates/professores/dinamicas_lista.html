@@ -26,6 +26,57 @@
         {% lng "Permite Agendamentos" "Allows Scheduling" %}
       </label>
     </div>
+
+    <div class="form-group mt-2">
+      <table class="table table-sm" style="margin-bottom:0; width:auto; font-size:0.97em;">
+        <thead style="background-color:rgba(0, 123, 255, 0.1);">
+          <tr>
+            <th style="padding:2px 8px;">{% lng "Temática" "Theme" %}</th>
+            <th style="padding:2px 8px;">{% lng "Visível" "Visible" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tematica in tematicas %}
+            <tr>
+              <td style="padding:2px 8px;">
+                <label for="tematica_{{ tematica.id }}" style="margin-bottom:0;">{{ tematica.nome }}</label>
+              </td>
+              <td style="padding:2px 8px; text-align:center;">
+                <input type="checkbox"
+                      class="esconder tematicas_checkbox"
+                      id="tematica_{{ tematica.id }}"
+                      name="tematica_{{ tematica.id }}"
+                      {% if tematica.visibilidade %}checked{% endif %}
+                      style="margin:0; width:16px; height:16px; vertical-align:middle;" />
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+      <script>
+        $(".tematicas_checkbox").change(function(evt){
+
+          $.ajax({
+            url: "{% url 'ajax_atualiza_visibilidade_tematica' %}",
+            data: {
+              "csrfmiddlewaretoken": "{{ csrf_token }}",
+              "visibilidade": evt.target.checked,
+              "tematica_id": evt.target.id.split("_")[1]
+            },
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+              {% comment %} if (data.atualizado) {} {% endcomment %}
+            },
+            {% include "ajax_error_function.js" %}
+          });
+
+        });
+      </script>
+
+  
   {% endif %}
 
 
@@ -90,9 +141,9 @@
                 </div>
               {% endif %}
 
-              {% if e.tema %}
-                <div class="tema" style="margin: 4px 0px 4px 0px;">
-                  <b>Tema:</b> {{ e.tema }}
+              {% if e.tematica %}
+                <div class="tematica" style="margin: 4px 0px 4px 0px;">
+                  <b>Temática:</b> {{ e.tematica.nome }}
                 </div>
               {% endif %}
 

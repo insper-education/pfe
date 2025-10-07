@@ -498,3 +498,5 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
     search_fields = ["encontro__projeto__titulo_final", "participante__user__username",]
     actions = [dup_entrada]
 
+
+admin.site.register(TematicaEncontro)
