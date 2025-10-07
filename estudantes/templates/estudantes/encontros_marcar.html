@@ -52,7 +52,6 @@
 
 {% block content %}
 
-  
   {% if user.eh_estud %}
   <h5 class="mb-3">
     <span style="background:#e3f2fd; color:#0d47a1; padding:0.3em 0.7em; border-radius:8px;">
@@ -181,31 +180,6 @@
             {% endif %}
           </div>
 
-
-          <script>
-
-            window.setInterval("update()", 120000); // 2 minutos
-
-            var update = function() {
-              $.ajax({
-                type: "GET",
-                url: "{% url 'encontros_marcar' %}",
-                data: {"csrfmiddlewaretoken": "{{ csrf_token }}",},
-                success: function(response){
-                  var value = $( "input[type=radio][name=selection]:checked" ).val();
-                  $("#horarios").replaceWith($("#horarios",response));
-                  if(!$("input[type=radio][name=selection][value=" + value + "]").prop("disabled")){
-                    $("input[type=radio][name=selection][value=" + value + "]").prop("checked", true);
-                  }
-                  $(".tooltip-inner").remove();
-                  $(".tooltip-arrow").remove();
-                },
-                {% include "ajax_error_function.js" %}
-              });
-            };
-
-          </script>
-
         </form>
 
       </div>
@@ -214,5 +188,29 @@
     {% endfor %}
 
   </div>
+
+  <script>
+
+    window.setInterval("update()", 120000); // 2 minutos
+
+    var update = function() {
+      $.ajax({
+        type: "GET",
+        url: "{% url 'encontros_marcar' %}",
+        data: {"csrfmiddlewaretoken": "{{ csrf_token }}",},
+        success: function(response){
+          var value = $( "input[type=radio][name=selection]:checked" ).val();
+          $("#horarios").replaceWith($("#horarios",response));
+          if(!$("input[type=radio][name=selection][value=" + value + "]").prop("disabled")){
+            $("input[type=radio][name=selection][value=" + value + "]").prop("checked", true);
+          }
+          $(".tooltip-inner").remove();
+          $(".tooltip-arrow").remove();
+        },
+        {% include "ajax_error_function.js" %}
+      });
+    };
+
+  </script>
 
 {% endblock %}
