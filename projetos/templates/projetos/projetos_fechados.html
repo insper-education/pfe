@@ -17,6 +17,17 @@
     .sem_estudantes {
       opacity: 0.3;
     }
+    .logotipo_altura {
+      max-width: 136px;
+      min-width: 32px;
+      width: auto;
+      height: 78px;
+      object-fit: contain;
+      padding: 2px;
+      box-shadow: 0 1px 6px 0 rgba(180,200,220,0.10);
+      margin-bottom: 4px;
+      vertical-align: middle;
+    }
   </style>
 {% endblock %}
 
@@ -33,7 +44,6 @@
   
   {% comment %} Tabela com todos os projetos selecionados pelo filtro {% endcomment %}
   <div id="atualizar">
-    
 
     {% if projetos %}
 
@@ -51,16 +61,15 @@
               
                 {% if projeto.organizacao %}
                   <div class="logo">
-
                     <p>
                       <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
-                        <img class="logotipo" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
+                        <img class="logotipo_altura" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
                       </a>
                       {% for conexao in cooperacoes %}
                         {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
                           &nbsp;
                           <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-                            <img class="logotipo" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+                            <img class="logotipo_altura" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
                           </a>
                         {% endif %}
                       {% endfor %}

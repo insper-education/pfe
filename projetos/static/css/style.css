@@ -180,6 +180,18 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   width: auto;
 }
 
+.logotipo_altura {
+  max-width: 136px;
+  min-width: 32px;
+  width: auto;
+  height: 78px;
+  object-fit: contain;
+  padding: 2px;
+  box-shadow: 0 1px 6px 0 rgba(180,200,220,0.10);
+  margin-bottom: 4px;
+  vertical-align: middle;
+}
+
 .flutua_dir {
   float: right;
   margin-left: 10px;

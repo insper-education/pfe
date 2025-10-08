@@ -44,6 +44,22 @@
       margin-top: 0.8em;
     }
 
+    .bloco-destaque-projeto {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1em;
+      padding: 0.8em;
+      border: 1.5px solid #0cf;
+    }
+    .bloco-destaque-projeto:hover {
+      box-shadow: 0 4px 24px 0 rgba(120,160,200,0.13);
+    }
+    .bloco-destaque-projeto .logotipo {
+      max-height: 80px;
+      margin-left: 12px;
+      padding: 2px;
+    }
   </style>
 
 {% endblock %}
@@ -56,21 +72,65 @@
 
   <div class="div_arredondado_100">
 
-    <h4>
-      {{ projeto.get_titulo_org }}
-      {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-        <span style="font-size: small; padding-left: 0.7em; display: block;">
-          <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}
-        </span>
+    <div class="bloco-destaque-projeto" style="display: flex;">
+      <div style="flex: 1; min-width: 0;">
+
+        <h4>
+          {% lng "Título" "Title" %}:
+          {{ projeto.get_titulo }}
+          {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+            <span style="font-size: small; padding-left: 0.7em; display: block;">
+              <b>{% lng "Título original da proposta" "Original title of the proposal" %}:</b> {{projeto.proposta.titulo}}
+            </span>
+          {% endif %}
+        </h4>
+
+        <b>{% lng "Semestre" "Semester" %}</b>:
+        {{projeto.ano}}.{{projeto.semestre}}
+
+        {% include "tipo_projeto.html" with com_tipo=True %}
+        <br>
+
+        <b>{% lng "Organização" "Organization" %}</b>:
+        {% if projeto.organizacao %}
+          {% if user.eh_prof_a %}
+            <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
+          {% else %}
+            {{ projeto.organizacao.nome }}
+          {% endif %}
+        {% else %}
+          {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
+        {% endif %}
+        
+        {% for conexao in cooperacoes %}
+          {% if conexao.parceiro and conexao.parceiro.organizacao %}
+            <span class="ml-4">
+              ( {% lng "colaboração" "collaboration" %}:
+              <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+                {{conexao.parceiro.organizacao}}
+              </a> )
+            </span>
+          {% endif %}
+        {% endfor %}
+        <br>
+      </div>
+      
+      {% if projeto.organizacao and projeto.organizacao.logotipo %}
+        <img class="logotipo" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
       {% endif %}
-    </h4>
 
-    <b>{% lng "Semestre" "Semester" %}</b>
-    {{projeto.ano}}.{{projeto.semestre}}
+      {% for conexao in cooperacoes %}
+        {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
+            <img class="logotipo" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
+          </a>
+        {% endif %}
+      {% endfor %}
 
-    {% include "tipo_projeto.html" with com_tipo=True %}
+    </div>
 
     {% if projeto.resumo %}
+      <hr>
       <div class="resumo mt-3">
         <strong>{% lng "Resumo do Projeto (escrito por estudantes)" "Project Summary (written by students)" %}:</strong>
         {{ projeto.resumo|linebreaks }}
@@ -93,43 +153,7 @@
 
     <hr>
 
-    {% for conexao in cooperacoes %}
-      {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-        <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-          <img class="logotipo flutua_dir" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
-        </a>
-      {% endif %}
-    {% endfor %}
-
-    {% if projeto.organizacao and projeto.organizacao.logotipo %}
-      <img class="logotipo flutua_dir" src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}">
-    {% endif %}
-
-    <h5>
-      {% lng "Organização" "Organization" %}:
-      {% if projeto.organizacao %}
-        {% if user.eh_prof_a %}
-          <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>
-        {% else %}
-          {{ projeto.organizacao.nome }}
-        {% endif %}
-      {% else %}
-        {% lng "ORGANIZAÇÃO NÃO DEFINIDA" "ORGANIZATION NOT DEFINED" %}
-      {% endif %}
-    </h5>
-
-    {% for conexao in cooperacoes %}
-      {% if conexao.parceiro and conexao.parceiro.organizacao %}
-        <span class="ml-4">
-          {% lng "Colaboração" "Collaboration" %}:
-          <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
-            {{conexao.parceiro.organizacao}}
-          </a>
-        </span>
-      {% endif %}
-    {% endfor %}
-
-    <div class="endereco mt-3">
+    {% comment %} <div class="endereco mt-3">
       <strong>{% lng "Endereço" "Address" %}:</strong><br>
       <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
     </div>
@@ -143,7 +167,7 @@
           <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
         {% endif %}
       </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     {% if projeto.proposta.descricao %}
       <div class="descricao mt-3">
