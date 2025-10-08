@@ -23,7 +23,7 @@
       gap: 1px;
       margin-left: 6px;
     }
-    .logo-container {
+    .logo-org-container {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -74,14 +74,14 @@
               
                 {% if projeto.organizacao %}
                   <div class="logo logo-block">
-                    <div class="logo-container">
+                    <div class="logo-org-container">
                       <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                         <img class="logotipo_altura" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
                       </a>
                     </div>
                     {% for conexao in cooperacoes %}
                       {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-                        <div class="logo-container">
+                        <div class="logo-org-container">
                           <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
                             <img class="logotipo_altura" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
                           </a>
