@@ -482,7 +482,14 @@ def encontro_feedback(request, pk):
         # Mensagem para facilitador
         subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
         configuracao = get_object_or_404(Configuracao)
-        recipient_list = [encontro.facilitador.email, encontro.projeto.orientador.user.email, configuracao.coordenacao.user.email]
+        #recipient_list = [encontro.facilitador.email, encontro.projeto.orientador.user.email, configuracao.coordenacao.user.email]
+
+        recipient_list = list(filter(None, [
+            getattr(encontro.facilitador, "email", None),
+            getattr(encontro.projeto and encontro.projeto.orientador and encontro.projeto.orientador.user, "email", None),
+            getattr(configuracao and configuracao.coordenacao and configuracao.coordenacao.user, "email", None)
+        ]))
+
         context_email = {
             "encontro": encontro,
             "participantes": participantes,
@@ -491,6 +498,7 @@ def encontro_feedback(request, pk):
 
         mensagem = render_message("Anotações de Mentoria", context_email)
         email(subject, recipient_list, mensagem)
+        print(mensagem)
 
         if request.user.is_authenticated:
             return redirect("dinamicas_lista")
