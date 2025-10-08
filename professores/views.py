@@ -498,7 +498,6 @@ def encontro_feedback(request, pk):
 
         mensagem = render_message("Anotações de Mentoria", context_email)
         email(subject, recipient_list, mensagem)
-        print(mensagem)
 
         if request.user.is_authenticated:
             return redirect("dinamicas_lista")
