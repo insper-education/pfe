@@ -17,6 +17,20 @@
     .sem_estudantes {
       opacity: 0.3;
     }
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      margin-left: 6px;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 78px;
+      max-width: 136px;
+      width: 136px;
+    }
     .logotipo_altura {
       max-width: 136px;
       min-width: 32px;
@@ -24,7 +38,6 @@
       height: 78px;
       object-fit: contain;
       padding: 2px;
-      box-shadow: 0 1px 6px 0 rgba(180,200,220,0.10);
       margin-bottom: 4px;
       vertical-align: middle;
     }
@@ -60,20 +73,21 @@
                 </i>
               
                 {% if projeto.organizacao %}
-                  <div class="logo">
-                    <p>
+                  <div class="logo logo-block">
+                    <div class="logo-container">
                       <a href="{% url 'organizacao_completo' projeto.organizacao.id %}">
                         <img class="logotipo_altura" {% if projeto.organizacao.logotipo %}src="{{ projeto.organizacao.logotipo.url }}"{% endif %} alt="## {{ projeto.organizacao.sigla }} ##">
                       </a>
-                      {% for conexao in cooperacoes %}
-                        {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
-                          &nbsp;
+                    </div>
+                    {% for conexao in cooperacoes %}
+                      {% if conexao.parceiro and conexao.parceiro.organizacao and conexao.parceiro.organizacao.logotipo %}
+                        <div class="logo-container">
                           <a href="{% url 'organizacao_completo' conexao.parceiro.organizacao.id %}">
                             <img class="logotipo_altura" src="{{ conexao.parceiro.organizacao.logotipo.url }}" alt="{{ conexao.parceiro.organizacao.sigla }}">
                           </a>
-                        {% endif %}
-                      {% endfor %}
-                    </p>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
                   </div>
                 {% endif %}
 

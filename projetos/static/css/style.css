@@ -180,6 +180,20 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   width: auto;
 }
 
+.logo-block {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  margin-left: 6px;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 78px;
+  max-width: 136px;
+  width: 136px;
+}
 .logotipo_altura {
   max-width: 136px;
   min-width: 32px;
@@ -187,7 +201,6 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   height: 78px;
   object-fit: contain;
   padding: 2px;
-  box-shadow: 0 1px 6px 0 rgba(180,200,220,0.10);
   margin-bottom: 4px;
   vertical-align: middle;
 }
