@@ -151,7 +151,7 @@
                 <div class="local" style="margin: 4px 0px 4px 0px;">
                   <b>Local/Link:</b>
                   {% if e.url_location %}<a href="{{e.location}}">{% endif %}
-                  {{e.location}}
+                  <span style="word-break: break-all; overflow-wrap: break-word;">{{e.location}}</span>
                   {% if e.url_location %}</a>{% endif %}
                 </div>
               {% endif %}
@@ -178,7 +178,7 @@
                 {% lng "Horário Livre" "Available Time" %}<br><br>
               {% endif %}
 
-              <span class="editar esconder" style="float: right;">
+              <span class="editar esconder mt-1" style="float: right;">
                 <a class="open-modal" data-url="{% url 'dinamicas_editar' e.id %}" href="{% url 'dinamicas_editar' e.id %}"> 
                   <button class="btn btn-primary">{% lng "Editar" "Edit" %}</button>
                 </a>
