@@ -31,9 +31,8 @@
             {% endif %}
           </td>
           <td>{{ desconto.evento }}</td>
-          <td>
-            <span lang="pt">{% language "pt-br" %}{{ desconto.nota|floatformat:2}}{% endlanguage %}</span>
-            <span lang="en" style="display:none">{% language "en" %}{{ desconto.nota|floatformat:2}}{% endlanguage %}</span>
+          <td data-order="{% if desconto.nota %}{{ desconto.nota|unlocalize }}{% else %}0{% endif %}">
+            {{ desconto.nota|floatformat:2}}
           </td>
         </tr>
       {% endfor %}

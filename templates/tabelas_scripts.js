@@ -229,6 +229,15 @@ function getNumericColumnIndices(tableId) {
 
 // Function to convert notation based on language
 function convertNotation(data, type, row, meta, lang) {
+    // Para ordenação e tipo, sempre retorna número puro (com ponto)
+    if (type === "sort" || type === "type") {
+        if (typeof data === "string") {
+            // Troca vírgula por ponto e remove espaços
+            return parseFloat(data.replace(',', '.').replace(/\s/g, ''));
+        }
+        return data;
+    }
+    // Para exibição e filtro, trata conforme o idioma
     if (type === "display" || type === "filter") {
         if (lang === "en") return data.replace(',', '.');
         if (lang === "pt") return data.replace('.', ',');
@@ -256,9 +265,22 @@ function atualiza_lingua(lang) {
     const numericColumnIndices = getNumericColumnIndices(tableId);
     configuracao_table["columnDefs"] = [{
             targets: numericColumnIndices,
+            type: "num",
             render: function(data, type, row, meta) {
+                if (type === "sort" || type === "type") {
+                    var cell = meta && meta.settings && meta.settings.aoData && meta.settings.aoData[meta.row] && meta.settings.aoData[meta.row].anCells
+                        ? meta.settings.aoData[meta.row].anCells[meta.col]
+                        : null;
+                    if (cell && $(cell).attr("data-order")) {
+                        return parseFloat($(cell).attr("data-order"));
+                    }
+                    // fallback: tenta converter o próprio data
+                    return parseFloat(data.toString().replace(',', '.'));
+                }
+                // Para display e filter
                 return convertNotation(data, type, row, meta, lang);
             }
+
         }
     ];
 

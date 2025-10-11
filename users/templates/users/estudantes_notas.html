@@ -41,7 +41,7 @@
         </th>
 
         <td>
-          <a href="mailto:{{aluno.user.email}}"> &lt;{{aluno.user.email}}&gt;</a><br>
+          <a href="mailto:{{aluno.user.email}}">{{aluno.user.email}}</a>
         </td>
 
         {% if aluno.curso2 %}
@@ -104,21 +104,19 @@
 
           {% if alocacao %}
             {% with media=alocacao|get_media_alocacao %}
-              <td id="indiv{{aluno.id}}"> {% comment %} <!-- Individual --> {% endcomment %}
-                <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer"
-                  {% if media.media < 5 %}style="color:red;"{% endif %}
-                  >
-                  <span lang="pt">{% language "pt-br" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
-                  <span lang="en" style="display:none">{% language "en" %}{{ media.individual|floatformat:2}}{% endlanguage %}</span>
+
+              {% comment %} <!-- Individual --> {% endcomment %}
+              <td id="indiv{{aluno.id}}" data-order="{% if media.individual %}{{ media.individual|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Individual --> {% endcomment %}
+                <a href="{% url 'edita_notas' alocacao.id %}" target="_blank" rel="noopener noreferrer" {% if media.individual < 5 %}style="color:red;"{% endif %}>
+                  {{ media.individual|floatformat:2 }}
                 </a>
               </td>
 
-              <td>
-                <span lang="pt">{% language "pt-br" %}{{ media.descontos|floatformat:2}}{% endlanguage %}</span>
-                <span lang="en" style="display:none">{% language "en" %}{{ media.descontos|floatformat:2}}{% endlanguage %}</span>
-              </td> {% comment %} <!-- Descontos --> {% endcomment %}
+              <td data-order="{% if media.descontos %}{{ media.descontos|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Descontos --> {% endcomment %}
+                {{ media.descontos|floatformat:2}}
+              </td>
 
-              <td id="media{{aluno.id}}"> {% comment %} <!-- Média --> {% endcomment %}
+              <td id="media{{aluno.id}}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
 
                   {% if media.probation and user == alocacao.projeto.orientador.user %}
                     {% with parecer=alocacao.projeto|get_parecer_de_probatorio %}
@@ -158,8 +156,7 @@
                       >
                     {% endif %}
                   {% endif %}
-                  <span lang="pt">{% language "pt-br" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
-                  <span lang="en" style="display:none">{% language "en" %}{{ media.media|floatformat:"2"}}{% endlanguage %}</span>
+                  {{ media.media|floatformat:"2"}}
                 </a>
               </td>
             {% endwith %}

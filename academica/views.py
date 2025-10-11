@@ -182,7 +182,7 @@ def descontos(request):
 
         cabecalhos = [{"pt": "Referência", "en": "Reference"},
                       {"pt": "Evento", "en": "Event"},
-                      {"pt": "Nota", "en": "Grade"},
+                      {"pt": "Nota", "en": "Grade", "tipo": "numeral"},
                      ]
         
         context = {

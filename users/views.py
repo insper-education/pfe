@@ -297,9 +297,9 @@ def estudantes_notas(request, professor=None):
                         {"pt": "Curso", "en": "Program"},
                         {"pt": "Projeto", "en": "Project"},
                         {"pt": "Notas", "en": "Grades"},
-                        {"pt": "Indi.", "en": "Indi."},
-                        {"pt": "Desc.", "en": "Disc."},
-                        {"pt": "Média", "en": "Average"},
+                        {"pt": "Indi.", "en": "Indi.", "tipo": "numeral"},
+                        {"pt": "Desc.", "en": "Disc.", "tipo": "numeral"},
+                        {"pt": "Média", "en": "Average", "tipo": "numeral"},
                     ]
 
         captions = [
