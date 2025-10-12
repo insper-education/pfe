@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 11 de Outubro de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load i18n %}
+  {% load l10n %}
+  {% load linguas %}
+  <script src="{% static 'js/sort.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+  {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %}
+    {% for composicao in composicoes %}
+      <tr>
+        <td>{{composicao.exame}}</td>
+        <td>
+          <script> peso_tmp = 0; </script>
+          {% for peso in composicao.peso_set.all %}                    
+            {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}">{{peso.objetivo.sigla}}{% else %}<span>[Única{% endif %}={% lng_2 peso.peso %}</span>]
+            {% if peso.peso %}
+              <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
+            {% endif %}
+          {% endfor %}
+        </td><td>
+          <b id="m{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>
+        </td>
+        <script> document.getElementById("m{{forloop.counter0}}").innerHTML = peso_tmp.toFixed(2)+"%"; </script>
+      </tr>
+    {% endfor %}
+    <caption>
+      <small>
+        {% for o in objetivos %}
+          <b>{{o.sigla}}</b>: {{o.titulo}}
+          {% if not forloop.last %}|{% endif %}
+        {% endfor %}
+      </small>
+    </caption>
+  {% include "tabelas_bottom.html" %}
+  
+{% endblock %}

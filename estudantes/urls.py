@@ -28,6 +28,7 @@ urlpatterns = [
     path("funcionalidade_grupo/", views.funcionalidade_grupo, name="funcionalidade_grupo"),
     path("informacoes_adicionais/", views.informacoes_adicionais, name="informacoes_adicionais"),
     path("minhas_bancas/", views.minhas_bancas, name="minhas_bancas"),
+    path("pesos_rubricas/", views.pesos_rubricas, name="pesos_rubricas"),
     path("refresh_hora/", views.refresh_hora, name="refresh_hora"),
     path("relato_quinzenal/", views.relato_quinzenal, name="relato_quinzenal"),
     path("relato_visualizar/<int:id>", views.relato_visualizar, name="relato_visualizar"),

@@ -941,6 +941,46 @@ def exames_pesos(request):
 
     return render(request, "academica/exames_pesos.html", context)
 
+@login_required
+def pesos_rubricas(request):
+    """Exibe os pessos de cada exames e as rubricas do semestre letivo do estudantes."""
+
+    if not request.user.eh_estud:
+        context = {
+            "area_principal": True,
+            "mensagem_aviso": {"pt": "Você não está cadastrado como estudante.", "en": "You are not registered as a student."}
+        }
+        return render(request, "generic_ml.html", context=context)
+
+    composicoes_com_peso = Composicao.objects.filter(peso__peso__gt=0).distinct()
+    
+    composicoes = filtra_composicoes(composicoes_com_peso, request.user.aluno.ano, request.user.aluno.semestre)
+    
+    # Para cada composição, veja todos os objetivos associados
+    objetivos_unicos = {}
+    for composicao in composicoes:
+        for objetivo in composicao.pesos.all():
+            objetivos_unicos[objetivo.sigla] = objetivo
+    objetivos = list(objetivos_unicos.values())
+
+
+    cabecalhos = [
+        {"pt": "Exames", "en": "Evaluation"},
+        {"pt": "Composição", "en": "Composition"},
+        {"pt": "Peso", "en": "Weight"},
+        
+    ]
+
+    context = {
+        "titulo": {"pt": "Pesos e Rubricas", "en": "Weights and Rubrics"},
+        "composicoes": composicoes,
+        "cabecalhos": cabecalhos,
+        "objetivos": objetivos,
+    }
+
+    return render(request, "academica/pesos_rubricas.html", context)
+
+
 
 @login_required
 def submissao_documento(request):
