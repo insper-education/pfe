@@ -15,6 +15,12 @@
 
 {% block content %}
 
+
+  <h4>{% lng "Objetivos de Aprendizagem e Rubricas" "Learning Goals and Rubrics" %}</h4>
+  {% include "professores/includes/tabela_objetivos_rubricas.html" %}
+  <br><br>
+
+  <h4>{% lng "Exames e Pesos" "Exams and Weights" %}</h4>
   {% include "tabelas_top_ml.html" with tabela="ExamesPesos" cabecalhos=cabecalhos tabela_simples=True %}
     {% for composicao in composicoes %}
       <tr>
@@ -22,7 +28,7 @@
         <td>
           <script> peso_tmp = 0; </script>
           {% for peso in composicao.peso_set.all %}                    
-            {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}">{{peso.objetivo.sigla}}{% else %}<span>[Única{% endif %}={% lng_2 peso.peso %}</span>]
+            {% if peso.objetivo %}[<span data-toggle="tooltip" data-placement="bottom" title="{{peso.objetivo.titulo}}">{{peso.objetivo.sigla}}{% else %}<span>[Única{% endif %}={% lng_2 peso.peso %}%</span>]
             {% if peso.peso %}
               <script> peso_tmp += {{peso.peso|unlocalize}}; </script>
             {% endif %}
@@ -35,7 +41,7 @@
     {% endfor %}
     <caption>
       <small>
-        {% for o in objetivos %}
+        {% for o in objetivos_avaliados %}
           <b>{{o.sigla}}</b>: {{o.titulo}}
           {% if not forloop.last %}|{% endif %}
         {% endfor %}
@@ -43,4 +49,5 @@
     </caption>
   {% include "tabelas_bottom.html" %}
   
+
 {% endblock %}
