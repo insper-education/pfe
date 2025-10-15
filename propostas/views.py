@@ -773,6 +773,8 @@ def proposta_editar(request, slug=None):
                 colaboracao_id = request.POST.get("colaboracao", None)
                 if colaboracao_id:
                     proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+                else:
+                    proposta.colaboracao = None
                 proposta.save()
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
