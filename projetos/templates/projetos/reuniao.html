@@ -145,7 +145,8 @@
 
         <div id="mensagens" style="font-size: small;"> {% comment %} flex: 1; {% endcomment %}
           <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
-          {% if not user.eh_admin %}checked{% endif %}>
+          {% if not user.eh_admin %}checked{% endif %}
+          {% if user.eh_estud %} disabled{% endif %} />
           <label for="enviar_mensagem">
             {% lng "Enviar mensagem para envolvidos (sempre para orientador, coorientadores e grupo de estudantes)" "Send message to involved people (always to advisor, co-advisors and group of students)" %}
           </label>
