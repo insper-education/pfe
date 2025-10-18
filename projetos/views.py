@@ -894,7 +894,7 @@ def reunioes(request, todos=None):
             "cabecalhos": [
                 {"pt": "Título", "en": "Title"},
                 {"pt": "Projeto", "en": "Project"},
-                {"pt": "Data", "en": "Date"},
+                {"pt": "Data", "en": "Date", "tipo": "data_hora"},
                 {"pt": "Local", "en": "Location"},
                 {"pt": "Participantes", "en": "Participants"}
             ],
@@ -1060,7 +1060,7 @@ def despesas(request):
                 "despesas": despesas,
                 "cotacao_dolar": configuracao.cotacao_dolar,
                 "despesa_por_tipo": despesa_por_tipo,
-                "cabecalhos": [ {"pt": "Data", "en": "Date"},
+                "cabecalhos": [ {"pt": "Data", "en": "Date", "tipo": "data"},
                                 {"pt": "Tipo", "en": "Type"},
                                 {"pt": "Valor", "en": "Value"},
                                 {"pt": "Descrição", "en": "Description"},
@@ -1179,7 +1179,7 @@ def lista_feedback_estudantes(request):
 
             "cabecalhos": [{"pt": "Nome", "en": "Name"},
                            {"pt": "Projeto", "en": "Project"}, 
-                           {"pt": "Data", "en": "Date"}, 
+                           {"pt": "Data", "en": "Date", "tipo": "data"}, 
                            {"pt": "Mensagem", "en": "Message"}, ],
         }
 
