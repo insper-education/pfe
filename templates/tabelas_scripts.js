@@ -283,20 +283,34 @@ function buildTypedColumnDefs(lang, tableId) {
             name: "numeric-render",
             targets: numericColumnIndices,
             type: "num",
+            // Format visible text (display) while preserving HTML
+            createdCell: function(td, cellData, rowData, row, col) {
+                var lang = localStorage.getItem("lingua") || "pt";
+                var html = $(td).html();
+                var text = $(td).text();
+                var formatted = convertNotation(text || "", "display", rowData, { row: row, col: col }, lang);
+                var m = text.match(/-?\d+(?:[.,]\d+)?/);
+                if (m) {
+                    $(td).html(html.replace(m[0], formatted));
+                }
+            },
+            // Sort fallback when data-order is missing
             render: function(data, type, row, meta) {
                 if (type === "sort" || type === "type") {
                     var cell = meta && meta.settings && meta.settings.aoData && meta.settings.aoData[meta.row] && meta.settings.aoData[meta.row].anCells
                         ? meta.settings.aoData[meta.row].anCells[meta.col]
                         : null;
-                    if (cell && $(cell).attr("data-order")) {
-                        return parseFloat($(cell).attr("data-order"));
+                    if (cell) {
+                        var ord = $(cell).attr("data-order") || $(cell).attr("data-sort");
+                        if (ord != null && ord !== "") {
+                            return parseFloat(String(ord).replace(',', '.'));
+                        }
                     }
-                    // fallback: tenta converter o próprio data
                     if (data == null) return NaN;
-                    return parseFloat(data.toString().replace(',', '.'));
+                    return parseFloat(String(stripData(data)).replace(',', '.'));
                 }
-                // Para display e filter
-                return convertNotation(data, type, row, meta, lang);
+                // For DOM source, display render is ignored by design
+                return data;
             }
         });
     }
