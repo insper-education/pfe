@@ -58,7 +58,10 @@
             </script>
           {% endif %}
           
-          <td>
+          <td data-toggle="tooltip" data-html="true" animation="true" title="
+          A média final é calculada considerando todas as avaliações e seus respectivos pesos mesmo as avaliações ainda não realizadas.<br>
+          A média provisória é calculada como a soma ponderada das avaliações dividida pela soma dos pesos das avaliações já realizadas.
+          ">
             <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocacao.id}}">0.0</span> <span id="aviso{{alocacao.id}}"></span></b>    
           </td>
 

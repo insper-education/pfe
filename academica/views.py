@@ -136,7 +136,7 @@ def dinamicas_grupos(request):
         context = {
             "informacoes": informacoes,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
             "Pares": Pares,
         }
 

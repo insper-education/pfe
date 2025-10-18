@@ -252,10 +252,10 @@ def relatorios_publicos(request, edicao=None):
                       {"pt": "Período", "en": "Semester"},
                       {"pt": "Documentos", "en": "Documents"},]
             
-        captions = [
+        captions = [ [
             {"sigla": "B", "pt": "Biblioteca", "en": "Library"},
             {"sigla": "S", "pt": "Servidor", "en": "Server"},
-        ]
+        ] ]
 
         context = {
             "projetos": projetos,

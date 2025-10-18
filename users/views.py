@@ -302,14 +302,18 @@ def estudantes_notas(request, professor=None):
                         {"pt": "Média", "en": "Average", "tipo": "numeral"},
                     ]
 
-        captions = [
+        captions = [ [
+            {"sigla": "XX", "pt": "Abaixo da Média", "en": "Below Average", "cor": "red"},
+            {"sigla": "XX", "pt": "Peso da Média Incompleto", "en": "Incomplete Average Weight", "cor": "orange"},
+        ], 
+        [
             {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
             {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
             {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
             {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
             {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
             {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
-        ]
+        ] ]
 
         context = {
             "alunos_list": alunos_list,
@@ -483,7 +487,7 @@ def estudantes_objetivos(request):
             "objetivos_i": objetivos_i,
             "objetivos_t": objetivos_t,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
         }
 
     else:
@@ -529,7 +533,7 @@ def projetos_objetivos(request):
             "projetos": projetos,
             "objetivos": objetivos,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
         }
 
     else:

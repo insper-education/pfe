@@ -30,12 +30,15 @@
       </tr>
     </thead>
     {% if captions %}
-      <caption style="text-align: right"><small>
-        {% for caption in captions %}
-          <span style="white-space: nowrap;"><b>{{caption.sigla}}</b>:
-            {% lng caption.pt|safe caption.en|safe %}
-          </span>
-          {% if not forloop.last %}|{% endif %}
+      <caption style="text-align: right; padding-top: 6px;"><small>
+        {% for linhas in captions %}
+          {% for caption in linhas %}
+            <span style="white-space: nowrap;"><b {% if caption.cor %}style="color: {{caption.cor}};"{% endif %}>{{caption.sigla}}</b>:
+              {% lng caption.pt|safe caption.en|safe %}
+            </span>
+            {% if not forloop.last %}|{% endif %}
+          {% endfor %}
+          {% if not forloop.last %}<br>{% endif %}
         {% endfor %}
       </small></caption>
     {% endif %}
