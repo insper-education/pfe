@@ -206,7 +206,7 @@ def materias_midia(request):
                   {"pt": "Anotações", "en": "Notes"},
                   {"pt": "Projeto", "en": "Project"},
                   {"pt": "Documento", "en": "Document"},
-                  {"pt": "URLs", "en": "URLs"},
+                  {"pt": "URLs", "en": "URLs", "esconder": True},
                 ]
 
     context = {
@@ -249,7 +249,7 @@ def relatorios_publicos(request, edicao=None):
                       {"pt": "Orientador", "en": "Advisor"},
                       {"pt": "Organização", "en": "Company"},
                       {"pt": "Banca Final", "en": "Examination Board"},
-                      {"pt": "Período", "en": "Semester"},
+                      {"pt": "Período", "en": "Semester", "esconder": True},
                       {"pt": "Documentos", "en": "Documents"},]
             
         captions = [ [
@@ -335,7 +335,7 @@ def tabela_documentos(request):
         cabecalhos = [{"pt": "Projeto", "en": "Project"},
                         {"pt": "Estudantes", "en": "Students"},
                         {"pt": "Orientador", "en": "Advisor"},
-                        {"pt": "Período", "en": "Semester"},
+                        {"pt": "Período", "en": "Semester", "esconder": True},
                         {"pt": "Organização", "en": "Company"},
                         {"pt": "Banca Final", "en": "Examination Board"},
                         {"pt": "Documentos", "en": "Documents"},]
@@ -599,7 +599,7 @@ def contratos_assinados(request):
                         {"pt": "Conexões", "en": "Connections"},
                         {"pt": "Estudantes", "en": "Students"},
                         {"pt": "Orientador", "en": "Advisor"},
-                        {"pt": "Período", "en": "Period"},
+                        {"pt": "Período", "en": "Period", "esconder": True},
                         {"pt": "Contrato(s)", "en": "Contract(s)"},
                         ]
         

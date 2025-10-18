@@ -112,7 +112,7 @@ def dinamicas_grupos(request):
 
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
-                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "e-mail", "en": "e-mail", "esconder": True},
                         {"pt": "Curso", "en": "Program"},
                         {"pt": "Projeto", "en": "Project"},
                         {"pt": "Quinzenal Realizado", "en": "Biweekly Completed"},

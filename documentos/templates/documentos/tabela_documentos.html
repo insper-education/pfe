@@ -105,16 +105,18 @@
   </div>
 
   <script>
-    function carrega_pagina() {
-      // Esconde a coluna de Período se a edição não for "todas"
-      if($("#ProjetosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#ProjetosTable").dataTable();
-        if(table) {table.fnSetColumnVis( 3, !($("#filterEdicao").val()!="todas" ));}  // esconde Período
+
+    $("#filterEdicao").change(function() {
+      var selectedValue = $(this).val();
+      var table = $("#ProjetosTable").DataTable();
+      if (selectedValue === "todas") {
+        table.column(3).visible(true);
+        table.search("").draw();
       }
-    };
+    });
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     };
     window.onload = carrega_site
   </script>

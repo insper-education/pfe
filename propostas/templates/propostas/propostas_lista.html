@@ -46,15 +46,14 @@
     {% include "tabelas_bottom.html" %}
     
     <script>
-      function carrega_pagina(){
-        if($("#PropostasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#PropostasTable").dataTable();
-          if(table) {
-            table.fnSetColumnVis( 1, !($("#filterEdicao").val()!="todas" ));  // esconde Período
-          }
+      $("#filterEdicao").change(function() {
+        var selectedValue = $(this).val();
+        var table = $("#PropostasTable").DataTable();
+        if (selectedValue === "todas") {
+          table.column(1).visible(true);
+          table.search("").draw();
         }
-      }
-      window.onload = carrega_pagina
+      });
     </script>
 
   </div>

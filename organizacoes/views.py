@@ -825,7 +825,7 @@ def todos_parceiros(request):
                 return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
 
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
-                  { "pt": "Gênero", "en": "Gender", },
+                  { "pt": "Gênero", "en": "Gender", "esconder": True},
                   { "pt": "Cargo", "en": "Position", }, 
                   { "pt": "Organização", "en": "Organization", }, 
                   { "pt": "e-mail", "en": "e-mail", }, 

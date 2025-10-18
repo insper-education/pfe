@@ -235,6 +235,17 @@ function getDateHourColumnIndices(tableId) {
     return indices;
 }
 
+function getHiddenColumnIndices(tableId) {
+    var indices = [];
+    $(tableId + " th").each(function(i) {
+        var attr = $(this).attr("data-esconder");
+        if (attr !== undefined && attr !== "false" && attr !== "0") {
+            indices.push(i);
+        }
+    });
+    return indices;
+}
+
 // Robust date parser: returns a numeric timestamp for sorting (ms since epoch)
 // Supports:
 // - data-order attribute (ISO, YYYY-MM-DD, YYYY-MM-DD HH:mm[:ss])
@@ -343,6 +354,15 @@ function buildTypedColumnDefs(lang, tableId) {
         });
     }
 
+    var hiddenColumnIndices = getHiddenColumnIndices(tableId);
+    if (hiddenColumnIndices.length) {
+        baseDefs.push({
+            name: "hidden-columns",
+            targets: hiddenColumnIndices,
+            visible: false
+        });
+    }
+
     return baseDefs;
 }
 
@@ -395,6 +415,16 @@ function atualiza_lingua(lang) {
     configuracao_table["language"] = textos_linguas[lang];  // Tabela gigante com os textos de cada língua
     table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
+
+    {% comment %} // Enforce hidden columns even when stateSave restores previous visibility
+    var hiddenIdx = getHiddenColumnIndices(tableId);
+    if (hiddenIdx.length) {
+        table.columns(hiddenIdx).visible(false, false);
+        table.columns.adjust().draw(false);
+        if (configuracao_table.stateSave) {
+            try { table.state.save(); } catch (e) {}
+        }
+    } {% endcomment %}
 
     // Update all spans for the selected language
     updateTableLanguageSpans(lang);

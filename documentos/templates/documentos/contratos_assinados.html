@@ -93,20 +93,17 @@
 
   <script>
 
-    var table = null;
-
-    function carrega_pagina() {
-      if($("#ContratosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#ContratosTable").dataTable();
-        if(table) {
-          table.fnSetColumnVis( 5, false );  // esconde Edição
-        }
+    $("#filterEdicao").change(function() {
+      var selectedValue = $(this).val();
+      var table = $("#ContratosTable").DataTable();
+      if (selectedValue === "todas") {
+        table.column(5).visible(true);
+        table.search("").draw();
       }
-    };
-    
+    });
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     };
 
     window.onload = carrega_site

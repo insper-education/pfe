@@ -930,7 +930,7 @@ def exames_pesos(request):
     cabecalhos = [
         {"pt": "Semestre", "en": "Semester", "tsort": "1"},
         {"pt": "Exames", "en": "Evaluation"},
-        {"pt": "Peso", "en": "Weight", "esconder": True},
+        {"pt": "Peso", "en": "Weight", "esconder_so_th": True},
     ]
 
     context = {

@@ -339,25 +339,8 @@
       }
       lingua_grafico();
       document.addEventListener("languageChanged", lingua_grafico);
-
-      var table = null;
-
-      function carrega_pagina() {
-        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#EstudantesTable").dataTable();
-          if(table) {
-            // Hide/Esconde certas colunas
-            table.fnSetColumnVis( 1, false );  // esconde Matrícula
-            table.fnSetColumnVis( 6, false );  // esconde Linkedin
-            table.fnSetColumnVis( 7, false );  // esconde Telefone
-            {% include "linguas_ajax.html" %}
-          }
-        }
-      };
-
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
       }
       window.onload = carrega_site
     </script>

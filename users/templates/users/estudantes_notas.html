@@ -13,6 +13,7 @@
   {% load linguas %}
   {% load exibe_notas %}
   {% load documentos %}
+  {% load negate %}
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -116,6 +117,10 @@
                 {{ media.descontos|floatformat:2}}
               </td>
 
+              <td>
+                {{media.media_parcial|floatformat:2}}
+              </td>
+
               <td id="media{{aluno.id}}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
 
                   {% if media.probation and user == alocacao.projeto.orientador.user %}
@@ -217,26 +222,19 @@
       } else {
         $("#medias").hide();
       }
-      
-      function carrega_pagina() {
-        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#EstudantesTable").dataTable();
-          if(table) {
-            table.fnSetColumnVis( 1, false );  // esconde e-mail
-            table.fnSetColumnVis( 2, false );  // esconde Curso
-          }
-        }
-      };
-
-      function carrega_site() {
-        {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
-      };
-      window.onload = carrega_site
-
+    
     </script>
 
   </div>
+
+  <script>
+    {% comment %} function carrega_pagina() {}; {% endcomment %}
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site;
+
+  </script>
 
   {% include "edicoes_ajax.html" with tabela="Estudantes" %}
   {% include "base-modal.html" %}
