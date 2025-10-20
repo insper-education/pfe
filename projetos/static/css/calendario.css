@@ -128,11 +128,18 @@ th.colu {
   font-weight: normal;
 }
 
+
+td.colu2 {
+  border-left: 1px solid !important;
+}
+
+
 th.colu:first-child,
 td.colu:first-child,
 th.cabec:first-child,
 td.cabec:first-child {
   border-left: none;
+
 }
 
 th.cabec:first-child, 

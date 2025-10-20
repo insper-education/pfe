@@ -23,6 +23,12 @@
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
   <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
 
+  <style>
+    .tab_pfe td.colu2 {
+      border-left: 1px solid !important;
+    }
+  </style>
+
   <script>
 
     let calendar = null;
@@ -128,14 +134,22 @@
             );
           }
 
+          function uniqueColorsFrom(events) {
+            return Array.from(new Set(
+              (events || []).map(e => e && e.color).filter(Boolean)
+            ));
+          }
+
+          var colors = uniqueColorsFrom(eventos);
+
           // Desenha o fundo do dia conforme a quantidade de eventos no dia
-          if(eventos.length==1) {
-            $(element).css({"background-color": eventos[0].color });
-          } else if (eventos.length==2) {
-            $(element).css({"background": "linear-gradient(to bottom right, " + eventos[0].color + " 50%, " + eventos[1].color + " 50%)"});
-          } else if (eventos.length==3) {
-            $(element).css({"background": "linear-gradient(300deg, " + eventos[0].color + " 36%, " + eventos[1].color + " 36% 64%, " + eventos[2].color + " 64%)"});
-          } else if (eventos.length > 3) {
+          if(colors.length==1) {
+            $(element).css({"background-color": colors[0]});
+          } else if (colors.length==2) {
+            $(element).css({"background": "linear-gradient(to bottom right, " + colors[0] + " 50%, " + colors[1] + " 50%)"});
+          } else if (colors.length==3) {
+            $(element).css({"background": "linear-gradient(300deg, " + colors[0] + " 36%, " + colors[1] + " 36% 64%, " + colors[2] + " 64%)"});
+          } else if (colors.length > 3) {
             $(element).css({"background": "radial-gradient(circle, yellow, lightblue, PaleVioletRed, green)"});   // muitas cores
           }
         },
@@ -355,16 +369,23 @@
                 <th scope="col" class="cabec header_local">Local</th>
               </tr></thead>
               <tbody>
-                {% for aula in eventos_academicos.aulas|dictsort:"endDate" %}
+                {% regroup eventos_academicos.aulas|dictsort:"endDate" by endDate|date:"DATE_FORMAT" as aulas_por_dia %}
+                  {% for grupo in aulas_por_dia %}
+                    {% for aula in grupo.list %}
                   <tr id="ev{{aula.id}}" class="lin_aulas ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}"
-                      {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
-                      <th class="colu text-center" scope="row">
+                   {% if aula.startDate|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
+
+                    {% if forloop.first %}
+
+                      <th class="colu text-center" scope="row"
+                       rowspan="{{ grupo.list|length }}"
+                                      style="vertical-align: middle;">
+
                         {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
                         {% else %}
                           <span>
                         {% endif %}
-
                           <span lang="pt">
                             {% language "pt-br" %}
                               {{aula.endDate|date:"d/m"}}
@@ -381,8 +402,10 @@
                           </span>
                         </span>
                       </th>
-                      
-                      <td class="colu" style="cursor:pointer;">
+
+                    {% endif %}
+
+                      <td class="colu colu2" style="cursor:pointer;">
                         {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
                         {% else %}
@@ -407,10 +430,14 @@
                       </td>
                   </tr>
                 {% endfor %}
+                {% endfor %}
 
-                    <tr id="barra_inferior" style="display: none;"><th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th><td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
-                    <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
-                  </td></tr>
+                  <tr id="barra_inferior" style="display: none;">
+                    <th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th>
+                    <td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                      <a id="barra_local" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                    </td>
+                  </tr>
                   
               </tbody>
             </table>
