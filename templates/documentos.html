@@ -8,7 +8,11 @@
 
 {% if documentos %}
   {% for documento in documentos %}
-    <div style="display: flex; align-items: flex-start;">
+    <div style="display: flex; align-items: flex-start;" class="documento-tipo-item" 
+    data-tipo="{{documento.tipo_documento.sigla}}"
+    data-texto="{{documento.tipo_documento.nome}}"
+    data-texto_en="{{documento.tipo_documento.nome_en}}"
+    >
 
       <div style="white-space: nowrap;">
         {% if documento.confidencial %}

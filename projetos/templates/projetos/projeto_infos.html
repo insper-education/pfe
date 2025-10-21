@@ -544,16 +544,19 @@
 
     {% if documentos or user.eh_prof_a %}
       <hr>
-      <h4>
-        {% lng "Documentos" "Documents" %}:
-        {% if user.eh_prof_a %}
-          {% if projeto and projeto.organizacao %}
-            <small class="esconder">
-              <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
-            </small>
+      <span class="d-flex align-items-center justify-content-between flex-wrap">
+        <h4>
+          {% lng "Documentos" "Documents" %}:
+          {% if user.eh_prof_a %}
+            {% if projeto and projeto.organizacao %}
+              <small class="esconder">
+                <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+              </small>
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </h4>
+        </h4>
+        {% include "filtro_documentos.html" %}
+      </span>
       <div class="caixa_rolante">
         {% include "documentos.html" %}
       </div>
