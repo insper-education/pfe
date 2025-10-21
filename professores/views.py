@@ -2416,7 +2416,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                     corpo_email += "<br>\n<br>\n"
                     corpo_email += "Feedback:<br>\n" 
                     corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
-                    email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                    email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email]  # configuracao.coordenacao.user.email
                     email("Capstone | Feedback de Relato Quinzenal", email_dest, corpo_email)
 
                 elif feedback != relato.feedback:
@@ -2818,7 +2818,7 @@ def ver_pares_projeto(request, projeto_id, momento):
                         corpo_email += "<br>\n<br>\n"
                         corpo_email += "Feedback:<br>\n" 
                         corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
-                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email] #, configuracao.coordenacao.user.email
                         email("Capstone | Feedback de Avaliação de Pares", email_dest, corpo_email)
                         
                 else:
