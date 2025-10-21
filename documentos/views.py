@@ -654,3 +654,28 @@ def duplicar_publicar(request, relatorio_id):
     }
     return render(request, "generic_ml.html", context=context)
 
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def somente_publicar(request, relatorio_id):
+    """Tornar público um documento."""
+    if not request.user.is_authenticated or not request.user.eh_admin:
+        return HttpResponse("Sem privilégios necessários", status=401)
+
+    relatorio = get_object_or_404(Documento, pk=relatorio_id)
+    if relatorio.tipo_documento.sigla not in ["B", "VP", "ABF"]:
+        return HttpResponse("Apenas certos documentos podem ser tornados públicos.", status=401)
+
+    relatorio.confidencial = False
+    relatorio.save()
+
+    mensagem = {
+        "pt": "Documento tornado público.",
+        "en": "Document made public.",
+    }
+    context = {
+        "voltar": True,
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, "generic_ml.html", context=context)

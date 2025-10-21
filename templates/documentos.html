@@ -59,9 +59,24 @@
         >&nbsp;<i class="fas fa-pencil-alt" style="font-size: 0.7em;"></i></a>
 
         {% if documento.tipo_documento.sigla == "RFR" %}
-          {% comment %} Relatório Final de Revisão - pode duplicar {% endcomment %}
-          <a href="{% url 'duplicar_publicar' documento.id %}" data-toggle="tooltip" data-html="true" animation="true" title="duplicar e tornar público">&nbsp;<i class="fas fa-copy" style="font-size: 0.7em;"></i></a>
+          {% comment %} Relatório Final Revisado - pode duplicar e publicar? {% endcomment %}
+          <a href="{% url 'duplicar_publicar' documento.id %}" 
+             data-toggle="tooltip" data-html="true" animation="true" title="duplicar e tornar público"
+             onClick="return confirm('Tem certeza que deseja duplicar o documento e deixar ele público?')" 
+             >&nbsp;<span>
+              <i class="fas fa-copy" style="font-size: 0.7em; transform: translate(0px,-6px);"></i>
+              <i class="fas fa-eye" style="font-size: 0.7em; transform: translate(-5px,0px);"></i>
+            </span>
+            </a>
+        {% elif documento.tipo_documento.sigla == "B" or documento.tipo_documento.sigla == "VP" or documento.tipo_documento.sigla == "ABF" %}
+        {% comment %} Banca ou Vídeo do Projeto ou Apresentação da Banca Final - pode publicar? {% endcomment %}
+          <a href="{% url 'somente_publicar' documento.id %}" 
+             data-toggle="tooltip" data-html="true" animation="true" title="tornar público"
+             onClick="return confirm('Tem certeza que deseja tornar o documento público?')"
+             >&nbsp;<i class="fas fa-eye" style="font-size: 0.7em;"></i>
+            </a>
         {% endif %}
+
       {% endif %}
 
     </div>
