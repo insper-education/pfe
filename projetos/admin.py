@@ -487,7 +487,7 @@ class ReuniaoParticipanteAdmin(admin.ModelAdmin):
     """Participantes das Reuniões."""
     list_display = ("reuniao", "participante", "situacao")
     list_filter = ("reuniao__projeto__ano", "reuniao__projeto__semestre",)
-    search_fields = ["reuniao__projeto__titulo_final", "participante__user__username",]
+    search_fields = ["reuniao__projeto__titulo_final", "participante__first_name", "participante__last_name",]
     actions = [dup_entrada]
 
 @admin.register(EncontroParticipante)
@@ -495,7 +495,7 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
     """Participantes dos Encontros."""
     list_display = ("encontro", "participante", "situacao")
     list_filter = ("encontro__projeto__ano", "encontro__projeto__semestre",)
-    search_fields = ["encontro__projeto__titulo_final", "participante__user__username",]
+    search_fields = ["encontro__projeto__titulo_final", "participante__username",]
     actions = [dup_entrada]
 
 
