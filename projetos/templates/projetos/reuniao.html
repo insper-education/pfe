@@ -124,7 +124,7 @@
 
       <div class="form-floating mb-2">
         <label for="participantes" class="form_label" style="font-size:0.97em;">{% lng "Participantes" "Participants" %}</label><br>
-        {% include "participantes.html" %}
+        {% include "participantes.html" with nao_convocado=True %}
       </div>
 
       <div class="d-flex align-items-center" style="gap: 1rem;">
