@@ -69,15 +69,16 @@
       </tbody>
     </table>
     
-    <a class="btn btn-info btn-sm" style="padding: 2px; font-size: 0.75em; margin-top: 2px;"
-        href="{% url 'pesos_rubricas' %}"
-        target="_blank" rel="noopener noreferrer"
-        aria-label="Abrir rubricas, pesos e objetivos em nova aba"
-        data-toggle="tooltip" data-html="true" animation="true"
-        >
-      {% lng 'Rubricas e Pesos ↗' 'Rubrics and Weights ↗' %}
-    </a>
-    
+    {% if rubricas %}
+      <a class="btn btn-info btn-sm" style="padding: 2px; font-size: 0.75em; margin-top: 2px;"
+          href="{% url 'pesos_rubricas' %}"
+          target="_blank" rel="noopener noreferrer"
+          aria-label="Abrir rubricas, pesos e objetivos em nova aba"
+          data-toggle="tooltip" data-html="true" animation="true"
+          >
+        {% lng 'Rubricas e Pesos ↗' 'Rubrics and Weights ↗' %}
+      </a>
+    {% endif %}
 
     <script>
       if(peso > 0.0) {

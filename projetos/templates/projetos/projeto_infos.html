@@ -60,10 +60,56 @@
       margin-left: 12px;
       padding: 2px;
     }
+
+    .alunos-stack { list-style: none; padding: 0; margin: 0; border-radius: 8px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .aluno-item { border-bottom: 1px solid #eee; }
+    .aluno-item:last-child { border-bottom: 0; }
+
+    .aluno-item > summary {
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 8px 1fr auto;
+      gap: 2px;
+      align-items: center;
+      padding: 2px 6px;
+      list-style: none;
+    }
+    .aluno-item > summary::-webkit-details-marker { display: none; }
+
+    .aluno-accent { width: 3px; height: 100%; border-radius: 2px; background: #9ac3ff; }
+    .associado-accent { width: 3px; height: 100%; border-radius: 2px; background: #85e3a1; }
+    .aluno-item.is-externo .aluno-accent { background: #f59f85; } /* externo highlight */
+
+    .aluno-item:hover { background: #f9fbff; }
+    .aluno-extra { padding: 0 12px 10px 20px; }
+
+
+{% comment %} REMOVER REMOVER REMOVER REMOVER {% endcomment %}
+.curso-chip {
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  font-size: 0.8em;
+  line-height: 1.0;
+  padding-bottom: 2px;
+  border-radius: 3px;
+
+  color: #ffffffff;
+  background: #d7e2f9ff;
+  filter: brightness(0.9);
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  transition: box-shadow .15s ease, filter .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.curso-chip:hover,
+.curso-chip:focus {
+  box-shadow: 0 1px 8px rgba(16,58,126,.18);
+}
+{% comment %} REMOVER  {% endcomment %}
+
   </style>
 
 {% endblock %}
-
 {% block content %}
 
   {% if not projeto.organizacao %}
@@ -341,72 +387,102 @@
       </span>
     {% endif %}
     <div class="mt-2">
-      <ul style="padding-left: 16px; margin: 0;">
-        {% if not alocacoes %}
-          <li><span class="text-danger">{% lng "Nenhum estudante alocado." "No student allocated." %}</span></li>
-        {% endif %}
+      <ul class="alunos-stack">
         {% for alocacao in alocacoes %}
-          <li>
-            {% if user.eh_prof_a %}
-              <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
-            {% else %}
-              {{alocacao.aluno.user.get_full_name}}
-            {% endif %}
-            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-            
-            <a href="mailto:{{alocacao.aluno.user.email}}">
-              <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
-              <span class="texto-curto"><i class="far fa-envelope"></i></span>
-            </a>
-
-            {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-
-            {% if user.eh_prof_a %}
-              {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
-                {% if notas or descontos %}
-                  <div style="background: #FFFFFF; padding: 0px;">
-                  {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
-                  </div>
+          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+          <details class="aluno-item {% if alocacao.aluno.externo %}is-externo{% endif %}">
+            <summary>
+              <span class="aluno-accent"></span>
+              <div>
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
+                {% else %}
+                  {{alocacao.aluno.user.get_full_name}}
                 {% endif %}
-              {% endwith %}
+                <span class="texto-longo curso-chip"
+                style="background: #{{ alocacao.aluno.curso2.cor }};"
+                >[{% lng alocacao.aluno.curso2.nome alocacao.aluno.curso2.nome_en %}]</span>
+                <span class="texto-curto curso-chip" 
+                style="background: #{{ alocacao.aluno.curso2.cor }};"
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                <a href="mailto:{{alocacao.aluno.user.email}}">
+                  <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
+                {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+              </div>
+              <div>
+                {% if notas or descontos %}
+                  <span class="badge badge-info unselectable">
+                    <i class="fas fa-chart-bar"></i> {% lng "notas" "grades" %}
+                  </span>
+                {% else %}
+                  <span class="text-muted unselectable" style="font-size: .85em;">{% lng "sem notas" "no grades" %}</span>
+                {% endif %}
+              </div>
+            </summary>
+            {% if notas or descontos %}
+              <div class="aluno-extra">
+                {% include "display_notas_individuais.html" with notas=notas descontos=descontos rubricas=False %}
+              </div>
             {% endif %}
-            
+          </details>
+          {% endwith %}
+        {% empty %}
+          <li class="aluno-item text-danger" style="padding: 8px 12px;">
+            {% lng "Nenhum estudante alocado." "No student allocated." %}
           </li>
         {% endfor %}
       </ul>
+    </div>
+
+    
 
       {% if associados %}  
-        <div class="mt-3">
-        <h5 style="display: inline;" class="mt-5">
-          {% lng_n associados.count "Participante associado" "Participantes associados" "Associated participant" "Associated participants" %}:
+        
+        <h5 style="display: inline;">
+          {% lng_n associados.count "Estudante associado" "Estudantes associados" "Associated student" "Associated students" %}:
         </h5>
         <span class="emails esconder">
           <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </span>
-        <ul>
+        <div class="mt-1">
+        <ul class="alunos-stack mt-2">
         {% for associado in associados %}
-          <li>
-            {% if user.eh_prof_a %}
-              <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
-            {% else %}
-              {{associado.estudante.user.get_full_name}}
-            {% endif %}
-            <span class="texto-longo">[{{ associado.estudante.curso2 }}]</span>
-            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
+          <details class="aluno-item {% if associado.estudante.externo %}is-externo{% endif %}" open>
+            <summary>
+              <span class="associado-accent"></span>
+              <div>
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
+                {% else %}
+                  {{associado.estudante.user.get_full_name}}
+                {% endif %}
+                <span class="texto-longo curso-chip"
+                style="background: #{{ associado.estudante.curso2.cor }};"
+                >[{% lng associado.estudante.curso2.nome associado.estudante.curso2.nome_en %}]</span>
+                <span class="texto-curto curso-chip" 
+                style="background: #{{ associado.estudante.curso2.cor }};"
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
 
-            <a href="mailto:{{associado.estudante.user.email}}">
-              <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
-              <span class="texto-curto"><i class="far fa-envelope"></i></span>
-            </a>
+                <a href="mailto:{{associado.estudante.user.email}}">
+                  <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
 
-            {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
-          </li>
+                {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
+              </div>
+              {% comment %} <div>
+                <span class="badge badge-light">
+                  {% lng 'associado' 'associated' %}
+                </span>
+              </div> {% endcomment %}
+            </summary>
+          </details>
         {% endfor %}
         </ul>
-        </div>
       {% endif %}
 
 
@@ -731,7 +807,7 @@
         <a class="btn btn-primary wbtn"
           data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
           href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-          {% lng "Resultado Bancas" "Exam. Boards Results" %}
+          {% lng "Resultado Bancas" "Exam. Boards" %}
         </a>
 
         <a class="btn btn-primary wbtn"
