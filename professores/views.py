@@ -1885,6 +1885,7 @@ def dinamicas_criar(request, data=None):
         "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
