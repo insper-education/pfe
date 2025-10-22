@@ -164,17 +164,23 @@
               <option {% if not encontro %}selected{% endif %} value="0"> -- selecione o facilitador -- </option>
               <optgroup label="Professores">
                 {% for pessoa in professores %}
-                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} (Professor)</option>
+                  <option value="{{pessoa.id}}"
+                   {% if not pessoa.is_active %} style="color: LightBlue;" {% endif %}
+                   {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} (Professor){% if not pessoa.is_active %} [Inativo]{% endif %}</option>
                 {% endfor %}
               </optgroup>
               <optgroup label="Falconi">
                 {% for pessoa in falconis %}
-                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} (Falconi)</option>
+                  <option value="{{pessoa.id}}" 
+                   {% if not pessoa.is_active %} style="color: LightBlue;" {% endif %}
+                   {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} (Falconi){% if not pessoa.is_active %} [Inativo]{% endif %}</option>
                 {% endfor %}
               </optgroup>
               <optgroup label="Outros Parceiros">
                 {% for pessoa in parceiros %}
-                  <option value="{{pessoa.id}}" {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} ({{pessoa.parceiro.organizacao.sigla}})</option>
+                  <option value="{{pessoa.id}}"
+                   {% if not pessoa.is_active %} style="color: LightBlue;" {% endif %}
+                   {% if pessoa.id == encontro.facilitador.id %} selected {% endif %}>{{pessoa.get_full_name}} ({{pessoa.parceiro.organizacao.sigla}}){% if not pessoa.is_active %} [Inativo]{% endif %}</option>
                 {% endfor %}
               </optgroup>
           </select>

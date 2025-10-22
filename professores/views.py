@@ -2031,6 +2031,7 @@ def dinamicas_editar(request, primarykey=None):
         "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "encontro": encontro,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
@@ -2062,6 +2063,7 @@ def dinamicas_editar_edicao(request, edicao):
     context = {
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "todas": True,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
