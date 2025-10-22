@@ -1556,17 +1556,18 @@ class Conexao(models.Model):
     
     observacao = models.TextField(max_length=256, null=True, blank=True,
                                   help_text="qualquer observação relevante")
-    
+
     papel = {
-       "gestor_responsavel": ["Gestor Responsável", "GR"],
-       "mentor_tecnico": ["Mentoria Técnica", "MT"],
-       "recursos_humanos" : ["Área Administrativa", "AA"],
-       "colaboracao" : ["Colaboração Externa", "CE"],
+       "gestor_responsavel": {"nome": "Gestor Responsável", "nome_en": "Responsible Manager", "sigla": "GR", "cor": "#2563EB"},
+       "mentor_tecnico": {"nome": "Mentoria Técnica", "nome_en": "Technical Mentoring", "sigla": "MT", "cor": "#16A34A"},
+       "recursos_humanos" : {"nome": "Área Administrativa", "nome_en": "Administrative Area", "sigla": "AA", "cor": "#D97706"},
+       "colaboracao" : {"nome": "Colaboração Externa", "nome_en": "External Collaboration", "sigla": "CE", "cor": "#7C3AED"},
     }
-    gestor_responsavel = models.BooleanField(papel["gestor_responsavel"], default=False)
-    mentor_tecnico = models.BooleanField(papel["mentor_tecnico"], default=False)
-    recursos_humanos = models.BooleanField(papel["recursos_humanos"], default=False)
-    colaboracao = models.BooleanField(papel["colaboracao"], default=False)
+
+    gestor_responsavel = models.BooleanField(papel["gestor_responsavel"]["nome"], default=False)
+    mentor_tecnico = models.BooleanField(papel["mentor_tecnico"]["nome"], default=False)
+    recursos_humanos = models.BooleanField(papel["recursos_humanos"]["nome"], default=False)
+    colaboracao = models.BooleanField(papel["colaboracao"]["nome"], default=False)
 
     def get_papeis(self):
         texto = []
@@ -2139,10 +2140,10 @@ class Reuniao(models.Model):
                                              help_text="Se a reunião está travada")
 
     def __str__(self):
-        return "Reunião " + self.titulo + ": " + self.data_hora.strftime('%d/%m/%Y %H:%M')
+        return f"{self.titulo}: {self.data_hora.strftime('%d/%m/%Y %H:%M')}"
 
     def get_title(self):
-        return f"Reunião {self.titulo}"
+        return f"Reunião: {self.titulo}"
 
     def get_data(self):
         return self.data_hora

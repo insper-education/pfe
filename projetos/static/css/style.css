@@ -242,9 +242,12 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   padding-bottom: 2px;
   border-radius: 3px;
 
-  color: #ffffffff;
-  background: #d7e2f9ff;
-  filter: brightness(0.9);
+  color: #000000ff;
+  /* fallback (no washout) */
+  background-color: var(--chip-bg);
+  background-color: color-mix(in oklch, var(--chip-bg) 15%, white 85%);
+  
+  filter: brightness(1.05);
   box-shadow: 0 0 0 0 rgba(0,0,0,0);
   transition: box-shadow .15s ease, filter .15s ease, background-color .15s ease, border-color .15s ease;
 }
