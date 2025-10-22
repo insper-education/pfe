@@ -1196,6 +1196,16 @@ class Encontro(models.Model):
     def __str__(self):
         return "Encontro/Mentoria: " + self.startDate.strftime('%d/%m/%Y %H:%M')
 
+    def get_data(self):
+        """Retorna a data do encontro/mentoria."""
+        return self.startDate
+    
+    def get_title(self):
+        """Retorna o título do encontro/mentoria."""
+        texto = "Encontro/Mentoria"
+        if self.tematica:
+            return f"{texto} - {self.tematica}"
+        return f"{texto} Sem Tema"
     class Meta:
         verbose_name = "Encontro/Mentoria"
         verbose_name_plural = "Encontros/Mentorias"
@@ -2131,6 +2141,12 @@ class Reuniao(models.Model):
     def __str__(self):
         return "Reunião " + self.titulo + ": " + self.data_hora.strftime('%d/%m/%Y %H:%M')
 
+    def get_title(self):
+        return f"Reunião {self.titulo}"
+
+    def get_data(self):
+        return self.data_hora
+
     class Meta:
         verbose_name = "Reunião"
         verbose_name_plural = "Reuniões"
@@ -2176,6 +2192,24 @@ class Desconto(models.Model):
             return mensagem + str(self.reuniao)
         elif self.encontro:
             return mensagem + str(self.encontro)
+
+    def get_referencia(self):
+        if self.evento:
+            return self.evento.get_title()
+        elif self.reuniao:
+            return self.reuniao.get_title()
+        elif self.encontro:
+            return self.encontro.get_title()
+        return "Sem Referência"
+
+    def get_data(self):
+        if self.evento:
+            return self.evento.get_data()
+        elif self.reuniao:
+            return self.reuniao.get_data()
+        elif self.encontro:
+            return self.encontro.get_data()
+        return None
 
     class Meta:
         verbose_name = "Desconto"

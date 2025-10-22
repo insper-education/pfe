@@ -30,7 +30,8 @@
               {% lng "Alocação" "Allocation" %}: {{ desconto.alocacao.aluno }} &gt;&gt;&gt; {{ desconto.alocacao.projeto }}
             {% endif %}
           </td>
-          <td>{{ desconto.evento }}</td>
+          <td>{{ desconto.get_referencia }}</td>
+          <td>{{ desconto.get_data|date:"SHORT_DATE_FORMAT" }}</td>
           <td data-order="{% if desconto.nota %}{{ desconto.nota|unlocalize }}{% else %}0{% endif %}">
             {{ desconto.nota|floatformat:2}}
           </td>
