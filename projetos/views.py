@@ -26,7 +26,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .messages import email, message_reembolso
 
-from .models import Projeto, Proposta, Configuracao, Observacao
+from .models import Projeto, Proposta, Configuracao, Observacao, TematicaEncontro
 from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
@@ -49,6 +49,9 @@ from administracao.models import Estrutura, Despesa
 from administracao.support import usuario_sem_acesso
 
 from operacional.models import Curso
+
+from professores.support3 import puxa_encontros
+
 
 from projetos.messages import email, render_message
 
@@ -699,6 +702,33 @@ def bancas_tabela_agenda(request):
         }
 
     return render(request, "projetos/bancas_tabela_agenda.html", context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def dinamicas_tabela_agenda(request):
+    """Lista todos as dinâmicas por semestre."""
+
+    if request.is_ajax():
+        if "edicao" in request.POST:
+            context = puxa_encontros(request.POST["edicao"])
+            context["cabecalhos"] = [{"pt": "Tema", "en": "Theme"},
+                                     {"pt": "Data", "en": "Date"},
+                                     {"pt": "Projeto/Estudante", "en": "Project/Student"},
+                                     {"pt": "Facilitador(a)", "en": "Facilitator"},
+                                     {"pt": "Formulário", "en": "Form"},
+                                    ]
+        else:
+            return HttpResponse("Algum erro não identificado.", status=401)
+    else:
+
+        context = {
+            "titulo": {"pt": "Tabela de Agenda das Bancas", "en": "Examination Boards Schedule Table"},
+            "edicoes": get_edicoes(Projeto)[0],
+            "tematicas": TematicaEncontro.objects.all().order_by("nome"),
+        }
+
+    return render(request, "projetos/dinamicas_tabela_agenda.html", context)
 
 
 @login_required

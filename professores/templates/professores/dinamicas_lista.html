@@ -171,7 +171,7 @@
                 <div class="avaliacao" style="margin-top: 8px; overflow-wrap: break-word;">
                   &#9733;
                   <b>{% lng "Formulário de feedback" "Feedback form" %}</b>
-                  <a href="{% url 'encontro_feedback' e.id %}">https://{{ request.get_host }}{% url 'encontro_feedback' e.id %}</a>
+                  <a href="{% url 'encontro_feedback' e.id %}">{{request.scheme}}://{{ request.get_host }}{% url 'encontro_feedback' e.id %}</a>
                 </div>
 
               {% else %}
