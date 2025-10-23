@@ -144,6 +144,9 @@
         {% endif %}
 
         <div id="mensagens" style="font-size: small;"> {% comment %} flex: 1; {% endcomment %}
+          {% if user.eh_estud %}
+            <input type="hidden" name="enviar_mensagem" value="sim">
+          {% endif %}
           <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
           {% if not user.eh_admin %}checked{% endif %}
           {% if user.eh_estud %} disabled{% endif %} />
