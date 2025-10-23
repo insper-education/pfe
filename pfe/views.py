@@ -94,19 +94,9 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from projetos.models import Encontro, TematicaEncontro
-
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-
-    tematica = TematicaEncontro.objects.get(nome="outros")
-    encontros = Encontro.objects.filter(tematica__isnull=True)
-    for encontro in encontros:
-        encontro.tematica = tematica
-        encontro.save()
-        message += f"Encontro {encontro.startDate} - {encontro.tematica} - atualizado.<br>"
-
     return HttpResponse(message)
