@@ -696,7 +696,7 @@ def bancas_tabela_agenda(request):
     else:
 
         context = {
-            "titulo": {"pt": "Tabela de Agenda das Bancas", "en": "Examination Boards Schedule Table"},
+            "titulo": {"pt": "Tabela das Bancas", "en": "Examination Boards Table"},
             "edicoes": get_edicoes(Projeto)[0],
             "tipos_bancas": Exame.objects.filter(banca=True),
         }
@@ -723,7 +723,7 @@ def dinamicas_tabela_agenda(request):
     else:
 
         context = {
-            "titulo": {"pt": "Tabela de Agenda das Bancas", "en": "Examination Boards Schedule Table"},
+            "titulo": {"pt": "Tabela de Mentorias", "en": "Mentoring Table"},
             "edicoes": get_edicoes(Projeto)[0],
             "tematicas": TematicaEncontro.objects.all().order_by("nome"),
         }
