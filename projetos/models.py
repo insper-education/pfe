@@ -916,6 +916,22 @@ class Banca(models.Model):
             return Observacao.objects.filter(alocacao=self.alocacao, observacoes_estudantes__isnull=False, exame=self.composicao.exame)
         return Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame=self.composicao.exame)
     
+    def get_anotacoes_estudantes(self, avaliador):
+        """Retorna as anotações dos estudantes."""
+        return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMB", usuario=avaliador).order_by("data")
+    
+    def get_observacoes_anotacoes_estudantes(self):
+        """Retorna as observações e anotações dos estudantes."""
+        observacoes = self.get_observacoes_estudantes()
+        dados = []
+        for obs in observacoes:
+            anotacoes = self.get_anotacoes_estudantes(obs.avaliador)
+            dados.append({
+                "observacoes": obs,
+                "anotacoes": anotacoes,
+            })
+        return dados
+
     def get_avaliacoes_bancas(self):
         """Retorna as avaliações da banca (com algumas condições)."""
         prazo_horas = 24  # prazo para publicar as notas depois que todos avaliaram
@@ -1004,11 +1020,10 @@ class Banca(models.Model):
         for observacao in observacoes:
             if observacao.avaliador not in avaliadores:
                 avaliadores[observacao.avaliador] = {}
-            if "observacoes_estudantes" not in avaliadores[observacao.avaliador]:
-                avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
-            if "observacoes_orientador" not in avaliadores[observacao.avaliador]:
-                avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
-
+            avaliadores[observacao.avaliador]["observacoes_estudantes"] = observacao.observacoes_estudantes
+            avaliadores[observacao.avaliador]["observacoes_orientador"] = observacao.observacoes_orientador
+            avaliadores[observacao.avaliador]["observacoes_anotacoes"] = self.get_anotacoes_estudantes(observacao.avaliador)
+            
         return avaliadores
     
     def get_avaliadores_todos(self):

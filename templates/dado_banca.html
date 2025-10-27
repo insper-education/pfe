@@ -114,7 +114,22 @@
                 {% lng "Observações para Orientador" "Observations for Advisor" %}:
               </span></u> {{objs.observacoes_orientador}}<br>
             {% endif %}
+
+            {% with anotacoes=objs.observacoes_anotacoes %}
+              {% if anotacoes %}
+                <div style="margin-top: 6px; border: 1px solid #ccc; background-color: #f9f9f9;">
+                  <a href="{{request.scheme}}://{{request.get_host}}{{anotacoes.last.documento.url}}" target="_blank" rel="noopener noreferrer">
+                    &#128196;
+                    {% lng "Relatório com anotações" "Report with annotations" %}
+                    ({{ anotacoes.last.data }})
+                  </a>
+                </div>
+              {% endif %}
+            {% endwith %}
+          
+
           {% endif %}
+          
 
         {% else %}
           <span class="text-muted">{% lng "Ainda não avaliou." "Has not evaluated yet." %}</span>

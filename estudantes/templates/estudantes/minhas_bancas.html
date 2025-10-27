@@ -70,18 +70,27 @@
                 {% endif %}
               {% endif %}
 
-              {% with observacoes_estudantes=banca.get_observacoes_estudantes %}
-                {% if observacoes_estudantes %}
+              {% with dados=banca.get_observacoes_anotacoes_estudantes %}
+                {% if dados %}
                   <b style="display: inline-block; margin-top: 14px;">
                     {% lng "Observações realizadas pelos membros da banca:" "Observations made by the examination board members:" %}
                   </b>
-                  {% for observacao in observacoes_estudantes %}
-                    {% if observacao.observacoes_estudantes %}
+                  {% for item in dados %}
                     <div class="pintern" style="padding: 6px;">
-                        <b>{{observacao.avaliador.get_full_name}}</b>:<br>
-                        {{observacao.observacoes_estudantes|linebreaks}}
+                      <b>{{ item.observacoes.avaliador.get_full_name }}</b>:<br>
+                      {{ item.observacoes.observacoes_estudantes|linebreaks }}
+
+                      {% if item.anotacoes %}
+                        <div style="margin-top: 6px; border: 1px solid #ccc; background-color: #f9f9f9;">
+                          <a href="{{request.scheme}}://{{request.get_host}}{{item.anotacoes.last.documento.url}}" target="_blank" rel="noopener noreferrer">
+                            &#128196;
+                            {% lng "Relatório com anotações" "Report with annotations" %}
+                            ({{ item.anotacoes.last.data }})
+                          </a>
+                        </div>
+                      {% endif %}
                     </div>
-                    {% endif %}
+
                   {% endfor %}
                 {% endif %}      
               {% endwith %}
