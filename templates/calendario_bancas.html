@@ -208,7 +208,10 @@
                 {% endwith %}
                 rendering: "background",
 
-                {% if dias.tipo_evento.sigla == "BF" %} // Banca Final
+                {% if dias.tipo_evento.sigla == "FERI" %} // Feriado
+                  color: '#333333',
+                  description: "<b>feriado</b>",
+                {% elif dias.tipo_evento.sigla == "BF" %} // Banca Final
                   color: color_banca_final,
                   description: "<b>período de bancas finais</b>",
                 {% elif dias.tipo_evento.sigla == "BI" %} // Banca Intermediária 

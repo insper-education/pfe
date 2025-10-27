@@ -1264,7 +1264,7 @@ def bancas_lista(request, edicao=None):
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
 
-    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
+    context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F", "FERI"))
     context["tipos_bancas"] = Exame.objects.filter(banca=True).order_by("id")
         
     if request.is_ajax() and "edicao" in request.POST:
