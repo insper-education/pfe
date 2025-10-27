@@ -48,10 +48,10 @@
             {% endif %}
           </td>
 
-          <td style="font-size:80%">
+          <td style="font-size:80%" data-sort="{% if feedback %}{{feedback.momento|date:'Y-m-d'}}{% else %}0{% endif %}">
             {% if feedback %}
               <a href="{% url 'mostra_feedback_estudante' feedback.id %}">
-                {{feedback.momento|date:"Y.m.d"}}
+                {{feedback.momento|date:"d/m/Y"}}
               </a>
             {% endif %}
           </td>

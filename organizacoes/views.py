@@ -676,7 +676,7 @@ def organizacoes_lista(request):
         "filtro": "todas",
         "grupos": grupos,
         "cabecalhos": cabecalhos,
-        "captions": captions,
+        "captions": [captions],
     }
 
     return render(request, "organizacoes/organizacoes_lista.html", context)
@@ -825,7 +825,7 @@ def todos_parceiros(request):
                 return HttpResponseNotFound("<h1>Curso não encontrado!</h1>")
 
     cabecalhos = [{ "pt": "Nome", "en": "Name", }, 
-                  { "pt": "Gênero", "en": "Gender", },
+                  { "pt": "Gênero", "en": "Gender", "esconder": True},
                   { "pt": "Cargo", "en": "Position", }, 
                   { "pt": "Organização", "en": "Organization", }, 
                   { "pt": "e-mail", "en": "e-mail", }, 
@@ -846,7 +846,7 @@ def todos_parceiros(request):
         "todos": True,
         "edicao": edicao,
         "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
-        "captions": captions,
+        "captions": [captions],
         }
 
     return render(request, "organizacoes/todos_parceiros.html", context)
@@ -949,7 +949,7 @@ def seleciona_conexoes(request):
         "todos_parceiros": Parceiro.objects.all(),
         "colaboradores": colaboradores,
         "cabecalhos": cabecalhos,
-        "captions": captions,
+        "captions": [captions],
         }
 
     return render(request, "organizacoes/seleciona_conexoes.html", context)

@@ -41,6 +41,7 @@ from operacional.models import Curso
 from projetos.models import Projeto, Proposta, Configuracao, Area, AreaDeInteresse
 from projetos.models import Encontro, Banca, Entidade, Evento, ObjetivosDeAprendizagem
 from projetos.messages import email, message_agendamento_dinamica, create_message, message_cancelamento
+from projetos.support4 import get_objetivos_atuais
 
 from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 from users.models import UsuarioEstiloComunicacao, Associado
@@ -929,7 +930,7 @@ def exames_pesos(request):
     cabecalhos = [
         {"pt": "Semestre", "en": "Semester", "tsort": "1"},
         {"pt": "Exames", "en": "Evaluation"},
-        {"pt": "Peso", "en": "Weight", "esconder": True},
+        {"pt": "Peso", "en": "Weight", "esconder_so_th": True},
     ]
 
     context = {
@@ -961,7 +962,7 @@ def pesos_rubricas(request):
     for composicao in composicoes:
         for objetivo in composicao.pesos.all():
             objetivos_unicos[objetivo.sigla] = objetivo
-    objetivos = list(objetivos_unicos.values())
+    objetivos_avaliados = list(objetivos_unicos.values())
 
 
     cabecalhos = [
@@ -972,10 +973,12 @@ def pesos_rubricas(request):
     ]
 
     context = {
-        "titulo": {"pt": "Pesos e Rubricas", "en": "Weights and Rubrics"},
+        "titulo": {"pt": "Rubricas e Pesos", "en": "Rubrics and Weights"},
         "composicoes": composicoes,
         "cabecalhos": cabecalhos,
-        "objetivos": objetivos,
+        "objetivos_avaliados": objetivos_avaliados,
+        "objetivos": get_objetivos_atuais(),
+        "niveis_objetivos": Estrutura.loads(nome="Níveis de Objetivos"),
     }
 
     return render(request, "academica/pesos_rubricas.html", context)

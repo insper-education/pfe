@@ -99,5 +99,4 @@ def custom_400(request, exception):
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
-
     return HttpResponse(message)

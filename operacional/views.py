@@ -95,14 +95,14 @@ def avisos_listar(request):
         {"pt": "Título", "en": "Title"},
     ]
 
-    captions = [
+    captions = [ [
           {"sigla": "Co", "pt": "Coordenação", "en": "Coordination"},
           {"sigla": "Op", "pt": "Equipe Operacional", "en": "Operational Team"},
           {"sigla": "Cm", "pt": "Comitê Capstone", "en": "Capstone Committee"},
           {"sigla": "Es", "pt": "Estudantes", "en": "Students"},
           {"sigla": "Or", "pt": "Orientadores", "en": "Advisors"},
           {"sigla": "Og", "pt": "Contatos nas Organizações", "en": "Contacts in Organizations"},
-    ]
+    ] ]
 
     context = {
         "titulo": { "pt": "Agenda de Avisos Automáticos", "en": "Automatic Notices Agenda" },

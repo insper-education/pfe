@@ -324,17 +324,7 @@
     {% include "base-modal.html" %}
 
     <script>
-      function carrega_pagina() {
-        {% if edicao != "todas" %}
-          if($("#PropostasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-            table = $("#PropostasTable").dataTable();
-            if(table) {
-              table.fnSetColumnVis( 2, false );  // esconde Fechada
-              table.fnSetColumnVis( 4, false );  // esconde Edição
-            }
-          }
-        {% endif %}
-      };
+      function carrega_pagina() {};
       window.onload = carrega_pagina
     </script>
 

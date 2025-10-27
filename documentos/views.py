@@ -206,7 +206,7 @@ def materias_midia(request):
                   {"pt": "Anotações", "en": "Notes"},
                   {"pt": "Projeto", "en": "Project"},
                   {"pt": "Documento", "en": "Document"},
-                  {"pt": "URLs", "en": "URLs"},
+                  {"pt": "URLs", "en": "URLs", "esconder": True},
                 ]
 
     context = {
@@ -249,13 +249,13 @@ def relatorios_publicos(request, edicao=None):
                       {"pt": "Orientador", "en": "Advisor"},
                       {"pt": "Organização", "en": "Company"},
                       {"pt": "Banca Final", "en": "Examination Board"},
-                      {"pt": "Período", "en": "Semester"},
+                      {"pt": "Período", "en": "Semester", "esconder": True},
                       {"pt": "Documentos", "en": "Documents"},]
             
-        captions = [
+        captions = [ [
             {"sigla": "B", "pt": "Biblioteca", "en": "Library"},
             {"sigla": "S", "pt": "Servidor", "en": "Server"},
-        ]
+        ] ]
 
         context = {
             "projetos": projetos,
@@ -335,7 +335,7 @@ def tabela_documentos(request):
         cabecalhos = [{"pt": "Projeto", "en": "Project"},
                         {"pt": "Estudantes", "en": "Students"},
                         {"pt": "Orientador", "en": "Advisor"},
-                        {"pt": "Período", "en": "Semester"},
+                        {"pt": "Período", "en": "Semester", "esconder": True},
                         {"pt": "Organização", "en": "Company"},
                         {"pt": "Banca Final", "en": "Examination Board"},
                         {"pt": "Documentos", "en": "Documents"},]
@@ -599,7 +599,7 @@ def contratos_assinados(request):
                         {"pt": "Conexões", "en": "Connections"},
                         {"pt": "Estudantes", "en": "Students"},
                         {"pt": "Orientador", "en": "Advisor"},
-                        {"pt": "Período", "en": "Period"},
+                        {"pt": "Período", "en": "Period", "esconder": True},
                         {"pt": "Contrato(s)", "en": "Contract(s)"},
                         ]
         
@@ -654,3 +654,28 @@ def duplicar_publicar(request, relatorio_id):
     }
     return render(request, "generic_ml.html", context=context)
 
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def somente_publicar(request, relatorio_id):
+    """Tornar público um documento."""
+    if not request.user.is_authenticated or not request.user.eh_admin:
+        return HttpResponse("Sem privilégios necessários", status=401)
+
+    relatorio = get_object_or_404(Documento, pk=relatorio_id)
+    if relatorio.tipo_documento.sigla not in ["B", "VP", "ABF"]:
+        return HttpResponse("Apenas certos documentos podem ser tornados públicos.", status=401)
+
+    relatorio.confidencial = False
+    relatorio.save()
+
+    mensagem = {
+        "pt": "Documento tornado público.",
+        "en": "Document made public.",
+    }
+    context = {
+        "voltar": True,
+        "area_principal": True,
+        "mensagem": mensagem,
+    }
+    return render(request, "generic_ml.html", context=context)

@@ -122,7 +122,7 @@ def get_media_alocacao_i(alocacao, request=None):
     peso_grupo_final = 0
     peso_bancas = 0
     nota_descontos = 0
-
+    
     for aval in edicao:
         if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
             peso_final += aval["peso"]
@@ -148,6 +148,11 @@ def get_media_alocacao_i(alocacao, request=None):
 
     # Recupera os descontos e aplica na nota final
     nota_descontos, _ = get_descontos_alocacao(alocacao)
+
+    # Media parcial (com os pesos disponíveis) antes dos descontos
+    media_parcial = nota_final / peso_final if peso_final > 0 else 0
+    media_parcial -= nota_descontos
+
     nota_final -= nota_descontos
     if nota_final < 0:
         nota_final = 0
@@ -156,6 +161,7 @@ def get_media_alocacao_i(alocacao, request=None):
     nota_final = round(nota_final, 6)
     peso_final = round(peso_final, 9)
 
+    
     if alocacao.projeto.ano > 2021:  # A partir de 2022, a nota final é a menor das notas individuais
         if individual is not None and individual < 5:  # Caso a nota individual seja menor que 5, a nota final é a menor das notas
             if individual < nota_final:
@@ -200,4 +206,5 @@ def get_media_alocacao_i(alocacao, request=None):
         "media_grupo": media_grupo,
         "probation": probation,
         "descontos": nota_descontos,
+        "media_parcial": media_parcial,
     }

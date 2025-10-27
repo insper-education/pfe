@@ -220,13 +220,13 @@ def estudantes_lista(request):
         }
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
-                        {"pt": "Matrícula", "en": "Enrollment"},
+                        {"pt": "Matrícula", "en": "Enrollment", "esconder": True},
                         {"pt": "e-mail", "en": "e-mail"},
                         {"pt": "Curso", "en": "Program"},
                         {"pt": "Período", "en": "Period"},
                         {"pt": "Projeto", "en": "Project"},
-                        {"pt": "Linkedin", "en": "Linkedin"},
-                        {"pt": "Celular", "en": "Cellphone"},
+                        {"pt": "Linkedin", "en": "Linkedin", "esconder": True},
+                        {"pt": "Celular", "en": "Cellphone", "esconder": True},
                         ]
         
         context = {
@@ -284,32 +284,37 @@ def estudantes_notas(request, professor=None):
             coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
             projetos = Projeto.objects.filter(orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes)
             alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
-
-        # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
+            
+        # Buscando estudantes que tiveram alocação no semestre
         alunos_semestre = alunos_list.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).distinct()
-
-        # Caso o aluno tenha repetido e esteja fazendo de novo o Capstone
+        
+        # Incluindo os alunos que estão cursando o semestre em algum projeto
         alunos_list = alunos_semestre |\
-            alunos_list.filter(ano=ano, semestre=semestre).distinct()
+            alunos_list.filter(ano=ano, semestre=semestre, alocacao__isnull=False).distinct()
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
-                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "e-mail", "en": "e-mail", "esconder": True},
                         {"pt": "Curso", "en": "Program"},
                         {"pt": "Projeto", "en": "Project"},
                         {"pt": "Notas", "en": "Grades"},
-                        {"pt": "Indi.", "en": "Indi.", "tipo": "numeral"},
-                        {"pt": "Desc.", "en": "Disc.", "tipo": "numeral"},
-                        {"pt": "Média", "en": "Average", "tipo": "numeral"},
+                        {"pt": "Individual", "en": "Individual", "tipo": "numeral"},
+                        {"pt": "Descontos", "en": "Discounts", "tipo": "numeral"},
+                        {"pt": "Média Parcial", "en": "Partial Average", "tipo": "numeral"},
+                        {"pt": "Média Final", "en": "Final Average", "tipo": "numeral"},
                     ]
 
-        captions = [
+        captions = [ [
+            {"sigla": "XX", "pt": "Abaixo da Média", "en": "Below Average", "cor": "red"},
+            {"sigla": "XX", "pt": "Peso da Média Incompleto", "en": "Incomplete Average Weight", "cor": "orange"},
+        ], 
+        [
             {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
             {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
             {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
             {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
             {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
             {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
-        ]
+        ] ]
 
         context = {
             "alunos_list": alunos_list,
@@ -321,7 +326,11 @@ def estudantes_notas(request, professor=None):
         }
 
     else:
-        informacoes = [(".pesos_aval", "Pesos", "Weights", False),]
+        informacoes = [
+                (".pesos_aval", "Pesos", "Weights", False),
+            ]
+
+
         context = {
             "titulo": {"pt": "Avaliações por Estudante", "en": "Assessments by Student"},
             "edicoes": get_edicoes(Projeto)[0],
@@ -483,7 +492,7 @@ def estudantes_objetivos(request):
             "objetivos_i": objetivos_i,
             "objetivos_t": objetivos_t,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
         }
 
     else:
@@ -529,7 +538,7 @@ def projetos_objetivos(request):
             "projetos": projetos,
             "objetivos": objetivos,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
         }
 
     else:
@@ -586,8 +595,8 @@ def estudantes_inscritos(request):
             {"pt": "C", "en": "C"},
             {"pt": "Estudante", "en": "Student"},
             {"pt": "Curso", "en": "Program"},
-            {"pt": "e-mail", "en": "e-mail"},
-            {"pt": "CR", "en": "CR/GPA", "tipo": "numeral"},
+            {"pt": "e-mail", "en": "e-mail", "esconder": True},
+            {"pt": "CR", "en": "CR/GPA", "tipo": "numeral", "esconder": True},
         ]
 
         context = {

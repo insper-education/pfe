@@ -1,0 +1,142 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 21 de Outubro de 2025
+{% endcomment %}
+
+{% load linguas %}
+
+<div id="doc-filter-bar" style="margin-bottom: 2px;">
+  <button id="doc-filter-toggle" type="button" class="btn btn-sm btn-outline-secondary">
+    <i class="fas fa-filter"></i>
+    {% lng "Filtrar" "Filter" %}
+    <i id="doc-filter-caret" class="fas fa-chevron-down" style="font-size: 0.85em;"></i>
+  </button>
+  <span id="doc-filter-active" style="margin-left: 8px;"></span>
+  <span id="doc-filter-count" class="text-muted" style="margin-left: 8px; font-size: 0.9em;"></span>
+</div>
+
+<div id="doc-filter-panel" style="display:none; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; padding: 8px 10px;">
+  <div id="doc-filter-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+  <div style="margin-top:8px;">
+    <button id="doc-filter-clear" type="button" class="btn btn-sm btn-link">
+      <i class="fas fa-times-circle"></i> {% lng "Limpar" "Clear" %}
+    </button>
+  </div>
+</div>
+
+<style>
+  .doc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid #bbb;
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.9em;
+    background: #f8f9fa;
+  }
+  .doc-chip.active {
+    background: #e6f3ff;
+    border-color: #79b6ff;
+    color: #0b5ed7;
+  }
+  .doc-chip i { font-size: 0.85em; }
+  #doc-filter-active .doc-pill {
+    display: inline-flex; align-items:center;
+    padding: 2px 6px; margin-right: 4px;
+    background: #eef5ff; border-radius: 999px; font-size: 0.85em;
+  }
+</style>
+
+<script>
+(function(){
+
+  function uniqueTipos() {
+    var map = new Map(); // key = tipo
+    document.querySelectorAll('.documento-tipo-item').forEach(function(el){
+      var tipo = (el.getAttribute('data-tipo') || '').trim();
+      if (!tipo) return;
+      if (!map.has(tipo)) {
+        map.set(tipo, {
+          tipo: tipo,
+          texto: (el.getAttribute('data-texto') || '').trim(),
+          texto_en: (el.getAttribute('data-texto_en') || '').trim()
+        });
+      }
+    });
+    return Array.from(map.values());
+  }
+
+  function renderChips() {
+    var container = document.getElementById('doc-filter-chips');
+    container.innerHTML = '';
+    uniqueTipos().forEach(function(item){
+      var chip = document.createElement('span');
+      chip.className = 'doc-chip';
+      chip.dataset.tipo = item.tipo;
+      chip.innerHTML = '<i class="fas fa-tag"></i>' + (item.texto || item.texto_en || item.tipo);
+      chip.addEventListener('click', function(){
+        chip.classList.toggle('active');
+        applyFilters();
+      });
+      container.appendChild(chip);
+    });
+  }
+
+  function selectedTipos() {
+    return Array.from(document.querySelectorAll('.doc-chip.active'))
+      .map(function(c){ return c.dataset.tipo; });
+  }
+
+  function applyFilters() {
+    var selected = selectedTipos();
+    var total = 0, visible = 0;
+    document.querySelectorAll('.documento-tipo-item').forEach(function(el){
+      total++;
+      var tipo = el.getAttribute('data-tipo');
+      var show = selected.length === 0 || selected.indexOf(tipo) !== -1;
+      el.style.display = show ? 'flex' : 'none';
+      if (show) visible++;
+    });
+    // Active summary pills
+    var activeSpan = document.getElementById('doc-filter-active');
+    activeSpan.innerHTML = '';
+    selected.forEach(function(t){
+      var pill = document.createElement('span');
+      pill.className = 'doc-pill';
+      pill.textContent = t;
+      activeSpan.appendChild(pill);
+    });
+    // Count
+    document.getElementById('doc-filter-count').textContent = visible + '/' + total;
+  }
+
+  function togglePanel() {
+    var panel = document.getElementById('doc-filter-panel');
+    var caret = document.getElementById('doc-filter-caret');
+    var open = panel.style.display !== 'none';
+    panel.style.display = open ? 'none' : '';
+    caret.className = open ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
+  }
+
+  function clearFilters() {
+    document.querySelectorAll('.doc-chip.active').forEach(function(c){ c.classList.remove('active'); });
+    applyFilters();
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    // Remove old select filter block if still present
+    var oldSelect = document.getElementById('filter-tipo-documento-select');
+    if (oldSelect && oldSelect.parentElement) {
+      oldSelect.parentElement.style.display = 'none';
+    }
+    document.getElementById('doc-filter-toggle').addEventListener('click', togglePanel);
+    document.getElementById('doc-filter-clear').addEventListener('click', clearFilters);
+    renderChips();
+    applyFilters();
+  });
+})();
+</script>

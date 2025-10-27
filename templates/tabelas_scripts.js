@@ -227,6 +227,146 @@ function getNumericColumnIndices(tableId) {
     return indices;
 }
 
+function getDateHourColumnIndices(tableId) {
+    var indices = [];
+    $(tableId + " th").each(function(i) {
+        if ($(this).data("tipo") === "data_hora") indices.push(i);
+    });
+    return indices;
+}
+
+function getHiddenColumnIndices(tableId) {
+    var indices = [];
+    $(tableId + " th").each(function(i) {
+        var attr = $(this).attr("data-esconder");
+        if (attr !== undefined && attr !== "false" && attr !== "0") {
+            indices.push(i);
+        }
+    });
+    return indices;
+}
+
+// Robust date parser: returns a numeric timestamp for sorting (ms since epoch)
+// Supports:
+// - data-order attribute (ISO, YYYY-MM-DD, YYYY-MM-DD HH:mm[:ss])
+// - dd/mm/yyyy[ HH:mm[:ss]] (PT/BR style)
+// - ISO strings (YYYY-MM-DD[T]HH:mm[:ss])
+// Returns NaN if it cannot parse.
+function toTimestampForSort(value) {
+    if (value == null) return NaN;
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === "number") return value; // assume already ts
+    var str = String(value).trim();
+    try { str = stripData(str); } catch (e) {}
+    if (!str) return NaN;
+
+    // Extract first dd/mm/yyyy (optionally with time) from anywhere in string
+    var m = str.match(/([0-3]?\d)\/([0-1]?\d)\/(\d{2}|\d{4})(?:\s+([0-2]?\d):([0-5]?\d)(?::([0-5]?\d))?)?/);
+    if (m) {
+        var d = parseInt(m[1], 10);
+        var mo = parseInt(m[2], 10) - 1; // 0-based month
+        var y = parseInt(m[3], 10);
+        if (y < 100) y += 2000; // assume 20xx for 2-digit year
+        var hh = m[4] ? parseInt(m[4], 10) : 0;
+        var mm = m[5] ? parseInt(m[5], 10) : 0;
+        var ss = m[6] ? parseInt(m[6], 10) : 0;
+        var dt = new Date(y, mo, d, hh, mm, ss);
+        return dt.getTime();
+    }
+
+    // Try ISO/Date.parse as fallback
+    var iso = Date.parse(str);
+    if (!isNaN(iso)) return iso;
+
+    return NaN;
+}
+
+// Build fresh columnDefs for numeric and date types without losing existing ones
+function buildTypedColumnDefs(lang, tableId) {
+    var baseDefs = (configuracao_table["columnDefs"] || []).filter(function(def) {
+        // Remove previously injected defs to avoid duplicates on re-init
+        return def.name !== "numeric-render" && def.name !== "date-render";
+    });
+
+    var numericColumnIndices = getNumericColumnIndices(tableId);
+    if (numericColumnIndices.length) {
+        baseDefs.push({
+            name: "numeric-render",
+            targets: numericColumnIndices,
+            type: "num",
+            // Format visible text (display) while preserving HTML
+            createdCell: function(td, cellData, rowData, row, col) {
+                var lang = localStorage.getItem("lingua") || "pt";
+                var html = $(td).html();
+                var text = $(td).text();
+                var formatted = convertNotation(text || "", "display", rowData, { row: row, col: col }, lang);
+                var m = text.match(/-?\d+(?:[.,]\d+)?/);
+                if (m) {
+                    $(td).html(html.replace(m[0], formatted));
+                }
+            },
+            // Sort fallback when data-order is missing
+            render: function(data, type, row, meta) {
+                if (type === "sort" || type === "type") {
+                    var cell = meta && meta.settings && meta.settings.aoData && meta.settings.aoData[meta.row] && meta.settings.aoData[meta.row].anCells
+                        ? meta.settings.aoData[meta.row].anCells[meta.col]
+                        : null;
+                    if (cell) {
+                        var ord = $(cell).attr("data-order") || $(cell).attr("data-sort");
+                        if (ord != null && ord !== "") {
+                            return parseFloat(String(ord).replace(',', '.'));
+                        }
+                    }
+                    if (data == null) return NaN;
+                    return parseFloat(String(stripData(data)).replace(',', '.'));
+                }
+                // For DOM source, display render is ignored by design
+                return data;
+            }
+        });
+    }
+
+    var dateColumnIndices = getDateHourColumnIndices(tableId);
+    if (dateColumnIndices.length) {
+        baseDefs.push({
+            name: "date-render",
+            targets: dateColumnIndices,
+            // We return a numeric timestamp for sorting, so force numeric type
+            type: "num",
+            render: function(data, type, row, meta) {
+                if (type === "sort" || type === "type") {
+                    var cell = meta && meta.settings && meta.settings.aoData && meta.settings.aoData[meta.row] && meta.settings.aoData[meta.row].anCells
+                        ? meta.settings.aoData[meta.row].anCells[meta.col]
+                        : null;
+                    var ts;
+                    if (cell && $(cell).attr("data-order")) {
+                        ts = toTimestampForSort($(cell).attr("data-order"));
+                    } else {
+                        // fallback: tenta converter o próprio data (dd/mm/yyyy, ISO, etc.)
+                        ts = toTimestampForSort(data);
+                    }
+                    // Garantir valor numérico para ordenar; valores inválidos vão para o final
+                    return isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts;
+                }
+                // Para display e filter
+                return data;
+            }
+        });
+    }
+
+    var hiddenColumnIndices = getHiddenColumnIndices(tableId);
+    if (hiddenColumnIndices.length) {
+        baseDefs.push({
+            name: "hidden-columns",
+            targets: hiddenColumnIndices,
+            visible: false
+        });
+    }
+
+    return baseDefs;
+}
+
+
 // Function to convert notation based on language
 function convertNotation(data, type, row, meta, lang) {
     // Para ordenação e tipo, sempre retorna número puro (com ponto)
@@ -262,27 +402,8 @@ function atualiza_lingua(lang) {
         $(tableId).DataTable().destroy();
     }
 
-    const numericColumnIndices = getNumericColumnIndices(tableId);
-    configuracao_table["columnDefs"] = [{
-            targets: numericColumnIndices,
-            type: "num",
-            render: function(data, type, row, meta) {
-                if (type === "sort" || type === "type") {
-                    var cell = meta && meta.settings && meta.settings.aoData && meta.settings.aoData[meta.row] && meta.settings.aoData[meta.row].anCells
-                        ? meta.settings.aoData[meta.row].anCells[meta.col]
-                        : null;
-                    if (cell && $(cell).attr("data-order")) {
-                        return parseFloat($(cell).attr("data-order"));
-                    }
-                    // fallback: tenta converter o próprio data
-                    return parseFloat(data.toString().replace(',', '.'));
-                }
-                // Para display e filter
-                return convertNotation(data, type, row, meta, lang);
-            }
-
-        }
-    ];
+    // Reconstrói defs de colunas numéricas e de data sem sobrescrever outras defs existentes
+    configuracao_table["columnDefs"] = buildTypedColumnDefs(lang, tableId);
 
     // Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela
     document.querySelectorAll("th[data-lang-pt]").forEach(function(th) {
@@ -294,6 +415,16 @@ function atualiza_lingua(lang) {
     configuracao_table["language"] = textos_linguas[lang];  // Tabela gigante com os textos de cada língua
     table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
+
+    {% comment %} // Enforce hidden columns even when stateSave restores previous visibility
+    var hiddenIdx = getHiddenColumnIndices(tableId);
+    if (hiddenIdx.length) {
+        table.columns(hiddenIdx).visible(false, false);
+        table.columns.adjust().draw(false);
+        if (configuracao_table.stateSave) {
+            try { table.state.save(); } catch (e) {}
+        }
+    } {% endcomment %}
 
     // Update all spans for the selected language
     updateTableLanguageSpans(lang);

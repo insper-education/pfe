@@ -77,18 +77,8 @@
   </div>
 
   <script>
-    function carrega_pagina() {
-      if($("#MateriasTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        var table = $("#MateriasTable").dataTable();
-        if(table) {
-          table.fnSort([[0, "desc"]]); // para começar com as noticias mais recentes
-          table.fnSetColumnVis( 4, false );  // esconde longa URL
-        }
-      }
-    };
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     };
     window.onload = carrega_site
   </script>

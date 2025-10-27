@@ -90,21 +90,8 @@
     
 
     <script>
-
-      var table = null;
-  
-      function carrega_pagina() {
-        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#EstudantesTable").dataTable();
-          if(table) {
-            table.fnSetColumnVis( 3, false );
-          }
-        }
-      }
-      
       function carrega_site() {
         {% include "edicao_puxar_local_ou_versao.js" %}
-        carrega_pagina();
       };
       window.onload = carrega_site
     </script>

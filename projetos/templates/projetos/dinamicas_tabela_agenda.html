@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 23 de Outubro de 2025
+{% endcomment %}
+
+{% block head %}
+  {% load static %}
+  {% load linguas %}
+  <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
+  <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+  {% include "tabelas_includes.html" %}
+{% endblock %}
+
+{% block content %}
+
+  {% include "edicoes.html" %}
+
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="tematicas">
+              <span class="to_hide">{% lng "Temática" "Theme" %}</span>
+            </label>
+          </div>
+          <select id="tematicas" class="selectpicker form-control form-control-sm" data-style="mr-sm border " data-width="19em"
+                  title="Nada selecionado" multiple>
+                  {% for tema in tematicas %}
+                    <option selected="selected" value="{{tema.id}}"  title="{{tema.nome}}">{{tema.nome}}</option>
+                  {% endfor %}
+          </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="atualizar">
+    {% include "tabelas_top_ml.html" with tabela="Dinamicas" cabecalhos=cabecalhos %}
+      {% for encontro in encontros %}
+      
+        {% with projeto=encontro.get_projeto %}
+          <tr class="item" data-user="{{encontro.tematica.id}}">
+            <td>{{encontro.tematica}}</td>
+
+            <td><span class="texto-longo">{% lng "De" "From" %}:{{encontro.startDate}}<br>{% lng "A" "To" %}: {{encontro.endDate}}</span>
+                <span class="texto-curto">{% lng "De" "From" %}: {{encontro.startDate|date:"d/m/y H:i"}}<br>{% lng "A" "To" %}: {{encontro.endDate|date:"d/m/y H:i"}}</span></td>
+            <td data-order="{{projeto.get_titulo}}" style="width: 48%;">
+              {% lng "Projeto" "Project" %}:
+              {% if projeto.organizacao %}
+                [<a href="{% url 'organizacao_completo' projeto.organizacao.id %}">{{ projeto.organizacao.nome }}</a>]
+              {% else %}
+                [<i>Organização não definida</i>]
+              {% endif %}
+              {% if projeto %}
+                <a href="{% url 'projeto_infos' projeto.id %}">
+                  {{projeto.get_titulo}}{% include "tipo_projeto.html" with projeto=projeto %}
+                </a><br>
+              {% endif %}
+              {% lng "Orientador" "Advisor" %}:
+              {% if projeto.orientador %}
+                <a href="{% url 'professor_detail' projeto.orientador.id %}">{{ projeto.orientador }}</a>
+                <a href="mailto:{{projeto.orientador.user.email}}"> &lt;{{projeto.orientador.user.email}}&gt;</a>
+              {% else %}
+                <i>Orientador não definido</i>
+              {% endif %}
+            <br>
+            <!-- Probation -->
+            {% if banca.alocacao %}
+              {% lng "Estudante" "Student" %}:
+              <ul><li>
+                  <a href="{% url 'estudante_detail' banca.alocacao.aluno.id %}">{{ banca.alocacao.aluno.user.get_full_name }}</a>
+                  <a href="mailto:{{banca.alocacao.aluno.user.email}}"> &lt;{{banca.alocacao.aluno.user.email}}&gt;</a>
+              </li></ul>
+            {% else %} 
+              {% lng "Grupo" "Group" %}:
+                <ul>
+                {% for estudante in projeto.alocacao_set.all %}
+                  <li>
+                  <a href="{% url 'estudante_detail' estudante.aluno.id %}">{{ estudante.aluno.user.get_full_name }}</a>
+                  <a href="mailto:{{estudante.aluno.user.email}}"> &lt;{{estudante.aluno.user.email}}&gt;</a>
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            </td>
+            <td>
+              {% if encontro.facilitador %}
+                <a href="{% url 'user_detail' encontro.facilitador.id %}">{{encontro.facilitador.get_full_name}}</a>
+                <a href="mailto:{{encontro.facilitador.email}}"> &lt;{{encontro.facilitador.email}}&gt;</a>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'encontro_feedback' encontro.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-comment-dots"></i> {% lng "Feedback" "Feedback" %}
+              </a>
+              <div class="mt-1">
+                {% if encontro.observacoes_estudantes or encontro.observacoes_orientador %}
+                  <span class="badge badge-success">
+                    <i class="fas fa-check-circle"></i> {% lng "Preenchido" "Filled" %}
+                  </span>
+                {% else %}
+                  <span class="badge badge-warning text-dark">
+                    <i class="fas fa-exclamation-circle"></i> {% lng "Não preenchido" "Not filled" %}
+                  </span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endwith %}
+      {% endfor %}
+    {% include "tabelas_bottom.html" %}
+    <script>
+      {% include "seleciona_linha_tabelas.html" with select="tematicas" tabela="Dinamicas" data="user" %}
+    </script>
+  </div>
+
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    }
+    window.onload = carrega_site
+  </script>
+
+  {% include "edicoes_ajax.html" with tabela="Dinamicas" %}
+
+{% endblock %}

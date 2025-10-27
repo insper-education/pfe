@@ -1885,6 +1885,7 @@ def dinamicas_criar(request, data=None):
         "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
         "Encontro": Encontro,
@@ -2030,6 +2031,7 @@ def dinamicas_editar(request, primarykey=None):
         "projetos": Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre),
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "encontro": encontro,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
@@ -2061,6 +2063,7 @@ def dinamicas_editar_edicao(request, edicao):
     context = {
         "professores": PFEUser.objects.filter(tipo_de_usuario__in=[2,4]),  # 'professor' ou 'administrador'
         "falconis": PFEUser.objects.filter(parceiro__organizacao__sigla="Falconi"),
+        "parceiros": PFEUser.objects.filter(parceiro__isnull=False).exclude(parceiro__organizacao__sigla="Falconi"),
         "todas": True,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
@@ -2416,7 +2419,7 @@ def relato_avaliar(request, projeto_id, evento_id):
                     corpo_email += "<br>\n<br>\n"
                     corpo_email += "Feedback:<br>\n" 
                     corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
-                    email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                    email_dest = [relato.alocacao.aluno.user.email, projeto.orientador.user.email]  # configuracao.coordenacao.user.email
                     email("Capstone | Feedback de Relato Quinzenal", email_dest, corpo_email)
 
                 elif feedback != relato.feedback:
@@ -2818,7 +2821,7 @@ def ver_pares_projeto(request, projeto_id, momento):
                         corpo_email += "<br>\n<br>\n"
                         corpo_email += "Feedback:<br>\n" 
                         corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
-                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email, configuracao.coordenacao.user.email]
+                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email] #, configuracao.coordenacao.user.email
                         email("Capstone | Feedback de Avaliação de Pares", email_dest, corpo_email)
                         
                 else:

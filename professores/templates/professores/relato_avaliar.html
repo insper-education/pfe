@@ -183,12 +183,18 @@
 
     {% endfor %}
 
-    <hr><br>
+    <hr><hr><br>
 
     <div class="div_arredondado_azulado"  style="width: 1222px;">
 
-      <label for="observacoes" style="font-weight: 600; letter-spacing: 0.04em; color: #40515cff; margin-bottom: 4px; display: block;">
-        {% lng "Informe suas observações para a coordenação do Capstone (opcional)" "Inform your observations to the Capstone coordination (optional)" %}:
+      <label for="observacoes" style="width: 100%;">
+        <div class="alert alert-info py-1 px-2 mb-1" role="note">
+          <strong>{% lng "Observações Gerais para a coordenação do Capstone (opcional)" "General observations to the coordination of Capstone  (optional)" %}</strong>
+          <span class="d-block small text-muted">
+            {% lng "Não use este campo para feedback de um estudante específico" "Do not use this field for a specific student's feedback" %}.
+            {% lng "Informe suas observações para a coordenação do Capstone" "Inform your observations to the Capstone coordination" %}.
+          </span>
+        </div>
       </label>
       <textarea id="observacoes" name="observacoes"
         rows="9"
@@ -196,8 +202,8 @@
         maxlength="{% max_length Observacao 'observacoes_orientador' %}"
         {% if not editor %}disabled{% endif %}
         class="troca_lingua"
-        data-pt="Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar."
-        data-en="If you identify any difficulty with any student or the group, describe here that the Capstone coordination will assist you."
+        data-pt="Este campo é geral e não é enviado como feedback a um estudante específico, somente para a coordenação do Capstone. Caso identifique alguma dificuldade com qualquer estudante ou o grupo, descreva aqui que a coordenação do Capstone irá lhe auxiliar."
+        data-en="This is a General field and is not sent as feedback to a specific student, only to the Capstone coordination. If you identify any difficulty with any student or the group, describe here that the Capstone coordination will assist you."
         placeholder="Descreva aqui suas observações..."
       >{% if observacoes %}{{observacoes}}{% endif %}</textarea>
     </div>
@@ -231,6 +237,21 @@
           $(this).css("height", this.scrollHeight + "px");
         }
       });
+
+      // Aviso se o campo geral foi preenchido
+      $("form").on("submit", function(e) {
+        const geral = $("#observacoes").val().trim().length > 0;
+        if (geral) {
+          if(localStorage.getItem("lingua") == "pt") {
+            var msg = "Você preencheu o campo de obeservações gerais, a coordenação do Capstone irá receber suas observações e lhe contactar conforme necessário.";
+          } else {
+            var msg = "You filled the general observations field, the Capstone coordination will receive your observations and contact you as necessary.";
+          }
+          const ok = confirm(msg);
+          if (!ok) { e.preventDefault(); }
+        }
+      });
+
     });
   </script>
 

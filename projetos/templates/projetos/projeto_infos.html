@@ -37,13 +37,7 @@
       color: #333;
       display: inline-block;
     }
-    .lista_mentorias > li > ul > li {
-      margin-bottom: 0.1em;
-    }
-    .lista_mentorias > li {
-      margin-top: 0.8em;
-    }
-
+    
     .bloco-destaque-projeto {
       display: flex;
       justify-content: space-between;
@@ -60,10 +54,76 @@
       margin-left: 12px;
       padding: 2px;
     }
+
+    .usuarios-stack { list-style: none; padding: 0; margin: 0; border-radius: 8px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .usuario-item { border-bottom: 1px solid #eee; }
+    .usuario-item:last-child { border-bottom: 0; }
+
+    .usuario-item > summary {
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 8px 1fr auto;
+      gap: 2px;
+      align-items: center;
+      padding: 2px 6px;
+      list-style: none;
+    }
+    .usuario-item > summary::-webkit-details-marker { display: none; }
+
+    .aluno-accent { width: 3px; height: 100%; border-radius: 2px; background: #9ac3ff; }
+    .associado-accent { width: 3px; height: 100%; border-radius: 2px; background: #85e3a1; }
+    .conexao-accent { width: 3px; height: 100%; border-radius: 2px; background: #f5d185; }
+    .coorientador-accent { width: 3px; height: 100%; border-radius: 2px; background: #c985f5; }
+
+    .usuario-item.is-externo .aluno-accent { background: #f59f85; } /* externo highlight */
+
+    .usuario-item:hover { background: #f9fbff; }
+    .aluno-extra { padding: 0 12px 10px 20px; }
+
+    .mentoria-timeline { list-style: none; margin: 0; padding-left: 18px; position: relative; }
+    .mentoria-timeline::before { content:""; position:absolute; left:8px; top:0; bottom:0; width:2px; background:#e6e9ef; }
+    .mentoria-item { position: relative; margin-bottom: 12px; }
+    .mentoria-item .dot { position:absolute; left:2px; top:12px; width:12px; height:12px; border-radius:50%; background:#6ea8fe; border:2px solid #fff; box-shadow:0 0 0 2px #e6e9ef; }
+
+    .mentoria-card { background:#fff; border:1px solid #e9ecef; border-radius:8px; padding:8px 10px; box-shadow:0 2px 10px rgba(0,0,0,.03); }
+    .mentoria-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px; }
+    .mentoria-when { font-weight:500; }
+    .mentoria-chips .badge { margin-left:4px; }
+    .mentoria-body .section { margin-top:6px; }
+    .mentoria-body .section > .title { font-weight:600; font-size:.95em; color:#394a6d; display:inline-flex; align-items:center; gap:6px; }
+    .mentoria-body .section > .content { margin-top:2px; font-size:.95em; }
+
+
+
+{% comment %} REMOVER REMOVER REMOVER REMOVER {% endcomment %}
+.curso-chip {
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  font-size: 0.8em;
+  line-height: 1.0;
+  padding-bottom: 2px;
+  border-radius: 3px;
+
+  color: #000000ff;
+  /* fallback (no washout) */
+  background-color: var(--chip-bg);
+  background-color: color-mix(in oklch, var(--chip-bg) 15%, white 85%);
+  
+  filter: brightness(1.05);
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  transition: box-shadow .15s ease, filter .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.curso-chip:hover,
+.curso-chip:focus {
+  box-shadow: 0 1px 8px rgba(16,58,126,.18);
+}
+{% comment %} REMOVER  {% endcomment %}
+
   </style>
 
 {% endblock %}
-
 {% block content %}
 
   {% if not projeto.organizacao %}
@@ -225,14 +285,24 @@
     
     <div class="conexoes" style="margin-top: 8px;">
       <strong>{% lng "Conexões" "Connections" %}:</strong>
+      {% if conexoes %}
+        <span class="emails esconder">
+          <a href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+            <i class="fas fa-mail-bulk"></i>
+          </a>
+        </span>
+      {% endif %}
       {% if user.eh_prof_a %}
         <small class="esconder"><a style="vertical-align: 0px;" href="{% url 'seleciona_conexoes' %}?projeto={{projeto.id}}">&#x1F517;</a></small>
       {% endif %}<br>
       {% if conexoes %}
-        <ul>
+        <ul class="usuarios-stack mt-2">
         {% for conexao in conexoes %}
           {% if conexao.parceiro.user.is_active %}
-            <li>
+            <details class="usuario-item " open>
+              <summary>
+              <span class="conexao-accent"></span>
+              <div>
               {% if conexao.parceiro %}
                 {% if user.eh_prof_a %}
                   <a href="{% url 'parceiro_detail' conexao.parceiro.id %}">{{ conexao.parceiro.user.get_full_name }}</a>
@@ -249,13 +319,25 @@
                 {% lng "PARCEIRO NÃO CADASTRADO" "ORGANIZATION NOT REGISTERED" %}
               {% endif %}
               {% for papel in conexao.get_papeis %}
-                <span class="texto-longo">[{{papel.0}}]</span>
-                <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-              {% endfor %}
+                <span class="badge badge-pill badge-light border ml-1 align-middle texto-longo unselectable"
+                      style="--c: {{papel.cor}}; color: var(--c); border-color: var(--c); background-color: rgba(255,255,255,.75);">
+                  {% lng papel.nome papel.nome_en %}
+                </span>
+                <span class="badge badge-pill badge-light border ml-1 align-middle texto-curto unselectable"
+                      style="--c: {{papel.cor}}; color: var(--c); border-color: var(--c); background-color: rgba(255,255,255,.75);"
+                      data-toggle="tooltip" data-html="true" animation="true" title="{{papel.nome}}">
+                  {{papel.sigla}}
+                </span>
+                {% endfor %}
               {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
-            </li>
+            </div>
+            </summary>
+          </details>
           {% else %}
-            <li>
+            <details class="usuario-item " open>
+            <summary>
+              <span class="conexao-accent"></span>
+              <div>
               {% if conexao.parceiro %}
                 <a href="{% url 'parceiro_detail' conexao.parceiro.id %}" style="color: LightBlue;">
                   {{ conexao.parceiro.user.get_full_name }}
@@ -269,12 +351,17 @@
               {% endif %}
               <span style="color: lightgrey; border: 0px; ">
                 {% for papel in conexao.get_papeis %}
-                  <span class="texto-longo">[{{papel.0}}]</span>
-                  <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                  <span class="badge badge-pill badge-light border text-muted ml-1 align-middle texto-longo unselectable">{% lng papel.nome papel.nome_en %}</span>
+                  <span class="badge badge-pill badge-light border text-muted ml-1 align-middle texto-curto unselectable"
+                        data-toggle="tooltip" data-html="true" animation="true" title="{{papel.nome}}">
+                    {{papel.sigla}}
+                  </span>
                 {% endfor %}
                 {% if conexao.observacao %}&nbsp;&nbsp;obs: {{conexao.observacao}}{% endif %}
               </span>
-            </li>
+            </div>
+            </summary>
+          </details>
           {% endif %}        
         {% endfor %}
         </ul>
@@ -308,25 +395,32 @@
     {% endif %}
 
     {% if coorientadores %}
-      <div class="mt-2 ml-2">
-        <strong>{% lng "coorientação" "co-advisoring" %}:</strong>
+      <h6 class="mt-2 ml-2">
+        <strong>{% lng "Coorientação" "Co-advisoring" %}:</strong>
+      </h6>
+      <div>
+        <ul class="usuarios-stack">
+        {% for coorientador in coorientadores %}
+          <details class="usuario-item">
+            <summary>
+              <span class="coorientador-accent"></span>
+              <div>
+              <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
+                {{ coorientador.usuario.get_full_name }}
+              </a>
+              <a href="mailto:{{coorientador.usuario.email}}">
+                <span class="texto-longo">&lt;{{coorientador.usuario.email}}&gt;</span>
+                <span class="texto-curto"><i class="far fa-envelope"></i></span>
+              </a>
+              {% if coorientador.observacao %}
+                <div class="ml-2">obs: {{coorientador.observacao}}</div>
+              {% endif %}
+              </div>
+            </summary>
+          </details>
+        {% endfor %}
+        </ul>
       </div>
-      <ul>
-      {% for coorientador in coorientadores %}
-        <li>
-        <a href="{% url 'professor_detail' coorientador.usuario.professor.id %}">
-          {{ coorientador.usuario.get_full_name }}
-        </a>
-        <a href="mailto:{{coorientador.usuario.email}}">
-          <span class="texto-longo">&lt;{{coorientador.usuario.email}}&gt;</span>
-          <span class="texto-curto"><i class="far fa-envelope"></i></span>
-        </a>
-        {% if coorientador.observacao %}
-          <div class="ml-2">obs: {{coorientador.observacao}}</div>
-        {% endif %}
-        </li>
-      {% endfor %}
-      </ul>
     {% endif %}
 
     <hr>
@@ -341,72 +435,102 @@
       </span>
     {% endif %}
     <div class="mt-2">
-      <ul style="padding-left: 16px; margin: 0;">
-        {% if not alocacoes %}
-          <li><span class="text-danger">{% lng "Nenhum estudante alocado." "No student allocated." %}</span></li>
-        {% endif %}
+      <ul class="usuarios-stack">
         {% for alocacao in alocacoes %}
-          <li>
-            {% if user.eh_prof_a %}
-              <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
-            {% else %}
-              {{alocacao.aluno.user.get_full_name}}
-            {% endif %}
-            <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
-            
-            <a href="mailto:{{alocacao.aluno.user.email}}">
-              <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
-              <span class="texto-curto"><i class="far fa-envelope"></i></span>
-            </a>
-
-            {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
-
-            {% if user.eh_prof_a %}
-              {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
-                {% if notas or descontos %}
-                  <div style="background: #FFFFFF; padding: 0px;">
-                  {% include "display_notas_individuais.html" with notas=notas descontos=descontos %}
-                  </div>
+          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+          <details class="usuario-item {% if alocacao.aluno.externo %}is-externo{% endif %}">
+            <summary>
+              <span class="aluno-accent"></span>
+              <div>
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'estudante_detail' alocacao.aluno.id %}">{{alocacao.aluno.user.get_full_name}}</a>
+                {% else %}
+                  {{alocacao.aluno.user.get_full_name}}
                 {% endif %}
-              {% endwith %}
+                <span class="texto-longo curso-chip"
+                style="--chip-bg: #{{ alocacao.aluno.curso2.cor }};"
+                >[{% lng alocacao.aluno.curso2.nome alocacao.aluno.curso2.nome_en %}]</span>
+                <span class="texto-curto curso-chip" 
+                style="--chip-bg: #{{ alocacao.aluno.curso2.cor }};"
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ alocacao.aluno.curso2}}">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
+                <a href="mailto:{{alocacao.aluno.user.email}}">
+                  <span class="texto-longo">&lt;{{alocacao.aluno.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
+                {% if alocacao.aluno.externo %}<span style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
+              </div>
+              <div>
+                {% if notas or descontos %}
+                  <span class="badge badge-info unselectable">
+                    <i class="fas fa-chart-bar"></i> {% lng "notas" "grades" %}
+                  </span>
+                {% else %}
+                  <span class="text-muted unselectable" style="font-size: .85em;">{% lng "sem notas" "no grades" %}</span>
+                {% endif %}
+              </div>
+            </summary>
+            {% if notas or descontos %}
+              <div class="aluno-extra">
+                {% include "display_notas_individuais.html" with notas=notas descontos=descontos rubricas=False %}
+              </div>
             {% endif %}
-            
+          </details>
+          {% endwith %}
+        {% empty %}
+          <li class="usuario-item text-danger" style="padding: 8px 12px;">
+            {% lng "Nenhum estudante alocado." "No student allocated." %}
           </li>
         {% endfor %}
       </ul>
+    </div>
+
+    
 
       {% if associados %}  
-        <div class="mt-3">
-        <h5 style="display: inline;" class="mt-5">
-          {% lng_n associados.count "Participante associado" "Participantes associados" "Associated participant" "Associated participants" %}:
+        
+        <h5 style="display: inline;">
+          {% lng_n associados.count "Estudante associado" "Estudantes associados" "Associated student" "Associated students" %}:
         </h5>
         <span class="emails esconder">
           <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </span>
-        <ul>
+        <div class="mt-1">
+        <ul class="usuarios-stack mt-2">
         {% for associado in associados %}
-          <li>
-            {% if user.eh_prof_a %}
-              <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
-            {% else %}
-              {{associado.estudante.user.get_full_name}}
-            {% endif %}
-            <span class="texto-longo">[{{ associado.estudante.curso2 }}]</span>
-            <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
+          <details class="usuario-item {% if associado.estudante.externo %}is-externo{% endif %}" open>
+            <summary>
+              <span class="associado-accent"></span>
+              <div>
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'estudante_detail' associado.estudante.id %}">{{associado.estudante.user.get_full_name}}</a>
+                {% else %}
+                  {{associado.estudante.user.get_full_name}}
+                {% endif %}
+                <span class="texto-longo curso-chip"
+                style="--chip-bg: #{{ associado.estudante.curso2.cor }};"
+                >[{% lng associado.estudante.curso2.nome associado.estudante.curso2.nome_en %}]</span>
+                <span class="texto-curto curso-chip" 
+                style="--chip-bg: #{{ associado.estudante.curso2.cor }};"
+                data-toggle="tooltip" data-html="true" animation="true" title="{{ associado.estudante.curso2}}">[{{ associado.estudante.curso2.sigla_curta }}]</span>
 
-            <a href="mailto:{{associado.estudante.user.email}}">
-              <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
-              <span class="texto-curto"><i class="far fa-envelope"></i></span>
-            </a>
+                <a href="mailto:{{associado.estudante.user.email}}">
+                  <span class="texto-longo">&lt;{{associado.estudante.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
 
-            {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
-          </li>
+                {% if associado.estudante.externo %}<span style="color:red">[{{associado.estudante.externo}}]</span>{% endif %}
+              </div>
+              {% comment %} <div>
+                <span class="badge badge-light">
+                  {% lng 'associado' 'associated' %}
+                </span>
+              </div> {% endcomment %}
+            </summary>
+          </details>
         {% endfor %}
         </ul>
-        </div>
       {% endif %}
 
 
@@ -544,16 +668,19 @@
 
     {% if documentos or user.eh_prof_a %}
       <hr>
-      <h4>
-        {% lng "Documentos" "Documents" %}:
-        {% if user.eh_prof_a %}
-          {% if projeto and projeto.organizacao %}
-            <small class="esconder">
-              <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
-            </small>
+      <span class="d-flex align-items-center justify-content-between flex-wrap">
+        <h4>
+          {% lng "Documentos" "Documents" %}:
+          {% if user.eh_prof_a %}
+            {% if projeto and projeto.organizacao %}
+              <small class="esconder">
+                <a class="open-modal" style="cursor: pointer;" data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id %}">&#10133;</a>
+              </small>
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </h4>
+        </h4>
+        {% include "filtro_documentos.html" %}
+      </span>
       <div class="caixa_rolante">
         {% include "documentos.html" %}
       </div>
@@ -587,86 +714,100 @@
     {% if projeto.encontro_set.all %}
         <hr>
         <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
-        <ul class="lista_mentorias">
-            {% for dinamica in projeto.encontro_set.all %} 
-                <li>
-                    {{dinamica.startDate|date:'j \d\e F \d\e Y \d\a\s H:i'}} às {{dinamica.endDate|date:'H:i'}}
-                    <ul>
-                      {% if dinamica.location %}
-                        <li>
-                          {% lng "Local" "Location" %}:
-                          {% if dinamica.url_location %}
-                            <a href="{{dinamica.location}}">{% lng "link vídeo-conferência" "video-conference link" %}</a>
-                          {% else %}
-                            <span style="word-break: break-all;">{{dinamica.location}}</span>
-                          {% endif %}
-                        </li>
+        <ul class="mentoria-timeline">
+          {% for dinamica in projeto.encontro_set.all %}
+            <li class="mentoria-item">
+              
+              <div class="mentoria-card">
+                <div class="mentoria-header">
+                  <div class="mentoria-when">
+                    <i class="far fa-calendar-alt"></i>
+                    {{dinamica.startDate|date:'j \\d\\e F \\d\\e Y'}}
+                    <span class="ml-1">
+                      <i class="far fa-clock"></i>
+                      {{dinamica.startDate|date:'H:i'}}–{{dinamica.endDate|date:'H:i'}}
+                    </span>
+                  </div>
+                  <div class="mentoria-chips">
+                    {% if dinamica.tematica %}
+                      <span class="badge badge-pill badge-light border" title="Tem">  
+                        {% comment %} {% lng 'Temática' 'Theme' %} {% endcomment %}
+                        <i class="fas fa-tags"></i> {{dinamica.tematica.nome}}
+                      </span>
+                    {% endif %}
+                    {% if dinamica.location %}
+                      {% if dinamica.url_location %}
+                        <a class="badge badge-pill badge-light border" href="{{dinamica.location}}" title="Link de videoconferência">
+                          {% comment %} {% lng 'Link de vídeo' 'Video link' %} {% endcomment %}
+                          <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
+                        </a>
+                      {% else %}
+                        <span class="badge badge-pill badge-light border" title="Localização">
+                          {% comment %} {% lng 'Local' 'Location' %} {% endcomment %}
+                          <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
+                        </span>
                       {% endif %}
-                      {% if dinamica.tematica %}
-                        <li>
-                          {% lng "Temática" "Theme" %}:
-                          <span style="word-break: break-all;">{{dinamica.tematica.nome}}</span>
-                        </li>
-                      {% endif %}
-                      {% if dinamica.facilitador %}
-                        <li>
-                          {% lng_g dinamica.facilitador.genero "Facilitador" "Facilitadora" "Facilitator" %}:
-                          <a href="{% url 'user_detail' dinamica.facilitador.id %}">
-                            {{dinamica.facilitador}}
-                          </a>
-                        </li>
-                      {% endif %}
-                      {% if dinamica.observacoes_orientador or dinamica.observacoes_estudantes %}
-                          <ul>
-                            {% if dinamica.observacoes_estudantes %}
-                              <li>
-                                <strong>{% lng "Observações para Estudantes" "Observations for Students" %}:</strong>
-                                {{dinamica.observacoes_estudantes|safe|linebreaks}}
-                              </li>
-                            {% endif %}
-                            {% if dinamica.observacoes_orientador %}
-                              <li>
-                                <strong>{% lng "Observações para Orientador" "Observations for Advisor" %}:</strong>
-                                {{dinamica.observacoes_orientador|safe|linebreaks}}
-                              </li>
-                            {% endif %}
-                          </ul>
-                      {% endif %}
-                      {% if dinamica.documento %}
-                        <li>
-                          <strong>{% lng "Documento" "Document" %}:</strong>
-                          <a href="{{dinamica.documento.url}}">{{dinamica.documento}}</a>
-                        </li>
-                      {% endif %}
-                      {% if dinamica.link %}
-                        <li>
-                          <strong>{% lng "Link" "Link" %}:</strong>
-                          <a href="{{dinamica.link}}">{{dinamica.link}}</a>
-                        </li>
-                      {% endif %}
-                      {% if dinamica.feedback %}
-                        <li>
-                          <strong>{% lng "Feedback" "Feedback" %}:</strong>
-                          {{dinamica.feedback}}
-                        </li>
-                      {% endif %}
-                      {% if dinamica.feedback_estudantes %}
-                        <li>
-                          <strong>{% lng "Feedback dos Estudantes" "Students Feedback" %}:</strong>
-                          {{dinamica.feedback_estudantes}}
-                        </li>
-                      {% endif %}
-                      {% if dinamica.feedback_orientador %}
-                        <li>
-                          <strong>{% lng "Feedback do Orientador" "Advisor Feedback" %}:</strong>
-                          {{dinamica.feedback_orientador}}
-                        </li>
-                      {% endif %}
-                    </ul>
-                </li>
-            {% endfor %}
+                    {% endif %}
+                    {% if dinamica.facilitador %}
+                      <a class="badge badge-pill badge-light border" href="{% url 'user_detail' dinamica.facilitador.id %}" title="Facilitador(a)">
+                        {% comment %} {% lng 'Facilitador(a)' 'Facilitator' %} {% endcomment %}
+                        <i class="fas fa-user"></i> {{dinamica.facilitador}}
+                      </a>
+                    {% endif %}
+                    {% if dinamica.documento %}
+                      <a class="badge badge-pill badge-light border" href="{{dinamica.documento.url}}">
+                        <i class="fas fa-file-alt"></i> {% lng "Documento" "Document" %}
+                      </a>
+                    {% endif %}
+                    {% if dinamica.link %}
+                      <a class="badge badge-pill badge-light border" href="{{dinamica.link}}">
+                        <i class="fas fa-link"></i> {% lng "Link" "Link" %}
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="mentoria-body">
+                  {% if dinamica.observacoes_estudantes %}
+                    <div class="section">
+                      <span class="title"><i class="fas fa-user-graduate"></i> {% lng "Observações para Estudantes" "Observations for Students" %}</span>
+                      <div class="content">{{dinamica.observacoes_estudantes|safe|linebreaks}}</div>
+                    </div>
+                  {% endif %}
+
+                  {% if dinamica.observacoes_orientador %}
+                    <div class="section">
+                      <span class="title"><i class="fas fa-chalkboard-teacher"></i> {% lng "Observações para Orientador" "Observations for Advisor" %}</span>
+                      <div class="content">{{dinamica.observacoes_orientador|safe|linebreaks}}</div>
+                    </div>
+                  {% endif %}
+
+                  {% if dinamica.feedback %}
+                    <div class="section">
+                      <span class="title"><i class="far fa-comment-dots"></i> {% lng "Feedback" "Feedback" %}</span>
+                      <div class="content">{{dinamica.feedback|linebreaks}}</div>
+                    </div>
+                  {% endif %}
+
+                  {% if dinamica.feedback_estudantes %}
+                    <div class="section">
+                      <span class="title"><i class="far fa-comments"></i> {% lng "Feedback dos Estudantes" "Students Feedback" %}</span>
+                      <div class="content">{{dinamica.feedback_estudantes|linebreaks}}</div>
+                    </div>
+                  {% endif %}
+
+                  {% if dinamica.feedback_orientador %}
+                    <div class="section">
+                      <span class="title"><i class="far fa-comment"></i> {% lng "Feedback do Orientador" "Advisor Feedback" %}</span>
+                      <div class="content">{{dinamica.feedback_orientador|linebreaks}}</div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </li>
+          {% endfor %}
         </ul>
-    {% endif %}
+      {% endif %}
     {% endif %}
 
     
@@ -728,7 +869,7 @@
         <a class="btn btn-primary wbtn"
           data-toggle="tooltip" data-html="true" animation="true" title="Acessa as avaliações das bancas"
           href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-          {% lng "Resultado Bancas" "Exam. Boards Results" %}
+          {% lng "Resultado Bancas" "Exam. Boards" %}
         </a>
 
         <a class="btn btn-primary wbtn"

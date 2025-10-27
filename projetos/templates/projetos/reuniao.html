@@ -124,7 +124,7 @@
 
       <div class="form-floating mb-2">
         <label for="participantes" class="form_label" style="font-size:0.97em;">{% lng "Participantes" "Participants" %}</label><br>
-        {% include "participantes.html" %}
+        {% include "participantes.html" with nao_convocado=True %}
       </div>
 
       <div class="d-flex align-items-center" style="gap: 1rem;">
@@ -144,8 +144,12 @@
         {% endif %}
 
         <div id="mensagens" style="font-size: small;"> {% comment %} flex: 1; {% endcomment %}
+          {% if user.eh_estud %}
+            <input type="hidden" name="enviar_mensagem" value="sim">
+          {% endif %}
           <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
-          {% if not user.eh_admin %}checked{% endif %}>
+          {% if not user.eh_admin %}checked{% endif %}
+          {% if user.eh_estud %} disabled{% endif %} />
           <label for="enviar_mensagem">
             {% lng "Enviar mensagem para envolvidos (sempre para orientador, coorientadores e grupo de estudantes)" "Send message to involved people (always to advisor, co-advisors and group of students)" %}
           </label>

@@ -104,17 +104,17 @@
 
   <script>
     
-    function carrega_pagina() {
-      if($("#RelatoriosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#RelatoriosTable").dataTable();
-        if(table) {
-          table.fnSetColumnVis( 5, !($("#filterEdicao").val()!="todas" ));  // esconde Período
-        }
+    $("#filterEdicao").change(function() {
+      var selectedValue = $(this).val();
+      var table = $("#RelatoriosTable").DataTable();
+      if (selectedValue === "todas") {
+        table.column(5).visible(true);
+        table.search("").draw();
       }
-    }
+    });
+
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     };
     window.onload = carrega_site
   </script>

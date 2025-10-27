@@ -20,13 +20,16 @@
       <tr class="item">
         <th scope="row"><a href="{% url 'edita_reuniao' reuniao.id %}">{{reuniao.titulo}}</a></th>
         <td><a href="{% url 'projeto_infos' reuniao.projeto.id %}">{{reuniao.projeto}}</a></td>
-        <td data-sort="{{reuniao.data_hora}}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
+        {% comment %} <td data-sort="{{reuniao.data_hora|date:'Y-m-d\TH:i:s' }}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td> {% endcomment %}
+        <td data-sort="{{reuniao.data_hora|date:'Y-m-d\TH:i:s' }}">{{reuniao.data_hora|date:"d/m/Y H:i"}}</td>
         <td>{{reuniao.local}}</td>
-        <td>
-          {% for rp in reuniao.reuniaoparticipante_set.all %}
-              &bull; {{ rp.participante.get_full_name }} ({{ rp.get_situacao_display }})<br>
+        <td><div style="line-height: 1.10; font-size: 0.8em;">
+          {% for rp in reuniao.participantes_reuniao.all %}
+            {% if rp.situacao == 1 %} {% comment %} (1, "Presente"), {% endcomment %}
+              &bull; {{ rp.participante.get_full_name }}<br> {% comment %} ({{ rp.get_situacao_display }}) {% endcomment %}
+            {% endif %}
           {% endfor %}
-        </td>
+        </div></td>
       </tr>
     {% endfor %}
   {% include "tabelas_bottom.html" %}

@@ -168,15 +168,6 @@
 
       }
 
-      function carrega_pagina() {
-        if($("#EstudantesTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-          table = $("#EstudantesTable").dataTable();
-          if(table) {table.fnSetColumnVis( 3, false);}  // esconde e-mail
-          if(table) {table.fnSetColumnVis( 4, false);}  // esconde CR
-        }
-      };
-
-      window.onload = carrega_pagina
     </script>
 
   </div>

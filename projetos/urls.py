@@ -18,6 +18,7 @@ urlpatterns = [
     path("analise_notas/", views.analise_notas, name="analise_notas"),
     path("analise_objetivos/", views.analise_objetivos, name="analise_objetivos"),
     path("bancas_tabela_agenda", views.bancas_tabela_agenda, name="bancas_tabela_agenda"),
+    path("dinamicas_tabela_agenda", views.dinamicas_tabela_agenda, name="dinamicas_tabela_agenda"),
     path("carrega_bancos/", views.carrega_bancos, name="carrega_bancos"),
     path("certificacao_falconi",views.certificacao_falconi, name="certificacao_falconi"),
     path("comite/", views.comite, name="comite"),

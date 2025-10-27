@@ -128,14 +128,18 @@
   {% endif %}
 
   <hr>
-  <h3>
-    {% lng "Documentos" "Documents" %}
-    <small class="esconder">
-      <a class="open-modal" style="cursor:pointer;"
-         data-url="{% url 'adiciona_documento' organizacao.id %}"
-      >&#10133;</a>
-    </small>
-  </h3>
+  <span class="d-flex align-items-center justify-content-between flex-wrap">
+    <h3>
+      {% lng "Documentos" "Documents" %}
+      <small class="esconder">
+        <a class="open-modal" style="cursor:pointer;"
+          data-url="{% url 'adiciona_documento' organizacao.id %}"
+        >&#10133;</a>
+      </small>
+    </h3>
+    {% include "filtro_documentos.html" %}
+  </span>
+
   <div class="caixa_rolante">
     {% include "documentos.html" with documentos=organizacao.documento_set.all %}
   </div>

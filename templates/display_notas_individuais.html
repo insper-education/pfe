@@ -27,7 +27,7 @@
 {% if notas or descontos %}
 
   <div style="overflow-x: auto; width: 100%;">
-    <table class="one-line" style="max-width: 100%;">
+    <table class="one-line mb-1" style="max-width: 100%;">
       <tbody>
         <tr>
           <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
@@ -58,13 +58,27 @@
             </script>
           {% endif %}
           
-          <td>
+          <td data-toggle="tooltip" data-html="true" animation="true" title="
+          A média final é calculada considerando todas as avaliações e seus respectivos pesos mesmo as avaliações ainda não realizadas.<br>
+          A média provisória é calculada como a soma ponderada das avaliações dividida pela soma dos pesos das avaliações já realizadas.
+          ">
             <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocacao.id}}">0.0</span> <span id="aviso{{alocacao.id}}"></span></b>    
-          </td>    
+          </td>
 
         </tr>
       </tbody>
     </table>
+    
+    {% if rubricas %}
+      <a class="btn btn-info btn-sm" style="padding: 2px; font-size: 0.75em; margin-top: 2px;"
+          href="{% url 'pesos_rubricas' %}"
+          target="_blank" rel="noopener noreferrer"
+          aria-label="Abrir rubricas, pesos e objetivos em nova aba"
+          data-toggle="tooltip" data-html="true" animation="true"
+          >
+        {% lng 'Rubricas e Pesos ↗' 'Rubrics and Weights ↗' %}
+      </a>
+    {% endif %}
 
     <script>
       if(peso > 0.0) {

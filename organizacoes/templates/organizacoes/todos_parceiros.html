@@ -83,22 +83,8 @@
   </div>
 
   <script>
-    var table = null;
-
-    function carrega_pagina() {
-      if($("#ParceirosTable th").length > 0) {   // Verifica se os THs foram registrados primeiro
-        table = $("#ParceirosTable").dataTable();
-        if(table) {
-          // Hide/Esconde certas colunas
-          table.fnSetColumnVis( 1, false );  // esconde Gênero
-          {% include "linguas_ajax.html" %}
-        }
-      }
-    };
-
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
-      carrega_pagina();
     }
     window.onload = carrega_site
   </script>

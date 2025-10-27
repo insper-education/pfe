@@ -11,6 +11,7 @@ from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
@@ -112,7 +113,7 @@ def dinamicas_grupos(request):
 
 
         cabecalhos = [{"pt": "Nome", "en": "Name"},
-                        {"pt": "e-mail", "en": "e-mail"},
+                        {"pt": "e-mail", "en": "e-mail", "esconder": True},
                         {"pt": "Curso", "en": "Program"},
                         {"pt": "Projeto", "en": "Project"},
                         {"pt": "Quinzenal Realizado", "en": "Biweekly Completed"},
@@ -136,7 +137,7 @@ def dinamicas_grupos(request):
         context = {
             "informacoes": informacoes,
             "cabecalhos": cabecalhos,
-            "captions": captions,
+            "captions": [captions],
             "Pares": Pares,
         }
 
@@ -178,12 +179,12 @@ def descontos(request):
             return HttpResponse("Algum erro não identificado.", status=401)
         
         ano, semestre = request.POST["edicao"].split('.')
-        descontos = lanca_descontos(ano, semestre)
-
-        cabecalhos = [{"pt": "Referência", "en": "Reference"},
-                      {"pt": "Evento", "en": "Event"},
-                      {"pt": "Nota", "en": "Grade", "tipo": "numeral"},
-                     ]
+        descontos = Desconto.objects.filter(Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre) | Q(projeto__ano=ano, projeto__semestre=semestre))
+        cabecalhos = [{"pt": "Alocação/Projeto", "en": "Allocation/Project"},
+                        {"pt": "Referência", "en": "Reference"},
+                        {"pt": "Data", "en": "Date", "tipo": "data_hora"},
+                        {"pt": "Nota", "en": "Grade", "tipo": "numeral"},
+        ]
         
         context = {
             "descontos": descontos,

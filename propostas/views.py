@@ -368,7 +368,7 @@ def propostas_apresentadas(request):
                 {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"},
                 {"pt": "Fechada", "en": "Confirmed", "font": "12px", "tooltip": "Foi formado um grupo de estudantes para essa proposta de projeto"},
                 {"pt": "Proposta", "en": "Proposal"},
-                {"pt": "Período", "en": "Semester"},
+                {"pt": "Período", "en": "Semester", "esconder": True},
                 {"pt": "Organização", "en": "Organization"},
                 {"pt": "Tipo", "en": "Type", "font-size": "12px"},
                 {"pt": "Estudante1", "en": "Student1", "font": "12px", "classes": "estudante-icon"},
@@ -423,7 +423,7 @@ def propostas_lista(request):
             propostas = Proposta.objects.filter(ano=ano, semestre=semestre)
 
         cabecalhos = [{"pt": "Título da Proposta", "en": "Proposal Title"},
-                    {"pt": "Período", "en": "Period"},
+                    {"pt": "Período", "en": "Period", "esconder": True},
                     {"pt": "Organização", "en": "Organization"},
                     {"pt": "Tipo", "en": "Type"},]
         
@@ -773,6 +773,8 @@ def proposta_editar(request, slug=None):
                 colaboracao_id = request.POST.get("colaboracao", None)
                 if colaboracao_id:
                     proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
+                else:
+                    proposta.colaboracao = None
                 proposta.save()
 
             enviar = "mensagem" in request.POST  # Por e-mail se enviar
