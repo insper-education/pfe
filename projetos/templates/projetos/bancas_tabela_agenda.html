@@ -85,14 +85,27 @@
               {% endif %}
             </td>
             <td>
-              <ul>
-                {% for membro in banca.membros %}
-                  <li><a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a>
-                    <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
-                    {% if projeto.orientador.user == membro %}[{% lng_g projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
-                  </li>
-                {% endfor %}
-              </ul>
+              {% for membro, avaliacao in banca.get_avaliadores_todos.items %}
+                <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
+                  <a href="{% url 'user_detail' membro.id %}">{{membro.get_full_name}}</a>
+                  <a href="mailto:{{membro.email}}"> &lt;{{membro.email}}&gt;</a>
+                  {% if projeto.orientador.user == membro %}[{% lng_g projeto.orientador.user.genero "orientador" "orientadora" "advisor" %}]{% endif %}
+                  <div class="mt-1">
+                    {% if avaliacao %}
+                      <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> {% lng "Avaliado" "Evaluated" %}
+                      </span>
+                    {% else %}
+                      <span class="badge badge-warning text-dark">
+                        <a target="_blank" rel="noopener noreferrer" 
+                         href="{% url 'banca_avaliar' banca.slug %}">
+                          <i class="fas fa-exclamation-circle"></i> {% lng "Avaliação pendente" "Evaluation pending" %}
+                        </a>
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
             </td>
           </tr>
         {% endwith %}
