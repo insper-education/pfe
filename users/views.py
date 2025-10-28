@@ -314,6 +314,12 @@ def estudantes_notas(request, professor=None):
             {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
             {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
             {"sigla": "RFI", "pt": "Relatório Final Individual", "en": "Final Individual Report"},
+        ],
+        [
+            {"sigla": "Individual", "pt": "Média só das avaliações individuais", "en": "Average of individual assessments only"},
+            {"sigla": "Descontos", "pt": "Total de descontos na média final a ser aplicado", "en": "Total discounts on the final average to be applied"},
+            {"sigla": "Média Parcial", "pt": "Média das avaliações até o momento já com descontos", "en": "Average of assessments so far with discounts"},
+            {"sigla": "Média Final", "pt": "Média final do estudante no projeto", "en": "Student's final average in the project"},
         ] ]
 
         context = {
