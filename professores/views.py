@@ -1071,7 +1071,8 @@ def dinamicas_index(request, facilit_id=None):
     context = {
         "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentorships"},
         "encontros": encontros,
-        }
+        "dias_fundos": Evento.objects.filter(tipo_evento__sigla__in=["FERI",])
+    }
     return render(request, "professores/dinamicas_index.html", context)
 
 
@@ -1079,7 +1080,7 @@ def dinamicas_index(request, facilit_id=None):
 # @permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
-    dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F"))
+    dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F", "FERI"))
     if request.user.is_authenticated:
         usuario = request.user
         if prof_id and request.user.eh_admin:  # Administrador
@@ -1159,6 +1160,7 @@ def dinamicas_lista(request, edicao=None):
     request.session["root_page_url"] = request.build_absolute_uri()
     context["root_page_url"] = request.session["root_page_url"]
     context["hoje"] = datetime.date.today()
+    context["dias_fundos"] = Evento.objects.filter(tipo_evento__sigla__in=["FERI",])
 
     return render(request, "professores/dinamicas_lista.html", context)
 
