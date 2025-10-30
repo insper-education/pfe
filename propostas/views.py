@@ -478,6 +478,10 @@ def ajax_proposta(request, primarykey=None):
         if "disponibilizar" in request.POST:
             proposta.disponivel = request.POST["disponibilizar"] == "sim"
 
+        # Anotações internas
+        if "anotacoes" in request.POST:
+            proposta.anotacoes = request.POST["anotacoes"]
+
         proposta.save()
         data = {"atualizado": True,}
         return JsonResponse(data)

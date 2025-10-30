@@ -347,6 +347,9 @@ class Proposta(models.Model):
 
     autorizado = models.ForeignKey("users.PFEUser", null=True, blank=True,
                                    on_delete=models.SET_NULL, help_text="Quem autorizou a ser publicado para estudantes",)
+    
+    anotacoes = models.TextField("Anotações Internas", max_length=2000, null=True, blank=True,
+                                    help_text="Anotações internas do revisor sobre a proposta de projeto")
 
     perfil1 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil1", blank=True)
     perfil2 = models.ManyToManyField("operacional.Curso", help_text="Perfil de curso desejado para estudante", related_name="perfil2", blank=True)

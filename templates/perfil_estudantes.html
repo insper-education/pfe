@@ -7,99 +7,248 @@
 {% load linguas %}
 
 <style>
-  .obs {
-    font-size: 12px;
-    display: block;
+  .card-perfil {
+    border-radius: 8px;
+    border: none;
+    max-width: 900px;
   }
+  
+  .card-perfil .card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  }
+  
+  .card-perfil .card-body {
+    padding: 1rem;
+  }
+  
+  .obs {
+    font-size: 0.85rem;
+    color: #6c757d;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+  
+  .perfil-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+  }
+
+  .perfil-table tbody td {
+    width: auto;
+    min-width: 90px;
+    max-width: 90px;
+  }
+
+  .perfil-table tbody td.vertical-text-tab {
+    white-space: nowrap;
+    width: 30px;
+    min-width: 30px;
+    max-width: 30px;  }
+
+  .perfil-table tbody td.row-header {
+    white-space: nowrap;
+    width: 30px;
+    min-width: 30px;
+    max-width: 30px;
+  }
+
+  .perfil-table thead th {
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+  }
+
+  .perfil-table tbody td {
+    text-align: center;
+    padding: 0.15rem;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.15s ease;
+  }
+
+  .perfil-table tbody td.row-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .perfil-table tbody td.vertical-text-tab {
+    background-color: #f8f9fa;
+    writing-mode: vertical-lr;
+    font-weight: 600;
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .perfil-table input[type="checkbox"] {
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+  
+  .perfil-table tbody tr:hover td:not(.vertical-text-tab):not(.row-header) {
+    background-color: #f8f9fa;
+  }
+  
+  .linha-vazia {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+  }
+
+  .perfil-table input[type="checkbox"].coluna-principal {
+    cursor: pointer;
+    width: 18px; /* Aumentado para 18px para mais visibilidade */
+    height: 18px; /* Aumentado para 18px */
+    margin: 4px 0;
+    border: 2px solid #6f42c1; /* Borda roxa */
+    border-radius: 4px; /* Bordas arredondadas */
+    background-color: #f8f9fa; /* Fundo claro */
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s; /* Transição suave */
+    box-shadow: 0 0 5px rgba(110, 58, 193, 0.5); /* Sombra para destaque */
+  }
+
+  .perfil-table input[type="checkbox"].coluna-principal:hover {
+    background-color: #e9ecef; /* Fundo mais escuro ao passar o mouse */
+    border-color: #5a32a3; /* Borda mais escura ao passar o mouse */
+    box-shadow: 0 0 10px rgba(110, 58, 193, 0.8); /* Sombra mais intensa ao passar o mouse */
+  }
+
 </style>
 
 {% if proposta %}
-  <h5 style="margin-bottom: 0px;">
-    {% lng "Perfil de Estudantes Esperados" "Expected Student Profile" %}
-  </h5>
-  <small class="obs">
-    {% lng "Cada linha representa uma vaga que idealmente deve ser preenchida por um estudante dos cursos marcados" "Each row represents a vacancy that should ideally be filled by a student from the marked programs" %}
-  </small>
-  <table class="table-striped">
-    <thead>
-      <tr style="background-color: #EEF;">
-        <th style="text-align:center;" colspan="2"></th>
-        {% for curso in cursos %}
-          {% if curso.curso_do_insper %}
-            <th style="text-align:center; width:138px;">
-              {% lng curso.nome curso.nome_en %}
-              {% if editavel %}<input type="checkbox" id="alunos{{curso.sigla_curta}}">{% endif %}
-            </th>
-          {% endif %}
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="background-color: #EEF; text-align:center; writing-mode: vertical-lr;" rowspan="4">
-          {% lng "Estudantes" "Students" %}
-        </td>
-        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#1</td>
-        {% for curso in cursos %}
-          {% if curso.curso_do_insper %}
-          <td class="linha1" style="text-align:center;">
-            {% if editavel %}
-                <label style="line-height:0.6em; "><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}1" name="alunos{{curso.sigla_curta}}1" value="{{curso.sigla_curta}}-1" 
-                {% if curso in proposta.perfil1.all %}checked{% endif %}></label>
-            {% else %}
-              {% if  curso in proposta.perfil1.all %}&#x2713;{% endif %}
-            {% endif %}
-          </td>
-          {% endif %}
-        {% endfor %}
-      </tr>
-      <tr>
-        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#2</td>
-        {% for curso in cursos %}
-          {% if curso.curso_do_insper %}
-          <td class="linha2"  style="text-align:center;">
-            {% if editavel %}
-                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}2" name="alunos{{curso.sigla_curta}}2" value="{{curso.sigla_curta}}-2" 
-                {% if curso in proposta.perfil2.all %}checked{% endif %}></label>
-            {% else %}
-              {% if  curso in proposta.perfil2.all %}&#x2713;{% endif %}
-            {% endif %}
-          </td>
-          {% endif %}
-        {% endfor %}
-      </tr>
-      <tr>
-        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#3</td>
-        {% for curso in cursos %}
-          {% if curso.curso_do_insper %}
-          <td class="linha3"  style="text-align:center;">
-            {% if editavel %}
-                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}3" name="alunos{{curso.sigla_curta}}3" value="{{curso.sigla_curta}}-3" 
-                {% if curso in proposta.perfil3.all %}checked{% endif %}></label>
-            {% else %}
-              {% if  curso in proposta.perfil3.all %}&#x2713;{% endif %}
-            {% endif %}
-          </td>
-          {% endif %}
-        {% endfor %}
-      </tr>
-      <tr>
-        <td style="background-color: #EEF; text-align:center; padding: 0px 2px; font-size: 12px;">#4</td>
-        {% for curso in cursos %}
-          {% if curso.curso_do_insper %}
-          <td class="linha4"  style="text-align:center;">
-            {% if editavel %}
-                <label style="line-height:0.6em;"><input style="vertical-align: middle;" class="alunos" type="checkbox" id="alunos{{curso.sigla_curta}}4" name="alunos{{curso.sigla_curta}}4" value="{{curso.sigla_curta}}-4" 
-                {% if curso in proposta.perfil4.all %}checked{% endif %}></label>
-            {% else %}
-              {% if  curso in proposta.perfil4.all %}&#x2713;{% endif %}
-            {% endif %}
-          </td>
-          {% endif %}
-        {% endfor %}
-      </tr>
-    </tbody>
-  </table>
+
+
+  <div class="card card-perfil shadow-sm mb-4">
+    <div class="card-header text-white">
+      <h6 class="mb-0" style="font-size: 0.95rem;">
+        <i class="fas fa-users mr-2"></i>
+        {% lng "Perfil de Estudantes Esperados" "Expected Student Profile" %}
+      </h6>
+    </div>
+    <div class="card-body">
+      
+      <small class="obs">
+        <i class="fas fa-info-circle mr-1"></i>
+        {% lng "Cada linha representa uma vaga que idealmente deve ser preenchida por um estudante dos cursos marcados" "Each row represents a vacancy that should ideally be filled by a student from the marked programs" %}
+      </small>
+      
+      <div class="table-responsive">
+        <table class="perfil-table">
+          <thead>
+            <tr>
+              <th colspan="2"></th>
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                  <th>
+                    {% lng curso.nome curso.nome_en %}
+                    {% if editavel %}
+                      <br>
+                      <input type="checkbox" id="alunos{{curso.sigla_curta}}" 
+                            class="coluna-principal" 
+                            data-toggle="tooltip" 
+                            title="Marcar/desmarcar toda a coluna">
+                    {% endif %}
+                  </th>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="vertical-text-tab" rowspan="4">
+                {% lng "Estudantes" "Students" %}
+              </td>
+              <td class="row-header">#1</td>
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                <td class="linha1">
+                  {% if editavel %}
+                    <label style="margin: 0; cursor: pointer;">
+                      <input class="alunos" type="checkbox" 
+                            id="alunos{{curso.sigla_curta}}1" 
+                            name="alunos{{curso.sigla_curta}}1" 
+                            value="{{curso.sigla_curta}}-1" 
+                            {% if curso in proposta.perfil1.all %}checked{% endif %}>
+                    </label>
+                  {% else %}
+                    {% if curso in proposta.perfil1.all %}<i class="fas fa-check text-success"></i>{% endif %}
+                  {% endif %}
+                </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+            <tr>
+              <td class="row-header">#2</td>
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                <td class="linha2">
+                  {% if editavel %}
+                    <label style="margin: 0; cursor: pointer;">
+                      <input class="alunos" type="checkbox" 
+                            id="alunos{{curso.sigla_curta}}2" 
+                            name="alunos{{curso.sigla_curta}}2" 
+                            value="{{curso.sigla_curta}}-2" 
+                            {% if curso in proposta.perfil2.all %}checked{% endif %}>
+                    </label>
+                  {% else %}
+                    {% if curso in proposta.perfil2.all %}<i class="fas fa-check text-success"></i>{% endif %}
+                  {% endif %}
+                </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+            <tr>
+              <td class="row-header">#3</td>
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                <td class="linha3">
+                  {% if editavel %}
+                    <label style="margin: 0; cursor: pointer;">
+                      <input class="alunos" type="checkbox" 
+                            id="alunos{{curso.sigla_curta}}3" 
+                            name="alunos{{curso.sigla_curta}}3" 
+                            value="{{curso.sigla_curta}}-3" 
+                            {% if curso in proposta.perfil3.all %}checked{% endif %}>
+                    </label>
+                  {% else %}
+                    {% if curso in proposta.perfil3.all %}<i class="fas fa-check text-success"></i>{% endif %}
+                  {% endif %}
+                </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+            <tr>
+              <td class="row-header">#4</td>
+              {% for curso in cursos %}
+                {% if curso.curso_do_insper %}
+                <td class="linha4">
+                  {% if editavel %}
+                    <label style="margin: 0; cursor: pointer;">
+                      <input class="alunos" type="checkbox" 
+                            id="alunos{{curso.sigla_curta}}4" 
+                            name="alunos{{curso.sigla_curta}}4" 
+                            value="{{curso.sigla_curta}}-4" 
+                            {% if curso in proposta.perfil4.all %}checked{% endif %}>
+                    </label>
+                  {% else %}
+                    {% if curso in proposta.perfil4.all %}<i class="fas fa-check text-success"></i>{% endif %}
+                  {% endif %}
+                </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
 
   {% if editavel %}
     <script>

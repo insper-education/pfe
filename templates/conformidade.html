@@ -7,55 +7,118 @@
 {% load linguas %}
 {% load get_field %}
 
+
 <style>
-  #ConformidadeTable td {padding: 0px 3px 2px 3px;}
-
-  .conf_la {
-    text-align: left;
-    margin-bottom: 0px;
+  .card-conformidade {
+    border-radius: 8px;
+    border: none;
+    max-width: 700px;
   }
-
-  .fechar_proposta {
-    position: relative;
-    top: 2px; 
+  
+  .card-conformidade .card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+  }
+  
+  .card-conformidade .card-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .conformidade-item {
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.15s ease;
+  }
+  
+  .conformidade-item:hover {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .conformidade-item input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  
+  .conformidade-item label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    user-select: none;
+  }
+  
+  .btn-check-all {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+    margin-left: 0.5rem;
+  }
+  
+  .btn-check-all:hover {
+    transform: scale(1.2);
   }
 </style>
 
-<b>
-  {% if request.user.eh_admin %}
-    <span id="checar_todas_conformidades"  style="cursor: pointer;" 
-    onclick="checar_todas_conformidades()">🆗</span>
 
-    <script>
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
 
-      async function checar_todas_conformidades() {
-        var checkboxes = document.querySelectorAll(".conformidade");
-        for (const checkbox of checkboxes) {
-          if (!checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-            await sleep(20);
-          }
+
+<div class="card card-conformidade shadow-sm mb-4">
+  <div class="card-header text-white">
+    <h6 class="mb-0 d-inline-block" style="font-size: 0.95rem;">
+      <i class="fas fa-check-double mr-2"></i>
+      {% lng "Conformidade de Proposta" "Proposal Conformity" %}
+    </h6>
+    {% if request.user.eh_admin %}
+      <button type="button" class="btn-check-all float-right" 
+              onclick="checar_todas_conformidades()"
+              data-toggle="tooltip" 
+              title="Marcar todas">
+        ✓
+      </button>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    {% for conformidade, descr in conformidades.items %}
+      <div class="conformidade-item">
+        <input class="fechar_proposta conformidade" 
+               type="checkbox" 
+               id="{{conformidade}}" 
+               name="{{conformidade}}" 
+               value="True" 
+               {% if proposta|get_attr:conformidade %}checked{% endif %}>
+        <label for="{{conformidade}}">
+          {% lng descr.pt descr.en %}
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if request.user.eh_admin %}
+  <script>
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function checar_todas_conformidades() {
+      var checkboxes = document.querySelectorAll(".conformidade");
+      for (const checkbox of checkboxes) {
+        if (!checkbox.checked) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+          await sleep(20);
         }
       }
-    </script>
-
-  {% endif %}
-  {% lng "Conformidade de Proposta" "Proposal Conformity" %}
-</b>
-
-<table id="ConformidadeTable" class="table table-borderless" style="border: 0px; width: auto;">
-  <tbody>
-    {% for conformidade, descr in conformidades.items %}
-      <tr>
-        <td>
-          <input class="fechar_proposta conformidade" type="checkbox" id="{{conformidade}}" name="{{conformidade}}" value="True" {% if proposta|get_attr:conformidade %}checked{% endif %}>
-        </td>
-        <td><label class="conf_la" for="{{conformidade}}">{% lng descr.pt descr.en %}</label></td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    }
+  </script>
+{% endif %}

@@ -11,78 +11,123 @@
     font-size: 12px;
     display: block;
   }
+
+  .card-recomendadas {
+    border-radius: 8px;
+    border: none;
+    max-width: 700px;
+  }
+
+  .card-recomendadas .card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  }
+
+  .card-recomendadas .card-body {
+    padding: 1rem;
+  }
+
+  .perfil-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+  }
+
+  .perfil-table thead th {
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+  }
+
+  .perfil-table tbody td {
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.15s ease;
+  }
+
 </style>
+
 
 {% if proposta %}
 
   {% if proposta.recomendada_set.all or editavel %}
-    <hr>
-    <h4>
-    <h5 style="margin-bottom: 0px;">
-      {% lng "Disciplina(s) Recomendada(s)" "Recommended Courses(s)" %}
-    </h5>
-    <small class="obs">
-      {% lng "Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta" "Recommended courses that students should have or be taking to apply to the proposal" %}
-    </small>
-    
-    <table id="disciplinas_recomendadas" style="margin-top: 10px; border: 0px;">
-      <tr>
-        <th style="border: 0px;">
-          {% lng "Nome da Disciplina" "Course Name" %}
-          {% if editavel %}
-            <small class="esconder">
-              <a
-                data-proposta='{{proposta.id}}'
-                class="open-modal"
-                href="{% url 'link_disciplina' proposta.id %}"
-                data-url="{% url 'link_disciplina' proposta.id %}"
-                >&#10133;</a>
-            </small>
-          {% endif %}
-        </th>
-      </tr>
-      {% for rec in proposta.recomendada_set.all %}
-          <tr id="disciplina{{rec.disciplina.id}}"><td style="border: 0px;">
-              {% if rec.disciplina %}
-                {{rec.disciplina.nome}}
-              {% else %}
-                <span style="color:red">
-                  {% lng "ERRO: NOME DA DISCINPLINA NÃO DEFINIDO" "ERROR: COURSE NAME NOT DEFINED" %}
-                </span>
-              {% endif %}
+    <div class="card card-recomendadas shadow-sm mb-4">
+      <div class="card-header text-white">
+        <h6 class="mb-0" style="font-size: 0.95rem;">
+          {% lng "Disciplina(s) Recomendada(s)" "Recommended Courses(s)" %}
+        </h6>
+      </div>
+      <div class="card-body">
+        <small class="obs">
+          {% lng "Disciplinas recomendadas que estudantes tenham ou estejam cursando para aplicar na proposta" "Recommended courses that students should have or be taking to apply to the proposal" %}
+        </small>
+        
+        <table id="disciplinas_recomendadas" style="margin-top: 10px; border: 0px;">
+          <tr>
+            <th style="border: 0px;">
+              {% lng "Nome da Disciplina" "Course Name" %}
               {% if editavel %}
-                <div class="esconder" style="float:right;">
-                  &nbsp;
-                  <a onclick="event.preventDefault(); remove_disciplina($(this));"
-                    data-disciplina='{{rec.disciplina.id}}'
-                    data-proposta='{{proposta.id}}'>
-                    <i class="far fa-trash-alt"></i>
-                  </a>
-                </div>
+                <small class="esconder">
+                  <a
+                    data-proposta='{{proposta.id}}'
+                    class="open-modal"
+                    href="{% url 'link_disciplina' proposta.id %}"
+                    data-url="{% url 'link_disciplina' proposta.id %}"
+                    >&#10133;</a>
+                </small>
               {% endif %}
-          </td></tr>
-      {% endfor %}
-    </table>
+            </th>
+          </tr>
+          {% for rec in proposta.recomendada_set.all %}
+              <tr id="disciplina{{rec.disciplina.id}}">
+                <td style="border: 0px;">
+                  {% if rec.disciplina %}
+                    {{rec.disciplina.nome}}
+                  {% else %}
+                    <span>
+                      {% lng "ERRO: NOME DA DISCINPLINA NÃO DEFINIDO" "ERROR: COURSE NAME NOT DEFINED" %}
+                    </span>
+                  {% endif %}
+                  {% if editavel %}
+                    <span class="esconder">
+                      &nbsp;
+                      <a onclick="event.preventDefault(); remove_disciplina($(this));"
+                        data-disciplina='{{rec.disciplina.id}}'
+                        data-proposta='{{proposta.id}}'>
+                        <i class="far fa-trash-alt"></i>
+                      </a>
+                    </span>
+                  {% endif %}
+                </td>
+              </tr>
+          {% endfor %}
+        </table>
 
-    {% if editavel %}
-      {% include "base-modal.html" %}
-    {% endif %}
+        {% if editavel %}
+          {% include "base-modal.html" %}
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+      function remove_disciplina(aqui) {
+        url = "{% url 'remover_disciplina' %}";
+        data = {
+            "disciplina_id": aqui.data("disciplina"),
+            "proposta_id": aqui.data("proposta"),
+        };
+        function success(response){
+          $("#disciplina"+data["disciplina_id"]).remove();
+        }
+        {% include "ajax_default_function.js" %}
+      }
+    </script>
 
   {% endif %}
-  <br>
-
-  <script>
-    function remove_disciplina(aqui) {
-      url = "{% url 'remover_disciplina' %}";
-      data = {
-          "disciplina_id": aqui.data("disciplina"),
-          "proposta_id": aqui.data("proposta"),
-      };
-      function success(response){
-        $("#disciplina"+data["disciplina_id"]).remove();
-      }
-      {% include "ajax_default_function.js" %}
-    }
-  </script>
-
 {% endif %}

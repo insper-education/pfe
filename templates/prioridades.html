@@ -6,20 +6,23 @@
 
 {% load linguas %}
 
-<hr>
-
-<br>
-<h5 style="margin-bottom: 0px;">
-  {% lng "Procura da Proposta" "Proposal Demand" %}
-</h5>
-<small>
-  {% lng "Quantidade de estudantes em cada opção para esta proposta:" "Number of students in each option for this proposal:" %}
-  <br>
-</small>
-<div class="container-fluid">
-  <div class="row align-self-start" style="max-width: 800px">
-    <div class="col">
-      <canvas style="height: 112px" id="horizontal"></canvas>
+<div class="card card-recomendadas shadow-sm mb-4" style="max-width: 800px;">
+  <div class="card-header text-white">
+    <h5 class="mb-0" style="font-size: 1rem;">
+      {% lng "Procura da Proposta" "Proposal Demand" %}
+    </h5>
+  </div>
+  <div class="card-body">
+    <small>
+      {% lng "Quantidade de estudantes em cada opção para esta proposta:" "Number of students in each option for this proposal:" %}
+      <br>
+    </small>
+    <div class="container-fluid">
+      <div class="row align-self-start">
+        <div class="col">
+          <canvas style="height: 112px;" id="horizontal"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </div>
