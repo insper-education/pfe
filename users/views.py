@@ -808,7 +808,7 @@ def estudante_detail(request, primarykey=None):
         "aluno": estudante,
         "alocacoes": alocacoes,
         "certificados": Certificado.objects.filter(usuario=estudante.user),
-        "areast": Area.objects.filter(ativa=True),
+        "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
     })
 
     # Estilos de Comunicação

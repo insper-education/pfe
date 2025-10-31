@@ -272,15 +272,9 @@
     {% endif %}
   {% endwith %}
 
-  <h5 style="margin-bottom: 4px;">
-    {% lng "Áreas de Interesse" "Areas of Interest" %}
-  </h5>
-  {% with aa=proposta.areadeinteresse_set.all %}
-    {% with vencido=True %}
-      {% include "areas.html" %}
-    {% endwith %}
+  {% with vencido=True areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all com_borda=True %}
+    {% include "areas.html" %}  
   {% endwith %}
-  <br>
 
   <hr>
 

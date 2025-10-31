@@ -751,7 +751,7 @@ def informacoes_adicionais(request):
         }
     
     context["entidades"] = Entidade.objects.all()
-    context["areast"] = Area.objects.filter(ativa=True)
+    context["areas_de_interesse_possiveis"] = Area.objects.filter(ativa=True)
     context["Aluno"] = Aluno
     context["PFEUser"] = PFEUser
     context["titulo"] = {"pt": "Interesses e Experiências", "en": "Interests and Experiences"}

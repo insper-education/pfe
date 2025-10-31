@@ -27,35 +27,77 @@
     width: fit-content;
     margin: 0.1em 0px 0.5em 0px;  
   }
+  
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    border: none;
+    max-width: 700px;
+  }
+
+  .card-header {
+    background-color: #636DD1;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .checkbox-label {
+    align-items: center;
+    margin-left: 10px;
+    display: inline-flex;
+  }
+
+  .checkbox-label input {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 5px;
+    resize: vertical;
+  }
 </style>
 
-{% if areast %}
+{% if areas_de_interesse_possiveis or areas_de_interesse_selecionadas %}
 
   {% if com_borda %}
-    <div id="bordar_areas">
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fas fa-heart mr-2"></i>
+          <label for="titulo_areas" style="line-height:0.6em;"><b>
+            {% lng "Áreas de Interesse" "Areas of Interest" %}
+          </b></label>
+          {% if titulo_areas %}
+            <span class="checkbox-label">
+              <input type="checkbox" id="titulo_areas" value="{{area.titulo}}"
+               {% if tudo_ligado %}checked{% endif %}
+               {% if vencido %}disabled{% endif %}>
+            </span>
+          {% endif %}
+      </h6>
+    </div>
+    <div class="card-body">
   {% endif %}
 
   <table class="sem_b">
-    {% if titulo_areas %}
-      <tr>
-        <td style="text-align: center;"><input type="checkbox" id="titulo_areas" value="{{area.titulo}}"
-          {% if tudo_ligado %}checked{% endif %}
-          {% if vencido %}disabled{% endif %}>
-        </td>
-        <td style="text-align: center;"><label for="titulo_areas" style="line-height:0.6em;"><b>
-          {% lng "Áreas de Interesse" "Areas of Interest" %}
-        </b></label></td>
-      </tr>
-    {% endif %}
-    {% for area in areast %}
+    <tbody>
+      {% for area in areas_de_interesse_possiveis %}
         <tr><td class="ar_in">
                 <input style="position: relative; top: 2px;" type="checkbox" name="selection" id="{{area.id}}" value="{{area.titulo}}" class="filtra_area"
                 {% if tudo_ligado %}
                     checked
                 {% else %}
-                    {% comment %} Provavelmente aa não está sendo mais usado {% endcomment %}
-                    {% for a in aa %}
-                        {% if area == a.area %}checked{% endif %}
+                    {% for a in areas_de_interesse_selecionadas %}
+                      {% if area == a.area %}checked{% endif %}
                     {% endfor %}
                 {% endif %}
                 {% if vencido %}disabled{% endif %}>
@@ -70,7 +112,8 @@
                 </label>
             </td>
         </tr>
-    {% endfor %}
+      {% endfor %}
+    </tbody>
   </table>
   {% if not com_borda %}
       <div style="height:8px;font-size:8px;">&nbsp;</div>
@@ -82,11 +125,11 @@
     </label> 
     <textarea type="text" cols="29" maxlength="128" id="outras" name="outras" wrap="soft"
     {% if vencido %}disabled{% endif %}
-    >{% for a in aa %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
-    {% comment %} Provavelmente aa não está sendo mais usado {% endcomment %}
+    >{% for a in areas_de_interesse_selecionadas %}{% if a.outras %}{{a.outras}}{% endif %}{% endfor %}</textarea>
   {% endif %}
 
   {% if com_borda %}
+      </div>
     </div>
   {% endif %}
 

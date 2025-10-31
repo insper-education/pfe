@@ -75,11 +75,9 @@
     <b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}<br>
   {% endif %}
 
-  <b>{% lng "Áreas de interesse" "Areas of Interest" %}:</b>
-  {% with aa=aluno.user.areadeinteresse_set.all %}
-    {% with vencido=True %}
-      {% include "areas.html" %}
-    {% endwith %}
+  
+  {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True com_borda=True %}
+    {% include "areas.html" %}
   {% endwith %}
   <br>
 

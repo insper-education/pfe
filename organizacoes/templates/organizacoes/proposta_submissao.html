@@ -356,7 +356,7 @@
               {% lng "Áreas/Habilidades envolvidas no projeto" "Areas/Skills involved in the project" %}
             </span><br>
             {% if proposta %}
-              {% with aa=proposta.areadeinteresse_set.all %}
+              {% with areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all %}
                 {% if edicao and liberadas_propostas %}
                   {% with vencido=True %}
                     {% include "areas.html" %}

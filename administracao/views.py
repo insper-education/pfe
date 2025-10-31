@@ -64,7 +64,7 @@ from organizacoes.models import Segmento
 from propostas.support import ordena_propostas
 
 from projetos.models import Configuracao, Organizacao, Proposta, Projeto
-from projetos.models import Avaliacao2, Feedback, Disciplina
+from projetos.models import Avaliacao2, Feedback, Disciplina, Area
 from projetos.support import simple_upload, get_upload_path
 from projetos.support2 import get_pares_colegas
 
@@ -1209,14 +1209,17 @@ def excluir_disciplina(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def relatorio(request, modelo, formato):
     """Gera relatorios em html e PDF."""
-    context = {"titulo": {"pt": "Relatório", "en": "Report"},}
+    context = {
+        "titulo": {"pt": "Relatório", "en": "Report"},
+        "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
+        }
 
     edicao = request.GET.get("edicao", None)
     if edicao and edicao != "todas":
         ano, semestre = map(int, edicao.split('.'))
     else:
         edicao = None
-   
+
     if modelo == "propostas":
         if edicao:
             context["propostas"] = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
@@ -1224,7 +1227,7 @@ def relatorio(request, modelo, formato):
             context["propostas"] = Proposta.objects.all(disponivel=True)
         arquivo = "administracao/relatorio_propostas.html"
 
-    if modelo == "propostas_s":
+    elif modelo == "propostas_s":
         if edicao:
             context["propostas"] = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
         else:

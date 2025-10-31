@@ -70,13 +70,9 @@
         {% endif %}
       {% endwith %}
 
-      <h4>Áreas de Interesse</h4>
-      {% with aa=proposta.areadeinteresse_set.all %}
-        {% with vencido=True %}
-          {% include "areas.html" %}
-        {% endwith %}
+      {% with areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all vencido=True com_borda=True %}
+        {% include "areas.html" %}
       {% endwith %}
-      <br>
 
       {% with editavel=False %}
         {% include "recomendadas.html" %}

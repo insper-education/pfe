@@ -31,7 +31,7 @@
   <form method="post"> {% csrf_token %}  
 
     <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">Selecionar suas áreas de interesse:</span><br>
-    {% include "areas.html" with aa=estudante.user.areadeinteresse_set.all com_borda=True %}<br>
+    {% include "areas.html" with areas_de_interesse_selecionadas=estudante.user.areadeinteresse_set.all com_borda=True %}<br>
     
     {% include "estudantes/includes/trab_ativ_famil.html" %}
 

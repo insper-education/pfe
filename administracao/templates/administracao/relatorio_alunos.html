@@ -25,14 +25,10 @@
     <strong>Curso:</strong> {{aluno.curso2}} <br>
     <strong>CR:</strong> {{aluno.cr}} <br>
     {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span><br>{% endif %}
-    <br>
 
-    <strong>Áreas de interesse selecionadas:</strong>
-
-    {% with areas=aluno.areas_de_interesse %}
-        {% with vencido=True %}
-        {% include "areas.html" %}
-        {% endwith %}
+    {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True %}
+      <strong>Áreas de interesse selecionadas:</strong>
+      {% include "areas.html" %}
     {% endwith %}
 
       <br>
