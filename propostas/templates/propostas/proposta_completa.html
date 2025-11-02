@@ -56,13 +56,44 @@
   }
 
 </script>
+{% comment %} REMOVER ˆˆˆ REMOVER  {% endcomment %}
+
+
+
+{% comment %} vvv REMOVER REMOVER REMOVER vvv {% endcomment %}
+<style>
+.div_arredondado_100_tmp {
+
+  background: #f8fafc; /* azul bem claro */
+  border: 1px solid #cfd8dc; /* cinza-azulado claro */
+  box-shadow: 0 2px 8px rgba(90, 120, 150, 0.05); /* sombra leve */
+  vertical-align: middle;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  max-width: 100%;
+  width: 100%;
+  padding: 8px;
+}
+.div_arredondado_100_tmp > div {
+  /* display: block;  Isso dá problema com o layout modal*/
+  max-width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #FBFBFB;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+</style>
+{% comment %} ˆˆˆ REMOVER REMOVER REMOVER ˆˆˆ {% endcomment %}
+{% comment %} E COLOCAR O DIV_ARREDONDADO_100 {% endcomment %}
 
 
   {% comment %} Para o gráfico no final da página {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/Chart.min.css' %}">
-
+  <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   {% include "tabelas_includes.html" %}
 
   <style>
@@ -89,6 +120,15 @@
     #OpcoesEstudantesTable tbody td {
       padding: 0.05em 0.3em;
     }
+
+  .card {
+    width: 700px;
+    padding: 0 !important;
+  }
+
+  .card-header {
+    border-radius: 8px 8px 0 0 !important;
+  }
 
   .card-analise {
     border-radius: 8px;
@@ -221,339 +261,348 @@
 
 {% block content %}
 
-  {% if not proposta.organizacao %}
-  <h2 id="org_conectada" class="text-warning">
-    {% lng "Proposta ainda sem organização definitiva" "Proposal still without definitive organization" %}
-  </h2><br>
-  {% endif %}
+  <div class="div_arredondado_100_tmp">
 
-  {% with completo=True %}
-    {% include "proposta.html" %}
-  {% endwith %}
-
-  {% with completo=True %}
-    {% include "organizacao.html" %}
-  {% endwith %}
-
-  <strong>
-    {% lng "Submetido por" "Submitted by" %}:
-  </strong><br>
-  {{proposta.nome}}<br><br>
-
-  {% with c_t=proposta|contatos_tec %}
-    {% if proposta.contatos_tecnicos or c_t %}
-      <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
-      {% if proposta.contatos_tecnicos %}
-        {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-        <br>
-      {% endif %}
-      {% if c_t %}
-        {% for contato in c_t %}
-          {{contato}}<br>
-        {% endfor %}
-      {% endif %}
-      <br>
+    {% if not proposta.organizacao %}
+    <h2 id="org_conectada" class="text-warning">
+      {% lng "Proposta ainda sem organização definitiva" "Proposal still without definitive organization" %}
+    </h2><br>
     {% endif %}
-  {% endwith %}
 
-  {% with c_a=proposta|contatos_adm %}
-    {% if proposta.contatos_administrativos or c_a %}
-      <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
-      {% if proposta.contatos_administrativos %}
-        {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-        <br>
-      {% endif %}
-      {% if c_a %}
-        {% for contato in c_a %}
-          {{contato}}<br>
-        {% endfor %}
-      {% endif %}
-      <br>
-    {% endif %}
-  {% endwith %}
-
-  {% with vencido=True areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all com_borda=True %}
-    {% include "areas.html" %}  
-  {% endwith %}
-
-  <hr>
-
-  {% with editavel=True %}
-    {% include "recomendadas.html" %}
-  {% endwith %}
-
-  {% with editavel=True %}
-    {% include "perfil_estudantes.html" %}
-  {% endwith %}
-
-  <hr>
-
+    {% with completo=True %}
+      {% include "proposta.html" %}
+    {% endwith %}
   
-  <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
-    {% csrf_token %}
+    <hr>
 
- 
-    <div class="card card-analise shadow-sm mb-4">
-      <div class="card-header text-white">
-        <h6 class="mb-0" style="font-size: 0.95rem;">
-          <i class="fas fa-clipboard-check mr-2"></i>
-          {% lng "Análise da Proposta" "Proposal Review" %}
-        </h6>
-      </div>
-      <div class="card-body">
-        
-        <!-- Analisada por -->
-        <div class="form-group">
-          <label for="autorizador" class="font-weight-bold">
-            <i class="fas fa-user-check mr-1"></i>
-            {% lng "Analisada por" "Analyzed by" %}
-          </label>
-          <select class="form-control fechar_proposta" name="autorizador" id="autorizador" 
-                  data-toggle="tooltip" data-html="true" animation="true" 
-                  title="Mesmo ao autorizar uma proposta, esta só será visível para os estudantes depois que a liberação de visualização for habilitada."
-                  required>
-            <option selected value class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
-            {% for pessoa in comite %}
-              <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
-                {{ pessoa.get_full_name }}
-              </option>
+    {% with completo=True %}
+      {% include "organizacao.html" %}
+    {% endwith %}
+
+    <div>
+
+      <strong>
+        {% lng "Submetido por" "Submitted by" %}:
+      </strong><br>
+      {{proposta.nome}}<br><br>
+
+      {% with c_t=proposta|contatos_tec %}
+        {% if proposta.contatos_tecnicos or c_t %}
+          <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
+          {% if proposta.contatos_tecnicos %}
+            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+            <br>
+          {% endif %}
+          {% if c_t %}
+            {% for contato in c_t %}
+              {{contato}}<br>
             {% endfor %}
-          </select>
-        </div>
+          {% endif %}
+          <br>
+        {% endif %}
+      {% endwith %}
 
-        <!-- Anotações -->
-        <div class="form-group">
-          <label for="anotacoes" class="font-weight-bold">
-            <i class="fas fa-sticky-note mr-1"></i>
-            {% lng "Anotações" "Notes" %}
-            <span class="text-muted font-weight-normal" style="font-size: 0.85rem;">({% lng "opcional" "optional" %})</span>
-          </label>
-          <textarea class="form-control anotacoes_proposta troca_lingua" name="anotacoes" id="anotacoes" rows="2"
-                    data-pt="Anotações sobre a conformidade da proposta"
-                    data-en="Notes on the proposal's compliance"
-                    placeholder="Anotações sobre a conformidade da proposta"
-                    >{% if proposta.anotacoes %}{{proposta.anotacoes}}{% endif %}</textarea>
-        </div>
-        <script>
-          let lastValue = `{% if proposta.anotacoes %}{{proposta.anotacoes}}{% endif %}`;
-          let saveInterval = 2000; // Tempo em milissegundos (2 segundos)
-          let saveTimeout;
+      {% with c_a=proposta|contatos_adm %}
+        {% if proposta.contatos_administrativos or c_a %}
+          <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
+          {% if proposta.contatos_administrativos %}
+            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+            <br>
+          {% endif %}
+          {% if c_a %}
+            {% for contato in c_a %}
+              {{contato}}<br>
+            {% endfor %}
+          {% endif %}
+          <br>
+        {% endif %}
+      {% endwith %}
 
-          function checkForChanges() {
-            const currentValue = $('#anotacoes').val();
-            if (currentValue !== lastValue) {
-              lastValue = currentValue;
-              clearTimeout(saveTimeout);
-              saveTimeout = setTimeout(fechar_proposta, saveInterval);
-            }
-          }
-
-          $(document).ready(function() {
-            // Verifica mudanças a cada 500ms
-            setInterval(checkForChanges, 500);
-          });
-        </script>
-
-      </div>
     </div>
 
-    {% include "conformidade.html" %}
+    {% with vencido=True areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all com_borda=True %}
+      {% include "areas.html" %}  
+    {% endwith %}
 
-    <div class="card card-disponibilizar shadow-sm mb-4">
-      <div class="card-header text-white">
-        <h6 class="mb-0" style="font-size: 0.95rem;">
-          <i class="fas fa-eye mr-2"></i>
-          {% lng "Disponibilização" "Availability" %}
-        </h6>
-      </div>
-      <div class="card-body">
-        
-        <label class="font-weight-bold mb-2">
-          <i class="fas fa-unlock mr-1"></i>
-          {% lng "Disponibilizar proposta:" "Make proposal available:" %}
-        </label>
-        
-        <div class="radio-group">
-          <div class="radio-item">
-            <input class="fechar_proposta disponibilizar" 
-                  type="radio" 
-                  name="disponibilizar" 
-                  id="disp_sim"
-                  value="sim"
-                  {% if proposta.disponivel %}checked{% endif %}>
-            <label for="disp_sim">
-              {% lng "Sim" "Yes" %}
+    <hr>
+
+    {% with editavel=True %}
+      {% include "recomendadas.html" %}
+    {% endwith %}
+
+    {% with editavel=True %}
+      {% include "perfil_estudantes.html" %}
+    {% endwith %}
+
+    <hr>
+
+    
+    <form method="post" id="disponibilizacaoform" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="card card-analise shadow-sm mb-4">
+        <div class="card-header text-white">
+          <h6 class="mb-0" style="font-size: 0.95rem;">
+            <i class="fas fa-clipboard-check mr-2"></i>
+            {% lng "Análise da Proposta" "Proposal Review" %}
+          </h6>
+        </div>
+        <div class="card-body">
+          
+          <!-- Analisada por -->
+          <div class="form-group">
+            <label for="autorizador" class="font-weight-bold">
+              <i class="fas fa-user-check mr-1"></i>
+              {% lng "Analisada por" "Analyzed by" %}
             </label>
+            <select class="form-control fechar_proposta" name="autorizador" id="autorizador" 
+                    data-toggle="tooltip" data-html="true" animation="true" 
+                    title="Mesmo ao autorizar uma proposta, esta só será visível para os estudantes depois que a liberação de visualização for habilitada."
+                    required>
+              <option selected value class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
+              {% for pessoa in comite %}
+                <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
+                  {{ pessoa.get_full_name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Anotações -->
+          <div class="form-group">
+            <label for="anotacoes" class="font-weight-bold">
+              <i class="fas fa-sticky-note mr-1"></i>
+              {% lng "Anotações" "Notes" %}
+              <span class="text-muted font-weight-normal" style="font-size: 0.85rem;">({% lng "opcional" "optional" %})</span>
+            </label>
+            <textarea class="form-control anotacoes_proposta troca_lingua" name="anotacoes" id="anotacoes" rows="2"
+                      data-pt="Anotações sobre a conformidade da proposta"
+                      data-en="Notes on the proposal's compliance"
+                      placeholder="Anotações sobre a conformidade da proposta"
+                      >{% if proposta.anotacoes %}{{proposta.anotacoes}}{% endif %}</textarea>
+          </div>
+          <script>
+            let lastValue = `{% if proposta.anotacoes %}{{proposta.anotacoes}}{% endif %}`;
+            let saveInterval = 2000; // Tempo em milissegundos (2 segundos)
+            let saveTimeout;
+
+            function checkForChanges() {
+              const currentValue = $('#anotacoes').val();
+              if (currentValue !== lastValue) {
+                lastValue = currentValue;
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(fechar_proposta, saveInterval);
+              }
+            }
+
+            $(document).ready(function() {
+              // Verifica mudanças a cada 500ms
+              setInterval(checkForChanges, 500);
+            });
+          </script>
+
+        </div>
+      </div>
+
+      {% include "conformidade.html" %}
+
+      <div class="card card-disponibilizar shadow-sm mb-4">
+        <div class="card-header text-white">
+          <h6 class="mb-0" style="font-size: 0.95rem;">
+            <i class="fas fa-eye mr-2"></i>
+            {% lng "Disponibilização" "Availability" %}
+          </h6>
+        </div>
+        <div class="card-body">
+          
+          <label class="font-weight-bold mb-2">
+            <i class="fas fa-unlock mr-1"></i>
+            {% lng "Disponibilizar proposta:" "Make proposal available:" %}
+          </label>
+          
+          <div class="radio-group">
+            <div class="radio-item">
+              <input class="fechar_proposta disponibilizar" 
+                    type="radio" 
+                    name="disponibilizar" 
+                    id="disp_sim"
+                    value="sim"
+                    {% if proposta.disponivel %}checked{% endif %}>
+              <label for="disp_sim">
+                {% lng "Sim" "Yes" %}
+              </label>
+            </div>
+            
+            <div class="radio-item">
+              <input class="fechar_proposta disponibilizar" 
+                    type="radio" 
+                    name="disponibilizar" 
+                    id="disp_nao"
+                    value="nao"
+                    {% if not proposta.disponivel %}checked{% endif %}>
+              <label for="disp_nao">
+                {% lng "Não" "No" %}
+              </label>
+            </div>
           </div>
           
-          <div class="radio-item">
-            <input class="fechar_proposta disponibilizar" 
-                  type="radio" 
-                  name="disponibilizar" 
-                  id="disp_nao"
-                  value="nao"
-                  {% if not proposta.disponivel %}checked{% endif %}>
-            <label for="disp_nao">
-              {% lng "Não" "No" %}
-            </label>
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            <span>
+              {% lng "Previsão para liberar visualização de propostas para estudantes em:" "Forecast to release proposal visualization for students on:" %}
+              <strong>{% lng_dl liberacao_visualizacao.startDate %}</strong>
+            </span>
           </div>
+
         </div>
-        
-        <div class="info-text">
-          <i class="fas fa-info-circle"></i>
-          <span>
-            {% lng "Previsão para liberar visualização de propostas para estudantes em:" "Forecast to release proposal visualization for students on:" %}
-            <strong>{% lng_dl liberacao_visualizacao.startDate %}</strong>
-          </span>
+      </div>
+
+      {% include "prioridades.html" %}
+
+      <div class="card card-analise shadow-sm mb-4">
+        <div class="card-header text-white">
+          <h6 class="mb-0" style="font-size: 0.95rem;">
+            <i class="fas fa-users mr-2"></i>
+            {% lng "Estudantes Aplicando para a Proposta" "Students Applying for the Proposal" %}
+          </h6>
         </div>
-
-      </div>
-    </div>
-
-    {% include "prioridades.html" %}
-
-    <div class="card card-analise shadow-sm mb-4">
-      <div class="card-header text-white">
-        <h6 class="mb-0" style="font-size: 0.95rem;">
-          <i class="fas fa-users mr-2"></i>
-          {% lng "Estudantes Aplicando para a Proposta" "Students Applying for the Proposal" %}
-        </h6>
-      </div>
-      <div class="card-body">
-        <table id="OpcoesEstudantesTable" class="table-bordered table-hover">
-          <thead class="table-info">
-            <tr>
-              <th title="Nome do estudante">{% lng "Nome" "Name" %}</th>
-              <th title="Curso do estudante">{% lng "Curso" "Program" %}</th>
-              <th style="width: 5em;" title="Prioridade de opção do estudante">{% lng "Ordem" "Order" %}</th>
-              <th style="width: 3em;" title="Coeficiente de Rendimento Acadêmico do estudante">{% lng "CR" "GPA" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for estudante in sem_opcao %}
-              <tr class="font-weight-bold" style="background-color:rgb(255, 148, 255);">
-                <td><a href="{% url 'estudante_detail' estudante.id %}">{{estudante.user.get_full_name}}</a></td>
-                <td>{{estudante.curso2}}</td>
-                <td class="text-center" data-order="0">
-                  {% lng "SEM" "WITHOUT" %}
-                </td>
-                <td class="text-right">{{estudante.cr|floatformat:2}}</td>
+        <div class="card-body">
+          <table id="OpcoesEstudantesTable" class="table-bordered table-hover">
+            <thead class="table-info">
+              <tr>
+                <th title="Nome do estudante">{% lng "Nome" "Name" %}</th>
+                <th title="Curso do estudante">{% lng "Curso" "Program" %}</th>
+                <th style="width: 5em;" title="Prioridade de opção do estudante">{% lng "Ordem" "Order" %}</th>
+                <th style="width: 3em;" title="Coeficiente de Rendimento Acadêmico do estudante">{% lng "CR" "GPA" %}</th>
               </tr>
-            {% endfor %}
-            {% for opcao in proposta.opcao_set.all %}
-              <tr class="{% if opcao.aluno in estudantes %}font-weight-bold{% endif %}"
-              style="background-color:
-                {% if opcao.prioridade == 1 %}
-                  {{cores_opcoes.0}}
-                {% elif opcao.prioridade == 2 %}
-                  {{cores_opcoes.1}}
-                {% elif opcao.prioridade == 3 %}
-                  {{cores_opcoes.2}}
-                {% elif opcao.prioridade == 4 %}
-                  {{cores_opcoes.3}}
-                {% elif opcao.prioridade == 5 %}
-                  {{cores_opcoes.4}}
-                {% else %}
-                  rgb(158, 158, 158)
-                {% endif %};">
-                <td><a href="{% url 'estudante_detail' opcao.aluno.id %}">{{opcao.aluno.user.get_full_name}}</a></td>
-                <td>{{opcao.aluno.curso2}}</td>
-                <td class="text-center" data-order="{{opcao.prioridade}}">{{opcao.prioridade}}</td>
-                <td class="text-right">{{opcao.aluno.cr|floatformat:2}}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-          <caption style="caption-side: bottom; font-size: 0.9em; padding-top: 1px; text-align: right;">
-            {% lng "Estudantes em negrito foram selecionados para a proposta" "Students in bold were selected for the proposal" %}
-          </caption>
-        </table>
+            </thead>
+            <tbody>
+              {% for estudante in sem_opcao %}
+                <tr class="font-weight-bold" style="background-color:rgb(255, 148, 255);">
+                  <td><a href="{% url 'estudante_detail' estudante.id %}">{{estudante.user.get_full_name}}</a></td>
+                  <td>{{estudante.curso2}}</td>
+                  <td class="text-center" data-order="0">
+                    {% lng "SEM" "WITHOUT" %}
+                  </td>
+                  <td class="text-right">{{estudante.cr|floatformat:2}}</td>
+                </tr>
+              {% endfor %}
+              {% for opcao in proposta.opcao_set.all %}
+                <tr class="{% if opcao.aluno in estudantes %}font-weight-bold{% endif %}"
+                style="background-color:
+                  {% if opcao.prioridade == 1 %}
+                    {{cores_opcoes.0}}
+                  {% elif opcao.prioridade == 2 %}
+                    {{cores_opcoes.1}}
+                  {% elif opcao.prioridade == 3 %}
+                    {{cores_opcoes.2}}
+                  {% elif opcao.prioridade == 4 %}
+                    {{cores_opcoes.3}}
+                  {% elif opcao.prioridade == 5 %}
+                    {{cores_opcoes.4}}
+                  {% else %}
+                    rgb(158, 158, 158)
+                  {% endif %};">
+                  <td><a href="{% url 'estudante_detail' opcao.aluno.id %}">{{opcao.aluno.user.get_full_name}}</a></td>
+                  <td>{{opcao.aluno.curso2}}</td>
+                  <td class="text-center" data-order="{{opcao.prioridade}}">{{opcao.prioridade}}</td>
+                  <td class="text-right">{{opcao.aluno.cr|floatformat:2}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <caption style="caption-side: bottom; font-size: 0.9em; padding-top: 1px; text-align: right;">
+              {% lng "Estudantes em negrito foram selecionados para a proposta" "Students in bold were selected for the proposal" %}
+            </caption>
+          </table>
+        </div>
       </div>
-    </div>
 
-    <script>
-      $(document).ready(function() {
-        function toggleConformidade() {
-            var autorizadorValue = $("#autorizador").val();
-            if (autorizadorValue === '0' || autorizadorValue === '') {
-                $(".conformidade").prop("disabled", true);
-            } else {
-                $(".conformidade").prop("disabled", false);
-            }
-        }
-
-        // Primeira interação
-        toggleConformidade();
-
-        // Sempre que mudar verificar
-        $("#autorizador").change(function() {
-            toggleConformidade();
-        });
-
-        function toggleDisponibilizar() {
-          var allChecked = true;
-          $(".conformidade").each(function() {
-              if (!$(this).is(":checked")) {
-                  allChecked = false;
+      <script>
+        $(document).ready(function() {
+          function toggleConformidade() {
+              var autorizadorValue = $("#autorizador").val();
+              if (autorizadorValue === '0' || autorizadorValue === '') {
+                  $(".conformidade").prop("disabled", true);
+              } else {
+                  $(".conformidade").prop("disabled", false);
               }
+          }
+
+          // Primeira interação
+          toggleConformidade();
+
+          // Sempre que mudar verificar
+          $("#autorizador").change(function() {
+              toggleConformidade();
           });
 
-          if (allChecked) {
-              $(".disponibilizar").prop("disabled", false);
-          } else {
-              $(".disponibilizar").prop("disabled", true);
+          function toggleDisponibilizar() {
+            var allChecked = true;
+            $(".conformidade").each(function() {
+                if (!$(this).is(":checked")) {
+                    allChecked = false;
+                }
+            });
+
+            if (allChecked) {
+                $(".disponibilizar").prop("disabled", false);
+            } else {
+                $(".disponibilizar").prop("disabled", true);
+            }
           }
-        }
 
-        // Initial check
-        toggleDisponibilizar();
+          // Initial check
+          toggleDisponibilizar();
 
-        // Check on change
-        $(".conformidade").change(function() {
-            toggleDisponibilizar();
+          // Check on change
+          $(".conformidade").change(function() {
+              toggleDisponibilizar();
+          });
+
         });
 
-      });
+      </script>
 
-    </script>
+      <br>
+      <div style="max-width: 56em; text-align: center;">
+        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">
+          {% lng "Editar Proposta" "Edit Proposal" %}
+        </a>
+        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">
+          {% lng "Visão do Estudante" "Student View" %}
+        </a>
+        
+        {% for projeto in projetos %}
+          <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_infos' projeto.id %}">
+            {% lng "Projeto" "Project" %}
+            {{projeto.ano}}.{{projeto.semestre}}
+          </a>
+          <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')">
+            {% lng "Remover Proposta" "Remove Proposal" %}
+          </a>
+        {% empty %}
+          <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
+          onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
+          <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')">
+            {% lng "Remover Proposta" "Remove Proposal" %}
+          </a>
+        {% endfor %}
+      </div>
+      <br>
 
-    <br>
-    <div style="max-width: 56em; text-align: center;">
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">
-        {% lng "Editar Proposta" "Edit Proposal" %}
-      </a>
-      <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_detalhes' proposta.id %}">
-        {% lng "Visão do Estudante" "Student View" %}
-      </a>
-      
-      {% for projeto in projetos %}
-        <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'projeto_infos' projeto.id %}">
-          {% lng "Projeto" "Project" %}
-          {{projeto.ano}}.{{projeto.semestre}}
-        </a>
-        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" onClick="return confirm('Proposta possui um projeto e não pode ser removida')">
-          {% lng "Remover Proposta" "Remove Proposal" %}
-        </a>
-      {% empty %}
-        <a class="btn btn-primary mb-1 mt-2" data-toggle="tooltip" data-html="true" animation="true" title="criar projeto dessa proposta"
-        onclick="cria_projeto()" style="width: 13em; padding-bottom: 3px; color:white;">Criar Projeto</a>
-        <a class="btn btn-danger mb-1 mt-2" style="width: 13em; color:white;" href="{% url 'proposta_remover' proposta.slug %}" onClick="return confirm('Tem certeza que deseja remover proposta definitivamente?')">
-          {% lng "Remover Proposta" "Remove Proposal" %}
-        </a>
-      {% endfor %}
-    </div>
-    <br>
-
-  {% if not projetos %}
-    <script>
-      function cria_projeto() {
-        if (confirm('Não existe um projeto para essa proposta, deseja criar?')) {
-          window.open("{% url 'projeto_criar' proposta.id %}");
+    {% if not projetos %}
+      <script>
+        function cria_projeto() {
+          if (confirm('Não existe um projeto para essa proposta, deseja criar?')) {
+            window.open("{% url 'projeto_criar' proposta.id %}");
+          }
         }
-      }
-    </script>
-  {% endif %}
+      </script>
+    {% endif %}
 
-  </form>
+    </form>
+    
+  </div>
 
   <script>
       

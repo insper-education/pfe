@@ -11,8 +11,6 @@
 {% load linguas %}
 
 {% if proposta.nome_organizacao or proposta.organizacao or proposta.website %}
-  <hr>
-
   <style>
     .entrada_pri {
       font-size: 25px;
@@ -69,6 +67,7 @@
         </u>
       </a>
     {% endif %}
+
     {% if completo %}
       <span class="esconder">
         <a data-proposta='{{proposta.id}}'
@@ -87,7 +86,7 @@
     <br>
   </span>
   
-  <p>
+  <div>
     {% if proposta.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
        Endereço onde os alunos deverão se deslocar para desenvolver o projeto.
@@ -115,9 +114,9 @@
       </u>
     {% endif %}
     <br>
-  </p>
+  </div>
 
-  <p>
+  <div>
     <strong data-toggle="tooltip" data-html="true" animation="true" title="
      Site da organização e/ou projeto.
     ">
@@ -134,30 +133,30 @@
           </u>
         </a>
     {% endif %}
-    <br><br>
-  </p>
+  </div>
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.descricao_organizacao %}    
-    <p><strong>
-      {% lng "Informações sobre a empresa:" "Information about the company:" %}
-    </strong>
-    {{proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
-    <br></p>
+    <div><strong>
+        {% lng "Informações sobre a empresa:" "Information about the company:" %}
+      </strong>
+      {{proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
+    </div>
   {% elif proposta.organizacao and proposta.organizacao.informacoes %}
-    <p><strong>
-      {% lng "Informações sobre a empresa:" "Information about the company:" %}
-    </strong>
-    {{proposta.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
-    <br></p>
+    <div><strong>
+        {% lng "Informações sobre a empresa:" "Information about the company:" %}
+      </strong>
+      {{proposta.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
+    </div>
   {% endif %}
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.departamento %}
-    <p><strong>
-      {% lng "Informações sobre o departamento na organização:" "Information about the department in the organization:" %}
-    </strong>
-    {{proposta.departamento|linebreaks|bleach_urlize|safe}}<br></p>
+    <div><strong>
+        {% lng "Informações sobre o departamento na organização:" "Information about the department in the organization:" %}
+      </strong>
+      {{proposta.departamento|linebreaks|bleach_urlize|safe}}
+    </div>
   {% endif %}
 
   {% include "base-modal.html" %}

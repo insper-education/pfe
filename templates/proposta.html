@@ -36,7 +36,7 @@
       </b> {{proposta.descricao|linebreaks|bleach_urlize|safe}}
     </div>
   {% else %}
-    <p><u>{% lng "Campo de descrição ausente." "Description field missing." %}<u><br></p>
+    <div><u>{% lng "Campo de descrição ausente." "Description field missing." %}<u></div>
   {% endif %}
 
   {% if proposta.expectativas %}
@@ -47,7 +47,7 @@
         Independente do que as organizações sugerirem nesse campo, existem uma série de relatórios, apresentações, vídeos e outros materiais como obrigatórios.">
         {% lng "Expectativas de resultados/entregas:" "Expected results/deliverables:" %}
       </b>
-      {{proposta.expectativas|linebreaks|bleach_urlize|safe}}<br>
+      {{proposta.expectativas|linebreaks|bleach_urlize|safe}}
     </div>
   {% else %}
       <p><u>{% lng "Campo de expectativas ausente." "Expectations field missing." %}<u><br></p>
@@ -61,7 +61,7 @@
         Não existe nenhuma garantia que o Insper irá suprir material de consumo para os grupos de estudantes, em geral não há recursos para isso.">
         {% lng "Recursos a serem disponibilizados:" "Resources to be made available:" %}
       </b>
-      {{proposta.recursos|linebreaks|bleach_urlize|safe}}<br>
+      {{proposta.recursos|linebreaks|bleach_urlize|safe}}
     </div>
   {% endif %}
 
@@ -71,7 +71,7 @@
        title="Outras observações que a organização parceira considerou relevante para informar aos estudantes.">
         {% lng "Outras observações:" "Other observations:" %}
       </b>
-      {{proposta.observacoes|linebreaks|bleach_urlize|safe}}<br>
+      {{proposta.observacoes|linebreaks|bleach_urlize|safe}}
     </div>
   {% endif %}
 
@@ -83,15 +83,16 @@
   {% endif %}
   
   {% if completo %}
-    <br>
-    <b>{% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}</b><br>
-    <ul>
-    {% for interesse in proposta.get_interesses_selecionados %}
-      <li>{% lng interesse.1.1 interesse.1.2 %}</li>
-    {% empty %}
-      {% lng "Nenhuma opção de interesses foi selecionada" "No interest option was selected" %}
-    {% endfor %}
-    </ul>
+    <div>
+      <b>{% lng "O principal interesse com o projeto é:" "The main interest with the project is:" %}</b><br>
+      <ul>
+      {% for interesse in proposta.get_interesses_selecionados %}
+        <li>{% lng interesse.1.1 interesse.1.2 %}</li>
+      {% empty %}
+        {% lng "Nenhuma opção de interesses foi selecionada" "No interest option was selected" %}
+      {% endfor %}
+      </ul>
+    </div>
   {% endif %}
 
 {% else %}

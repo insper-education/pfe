@@ -28,7 +28,7 @@
 }
 
 .div_arredondado_100 > div {
-  display: block;
+  /* display: block;  Isso dá problema com o layout modal*/
   max-width: 100%;
   border: 1px solid #e0e0e0;
   border-radius: 6px;

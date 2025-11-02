@@ -73,9 +73,10 @@
     .aluno-accent { width: 3px; height: 100%; border-radius: 2px; background: #9ac3ff; }
     .associado-accent { width: 3px; height: 100%; border-radius: 2px; background: #85e3a1; }
     .conexao-accent { width: 3px; height: 100%; border-radius: 2px; background: #f5d185; }
+    .orientador-accent { width: 3px; height: 100%; border-radius: 2px; background: #f22066ff; }
     .coorientador-accent { width: 3px; height: 100%; border-radius: 2px; background: #c985f5; }
 
-    .usuario-item.is-externo .aluno-accent { background: #f59f85; } /* externo highlight */
+    .usuario-item.is-externo .aluno-accent { background: #51effdff; } /* externo highlight */
 
     .usuario-item:hover { background: #f9fbff; }
     .aluno-extra { padding: 0 12px 10px 20px; }
@@ -379,16 +380,24 @@
         <h5>{% lng_g projeto.orientador.user.genero "Orientador" "Orientadora" "Advisor" %}:</h5>
       {% endif %}
       <div class="ml-1">
-        &#8614;
-        {% if user.eh_prof_a %}
-          <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
-        {% else %}
-          {{projeto.orientador.user.get_full_name}}
-        {% endif %}
-        <a href="mailto:{{projeto.orientador.user.email}}">
-          <span class="texto-longo">&lt;{{projeto.orientador.user.email}}&gt;</span>
-          <span class="texto-curto"><i class="far fa-envelope"></i></span>
-        </a>
+        <ul class="usuarios-stack">
+          <details class="usuario-item">
+            <summary>
+              <span class="orientador-accent"></span>
+              <div>
+                {% if user.eh_prof_a %}
+                  <a href="{% url 'professor_detail' projeto.orientador.id %}">{{projeto.orientador.user.get_full_name}}</a>
+                {% else %}
+                  {{projeto.orientador.user.get_full_name}}
+                {% endif %}
+                <a href="mailto:{{projeto.orientador.user.email}}">
+                  <span class="texto-longo">&lt;{{projeto.orientador.user.email}}&gt;</span>
+                  <span class="texto-curto"><i class="far fa-envelope"></i></span>
+                </a>
+              </div>
+            </summary>
+          </details>
+        </ul>
       </div>
     {% else %}
       <h4>{% lng "Orientador não definido" "Advisor not defined" %}</h4>
