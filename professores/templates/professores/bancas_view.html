@@ -380,7 +380,7 @@
         <thead>
           <tr>
             <th colspan="2"><b>{% lng "Membros da Banca" "Board Members" %}:</b></th>
-            <th><small id="horarios_outros_bancas" style="display: none;">{% lng "Horários de outras bancas agendadas" "Scheduled Times of Other Committees" %}:</small></th>
+            <th style="padding: 0 6px;"><small id="horarios_outros_bancas" style="display: none;">{% lng "Horários de outras bancas agendadas" "Scheduled Times of Other Committees" %}:</small></th>
           </tr>
         </thead>
         <tbody>
@@ -564,11 +564,11 @@
           for(var i=0; i < data.lista_bancas.length; i++) {
             var banca = data.lista_bancas[i];
             var texto = banca.data;
-            textos.push(texto);
+            textos.push("<span style='font-size: 10px; font-weight: bold; white-space: nowrap; display: inline-block; margin-bottom: 2px; border: 2px solid #ccc; padding: 3px; border-radius: 6px; background-color: #e8e9ea;'>" + texto + "</span>");
           }
-          membro_bancas.html(textos.join("; "));
+          membro_bancas.html(textos.join(" "));
           if(data.lista_bancas.length == 3) {
-            membro_bancas.css("color", "orange");
+            membro_bancas.css("color", "#f39e00ff"); // laranja
           } else if(data.lista_bancas.length > 3) {
             membro_bancas.css("color", "red");
           }
