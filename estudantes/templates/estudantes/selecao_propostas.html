@@ -192,6 +192,11 @@
                       <i class="anteriores" style="float:right;"><span class="seta seta-baixo"></span></i>
                       <div id="relato{{item.id}}" style="display: none; background-color: #f9f9f2; padding: 5px;" class="relato">
                         {{proposta.descricao|linebreaks}}
+                        <div class="mt-1">{% comment %} Mostra cursos {% endcomment %}
+                          {% for curso in proposta.cursos %}
+                            <span class="badge badge-light border curso-badge mr-1">{% lng curso.nome curso.nome_en %}</span>
+                          {% endfor %}
+                        </div>
                       </div>
 
                     </td>
@@ -213,7 +218,7 @@
 
         <small>
           {% lng "Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia" "When you decide on the desired projects, click <b>Confirm</b>. You can reconfirm as many times as you want until" %}
-          {{prazo}}.
+          {% lng_dl prazo %}.
         </small><br>
 
         <div class="row mt-3">
