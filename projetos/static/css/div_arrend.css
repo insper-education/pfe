@@ -10,7 +10,7 @@
 }
 
 .div_arredondado > div {
-  display: block;
+  /* display: block;  Isso dá problema com o layout modal*/
   max-width: 100%;
 }
 

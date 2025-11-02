@@ -470,7 +470,7 @@ def ajax_proposta(request, primarykey=None):
                     proposta.autorizado = None
                 else:
                     proposta.autorizado = PFEUser.objects\
-                        .get(pk=int(request.POST["autorizador"]))
+                        .get(pk=request.POST["autorizador"])
             except PFEUser.DoesNotExist:
                 return HttpResponse("Analisador não encontrado.", status=401)
         

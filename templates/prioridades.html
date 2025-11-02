@@ -6,7 +6,27 @@
 
 {% load linguas %}
 
-<div class="card card-recomendadas shadow-sm mb-4" >
+<style>
+  
+  .card-prioridades {
+    border-radius: 8px;
+    border: none;
+    width: 700px;
+  }
+
+  .card-prioridades .card-header {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #b942c1ff 0%, #a332a3ff 100%);
+  }
+
+  .card-prioridades .card-body {
+    padding: 1rem;
+  }
+</style>
+
+<div class="card card-prioridades shadow-sm mb-4" >
   <div class="card-header text-white">
     <h5 class="mb-0" style="font-size: 1rem;">
       <i class="fas fa-chart-line mr-2"></i>

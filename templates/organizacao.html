@@ -86,7 +86,7 @@
     <br>
   </span>
   
-  <div>
+  <div class="mb-2">
     {% if proposta.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
        Endereço onde os alunos deverão se deslocar para desenvolver o projeto.
@@ -116,7 +116,7 @@
     <br>
   </div>
 
-  <div>
+  <div class="mb-2">
     <strong data-toggle="tooltip" data-html="true" animation="true" title="
      Site da organização e/ou projeto.
     ">
@@ -137,13 +137,13 @@
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.descricao_organizacao %}    
-    <div><strong>
+    <div class="mb-2"><strong>
         {% lng "Informações sobre a empresa:" "Information about the company:" %}
       </strong>
       {{proposta.descricao_organizacao|linebreaks|bleach_urlize|safe}}
     </div>
   {% elif proposta.organizacao and proposta.organizacao.informacoes %}
-    <div><strong>
+    <div class="mb-2"><strong>
         {% lng "Informações sobre a empresa:" "Information about the company:" %}
       </strong>
       {{proposta.organizacao.informacoes|linebreaks|bleach_urlize|safe}}
@@ -152,7 +152,7 @@
 
   {% comment %} Campo opcional {% endcomment %}
   {% if proposta.departamento %}
-    <div><strong>
+    <div class="mb-2"><strong>
         {% lng "Informações sobre o departamento na organização:" "Information about the department in the organization:" %}
       </strong>
       {{proposta.departamento|linebreaks|bleach_urlize|safe}}

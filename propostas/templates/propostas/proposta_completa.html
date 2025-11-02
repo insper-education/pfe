@@ -359,7 +359,7 @@
                     data-toggle="tooltip" data-html="true" animation="true" 
                     title="Mesmo ao autorizar uma proposta, esta só será visível para os estudantes depois que a liberação de visualização for habilitada."
                     required>
-              <option selected value class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
+              <option selected value='0' class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
               {% for pessoa in comite %}
                 <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
                   {{ pessoa.get_full_name }}

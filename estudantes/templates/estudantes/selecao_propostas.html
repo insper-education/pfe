@@ -16,13 +16,9 @@
 
     .botaopequeno{
       box-shadow: inset 0px 1px 3px 0px #91b8b3;
-      /*background: linear-gradient(to bottom, #96ada7 5%, #8c9c9c 100%);*/
-      /*background-color: #96ada7;*/
       border-radius: 5px;
-      /*border: 1px solid #768983;*/
       display: inline-block;
       cursor: pointer;
-      /*color: #ffffff;*/
       font-family: Arial;
       font-size: 13px;
       font-weight: bold;
@@ -41,7 +37,6 @@
     }
 
     .ordenar {
-      
       background-color: #96ada7;
       border: 1px solid #768983;
       color: #ffffff;
@@ -102,6 +97,10 @@
       border-radius: 0 0.25rem 0.25rem 0;
     }
 
+    .linha_proposta {
+      background-color: #fcfcfc;
+    }
+
   </style>
   
 {% endblock %}
@@ -126,7 +125,7 @@
       <a href="{% url 'informacoes_adicionais' %}">
         {% lng "Áreas de Interesse" "Areas of Interest" %}
       </a>
-    <h5><br><br>
+    <h5><br>
   {% endif %}
 
   <div class="container-fluid mt-1">
@@ -155,7 +154,7 @@
               <tbody>
               {% for proposta in propostas %} 
                 {% if proposta.disponivel %}
-                  <tr class="table-row" data-cursos="{% for curso in proposta.cursos %}{{curso.sigla}} {% endfor %}">
+                  <tr class="table-row linha_proposta" data-cursos="{% for curso in proposta.cursos %}{{curso.sigla}} {% endfor %}">
                     <th scope="row" class="linha_th align-middle text-center" style="width: 1%;">
                       <div class="select-wrapper">
                         <select
