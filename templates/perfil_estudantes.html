@@ -10,7 +10,6 @@
   .card-perfil {
     border-radius: 8px;
     border: none;
-    max-width: 900px;
   }
   
   .card-perfil .card-header {
@@ -22,6 +21,7 @@
   
   .card-perfil .card-body {
     padding: 1rem;
+    max-width: 700px;
   }
   
   .obs {
@@ -38,10 +38,10 @@
     font-size: 0.9rem;
   }
 
-  .perfil-table tbody td {
-    width: auto;
-    min-width: 90px;
-    max-width: 90px;
+  .perfil-table tbody td, .nome_curso {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
   }
 
   .perfil-table tbody td.vertical-text-tab {
@@ -144,7 +144,7 @@
               <th colspan="2"></th>
               {% for curso in cursos %}
                 {% if curso.curso_do_insper %}
-                  <th>
+                  <th class="nome_curso">
                     {% lng curso.nome curso.nome_en %}
                     {% if editavel %}
                       <br>
@@ -161,7 +161,7 @@
           <tbody>
             <tr>
               <td class="vertical-text-tab" rowspan="4">
-                {% lng "Estudantes" "Students" %}
+                {% lng "Estudante" "Student" %}
               </td>
               <td class="row-header">#1</td>
               {% for curso in cursos %}

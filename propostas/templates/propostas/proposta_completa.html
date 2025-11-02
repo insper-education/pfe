@@ -312,7 +312,7 @@
                   data-toggle="tooltip" data-html="true" animation="true" 
                   title="Mesmo ao autorizar uma proposta, esta só será visível para os estudantes depois que a liberação de visualização for habilitada."
                   required>
-            <option value='0'>{% lng "Selecione um revisor" "Select a reviewer" %}</option>
+            <option selected value class="troca_lingua" data-pt="-- selecione um revisor --" data-en="-- select a reviewer --">-- selecione um revisor --</option>
             {% for pessoa in comite %}
               <option value="{{pessoa.id}}" {% if pessoa.id == proposta.autorizado.id %}selected{% endif %}>
                 {{ pessoa.get_full_name }}
@@ -328,7 +328,9 @@
             {% lng "Anotações" "Notes" %}
             <span class="text-muted font-weight-normal" style="font-size: 0.85rem;">({% lng "opcional" "optional" %})</span>
           </label>
-          <textarea class="form-control anotacoes_proposta" name="anotacoes" id="anotacoes" rows="2"
+          <textarea class="form-control anotacoes_proposta troca_lingua" name="anotacoes" id="anotacoes" rows="2"
+                    data-pt="Anotações sobre a conformidade da proposta"
+                    data-en="Notes on the proposal's compliance"
                     placeholder="Anotações sobre a conformidade da proposta"
                     >{% if proposta.anotacoes %}{{proposta.anotacoes}}{% endif %}</textarea>
         </div>
@@ -401,7 +403,7 @@
           <i class="fas fa-info-circle"></i>
           <span>
             {% lng "Previsão para liberar visualização de propostas para estudantes em:" "Forecast to release proposal visualization for students on:" %}
-            <strong>{{liberacao_visualizacao.startDate}}</strong>
+            <strong>{% lng_dl liberacao_visualizacao.startDate %}</strong>
           </span>
         </div>
 
@@ -514,7 +516,7 @@
 
     </script>
 
-    <br><br>
+    <br>
     <div style="max-width: 56em; text-align: center;">
       <a class="btn btn-primary mb-1 mt-2" style="width: 13em;" href="{% url 'proposta_editar' proposta.slug %}">
         {% lng "Editar Proposta" "Edit Proposal" %}
