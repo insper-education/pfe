@@ -101,10 +101,10 @@
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">{% lng "Projeto" "Project" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Período" "Semester" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Orientador" "Advisor" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediário">Inter.</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)', 'n')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Intermediário">Inter.</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)', 'n')" data-toggle="tooltip" data-html="true" animation="true" title="Relatório Final">Final</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)', 'n')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">Inter.</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)', 'n')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">Final</th>
             </tr>      
           </thead>
 
@@ -191,7 +191,11 @@
                       {% endif %}
                       {% if relatorio_intermediario.nota_texto %}
                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_intermediario.conceito|safe }}">
-                        {{ relatorio_intermediario.nota_texto|safe }}
+                        {% lng_2 relatorio_intermediario.nota %}
+
+
+{% comment %} <span lang="pt">{% language "pt-br" %}{{val.0|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{val.0|floatformat:2}}{% endlanguage %}</span>&plusmn;<span lang="pt">{% language "pt-br" %}{{val.1|floatformat:2}}{% endlanguage %}</span><span lang="en" style="display:none">{% language "en" %}{{val.1|floatformat:2}}{% endlanguage %}</span> {% endcomment %}
+
                       {% else %}
                         >
                           {% if relatorio_intermediario.nota_incompleta > 0 %}
@@ -213,7 +217,7 @@
                       {% endif %}
                       {% if relatorio_final.nota_texto %}
                        data-toggle="tooltip" data-html="true" animation="true" title="{{ relatorio_final.conceito|safe }}">
-                        {{ relatorio_final.nota_texto|safe }}
+                        {% lng_2 relatorio_final.nota %}
                       {% else %}
                         >
                           {% if relatorio_final.nota_incompleta > 0 %}
@@ -235,7 +239,7 @@
                       {% endif %}
                       {% if banca_intermediaria.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_intermediaria.conceito|safe }}">
-                        {{ banca_intermediaria.nota_texto|safe }}
+                        {% lng_2 banca_intermediaria.nota %}
                       {% else %}
                         >
                           {% if banca_intermediaria.nota_incompleta > 0 %}
@@ -257,7 +261,7 @@
                       {% endif %}
                       {% if banca_final.nota_texto %}
                         data-toggle="tooltip" data-html="true" animation="true" title="{{ banca_final.conceito|safe }}">
-                        {{ banca_final.nota_texto|safe }}
+                        {% lng_2 banca_final.nota %}
                       {% else %}
                         >
                           {% if banca_final.nota_incompleta > 0 %}
