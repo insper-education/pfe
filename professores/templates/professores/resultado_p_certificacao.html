@@ -108,15 +108,15 @@
 
           <thead>
             <tr>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)')">#</th> 
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(1)', 'n')">#</th> 
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(2)')">{% lng "Projeto" "Project" %}</th>
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)')">{% lng "Período" "Semester" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(3)', 'n')">{% lng "Período" "Semester" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(4)')">{% lng "Orientador" "Advisor" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(5)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Intermediária">{% lng "Banca Inter." "Inter. Board" %}</th> {% comment %} Banca Intermediária {% endcomment %}
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(6)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Final">{% lng "Banca Final" "Final Board" %}</th> {% comment %} Banca Final {% endcomment %}
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)')">{% lng "Média Bancas" "Average Boards" %}</th>
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(7)', 'n')">{% lng "Média Bancas" "Average Boards" %}</th>
               <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(8)')" data-toggle="tooltip" data-html="true" animation="true" title="Banca Falconi">{% lng "Banca Falconi" "Falconi Board" %}</th> {% comment %} Banca Falconi {% endcomment %}
-              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(9)')" data-toggle="tooltip" data-html="true" animation="true" title="Nota Certificado">{% lng "Nota Certificado" "Certificate Grade" %}</th> {% comment %} Nota Certificado {% endcomment %}
+              <th onclick="sort('#ProjetosTable', '.item', 'td:nth-child(9)', 'n')" data-toggle="tooltip" data-html="true" animation="true" title="Nota Certificado">{% lng "Nota Certificado" "Certificate Grade" %}</th> {% comment %} Nota Certificado {% endcomment %}
             </tr>      
           </thead>
 
@@ -185,8 +185,7 @@
                     {% comment %} Só para pegar as notas só de grupo {% endcomment %}
                     {% with media=alocacao|get_media_alocacao %}
                     <td> {% comment %} <!-- Grupo --> {% endcomment %}
-                      <span lang="pt">{% language "pt-br" %}{{ media.media_grupo|floatformat:2}}{% endlanguage %}</span>
-                      <span lang="en" style="display:none">{% language "en" %}{{ media.media_grupo|floatformat:2}}{% endlanguage %}</span>
+                      {% lng_2 media.media_grupo %}
                     </td>
                     {% endwith %}
                   {% endwith %}
@@ -217,11 +216,11 @@
                   {% comment %} Nota Banca Falconi {% endcomment %}
                   <td class="text-center" style="white-space: nowrap;">
                     <a class="imprimir" href="{% url 'resultado_bancas' %}?projeto={{projeto.id}}">
-                      {% if notas_falconi %}  
+                      {% if notas_falconi.nota_texto %}  
+                        {% lng_2 notas_falconi.nota %}
                         {% if notas_falconi.nota_incompleta > 0 %}
                           <i class="fas fa-exclamation-triangle esconder"></i>
                         {% endif %}
-                        {{ notas_falconi.nota_texto|safe }}
                       {% endif %}
                     </a>
                   </td>
