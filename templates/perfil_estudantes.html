@@ -22,7 +22,8 @@
   
   .card-perfil .card-body {
     padding: 1rem;
-    max-width: 700px;
+    width: 700px;
+    max-width: 100%;
   }
   
   .obs {
@@ -44,6 +45,7 @@
     min-width: 150px;
     max-width: 150px;
   }
+
 
   .perfil-table tbody td.vertical-text-tab {
     white-space: nowrap;
@@ -117,6 +119,32 @@
     background-color: #e9ecef; /* Fundo mais escuro ao passar o mouse */
     border-color: #5a32a3; /* Borda mais escura ao passar o mouse */
     box-shadow: 0 0 10px rgba(110, 58, 193, 0.8); /* Sombra mais intensa ao passar o mouse */
+  }
+
+  
+  @media (max-width: 750px) {
+    .perfil-table tbody td, .nome_curso {
+      width: 81px;
+      min-width: 81px;
+      max-width: 81px;
+      padding: 1px;
+    }
+    .perfil-table tbody td.vertical-text-tab {
+      width: 18px;
+      min-width: 18px;
+      max-width: 18px;
+      padding: 1px;
+    }
+
+    .perfil-table tbody td.row-header {
+      width: 19px;
+      min-width: 19px;
+      max-width: 19px;
+      padding: 1px;
+    }
+    .perfil-table thead th, .perfil-table tbody td.row-header, .perfil-table tbody td.vertical-text-tab {
+      font-size: 0.61rem;
+    }
   }
 
 </style>
