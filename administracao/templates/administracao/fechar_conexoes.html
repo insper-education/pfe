@@ -68,16 +68,16 @@
       <table class="table table-borderless table-sm" style="width: 51.5em; border-collapse:separate; border-spacing: 4px 6px; margin-left: 6px; margin-right: 12px; margin-bottom: 6px; border: 0px;">
         <tbody>
           {% for parceiro in projeto.organizacao.parceiro_set.all %}
-            <tr style="background: #F0F0F0; line-height:1; height: 1px;"><td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
-              <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
-              <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
-              {% for papel in parceiro.get_papeis %}
-                <span class="texto-longo">[{{papel.0}}]</span>
-                <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
-              {% endfor %}
-              {% if parceiro.observacao %}&nbsp;&nbsp;obs: {{parceiro.observacao}}{% endif %}
-
-            </td>
+            <tr style="background: #F0F0F0; line-height:1; height: 1px;">
+              <td class="nomes_conec" style="width: 97%;  vertical-align: middle;">
+                <a href="{% url 'parceiro_detail' parceiro.id %}">{{ parceiro.user.get_full_name }}</a>
+                <a href="mailto:{{parceiro.user.email}}"> &lt;{{parceiro.user.email}}&gt;</a>
+                {% comment %} {% for papel in parceiro.get_papeis %} CREIO NAO ESTAR SENDO USADO
+                  <span class="texto-longo">[{{papel.sigla}}]</span>
+                  <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.sigla}}">[{{papel.nome}}]</span>
+                {% endfor %} {% endcomment %}
+                {% if parceiro..user.observacoes %}&nbsp;&nbsp;obs: {{parceiro..user.observacoes}}{% endif %}
+              </td>
               {% with conexao=conexoes|get_conexao:parceiro %}
                   <td style="text-align: center; padding: 0px; width: 1%; height: inherit;">
                       <div class="btn-group-toggle" data-toggle="buttons" style="height: 100%;">

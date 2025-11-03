@@ -23,7 +23,7 @@
           {% if user.eh_prof_a %}
             </a>
           {% endif %}
-          {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+          {% for papel in conexao.get_papeis %}[{% lng papel.nome papel.nome_en %}] {% endfor %}
           {% if pequeno %}
             </small>
           {% endif %}

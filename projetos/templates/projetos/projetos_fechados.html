@@ -276,8 +276,8 @@
                       <span class="papeis">
 
                         {% for papel in conexao.get_papeis %}
-                          <span class="texto-longo">[{{papel.0}}]</span>
-                          <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.0}}">[{{papel.1}}]</span>
+                          <span class="texto-longo">[{% lng papel.nome papel.nome_en %}]</span>
+                          <span class="texto-curto" data-toggle="tooltip" data-html="true" animation="true" title="{{papel.nome}}">[{{papel.sigla}}]</span>
                         {% endfor %}
                                       
                         {% if conexao.observacao %}

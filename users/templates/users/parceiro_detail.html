@@ -51,7 +51,7 @@
           <li><a href="{% url 'projeto_infos' conexao.projeto.id %}">
           {{conexao.projeto.get_titulo}}
           ({{conexao.projeto.ano}}.{{conexao.projeto.semestre}}) &#x2192;
-          {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+          {% for papel in conexao.get_papeis %}[{% lng papel.nome papel.nome_en %}] {% endfor %}
           </a></li>
         {% else %}
           {% lng "PROBLEMA AO RECUPERAR PROJETO!" "PROBLEM RETRIEVING PROJECT!" %}

@@ -66,12 +66,12 @@
                 {% if edicao == "todas" %}
                   {% if conexao.projeto %}
                     <a href="{% url 'projeto_infos' conexao.projeto.id %}">
-                      {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+                      {% for papel in conexao.get_papeis %}[{{papel.sigla}}] {% endfor %}
                     </a>
                   {% endif %}
                 {% else %}
                   {% if conexao.projeto and conexao.projeto.get_edicao == edicao %}
-                    {% for papel in conexao.get_papeis %}[{{papel.0}}] {% endfor %}
+                    {% for papel in conexao.get_papeis %}[{{papel.sigla}}] {% endfor %}
                   {% endif %}
                 {% endif %}
               {% endfor %}
