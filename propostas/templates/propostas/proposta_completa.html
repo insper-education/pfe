@@ -284,43 +284,46 @@
 
     <div>
 
-      <strong>
-        {% lng "Submetido por" "Submitted by" %}:
-      </strong><br>
-      {{proposta.nome}}<br><br>
+      <div class="mb-2">
+        <strong>
+          {% lng "Submetido por" "Submitted by" %}:
+        </strong><br>
+        {{proposta.nome}}
+        <a href="mailto:{{proposta.email}}">&lt;{{proposta.email}}&gt;</a>
+      </div>
 
-      {% with c_t=proposta|contatos_tec %}
-        {% if proposta.contatos_tecnicos or c_t %}
-          <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
-          {% if proposta.contatos_tecnicos %}
-            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-            <br>
+      <div class="mb-2">
+        {% with c_t=proposta|contatos_tec %}
+          {% if proposta.contatos_tecnicos or c_t %}
+            <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
+            {% if proposta.contatos_tecnicos %}
+              {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}<br>
+            {% endif %}
+            {% if c_t %}
+              {% for contato in c_t %}
+                {{contato}}<br>
+              {% endfor %}
+            {% endif %}
           {% endif %}
-          {% if c_t %}
-            {% for contato in c_t %}
-              {{contato}}<br>
-            {% endfor %}
-          {% endif %}
-          <br>
-        {% endif %}
-      {% endwith %}
+        {% endwith %}
+      </div>
 
-      {% with c_a=proposta|contatos_adm %}
-        {% if proposta.contatos_administrativos or c_a %}
-          <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
-          {% if proposta.contatos_administrativos %}
-            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-            <br>
+      <div class="mb-2">
+        {% with c_a=proposta|contatos_adm %}
+          {% if proposta.contatos_administrativos or c_a %}
+            <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
+            {% if proposta.contatos_administrativos %}
+              {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}<br>
+            {% endif %}
+            {% if c_a %}
+              {% for contato in c_a %}
+                {{contato}}<br>
+              {% endfor %}
+            {% endif %}
           {% endif %}
-          {% if c_a %}
-            {% for contato in c_a %}
-              {{contato}}<br>
-            {% endfor %}
-          {% endif %}
-          <br>
-        {% endif %}
-      {% endwith %}
-
+        {% endwith %}
+      </div>
+      
     </div>
 
     {% with vencido=True areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all com_borda=True %}
