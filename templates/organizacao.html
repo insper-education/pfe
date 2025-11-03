@@ -19,6 +19,12 @@
       padding-top: 10px;
     }
 
+    .bloco-destaque-projeto .logotipo_org {
+      max-height: 80px;
+      margin-left: 12px;
+      padding: 2px;
+    }
+
     @media only screen and (max-width: 740px) {
       .entrada_pri {
         font-size: 22px;
@@ -33,59 +39,82 @@
       }
     } 
 
+        
+    .bloco-destaque-projeto {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1em;
+      padding: 0.8em;
+      border: 1.5px solid #0cf;
+    }
+    
+    .bloco-destaque-projeto:hover {
+      box-shadow: 0 4px 24px 0 rgba(120,160,200,0.13);
+    }
+
+    .bloco-destaque-projeto .logotipo {
+      max-height: 80px;
+      margin-left: 12px;
+      padding: 2px;
+    }
+
   </style>
   
-  {% if proposta.organizacao.logotipo %}
-    <img id="logotipo" class="logotipo flutua_dir"  src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
-  {% endif %}
 
-  <span class="entrada_pri">
-    <b>
-      {% lng "Organização:" "Organization:" %}
-    </b>
-    {% if proposta.organizacao and proposta.organizacao.nome %}
-        {% if completo %}
-            <a id="organizacao_link" data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
-              href="{% url 'organizacao_completo' proposta.organizacao.id %}">
-        {% endif %}
-        <span id="organizacao_nome">
-          {{proposta.organizacao.nome}}
-        </span>
-        {% if completo %}
-            </a>
-        {% endif %}
-    {% elif proposta.nome_organizacao %}
-      <a id="organizacao_link">
-        <span data-toggle="tooltip" data-html="true" animation="true" title="<b>Organização/empresa não linkada.</b>">
-          <span style="color:gray">{{proposta.nome_organizacao}}</span>
-        </span>
-      </a>
-    {% else %}
-      <a id="organizacao_link">
-        <u>
-          {% lng "Organização não definida." "Organization not defined." %}
-        </u>
-      </a>
-    {% endif %}
-
-    {% if completo %}
-      <span class="esconder">
-        <a data-proposta='{{proposta.id}}'
-         class="open-modal"
-         href="{% url 'link_organizacao' proposta.id %}"
-         data-url="{% url 'link_organizacao' proposta.id %}">
-           <small>&#128279;</small>
+  <div class="bloco-destaque-projeto" style="display: flex;">
+    <div class="entrada_pri" style="flex: 1; min-width: 0;">
+      <b>
+        {% lng "Organização:" "Organization:" %}
+      </b>
+      {% if proposta.organizacao and proposta.organizacao.nome %}
+          {% if completo %}
+              <a id="organizacao_link" data-toggle="tooltip" data-html="true" animation="true" title="Nome da organização/empresa que está propondo o projeto."
+                href="{% url 'organizacao_completo' proposta.organizacao.id %}">
+          {% endif %}
+          <span id="organizacao_nome">
+            {{proposta.organizacao.nome}}
+          </span>
+          {% if completo %}
+              </a>
+          {% endif %}
+      {% elif proposta.nome_organizacao %}
+        <a id="organizacao_link">
+          <span data-toggle="tooltip" data-html="true" animation="true" title="<b>Organização/empresa não linkada.</b>">
+            <span style="color:gray">{{proposta.nome_organizacao}}</span>
+          </span>
         </a>
-        {% if not proposta.organizacao %}
-          <small id="org_nao_conectada" style="color:red; font-size: 12px;">
-            {% lng "Organização não conectada com proposta" "Organization not connected with proposal" %}
-          </small>
-        {% endif %}
-      </span>
+      {% else %}
+        <a id="organizacao_link">
+          <u>
+            {% lng "Organização não definida." "Organization not defined." %}
+          </u>
+        </a>
+      {% endif %}
+
+      {% if completo %}
+        <span class="esconder">
+          <a data-proposta='{{proposta.id}}'
+          class="open-modal"
+          href="{% url 'link_organizacao' proposta.id %}"
+          data-url="{% url 'link_organizacao' proposta.id %}">
+            <small>&#128279;</small>
+          </a>
+          {% if not proposta.organizacao %}
+            <small id="org_nao_conectada" style="color:red; font-size: 12px;">
+              {% lng "Organização não conectada com proposta" "Organization not connected with proposal" %}
+            </small>
+          {% endif %}
+        </span>
+      {% endif %}
+    </div>
+
+    {% if proposta.organizacao.logotipo %}
+      <img id="logotipo" class="logotipo logotipo_org"  src="{{ proposta.organizacao.logotipo.url }}" alt="{{ proposta.organizacao.sigla }}">
     {% endif %}
-    <br>
-  </span>
-  
+
+  </div>
+
   <div class="mb-2">
     {% if proposta.endereco %}
       <strong data-toggle="tooltip" data-html="true" animation="true" title="
