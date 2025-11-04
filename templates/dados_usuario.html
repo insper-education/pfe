@@ -20,13 +20,13 @@
 {% endif %}
 
 {% if user.linkedin %}
-  <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
+  <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank" style="overflow-wrap: break-word;">{{user.linkedin}}</a><br>
 {% endif %}
 
-<strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+<strong>e-mail:</strong> <a href="mailto:{{user.email}}" style="overflow-wrap: break-word;">{{user.email}}</a><br>
 
 {% if user.conta_github %}
-  <strong>GitHub:</strong> <a href="https://github.com/{{user.conta_github}}" target="_blank">{{user.conta_github}}</a><br>
+  <strong>GitHub:</strong> <a href="https://github.com/{{user.conta_github}}" target="_blank" style="overflow-wrap: break-word;">{{user.conta_github}}</a><br>
 {% endif %}
 
 {% if user.telefone or user.celular or user.instant_messaging %}
@@ -48,8 +48,8 @@
   {% endif %}
 
   {% if user.instant_messaging %}
-    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px;height:16px;"></span>
-      <a href="instant_messaging:{{instant_messaging}}">{{user.instant_messaging}}</a>
+    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px; height:16px;"></span>
+      <a href="instant_messaging:{{instant_messaging}}" style="overflow-wrap: break-word;">{{user.instant_messaging}}</a>
     </div>
   {% endif %}
 
@@ -60,5 +60,5 @@
     <strong>
       {% lng "Observações:" "Observations:" %}
     </strong>
-    <div style="padding-left: 18px">{{user.observacoes|linebreaks}}</div>
+    <div style="padding-left: 18px; overflow-wrap: break-word;">{{user.observacoes|linebreaks}}</div>
 {% endif %}
