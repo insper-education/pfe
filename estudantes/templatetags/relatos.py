@@ -62,6 +62,6 @@ def porcentagem_relatos_avaliados(relatos):
         return 0
     avaliados = 0
     for alocacao, relato in relatos.items():
-        if relato[0].avaliacao > -1:
+        if relato[-1].avaliacao > -1:
             avaliados += 1
     return avaliados/total if total > 0 else 0

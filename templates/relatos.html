@@ -60,18 +60,19 @@
                 {% endif %}
 
                 {% for alocacao, relato in avaliados.items %}
-                  <script>
-                    {% comment %} O primeiro relato deveria ser o último avaliado pelo orientador (não está ordenado por data de avaliação) {% endcomment %}
-                    {% if relato.0.avaliacao > 0 %}
-                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44D;");
-                    {% elif relato.0.avaliacao == 0 %}
-                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44E;");
-                    {% else %}
-                      {% comment %} Não avaliado ainda {% endcomment %}
-                      {% comment %} $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F937;"); {% endcomment %}
-                      $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#8987;");
-                    {% endif %}
-                  </script>
+                  {% with ultimo=relato|last %}
+                    <script>
+                      {% comment %} O primeiro relato deveria ser o último avaliado pelo orientador (não está ordenado por data de avaliação) {% endcomment %}
+                      {% if ultimo.avaliacao > 0 %}
+                        $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44D;");
+                      {% elif ultimo.avaliacao == 0 %}
+                        $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#x1F44E;");
+                      {% else %}
+                        {% comment %} Não avaliado ainda {% endcomment %}
+                        $("#s{{alocacao.aluno.id}}_e{{evento.id}}").html("&#8987;");
+                      {% endif %}
+                    </script>
+                  {% endwith %}
                 {% endfor %}
                 {% if observacoes %}
                   <span data-toggle="tooltip" data-html="true" animation="true" title="{{ observacoes.observacoes_orientador}}">&#x1F4AC;</span>

@@ -128,7 +128,7 @@ def get_edicoes(tipo, anual=False, minimo=None):  # Minimo no formato "ano.semes
 
     edicoes = []
     ano, semestre = None, None
-    for pair in pares.distinct("ano", "semestre"):
+    for pair in pares.order_by("ano", "semestre").distinct("ano", "semestre"):
         ano = pair.get("ano")
         semestre = pair.get("semestre")
         if ano == None or semestre == None:
