@@ -316,9 +316,9 @@ def propostas_apresentadas(request):
 
             for curso in cursos:
                 if ano and semestre:
-                    estudantes = alunos.filter(curso2=curso, ano=ano, semestre=semestre).count()
+                    estudantes = alunos.filter(curso2=curso, ano=ano, semestre=semestre, trancado=False).count()
                 else:
-                    estudantes = alunos.filter(curso2=curso).count()
+                    estudantes = alunos.filter(curso2=curso, trancado=False).count()
                 disponivel_propostas[curso] = [0, 0]
                 vagas[curso] = {"count": 0, "count_disp": 0, "prop": 0, "prop_disp": 0, "neces": estudantes}
                 total_vagas["neces"] += estudantes
