@@ -888,7 +888,7 @@ def relato_quinzenal(request):
         if not relato_anterior:
             return HttpResponseNotFound("<h1>Erro ao buscar prazos!</h1>")
 
-        prazo_anterior = relato_anterior.endDate + datetime.timedelta(days=1)
+        prazo_anterior = relato_anterior.endDate + datetime.timedelta(days=1)  # Senão pega o relato anterior preenchido no último dia
         
         context["relatos"] = Relato.objects.filter(alocacao=alocacao).order_by("-momento")
         context["alocacao"] = alocacao

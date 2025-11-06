@@ -83,8 +83,8 @@ def check_relato_quinzenal(alocacao):
     evento = Evento.objects.filter(tipo_evento=tevento, endDate__gte=hoje).order_by("endDate").first()
 
     if evento and evento.endDate - hoje <= datetime.timedelta(days=configuracao.periodo_relato):
-        relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
-        prazo_anterior = relato_anterior.endDate if relato_anterior else None
+        evento_relato_anterior = Evento.objects.filter(tipo_evento=tevento, endDate__lt=hoje).order_by("endDate").last()
+        prazo_anterior = evento_relato_anterior.endDate + datetime.timedelta(days=1) if evento_relato_anterior else None    # Senão pega o relato anterior preenchido no último dia
         relato = Relato.objects.filter(alocacao=alocacao, momento__gt=prazo_anterior).exists() if prazo_anterior else False
         if relato:
             cor = 'g'
