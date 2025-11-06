@@ -89,10 +89,8 @@
           {% for item in nav_menu_items %}
             <a href="{% url 'index_'|add:item.url %}">{% lng item.title.pt item.title.en %}</a>
           {% endfor %}
-        {% endif %}
 
-
-{% comment %}         
+      
           <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
           {% if user.eh_admin or user.eh_estud %}
             <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
@@ -103,12 +101,12 @@
           {% endif %}
         
           {% if perms.users.altera_professor %}
-            <a href="{% url 'index_professor'%}">{% lng "Área dos Professores" "Professor's Area" %}</a>
+            <a href="{% url 'index_professores' %}">{% lng "Área dos Professores" "Professor's Area" %}</a>
           {% endif %}
           {% if perms.users.view_administrador %}
             <a href="{% url 'index_coordenacao' %}">{% lng "Área da Coordenação" "Coordination Area" %}</a>
           {% endif %}
-          {% if perms.users.altera_professor %}
+          {% if perms.users.altera_professor and request.user.membro_comite %}
             <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
           {% endif %}
           {% if user.eh_admin or user.membro_operacional or user.membro_tecnico %}
@@ -123,11 +121,11 @@
             {% endif %}
             <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
           {% endif %}
+        
+          <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
+ 
+
         {% endif %}
-        <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
- {% endcomment %}
-
-
 
 
         {% if user.is_authenticated %}
