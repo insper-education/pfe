@@ -821,7 +821,7 @@ def proposta_editar(request, slug=None):
     ano_semestre = f"{ano}.{semestre}"
 
     obs = {
-           "pt": """""
+           "pt": """
                 Observação: Ao submeter o projeto, é fundamental deixar claro que o objetivo do Capstone é 
                 proporcionar aos estudantes um contato próximo com os responsáveis das organizações parceiras 
                 para o desenvolvimento de uma solução tecnológica. Em geral, os estudantes se comunicam 
