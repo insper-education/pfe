@@ -480,7 +480,14 @@ class DescontoAdmin(admin.ModelAdmin):
     list_filter = ("projeto__ano", "projeto__semestre","alocacao__projeto__ano", "alocacao__projeto__semestre",)
     actions = [dup_entrada]
 
-admin.site.register(Reuniao)
+@admin.register(Reuniao)
+class ReuniaoAdmin(admin.ModelAdmin):
+    """Reuniões."""
+    list_display = ("titulo", "data_hora", "usuario", "travado",)
+    list_filter = ("data_hora", "travado",)
+    search_fields = ["titulo", "local",]
+
+
 
 @admin.register(ReuniaoParticipante)
 class ReuniaoParticipanteAdmin(admin.ModelAdmin):

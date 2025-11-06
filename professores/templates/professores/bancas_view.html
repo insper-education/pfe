@@ -283,7 +283,7 @@
         <span style="display:inline-block; width:5.5ex; text-align:right;">
           {% lng "Início:" "Start:" %}
         </span>
-        <input id="inicio" type="datetime-local" name="inicio" class="horario_banca"
+        <input id="inicio" type="datetime-local" name="inicio" class="horario_banca" min="2018-08-01T00:00"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% if banca %}
           value="{{banca.startDate|date:'Y-m-d\TH:i:s'}}"
@@ -298,7 +298,7 @@
         <span style="display:inline-block; width:5.5ex; text-align:right">
           {% lng "Fim:" "End:" %}
         </span>
-        <input id="fim" type="datetime-local" name="fim" class="horario_banca"
+        <input id="fim" type="datetime-local" name="fim" class="horario_banca" min="2018-08-01T00:00"
         {% if banca and banca.projeto.orientador.user != request.user and request.user.tipo_de_usuario != 4 %}disabled{% endif %}
         {% if banca %}
           value="{{banca.endDate|date:'Y-m-d\TH:i:s'}}"

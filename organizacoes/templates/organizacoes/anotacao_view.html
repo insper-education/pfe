@@ -46,7 +46,7 @@
     {% endif %}
 
     <label for="data_hora">{% lng "Data e Hora" "Date and Time" %}:</label>
-    <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
+    <input id="data_hora" class="form-control" type="datetime-local" name="data_hora" min="2018-08-01T00:00" value="{{data_hora|date:'Y-m-d\TH:i'}}"><br>
     
     <label for="texto">{% lng "Anotação" "Annotation" %}:</label><br>
     <textarea id="texto" name="texto" class="form-control" rows="5" required>{% if anotacao %}{{anotacao.texto}}{% endif %}</textarea>

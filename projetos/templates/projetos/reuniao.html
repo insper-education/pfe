@@ -11,6 +11,7 @@
 {% load linguas %}
 
 {% block head %}
+  <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 
 <style>
@@ -94,7 +95,7 @@
 
       <div class="form-floating mb-2">
         <label for="data_hora" class="form_label" style="font-size:0.97em;">{% lng "Data da reunião" "Meeting date" %}</label>
-        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar"
+        <input type="datetime-local" id="data_hora" name="data_hora" class="form-control-sm compact-input ptravar" min="2018-08-01T00:00"
               value="{% if reuniao.data_hora %}{{reuniao.data_hora|date:"Y-m-d\TH:i"}}{% endif %}" required>
       </div>
 

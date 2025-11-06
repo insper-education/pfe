@@ -50,7 +50,7 @@
             <span style="display:inline-block; width:5.5ex; text-align:right;">
               {% lng "Inicio" "Start" %}:
             </span>
-            <input id="inicio"  type="datetime-local" name="inicio"
+            <input id="inicio"  type="datetime-local" name="inicio" min="2018-08-01T00:00"
             {% if encontro %}
               value="{{encontro.startDate|date:'Y-m-d\TH:i:s'}}" 
             {% elif data %}
@@ -63,7 +63,7 @@
             <span style="display:inline-block; width:5.5ex; text-align:right">
               {% lng "Fim" "End" %}:
             </span>
-            <input id="fim"  type="datetime-local" name="fim"
+            <input id="fim"  type="datetime-local" name="fim" min="2018-08-01T00:00"
             {% if encontro %}
               value="{{encontro.endDate|date:'Y-m-d\TH:i:s'}}"
             {% elif data %}
