@@ -17,6 +17,8 @@ from .messages import email, htmlizar
 
 from calendario.support import get_calendario_context
 
+from projetos.models import Banca
+
 from users.models import Aluno, Professor, PFEUser
 
 logger = logging.getLogger("django")  # Get an instance of a logger
@@ -28,8 +30,10 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
     except Configuracao.DoesNotExist:
         return None
 
+    hoje = datetime.date.today()
     orientadores_ids = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).values_list("orientador", flat=True)
     orientadores = Professor.objects.filter(id__in=orientadores_ids)
+    bancas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
     
     estudantes = Aluno.objects.filter(alocacao__projeto__ano=configuracao.ano,
                                       alocacao__projeto__semestre=configuracao.semestre,
@@ -70,6 +74,7 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
                 "eventos": eventos,
                 "orientadores": orientadores,
                 "estudantes": estudantes,
+                "bancas": bancas,
             }
 
         mensagem_final = mensagem_como_template.render(Context(context))
@@ -90,7 +95,6 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
         if aviso.contatos_nas_organizacoes:
             mensagem_enviados += "[<b>Contatos nas Organizações</b>], "
         mensagem_enviados = mensagem_enviados[:-2] + "<br><hr><br>"
-
 
         if endereco:  # Se for um endereço específico, envia só para ele
             recipient_list.append(endereco)
