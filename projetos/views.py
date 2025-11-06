@@ -949,6 +949,8 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         "envolvidos": {},
     }
     
+    reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
+
     if request.user.eh_estud:  # Estudante
 
         alocacao = Alocacao.objects.filter(aluno=request.user.aluno,
@@ -958,6 +960,17 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
         associados = Associado.objects.filter(estudante=request.user.aluno,
                                              projeto__ano=configuracao.ano, 
                                              projeto__semestre=configuracao.semestre)
+
+        if reuniao:
+            if not alocacao and not associados:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
+            elif alocacao and reuniao.projeto != alocacao.projeto:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
+            elif associados and reuniao.projeto not in [associado.projeto for associado in associados]:
+                context["mensagem"] = {"pt": "Você não tem permissão para visualizar/editar essa reunião.", "en": "You do not have permission to edit this meeting."}
+                return render(request, "generic_ml.html", context=context)
 
         if alocacao:
             projetos = [alocacao.projeto]
@@ -984,7 +997,6 @@ def reuniao(request, reuniao_id_g=None):  # Id da reunião para editar, None par
 
     context["projetos"] = projetos
 
-    reuniao = get_object_or_404(Reuniao, id=int(reuniao_id_g)) if (reuniao_id_g and reuniao_id_g != "todos") else None
     if reuniao:
         context["reuniao"] = reuniao
         context["titulo"] = {"pt": "Editar Reunião", "en": "Edit Meeting"}
