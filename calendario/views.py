@@ -25,7 +25,7 @@ from administracao.models import TipoEvento
 
 from documentos.models import TipoDocumento
 
-from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento
+from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento, Cerimonia
 
 from users.models import PFEUser, Aluno
 
@@ -37,7 +37,7 @@ def calendario(request):
     context["titulo"] = { "pt": "Calendário de Eventos", "en": "Events Calendar" }
 
     if context:
-    
+
         pessoas = {}
         professores = PFEUser.objects.filter(tipo_de_usuario=2) # Professores
         administradores = PFEUser.objects.filter(tipo_de_usuario=4) # Administradores
@@ -56,6 +56,8 @@ def calendario(request):
             context["documentos"] = Documento.objects.filter(tipo_documento=tipo_documento).order_by("-data")
         except TipoDocumento.DoesNotExist:
             context["documentos"] = None
+
+        context["cerimonias"] = Cerimonia.objects.all().order_by("startDateTime", "tipo_participacao")
     
         return render(request, "calendario/calendario.html", context)
 

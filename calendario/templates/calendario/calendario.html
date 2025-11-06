@@ -21,7 +21,7 @@
   <script src="{% static 'js-year-calendar/locales/js-year-calendar.pt.js' %}"></script>
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
-  <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+  <link rel="stylesheet" href="{% static 'css/calendario.css' %}?v=2025.11.06-1">
 
   <style>
     .tab_pfe td.colu2 {
@@ -463,7 +463,7 @@
               </tr></thead>
               <tbody>
                 {% for aula in mentorias|dictsort:"endDate" %}
-                  <tr id="ev{{aula.id}}" class="lin_mentorias ano{{aula.endDate.year}} semestre" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}">
+                  <tr id="ev{{aula.id}}" class="lin_mentorias ano{{aula.endDate.year}} semestre" data-ano="{{aula.endDate.year}}" data-mes="{{aula.endDate.month}}" data-dia="{{aula.endDate.day}}">
                       <th class="colu text-center" scope="row">
                         {% if user.eh_admin %}
                           <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
@@ -471,10 +471,12 @@
                           <span>
                         {% endif %}
 
-                        {% if aula.startDate == aula.endDate %} 
-                          {{ aula.endDate.day }}/{{ aula.endDate.month }}
+                        {% if aula.startDate == aula.endDate %}
+                        <span lang="pt">{% language "pt-br" %}{{aula.endDate|date:"d/m"}}{% endlanguage %}</span>
+                        <span lang="en" style="display:none">{% language "en" %}{{aula.endDate|date:"M d"}}{% endlanguage %}</span>
                         {% else %}
-                          {{ aula.startDate.day }}/{{ aula.startDate.month }} à {{ aula.endDate.day }}/{{ aula.endDate.month }}
+                        <span lang="pt">{% language "pt-br" %}{{aula.startDate|date:"d/m"}} à {{aula.endDate|date:"d/m"}}{% endlanguage %}</span>
+                        <span lang="en" style="display:none">{% language "en" %}{{aula.startDate|date:"M d"}} to {{aula.endDate|date:"M d"}}{% endlanguage %}</span>
                         {% endif %}
 
                         </span>
@@ -526,7 +528,93 @@
             {% endnospaces %}
           {% endif %}
 
-          </div>
+        </div>
+
+
+
+        <div class="tit_agenda" id="titulo_encerramento">
+          {% lng "Cerimônia de Encerramento" "Closing Ceremony" %}
+        </div>
+
+        <div id="lista_encerramento" class="lista_encerramento">
+          {% if cerimonias %}
+            {% nospaces %}
+            <table class="tab_pfe">
+              <thead><tr>
+                <th scope="col" class="cabec">{% lng "Horário" "Time" %}</th>
+                <th scope="col" class="cabec header_atividade_cerimonia">{% lng "Atividade" "Activity" %}</th>
+                <th scope="col" class="cabec header_local_cerimonia">Local</th>
+              </tr></thead>
+              <tbody>
+                {% regroup cerimonias|dictsort:"startDateTime" by startDateTime as aulas_por_dia %}
+                  {% for grupo in aulas_por_dia %}
+                    {% for aula in grupo.list %}
+                  <tr id="ev{{aula.id}}" class="lin_cerimonia ano{{aula.endDateTime.year}} semestre" data-ano="{{aula.endDateTime.year}}" data-mes="{{aula.endDateTime.month}}" data-dia="{{aula.endDateTime.day}}"
+                   {% if aula.startDateTime|dif_dias_hoje == 0 %}style="background-color: #F0FFFF;"{% endif %}>
+
+                    {% if forloop.first %}
+
+                      <th class="colu text-center" scope="row"
+                       rowspan="{{ grupo.list|length }}"
+                                      style="vertical-align: middle;">
+
+                        {% if user.eh_admin %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})">
+                        {% else %}
+                          <span>
+                        {% endif %}
+
+                        {{aula.startDateTime|date:"H:i"}}&nbsp;<span lang="pt">às</span><span lang="en" style="display:none">to</span>&nbsp;{{aula.endDateTime|date:"H:i"}}
+
+                      </th>
+
+                    {% endif %}
+
+                      <td class="colu colu2" style="cursor:pointer;">
+                        {% if user.eh_admin %}
+                          <span style="cursor:pointer;" onclick="buscaEditEvent({{aula.id}})"
+                        {% else %}
+                          <span
+                        {% endif %}
+                          data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
+                          {{aula.atividade}}
+                          {% if aula.responsavel %}{{aula.responsavel.get_full_name}}{% endif %}
+                          {% if aula.tipo_participacao == 10 %}({% lng "Mediação" "Mediation" %})
+                          {% elif aula.tipo_participacao == 20 %}({{aula.responsavel.parceiro.organizacao.sigla}})
+                          {% elif aula.tipo_participacao == 30 %}({% lng "Apresentador" "Presenter" %})
+                          {% endif %}
+                        </span>
+                        {% for documento in aula.documentos %}
+                          {% comment %} Só mostra se data do documento for no passado {% endcomment %}
+                          {% if documento and documento.data|dif_agora < 0 %}
+                            {% include "documentos/includes/icone_documento.html" %}
+                          {% endif %}
+                        {% endfor %}
+                      </td>
+
+                      <td class="colu local_cerimonia" style="cursor: pointer;">
+                        {% if aula.location %}{{aula.location}}{% endif %}
+                      </td>
+                  </tr>
+                {% endfor %}
+                {% endfor %}
+
+                  <tr id="barra_inferior_cerimonia" style="display: none;">
+                    <th scope="row" class="cabec" style="border-top: 4px double black; border-radius: 0 0 0 8px;">Local</th>
+                    <td class="colu" colspan="2" style="border-top: 4px double black; border-radius: 0 0 8px 0;">
+                      <a id="barra_local_cerimonia" style="color: inherit;" href="https://www.insper.edu.br/campus/mapa-dos-andares/"></a>
+                    </td>
+                  </tr>
+                  
+              </tbody>
+            </table>
+            {% endnospaces %}
+          {% endif %}
+
+        </div>
+
+        
+
 
       </div> <!--id="bloco_aulas"-->
 

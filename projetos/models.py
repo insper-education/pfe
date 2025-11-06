@@ -656,6 +656,38 @@ class Recomendada(models.Model):
 
 
 
+class Cerimonia(models.Model):
+    """Eventos da Cerimônia de Encerramento (ou outras)."""
+
+    atividade = models.CharField(max_length=200, blank=True,
+                                 help_text="nome da atividade do evento (abertura, coffee break, etc.)")
+    
+    location = models.CharField(blank=True, null=True, max_length=80,
+                                help_text="Onde ocorrerá o evento")
+    
+    startDateTime = models.DateTimeField(default=datetime.datetime.today, blank=True,
+                                 help_text="Inicio do Evento")
+
+    endDateTime = models.DateTimeField(default=datetime.datetime.today, blank=True,
+                                   help_text="Fim do Evento")
+
+    TIPO_PARTICIPACAO = (
+        (0, "", ""),
+        (10, "Mediador", "Moderator"),
+        (20, "Panelista", "Panelist"),
+        (30, "Palestrante", "Speaker"),
+    )
+    tipo_participacao = models.IntegerField(choices=[subl[:2] for subl in TIPO_PARTICIPACAO],
+                                               null=True, blank=True, default=0)
+
+    descricao = models.CharField(max_length=512, blank=True,
+                                 help_text="Descrição do evento")
+    
+    responsavel = models.ForeignKey("users.PFEUser", null=True, blank=True,
+                                   on_delete=models.SET_NULL,
+                                   help_text="Responsável pelo evento, por exemplo panelista")
+
+
 class Evento(models.Model):
     """Eventos para a agenda."""
 

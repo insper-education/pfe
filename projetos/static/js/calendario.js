@@ -68,6 +68,7 @@ function mostra_semestre() {
 
   // Para reduzir o local a só uma linha
   const elements = $(".lin_aulas:visible > :last-child");
+  const elements_c = $(".lin_cerimonia:visible > :last-child");
   const firstElementText = elements.first().text();
   const allSame = elements.toArray().every(el => $(el).text() === firstElementText || $(el).text() === "");
 
@@ -119,7 +120,10 @@ function showElements(els) {
     } else if (el.classList.contains("lin_mentorias")) {
         el.style.display = "table-row";
         if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
-    } else {
+    } else if (el.classList.contains("lin_cerimonia")) {
+        el.style.display = "table-row";
+        if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
+    }else {
       el.style.display = "inline";
     }
     if (el.parentNode.classList.contains("ano" + currentYear)) {
@@ -151,6 +155,35 @@ function updateInfoVisibility(fim_semestre, inicio_semestre, isSecondSemester) {
     filtragem[0].innerHTML = filtragem[0].innerHTML.replace(/^\s*<br\s*\/?>/i, ""); // Remove o <br> inicial se existir
   }
   else $("#info_semestre").hide();
+
+  // Esconde Mentorias se não houver no semestre
+  const mentorias_filtragem = $(".lin_mentorias[data-mes]").filter(function () {
+    const no_semestre = isSecondSemester ? $(this).attr("data-mes") > inicio_semestre : $(this).attr("data-mes") <= fim_semestre;
+    const no_ano = $(this).attr("data-ano") == currentYear;
+    return no_semestre && no_ano;
+  });
+  if (mentorias_filtragem.length === 0) {
+    $("#titulo_mentorias").hide();
+    $("#lista_mentorias").hide();
+  } else {
+    $("#titulo_mentorias").show();
+    $("#lista_mentorias").show();
+  }
+
+  // Esconde Cerimônias se não houver no semestre
+  const cerimonias_filtragem = $(".lin_cerimonia[data-mes]").filter(function () {
+    const no_semestre = isSecondSemester ? $(this).attr("data-mes") > inicio_semestre : $(this).attr("data-mes") <= fim_semestre;
+    const no_ano = $(this).attr("data-ano") == currentYear;
+    return no_semestre && no_ano;
+  });
+  if (cerimonias_filtragem.length === 0) {
+    $("#titulo_encerramento").hide();
+    $("#lista_encerramento").hide();
+  } else {
+    $("#titulo_encerramento").show();
+    $("#lista_encerramento").show();
+  }
+
 }
 
 function primeiro(e) {
@@ -218,14 +251,13 @@ $(document).ready(function() {
         el.style.display = "none";
       });
     
-      // Mostra só os elementos do ano
+      // Mostra só eventos do ano
       [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
           el.style.display = "table-row";
         } else if(el.classList.contains("lin_mentorias")) {
           el.style.display = "table-row";
-        } 
-        else {
+        } else {
           el.style.display = "inline";
         }
       });

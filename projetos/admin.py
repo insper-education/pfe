@@ -500,3 +500,4 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
 
 
 admin.site.register(TematicaEncontro)
+admin.site.register(Cerimonia)
