@@ -2680,36 +2680,29 @@ def resultado_p_certificacao(request):
                 # Banca Falconi
                 aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
                 banca_info = get_banca_estudante(aval_b, ano=projeto.ano, semestre=projeto.semestre)
+                
                 nota_b = banca_info["media"]
                 peso = banca_info["peso"]
                 avaliadores = banca_info["avaliadores"]
                 nota_incompleta, banca = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
 
-                if peso is not None:
-                    certificacao = ""
-                    if nota_b >= 8:
-                        certificacao = "E"  # Excelencia FALCONI-INSPER
-                    elif nota_b >= 6:
-                        certificacao = "D"  # Destaque FALCONI-INSPER
+                certificacao = ""
+                if nota_b >= 8:
+                    certificacao = "E"  # Excelencia FALCONI-INSPER
+                elif nota_b >= 6:
+                    certificacao = "D"  # Destaque FALCONI-INSPER
 
-                    notas["Falconi"].append({
-                                        #"avaliadores": "{0}".format(nomes),
-                                        "avaliadores": avaliadores,
-                                        "nota_texto": "{0:5.2f}".format(nota_b),
-                                        "nota": nota_b,
-                                        "certificacao": certificacao,
-                                        "nota_incompleta": nota_incompleta,
-                                        "banca": banca,
-                                        })
-                    
-                else:
-                    notas["Falconi"].append({"avaliadores": None,
-                                        "nota_texto": "",
-                                        "nota": 0,
-                                        "certificacao": "",
-                                        "nota_incompleta": nota_incompleta,
-                                        "banca": banca,})
-                
+                notas["Falconi"].append({
+                                    #"avaliadores": "{0}".format(nomes),
+                                    "avaliadores": avaliadores,
+                                    "nota_texto": "{0:5.2f}".format(nota_b) if avaliadores else "",
+                                    "nota": nota_b,
+                                    "certificacao": certificacao,
+                                    "nota_incompleta": nota_incompleta,
+                                    "banca": banca,
+                                    "peso": peso,
+                                    })
+            
             tabela = zip(projetos,
                          recomendacoes["Banca Intermediária"],
                          recomendacoes["Banca Final"],
@@ -2726,9 +2719,6 @@ def resultado_p_certificacao(request):
 
     else:
         edicoes = get_edicoes(Projeto)[0]
-
-        configuracao = get_object_or_404(Configuracao)
-        selecionada_edicao = "{0}.{1}".format(configuracao.ano, configuracao.semestre)
 
         try:
             regulamento = Documento.objects.filter(tipo_documento__sigla="RCF").order_by("-data").last()  # Regulamento da Certificação Falconi
@@ -2748,7 +2738,6 @@ def resultado_p_certificacao(request):
         context = {
             "titulo": {"pt": "Resultado para Certificação", "en": "Certification Results"},
             "edicoes": edicoes,
-            "selecionada_edicao": selecionada_edicao,
             "informacoes": informacoes,
             "regulamento": regulamento,
         }

@@ -27,7 +27,6 @@ logger = logging.getLogger("django")
 def get_banca_estudante(avaliacoes_banca, ano, semestre):
     """Retorna média final das bancas informadas."""
     val_objetivos, pes_total, avaliadores = get_objetivos(avaliacoes_banca, ano, semestre)
-
     media_local = 0.0
     peso_local = 0.0
 
@@ -36,7 +35,6 @@ def get_banca_estudante(avaliacoes_banca, ano, semestre):
         peso_local += peso
 
     if val_objetivos:
-        #peso_local = float(peso_local)
         if peso_local != 0:
             media_local /= peso_local
         else:

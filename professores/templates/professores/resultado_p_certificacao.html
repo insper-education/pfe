@@ -198,7 +198,7 @@
                         <span class="texto-curto">{% lng_d_de_ate notas_falconi.banca.startDate notas_falconi.banca.endDate %}</span>
                       </span>
                     {% endif %}
-                    <ul class="membros">
+                    <ul class="membros">{{notas_falconi.avaliadores.count}} {% lng "avaliadores" "evaluators" %}
                       {% for avaliador in notas_falconi.avaliadores %}
                         <li>
                           <span style="white-space: nowrap;">
@@ -333,6 +333,13 @@
     </script>
 
   </div>
+
+  <script>
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
 
   {% include "edicoes_ajax.html" %}
 
