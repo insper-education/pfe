@@ -9,6 +9,7 @@
   {% load static %}
   {% load linguas %}
   {% load define_action %}
+  {% load get_field %}
   {% load propostas %}
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
@@ -133,14 +134,13 @@
       <div class="col-xl-auto ">
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
-
             <label class="topico" for="nome">{% lng "Nome" "Name" %}:</label>
-            <input class="requiredField" type="text" size="75" maxlength="127" 
+            <input class="requiredField" type="text" size="75" maxlength="{% max_length Proposta 'nome' %}"
               id="nome" name="nome" value="{% if request.user.is_authenticated %}{{request.user.get_full_name}}{% endif %}" 
               pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" 
               oninput="this.setCustomValidity('')" required {% if liberadas_propostas %}disabled{% endif %}><br>
             <label class="topico" for="email">e-mail:</label>
-            <input class="requiredField" autocomplete="on" type="email" size="75" maxlength="80" 
+            <input class="requiredField" autocomplete="on" type="email" size="75" maxlength="{% max_length Proposta 'email' %}"
               id="email" name="email" value="{% if request.user.is_authenticated %}{{request.user.email}}{% endif %}" 
               pattern="^[\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,99}[\s]*([;,][\s]*([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})*[\s]*$" 
               oninvalid="this.setCustomValidity('Digite um ou mais endereços de e-mail (e-mails separados por ponto e vírgula)')" 
@@ -156,13 +156,13 @@
                 {% lng "sigla e nome comercial/fantasia (não é necessário indicar a Razão Social)" "acronym and commercial/fantasy name (it is not necessary to indicate the Corporate Name)" %}
               </small>
             </label><br>
-            <input class="requiredField" type="text" id="organizacao" name="organizacao" size="100" maxlength="120"  
+            <input class="requiredField" type="text" id="organizacao" name="organizacao" size="100" maxlength="{% max_length Proposta 'nome_organizacao' %}"
               value="{% if proposta.nome_organizacao %}{{ proposta.nome_organizacao }}{% elif organizacao and organizacao.nome %}{{organizacao.nome}}{% endif %}"
               {% if liberadas_propostas %}disabled{% endif %} required>
             <br>
 
             <label class="topico" for="website">website:</label>
-            <input class="requiredField" type="text" size="75"  maxlength="250" id="website" name="website" 
+            <input class="requiredField" type="text" size="75" maxlength="{% max_length Proposta 'website' %}" id="website" name="website" 
               value="{% if proposta.website %}{{proposta.website}}{% elif organizacao and organizacao.website %}{{organizacao.website}}{% endif %}"
               placeholder="https://www.insper.edu.br" required 
               {% if liberadas_propostas %}disabled{% endif %}><br><br>
@@ -173,7 +173,7 @@
                 {% lng "Local de possíveis reuniões, visitas técnicas ou apresentações de resultados (opcional)" "Place for possible meetings, technical visits or presentation of results (optional)" %}
               </small>
             </label><br>
-            <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="400" 
+            <textarea id="endereco" name="endereco" rows="3" cols="120" maxlength="{% max_length Proposta 'endereco' %}"
               {% if liberadas_propostas %}disabled{% endif %}
               >{% if proposta.endereco %}{{proposta.endereco}}{% elif organizacao and organizacao.endereco %}{{organizacao.endereco}}{% endif %}</textarea>
             
@@ -185,7 +185,7 @@
             </label><br>
 
             {% if proposta.contatos_tecnicos %} {% comment %} O campo contatos_tecnicos é um campo de texto livre que não é mais usado. {% endcomment %}
-              <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="120" maxlength="400" 
+              <textarea id="contatos_tecnicos" name="contatos_tecnicos" rows="3" cols="120" maxlength="{% max_length Proposta 'contatos_tecnicos' %}"
                 {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.contatos_tecnicos %}{{proposta.contatos_tecnicos}}{% endif %}</textarea>
             {% endif %}
             <table class="tab_contatos">
@@ -201,16 +201,16 @@
                 {% with tipo="T" %}
                   {% for contato in proposta|contatos_tec3 %}
                     <tr>
-                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="250" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" style="width: 190px;"
+                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="{% max_length Contato 'nome' %}" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" style="width: 190px;"
                         value="{% if contato.nome %}{{contato.nome}}{% endif %}"  
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="250" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" style="width: 180px;"
+                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="{% max_length Contato 'email' %}" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" style="width: 180px;"
                         value="{% if contato.email %}{{contato.email}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Telefone"><input type="tel" maxlength="250" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" style="width: 150px;"
+                      <td data-label="Telefone"><input type="tel" maxlength="{% max_length Contato 'telefone' %}" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" style="width: 150px;"
                         value="{% if contato.telefone %}{{contato.telefone}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Cargo"><input type="text" maxlength="250" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" style="width: 160px;"
+                      <td data-label="Cargo"><input type="text" maxlength="{% max_length Contato 'cargo' %}" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" style="width: 160px;"
                         value="{% if contato.cargo %}{{contato.cargo}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
                     </tr>
@@ -226,7 +226,7 @@
               </small>
             </label><br>
             {% if proposta.contatos_administrativos %}
-              <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="400" 
+              <textarea id="contatos_adm" name="contatos_adm" rows="3" cols="120" maxlength="{% max_length Proposta 'contatos_administrativos' %}"  
                 {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.contatos_administrativos %}{{proposta.contatos_administrativos}}{% endif %}</textarea>
             {% endif %}
             <table class="tab_contatos">
@@ -242,16 +242,16 @@
                 {% with tipo="A" %}
                   {% for contato in proposta|contatos_adm3 %}
                     <tr>
-                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="250" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" size="19"
+                      <td data-label="Nome"><input {% if forloop.first %}class="requiredField" required{% endif %} type="text" maxlength="{% max_length Contato 'nome' %}" id="contato_{{tipo}}_nome_{{forloop.counter0}}" name="contato_{{tipo}}_nome_{{forloop.counter0}}" size="19"
                         value="{% if contato.nome %}{{contato.nome}}{% endif %}"  
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="250" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" size="18" 
+                      <td data-label="e-mail"><input {% if forloop.first %}class="requiredField" required{% endif %} type="email" maxlength="{% max_length Contato 'email' %}" id="contato_{{tipo}}_email_{{forloop.counter0}}" name="contato_{{tipo}}_email_{{forloop.counter0}}" size="18" 
                         value="{% if contato.email %}{{contato.email}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Telefone"><input type="tel" maxlength="250" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" size="15" 
+                      <td data-label="Telefone"><input type="tel" maxlength="{% max_length Contato 'telefone' %}" id="contato_{{tipo}}_tel_{{forloop.counter0}}" name="contato_{{tipo}}_tel_{{forloop.counter0}}" size="15" 
                         value="{% if contato.telefone %}{{contato.telefone}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
-                      <td data-label="Cargo"><input type="text" maxlength="250" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" size="16"
+                      <td data-label="Cargo"><input type="text" maxlength="{% max_length Contato 'cargo' %}" id="contato_{{tipo}}_cargo_{{forloop.counter0}}" name="contato_{{tipo}}_cargo_{{forloop.counter0}}" size="16"
                         value="{% if contato.cargo %}{{contato.cargo}}{% endif %}" 
                         {% if liberadas_propostas %}disabled{% endif %}></td>
                     </tr>
@@ -266,7 +266,7 @@
                 {% lng "descreva a instituição/empresa para estudantes conhecerem o que ela faz (opcional)" "describe the institution/company for students to know what it does (optional)" %}
               </small>
             </label><br>
-            <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="3000"
+            <textarea id="descricao_organizacao" name="descricao_organizacao" rows="8" cols="120" maxlength="{% max_length Proposta 'descricao_organizacao' %}"
               {% if liberadas_propostas %}disabled{% endif %}
               >{% if proposta.descricao_organizacao %}{{proposta.descricao_organizacao}}{% elif organizacao and organizacao.informacoes %}{{organizacao.informacoes}}{% endif %}</textarea>
             
@@ -276,7 +276,7 @@
                 {% lng "descreva o departamento/área para estudantes conhecerem o que ele faz (opcional)" "describe the department/area for students to know what it does (optional)" %}
               </small>
             </label><br>
-            <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="3000" 
+            <textarea id="info_departamento" name="info_departamento" rows="8" cols="120" maxlength="{% max_length Proposta 'departamento' %}"
               {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.departamento %}{{proposta.departamento}}{% endif %}</textarea>
             <hr>
 
@@ -286,7 +286,7 @@
                 {% lng "título para ser apresentado aos estudantes e ao longo do projeto, será possível revisar esse título" "title to be presented to students and throughout the project, it will be possible to review this title" %}
               </small>
             </label><br>
-            <input class="requiredField" type="text" size="80" maxlength="160" id="titulo_prop" name="titulo_prop" 
+            <input class="requiredField" type="text" size="80" maxlength="{% max_length Proposta 'titulo' %}" id="titulo_prop" name="titulo_prop" 
               {% if proposta.titulo %}value="{{proposta.titulo}}"{% endif %} required {% if liberadas_propostas %}disabled{% endif %}>
             <br><br>
 
@@ -296,7 +296,7 @@
                 {% lng "descrição para discussão entre professores e que será visualizada pelos estudantes" "description for discussion among teachers and that will be viewed by students" %}
               </small>
             </label><br>
-            <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" maxlength="3000" required 
+            <textarea id="desc_projeto" class="requiredField" name="desc_projeto" rows="10" cols="120" required maxlength="{% max_length Proposta 'descricao' %}"
             {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.descricao %}{{proposta.descricao}}{% endif %}</textarea>
 
             <label class="topico" for="expectativas">
@@ -305,7 +305,7 @@
                 {% lng "exemplo: protótipos, modelos, ferramentas, estudos, validações, testes, padrões" "example: prototypes, models, tools, studies, validations, tests, standards" %}
               </small>
             </label><br>
-            <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" maxlength="3000" required 
+            <textarea id="expectativas" class="requiredField" name="expectativas" rows="8" cols="120" required maxlength="{% max_length Proposta 'expectativas' %}"
               {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.expectativas %}{{proposta.expectativas}}{% endif %}</textarea>
 
             <label class="topico" for="recursos">
@@ -314,7 +314,7 @@
                 {% lng "algo será fornecido para os estudantes? ex: kits de desenvolvimento, matérias primas, acesso a infra de cloud (opcional)" "something will be provided to students? ex: development kits, raw materials, access to cloud infrastructure (optional)" %}
               </small>
             </label><br>
-            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="1000"
+            <textarea id="recursos" name="recursos" rows="5" cols="120" maxlength="{% max_length Proposta 'recursos' %}"
               {% if liberadas_propostas %}disabled{% endif %}
               >{% if proposta.recursos and proposta.recursos != None and proposta.recursos != "None" %}{{proposta.recursos}}{% endif %}</textarea>
 
@@ -324,7 +324,7 @@
                 {% lng "caso desejar apresentar alguma informação adicional aos estudantes (opcional)" "if you wish to present additional information to students (optional)" %}
               </small>
             </label><br>
-            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="3000" 
+            <textarea id="observacoes" name="observacoes" rows="5" cols="120" maxlength="{% max_length Proposta 'observacoes' %}"
               {% if liberadas_propostas %}disabled{% endif %}>{% if proposta.observacoes and proposta.observacoes != None and proposta.observacoes != "None" %}{{proposta.observacoes}}{% endif %}</textarea>
 
             <label class="topico" for="arquivo">{% lng "Anexos" "Attachments" %}</label>

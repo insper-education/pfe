@@ -45,7 +45,7 @@ from projetos.support import get_upload_path, simple_upload
 from projetos.support2 import get_nativamente
 
 from users.models import Opcao, Aluno, Alocacao, PFEUser
-from users.models import Professor, Parceiro, Administrador
+from users.models import Contato, Parceiro
 from users.support import get_edicoes, adianta_semestre
 
 
@@ -858,6 +858,8 @@ def proposta_editar(request, slug=None):
         "liberadas_propostas": liberadas_propostas,
         "organizacao": organizacao,
         "proposta": proposta,
+        "Proposta": Proposta,
+        "Contato": Contato,
         "obs": obs,
         "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
         "edicao": True if proposta else False,

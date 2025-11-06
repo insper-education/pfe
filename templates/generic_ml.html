@@ -15,6 +15,19 @@
       padding: 20px; /* Add padding inside the border */
       background-color: #f9f9f9; /* Light background for better contrast */
     }
+
+    .feedback-container,
+    .feedback-container *:not(pre):not(code) {
+      overflow-wrap: anywhere; /* quebra qualquer token longo */
+      word-break: break-word;  /* fallback */
+      hyphens: auto;           /* hifeniza onde suportado */
+    }
+
+    .feedback-container pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
     .feedback-message {
       font-size: 1.2rem;
       font-weight: 500;

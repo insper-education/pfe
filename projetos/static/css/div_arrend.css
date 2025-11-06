@@ -7,6 +7,8 @@
   max-width: 100%;
   width: 800px;
   padding: 8px;
+  overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
+  word-break: break-word;  /* fallback */
 }
 
 .div_arredondado > div {
@@ -14,8 +16,17 @@
   max-width: 100%;
 }
 
-.div_arredondado_100 {
+.div_arredondado a {
+  word-break: break-all;
+}
 
+.div_arredondado pre,
+.div_arredondado code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.div_arredondado_100 {
   background: #f8fafc; /* azul bem claro */
   border: 1px solid #cfd8dc; /* cinza-azulado claro */
   box-shadow: 0 2px 8px rgba(90, 120, 150, 0.05); /* sombra leve */
@@ -25,6 +36,8 @@
   max-width: 100%;
   width: 100%;
   padding: 8px;
+  overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
+  word-break: break-word;  /* fallback */
 }
 
 .div_arredondado_100 > div {
@@ -37,6 +50,16 @@
   margin-bottom: 10px;
 }
 
+.div_arredondado_100 a {
+  word-break: break-all;
+}
+
+.div_arredondado_100 pre,
+.div_arredondado_100 code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .div_arredondado_azulado {
   background: #eff8ffff;
   vertical-align: middle;
@@ -47,11 +70,23 @@
   width: 800px;
   padding: 8px;
   box-shadow: none;
+  overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
+  word-break: break-word;  /* fallback */
 }
 
 .div_arredondado_azulado > div {
   display: block;
   max-width: 100%;
+}
+
+.div_arredondado_azulado a {
+  word-break: break-all;
+}
+
+.div_arredondado_azulado pre,
+.div_arredondado_azulado code {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .pintern {
