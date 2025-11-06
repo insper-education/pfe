@@ -499,5 +499,14 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
     actions = [dup_entrada]
 
 
+@admin.register(Cerimonia)
+class CerimoniaAdmin(admin.ModelAdmin):
+    """Para Cerimonias."""
+
+    list_display = ("atividade", "startDateTime", "endDateTime", "location",)
+    actions = [dup_entrada,]
+    ordering = ("-startDateTime",)
+    search_fields = ["atividade", "location",]
+
+
 admin.site.register(TematicaEncontro)
-admin.site.register(Cerimonia)

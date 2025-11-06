@@ -21,7 +21,7 @@
   <script src="{% static 'js-year-calendar/locales/js-year-calendar.pt.js' %}"></script>
   <script src="{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script> 
   <script src="{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js' %}"></script> 
-  <link rel="stylesheet" href="{% static 'css/calendario.css' %}?v=2025.11.06-1">
+  <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
 
   <style>
     .tab_pfe td.colu2 {
@@ -245,7 +245,7 @@
 
   </script>
 
-  <script src="{% static 'js/calendario.js' %}"></script>
+  <script src="{% static 'js/calendario.js' %}?v=2025.11.06-1"></script>
 
 {% endblock %}
 
@@ -579,9 +579,9 @@
                           data-toggle="tooltip" data-html="true" animation="true" title="{{aula.descricao}}">
                           {{aula.atividade}}
                           {% if aula.responsavel %}{{aula.responsavel.get_full_name}}{% endif %}
-                          {% if aula.tipo_participacao == 10 %}({% lng "Mediação" "Mediation" %})
-                          {% elif aula.tipo_participacao == 20 %}({{aula.responsavel.parceiro.organizacao.sigla}})
-                          {% elif aula.tipo_participacao == 30 %}({% lng "Apresentador" "Presenter" %})
+                          {% if aula.tipo_participacao == 10 %}({% lng "mediação" "moderator" %})
+                          {% elif aula.tipo_participacao == 20 and aula.responsavel %}({{aula.responsavel.parceiro.organizacao.sigla}})
+                          {% elif aula.tipo_participacao == 30 %}[{% lng "Apresentador" "Presenter" %}]
                           {% endif %}
                         </span>
                         {% for documento in aula.documentos %}
