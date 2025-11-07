@@ -189,7 +189,7 @@ function updateInfoVisibility(fim_semestre, inicio_semestre, isSecondSemester) {
 function primeiro(e) {
   setSemesterStyles(1);
   const inicio_semestre = 1;
-  const fim_semestre = 6;
+  const fim_semestre = 7;
   hideElements();
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
   showElements(els);
@@ -256,6 +256,8 @@ $(document).ready(function() {
         if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
           el.style.display = "table-row";
         } else if(el.classList.contains("lin_mentorias")) {
+          el.style.display = "table-row";
+        } else if(el.classList.contains("lin_cerimonia")) {
           el.style.display = "table-row";
         } else {
           el.style.display = "inline";
