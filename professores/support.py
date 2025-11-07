@@ -348,15 +348,15 @@ def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
             if relatos:
                 atraso_evento = 0
                 for alocacao, relato in avaliados.items():
-                    momento = relato[0].momento_avaliacao
+                    momento = relato[-1].momento_avaliacao
                     prazo_evento = evento.endDate + datetime.timedelta(days=PRAZO)
 
                     atraso_tmp = ((momento.date() if momento else today) - prazo_evento).days
                     atraso_evento = max(atraso_evento, atraso_tmp)
 
-                    if relato[0].avaliacao > -1 and cor not in ['r', 'y']:
+                    if relato[-1].avaliacao > -1 and cor not in ['r', 'y']:
                         cor = 'g'
-                    elif relato[0].avaliacao < 0 and today > prazo_evento:
+                    elif relato[-1].avaliacao < 0 and today > prazo_evento:
                         cor = 'r'
                         itens.append(f"{evento} - {projeto.get_titulo_org()} - {alocacao.aluno.user.get_full_name()}")
                         if not prazo or prazo_evento < prazo:
