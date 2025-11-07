@@ -233,8 +233,8 @@
   {% endif %} 
   
   <hr>
-
-  {% include "estudantes/includes/estilos_respostas.html" %}
+  {% include "participacoes_usuario.html" with usuario=aluno.user %}
+  
   {% include "estudantes/includes/funcionalidade_respostas.html" %}
   {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
 

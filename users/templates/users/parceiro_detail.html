@@ -17,34 +17,23 @@
   {% include "usuario.html" with user=parceiro.user %}
 
   {% if parceiro.principal_contato %}
-      <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">
-        &#x2B50;
-      </span>
-    {% endif %}
+    <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">&#x2B50;</span>
+  {% endif %}
 
   {% if parceiro.organizacao %}
-    <b>
-      {% lng "Organização:" "Organization:" %}
-    </b>
-    <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">
-      {{parceiro.organizacao.nome}}
-    </a>
-    <br>
+    <b>{% lng "Organização:" "Organization:" %}</b>
+    <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">{{parceiro.organizacao.nome}}</a><br>
   {% endif %}
 
   {% if parceiro.cargo %}
-    <b>
-      {% lng "Cargo:" "Position:" %}
-    </b> {{parceiro.cargo}}<br>
+    <b>{% lng "Cargo:" "Position:" %}</b> {{parceiro.cargo}}<br>
   {% endif %}
 
   {% include "dados_usuario.html" with user=parceiro.user %}
   
   {% if conexoes %}
     <hr>
-    <h3>
-      {% lng "Conexões com Projetos" "Connections with Projects" %}
-    </h3>
+    <h3>{% lng "Conexões com Projetos" "Connections with Projects" %}</h3>
     <ol>
       {% for conexao in conexoes %}
         {% if conexao.projeto %}
@@ -60,62 +49,7 @@
     </ol>
   {% endif %}
 
-  {% if aulas %}
-    <hr>
-    <h4>Aula{% if aulas|length > 1 %}s{% endif %} Ministrada{% if aulas|length > 1 %}s{% endif %}</h4>
-    <ol>{% for aula in aulas %}
-        <li> {{aula.startDate}} - {{aula.atividade}} </li>  
-    {% endfor %}</ol>
-  {% endif %}
-
-  {% if mentorias %}
-    <hr>
-    <h4>
-      {% lng_n mentorias|length "Mentoria em Projeto" "Mentorias em Projetos" "Mentorship in Project" "Mentorship in Projects" %}
-    </h4>
-    <ol>{% for mentoria in mentorias %}
-      <li><a href="{% url 'dinamicas_editar' mentoria.id %}">
-      {{mentoria.projeto.get_titulo}}
-      [{{mentoria.projeto.ano}}.{{mentoria.projeto.semestre}}]
-      em {{mentoria.startDate}}
-      </a></li>
-    {% endfor %}</ol>
-  {% endif %}
-
-  {% if bancas %}
-    <hr>
-    <h4>Participação em Banca{% if bancas|length > 1 %}s{% endif %}</h4>
-    <ol>{% for banca in bancas %}
-        <li>
-          <a href="{% url 'banca_ver' banca.id %}">
-          {% if banca.composicao.exame.sigla == "F" %}
-            Certificação Falconi,
-          {% else %}
-            Desconhecido,
-          {% endif %}
-          {% if banca.startDate %}
-            {{banca.startDate.date}},
-          {% endif %}
-          </a>
-          {% if banca.get_projeto %}
-            <a href="{% url 'projeto_infos' banca.get_projeto.id %}">{{banca.get_projeto.get_titulo}}</a>,
-          {% endif %}
-          {% if banca.get_projeto.organizacao %}
-            <a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">
-              {{ banca.get_projeto.organizacao.nome }}
-            </a>
-          {% endif %}
-          {% with certificado=banca|certificado_banca:parceiro.user %}
-            {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">[CERTIFICADO]</a><br>
-            {% endif %}
-          {% endwith %}
-        </li>
-    {% empty %}
-      Bancas não encontrados
-    {% endfor %}</ol>
-    
-  {% endif %}
+  {% include "participacoes_usuario.html" with usuario=parceiro.user %}
 
   {% if user.eh_admin %}
     <a href="{% url 'edita_usuario' parceiro.user.id %}">

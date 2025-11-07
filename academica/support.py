@@ -184,8 +184,7 @@ def media_orientador(projeto):
 
 
 def get_respostas_estilos(usuario):
-    
-    estilos = estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
+    estilos = UsuarioEstiloComunicacao.objects.filter(usuario=usuario).exists()
     if not estilos:
         return None
     

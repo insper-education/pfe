@@ -52,29 +52,6 @@
     </ol>
   {% endif %}
 
-  {% if coorientacoes %}
-    <hr>
-    <h4>{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</h4>
-    <ol>
-    {% for coorientacao in coorientacoes %}
-      {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
-          {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
-          {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-          </a>
-          {% with certificado_coorientador=coorientacao|certificado_coorientador %}
-            {% if certificado_coorientador %}
-              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
-            {% endif %}
-          {% endwith %}
-        </li>
-      {% endif %}
-    {% empty %}
-      {% lng "Projetos não encontrados" "Projects not found" %}
-    {% endfor %}
-    </ol>
-  {% endif %}
-
   {% if responsavel %}
     <hr>
     <h4>{% lng "Professor Responsável" "Professor in charge" %}</h4>
@@ -98,86 +75,7 @@
     </ol>
   {% endif %}
 
-  {% if bancas %}
-    <hr>
-    <h4>{% lng_n bancas|length "Participação em Banca" "Participação em Bancas" "Participation in Examination Board" "Participation in Examination Boards" %}</h4>
-    <div class="caixa_rolante">
-      <ol>
-      {% for banca in bancas %}
-        <li>
-          <a href="{% url 'banca_ver' banca.id %}">
-            {{banca.composicao.exame}}{% if banca.startDate %},
-              {% include "data_ml.html" with date=banca.startDate.date %}
-            {% endif %}-
-          </a>
-          {% if banca.get_projeto %}
-            {% if banca.get_projeto.organizacao %}
-              [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
-            {% endif %}
-            <a href="{% url 'projeto_infos' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
-          {% endif %}
-          {% with certificado=banca|certificado_banca:professor.user %}
-            {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
-            {% endif %}
-          {% endwith %}
-        </li>
-      {% endfor %}
-      </ol>
-    </div>
-  {% endif %}
-
-  {% if mentorias %}
-    <hr>
-    <h4>{% lng_n mentorias|length "Mentoria" "Mentorias" "Mentorship" "Mentorships" %}</h4>
-    <div class="caixa_rolante">
-      <ol>
-      {% for mentoria in mentorias %}
-        <li>
-          {% lng "Mentoria" "Mentorship" %}
-          {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
-          {% if mentoria.projeto %}
-            {% if mentoria.projeto.organizacao %}
-              [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
-            {% endif %}
-            <a href="{% url 'projeto_infos' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
-          {% endif %}
-          {% with certificado=mentoria|certificado_mentoria:professor.user %}
-            {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
-            {% endif %}
-          {% endwith %}
-        </li>
-      {% endfor %}
-      </ol>
-    </div>
-  {% endif %}
-
-  {% if aulas %}
-    <hr>
-    <h4>{% lng_n aulas|length "Aula Ministrada" "Aulas Ministradas" "Class Taught" "Classes Taught" %}</h4>
-    <div class="caixa_rolante">
-      <ol>{% for aula in aulas %}
-          <li>
-            {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
-              <span class="texto-longo">{% lng_dl aula.startDate %}</span>
-              <span class="texto-curto">{% lng_d aula.startDate %}</span>
-              - {{aula.atividade}}
-            {% if aula.documento.documento %}</a>{% endif %}
-          </li>  
-      {% endfor %}</ol>
-    </div>
-  {% endif %}
-
-  {% if estilos_respostas %}
-    <br><hr>
-    <h4>{% lng "Estilos de Comunicação" "Communication Styles" %}</h4>
-    {% include "tabela_estilos.html" with usuario=professor.user %}<br>
-    {% for metrica, valor in estilos_respostas.items %}
-      <b>{{ metrica }}:</b> {{ valor }}<br>
-    {% endfor %}
-    <br>
-  {% endif %}
+  {% include "participacoes_usuario.html" with usuario=professor.user %}
 
   {% if user.eh_admin %}
     <a href="{% url 'edita_usuario' professor.user.id %}">

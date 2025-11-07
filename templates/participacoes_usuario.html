@@ -1,0 +1,120 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 7 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load certificados %}
+{% load participacoes %}
+
+{% with coorientacoes=usuario|coorientacoes %} 
+  {% if coorientacoes %}
+    <hr>
+    <h4>{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</h4>
+    <ol>
+    {% for coorientacao in coorientacoes %}
+      {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
+        <li><a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
+          {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
+          {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
+          </a>
+          {% with certificado_coorientador=coorientacao|certificado_coorientador %}
+            {% if certificado_coorientador %}
+              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
+            {% endif %}
+          {% endwith %}
+        </li>
+      {% endif %}
+    {% empty %}
+      {% lng "Projetos não encontrados" "Projects not found" %}
+    {% endfor %}
+    </ol>
+  {% endif %}
+{% endwith %}
+
+{% with bancas=usuario|bancas %}
+  {% if bancas %}
+    <hr>
+    <h4>{% lng_n bancas|length "Participação em Banca" "Participação em Bancas" "Participation in Examination Board" "Participation in Examination Boards" %}</h4>
+    <div class="caixa_rolante">
+      <ol>
+      {% for banca in bancas %}
+        <li>
+          <a href="{% url 'banca_ver' banca.id %}">
+            {{banca.composicao.exame}}{% if banca.startDate %},
+              {% include "data_ml.html" with date=banca.startDate.date %}
+            {% endif %}-
+          </a>
+          {% if banca.get_projeto %}
+            {% if banca.get_projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' banca.get_projeto.organizacao.id %}">{{ banca.get_projeto.organizacao.nome }}</a>]
+            {% endif %}
+            <a href="{% url 'projeto_infos' banca.get_projeto.id %}">{{ banca.get_projeto.get_titulo }}</a>
+          {% endif %}
+          {% with certificado=banca|certificado_banca:usuario %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+      {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% with mentorias=usuario|mentorias %}
+  {% if mentorias %}
+    <hr>
+    <h4>{% lng_n mentorias|length "Mentoria" "Mentorias" "Mentorship" "Mentorships" %}</h4>
+    <div class="caixa_rolante">
+      <ol>
+      {% for mentoria in mentorias %}
+        <li>
+          {% lng "Mentoria" "Mentorship" %}
+          {% if mentoria.startDate %}{{mentoria.startDate.date}}{% endif %}:
+          {% if mentoria.projeto %}
+            {% if mentoria.projeto.organizacao %}
+              [<a href="{% url 'organizacao_completo' mentoria.projeto.organizacao.id %}">{{ mentoria.projeto.organizacao.nome }}</a>]
+            {% endif %}
+            <a href="{% url 'projeto_infos' mentoria.projeto.id %}">{{ mentoria.projeto.get_titulo }}</a>
+          {% endif %}
+          {% with certificado=mentoria|certificado_mentoria:usuario %}
+            {% if certificado %}
+              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
+            {% endif %}
+          {% endwith %}
+        </li>
+      {% endfor %}
+      </ol>
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% with aulas=usuario|aulas %}
+  {% if aulas %}
+    <hr>
+    <h4>{% lng_n aulas|length "Aula Ministrada" "Aulas Ministradas" "Class Taught" "Classes Taught" %}</h4>
+    <div class="caixa_rolante">
+      <ol>{% for aula in aulas %}
+          <li>
+            {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
+              <span class="texto-longo">{% lng_dl aula.startDate %}</span>
+              <span class="texto-curto">{% lng_d aula.startDate %}</span>
+              - {{aula.atividade}}
+            {% if aula.documento.documento %}</a>{% endif %}
+          </li>  
+      {% endfor %}</ol>
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% with estilos_respostas=usuario|estilos_respostas %}
+  {% if estilos_respostas %}
+    {% with estilos=usuario|estilos_comunicacao %}
+      {% include "estudantes/includes/estilos_respostas.html"  with usuario=usuario %}
+    {% endwith %}
+  {% endif %}
+{% endwith %}

@@ -7,13 +7,15 @@
 {% load static %}
 {% load linguas %}
 
+<link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
+
 {% if estilos_respostas %}
   <h4>
     {% lng "Estilos de Comunicação" "Communication Styles" %}
     <span id="estilo_com" class="seta-baixo"></span>
   </h4>
   <div id="bloco_estilo" style="display: none;">
-    {% include "tabela_estilos.html" with usuario=aluno.user %}<br>
+    {% include "tabela_estilos.html" with usuario=usuario %}<br>
     <b>{% lng "Resultados" "Results" %}:</b><br>
     <table>
       <tbody>
