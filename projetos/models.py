@@ -687,6 +687,9 @@ class Cerimonia(models.Model):
                                    on_delete=models.SET_NULL,
                                    help_text="Responsável pelo evento, por exemplo panelista")
 
+    class Meta:
+        ordering = ["startDateTime", "endDateTime"]
+
 
 class Evento(models.Model):
     """Eventos para a agenda."""

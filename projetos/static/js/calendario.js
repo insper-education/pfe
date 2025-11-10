@@ -108,22 +108,25 @@ function setSemesterStyles(semesterActive) {
   
 }
 
-function hideElements() {
-  document.querySelectorAll(".semestre").forEach(el => el.style.display = "none");
+function hideElements(filtro) {
+  document.querySelectorAll(filtro).forEach(el => el.style.display = "none");
 }
 
+let data_cerimonia = new Set();
+
 function showElements(els) {
+  data_cerimonia.clear();
   els.forEach(el => {
     if (el.classList.contains("lin_aulas")) {
-      el.style.display = "table-row";
-      if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
+      if (el.classList.contains("ano" + currentYear)) el.style.display = "table-row";
     } else if (el.classList.contains("lin_mentorias")) {
-        el.style.display = "table-row";
-        if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
+      if (el.classList.contains("ano" + currentYear)) el.style.display = "table-row";
     } else if (el.classList.contains("lin_cerimonia")) {
+      if (el.classList.contains("ano" + currentYear)) {
         el.style.display = "table-row";
-        if (!el.classList.contains("ano" + currentYear)) el.style.display = "none";
-    }else {
+        data_cerimonia.add(`${el.dataset.dia}/${el.dataset.mes}/${el.dataset.ano}`); // adiciona data à lista (set)
+      }
+    } else {
       el.style.display = "inline";
     }
     if (el.parentNode.classList.contains("ano" + currentYear)) {
@@ -131,12 +134,16 @@ function showElements(els) {
       if (el.classList.contains("prova")) $("#linha_provas").show();
     }
   });
+  if(data_cerimonia.size > 0) {
+    const datas = [...data_cerimonia]; // preserva ordem de inserção
+    document.getElementById("data_encerramento").innerText = "(" + datas.join(", ") + ")";
+  }
 }
 
 function filterAndShowCoordenacao(inicio_semestre, fim_semestre) {
   document.querySelectorAll(".coordenacao").forEach(el => el.style.display = "none");
   let els = Array.from(document.querySelectorAll(".coordenacao[data-mes]"))
-    .filter(el => Number(el.dataset.mes) <= fim_semestre && Number(el.dataset.mes) >= inicio_semestre && Number(el.dataset.ano) == currentYear);
+    .filter(el => Number(el.dataset.mes) <= fim_semestre && Number(el.dataset.mes) > inicio_semestre && Number(el.dataset.ano) == currentYear);
   els.forEach(el => el.style.display = "inline");
   if (els.length > 0) {
     // Remove o <br> inicial se existir
@@ -190,7 +197,7 @@ function primeiro(e) {
   setSemesterStyles(1);
   const inicio_semestre = 1;
   const fim_semestre = 7;
-  hideElements();
+  hideElements(".semestre");
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) < fim_semestre);
   showElements(els);
   filterAndShowCoordenacao(inicio_semestre, fim_semestre);
@@ -202,7 +209,7 @@ function segundo(e) {
   setSemesterStyles(2);
   const inicio_semestre = 7;
   const fim_semestre = 12;
-  hideElements();
+  hideElements(".semestre");
   const els = Array.from(document.querySelectorAll(".semestre[data-mes]")).filter(el => Number(el.dataset.mes) > inicio_semestre);
   showElements(els);
   filterAndShowCoordenacao(inicio_semestre, fim_semestre);
@@ -244,28 +251,10 @@ $(document).ready(function() {
     );
 
     document.querySelector("#calendar").addEventListener("yearChanged", function(e) {
-      currentYear = e.currentYear;
-    
-      // Esconde todos os elementos por ano
-      [].forEach.call(document.querySelectorAll(".ano"), function (el) {
-        el.style.display = "none";
-      });
-    
-      // Mostra só eventos do ano
-      [].forEach.call(document.querySelectorAll(".ano"+e.currentYear), function (el) {
-        if(el.classList.contains("lin_aulas")) { // Preciso fazer isso para a tabela de aulas no final da página
-          el.style.display = "table-row";
-        } else if(el.classList.contains("lin_mentorias")) {
-          el.style.display = "table-row";
-        } else if(el.classList.contains("lin_cerimonia")) {
-          el.style.display = "table-row";
-        } else {
-          el.style.display = "inline";
-        }
-      });
-
+      currentYear = e.currentYear;  // setando o ano atual global
+      hideElements(".ano");
+      showElements(document.querySelectorAll(".ano"+e.currentYear));
       carrega_semestre();
-
     });
 
     // Para comutar entre semestres no ano
