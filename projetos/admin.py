@@ -509,8 +509,7 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
 @admin.register(Cerimonia)
 class CerimoniaAdmin(admin.ModelAdmin):
     """Para Cerimonias."""
-
-    list_display = ("atividade", "startDateTime", "endDateTime", "location",)
+    list_display = ("atividade", "startDateTime", "endDateTime", "responsavel","location",)
     actions = [dup_entrada,]
     ordering = ("-startDateTime",)
     search_fields = ["atividade", "location",]
