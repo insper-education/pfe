@@ -11,12 +11,17 @@
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <style>
-    .bloco {
-      width: 700px;
+    .bloco_texto {
+      width: 800px;
       max-width: 100%;
+      text-align: justify; 
+      margin-bottom: 0.2rem;
+      background-color: #f8f9fd;
+      padding: 0.5rem;
+      line-height: 1.2;
     }
-    .bloco div {line-height: 1.2;}
-    .bloco div label {
+    .div_arredondado div {line-height: 1.1;}
+    .div_arredondado div label {
       display: block;
       margin-bottom: 0.75rem;
     }
@@ -45,12 +50,12 @@
 
   <form action="" method="post"> {% csrf_token %}  
 
-    <div class="bloco">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
+    <div class="bloco_texto">{% lng msg_aval_pares.texto msg_aval_pares.texto_en %}</div>
     <hr>
     
     {% for colega, par in colegas %}
 
-      <div class="bloco"><b>
+      <div><b>
           {% lng "Colega:" "Colleague:" %} {{colega.aluno}}
           {% if colega.aluno.externo %}
             [{{colega.aluno.externo}}]
@@ -58,7 +63,7 @@
           {% endif %}
       </b></div>
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <label for="aprecia"><b>
           {% lng_g colega.aluno.user.genero "O que você aprecia no" "O que você aprecia na" "What do you appreciate about" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}?
@@ -68,7 +73,7 @@
         {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.aprecia %}{{par.aprecia}}{% endif %}</textarea>
       </div>
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <label for="atrapalhando"><b>
           {% lng_g colega.aluno.user.genero "O que você vê o" "O que você vê a" "What do you see" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
@@ -79,7 +84,7 @@
         {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.atrapalhando %}{{par.atrapalhando}}{% endif %}</textarea>
       </div>
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <label for="mudar"><b>
           {% lng_g colega.aluno.user.genero "O que o" "O que a" "What can" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
@@ -90,7 +95,7 @@
         {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %}>{% if par.mudar %}{{par.mudar}}{% endif %}</textarea>
       </div>
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <b>
           {% lng_g colega.aluno.user.genero "Entrega do" "Entrega da" "Delivery of" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
@@ -106,7 +111,7 @@
       </div>
 
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <b>
           {% lng_g colega.aluno.user.genero "Iniciativa do" "Iniciativa da" "Initiative of" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
@@ -121,7 +126,7 @@
         </div>
       </div>
 
-      <div class="div_arredondado bloco">
+      <div class="div_arredondado">
         <b>
           {% lng_g colega.aluno.user.genero "Comunicação do" "Comunicação da" "Communication of" %}
           {% if colega.aluno %}{{colega.aluno}}{% else %}[ESTUDANTE]{% endif %}
@@ -140,7 +145,6 @@
 
     {% endfor %}
 
-    <br>
     <button class="btn btn-primary mb-1" {% if vencido or user.tipo_de_usuario != 1%}disabled{% endif %} type="submit">
       {% lng "Enviar" "Submit" %}
     </button>
