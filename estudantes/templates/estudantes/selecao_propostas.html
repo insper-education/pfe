@@ -129,18 +129,58 @@
   {% endif %}
 
   <div class="container-fluid mt-1">
-    <div class="row align-items-center">
-      <!-- First div aligned to the left -->
-      <div class="col-12 col-md-10 text-left">
-        {% lng "Selecione as propostas conforme seu interesse" "Select the proposals according to your interest" %}
+
+
+<!-- Hero section com instruções visuais -->
+    <div class="alert alert-light border mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.75rem 1rem;">
+      <div class="d-flex align-items-center mb-3">
+        <i class="fas fa-lightbulb fa-lg mr-2"></i>
+        <h6 class="mb-0">{% lng "Como selecionar propostas" "How to select proposals" %}</h6>
       </div>
-    
-      <!-- Second and third divs aligned to the right -->
-      <div class="col-12 col-md-2 text-right">
-        <button class="botaopequeno ordenar btn btn-primary ml-2" onclick="sortTable()">
+      <div class="row mt-2">
+        <div class="col-md-4 mb-1">
+          <div class="d-flex align-items-start">
+            <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">1</span>
+            <div style="font-size: 0.9rem;">
+              <strong>{% lng "Veja os detalhes" "View details" %}</strong><br>
+              <small>{% lng "Clique na seta (resumo) ou título (completo)" "Click the arrow (summary) or title (full)" %}</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-1">
+          <div class="d-flex align-items-start">
+            <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">2</span>
+            <div style="font-size: 0.9rem;">
+              <strong>{% lng "Escolha a prioridade" "Choose priority" %}</strong><br>
+              <small>{% lng "Use o número ao lado de cada proposta" "Use the number next to each proposal" %}</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-1">
+          <div class="d-flex align-items-start">
+            <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">3</span>
+            <div style="font-size: 0.9rem;">
+              <strong>{% lng "Confirme" "Confirm" %}</strong><br>
+              <small>{% lng "Clique em Confirmar ao final" "Click Confirm at the end" %}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-0">
+      <!-- Texto alinhado à esquerda -->
+      <h6 class="text-muted ml-1 mb-2 mb-md-0">
+        <i class="fas fa-list-ul mr-2"></i>
+        {% lng "Propostas disponíveis" "Available proposals" %}
+      </h6>
+      <!-- Botões alinhados à direita -->
+      <div class="mr-1">
+        <button class="btn btn-sm btn-primary ml-2" onclick="sortTable()">
           {% lng "Ordenar" "Sort" %}&nbsp;&#x21e3;
         </button>
-        <button class="botaopequeno filtrar btn btn-secondary" data-toggle="modal" data-target="#filterModal">
+        <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#filterModal">
           <i class="fas fa-filter"></i> {% lng "Filtrar" "Filter" %}
         </button>
       </div>
@@ -216,12 +256,20 @@
           {{warnings|linebreaks}}
         </font>
 
-        <small>
-          {% lng "Quando decidir os projetos desejados, clique em <b>Confirmar</b>. Você pode reconfirmar quantas vezes desejar até dia" "When you decide on the desired projects, click <b>Confirm</b>. You can reconfirm as many times as you want until" %}
-          {% lng_dl prazo %}.
-        </small><br>
+        <div class="d-inline-block ml-3 mr-3">
+          <div class="alert py-2 px-3 mb-2" style="background:#e8f5ec; border:1px solid #e2e6f0; border-radius:8px;">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-info-circle text-primary mr-2 mt-1"></i>
+              <div style="font-size:.85rem; line-height:1.5;">    
+                {% lng txt_min_propos.pt txt_min_propos.en %}
+                {% lng "Você pode reconfirmar quantas vezes desejar até" "You can reconfirm as many times as you want until" %}
+                <span class="badge badge-warning text-dark" style="font-size:.75rem;">{% lng_dl prazo %}</span>.
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <div class="row mt-3">
+        <div class="row ml-2 mt-3">
           <div class="col-12 col-md-2">
             <button class="btn btn-primary mb-1 mr-3" 
                   {% if vencido or not liberadas_propostas %}disabled{% endif %}
@@ -236,9 +284,7 @@
               {% lng "Confirmar" "Confirm" %}
             </button>
           </div>
-          <div class="col-12 col-md-10 text-md-left mt-0 mt-md-0 text-danger small">
-            {% lng txt_min_propos.pt txt_min_propos.en %}
-          </div>
+
         </div>
 
       </form>

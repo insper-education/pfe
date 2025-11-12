@@ -76,9 +76,17 @@
   {% endif %}
 
   {% if proposta.anexo %}
-    <div class="mt-3">
-      <b>{% lng "Anexo:" "Attachment:" %}</b>
-      <a class="text-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}">{{proposta.get_anexo}}</a>
+    <div class="mt-3 border rounded" style="background-color: #f8f9fa; padding: 2px 14px 6px 8px;">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-paperclip fa-2x text-primary mr-3"></i>
+        <div>
+          <b class="d-block">{% lng "Anexo:" "Attachment:" %}</b>
+          <a class="btn btn-sm btn-outline-success" href="{{request.scheme}}://{{request.get_host}}{{proposta.anexo.url}}" target="_blank">
+            <i class="fas fa-download mr-1"></i>
+            {{proposta.get_anexo}}
+          </a>
+        </div>
+      </div>
     </div>
   {% endif %}
   
