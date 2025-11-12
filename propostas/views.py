@@ -364,17 +364,17 @@ def propostas_apresentadas(request):
                 total_propostas = propostas_filtradas.count()
 
             cabecalhos = [
-                {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes"},
-                {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse"},
-                {"pt": "Fechada", "en": "Confirmed", "font": "12px", "tooltip": "Foi formado um grupo de estudantes para essa proposta de projeto"},
+                {"pt": "Analisada", "en": "Analyzed", "font": "12px", "tooltip": "Algum professor do comitê analisou que a proposta seja publicada para os estudantes", "icone": "&#x1F441;"},
+                {"pt": "Disponível", "en": "Available", "font": "12px", "tooltip": "Proposta ficará disponível para estudantes na fase onde eles deverão selecionar interesse", "icone": "&#x1F44D;"},
+                {"pt": "Fechada", "en": "Confirmed", "font": "12px", "tooltip": "Foi formado um grupo de estudantes para essa proposta de projeto", "icone": "&#x1F91D;"},
                 {"pt": "Proposta", "en": "Proposal"},
                 {"pt": "Período", "en": "Semester", "esconder": True},
                 {"pt": "Organização", "en": "Organization"},
                 {"pt": "Tipo", "en": "Type", "font-size": "12px"},
-                {"pt": "Estudante1", "en": "Student1", "font": "12px", "classes": "estudante-icon"},
-                {"pt": "Estudante2", "en": "Student2", "font": "12px", "classes": "estudante-icon"},
-                {"pt": "Estudante3", "en": "Student3", "font": "12px", "classes": "estudante-icon"},
-                {"pt": "Estudante4", "en": "Student4", "font": "12px", "classes": "estudante-icon"},
+                {"pt": "Estudante", "en": "Student", "texto": "1", "font": "12px", "icone": "&#x1F9D1;&#x200D;&#x1F393;"},
+                {"pt": "Estudante", "en": "Student", "texto": "2", "font": "12px", "icone": "&#x1F9D1;&#x200D;&#x1F393;"},
+                {"pt": "Estudante", "en": "Student", "texto": "3", "font": "12px", "icone": "&#x1F9D1;&#x200D;&#x1F393;"},
+                {"pt": "Estudante", "en": "Student", "texto": "4", "font": "12px", "icone": "&#x1F9D1;&#x200D;&#x1F393;"},
                 {"pt": "Disciplinas Recomendadas", "en": "Recommended Courses", "font": "12px"},
             ]
 

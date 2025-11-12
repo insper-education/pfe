@@ -21,44 +21,6 @@
       font-size: large;
       font-weight: bold;
     }
-		@media screen and (max-width: 1200px) {
-      .estudante-icon:before {
-        content: "\1F9D1 \200D \1F393";
-        font-size: 14px;
-      }
-      .autorizado-icon:before {
-        content: "\1F441";
-        font-size: 16px;
-      }
-      .disponivel-icon:before {
-        content: "\1F44D";
-        font-size: 16px;
-      }
-      .fechado-icon:before {
-        content: "\1F91D";
-        font-size: 16px;
-      }
-      th {
-        padding-top: 16px !important;
-        padding-right: 2px !important;
-        padding-left: 3px !important;
-      }
-    }
-    
-    @media screen and (min-width: 1201px) {
-      .estudante-icon:before {
-        content: "Estudante";
-      }
-      .autorizado-icon:before {
-        content: "Analisada";
-      }
-      .disponivel-icon:before {
-        content: "Liberada";
-      }
-      .fechado-icon:before {
-        content: "Fechada";
-      }
-    }
 	</style>
 
   {% include "tabelas_includes.html" %}
@@ -79,9 +41,9 @@
     </script>
 
 
-    {% comment %} {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos captions=captions %} {% endcomment %}
+    {% include "tabelas_top_ml.html" with tabela="Propostas" cabecalhos=cabecalhos captions=captions %}
 
-    <div class="table-responsive">
+    {% comment %} <div class="table-responsive">
       <table id="PropostasTable" class="table table-bordered table-hover table-sm" style="width: 100%;">
         <thead class="table-info">
           <tr>
@@ -106,7 +68,7 @@
             <th scope="col" class="text-center" style="font-size: 12px;" data-lang-pt="Disciplinas Recomendadas" data-lang-en="Recommended Courses">Disciplinas Recomendadas</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody> {% endcomment %}
 
           {% for proposta, nativamente in prop_nativ %} 
           {% with disponivel=proposta.disponivel %}

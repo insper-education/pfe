@@ -6,6 +6,15 @@
 
 {% load linguas %}
 
+<style>
+  .th-icone {display: none;}
+  .th-nao-icone {display: inline;}
+  @media screen and (max-width: 1200px) {
+    .th-icone {display: inline;}
+    .th-nao-icone {display: none;}
+  }
+</style>
+
 {% comment %} Somente para a parte de cima das tabelas comuns {% endcomment %}
 <div class="table-responsive">
   <table id="{{tabela}}Table"
@@ -24,6 +33,8 @@
             {% if cabecalho.tooltip %}data-toggle="tooltip" data-html="true" animation="true" title="{{cabecalho.tooltip|safe}}"{% endif %}
             {% if cabecalho.tipo %}data-tipo="{{cabecalho.tipo|safe}}"{% endif %}
             {% if cabecalho.esconder %}data-esconder="true"{% endif %}
+            {% if cabecalho.texto %}data-texto="{{cabecalho.texto}}"{% endif %}
+            {% if cabecalho.icone %}data-icone="{{cabecalho.icone|safe}}"{% endif %}
             data-lang-pt="{{cabecalho.pt|safe}}" data-lang-en="{{cabecalho.en|safe}}"
             ><span style="margin-right: 0.6ex;">{% lng cabecalho.pt|safe cabecalho.en|safe %}</span>
           </th>

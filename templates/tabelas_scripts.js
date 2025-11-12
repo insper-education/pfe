@@ -407,7 +407,13 @@ function atualiza_lingua(lang) {
 
     // Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela
     document.querySelectorAll("th[data-lang-pt]").forEach(function(th) {
-        th.innerHTML = th.getAttribute(lang === "pt" ? "data-lang-pt" : "data-lang-en");
+        texto_lingua = th.getAttribute(lang === "pt" ? "data-lang-pt" : "data-lang-en")
+        texto = th.getAttribute("data-texto");
+        icone = th.getAttribute("data-icone");
+        if (icone) {
+            texto_lingua = '<span class="th-icone">' + icone  + '</span><span class="th-nao-icone">' + texto_lingua + '</span>';
+        }
+        th.innerHTML = texto_lingua + (texto ? '<span>' + texto + '</span>' : '');
     });
   
 
