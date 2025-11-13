@@ -239,7 +239,7 @@ def edita_aviso(request, primarykey=None):
         "bancas": { "pt": "Próximas bancas", "en": "Next defenses" },
         "eventos": { 
             "pt": "Todos os eventos do semestre", "en": "All events of the semester",
-            "exemplos": "IA = Início das aulas, ERF = Entrega do Relatório Final (Grupo e Individual)"
+            "exemplos": 'IA (Início das Aulas) = {{eventos|data_evento_sigla:"IA"}}, MA (Mentoria Acadêmica) = {{eventos|data_evento_sigla:"MA"}}',
             },
         "evento": { 
             "pt": "Evento relacionado", "en": "Related event",

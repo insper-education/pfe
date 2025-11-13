@@ -10,30 +10,44 @@
 
 <div class="mt-4 alert alert-light p-2" style="max-width: 854px;">
   {% if variaveis %}
-    <b>{% lng "Variáveis" "Variables" %}</b>:<br>
-    {% for chave, valor in variaveis.items %}
-      &#123;&#123;{{chave}}&#125;&#125; - {% lng valor.pt valor.en %}<br>
-      {% if valor.atributos %}
-        <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
-      {% endif %}
-      {% if valor.exemplos %}
-        <small>&nbsp;&nbsp;{% lng "exemplos" "examples" %}: {{valor.exemplos}}<br></small>
-      {% endif %}
-    {% endfor %}
-    <br>
+    <div class="mb-3">
+      <b>{% lng "Variáveis" "Variables" %}</b>:<br>
+      {% for chave, valor in variaveis.items %}
+        &#123;&#123;{{chave}}&#125;&#125; - {% lng valor.pt valor.en %}<br>
+        {% if valor.atributos %}
+          <small>&nbsp;&nbsp;{% lng "atributos" "attributes" %}: {{valor.atributos}}<br></small>
+        {% endif %}
+        {% if valor.exemplos %}
+          <small>&nbsp;&nbsp;{% lng "exemplos" "examples" %}: {{valor.exemplos}}<br></small>
+        {% endif %}
+      {% endfor %}
+    </div>
   {% endif %}
   {% if filtros %}
-    <b>{% lng "Filtros" "Filters" %}</b>:<br>
-    {% for chave, valor in filtros.items %}
-      |{{chave}}: - {% lng valor.pt valor.en %}<br>
-    {% endfor %}
-    <br>
+    <div class="mb-3">
+      <b>{% lng "Filtros" "Filters" %}</b>:<br>
+      {% for chave, valor in filtros.items %}
+        |{{chave}}: - {% lng valor.pt valor.en %}<br>
+      {% endfor %}
+    </div>
   {% endif %}
   {% if tipos %}
-    <b>{% lng "Link Documentos" "Document Links" %}</b>:<br>
-    base - {{request.scheme}}://{{request.get_host}}{% url 'doc' %}[DOC]<br>
-    {% for tipo in tipos %}
-      <i>{{tipo.sigla}}</i>: {% lng tipo.nome tipo.nome_en %}<br>
-    {% endfor %}
+    <div class="mb-3">
+      <b>{% lng "Link Documentos" "Document Links" %}</b>:<br>
+      base - {{request.scheme}}://{{request.get_host}}{% url 'doc' %}[DOC]<br>
+      {% for tipo in tipos %}
+        <i>{{tipo.sigla}}</i>: {% lng tipo.nome tipo.nome_en %}<br>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if eventos %}
+    <div class="mb-3">
+      <b>{% lng "Sigla Eventos" "Events Acronyms" %}</b>:<br>
+      {% for evento in eventos %}
+        {% if evento.sigla %}
+          <i>{{evento.sigla}}</i>: {% lng evento.nome evento.nome_en %}<br>
+        {% endif %}
+      {% endfor %}
+    </div>
   {% endif %}
 </div>
