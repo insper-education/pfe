@@ -9,11 +9,16 @@
   {% load static %}
   {% load get_field %}
   {% load linguas %}
+
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>
     .ent_nome {cursor:pointer;}
     .ent_nome:hover {background-color: #eee;}
+    .help {font-size:.68rem; color:#64748b; margin-top:3px;}
+    .checkbox-inline {display:flex; align-items:center; gap:8px; font-size:.75rem; margin-top:6px;}
   </style>
   <script>
     $(document).ready(function(){
@@ -28,37 +33,68 @@
     
   {% if vencido and user.tipo_de_usuario == 1 %}<h6 class="red-bold">Prazo vencido. Você não pode editar seus dados!</h6>{% endif %}
 
-  <form method="post"> {% csrf_token %}  
+  <form method="post"> {% csrf_token %}
 
-    <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">Selecionar suas áreas de interesse:</span><br>
-    {% include "areas.html" with areas_de_interesse_selecionadas=estudante.user.areadeinteresse_set.all com_borda=True %}<br>
-    
-    {% include "estudantes/includes/trab_ativ_famil.html" %}
+    <div class="div_arredondado_100">
 
-    <div class="mt-3">
-      <label for="linkedin">
-        {% lng "Caso desejar, você pode informar seu LinkedIn: (opcional)" "If you wish, you can inform your LinkedIn: (optional)" %}
-      </label><br>
-      <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}>
-    </div>
-    
-    <div class="mt-3">
-      <label for="conta_github">
-        {% lng "Informe seu usuário GitHub: (pode ser informado posteriormente para uso do GitHub)" "Inform your GitHub user: (can be informed later for GitHub use)" %}
-      </label><br>
-      <input type="text" size="38" id="conta_github" name="conta_github" maxlength="{% max_length PFEUser 'conta_github' %}" {% if estudante.user.conta_github %}value="{{estudante.user.conta_github}}"{% endif %} {% if vencido %}disabled{% endif %}>
-    </div>
+      <div class="alert alert-light border mb-3" style="background:#f0f7f2;">
+        <div class="d-flex">
+          <div>
+            {% lng "Use este formulário para registrar informações que aprimoram a aderência das propostas e facilitam nosso contato ao longo do Capstone." "Use this form to provide information that improves proposal matching and helps us stay in touch throughout the Capstone." %}
+            <div class="small text-muted mt-1">
+              {% lng "Antes de confirmar projetos, preencha as informações a seguir." "Before confirming projects, fill in the information below." %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <span style="display: inline-block; margin-left: 4px; margin-bottom: 1px;">
+        {% lng "Selecionar suas áreas de interesse" "Select your areas of interest" %}:</span><br>
+      {% include "areas.html" with areas_de_interesse_selecionadas=estudante.user.areadeinteresse_set.all com_borda=True %}
+      
+      {% include "estudantes/includes/trab_ativ_famil.html" %}
 
-    <div class="mt-3">
-      <label for="celular">
-        Caso desejar, você pode informar seu telefone celular: (opcional)<br>
-      </label><br>
-      <input type="text" size="20" maxlength="{% max_length PFEUser 'celular' %}" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
-      <br><small><b class="text-danger">Iremos usar esse número para enviar avisos de forma não oficial pelo WhatsApp. A comunicação oficial é pelo seu e-mail de estudante!</b></small>
+      <div class="mt-3">
+        <label for="linkedin">
+          {% lng "Caso desejar, você pode informar seu LinkedIn: (opcional)" "If you wish, you can inform your LinkedIn: (optional)" %}
+        </label><br>
+        <input type="text" size="80" id="linkedin" name="linkedin" pattern="\s*https?://(www\.)?linkedin\.com/[^\s]*\s*" maxlength="{% max_length_menos PFEUser 'linkedin' 7 %}" {% if estudante.user.linkedin %}value="{{estudante.user.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/" {% if vencido %}disabled{% endif %}>
+      </div>
+      
+      <div class="mt-3">
+        <label for="conta_github">
+          {% lng "Informe seu usuário GitHub: (pode ser informado posteriormente para uso do GitHub)" "Inform your GitHub user: (can be informed later for GitHub use)" %}
+        </label><br>
+        <input type="text" size="38" id="conta_github" name="conta_github" maxlength="{% max_length PFEUser 'conta_github' %}" {% if estudante.user.conta_github %}value="{{estudante.user.conta_github}}"{% endif %} {% if vencido %}disabled{% endif %}>
+      </div>
+
+      <div class="mt-3">
+        <label for="celular">
+          {% lng "Caso desejar, você pode informar seu telefone celular: (opcional)" "If you wish, you can inform your cell phone number: (optional)" %}
+        </label><br>
+        <input type="text" size="20" maxlength="{% max_length PFEUser 'celular' %}" id="celular" name="celular" {% if estudante.user.celular %}value="{{estudante.user.celular}}"{% endif %} placeholder="(XX)XXXX-XXXX" {% if vencido %}disabled{% endif %}>
+        <br><small><b class="text-danger">
+          {% lng "Iremos usar esse número para enviar avisos de forma não oficial pelo WhatsApp. A comunicação oficial é pelo seu e-mail de estudante!" "We will use this number to send unofficial notifications via WhatsApp. Official communication is through your student email!" %}
+        </b></small>
+      </div>
+
+      <div class="mt-3">
+        <label>
+          {% lng "Recrutadores costumam solicitar informações sobre o desempenho dos alunos no Capstone." "Recruiters often request information about students' performance in the Capstone." %}<br>
+          {% lng "Você autoriza compartilhar seu relatório de desempenho (somente os feedbacks do orientador, sem notas) com potenciais empregadores interessados?" "Do you authorize sharing your performance report (only advisor feedback, no grades) with potential interested employers?" %}
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="recrutadores" name="recrutadores"
+                 {% if estudante.recrutadores %}checked{% endif %}
+                 {% if vencido %}disabled{% endif %}>
+          <span>{% lng "Autorizo" "I authorize" %}</span>
+        </label>
+      </div>
+
+      <button class="btn btn-primary mb-1 mt-3" type="submit" {% if vencido %}disabled{% endif %}>
+        {% lng "Atualizar" "Update" %}
+      </button>
+
     </div>
-   
-    <br><br>
-    <input class="btn btn-primary mb-1" {% if vencido %}disabled{% endif %} type="submit" value="Atualizar">
 
   </form>
 

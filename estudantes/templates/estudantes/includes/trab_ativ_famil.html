@@ -7,18 +7,55 @@
 {% load get_field %}
 {% load linguas %}
 
+<style>
+  .opcoes-trabalho input[type=radio] {
+    margin:0;
+  }
+  .radio-opcao {
+    font-size:.78rem;
+    cursor:pointer;
+  }
+</style>
+
 <div class="mt-3">
   <label for="trabalhou">
-  Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?<br>
-  Se sim, qual/quais? Indique o nome, a área de atuação e sua situação atual com a empresa.<br> 
+  {% lng "Você já trabalhou/trabalha/estagiou/estagia/empreende em alguma empresa?" "Have you ever worked/interned/entreprenuered at any company?" %}<br>
+  {% lng "Se sim, qual/quais? Indique o nome, a área de atuação e sua situação atual com a empresa." "If yes, which one(s)? Indicate the name, area of activity, and your current situation with the company." %}<br> 
   </label><br>
   <textarea id="trabalhou" name="trabalhou" rows="4" cols="80" maxlength="{% max_length Aluno 'trabalhou' %}" {% if vencido %}disabled{% endif %}>{% if estudante.trabalhou %}{{estudante.trabalhou}}{% endif %}</textarea>
+
+  <div>
+    <label class="mb-0">
+      {% lng "Você está trabalhando ou pretende trabalhar (estágio ou emprego) no próximo semestre?" "Are you working or planning to work (internship or job) next semester?" %}
+    </label>
+    <div class="opcoes-trabalho d-flex flex-wrap align-items-center mt-1">
+      <label class="radio-opcao mr-3 mb-1 d-flex align-items-center">
+        <input type="radio" id="trabalho_sim" name="trabalhara" value="Y"
+                {% if estudante.trabalhara == "Y" %}checked{% endif %}
+                {% if vencido %}disabled{% endif %}>
+        <span class="ml-1">{% lng "Sim" "Yes" %}</span>
+      </label>
+      <label class="radio-opcao mr-3 mb-1 d-flex align-items-center">
+        <input type="radio" id="trabalho_nao" name="trabalhara" value="N"
+                {% if estudante.trabalhara == "N" %}checked{% endif %}
+                {% if vencido %}disabled{% endif %}>
+        <span class="ml-1">{% lng "Não" "No" %}</span>
+      </label>
+      <label class="radio-opcao mb-1 d-flex align-items-center">
+        <input type="radio" id="trabalho_talvez" name="trabalhara" value="M"
+                {% if estudante.trabalhara == "M" %}checked{% endif %}
+                {% if vencido %}disabled{% endif %}>
+        <span class="ml-1">{% lng "Talvez" "Maybe" %}</span>
+      </label>
+    </div>
+  </div>
+  
 </div>
 
 <div class="mt-3">
   <label for="atividades">
-  Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?<br>
-  Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?
+    {% lng "Você já participou de alguma entidade estudantil/IC/IT/Ninja/etc ou atividades sociais?" "Have you ever participated in any student entity/undergraduate research/IT/Ninja/etc or social activities?" %}<br>
+    {% lng "Liste o que você já participou/fez (que possa ser relevante para os projetos que está aplicando)?" "List what you have participated/done (that may be relevant to the projects you are applying for)?" %}
   </label><br>
   <textarea id="atividades" name="atividades" rows="4" cols="80" maxlength="{% max_length Aluno 'atividades' %}" {% if vencido %}disabled{% endif %}>{% if estudante.atividades %}{{estudante.atividades}}{% endif %}</textarea>
   {% comment %} <small id="entidades" style="cursor:pointer;"><u>Lista de Entidades.</u></small> {% endcomment %}
@@ -28,9 +65,9 @@
 
 <div class="mt-3">
   <label for="familia">
-  Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?<br>
-  Se sim, qual/quais? Qual seu grau de relacionamento.
-  <small>[Só preencher depois de selecionar os projetos]</small>
+    {% lng "Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?" "Do you have family members in any company you are applying to? Or a direct competing company?" %}<br>
+    {% lng "Se sim, qual/quais? Qual seu grau de relacionamento." "If so, which one(s)? What is your degree of relationship." %}<br>
+    <small>{% lng "[Só preencher depois de selecionar os projetos]" "[Only fill in after selecting the projects]" %}</small>
   </label><br>
   <textarea id="familia" name="familia" rows="4" cols="80" maxlength="{% max_length Aluno 'familia' %}" {% if vencido %}disabled{% endif %}>{% if estudante.familia %}{{estudante.familia}}{% endif %}</textarea>
 </div>

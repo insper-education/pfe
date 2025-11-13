@@ -669,8 +669,12 @@ def avaliacao_pares(request, momento):
                     message += "<a href='https://pfe.insper.edu.br/professores/avaliacoes_pares/'>https://pfe.insper.edu.br/professores/avaliacoes_pares/</a><br><br>"
                     
                     email(subject, recipient_list, message)
-
-            return render(request, "users/atualizado.html",)
+        
+            context = {
+                "area_principal": True,
+                "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
+            }
+            return render(request, "generic_ml.html", context=context)
         
         pares = []
         for alocacao in alocacoes:
@@ -705,7 +709,7 @@ def informacoes_adicionais(request):
     """Perguntas aos estudantes de áreas de interesse, trabalho/atividades/familia, telefone."""
     usuario_sem_acesso(request, (1, 2, 4,)) # Est, Prof, Adm
     
-    if request.user.tipo_de_usuario == 1:
+    if request.user.eh_estud:  # Estudante
 
         estudante = request.user.aluno
 
@@ -716,9 +720,10 @@ def informacoes_adicionais(request):
             cria_area_estudante(request, request.user.aluno)
 
             request.user.aluno.trabalhou = request.POST.get("trabalhou", None)
-            #request.user.aluno.social = request.POST.get("social", None)
             request.user.aluno.atividades = request.POST.get("atividades", None)
             request.user.aluno.familia = request.POST.get("familia", None)
+            request.user.aluno.trabalhara = request.POST.get("trabalhara", None)
+            request.user.aluno.recrutadores = request.POST.get("recrutadores", None) == "on"
 
             link = request.POST.get("linkedin", "").strip()
             if not (link and link != ""):
@@ -738,7 +743,12 @@ def informacoes_adicionais(request):
 
             request.user.save()
             request.user.aluno.save()
-            return render(request, "users/atualizado.html",)
+            
+            context = {
+                "area_principal": True,
+                "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
+            }
+            return render(request, "generic_ml.html", context=context)
 
         context = {
             "vencido": vencido,

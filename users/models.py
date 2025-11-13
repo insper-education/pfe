@@ -270,6 +270,12 @@ class Aluno(models.Model):
 
     estrela = models.BooleanField(default=False,
                                   help_text="Algum ponto de observação para a alocação do estudante em um grupo")
+    
+    recrutadores = models.BooleanField("Autorização para compartilhamento com recrutadores", default=False,
+                                       help_text="Autoriza compartilhar relatório de desempenho com recrutadores")
+    
+    trabalhara = models.CharField("Trabalhará durante o Capstone", max_length=1, null=True, blank=True,
+                                 help_text="Está trabalhando ou pretende trabalhar (estágio ou emprego) no próximo semestre? Y/N/M")
 
     # https://bradmontgomery.net/blog/django-hack-help-text-modal-instance/
     def _get_help_text(self, field_name):
