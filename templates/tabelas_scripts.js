@@ -246,6 +246,15 @@ function getHiddenColumnIndices(tableId) {
     return indices;
 }
 
+function getDefaultOrderFromHeaders(tableId) {
+    var order = [];
+    $(tableId + " thead th").each(function(i) {
+        var dir = (($(this).attr("data-ordenamento") || "") + "").toLowerCase();
+        if (dir === "asc" || dir === "desc") order.push([i, dir]);
+    });
+    return order;
+}
+
 // Robust date parser: returns a numeric timestamp for sorting (ms since epoch)
 // Supports:
 // - data-order attribute (ISO, YYYY-MM-DD, YYYY-MM-DD HH:mm[:ss])
@@ -405,6 +414,10 @@ function atualiza_lingua(lang) {
     // Reconstrói defs de colunas numéricas e de data sem sobrescrever outras defs existentes
     configuracao_table["columnDefs"] = buildTypedColumnDefs(lang, tableId);
 
+    // Define ordem padrão a partir dos headers (se houver e é ignorado se houver no state)
+    var defaultOrder = getDefaultOrderFromHeaders(tableId);
+    configuracao_table.order = defaultOrder.length ? defaultOrder : [[0, 'asc']];
+
     // Se tiver tabela com linguagem o seguinte código ajusta a linguagem da tabela
     document.querySelectorAll("th[data-lang-pt]").forEach(function(th) {
         texto_lingua = th.getAttribute(lang === "pt" ? "data-lang-pt" : "data-lang-en")
@@ -416,21 +429,10 @@ function atualiza_lingua(lang) {
         th.innerHTML = texto_lingua + (texto ? '<span>' + texto + '</span>' : '');
     });
   
-
     // Setar a nova linguagem
     configuracao_table["language"] = textos_linguas[lang];  // Tabela gigante com os textos de cada língua
     table = $("#{{tabela}}Table").DataTable(configuracao_table);
     table.buttons().container().appendTo( "#{{tabela}}Table_wrapper .col-md-6:eq(0)" );
-
-    {% comment %} // Enforce hidden columns even when stateSave restores previous visibility
-    var hiddenIdx = getHiddenColumnIndices(tableId);
-    if (hiddenIdx.length) {
-        table.columns(hiddenIdx).visible(false, false);
-        table.columns.adjust().draw(false);
-        if (configuracao_table.stateSave) {
-            try { table.state.save(); } catch (e) {}
-        }
-    } {% endcomment %}
 
     // Update all spans for the selected language
     updateTableLanguageSpans(lang);

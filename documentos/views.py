@@ -202,7 +202,7 @@ def materias_midia(request):
     tipo_documento = TipoDocumento.objects.get(sigla="MMPA")  # Matéria na Mídia e Publicação Acadêmica
     documentos = Documento.objects.filter(tipo_documento=tipo_documento)
     
-    cabecalhos = [{"pt": "Data", "en": "Date"},
+    cabecalhos = [{"pt": "Data", "en": "Date", "tipo": "data", "ordenamento": "desc"},
                   {"pt": "Anotações", "en": "Notes"},
                   {"pt": "Projeto", "en": "Project"},
                   {"pt": "Documento", "en": "Document"},
