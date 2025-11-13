@@ -225,10 +225,11 @@ def registro_usuario(request, user=None):
 
         estudante.trancado = "estudante_trancado" in request.POST
 
-
-
-
-
+        estudante.trabalhou = request.POST.get("trabalhou", None)
+        estudante.atividades = request.POST.get("atividades", None)
+        estudante.familia = request.POST.get("familia", None)
+        estudante.trabalhara = request.POST.get("trabalhara", None)
+        estudante.recrutadores = request.POST.get("recrutadores", None) == "on"
 
         estudante.save()
         
