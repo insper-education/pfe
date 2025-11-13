@@ -101,7 +101,47 @@
       background-color: #fcfcfc;
     }
 
+    /* Callouts (avisos) */
+    .callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      margin-bottom: 10px;
+    }
+    .callout .icon { flex: 0 0 auto; margin-top: 2px; font-size: 1.1rem; }
+    .callout .content { font-size: .95rem; line-height: 1.45; color: #374151; }
+
+    .callout-warning { background: #fffbeb; border-color: #fde68a; }
+    .callout-warning .icon { color: #b45309; }
+
+    .callout-danger { background: #fef2f2; border-color: #fecaca; }
+    .callout-danger .icon { color: #b91c1c; }
+
+    .callout-info { background: #eff6ff; border-color: #bfdbfe; }
+    .callout-info .icon { color: #1d4ed8; }
+
+    .badge-deadline { background:#fbbf24; color:#111827; font-weight:600; font-size:.75rem; }
+  
+    .chip-areas {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:4px 10px;
+      background:#eef3ff;
+      border:1px solid #d1dcf8;
+      color:#3454a3;
+      font-size:.7rem;
+      font-weight:600;
+      border-radius:14px;
+      text-decoration:none;
+      transition:.2s;
+    }
+    .chip-areas:hover {background:#dbe7ff; text-decoration:none;}
   </style>
+
   
 {% endblock %}
 
@@ -109,29 +149,29 @@
 
   {% if not vencido %}
     {% if ano != user.aluno.ano or semestre != user.aluno.semestre %}
-      <h2 class="red-bold">
-        {% lng "Você não está registrado para o Capstone em {{ano}}.{{semestre}}" "You are not registered for the Capstone in {{ano}}.{{semestre}}" %}
-      </h2>
-      <h3 class="red-bold">
-        {% lng "Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone." "If you believe there is an error in the information, please contact the Capstone coordination." %}
-      </h3>
-      <br>
+      <div class="callout callout-danger mb-3">
+        <i class="icon fas fa-exclamation-triangle"></i>
+        <div class="content">
+          <strong>{% lng "Você não está registrado para o Capstone em" "You are not registered for the Capstone in" %} {{ano}}.{{semestre}}</strong><br>
+          {% lng "Caso acredite que existe algum erro na informação, por favor contactar a coordenação do Capstone." "If you believe there is an error in the information, please contact the Capstone coordination." %}
+        </div>
+      </div>
     {% endif %}
   {% endif %}
 
   {% if not areas %}
-    <h5 class="text-warning">
-      {% lng "Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:" "You have not selected any areas of interest yet, please make a selection before confirming the desired projects:" %}      
-      <a href="{% url 'informacoes_adicionais' %}">
-        {% lng "Áreas de Interesse" "Areas of Interest" %}
-      </a>
-    <h5><br>
+    <div class="callout callout-warning mb-3">
+      <i class="icon fas fa-flag"></i>
+      <div class="content">
+        {% lng "Você ainda não selecionou nenhuma área de interesse, por favor, faça alguma seleção antes de confirmar os projetos desejados:" "You have not selected any areas of interest yet, please make a selection before confirming the desired projects:" %}
+        <a href="{% url 'informacoes_adicionais' %}" class="chip-areas ml-2 mt-1"><i class="fas fa-tags"></i>{% lng "Áreas de Interesse" "Areas of Interest" %}</a>
+      </div>
+    </div>
   {% endif %}
 
   <div class="container-fluid mt-1">
 
-
-<!-- Hero section com instruções visuais -->
+    <!-- Hero section com instruções visuais -->
     <div class="alert alert-light border mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.75rem 1rem;">
       <div class="d-flex align-items-center mb-3">
         <i class="fas fa-lightbulb fa-lg mr-2"></i>
@@ -161,7 +201,9 @@
             <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">3</span>
             <div style="font-size: 0.9rem;">
               <strong>{% lng "Confirme" "Confirm" %}</strong><br>
-              <small>{% lng "Clique em Confirmar ao final" "Click Confirm at the end" %}</small>
+              <small>{% lng "Clique em" "Click " %}
+                 <b>{% lng "Confirmar " "Confirm" %}</b>
+                 {% lng "ao final" "at the end" %}</small>
             </div>
           </div>
         </div>
@@ -256,35 +298,32 @@
           {{warnings|linebreaks}}
         </font>
 
-        <div class="d-inline-block ml-3 mr-3">
-          <div class="alert py-2 px-3 mb-2" style="background:#e8f5ec; border:1px solid #e2e6f0; border-radius:8px;">
-            <div class="d-flex align-items-start">
-              <i class="fas fa-info-circle text-primary mr-2 mt-1"></i>
-              <div style="font-size:.85rem; line-height:1.5;">    
-                {% lng txt_min_propos.pt txt_min_propos.en %}
-                {% lng "Você pode reconfirmar quantas vezes desejar até" "You can reconfirm as many times as you want until" %}
-                <span class="badge badge-warning text-dark" style="font-size:.75rem;">{% lng_dl prazo %}</span>.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row ml-2 mt-3">
-          <div class="col-12 col-md-2">
-            <button class="btn btn-primary mb-1 mr-3" 
-                  {% if vencido or not liberadas_propostas %}disabled{% endif %}
-                  {% if areas %} 
-                    type="submit" 
-                  {% else %} 
-                    style="background-color: #6fa2fa;"
-                    type="button" 
-                    onclick="alert('Selecione suas áreas de interesse e experiências');"
-                  {% endif %}
-                  >
+        <div class="row ml-2 mt-3 align-items-center">
+          <div class="col-auto d-flex align-items-center mb-2">
+            <button class="btn btn-primary mb-0 mr-1" 
+                    {% if vencido or not liberadas_propostas %}disabled{% endif %}
+                    {% if areas %} 
+                      type="submit" 
+                    {% else %} 
+                      style="background-color: #6fa2fa;"
+                      type="button" 
+                      onclick="alert('Selecione suas áreas de interesse e experiências');"
+                    {% endif %}>
               {% lng "Confirmar" "Confirm" %}
             </button>
           </div>
-
+          <div class="col d-flex align-items-center mr-3">
+            <div class="alert py-2 px-3 mb-0" style="background:#e8f5ec; border:1px solid #e2e6f0; border-radius:8px; width:100%;">
+              <div class="d-flex align-items-start">
+                <i class="fas fa-info-circle text-primary mr-2 mt-1"></i>
+                <div style="font-size:.85rem; line-height:1.5;">
+                  {% lng txt_min_propos.pt txt_min_propos.en %}<br>
+                  {% lng "Você pode reconfirmar quantas vezes desejar até" "You can reconfirm as many times as you want until" %}
+                  <span class="badge badge-warning text-dark" style="font-size:.75rem;">{% lng_dl prazo %}</span>.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </form>
