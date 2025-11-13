@@ -48,19 +48,23 @@ def dup_entrada(modeladmin: admin_opt.ModelAdmin, request, queryset):
 dup_entrada.short_description = "Duplicar Entrada(s)"
 
 
-def dup_event_182(modeladmin: admin_opt.ModelAdmin, request, queryset):
-    """Função abaixo permite duplicar entradas no banco de dados."""
+def dup_entrada_182(modeladmin: admin_opt.ModelAdmin, request, queryset):
+    """Função abaixo permite duplicar entradas no banco de dados com 182 dias adicionados."""
     for obj in queryset:
         from_id = obj.id
         obj.id = None
-        obj.startDate += timedelta(days=182)
-        obj.endDate += timedelta(days=182)
+        if hasattr(obj, 'startDateTime') and hasattr(obj, 'endDateTime'):
+            obj.startDateTime += timedelta(days=182)
+            obj.endDateTime += timedelta(days=182)
+        elif hasattr(obj, 'startDate') and hasattr(obj, 'endDate'):
+            obj.startDate += timedelta(days=182)
+            obj.endDate += timedelta(days=182)
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
 
 
-dup_event_182.short_description = "Duplicar Entrada(s) adicionando 182 dias"
+dup_entrada_182.short_description = "Duplicar Entrada(s) adicionando 182 dias"
 
 
 def dup_encontros(modeladmin: admin_opt.ModelAdmin, request, queryset):
@@ -306,7 +310,7 @@ class EventoAdmin(admin.ModelAdmin):
     """Todos os eventos com suas datas."""
 
     list_display = ("get_title", "startDate", "endDate", "location", "atividade", "observacao")
-    actions = [dup_entrada, dup_event_182]
+    actions = [dup_entrada, dup_entrada_182]
     list_filter = (EventoFilter, "tipo_evento")
     ordering = ("-startDate",)
     search_fields = ["atividade", "location", "observacao",]
@@ -487,8 +491,6 @@ class ReuniaoAdmin(admin.ModelAdmin):
     list_filter = ("data_hora", "travado",)
     search_fields = ["titulo", "local",]
 
-
-
 @admin.register(ReuniaoParticipante)
 class ReuniaoParticipanteAdmin(admin.ModelAdmin):
     """Participantes das Reuniões."""
@@ -510,7 +512,7 @@ class EncontroParticipanteAdmin(admin.ModelAdmin):
 class CerimoniaAdmin(admin.ModelAdmin):
     """Para Cerimonias."""
     list_display = ("atividade", "startDateTime", "endDateTime", "responsavel","location",)
-    actions = [dup_entrada,]
+    actions = [dup_entrada, dup_entrada_182]
     ordering = ("-startDateTime",)
     search_fields = ["atividade", "location",]
 
