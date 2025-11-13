@@ -5,26 +5,31 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 23 de Janeiro de 2025
 """
 
+from django.core.exceptions import ValidationError
+
 from administracao.models import TipoEvento
 
 
 def trata_aviso(aviso, request):
     """Puxa dados do request e põe em aviso."""
     
-    aviso.titulo = request.POST["titulo"]
-    aviso.delta = int(request.POST["delta"])
-    aviso.mensagem = request.POST["mensagem"]
+    titulo = request.POST.get("titulo", "").strip()
+    delta = request.POST.get("delta", None)
+    id_evento = request.POST.get("evento", None)
 
-    id_evento = int(request.POST["evento"])
-    tipo_evento = TipoEvento.objects.get(id=id_evento)
-    aviso.tipo_evento = tipo_evento
+    if not all([id_evento, titulo, delta]):
+        raise ValidationError("Campos obrigatórios ausentes.")
+    
+    try:
+        aviso.titulo = titulo
+        aviso.delta = int(delta)
+        aviso.tipo_evento = TipoEvento.objects.get(id=id_evento)
+        aviso.mensagem = request.POST["mensagem"]
+    except (ValueError, TipoEvento.DoesNotExist):
+        raise ValidationError("Dados inválidos fornecidos.")
 
-    aviso.coordenacao = "coordenacao" in request.POST
-    aviso.operacional = "operacional" in request.POST
-    aviso.comite = "comite" in request.POST
-    aviso.todos_alunos = "todos_alunos" in request.POST
-    aviso.todos_orientadores = "todos_orientadores" in request.POST
-    aviso.contatos_nas_organizacoes = "contatos_nas_organizacoes" in request.POST
+    for campo in ["coordenacao", "operacional", "comite", "todos_alunos", "todos_orientadores", "contatos_nas_organizacoes"]:
+        setattr(aviso, campo, campo in request.POST)
 
     aviso.save()
 

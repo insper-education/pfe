@@ -33,7 +33,7 @@
         <b>{% lng "Evento relacionado:" "Related event:" %}</b>
       </label>
       <select name="evento" id="evento" title="Selecione evento" class="selectpicker" data-width="582px"  data-live-search="true" required>
-          <option disabled selected value> -- selecione evento -- </option>
+          <option disabled value> -- selecione evento -- </option>
           {% for evento in eventos %}
             <option value="{{evento.id}}" {% if aviso.tipo_evento.id == evento.id %}selected="selected"{% endif %}>
               {{evento.nome}}
