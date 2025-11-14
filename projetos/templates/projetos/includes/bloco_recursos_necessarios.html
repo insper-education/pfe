@@ -1,0 +1,269 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Seção: Recursos Necessários / Pedidos -->
+<section id="recursos-necessarios" lang="pt-BR" aria-labelledby="titulo-recursos">
+  <style>
+    #recursos-necessarios {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      max-width: 980px;
+      margin: 1rem 0;
+    }
+    .instrucao {
+      background: #f7f9fc;
+      border-left: 4px solid #2b6cb0;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+    }
+    .bloco {
+      border: 1px solid #e2e8f0;
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+      border-radius: 6px;
+      background: #fff;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .acoes {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.45rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #2b6cb0;
+      background: #2b6cb0;
+      color: white;
+      font-weight: 600;
+    }
+    .btn.terciario {
+      background: transparent;
+      color: #2b6cb0;
+      border-color: transparent;
+      text-decoration: underline;
+      padding: 0.25rem 0.5rem;
+      font-weight: 500;
+    }
+    .linha-dupla {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      align-items: start;
+    }
+    .help {
+      font-size: 0.95rem;
+      color: #475569;
+      margin-top: 0.4rem;
+    }
+    .erro {
+      color: #b91c1c;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+  </style>
+
+  <h2 id="titulo-recursos">Recursos Necessários / Pedidos</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções de preenchimento">
+    <p><strong>Objetivo:</strong> registrar solicitações de recursos ou materiais necessários ao andamento do projeto — como equipamentos, componentes, softwares, serviços em nuvem (ex.: AWS), materiais de laboratório ou de escritório.</p>
+    <ul>
+      <li><strong>Planejamento é essencial:</strong> registre o pedido com antecedência. Muitos recursos precisam ser comprados ou solicitados via processos administrativos.</li>
+      <li><strong>Recursos institucionais são limitados:</strong> nem todos os pedidos poderão ser atendidos. Priorize itens realmente necessários para o desenvolvimento do projeto.</li>
+      <li><strong>Prazo e logística:</strong> alguns pedidos podem levar <em>semanas</em> para aprovação ou entrega. Indique sempre alternativas possíveis e valores estimados.</li>
+      <li><strong>Transparência:</strong> registre inclusive materiais simples (como papel, ferramentas, componentes) — isso ajuda a coordenação a compreender as necessidades do grupo.</li>
+    </ul>
+    <p><strong>Dica:</strong> antes de registrar, verifique se o item já existe disponível no laboratório ou na instituição.</p>
+  </div>
+
+  <div class="acoes" aria-hidden="false">
+    <button type="button" id="adicionar-pedido" class="btn">Adicionar pedido</button>
+    <button type="button" id="remover-ultimo-pedido" class="btn terciario">Remover último pedido</button>
+  </div>
+
+  <div id="lista-pedidos" role="list" aria-label="Lista de pedidos">
+    <!-- MODELO DO PEDIDO -->
+    <div class="bloco pedido" role="listitem" data-index="1">
+      <input type="hidden" name="pedidos[0][data_pedido]" value="">
+      <label for="pedidos-0-titulo">Título do pedido</label>
+      <input
+        type="text"
+        id="pedidos-0-titulo"
+        name="pedidos[0][titulo]"
+        placeholder="Ex.: Servidor AWS t3.small (3 meses) ou Kit de sensores DHT22"
+        required
+      >
+
+      <label for="pedidos-0-descricao" style="margin-top:0.5rem;">Descrição do pedido</label>
+      <textarea
+        id="pedidos-0-descricao"
+        name="pedidos[0][descricao]"
+        placeholder="Explique o uso e importância do recurso, especificações técnicas, prazo de necessidade, etc."
+        required
+      ></textarea>
+
+      <div class="linha-dupla" style="margin-top:0.5rem;">
+        <div>
+          <label for="pedidos-0-quantidade">Quantidade</label>
+          <input type="number" id="pedidos-0-quantidade" name="pedidos[0][quantidade]" min="1" placeholder="Ex.: 1">
+        </div>
+        <div>
+          <label for="pedidos-0-prioridade">Prioridade</label>
+          <select id="pedidos-0-prioridade" name="pedidos[0][prioridade]">
+            <option value="">-- selecionar --</option>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="linha-dupla" style="margin-top:0.5rem;">
+        <div>
+          <label for="pedidos-0-valor">Orçamento estimado (R$)</label>
+          <input type="number" id="pedidos-0-valor" name="pedidos[0][valor_estimado]" placeholder="Ex.: 350.00" step="0.01" min="0">
+        </div>
+        <div>
+          <label for="pedidos-0-link-orcamento">Link para orçamento / cotação</label>
+          <input type="url" id="pedidos-0-link-orcamento" name="pedidos[0][link_orcamento]" placeholder="Ex.: https://fornecedor.com/cotacao.pdf">
+        </div>
+      </div>
+
+      <label for="pedidos-0-anexo" style="margin-top:0.5rem;">Anexo (opcional) — orçamento, imagem do item, justificativa</label>
+      <input type="file" id="pedidos-0-anexo" name="pedidos[0][anexo]" accept=".pdf,.jpg,.jpeg,.png,.zip">
+
+      <div style="margin-top:0.5rem;">
+        <label for="pedidos-0-observacao">Observações / informações adicionais</label>
+        <textarea id="pedidos-0-observacao" name="pedidos[0][observacao]" placeholder="Informações adicionais, fornecedor sugerido, prazo desejado, alternativas possíveis."></textarea>
+      </div>
+
+      <div style="margin-top:0.5rem;">
+        <label>
+          <input type="checkbox" id="pedidos-0-consciencia" name="pedidos[0][consciencia_demora]" value="1">
+          Estou ciente de que o atendimento do pedido pode demorar.
+        </label>
+      </div>
+
+      <div class="help">A data do pedido é registrada automaticamente ao criar o item e será enviada ao servidor.</div>
+    </div>
+  </div>
+
+  <div id="mensagem-pedidos" class="erro" role="status" aria-live="polite" style="display:none;"></div>
+
+  <script>
+    (function () {
+      const lista = document.getElementById('lista-pedidos');
+      const btnAdd = document.getElementById('adicionar-pedido');
+      const btnRem = document.getElementById('remover-ultimo-pedido');
+      const mensagem = document.getElementById('mensagem-pedidos');
+
+      function hojeYYYYMMDD() {
+        const d = new Date();
+        return d.toISOString().slice(0, 10);
+      }
+
+      function setDataPedido(bloco, isoDate) {
+        const hidden = bloco.querySelector('input[type="hidden"][name^="pedidos"]');
+        if (hidden) hidden.value = isoDate || hojeYYYYMMDD();
+      }
+
+      function atualizarIndices() {
+        Array.from(lista.querySelectorAll('.pedido')).forEach((bloco, i) => {
+          bloco.dataset.index = i + 1;
+          // hidden
+          const hidden = bloco.querySelector('input[type="hidden"][name^="pedidos"]');
+          if (hidden) hidden.name = `pedidos[${i}][data_pedido]`;
+          bloco.querySelectorAll('input, textarea, select').forEach((el) => {
+            const campoMatch = el.name && el.name.match(/\[([^\]]+)\]$/);
+            if (campoMatch) {
+              const campo = campoMatch[1];
+              if (el.type === 'hidden') return;
+              el.name = `pedidos[${i}][${campo}]`;
+            }
+            if (el.id) {
+              const base = el.id.replace(/-\d+$/, '').replace(/^pedidos-\d+-/, 'pedidos-');
+              el.id = base.replace(/pedidos-/, `pedidos-${i}-`);
+            }
+          });
+          const hiddenVal = bloco.querySelector(`input[name="pedidos[${i}][data_pedido]"]`);
+          if (hiddenVal && !hiddenVal.value) setDataPedido(bloco);
+        });
+      }
+
+      function adicionarPedido() {
+        const ultimo = lista.querySelector('.pedido:last-of-type');
+        const clone = ultimo.cloneNode(true);
+        clone.querySelectorAll('input, textarea').forEach((i) => {
+          if (i.type === 'file') i.value = '';
+          else if (i.type === 'hidden') i.value = '';
+          else if (i.type === 'checkbox') i.checked = false;
+          else i.value = '';
+        });
+        clone.querySelectorAll('select').forEach((s) => (s.selectedIndex = 0));
+        lista.appendChild(clone);
+        atualizarIndices();
+        const novo = lista.querySelector('.pedido:last-of-type');
+        setDataPedido(novo);
+        const titulo = novo.querySelector('input[name$="[titulo]"]');
+        if (titulo) titulo.focus();
+      }
+
+      function removerUltimo() {
+        const blocos = lista.querySelectorAll('.pedido');
+        if (blocos.length > 1) {
+          lista.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          mensagem.style.display = 'block';
+          mensagem.textContent = 'Deve haver pelo menos um registro (pode ficar vazio se não houver pedidos).';
+          setTimeout(() => {
+            mensagem.style.display = 'none';
+            mensagem.textContent = '';
+          }, 3500);
+        }
+      }
+
+      btnAdd.addEventListener('click', adicionarPedido);
+      btnRem.addEventListener('click', removerUltimo);
+
+      // inicializa datas
+      document.addEventListener('DOMContentLoaded', () => {
+        Array.from(lista.querySelectorAll('.pedido')).forEach((bloco) => setDataPedido(bloco));
+        atualizarIndices();
+      });
+      if (document.readyState !== 'loading') {
+        Array.from(lista.querySelectorAll('.pedido')).forEach((bloco) => setDataPedido(bloco));
+        atualizarIndices();
+      }
+    })();
+  </script>
+</section>

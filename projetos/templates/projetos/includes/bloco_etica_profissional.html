@@ -1,0 +1,103 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Formulário: Questões Éticas e Profissionais do Projeto -->
+<section id="questoes-eticas" lang="pt-BR" aria-labelledby="titulo-etica">
+  <style>
+    #questoes-eticas {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      max-width: 900px;
+      margin: 1rem 0;
+    }
+    .instrucao {
+      background: #f7f9fc;
+      border-left: 4px solid #9c4221;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      min-height: 180px;
+      resize: vertical;
+    }
+    .exemplo {
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      color: #333;
+    }
+  </style>
+
+  <h2 id="titulo-etica">Questões Éticas e Profissionais</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p>
+      <strong>Contexto:</strong> A formação em Engenharia e Computação exige que os futuros profissionais reconheçam suas 
+      <strong>responsabilidades éticas e profissionais</strong> em situações de projeto, considerando os impactos das soluções de engenharia 
+      e tecnologia nos contextos <em>social, econômico, ambiental e global</em>.
+    </p>
+
+    <p>Essa competência é destacada em diversas referências importantes:</p>
+    <ul>
+      <li>
+        <strong>ABET (EUA):</strong> “Capacidade de reconhecer responsabilidades éticas e profissionais em situações de engenharia e fazer julgamentos informados, considerando o impacto das soluções de engenharia em contextos globais, econômicos, ambientais e sociais.”
+      </li>
+      <li>
+        <strong>CREA / CONFEA (Brasil):</strong> O Código de Ética Profissional do Sistema CONFEA/CREA estabelece que o profissional deve atuar com 
+        <em>responsabilidade social, segurança, sustentabilidade e respeito à vida e ao bem-estar coletivo</em>.
+      </li>
+      <li>
+        <strong>SBC — Sociedade Brasileira de Computação:</strong> O Código de Ética da SBC orienta que profissionais de computação devem 
+        <em>promover a dignidade humana, proteger a privacidade, agir com honestidade e transparência, e evitar danos decorrentes de mau uso da tecnologia</em>.
+      </li>
+    </ul>
+
+    <p><strong>O que você deve fazer:</strong></p>
+    <ul>
+      <li>Identifique e descreva as <strong>questões éticas</strong> relevantes ao seu projeto (por exemplo: privacidade, segurança, justiça, sustentabilidade, acessibilidade, uso responsável da tecnologia).</li>
+      <li>Explique as <strong>responsabilidades profissionais</strong> envolvidas no desenvolvimento e uso do projeto (ex.: segurança do usuário, impacto ambiental, responsabilidade técnica, conformidade com normas).</li>
+      <li>Comente sobre os possíveis <strong>impactos sociais, econômicos, ambientais e globais</strong> do projeto, tanto positivos quanto negativos.</li>
+      <li>Se aplicável, discuta eventuais <strong>dilemas éticos</strong> e como foram ou poderiam ser resolvidos.</li>
+    </ul>
+
+    <p><strong>Exemplo de resposta orientativa:</strong></p>
+    <div class="exemplo">
+      Nosso projeto consiste no desenvolvimento de um aplicativo de monitoramento de mobilidade urbana. 
+      Uma das principais preocupações éticas é a <strong>privacidade dos dados dos usuários</strong>, pois o sistema coleta informações de localização. 
+      Para mitigar riscos, propomos que os dados sejam armazenados localmente e anonimizados antes de qualquer análise.<br><br>
+      Em termos de <strong>responsabilidade profissional</strong>, buscamos garantir que o aplicativo siga padrões de acessibilidade e usabilidade, permitindo o uso por pessoas com diferentes limitações visuais e motoras. 
+      Também avaliamos os <strong>impactos ambientais</strong>, optando por servidores de baixo consumo energético.<br><br>
+      Essas escolhas refletem uma postura ética e profissional que prioriza a <em>segurança, privacidade, sustentabilidade e bem-estar social</em>, conforme orientações do CREA e da SBC.
+    </div>
+  </div>
+
+  <label for="resposta-etica">Descreva as questões éticas e profissionais do seu projeto:</label>
+  <textarea
+    id="resposta-etica"
+    name="questoes_eticas"
+    placeholder="Descreva os aspectos éticos e profissionais do seu projeto. Considere privacidade, segurança, sustentabilidade, acessibilidade, impacto social, responsabilidade técnica e uso responsável da tecnologia."
+    required
+  ></textarea>
+
+  <p style="font-size:0.95rem; color:#4a5568; margin-top:0.5rem;">
+    Dica: reflita sobre o papel do engenheiro ou cientista da computação na sociedade e como seu projeto contribui (ou pode contribuir) para um futuro mais seguro, sustentável e ético.
+  </p>
+</section>

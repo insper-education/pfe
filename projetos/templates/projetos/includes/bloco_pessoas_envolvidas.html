@@ -1,0 +1,177 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Seção simples: Pessoas envolvidas (stakeholders) -->
+<section id="stakeholders-simples" lang="pt-BR" aria-labelledby="titulo-stakeholders-simples">
+  <style>
+    #stakeholders-simples { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; max-width:900px; margin:1rem 0; }
+    .instrucao { background:#f7f9fc; border-left:4px solid #2b6cb0; padding:0.75rem; margin-bottom:1rem; border-radius:6px; }
+    .bloco { border:1px solid #e2e8f0; padding:0.75rem; margin-bottom:0.75rem; border-radius:6px; background:#fff; }
+    label { display:block; font-weight:600; margin-bottom:0.25rem; }
+    input[type="text"], input[type="email"], select, textarea { width:100%; padding:0.5rem; border:1px solid #cbd5e1; border-radius:6px; box-sizing:border-box; font-size:1rem; }
+    textarea { min-height:70px; resize:vertical; }
+    .acoes { display:flex; gap:0.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
+    .btn { padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; border:1px solid #2b6cb0; background:#2b6cb0; color:white; font-weight:600; }
+    .btn.terciario { background:transparent; color:#2b6cb0; border-color:transparent; text-decoration:underline; padding:0.25rem 0.5rem; }
+    .help { font-size:0.9rem; color:#475569; margin-top:0.3rem; }
+    .erro { color:#b91c1c; font-weight:700; margin-top:0.5rem; }
+    .linha-dupla { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+  </style>
+
+  <h2 id="titulo-stakeholders-simples">Pessoas envolvidas (stakeholders)</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p><strong>Registre as pessoas interessadas ou envolvidas no projeto.</strong> Para cada pessoa, informe nome completo, cargo, e-mail, tipo de stakeholder, se atua como mentor e uma breve observação sobre responsabilidades.</p>
+  </div>
+
+  <div class="acoes">
+    <button type="button" id="adicionar-stakeholder-simples" class="btn">Adicionar pessoa</button>
+    <button type="button" id="remover-ultimo-stakeholder-simples" class="btn terciario">Remover última</button>
+  </div>
+
+  <div id="lista-stakeholders-simples" role="list" aria-label="Lista simples de stakeholders">
+    <!-- MODELO -->
+    <div class="bloco stakeholder-simples" role="listitem" data-index="1">
+      <label for="stakeholders-0-nome">Nome completo</label>
+      <input type="text" id="stakeholders-0-nome" name="stakeholders[0][nome]" placeholder="Ex.: Maria Silva"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %} required>
+
+      <label for="stakeholders-0-cargo" style="margin-top:0.5rem;">Cargo / função</label>
+      <input type="text" id="stakeholders-0-cargo" name="stakeholders[0][cargo]" placeholder="Ex.: Engenheiro de Produto"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
+
+      <label for="stakeholders-0-email" style="margin-top:0.5rem;">E-mail (se autorizado)</label>
+      <input type="email" id="stakeholders-0-email" name="stakeholders[0][email]" placeholder="Ex.: pessoa@empresa.com"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
+
+      <div class="linha-dupla" style="margin-top:0.5rem;">
+        <div>
+          <label for="stakeholders-0-tipo">Tipo de stakeholder</label>
+          <select id="stakeholders-0-tipo" name="stakeholders[0][tipo]"
+          {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
+            <option value="">-- selecionar --</option>
+            <option value="orientador_interno">Orientador interno</option>
+            <option value="mentor_empresa">Mentor (empresa parceira)</option>
+            <option value="coordenacao">Coordenação / órgão</option>
+            <option value="colaborador_estudantil">Colaborador estudantil</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="stakeholders-0-mentor">Atua como mentor?</label>
+          <select id="stakeholders-0-mentor" name="stakeholders[0][mentor]"
+          {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}>
+            <option value="">-- selecionar --</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="stakeholders-0-responsabilidades" style="margin-top:0.5rem;">Responsabilidades / observações</label>
+      <textarea id="stakeholders-0-responsabilidades" name="stakeholders[0][responsabilidades]" placeholder="Ex.: Revisão técnica mensal; contato para compras"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}></textarea>
+    </div>
+  </div>
+
+  <div id="mensagem-stakeholders-simples" class="erro" role="status" aria-live="polite" style="display:none;"></div>
+
+  <script>
+    (function () {
+      const lista = document.getElementById('lista-stakeholders-simples');
+      const btnAdd = document.getElementById('adicionar-stakeholder-simples');
+      const btnRem = document.getElementById('remover-ultimo-stakeholder-simples');
+      const msg = document.getElementById('mensagem-stakeholders-simples');
+
+      function atualizarIndices() {
+        Array.from(lista.querySelectorAll('.stakeholder-simples')).forEach((bloco, i) => {
+          bloco.dataset.index = i + 1;
+          bloco.querySelectorAll('input, textarea, select').forEach(el => {
+            if (!el.name) return;
+            const campoMatch = el.name.match(/\[([^\]]+)\]$/);
+            if (campoMatch) {
+              const campo = campoMatch[1];
+              el.name = `stakeholders[${i}][${campo}]`;
+            }
+            if (el.id) {
+              const base = el.id.replace(/-\d+$/, '').replace(/^stakeholders-\d+-/, 'stakeholders-');
+              el.id = base.replace(/stakeholders-/, `stakeholders-${i}-`);
+            }
+          });
+        });
+      }
+
+      function adicionar() {
+        const ultimo = lista.querySelector('.stakeholder-simples:last-of-type');
+        const clone = ultimo.cloneNode(true);
+        // limpar valores
+        clone.querySelectorAll('input, textarea, select').forEach(el => {
+          if (el.tagName.toLowerCase() === 'select') el.selectedIndex = 0;
+          else if (el.type === 'checkbox') el.checked = false;
+          else el.value = '';
+        });
+        lista.appendChild(clone);
+        atualizarIndices();
+        const novo = lista.querySelector('.stakeholder-simples:last-of-type');
+        const nome = novo.querySelector('input[name$="[nome]"]');
+        if (nome) nome.focus();
+      }
+
+      function remover() {
+        const blocos = lista.querySelectorAll('.stakeholder-simples');
+        if (blocos.length > 1) {
+          lista.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          msg.style.display = 'block';
+          msg.textContent = 'Deve haver ao menos um registro (pode ficar vazio se não houver pessoas a registrar).';
+          setTimeout(() => { msg.style.display='none'; msg.textContent=''; }, 3000);
+        }
+      }
+
+      // validação simples antes do submit (expondo função global)
+      function validarAntesSubmit() {
+        const blocos = Array.from(lista.querySelectorAll('.stakeholder-simples'));
+        for (let i = 0; i < blocos.length; i++) {
+          const nome = blocos[i].querySelector('input[name^="stakeholders"][name$="[nome]"]');
+          const email = blocos[i].querySelector('input[name^="stakeholders"][name$="[email]"]');
+          if (!nome || !nome.value.trim()) {
+            msg.style.display = 'block';
+            msg.textContent = `O nome da pessoa ${i+1} é obrigatório.`;
+            nome && nome.focus();
+            return false;
+          }
+          if (email && email.value.trim()) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!re.test(email.value.trim())) {
+              msg.style.display = 'block';
+              msg.textContent = `O e-mail do registro ${i+1} parece inválido.`;
+              email.focus();
+              return false;
+            }
+          }
+        }
+        msg.style.display = 'none';
+        msg.textContent = '';
+        return true;
+      }
+
+      window.validarStakeholdersSimples = validarAntesSubmit;
+
+      btnAdd.addEventListener('click', adicionar);
+      btnRem.addEventListener('click', remover);
+
+      // inicializa índices
+      if (document.readyState !== 'loading') atualizarIndices();
+      document.addEventListener('DOMContentLoaded', atualizarIndices);
+    })();
+  </script>
+</section>
+

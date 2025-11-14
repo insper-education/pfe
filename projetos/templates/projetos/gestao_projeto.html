@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% block head %}  
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+{% endblock %}
+
+{% block content %}
+  
+  {% if professor %}
+    <h5 style="color: red;">
+      {% lng "Mostrando como é a tela, usando qualquer estudante de exemplo." "Showing how the screen looks like, using any student as an example." %}
+    </h5>
+  {% endif %}
+
+
+  <div class="div_arredondado_100">
+    {% if projeto.ano > configuracao.ano or projeto.ano == configuracao.ano and projeto.semestre > configuracao.semestre %}
+      {% lng "Projetos" "Projects" %}
+      {{projeto.ano}}.{{projeto.semestre}}
+      {% lng "em fase de alocação." "in the allocation phase." %}
+      <br>
+
+    {% else %}
+
+      <div class="mb-3">
+        {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+          <h4>[{{projeto.organizacao}}]
+            {{projeto.titulo_final}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
+          <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>
+            {% lng "Título original da proposta" "Original title of the proposal" %}
+          </b>: {{projeto.proposta.titulo}}</small><br>
+        {% else %}
+          <h4>[{{projeto.organizacao}}] {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
+        {% endif %}
+      </div>
+
+      {% include "projetos/includes/bloco_titulo_resumo_pchave_novo.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_normas_tecnicas.html" with projeto=projeto %}
+      
+      {% include "projetos/includes/bloco_etica_profissional.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_riscos.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_recursos_necessarios.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_cronograma.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_pessoas_envolvidas.html" with projeto=projeto %}
+
+      {% comment %} {% include "projetos/includes/bloco_organizacao_gestao.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_qualidade.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_comunicacao.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_auditoria_monitoramento.html" with projeto=projeto %}
+
+      {% include "projetos/includes/bloco_encerramento_projeto.html" with projeto=projeto %} {% endcomment %}
+
+    {% endif %}
+
+  </div>
+
+{% endblock %}

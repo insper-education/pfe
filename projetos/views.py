@@ -778,6 +778,37 @@ def meuprojeto(request, primarykey=None):
     return render(request, "projetos/meuprojeto_estudantes.html", context=context)
 
 
+
+@login_required
+def gestao_projeto(request, primarykey=None):
+    """Mostra o projeto do próprio estudante, se for estudante."""
+    #usuario_sem_acesso(request, (1, 2, 4,)) # Soh Est Parc Adm
+    
+    # Caso seja Professor ou Administrador
+    if request.user.eh_prof_a:
+        # Pegando um estudante de um projeto quando orientador
+        if primarykey:
+            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+        else:
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+    elif request.user.eh_aluno:  # Caso seja estudante
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
+    else:
+        return HttpResponse("Acesso negado.", status=401)
+    
+    context = {
+        "titulo": {"pt": "Gestão de Projeto", "en": "Project Management"},
+        "configuracao": get_object_or_404(Configuracao),
+        "Projeto": Projeto,
+        "projeto": projeto,
+    }
+
+    return render(request, "projetos/gestao_projeto.html", context=context)
+
+
+
+
+
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def projeto_avancado(request, primarykey):

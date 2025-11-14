@@ -1,0 +1,149 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Março de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load get_field %}
+
+<!-- Seção: Metadados do Projeto — Título, Resumo, Abstract e Palavras-chave -->
+<section id="metadados-projeto" lang="pt-BR" aria-labelledby="titulo-metadados">
+  <style>
+    #metadados-projeto {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      max-width: 900px;
+      margin: 1rem 0;
+    }
+    .instrucao {
+      background: #f7f9fc;
+      border-left: 4px solid #2b6cb0;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    textarea[rows="1"] {
+      height: 2.2rem;
+    }
+    .contador {
+      float: right;
+      font-size: 0.85rem;
+      color: #667085;
+    }
+    .help {
+      font-size: 0.9rem;
+      color: #4a5568;
+      margin-top: 0.3rem;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .btn {
+      background: #2b6cb0;
+      border: 1px solid #2b6cb0;
+      color: white;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .erro {
+      color: #b91c1c;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+  </style>
+
+  <h2 id="titulo-metadados">Informações básicas do relatório</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p><strong>O que preencher:</strong> Este campo reúne os elementos básicos do relatório final de projeto: título, resumo, abstract e palavras-chave. Essas informações serão usadas para <strong>indexação, arquivamento e divulgação</strong> do trabalho.</p>
+    <ul>
+      <li><strong>Título:</strong> o nome final do projeto, tal como apresentado no relatório.</li>
+      <li><strong>Resumo:</strong> texto em português com objetivo, metodologia e resultados principais.</li>
+      <li><strong>Abstract:</strong> tradução fiel do resumo para o inglês (ou vice-versa).</li>
+      <li><strong>Palavras-chave:</strong> termos que identifiquem o tema do projeto (mínimo de três, separadas por vírgula).</li>
+    </ul>
+    <p>Esses campos devem refletir o relatório entregue e serão utilizados para compor o repositório institucional.</p>
+  </div>
+
+  <!-- TÍTULO FINAL -->
+  <div class="mb-3">
+    <label for="titulo_final">Título final do projeto</label>
+    <span id="contador-titulo" class="contador" aria-live="polite"></span>
+    <textarea
+      id="titulo_final"
+      name="titulo_final"
+      rows="1"
+      maxlength="{% max_length Projeto 'titulo_final' %}"
+      placeholder="Indique o título final do projeto usado no relatório (se diferente do título original da proposta)"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
+    >{% if projeto.titulo_final %}{{projeto.titulo_final}}{% endif %}</textarea>
+    <div class="help">Título conforme o relatório final. Use letras maiúsculas apenas onde necessário.</div>
+  </div>
+
+  <!-- RESUMO (PT) -->
+  <div class="mb-3">
+    <label for="resumo">Resumo (português)</label>
+    <span id="contador-resumo" class="contador" aria-live="polite"></span>
+    <textarea
+      id="resumo"
+      name="resumo"
+      rows="6"
+      maxlength="{% max_length Projeto 'resumo' %}"
+      placeholder="Informe o resumo em português. Copie diretamente do relatório final."
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
+    >{% if projeto.resumo %}{{projeto.resumo}}{% endif %}</textarea>
+    <div class="help">Resuma brevemente o objetivo, a metodologia e os principais resultados do projeto.</div>
+  </div>
+
+  <!-- ABSTRACT (EN) -->
+  <div class="mb-3">
+    <label for="abstract">Abstract (inglês)</label>
+    <span id="contador-abstract" class="contador" aria-live="polite"></span>
+    <textarea
+      id="abstract"
+      name="abstract"
+      rows="6"
+      maxlength="{% max_length Projeto 'abstract' %}"
+      placeholder="Informe o resumo em inglês. Copie diretamente do relatório final."
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
+    >{% if projeto.abstract %}{{projeto.abstract}}{% endif %}</textarea>
+    <div class="help">Tradução fiel do resumo para o inglês. Evite o uso de tradutores automáticos sem revisão.</div>
+  </div>
+
+  <!-- PALAVRAS-CHAVE -->
+  <div class="mb-3">
+    <label for="palavras_chave">Palavras-chave</label>
+    <span id="contador-palavras" class="contador" aria-live="polite"></span>
+    <textarea
+      id="palavras_chave"
+      name="palavras_chave"
+      rows="1"
+      maxlength="{% max_length Projeto 'palavras_chave' %}"
+      placeholder="Informe as palavras-chave separadas por vírgula. Ex.: energia, otimização, IoT"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}
+    >{% if projeto.palavras_chave %}{{projeto.palavras_chave}}{% endif %}</textarea>
+    <div class="help">Mínimo de três palavras-chave, separadas por vírgula. Exemplo: sustentabilidade, controle, sensores.</div>
+  </div>
+
+</section>

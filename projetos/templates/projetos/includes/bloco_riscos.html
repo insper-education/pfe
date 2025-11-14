@@ -1,0 +1,362 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Seção: Análise inicial de riscos e registro de incidentes -->
+<section id="analise-riscos" lang="pt-BR" aria-labelledby="titulo-riscos">
+  <style>
+    #analise-riscos { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; max-width: 980px; margin:1rem 0; }
+    .instrucao { background:#f7f9fc; border-left:4px solid #2b6cb0; padding:0.8rem; margin-bottom:1rem; border-radius:6px; }
+    .subtitulo { font-weight:700; margin-top:0.25rem; }
+    .bloco { border:1px solid #e2e8f0; padding:0.8rem; margin-bottom:0.8rem; border-radius:6px; background:#fff; }
+    label { display:block; font-weight:600; margin-bottom:0.25rem; }
+    input[type="text"], textarea, select, input[type="date"], input[type="datetime-local"] {
+      width:100%; padding:0.5rem; border:1px solid #cbd5e1; border-radius:6px; box-sizing:border-box; font-size:1rem;
+    }
+    textarea { min-height:80px; resize:vertical; }
+    .acoes { display:flex; gap:0.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
+    .btn { padding:0.45rem 0.7rem; border-radius:6px; cursor:pointer; border:1px solid #2b6cb0; background:#2b6cb0; color:white; font-weight:600; }
+    .btn.terciario { background:transparent; color:#2b6cb0; border-color:transparent; text-decoration:underline; padding:0.25rem 0.5rem; font-weight:500; }
+    .linha-pequena { display:grid; grid-template-columns: 1fr 1fr; gap:0.6rem; align-items:start; }
+    .help { font-size:0.95rem; color:#475569; margin-top:0.4rem; }
+    .meta { font-size:0.9rem; color:#475569; margin-top:0.4rem; }
+    .erro { color:#b91c1c; font-weight:700; margin-top:0.5rem; }
+    .chip { font-size:0.85rem; color:#0f172a; background:#eef2ff; padding:0.25rem 0.5rem; border-radius:4px; display:inline-block; margin-right:0.4rem; }
+  </style>
+
+  <h2 id="titulo-riscos">Riscos do projeto e registro de incidentes</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p><strong>Propósito:</strong> identificar, documentar e acompanhar riscos que possam comprometer a viabilidade do projeto (ex.: tecnologias não maduras, falta de recursos, cronograma apertado). Registre também incidentes (problemas ocorridos) relacionados a esses riscos.</p>
+    <p><strong>Fluxo sugerido:</strong> ao detectar um risco, adicione um novo registro e descreva probabilidade, gravidade e medidas preventivas/remediais. Se ocorrer um incidente, registre-o e indique se as medidas preventivas/remediais foram adotadas.</p>
+    <p class="meta"><span class="chip">Data</span> As datas são preenchidas automaticamente ao criar cada risco/ incidente e serão enviadas ao servidor no momento do submit.</p>
+  </div>
+
+  <!-- Controles -->
+  <div class="acoes" aria-hidden="false">
+    <button type="button" id="adicionar-risco" class="btn">Adicionar risco</button>
+    <button type="button" id="remover-ultimo-risco" class="btn terciario">Remover último risco</button>
+    <button type="button" id="adicionar-incidente" class="btn" style="margin-left:1rem;">Registrar incidente</button>
+    <button type="button" id="remover-ultimo-incidente" class="btn terciario">Remover último incidente</button>
+  </div>
+
+  <h4 style="margin-top:1rem;">Riscos identificados</h4>
+
+  <!-- Lista de riscos -->
+  <div id="lista-riscos" role="list" aria-label="Lista de riscos">
+    <!-- RISCO - modelo inicial -->
+    <div class="bloco risco" role="listitem" data-index="1">
+      <input type="hidden" name="riscos[0][data_identificacao]" value="">
+      <label for="riscos-0-titulo">Título</label>
+      <input type="text" id="riscos-0-titulo" name="riscos[0][titulo]" placeholder="Título do risco (curto)" required>
+
+      <label for="riscos-0-descricao" style="margin-top:0.5rem;">Descrição</label>
+      <textarea id="riscos-0-descricao" name="riscos[0][descricao]" placeholder="Descreva o risco: o que pode dar errado e por quê" required></textarea>
+
+      <div class="linha-pequena" style="margin-top:0.5rem;">
+        <div>
+          <label for="riscos-0-probabilidade">Probabilidade de ocorrer</label>
+          <select id="riscos-0-probabilidade" name="riscos[0][probabilidade]" required>
+            <option value="">-- selecionar --</option>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="riscos-0-just-prob">Justificativa da probabilidade</label>
+          <input type="text" id="riscos-0-just-prob" name="riscos[0][justificativa_probabilidade]" placeholder="Por que essa probabilidade?" required>
+        </div>
+      </div>
+
+      <div class="linha-pequena" style="margin-top:0.5rem;">
+        <div>
+          <label for="riscos-0-gravidade">Estimativa de gravidade</label>
+          <select id="riscos-0-gravidade" name="riscos[0][gravidade]" required>
+            <option value="">-- selecionar --</option>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="riscos-0-just-grav">Justificativa da gravidade</label>
+          <input type="text" id="riscos-0-just-grav" name="riscos[0][justificativa_gravidade]" placeholder="Por que essa gravidade?" required>
+        </div>
+      </div>
+
+      <label for="riscos-0-preventivas" style="margin-top:0.5rem;">Medidas preventivas</label>
+      <textarea id="riscos-0-preventivas" name="riscos[0][medidas_preventivas]" placeholder="O que será feito para reduzir a probabilidade?" required></textarea>
+
+      <label for="riscos-0-remediais" style="margin-top:0.5rem;">Medidas remediais</label>
+      <textarea id="riscos-0-remediais" name="riscos[0][medidas_remediais]" placeholder="O que será feito caso o risco se materialize?" required></textarea>
+
+      <div class="help">Ao salvar o formulário, o servidor receberá a data em que o risco foi registrado (campo oculto).</div>
+    </div>
+  </div>
+
+  <h4 style="margin-top:1rem;">Incidentes registrados</h4>
+
+  <div id="lista-incidentes" role="list" aria-label="Lista de incidentes">
+    <!-- INCIDENTE - modelo inicial -->
+    <div class="bloco incidente" role="listitem" data-index="1">
+      <input type="hidden" name="incidentes[0][data_registro]" value="">
+      <label for="incidentes-0-titulo">Título do incidente</label>
+      <input type="text" id="incidentes-0-titulo" name="incidentes[0][titulo]" placeholder="Título do incidente" required>
+
+      <label for="incidentes-0-risco" style="margin-top:0.5rem;">Risco relacionado</label>
+      <select id="incidentes-0-risco" name="incidentes[0][risco_relacionado]">
+        <option value="">[não relatado]</option>
+        <!-- opções preenchidas dinamicamente a partir dos riscos -->
+      </select>
+
+      <div class="linha-pequena" style="margin-top:0.5rem;">
+        <div>
+          <label for="incidentes-0-preventivas">Adotou medidas preventivas?</label>
+          <select id="incidentes-0-preventivas" name="incidentes[0][adotou_preventivas]" required>
+            <option value="">-- selecionar --</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+            <option value="parcial">Parcialmente</option>
+          </select>
+        </div>
+        <div>
+          <label for="incidentes-0-remediais">Aplicou medidas remediais?</label>
+          <select id="incidentes-0-remediais" name="incidentes[0][aplicou_remediais]" required>
+            <option value="">-- selecionar --</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+            <option value="parcial">Parcialmente</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="incidentes-0-conclusao" style="margin-top:0.5rem;">Conclusão / observações</label>
+      <textarea id="incidentes-0-conclusao" name="incidentes[0][conclusao]" placeholder="Descreva o resultado, ações tomadas e lições aprendidas" required></textarea>
+
+      <div class="help">A data/hora do registro do incidente é preenchida automaticamente e será enviada ao servidor.</div>
+    </div>
+  </div>
+
+  <div id="mensagens-riscos" class="erro" role="status" aria-live="polite" style="display:none;"></div>
+
+  <script>
+    (function () {
+      const listaRiscos = document.getElementById('lista-riscos');
+      const listaIncidentes = document.getElementById('lista-incidentes');
+      const btnAddRisco = document.getElementById('adicionar-risco');
+      const btnRemRisco = document.getElementById('remover-ultimo-risco');
+      const btnAddInc = document.getElementById('adicionar-incidente');
+      const btnRemInc = document.getElementById('remover-ultimo-incidente');
+      const mensagens = document.getElementById('mensagens-riscos');
+
+      // Utils de data
+      function hojeYYYYMMDD() {
+        const d = new Date();
+        return d.toISOString().slice(0,10);
+      }
+      function agoraISO() {
+        return new Date().toISOString(); // full timestamp
+      }
+
+      // Atualiza o campo data_identificacao do bloco de risco (input hidden)
+      function setDataIdentificacao(bloco, isoDate) {
+        const hidden = bloco.querySelector('input[type="hidden"][name^="riscos"]');
+        if (hidden) hidden.value = isoDate || hojeYYYYMMDD();
+      }
+
+      // Atualiza o campo data_registro do incidente
+      function setDataRegistroIncidente(bloco, isoDateTime) {
+        const hidden = bloco.querySelector('input[type="hidden"][name^="incidentes"]');
+        if (hidden) hidden.value = isoDateTime || agoraISO();
+      }
+
+      // Retorna lista de riscos atuais [{index, titulo, optionValue}]
+      function riscosAtuais() {
+        return Array.from(listaRiscos.querySelectorAll('.risco')).map((el, i) => {
+          const idx = i; // zero-based index corresponds to name indices after atualização
+          const tituloInput = el.querySelector('input[name^="riscos"][name$="[titulo]"]');
+          const titulo = tituloInput ? (tituloInput.value.trim() || `(Risco ${i+1} sem título)`) : `(Risco ${i+1})`;
+          return { idx, titulo, el };
+        });
+      }
+
+      // Atualiza os nomes/ids/data-index de riscos e incidentes para manter coerência nos nomes enviados ao servidor
+      function atualizarIndices() {
+        // riscos
+        Array.from(listaRiscos.querySelectorAll('.risco')).forEach((bloco, i) => {
+          bloco.dataset.index = i + 1;
+          // atualizar hidden data_identificacao name
+          const hidden = bloco.querySelector('input[type="hidden"][name^="riscos"]');
+          if (hidden) hidden.name = `riscos[${i}][data_identificacao]`;
+          // atualizar inputs dentro do bloco
+          bloco.querySelectorAll('input, textarea, select').forEach((el) => {
+            // field name ends with [campo]
+            const nameMatch = el.name && el.name.match(/\[([^\]]+)\]$/);
+            if (nameMatch) {
+              const campo = nameMatch[1];
+              el.name = `riscos[${i}][${campo}]`;
+            } else {
+              // fallback: keep as is
+            }
+            // atualizar id
+            if (el.id) {
+              const base = el.id.replace(/-\d+$/, '').replace(/^riscos-\d+-/, 'riscos-');
+              el.id = base.replace(/riscos-/, `riscos-${i}-`);
+            }
+          });
+          // se hidden sem valor, preencher data de identificação
+          const hiddenVal = bloco.querySelector(`input[name="riscos[${i}][data_identificacao]"]`);
+          if (hiddenVal && !hiddenVal.value) setDataIdentificacao(bloco);
+        });
+
+        // incidentes
+        Array.from(listaIncidentes.querySelectorAll('.incidente')).forEach((bloco, j) => {
+          bloco.dataset.index = j + 1;
+          const hidden = bloco.querySelector('input[type="hidden"][name^="incidentes"]');
+          if (hidden) hidden.name = `incidentes[${j}][data_registro]`;
+          bloco.querySelectorAll('input, textarea, select').forEach((el) => {
+            const nameMatch = el.name && el.name.match(/\[([^\]]+)\]$/);
+            if (nameMatch) {
+              const campo = nameMatch[1];
+              el.name = `incidentes[${j}][${campo}]`;
+            }
+            if (el.id) {
+              const base = el.id.replace(/-\d+$/, '').replace(/^incidentes-\d+-/, 'incidentes-');
+              el.id = base.replace(/incidentes-/, `incidentes-${j}-`);
+            }
+          });
+          const hiddenVal = bloco.querySelector(`input[name="incidentes[${j}][data_registro]"]`);
+          if (hiddenVal && !hiddenVal.value) setDataRegistroIncidente(bloco);
+        });
+
+        atualizarOpcoesIncidentes();
+      }
+
+      // Atualiza as opções do select de risco em cada incidente
+      function atualizarOpcoesIncidentes() {
+        const riscos = riscosAtuais();
+        Array.from(listaIncidentes.querySelectorAll('.incidente')).forEach((bloco) => {
+          const select = bloco.querySelector('select[name^="incidentes"][name$="[risco_relacionado]"]');
+          if (!select) return;
+          const atual = select.value;
+          // limpar e repopular
+          select.innerHTML = '';
+          const nao = document.createElement('option'); nao.value = ''; nao.textContent = '[não relatado]';
+          select.appendChild(nao);
+          riscos.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = String(r.idx); // armazenamos índice do risco
+            opt.textContent = `Risco ${r.idx+1}: ${r.titulo}`;
+            select.appendChild(opt);
+          });
+          // tentar restaurar seleção se possível (se atual correspondia a um índice existente)
+          if (atual !== '') {
+            // se atual é número que ainda existe
+            const existe = riscos.some(r => String(r.idx) === atual);
+            if (existe) select.value = atual;
+            else select.value = ''; // não relatado
+          } else {
+            select.value = '';
+          }
+        });
+      }
+
+      // adiciona novo risco (clona o último)
+      function adicionarRisco() {
+        const ultimo = listaRiscos.querySelector('.risco:last-of-type');
+        const clone = ultimo.cloneNode(true);
+        // limpar campos textuais do clone
+        clone.querySelectorAll('input, textarea').forEach(i => {
+          if (i.type === 'hidden') { i.value = ''; } else { i.value = ''; }
+        });
+        clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        listaRiscos.appendChild(clone);
+        atualizarIndices();
+        // focar no título do novo risco
+        const novo = listaRiscos.querySelector('.risco:last-of-type');
+        const campoTitulo = novo.querySelector('input[name$="[titulo]"]');
+        if (campoTitulo) campoTitulo.focus();
+      }
+
+      // remove último risco (mantém mínimo 1)
+      function removerUltimoRisco() {
+        const blocos = listaRiscos.querySelectorAll('.risco');
+        if (blocos.length > 1) {
+          listaRiscos.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          mensagens.style.display = 'block';
+          mensagens.textContent = 'Deve haver pelo menos um risco registrado.';
+          setTimeout(()=> { mensagens.style.display='none'; mensagens.textContent=''; }, 4000);
+        }
+      }
+
+      // adiciona incidente (clona último)
+      function adicionarIncidente() {
+        const ultimo = listaIncidentes.querySelector('.incidente:last-of-type');
+        const clone = ultimo.cloneNode(true);
+        // limpar campos
+        clone.querySelectorAll('input, textarea').forEach(i => {
+          if (i.type === 'hidden') { i.value = ''; } else { i.value = ''; }
+        });
+        clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        listaIncidentes.appendChild(clone);
+        atualizarIndices();
+        // setar data/hora no novo
+        const novo = listaIncidentes.querySelector('.incidente:last-of-type');
+        setDataRegistroIncidente(novo);
+        const campoTitulo = novo.querySelector('input[name$="[titulo]"]');
+        if (campoTitulo) campoTitulo.focus();
+      }
+
+      // remove último incidente (mantém mínimo 0)
+      function removerUltimoIncidente() {
+        const blocos = listaIncidentes.querySelectorAll('.incidente');
+        if (blocos.length > 0) {
+          listaIncidentes.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          mensagens.style.display = 'block';
+          mensagens.textContent = 'Não há incidentes para remover.';
+          setTimeout(()=> { mensagens.style.display='none'; mensagens.textContent=''; }, 3000);
+        }
+      }
+
+      // event listeners
+      btnAddRisco.addEventListener('click', adicionarRisco);
+      btnRemRisco.addEventListener('click', removerUltimoRisco);
+      btnAddInc.addEventListener('click', adicionarIncidente);
+      btnRemInc.addEventListener('click', removerUltimoIncidente);
+
+      // sempre que um título de risco mudar, atualizar opções de incidentes
+      listaRiscos.addEventListener('input', (ev) => {
+        if (ev.target && /titulo/.test(ev.target.name)) {
+          atualizarOpcoesIncidentes();
+        }
+      });
+
+      // inicializar: preencher datas dos modelos e índices corretos
+      document.addEventListener('DOMContentLoaded', () => {
+        // setar data de identificação do risco inicial
+        Array.from(listaRiscos.querySelectorAll('.risco')).forEach(bloco => setDataIdentificacao(bloco));
+        Array.from(listaIncidentes.querySelectorAll('.incidente')).forEach(bloco => setDataRegistroIncidente(bloco));
+        atualizarIndices();
+      });
+
+      // chamamos atualizarIndices imediatamente caso o script rode após o HTML já carregado
+      if (document.readyState !== 'loading') {
+        Array.from(listaRiscos.querySelectorAll('.risco')).forEach(bloco => setDataIdentificacao(bloco));
+        Array.from(listaIncidentes.querySelectorAll('.incidente')).forEach(bloco => setDataRegistroIncidente(bloco));
+        atualizarIndices();
+      }
+    })();
+  </script>
+</section>

@@ -1,0 +1,155 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Seção simples: Cronograma -->
+<section id="cronograma-simples" lang="pt-BR" aria-labelledby="titulo-cronograma-simples">
+  <style>
+    #cronograma-simples { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; max-width:900px; margin:1rem 0; }
+    .instrucao { background:#f7f9fc; border-left:4px solid #2b6cb0; padding:0.75rem; margin-bottom:1rem; border-radius:6px; }
+    .bloco { border:1px solid #e2e8f0; padding:0.75rem; margin-bottom:0.75rem; border-radius:6px; background:#fff; }
+    label { display:block; font-weight:600; margin-bottom:0.25rem; }
+    input[type="text"], input[type="date"], textarea { width:100%; padding:0.5rem; border:1px solid #cbd5e1; border-radius:6px; box-sizing:border-box; font-size:1rem; }
+    textarea { min-height:60px; resize:vertical; }
+    .acoes { display:flex; gap:0.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
+    .btn { padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; border:1px solid #2b6cb0; background:#2b6cb0; color:white; font-weight:600; }
+    .btn.terciario { background:transparent; color:#2b6cb0; border-color:transparent; text-decoration:underline; padding:0.25rem 0.5rem; font-weight:500; }
+    .help { font-size:0.95rem; color:#475569; margin-top:0.4rem; }
+    .erro { color:#b91c1c; font-weight:700; margin-top:0.5rem; }
+  </style>
+
+  <h2 id="titulo-cronograma-simples">Cronograma</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p><strong>Propósito:</strong> registrar, de forma simples, as etapas temporais do projeto (sprints, gates ou marcos). Use este campo para planejar datas de início das atividades e para manter um histórico básico de quando cada etapa começou.</p>
+    <ul>
+      <li>Registre cada *sprint* / *gate* com um <strong>título</strong> e a <strong>data de início</strong>.</li>
+      <li>Se desejar, adicione uma <strong>descrição curta</strong> (opcional) para indicar o objetivo da etapa.</li>
+      <li>Não é necessário indicar percentual de conclusão aqui — este é um registro simples de planejamento/histórico.</li>
+    </ul>
+    <p class="help">Exemplo rápido: Título: "Sprint 1 — Protótipo inicial" | Data de início: 2025-03-02</p>
+  </div>
+
+  <div class="acoes" aria-hidden="false">
+    <button type="button" id="adicionar-sprint" class="btn">Adicionar etapa</button>
+    <button type="button" id="remover-ultimo-sprint" class="btn terciario">Remover última</button>
+  </div>
+
+  <div id="lista-sprints" role="list" aria-label="Lista de sprints">
+    <!-- MODELO (um bloco já presente) -->
+    <div class="bloco sprint" role="listitem" data-index="1">
+      <label for="sprints-0-titulo">Título da etapa (sprint / gate)</label>
+      <input type="text" id="sprints-0-titulo" name="sprints[0][titulo]" placeholder="Ex.: Sprint 1 — Protótipo inicial"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %} required>
+
+      <label for="sprints-0-data" style="margin-top:0.5rem;">Data de início</label>
+      <input type="date" id="sprints-0-data" name="sprints[0][data_inicio]" 
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %} required>
+
+      <label for="sprints-0-desc" style="margin-top:0.5rem;">Descrição curta (opcional)</label>
+      <textarea id="sprints-0-desc" name="sprints[0][descricao]" placeholder="Objetivo desta etapa (opcional)"
+      {% if not alocacao or not request.user.eh_estud %}disabled{% endif %}></textarea>
+
+      <div class="help">Preencha título e data de início. Você pode adicionar quantas etapas desejar.</div>
+    </div>
+  </div>
+
+  <div id="mensagem-sprints" class="erro" role="status" aria-live="polite" style="display:none;"></div>
+
+  <script>
+    (function () {
+      const lista = document.getElementById('lista-sprints');
+      const btnAdd = document.getElementById('adicionar-sprint');
+      const btnRem = document.getElementById('remover-ultimo-sprint');
+      const msg = document.getElementById('mensagem-sprints');
+
+      function atualizarIndices() {
+        Array.from(lista.querySelectorAll('.sprint')).forEach((bloco, i) => {
+          bloco.dataset.index = i + 1;
+          // atualizar nomes e ids
+          bloco.querySelectorAll('input, textarea').forEach(el => {
+            if (!el.name) return;
+            const campoMatch = el.name.match(/\[([^\]]+)\]$/);
+            if (campoMatch) {
+              const campo = campoMatch[1];
+              el.name = `sprints[${i}][${campo}]`;
+            }
+            if (el.id) {
+              const base = el.id.replace(/-\d+$/, '').replace(/^sprints-\d+-/, 'sprints-');
+              el.id = base.replace(/sprints-/, `sprints-${i}-`);
+            }
+          });
+        });
+      }
+
+      function adicionar() {
+        const ultimo = lista.querySelector('.sprint:last-of-type');
+        const clone = ultimo.cloneNode(true);
+        // limpar valores do clone
+        clone.querySelectorAll('input, textarea').forEach(el => {
+          if (el.type === 'date') el.value = '';
+          else if (el.type === 'text') el.value = '';
+          else if (el.tagName.toLowerCase() === 'textarea') el.value = '';
+        });
+        lista.appendChild(clone);
+        atualizarIndices();
+        // foco no título do novo
+        const novo = lista.querySelector('.sprint:last-of-type');
+        const titulo = novo.querySelector('input[name$="[titulo]"]');
+        if (titulo) titulo.focus();
+      }
+
+      function remover() {
+        const blocos = lista.querySelectorAll('.sprint');
+        if (blocos.length > 1) {
+          lista.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          msg.style.display = 'block';
+          msg.textContent = 'Deve haver ao menos um registro (pode ficar vazio se não houver etapas).';
+          setTimeout(() => { msg.style.display='none'; msg.textContent=''; }, 3000);
+        }
+      }
+
+      btnAdd.addEventListener('click', adicionar);
+      btnRem.addEventListener('click', remover);
+
+      // validação leve ao submeter (se o formulário chamar window.validarCronogramaSimples antes do submit)
+      function validarAntesSubmit() {
+        const blocos = Array.from(lista.querySelectorAll('.sprint'));
+        for (let i = 0; i < blocos.length; i++) {
+          const titulo = blocos[i].querySelector('input[name^="sprints"][name$="[titulo]"]');
+          const data = blocos[i].querySelector('input[name^="sprints"][name$="[data_inicio]"]');
+          if (!titulo || !titulo.value.trim()) {
+            msg.style.display = 'block';
+            msg.textContent = `O título da etapa ${i+1} é obrigatório.`;
+            titulo && titulo.focus();
+            return false;
+          }
+          if (!data || !data.value) {
+            msg.style.display = 'block';
+            msg.textContent = `A data de início da etapa ${i+1} é obrigatória.`;
+            data && data.focus();
+            return false;
+          }
+        }
+        msg.style.display = 'none';
+        msg.textContent = '';
+        return true;
+      }
+
+      window.validarCronogramaSimples = validarAntesSubmit;
+
+      // inicializa índices (se o script roda após o HTML carregado)
+      if (document.readyState !== 'loading') atualizarIndices();
+      document.addEventListener('DOMContentLoaded', atualizarIndices);
+    })();
+  </script>
+</section>
+
+

@@ -1,0 +1,160 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 13 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+<!-- Formulário: Normas técnicas do projeto (pt-BR) -->
+<section id="normas-tecnicas" lang="pt-BR" aria-labelledby="titulo-normas">
+  <style>
+    /* Estilos simples para melhor legibilidade */
+    #normas-tecnicas { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; max-width: 900px; margin: 0.5rem; }
+    .instrucao { background:#f7f9fc; border-left:4px solid #2b6cb0; padding:0.75rem; margin-bottom:1rem; border-radius:6px; }
+    .norma { border:1px solid #e2e8f0; padding:0.75rem; margin-bottom:0.75rem; border-radius:6px; }
+    label { display:block; font-weight:600; margin-bottom:0.25rem; }
+    input[type="text"], textarea { width:100%; padding:0.5rem; border:1px solid #cbd5e1; border-radius:6px; box-sizing:border-box; }
+    textarea { min-height:100px; resize:vertical; }
+    .exemplo { font-size:0.95rem; color:#333; background:#fff; padding:0.5rem; border-radius:4px; margin-top:0.4rem; border:1px dashed #cbd5e1; }
+    .acoes { display:flex; gap:0.5rem; margin-top:0.5rem; }
+    .btn { padding:0.45rem 0.7rem; border-radius:6px; cursor:pointer; border:1px solid #2b6cb0; background:#2b6cb0; color:white; font-weight:600; }
+    .btn.terciario { background:transparent; color:#2b6cb0; border-color:transparent; text-decoration:underline; padding:0.25rem 0.5rem; font-weight:500; }
+  </style>
+
+  <h2 id="titulo-normas">Normas Técnicas</h2>
+
+  <div class="instrucao" role="region" aria-label="Instruções para preenchimento">
+    <p><strong>O que preencher:</strong> Liste as normas técnicas que você selecionou e que se aplicam ao seu projeto. Insira ao menos <strong>duas normas</strong> (duas entradas completas: Código, Título e Relevância).</p>
+
+    <p><strong>Como justificar a Relevância (campo obrigatório):</strong></p>
+    <ul>
+      <li>Explique <em>onde</em> e <em>como</em> a norma se aplica ao seu projeto ou produto final.</li>
+      <li>Indique qual parte específica da norma é relevante — cite a seção/número do item (ex.: seção 5.1.2.1.101) e resuma o trecho aplicado.</li>
+      <li>Diga se a aplicação é para o protótipo do projeto, para um produto futuro derivado do projeto, ou para requisitos de segurança/uso/manufatura.</li>
+    </ul>
+
+    <p><strong>Exemplo (use como modelo):</strong></p>
+    <div class="exemplo" aria-hidden="false">
+      • Código: <em>ABNT NBR 17079</em><br>
+      • Título: <em>Instalações elétricas de baixa tensão — Requisitos para instalações em locais especiais — Mobiliários</em><br>
+      • Relevância: A norma na seção <strong>5.1.2.1.101</strong> diz que “Quando o mobiliário tiver uma parte metálica acessível, ela deve ser fornecida, pelo fabricante do mobiliário, com ponto de conexão para sua ligação ao condutor de equipotencialização da instalação elétrica fixa.” Necessária pois o gabinete do XPTO será de metal; aplicar a exigência de equipotencialização no projeto do gabinete (seção 5.1.2.1.101).
+    </div>
+  </div>
+
+  <!-- Container das entradas de norma -->
+  <div id="lista-normas" role="list" aria-label="Lista de normas selecionadas">
+    <!-- Bloco de norma (modelo) -->
+    <div class="norma" role="listitem" data-index="1">
+      <label for="codigo-1">Código (ex.: ABNT NBR 17079)</label>
+      <input type="text" id="codigo-1" name="normas[0][codigo]" placeholder="Ex.: ABNT NBR 17079" required>
+
+      <label for="titulo-1" style="margin-top:0.5rem;">Título (copiar título completo da norma)</label>
+      <input type="text" id="titulo-1" name="normas[0][titulo]" placeholder="Ex.: Instalações elétricas de baixa tensão — Requisitos..." required>
+
+      <label for="relevancia-1" style="margin-top:0.5rem;">Relevância — justificar aplicação e citar seção específica</label>
+      <textarea id="relevancia-1" name="normas[0][relevancia]" placeholder="Descreva onde e como a norma se aplica; cite seção/item relevante (ex.: seção 5.1.2.1.101)..." required></textarea>
+    </div>
+
+    <!-- Segundo bloco (já presente porque você pediu ao menos duas) -->
+    <div class="norma" role="listitem" data-index="2">
+      <label for="codigo-2">Código (ex.: ABNT NBR 60204)</label>
+      <input type="text" id="codigo-2" name="normas[1][codigo]" placeholder="Ex.: ABNT NBR 60204" required>
+
+      <label for="titulo-2" style="margin-top:0.5rem;">Título (copiar título completo da norma)</label>
+      <input type="text" id="titulo-2" name="normas[1][titulo]" placeholder="Ex.: Segurança de máquinas — Equipamentos elétricos..." required>
+
+      <label for="relevancia-2" style="margin-top:0.5rem;">Relevância — justificar aplicação e citar seção específica</label>
+      <textarea id="relevancia-2" name="normas[1][relevancia]" placeholder="Descreva onde e como a norma se aplica; cite seção/item relevante..." required></textarea>
+    </div>
+  </div>
+
+  <div class="acoes" aria-hidden="false">
+    <button type="button" class="btn" id="adicionar-norma">Adicionar norma</button>
+    <button type="button" class="btn terciario" id="remover-ultima">Remover última</button>
+  </div>
+
+  <p style="font-size:0.95rem; color:#4a5568; margin-top:0.5rem;">
+    Observação: se citar trechos literais da norma, indique a seção e utilize aspas curtas. Sempre que possível, inclua referências bibliográficas (ano, versão) no campo de Título ou em anexo.
+  </p>
+
+  <script>
+    (function () {
+      const lista = document.getElementById('lista-normas');
+      const btnAdd = document.getElementById('adicionar-norma');
+      const btnRem = document.getElementById('remover-ultima');
+
+      function atualizarIndices() {
+        const blocos = Array.from(lista.querySelectorAll('.norma'));
+        blocos.forEach((bloco, i) => {
+          const idx = i + 1;
+          bloco.dataset.index = idx;
+
+          // atualizar labels [for]
+          bloco.querySelectorAll('label').forEach(label => {
+            const forAttr = label.getAttribute('for');
+            if (forAttr) {
+              // remove sufixo numérico final -NN se houver, senão usa como base
+              const base = forAttr.replace(/-\d+$/, '');
+              label.setAttribute('for', base + '-' + idx);
+            }
+          });
+
+          // atualizar inputs e textareas
+          bloco.querySelectorAll('input, textarea').forEach((el) => {
+            // tenta achar base removendo sufixo -NN; se não encontrar, usa o nome sem alteração
+            const match = el.id.match(/^(.*?)-\d+$/);
+            const idBase = match ? match[1] : (el.id || (el.name ? el.name.replace(/\[.*\]$/, '') : 'campo'));
+            el.id = idBase + '-' + idx;
+
+            // atualizar name para normas[i][campo] se o name seguir o padrão
+            const nameMatch = el.name && el.name.match(/normas\[(\d+)\]\[(.+)\]/);
+            if (nameMatch) {
+              const campo = nameMatch[2];
+              el.name = `normas[${i}][${campo}]`;
+            }
+          });
+        });
+      }
+
+      btnAdd.addEventListener('click', () => {
+        const ultimo = lista.querySelector('.norma:last-of-type');
+        const clone = ultimo.cloneNode(true);
+
+        // limpar valores do clone
+        clone.querySelectorAll('input').forEach(i => i.value = '');
+        clone.querySelectorAll('textarea').forEach(t => t.value = '');
+
+        lista.appendChild(clone);
+        atualizarIndices();
+
+        // focar no campo "Código" dentro do novo bloco (mais confiável que buscar por id global)
+        const novo = lista.querySelector('.norma:last-of-type');
+        // tenta achar input cujo name termine em [codigo] ou id comece com "codigo-"
+        const campoCodigo = novo.querySelector('input[name$="[codigo]"], input[id^="codigo-"], input[type="text"]');
+        if (campoCodigo) {
+          campoCodigo.focus();
+        } else {
+          // fallback: focar no primeiro input do bloco
+          const primeiro = novo.querySelector('input, textarea');
+          if (primeiro) primeiro.focus();
+        }
+      });
+
+      btnRem.addEventListener('click', () => {
+        const blocos = lista.querySelectorAll('.norma');
+        if (blocos.length > 2) {
+          lista.removeChild(blocos[blocos.length - 1]);
+          atualizarIndices();
+        } else {
+          alert('Deve haver pelo menos duas normas listadas.');
+        }
+      });
+
+      // inicializa índices corretos
+      atualizarIndices();
+    })();
+  </script>
+
+</section>
