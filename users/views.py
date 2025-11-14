@@ -269,9 +269,9 @@ def estudantes_notas(request, professor=None):
         alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
         alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
 
-        if professor is not None:
+        if professor is not None:  # A chamada padrão é com o argumento "meus_projetos"
             user = get_object_or_404(PFEUser, pk=request.user.pk)
-            if user.tipo_de_usuario != 2 and user.tipo_de_usuario != 4:
+            if not user.eh_prof_a:
                 mensagem_erro = {"pt": "Você não está cadastrado como professor!",
                                  "en": "You are not registered as a professor!"}
                 context = {
@@ -281,8 +281,8 @@ def estudantes_notas(request, professor=None):
                 return render(request, "generic_ml.html", context=context)
             
             # Incluindo também se coorientação
-            coorientacoes = Coorientador.objects.filter(usuario=user).values_list("projeto", flat=True)
-            projetos = Projeto.objects.filter(orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes)
+            coorientacoes = Coorientador.objects.filter(usuario=user, projeto__ano=ano, projeto__semestre=semestre).values_list("projeto", flat=True)
+            projetos = Projeto.objects.filter(ano=ano, semestre=semestre, orientador=user.professor) | Projeto.objects.filter(id__in=coorientacoes, ano=ano, semestre=semestre)
             alunos_list = alunos_list.filter(alocacao__projeto__in=projetos)
             
         # Buscando estudantes que tiveram alocação no semestre
