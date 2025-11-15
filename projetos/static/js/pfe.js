@@ -13,13 +13,24 @@ document.addEventListener("DOMContentLoaded", function() {
     var links_menu_lat = document.getElementById("links_menu_lat");
     var hamburger = document.getElementById("hamburger");
     
-    // Clique na barra de menu lateral
-    hamburger.addEventListener("click", function(event) {
-        if (links_menu_lat.style.display === "block") {
-            links_menu_lat.style.display = "none";
-        } else {
+    // Função auxiliar para abrir/fechar menu
+    function toggleMenu(open) {
+        if (open) {
             links_menu_lat.style.display = "block";
+            hamburger.setAttribute("aria-expanded", "true");
+            hamburger.setAttribute("aria-label", "Fechar menu de navegação");
+        } else {
+            links_menu_lat.style.display = "none";
+            hamburger.setAttribute("aria-expanded", "false");
+            hamburger.setAttribute("aria-label", "Abrir menu de navegação");
         }
+    }
+    
+    // Clique no botão hamburger
+    hamburger.addEventListener("click", function(event) {
+        event.stopPropagation(); // Previne propagação para document.click
+        var isOpen = links_menu_lat.style.display === "block";
+        toggleMenu(!isOpen);
     });
 
     // Trata quando a tecla Escape é pressionada
@@ -35,5 +46,19 @@ document.addEventListener("DOMContentLoaded", function() {
             links_menu_lat.style.display = "none";
         }
     });
+
+    // FECHAR MENSAGEM DE AVISO
+    var closeAlertBtn = document.querySelector('.close-alert');
+    if (closeAlertBtn) {
+        closeAlertBtn.addEventListener('click', function() {
+            var mensagem = document.getElementById('mensagem_aviso');
+            if (mensagem) {
+                mensagem.style.opacity = '0';
+                setTimeout(function() {
+                    mensagem.remove();
+                }, 300);
+            }
+        });
+    }
 
 });

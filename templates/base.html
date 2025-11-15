@@ -3,169 +3,209 @@
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 15 de Maio de 2019
 -->
+
+{% load static %}
+{% load linguas %}
+  
 <!DOCTYPE html>
 <html lang="pt-br">
-<meta charset="UTF-8">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <head>
-  {% load static %}
-  {% load linguas %}
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="description" content="{% block meta_description %}Sistema de gerenciamento do Projeto Final - Capstone - Insper{% endblock %}">
+  <meta name="keywords" content="{% block meta_keywords %}capstone, projeto final, engenharia, ciência da computação, insper, pfe{% endblock %}">
+  <meta name="author" content="Luciano Pereira Soares - Insper">
+  <meta name="developer" content="Luciano Pereira Soares">
+  <link rel="author" href="mailto:lpsoares@insper.edu.br">
+
+  <meta property="og:title" content="{% block og_title %}Capstone - Insper{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Sistema de Projetos Finais - Capstone{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:type" content="website">
   
   {% block title %}<title>Capstone{% if titulo.pt %} - {{ titulo.pt }}{% elif titulo %} - {{ titulo }}{% endif %}</title>{% endblock %}
-  
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
   <link rel="stylesheet" href="{% static 'bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'fontawesome-free-5.15.1-web/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/cores.css' %}">
 
-  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
-  <script src="{% static 'js/pfe.js' %}"></script>
   <script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
-  <script src="{% static 'popper-1.16.1/popper.min.js' %}"></script>
-  <script src="{% static 'js/tooltip.js' %}"></script>
-  <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'js/pega_erro.js' %}"></script>
+  <script src="{% static 'popper-1.16.1/popper.min.js' %}" defer></script>
+  <script src="{% static 'bootstrap-4.3.1-dist/js/bootstrap.min.js' %}" defer></script>
+  <script src="{% static 'js/pfe.js' %}" defer></script>
+  <script src="{% static 'js/tooltip.js' %}" defer></script>
+  <script src="{% static 'js/pega_erro.js' %}" defer></script>
 
-  <style>
-    {% comment %} REMOVER {% endcomment %}
-    .icone_usuario {
-      font-size: 1.1em;
-      margin-right: 2px;
-    }
-  </style>
-
-  {% block head %}
-
-
-  {% endblock %}
+  {% block head %}{% endblock %}
 </head>
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
-  <div class="topnav">
-    <div id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
-      {% if user.is_authenticated %}<a id="logo_inicial" href="{% url 'index' %}">{% endif %}
-        <div class="logo-container">
-          <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Insper" >
-          <b id="pfelogo">Capstone</b>
-        </div>
-      {% if user.is_authenticated %}</a>{% endif %}
-      {% if user.is_authenticated %}
-        <a href="{% url 'perfil' %}" id="link_username">
-          {% if user.eh_estudante %}
-            <i class="fas fa-user-graduate icone_usuario" title="Estudante"></i>
-          {% elif user.eh_professor %}
-            <i class="fas fa-chalkboard-teacher icone_usuario" title="Professor"></i>
-          {% elif user.eh_parc %}
-            <i class="fas fa-user-tie icone_usuario" title="Parceiro"></i>
-          {% elif user.is_superuser or user.eh_admin %}
-            <i class="fas fa-user-shield icone_usuario" title="Administrador"></i>
-          {% else %}
-            <i class="fas fa-user icone_usuario" title="Usuário"></i>
-          {% endif %}
-          <span class="first_name">{{user.first_name}}</span>
-          <span class="last_name">{{user.last_name}}</span>
-        </u></a>
-      {% else %}
-        <a href="{% url 'login' %}" id="link_username"><i class="fas fa-question interrogacao"></i>&nbsp;Login</u></a>
-      {% endif %}
-      <div id="language_box"><div id="language_button"></div></div>
 
-      <div id="links_menu_lat" class="links-container">
-        {% if user.is_authenticated %}
-          <a href="#">
-            {% include "save_image.html" %}
-            {% include "impressora.html" %}
-          </a>
-        {% endif %}
-
-        <a href="{% url 'info'%}">{% lng "Informações" "Information" %}</a>
-
-        {% if user.is_authenticated %}
-          <a href="{% url 'perfil' %}">{% lng "Perfil" "Profile" %}</a>
-          <a href="{% url 'index' %}">{% lng "Página Geral" "General Page" %}</a>
-
-          {% for item in nav_menu_items %}
-            <a href="{% url 'index_'|add:item.url %}">{% lng item.title.pt item.title.en %}</a>
-          {% endfor %}
-
-      
-          <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
-          {% if user.eh_admin or user.eh_estud %}
-            <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
-          {% endif %}
-          
-          {% if user.eh_admin or user.eh_parc or request.user.membro_comite %}
-            <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>
-          {% endif %}
+  <header>
+    <nav class="topnav" role="navigation" aria-label="Navegação principal">
+      <div id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
         
-          {% if perms.users.altera_professor %}
-            <a href="{% url 'index_professores' %}">{% lng "Área dos Professores" "Professor's Area" %}</a>
-          {% endif %}
-          {% if perms.users.view_administrador %}
-            <a href="{% url 'index_coordenacao' %}">{% lng "Área da Coordenação" "Coordination Area" %}</a>
-          {% endif %}
-          {% if perms.users.altera_professor and request.user.membro_comite %}
-            <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
-          {% endif %}
-          {% if user.eh_admin or user.membro_operacional or user.membro_tecnico %}
-            <a href="{% url 'index_operacional'%}">{% lng "Área Operacional" "Operational Area" %}</a>
-          {% endif %}
-          {% if perms.users.view_administrador %}
-            <a href="{% url 'index_administracao'%}">{% lng "Área Administrativa" "Administrative Area" %}</a>
-          {% endif %}
-          {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
-            {% if request.user.membro_comite or request.user.membro_operacional or request.user.eh_admin %}
-              <a href="{% url 'index_propostas'%}">{% lng "Propostas" "Proposals" %}</a>
+        {% if user.is_authenticated %}
+          <a id="logo_inicial" href="{% url 'index' %}" aria-label="Ir para página inicial">
+        {% endif %}
+          <div class="logo-container">
+            <img src="{% static 'images/logoInsper.png' %}" id="logo_insper" alt="Logo Insper" loading="lazy" width="auto" height="40">
+            <b id="pfelogo">Capstone</b>
+          </div>
+        {% if user.is_authenticated %}</a>{% endif %}
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'perfil' %}" id="link_username">
+            {% if user.eh_estudante %}
+              <i class="fas fa-user-graduate icone_usuario" aria-hidden="true"></i>
+              <span class="sr-only">{% lng "Estudante" "Student" %}</span>
+            {% elif user.eh_professor %}
+              <i class="fas fa-chalkboard-teacher icone_usuario" aria-hidden="true"></i>
+              <span class="sr-only">{% lng "Professor" "Professor" %}</span>
+            {% elif user.eh_parc %}
+              <i class="fas fa-user-tie icone_usuario" aria-hidden="true"></i>
+              <span class="sr-only">{% lng "Parceiro" "Partner" %}</span>
+            {% elif user.is_superuser or user.eh_admin %}
+              <i class="fas fa-user-shield icone_usuario" aria-hidden="true"></i>
+              <span class="sr-only">{% lng "Administrador" "Administrator" %}</span>
+            {% else %}
+              <i class="fas fa-user icone_usuario" aria-hidden="true"></i>
+              <span class="sr-only">{% lng "Usuário" "User" %}</span>
             {% endif %}
-            <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
-          {% endif %}
-        
-          <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
- 
-
-        {% endif %}
-
-
-        {% if user.is_authenticated %}
-          <a href="{% url 'logout'%}">Logout</a>
+            <span class="first_name">{{user.first_name}}</span>
+            <span class="last_name">{{user.last_name}}</span>
+          </a>
         {% else %}
-          <a href="{% url 'login'%}?next={{request.path}}">Login</a>
-        {% endif %} 
+          <a href="{% url 'login' %}" id="link_username"><i class="fas fa-question interrogacao" aria-hidden="true"></i>&nbsp;Login</a>
+        {% endif %}
+        <div id="language_box" aria-label="Seleção de idioma"><div id="language_button"></div></div>
+
+        <div id="links_menu_lat" class="links-container" aria-label="Menu lateral">
+          {% if user.is_authenticated %}
+            <a href="#" style="padding-left: 30px;">
+              {% include "save_image.html" %}
+              {% include "impressora.html" %}
+            </a>
+          {% endif %}
+
+          <a href="{% url 'info'%}">{% lng "Informações" "Information" %}</a>
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'perfil' %}">{% lng "Perfil" "Profile" %}</a>
+            <a href="{% url 'index' %}">{% lng "Página Geral" "General Page" %}</a>
+
+            {% for item in nav_menu_items %}
+              <a href="{% url 'index_'|add:item.url %}">{% lng item.title.pt item.title.en %}</a>
+            {% endfor %}
+
+            <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
+            {% if user.eh_admin or user.eh_estud %}
+              <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
+            {% endif %}
+            
+            {% if user.eh_admin or user.eh_parc or request.user.membro_comite %}
+              <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>
+            {% endif %}
+          
+            {% if perms.users.altera_professor %}
+              <a href="{% url 'index_professores' %}">{% lng "Área dos Professores" "Professor's Area" %}</a>
+            {% endif %}
+            {% if perms.users.view_administrador %}
+              <a href="{% url 'index_coordenacao' %}">{% lng "Área da Coordenação" "Coordination Area" %}</a>
+            {% endif %}
+            {% if perms.users.altera_professor and request.user.membro_comite %}
+              <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
+            {% endif %}
+            {% if user.eh_admin or user.membro_operacional or user.membro_tecnico %}
+              <a href="{% url 'index_operacional'%}">{% lng "Área Operacional" "Operational Area" %}</a>
+            {% endif %}
+            {% if perms.users.view_administrador %}
+              <a href="{% url 'index_administracao'%}">{% lng "Área Administrativa" "Administrative Area" %}</a>
+            {% endif %}
+            {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
+              {% if request.user.membro_comite or request.user.membro_operacional or request.user.eh_admin %}
+                <a href="{% url 'index_propostas'%}">{% lng "Propostas" "Proposals" %}</a>
+              {% endif %}
+              <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
+            {% endif %}
+          
+            <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
+
+          {% endif %}
+
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout'%}">Logout</a>
+          {% else %}
+            <a href="{% url 'login'%}?next={{request.path}}">Login</a>
+          {% endif %} 
+        </div>
+
+        <button id="hamburger" class="icon" aria-label="Menu" aria-expanded="false" aria-controls="links_menu_lat">
+          <i class="fa fa-bars"></i>
+        </button>
+
       </div>
 
-      <div id="hamburger" class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+    </nav>
+  </header>
 
+  <main id="main-content">
+    {% comment %} Para mensagens de erro ou avisos {% endcomment %}
+    {% if mensagem_aviso %}
+      {% if mensagem_aviso.pt or mensagem_aviso.en %}
+        <div id="mensagem_aviso" role="alert" aria-live="assertive" aria-atomic="true">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <span>{% lng mensagem_aviso.pt mensagem_aviso.en %}</span>
+          <button type="button" class="close-alert" aria-label="Fechar aviso">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+      {% endif %}
+    {% elif mensagem_alerta_fade %}
+      {% if mensagem_alerta_fade.pt or mensagem_alerta_fade.en %}
+        <div id="mensagem_aviso" role="alert" aria-live="polite" aria-atomic="true">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          <span>{% lng mensagem_alerta_fade.pt mensagem_alerta_fade.en %}</span>
+        </div>
+        <script>
+          setTimeout(function() {
+            var msg = document.getElementById("mensagem_aviso");
+            if (msg) msg.style.opacity = "0";
+            setTimeout(function() { if (msg) msg.remove(); }, 300);
+          }, 5000);
+        </script>
+      {% endif %}
+    {% endif %}
+
+    <div id="tudo" class="container-fluid">    
+      {% if titulo %}
+        <h1 class="titulo">{% lng titulo.pt titulo.en %}</h1>
+      {% endif %}
+      {% block content %}{% endblock %}
     </div>
+  </main>
 
-  </div>
-  
-  {% comment %} Para mensagens de erro ou avisos {% endcomment %}
-  {% if mensagem_aviso %}
-    {% if mensagem_aviso.pt or mensagem_aviso.en %}
-      <div id="mensagem_aviso">
-        {% lng mensagem_aviso.pt mensagem_aviso.en %}
-        {% comment %} {{ mensagem_aviso|safe|linebreaks }} {% endcomment %}
-      </div>
-    {% endif %}
-  {% elif mensagem_alerta_fade %}
-    {% if mensagem_alerta_fade.pt or mensagem_alerta_fade.en %}
-      <div id="mensagem_aviso">
-        {% lng mensagem_alerta_fade.pt mensagem_alerta_fade.en %}
-        {% comment %} {{ mensagem_alerta_fade|safe|linebreaks }} {% endcomment %}
-      </div>
-      <script>setTimeout(function() {$("#mensagem_aviso").fadeOut("fast");}, 5000);</script>
-    {% endif %}
-  {% endif %}
-
-  <div id="tudo" class="container-fluid">    
-    {% if titulo %}
-      <span class="titulo">{% lng titulo.pt titulo.en %}</span>
-    {% endif %}
-    {% block content %}{% endblock %}
-  </div>
   <p>&nbsp;</p>
+  {% comment %} <footer class="site-footer mt-5 py-3 text-center text-muted" role="contentinfo">
+    <div class="container-fluid">
+      <small>
+        &copy; 2019-{% now 'Y' %} 
+        <a href="https://www.insper.edu.br" target="_blank" rel="noopener noreferrer">Insper</a> 
+        | {% lng "Desenvolvido por" "Developed by" %} 
+        <a href="mailto:lpsoares@insper.edu.br">Luciano Pereira Soares</a>
+        {% if user.is_authenticated %}
+          | <a href="{% url 'info' %}">{% lng "Sobre o sistema" "About" %}</a>
+        {% endif %}
+      </small>
+    </div>
+  </footer> {% endcomment %}
+
 
   {% include "linguas.html" %}
   
@@ -186,8 +226,7 @@
   {% comment %} Modal comum para ser usado em várias páginas {% endcomment %}
   <div class="modal fade" id="popup" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-      </div>
+      <div class="modal-content"></div>
     </div>
   </div>
 

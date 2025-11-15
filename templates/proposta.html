@@ -24,9 +24,17 @@
     <h5 class="titulo text-danger">{% lng "Problema na identificação do título" "Problem in identifying the title" %}</h5>
   {% endif %}
 
-  <b>{% lng "Semestre:" "Semester:" %}</b> {{ proposta.get_edicao }}<br>
-  
-  {% include "tipo_proposta.html" with descr_long=True %}<br>
+  <div class="d-flex flex-wrap" style="font-size: 0.8em; gap: 8px;">
+    <span class="mr-2 d-inline-flex align-items-center px-2 py-1 border rounded-pill bg-white">
+      <span class="text-muted mr-1"><b>{% lng "Semestre" "Semester" %}:</b></span>
+      <strong>{{ proposta.get_edicao }}</strong>
+    </span>
+
+    <span class="mr-2 d-inline-flex align-items-center px-2 py-1 border rounded-pill bg-white">
+      <span class="text-muted mr-1"><b>{% lng "Tipo" "Type" %}:</b></span>
+      <strong>{% include "tipo_proposta.html" with descr_long=True %}</strong>
+    </span>
+  </div>
 
   {% if proposta.descricao %}
     <div class="mt-3">

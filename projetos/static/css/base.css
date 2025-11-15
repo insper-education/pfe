@@ -1,44 +1,82 @@
 /* Tem os parâmetros para o topnav e outros elementos comuns a todas as páginas. */
 
-p {
-  margin-bottom: 0.1em;
+:root {
+  --topnav-height: 53px;
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --transition: 0.2s ease;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
 }
 
-.titulo {
-  font-size: 30px;
-  display: block;
-  padding-bottom: 0.25em;
-  padding-top: 10px;
-  line-height: 1.35;
-  margin-bottom: 0.4em;
+html { font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.45;
+  
 }
+
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.8vw, 2.2rem); }
+h2 { font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.8rem); }
+h3 { font-size: clamp(1.2rem, 1.0rem + 0.8vw, 1.4rem); }
 
 /* Para a barra superior de navegação */
 .topnav {
-  overflow: hidden;
-  background-color: #333;
+  background: var(--primary-gradient);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+p {margin-bottom: 0.1em;}
+
+.titulo {
+  padding-bottom: 0.25em;
+  padding-top: 10px;
+  line-height: 1.35;
+  font-size: 1.75rem;
+  font-weight: 600;
   position: relative;
+  margin-bottom: 0.1em;
+
+}
+
+.titulo::after {
+  content:'';
+  position:absolute;
+  left:0; bottom: 0.2rem;
+  height:2px; width:128px;
+  background:linear-gradient(90deg,#667eea 0%,rgba(118,75,162,.65) 70%,rgba(118,75,162,0) 100%);
+  border-radius:2px;
 }
 
 .topnav #links_menu_lat { display: none; }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .links-container {
-  display: none;
-  position: fixed;
-  top: 50px;
-  right: 20px;
-  width: 200px;
-  background-color: #000e4d;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
   z-index: 1000;
   padding: 0px;
+  position: fixed;
+  top: var(--topnav-height);
+  right: 20px;
+  width: 220px;
+  background: rgba(0,14,77,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  animation: slideIn 0.25s ease;
 }
 
 .links-container a {
   padding: 5px 16px;
   display: block;
-  color: #333;
   text-decoration: none;
   border-bottom: 1px solid #eee;
 }
@@ -47,9 +85,7 @@ p {
   border-bottom: none;
 }
 
-.links-container a:hover {
-  background-color: #4971bb;
-}
+
 
 .logo-container {
   margin-left: 6px;
@@ -58,7 +94,7 @@ p {
 
 #barra_do_top_nav {
   padding: 0px;
-  height: 53px;
+  height: var(--topnav-height);
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -78,7 +114,18 @@ p {
 
 #links_menu_lat a {
   color: white;
+  padding: 5px 16px;
+  transition: all var(--transition);
+  position: relative;
+  border-left: 3px solid transparent;
   text-decoration: none;
+}
+
+#links_menu_lat a:hover {
+  background: rgba(255,255,255,0.15);
+  border-left-color: #fff;
+  padding-left: 20px;
+  background-color: #4971bb;
 }
 
 #hamburger {
@@ -87,6 +134,7 @@ p {
   text-decoration: none;
   font-size: 17px;
   display: block;
+  border: none;
 }
 
 #hamburger.icon {
@@ -133,8 +181,9 @@ p {
 
 #language_box {
   margin-left: auto;
-  padding: 8px;
+  padding: 6px 6px 6px 0px;
   margin-right: 48px;
+  flex-shrink: 0;
 }
 
 /* Remove decorações de links */
@@ -150,16 +199,36 @@ a#logo_inicial:hover {
 #link_username {
   color: white;
   text-decoration: none;
-  font-size: 0.9em; 
+  font-size: 0.9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px; /* ajuste conforme necessário */
+  flex-shrink: 1; /* permite encolher quando necessário */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icone_usuario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 30%;
+  font-size: 0.9rem;
+  transition: background var(--transition);
+}
+
+#link_username:hover .icone_usuario {
+  background: rgba(255,255,255,0.35);
+  text-decoration: underline;
 }
 
 #link_username:hover {
   text-decoration: underline;
-}
-
-.icone_usuario {
-  font-size: 1.1em;
-  margin-right: 2px;
 }
 
 .interrogacao {
@@ -173,6 +242,9 @@ a#logo_inicial:hover {
 
 #tudo {
   margin-top: 6px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
 }
 
 @media (max-width: 460px) {
@@ -227,3 +299,25 @@ a#logo_inicial:hover {
     padding-bottom: 0.05em;  
   }
 } 
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}

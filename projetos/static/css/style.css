@@ -1,10 +1,25 @@
+:root {
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --border-radius: 8px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --color-border: #ddd;
+  --transition-fast: 0.15s ease;
+}
+
 /* Evita que objetos sejam maiors que a tela. */
 textarea, input, select, label, table {max-width:100%;}
 
-/* não usar div {max-width:100%;} por que gera problema no selectpicker
-
 /* Em geral está confinado e pode preencher tudo */
 textarea {width: 100%;}
+
+textarea, input[type="text"], input[type="email"], select {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
 
 /* O espaço padrão é muito grande (uso em vários lugares) */
 ul, ol {
@@ -18,16 +33,11 @@ li {
   margin-bottom: 6px;
 }
 
-/* Não me parece uma boa ideia */
-/* p {
-  display: block;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-left: 0;
-  margin-right: 0;
-} */
-
 .tabela-padrao {
+  border-collapse: collapse;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
   max-width:100%;
 }
 
@@ -45,6 +55,14 @@ li {
 .tabela-padrao td {
   padding: 1px 4px 1px 4px;
   border: 1px solid #ddd;
+}
+
+.tabela-padrao tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.tabela-padrao tbody tr:hover {
+  background-color: #f0f8ff;
 }
 
 label {
@@ -111,24 +129,58 @@ tbody tr:nth-child(odd) {background-color: #f9f9f9;} */
   outline-offset: 5px;
 }
 
+
+
 #mensagem_aviso {
-  border: 2px dashed  darkred ;
-  color: red;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-left: 4px solid #dc3545;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  padding: 12px 40px 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   margin: 18px;
-  padding: 2px 8px 2px 8px;
-  background-color: lightyellow;
-  outline-offset: 5px;
+  transition: opacity 0.3s ease;
 }
 
-/* Não mais usado */
-/* .mobile-container {
-  max-width: 480px;
-  margin: auto;
-  background-color: #555;
-  height: 500px;
-  color: white;
-  border-radius: 10px;
-} */
+#mensagem_aviso i {
+  color: #dc3545;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+
+
+#mensagem_aviso .close-alert {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+#mensagem_aviso .close-alert:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+#mensagem_aviso .close-alert:focus {
+  outline: 2px solid #dc3545;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+#mensagem_aviso .close-alert:active {
+  transform: scale(0.95);
+}
 
 .striped-border {
   border: 2px dashed #000;
