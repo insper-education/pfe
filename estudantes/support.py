@@ -128,10 +128,11 @@ def check_encontros_marcar(alocacao):
     cor = 'b'
     prazo = None
     agora = datetime.datetime.now()
-    encontros = Encontro.objects.filter(startDate__gt=agora).order_by("startDate")
-    if encontros and alocacao and alocacao.projeto:
-        prazo = encontros.first().startDate - datetime.timedelta(days=1)
-        if encontros.filter(projeto=alocacao.projeto).exists():
+    encontro_futuro = Encontro.objects.filter(startDate__gt=agora).order_by("startDate").first()
+    if encontro_futuro and alocacao and alocacao.projeto:
+        encontros_semestre = Encontro.objects.filter(projeto__ano=alocacao.projeto.ano, projeto__semestre=alocacao.projeto.semestre)
+        prazo = encontro_futuro.startDate - datetime.timedelta(days=1)
+        if encontros_semestre.filter(projeto=alocacao.projeto, tematica=encontro_futuro.tematica).exists():
             cor = 'g'
         elif prazo > agora:
             cor = 'y'
