@@ -13,14 +13,6 @@ textarea, input, select, label, table {max-width:100%;}
 /* Em geral está confinado e pode preencher tudo */
 textarea {width: 100%;}
 
-textarea, input[type="text"], input[type="email"], select {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.95rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
 /* O espaço padrão é muito grande (uso em vários lugares) */
 ul, ol {
   padding-left: 1.5rem;
