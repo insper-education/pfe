@@ -10,10 +10,13 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-# from django.contrib.auth.decorators import user_passes_test
-# from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+
+# from django.db.models import Count
+from users.models import PFEUser
+from projetos.models import Projeto
+from projetos.models import Organizacao
 
 from .support import get_navigation_items
 
@@ -79,6 +82,26 @@ def info(request):
     """Página com informações."""
     info = get_object_or_404(Carta, template="Informação")
     return render(request, "info.html", {"info": info})
+
+def sistema(request):
+    """Página com informações sobre o sistema."""
+    from datetime import datetime
+    import os
+    
+    # Calcular estatísticas
+    stats = {
+        "anos_ativo": datetime.now().year - 2019,
+        "total_projetos": Projeto.objects.filter(ano__isnull=False).count(),
+        'total_usuarios': PFEUser.objects.count(),
+        'total_organizacoes': Organizacao.objects.count(),
+    }
+    
+    context = {
+        "titulo": {"pt": "Sobre o Sistema", "en": "About the System"},
+        "stats": stats,
+    }
+
+    return render(request, "sistema.html", context)
 
 def manutencao(request):
     """Página de Manutenção do sistema."""

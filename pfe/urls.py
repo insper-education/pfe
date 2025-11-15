@@ -14,13 +14,14 @@ from django.conf.urls.static import static
 
 from projetos import arquivos, sites
 
-from .views import *
+from . import views
 
 urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url="/static/favicon.ico")),
 
-    path("", index, name="index"),
-    path("info", info, name="info"),
+    path("", views.index, name="index"),
+    path("info", views.info, name="info"),
+    path("sistema", views.sistema, name="sistema"),
 
     path("estudantes/", include("estudantes.urls")),
     path("organizacoes/", include("organizacoes.urls")),
@@ -42,8 +43,8 @@ urlpatterns = [
     path("arquivos/<str:organizacao>/<str:projeto>/<str:usuario>/<str:path>", arquivos.arquivos, name="arquivos"),
     path("doc/", arquivos.doc, name="doc"),
     path("doc/<str:tipo>", arquivos.doc, name="doc"),
-    path("manutencao/", manutencao, name="manutencao"),
-    path("migracao/", migracao, name="migracao"),
+    path("manutencao/", views.manutencao, name="manutencao"),
+    path("migracao/", views.migracao, name="migracao"),
     path("upload_site_e_pastas/<int:projeto_id>", sites.upload_site_e_pastas, name="upload_site_e_pastas"),
     re_path(r'^sites/(?P<projeto_id>\d+)/(?P<path>.*)$', sites.sites, name="sites"),
 

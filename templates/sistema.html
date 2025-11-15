@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Novembro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% block head %}
+<style>
+  .sistema-nav {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+  
+  .sistema-nav .nav-link {
+    color: #6c757d;
+    padding: 0.5rem 1rem;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .sistema-nav .nav-link:hover {
+    color: #667eea;
+    background-color: #f8f9fa;
+  }
+  
+  .sistema-nav .nav-link.active {
+    color: #667eea;
+    border-left-color: #667eea;
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+  
+  .sistema-section {
+    scroll-margin-top: 100px;
+    padding: 2rem 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .sistema-section:last-child {
+    border-bottom: none;
+  }
+  
+  .sistema-section h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #667eea;
+  }
+  
+  .sistema-section h3 {
+    color: #555;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tech-stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .tech-card {
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .tech-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .tech-card i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tech-card h5 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+  }
+  
+  .tech-card small {
+    color: #6c757d;
+  }
+  
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+  }
+  
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.4rem;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #667eea;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #667eea;
+  }
+  
+  .timeline-item h4 {
+    color: #667eea;
+    margin-bottom: 0.25rem;
+  }
+  
+  .timeline-item .text-muted {
+    font-size: 0.875rem;
+  }
+  
+  .stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .stat-card h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+  
+  .stat-card p {
+    margin: 0;
+    opacity: 0.9;
+  }
+  
+  .feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .feature-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+  }
+  
+  .feature-item i {
+    color: #667eea;
+    margin-right: 0.5rem;
+  }
+  
+  .code-block {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 1rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+  
+  .alert-custom {
+    border-left: 4px solid #667eea;
+    background: linear-gradient(90deg, rgba(102,126,234,0.05) 0%, rgba(248,249,250,1) 100%);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Navegação lateral -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <nav class="sistema-nav">
+        <div class="nav flex-column">
+          <a class="nav-link active" href="#visao-geral">
+            <i class="fas fa-info-circle mr-2"></i>{% lng "Visão Geral" "Overview" %}
+          </a>
+          <a class="nav-link" href="#tecnologias">
+            <i class="fas fa-code mr-2"></i>{% lng "Tecnologias" "Technologies" %}
+          </a>
+          <a class="nav-link" href="#funcionalidades">
+            <i class="fas fa-clipboard-list mr-2"></i>{% lng "Funcionalidades" "Features" %}
+          </a>
+          <a class="nav-link" href="#desenvolvimento">
+            <i class="fas fa-laptop-code mr-2"></i>{% lng "Desenvolvimento" "Development" %}
+          </a>
+          <a class="nav-link" href="#historico">
+            <i class="fas fa-history mr-2"></i>{% lng "Histórico" "History" %}
+          </a>
+          <a class="nav-link" href="#estatisticas">
+            <i class="fas fa-chart-line mr-2"></i>{% lng "Estatísticas" "Statistics" %}
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="col-lg-9">
+      
+      <!-- Visão Geral -->
+      <section id="visao-geral" class="sistema-section">
+        <h2>{% lng "Visão Geral do Sistema" "System Overview" %}</h2>
+        
+        <div class="alert alert-custom">
+          <p class="mb-0">
+            <strong>{% lng "Sistema de Gerenciamento de Projetos Finais (Capstone)" "Capstone Project Management System" %}</strong><br>
+            {% lng "Plataforma web desenvolvida para gerenciar todo o ciclo de vida dos projetos finais de engenharia e ciência da computação do Insper, desde a submissão de propostas até a entrega final." "Web platform developed to manage the entire lifecycle of Insper's engineering and computer science capstone projects, from proposal submission to final delivery." %}
+          </p>
+        </div>
+
+        <h3>{% lng "Objetivos Principais" "Main Objectives" %}</h3>
+        <ul>
+          <li>{% lng "Centralizar informações de propostas, projetos e entregas" "Centralize information on proposals, projects and deliverables" %}</li>
+          <li>{% lng "Facilitar comunicação entre estudantes, professores e parceiros" "Facilitate communication between students, professors and partners" %}</li>
+          <li>{% lng "Automatizar processos de avaliação e acompanhamento" "Automate evaluation and monitoring processes" %}</li>
+          <li>{% lng "Gerar relatórios e métricas para coordenação" "Generate reports and metrics for coordination" %}</li>
+          <li>{% lng "Manter histórico completo de projetos realizados" "Maintain complete history of completed projects" %}</li>
+        </ul>
+
+        <h3>{% lng "Módulos Principais" "Main Modules" %}</h3>
+        <div class="feature-list">
+          <div class="feature-item">
+            <i class="fas fa-lightbulb"></i>
+            <strong>{% lng "Propostas" "Proposals" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Submissão e avaliação de propostas de projetos" "Submission and evaluation of project proposals" %}</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-project-diagram"></i>
+            <strong>{% lng "Projetos" "Projects" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Gestão completa dos projetos em andamento" "Complete management of ongoing projects" %}</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-users"></i>
+            <strong>{% lng "Usuários" "Users" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Estudantes, professores, parceiros e administradores" "Students, professors, partners and administrators" %}</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-file-alt"></i>
+            <strong>{% lng "Documentos" "Documents" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Entregas, relatórios e documentação técnica" "Deliverables, reports and technical documentation" %}</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-calendar"></i>
+            <strong>{% lng "Calendário" "Calendar" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Eventos, prazos e marcos importantes" "Events, deadlines and important milestones" %}</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-building"></i>
+            <strong>{% lng "Organizações" "Organizations" %}</strong>
+            <p class="mb-0 small text-muted">{% lng "Parceiros externos e empresas colaboradoras" "External partners and collaborating companies" %}</p>
+          </div>
+        </div>
+      </section>
+    
+      <!-- Tecnologias -->
+      <section id="tecnologias" class="sistema-section">
+        <h2>{% lng "Tecnologias Utilizadas" "Technologies Used" %}</h2>
+        
+        <h3>{% lng "Backend" "Backend" %}</h3>
+        <div class="tech-stack">
+          <div class="tech-card">
+            <i class="fab fa-python"></i>
+            <h5>Python</h5>
+            <small>{% lng "Linguagem principal" "Main language" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fas fa-server"></i>
+            <h5>Django</h5>
+            <small>{% lng "Framework web" "Web framework" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fas fa-database"></i>
+            <h5>PostgreSQL</h5>
+            <small>{% lng "Banco de dados" "Database" %}</small>
+          </div>
+        </div>
+
+        <h3>{% lng "Frontend" "Frontend" %}</h3>
+        <div class="tech-stack">
+          <div class="tech-card">
+            <i class="fab fa-html5"></i>
+            <h5>HTML5</h5>
+            <small>{% lng "Marcação" "Markup" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fab fa-css3-alt"></i>
+            <h5>CSS3</h5>
+            <small>{% lng "Estilização" "Styling" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fab fa-js"></i>
+            <h5>JavaScript</h5>
+            <small>{% lng "Interatividade" "Interactivity" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fab fa-bootstrap"></i>
+            <h5>Bootstrap 4</h5>
+            <small>{% lng "Framework CSS" "CSS framework" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fas fa-icons"></i>
+            <h5>FontAwesome</h5>
+            <small>{% lng "Ícones" "Icons" %}</small>
+          </div>
+          <div class="tech-card">
+            <i class="fab fa-jquery"></i>
+            <h5>jQuery</h5>
+            <small>{% lng "Biblioteca JS" "JS library" %}</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Funcionalidades -->
+      <section id="funcionalidades" class="sistema-section">
+        <h2>{% lng "Funcionalidades Principais" "Main Features" %}</h2>
+        
+        <h3>{% lng "Para Estudantes" "For Students" %}</h3>
+        <ul>
+          <li>{% lng "Visualizar propostas disponíveis" "View available proposals" %}</li>
+          <li>{% lng "Formar grupos e escolher projetos" "Form groups and choose projects" %}</li>
+          <li>{% lng "Submeter entregas e documentos" "Submit deliverables and documents" %}</li>
+          <li>{% lng "Acompanhar feedbacks de professores" "Track professor feedback" %}</li>
+          <li>{% lng "Acessar calendário de eventos e prazos" "Access event and deadline calendar" %}</li>
+        </ul>
+
+        <h3>{% lng "Para Professores" "For Professors" %}</h3>
+        <ul>
+          <li>{% lng "Orientar projetos designados" "Mentor assigned projects" %}</li>
+          <li>{% lng "Avaliar entregas e dar feedbacks" "Evaluate deliverables and provide feedback" %}</li>
+          <li>{% lng "Acompanhar progresso dos alunos" "Track student progress" %}</li>
+          <li>{% lng "Participar de bancas de avaliação" "Participate in evaluation boards" %}</li>
+        </ul>
+
+        <h3>{% lng "Para Parceiros" "For Partners" %}</h3>
+        <ul>
+          <li>{% lng "Submeter propostas de projetos" "Submit project proposals" %}</li>
+          <li>{% lng "Acompanhar desenvolvimento do projeto" "Track project development" %}</li>
+          <li>{% lng "Interagir com equipe e orientadores" "Interact with team and advisors" %}</li>
+        </ul>
+
+        <h3>{% lng "Para Coordenação" "For Coordination" %}</h3>
+        <ul>
+          <li>{% lng "Gerenciar todo o ciclo acadêmico" "Manage entire academic cycle" %}</li>
+          <li>{% lng "Aprovar/rejeitar propostas" "Approve/reject proposals" %}</li>
+          <li>{% lng "Alocar professores orientadores" "Allocate advisor professors" %}</li>
+          <li>{% lng "Gerar relatórios e estatísticas" "Generate reports and statistics" %}</li>
+          <li>{% lng "Configurar calendário acadêmico" "Configure academic calendar" %}</li>
+        </ul>
+      </section>
+
+      <!-- Desenvolvimento -->
+      <section id="desenvolvimento" class="sistema-section">
+        <h2>{% lng "Desenvolvimento" "Development" %}</h2>
+        
+        <h3>{% lng "Responsável" "Responsible" %}</h3>
+        <p>
+          <strong>Luciano Pereira Soares</strong><br>
+          <i class="fas fa-envelope mr-2"></i><a href="mailto:lpsoares@insper.edu.br">lpsoares@insper.edu.br</a>
+        </p>
+
+        <h3>{% lng "Atualizações Regulares" "Regular Updates" %}</h3>
+        <ul>
+          <li>{% lng "Atualizações de segurança do Django" "Django security updates" %}</li>
+          <li>{% lng "Correções de bugs reportados" "Bug fixes from reports" %}</li>
+          <li>{% lng "Melhorias de performance" "Performance improvements" %}</li>
+          <li>{% lng "Novas funcionalidades solicitadas" "New requested features" %}</li>
+        </ul>
+
+        <h3>{% lng "Backup" "Backup" %}</h3>
+        <p>{% lng "Backups automáticos diários do banco de dados PostgreSQL." "Automatic daily backups of PostgreSQL database." %}</p>
+
+        <h3>{% lng "Monitoramento" "Monitoring" %}</h3>
+        <ul>
+          <li>{% lng "Logs de erro e acesso" "Error and access logs" %}</li>
+          <li>{% lng "Performance do banco de dados" "Database performance" %}</li>
+          <li>{% lng "Uso de recursos do servidor" "Server resource usage" %}</li>
+        </ul>
+      </section>
+
+      <!-- Histórico -->
+      <section id="historico" class="sistema-section">
+        <h2>{% lng "Histórico de Versões" "Version History" %}</h2>
+        
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4>v0.1</h4>
+            <p class="text-muted">{% lng "Maio de 2019" "May 2019" %}</p>
+            <p>{% lng "Lançamento inicial do sistema com funcionalidades básicas de gerenciamento de propostas e projetos." "Initial system launch with basic proposal and project management features." %}</p>
+          </div>
+          
+          <div class="timeline-item">
+            <h4>v0.2</h4>
+            <p class="text-muted">{% lng "Janeiro de 2020" "January 2020" %}</p>
+            <p>{% lng "Adição do módulo de documentos, sistema de avaliação e calendário acadêmico." "Addition of documents module, evaluation system and academic calendar." %}</p>
+          </div>
+          
+          <div class="timeline-item">
+            <h4>v0.3</h4>
+            <p class="text-muted">{% lng "Agosto de 2021" "August 2021" %}</p>
+            <p>{% lng "Integração com organizações parceiras e dashboard de coordenação." "Integration with partner organizations and coordination dashboard." %}</p>
+          </div>
+          
+          <div class="timeline-item">
+            <h4>v0.4</h4>
+            <p class="text-muted">{% lng "Março de 2023" "March 2023" %}</p>
+            <p>{% lng "Melhorias de UI/UX e sistema de notificações." "UI/UX improvements and notification system." %}</p>
+          </div>
+          
+          <div class="timeline-item">
+            <h4>v0.5</h4>
+            <p class="text-muted">{% lng "Novembro de 2024" "November 2024" %}</p>
+            <p>{% lng "Melhorias de acessibilidade, internacionalização (PT/EN) e otimizações de performance." "Accessibility improvements, internationalization (PT/EN) and performance optimizations." %}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Estatísticas -->
+      <section id="estatisticas" class="sistema-section">
+        <h2>{% lng "Estatísticas do Sistema" "System Statistics" %}</h2>
+        
+        <div class="row mb-4">
+          <div class="col-md-3 mb-3">
+            <div class="stat-card">
+              <h3>{{ stats.anos_ativo }}</h3>
+              <p>{% lng "Anos Ativo" "Years Active" %}</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="stat-card">
+              <h3>{{ stats.total_projetos }}</h3>
+              <p>{% lng "Projetos Concluídos" "Completed Projects" %}</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="stat-card">
+              <h3>{{ stats.total_usuarios }}</h3>
+              <p>{% lng "Usuários Cadastrados" "Registered Users" %}</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="stat-card">
+              <h3>{{ stats.total_organizacoes }}</h3>
+              <p>{% lng "Organizações Parceiras" "Partner Organizations" %}</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Smooth scroll e active nav
+  document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.sistema-nav .nav-link');
+    const sections = document.querySelectorAll('.sistema-section');
+    
+    // Smooth scroll
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+    
+    // Active nav on scroll
+    function updateActiveNav() {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 150)) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    }
+    
+    window.addEventListener('scroll', updateActiveNav);
+  });
+</script>
+{% endblock %}
+
