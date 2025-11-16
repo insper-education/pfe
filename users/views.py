@@ -102,7 +102,7 @@ def estudantes_lista(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         edicao = request.POST["edicao"]
@@ -259,9 +259,9 @@ def estudantes_lista(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_notas(request, professor=None):
-    """Gera lista com todos os alunos já registrados."""
+    """Gera lista os estudantes com suas notas."""
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         ano, semestre = map(int, request.POST["edicao"].split('.'))
@@ -450,7 +450,8 @@ def blackboard_notas(request, anosemestre):
 @permission_required("users.altera_professor", raise_exception=True)
 def estudantes_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
-    if request.is_ajax():
+
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         
@@ -513,7 +514,7 @@ def estudantes_objetivos(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_objetivos(request):
     """Gera lista com todos os alunos já registrados."""
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         
@@ -561,7 +562,7 @@ def estudantes_inscritos(request):
     """Mostra todos os estudantes que estão se inscrevendo em projetos."""
     configuracao = get_object_or_404(Configuracao)
     
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         ano, semestre = map(int, request.POST["edicao"].split('.'))
@@ -873,7 +874,7 @@ def contas_senhas(request, edicao=None):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST": 
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         edicao = request.POST["edicao"]
@@ -1020,7 +1021,7 @@ def envia_contas_senhas(request):
 def projeto_user(request):
     """Retorna o projeto id associado ao usuário mais recentemente."""
     
-    if not request.is_ajax() or "user_id" not in request.POST:
+    if request.method != "POST" or "user_id" not in request.POST:
         return HttpResponse("Algum erro não identificado.", status=401)
     
     user_id = request.POST["user_id"]

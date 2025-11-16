@@ -42,7 +42,8 @@ def index_academica(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_grupos(request):
     """Mostra página com as dinâmicas de grupos."""
-    if request.is_ajax():
+    
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         
@@ -174,7 +175,7 @@ def lista_areas_interesse(request):
 def descontos(request):
     """Mostra tabela com os possíveis descontos."""
     
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         

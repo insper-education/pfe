@@ -61,16 +61,14 @@ def index_documentos(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def biblioteca_link(request, primarykey=None):
-    """Edita uma banca de avaliação para o projeto."""
+    """Mostra página para editar o link de um documento na biblioteca."""
 
-    if primarykey is None:
-        return HttpResponseNotFound("<h1>Erro!</h1>")
-    if not request.user.eh_admin:
-        return HttpResponse("Sem privilégios necessários", status=401)
+    if primarykey is None or not request.user.eh_admin:
+        return HttpResponse("Erro", status=401)
     
     relatorio = get_object_or_404(Documento, pk=primarykey)
 
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         link = request.POST.get("link", "").strip()
         if link:
             relatorio.link = link
@@ -91,7 +89,7 @@ def biblioteca_link(request, primarykey=None):
 def certificados_submetidos(request, edicao=None, tipos=None, gerados=None):
     """Lista os Certificados Emitidos."""
 
-    if request.is_ajax() and "edicao" in request.POST:
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and "edicao" in request.POST:
         edicao = request.POST["edicao"]
         if edicao == "todas":
             context = { "certificados": Certificado.objects.all()}
@@ -222,7 +220,7 @@ def materias_midia(request):
 def relatorios_publicos(request, edicao=None):
     """Exibe relatórios públicos."""
 
-    if request.is_ajax():
+    if request.method == "POST":
         
         projetos = Projeto.objects.all()
         if "edicao" not in request.POST:
@@ -310,7 +308,7 @@ def tabela_documentos(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -410,7 +408,7 @@ def exportar_documentos_projetos(request):
         context["projetos"] = projetos
         context["edicao"] = edicao
 
-        if request.is_ajax():
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest": # Ajax check
             pass
 
         elif request.method == "POST":  # Significa que o usuário clicou no botão de exportar
@@ -509,7 +507,7 @@ def exibir_ocultar_notas(request):
         context["edicao"] = edicao
         context["selecionada_edicao"] = edicao
 
-        if request.is_ajax():
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             pass
 
         elif request.method == "POST":  # Significa que o usuário clicou no botão de exportar
@@ -583,7 +581,7 @@ def tabela_imagens(request):
 def contratos_assinados(request):
     """Exibe tabela com todos os documentos armazenados."""
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 

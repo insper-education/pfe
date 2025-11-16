@@ -148,7 +148,7 @@ def distribuicao_areas(request):
     tipo = "estudantes"
     curso = "todos"
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "tipo" in request.POST and "edicao" in request.POST:
 
             tipo = request.POST["tipo"]
@@ -278,7 +278,7 @@ def evolucao_areas(request):
     tipo = "estudantes"
     curso = "todos"
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "tipo" in request.POST:
             tipo = request.POST["tipo"]
             if tipo == "estudantes" and "curso" in request.POST:
@@ -415,7 +415,7 @@ def projetos_fechados(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST and "curso" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -561,7 +561,7 @@ def projetos_lista(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -610,52 +610,53 @@ def projetos_lista(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def projetos_lista_completa(request):
     """Lista todos os projetos (bem completa)."""
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                projetos_filtrados = Projeto.objects.all()
-            else:
-                ano, semestre = edicao.split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-            cabecalhos = [
-                { "pt": "Projeto", "en": "Project" },
-                { "pt": "Tipo de Projeto", "en": "Project Type" },
-                { "pt": "Organização", "en": "Sponsor" },
-                { "pt": "ID Orientador", "en": "Advisor ID" },
-                { "pt": "Período", "en": "Semester" },
-                { "pt": "Quantidade de Estudantes", "en": "Number of Students" },
-                { "pt": "Área de Interesse do Projeto", "en": "Project Area of Interest" },
-                { "pt": "Média CR", "en": "Average GPA" },
-                { "pt": "Média de Avaliações de Grupo", "en": "Average Group Evaluations" },
-            ]
-
-            estudantes_fields = [
-                ("ID Estudante {i}", "Student {i} ID"),
-                ("Curso Estudante {i}", "Student {i} Program"),
-                ("CR Estudante {i}", "Student {i} GPA"),
-                ("Posição do Projeto nas Opções Selecionadas Estudante {i}", "Student {i} Project Position in Selected Options"),
-                ("Média Individual Estudante {i}", "Student {i} Individual Grade"),
-                ("Média Final Estudante {i}", "Student {i} Final Grade"),
-                ("Áreas de Interesse Estudante {i}", "Student {i} Areas of Interest"),
-                ("Trabalho/Estágio Estudante {i}", "Student {i} Work/Internship"),
-                ("Atividades Estudantis/Sociais Estudante {i}", "Student {i} Student/Social Activities"),
-            ]
-
-            for i in range(5):
-                for pt, en in estudantes_fields:
-                    cabecalhos.append({
-                        "pt": pt.format(i=i),
-                        "en": en.format(i=i)
-                    })
-
-            context = {
-                "projetos": projetos_filtrados,
-                "cabecalhos": cabecalhos,
-            }
-        else:
+    if request.method == "POST":
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+    
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            projetos_filtrados = Projeto.objects.all()
+        else:
+            ano, semestre = edicao.split('.')
+            projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        cabecalhos = [
+            { "pt": "Projeto", "en": "Project" },
+            { "pt": "Tipo de Projeto", "en": "Project Type" },
+            { "pt": "Organização", "en": "Sponsor" },
+            { "pt": "ID Orientador", "en": "Advisor ID" },
+            { "pt": "Período", "en": "Semester" },
+            { "pt": "Quantidade de Estudantes", "en": "Number of Students" },
+            { "pt": "Área de Interesse do Projeto", "en": "Project Area of Interest" },
+            { "pt": "Média CR", "en": "Average GPA" },
+            { "pt": "Média de Avaliações de Grupo", "en": "Average Group Evaluations" },
+        ]
+
+        estudantes_fields = [
+            ("ID Estudante {i}", "Student {i} ID"),
+            ("Curso Estudante {i}", "Student {i} Program"),
+            ("CR Estudante {i}", "Student {i} GPA"),
+            ("Posição do Projeto nas Opções Selecionadas Estudante {i}", "Student {i} Project Position in Selected Options"),
+            ("Média Individual Estudante {i}", "Student {i} Individual Grade"),
+            ("Média Final Estudante {i}", "Student {i} Final Grade"),
+            ("Áreas de Interesse Estudante {i}", "Student {i} Areas of Interest"),
+            ("Trabalho/Estágio Estudante {i}", "Student {i} Work/Internship"),
+            ("Atividades Estudantis/Sociais Estudante {i}", "Student {i} Student/Social Activities"),
+        ]
+
+        for i in range(5):
+            for pt, en in estudantes_fields:
+                cabecalhos.append({
+                    "pt": pt.format(i=i),
+                    "en": en.format(i=i)
+                })
+
+        context = {
+            "projetos": projetos_filtrados,
+            "cabecalhos": cabecalhos,
+        }
+            
     else:
 
         context = {
@@ -671,28 +672,28 @@ def projetos_lista_completa(request):
 def bancas_tabela_agenda(request):
     """Lista todos as bancas por semestre."""
     
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                bancas = Banca.objects.all()
-            else:
-                ano, semestre = edicao.split('.')
-                bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-                bancas_a = Banca.objects.filter(alocacao__isnull=False, alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)  # Probation
-                bancas = bancas_p | bancas_a
-
-            cabecalhos = [{"pt": "Tipo", "en": "Type"},
-                          {"pt": "Data", "en": "Date"},
-                          {"pt": "Projeto/Estudante", "en": "Project/Student"},
-                          {"pt": "Avaliadores", "en": "Evaluators"},]
-            
-            context = {
-                "bancas": bancas,
-                "cabecalhos": cabecalhos,
-            }
-        else:
+    if request.method == "POST":
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            bancas = Banca.objects.all()
+        else:
+            ano, semestre = edicao.split('.')
+            bancas_p = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
+            bancas_a = Banca.objects.filter(alocacao__isnull=False, alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)  # Probation
+            bancas = bancas_p | bancas_a
+
+        cabecalhos = [{"pt": "Tipo", "en": "Type"},
+                        {"pt": "Data", "en": "Date"},
+                        {"pt": "Projeto/Estudante", "en": "Project/Student"},
+                        {"pt": "Avaliadores", "en": "Evaluators"},]
+        
+        context = {
+            "bancas": bancas,
+            "cabecalhos": cabecalhos,
+        }
+            
     else:
 
         context = {
@@ -709,17 +710,17 @@ def bancas_tabela_agenda(request):
 def dinamicas_tabela_agenda(request):
     """Lista todos as dinâmicas por semestre."""
 
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            context = puxa_encontros(request.POST["edicao"])
-            context["cabecalhos"] = [{"pt": "Tema", "en": "Theme"},
-                                     {"pt": "Data", "en": "Date"},
-                                     {"pt": "Projeto/Estudante", "en": "Project/Student"},
-                                     {"pt": "Facilitador(a)", "en": "Facilitator"},
-                                     {"pt": "Formulário", "en": "Form"},
-                                    ]
-        else:
+    if request.method == "POST":
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        context = puxa_encontros(request.POST["edicao"])
+        context["cabecalhos"] = [{"pt": "Tema", "en": "Theme"},
+                                    {"pt": "Data", "en": "Date"},
+                                    {"pt": "Projeto/Estudante", "en": "Project/Student"},
+                                    {"pt": "Facilitador(a)", "en": "Facilitator"},
+                                    {"pt": "Formulário", "en": "Form"},
+                                ]
+
     else:
 
         context = {
@@ -1105,7 +1106,7 @@ def despesas(request):
     """Exibe as despesas do Capstone."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -1190,7 +1191,7 @@ def lista_feedback_estudantes(request):
     proposta = [0, 0, 0, 0, 0]
     trabalhando = [0, 0, 0, 0]
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         todos_feedbacks = FeedbackEstudante.objects.all().order_by("-momento")
 
@@ -1458,7 +1459,7 @@ def analise_notas(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
         
         medias_semestre = Alocacao.objects.all()
         
@@ -1537,7 +1538,7 @@ def certificacao_falconi(request):
     # cortando ["2018.2", "2019.1", "2019.2", "2020.1", ....]
     edicoes = edicoes[4:]
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         if "edicao" in request.POST:
             if request.POST["edicao"] != "todas":
@@ -1657,18 +1658,18 @@ def analise_objetivos(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         alocacoes = Alocacao.objects.all()
 
         periodo = ["todo", "periodo"]
 
-        if "edicao" in request.POST:
-            if request.POST["edicao"] != "todas":
-                periodo = request.POST["edicao"].split('.')
-                alocacoes = alocacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        
+        if request.POST["edicao"] != "todas":
+            periodo = request.POST["edicao"].split('.')
+            alocacoes = alocacoes.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1])
 
         if "curso" in request.POST:
             curso = request.POST["curso"]
@@ -1686,8 +1687,6 @@ def analise_objetivos(request):
         context = calcula_objetivos(alocacoes)
         context["edicoes"] = edicoes
         context["total_geral"] = len(alocacoes)
-        #context["curso"] = curso
-        #context["periodo"] = periodo
 
     else:
         context = {
@@ -1709,7 +1708,7 @@ def evolucao_notas(request):
     edicoes = get_edicoes(Avaliacao2)[0]
     cursos = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         avaliacoes = Avaliacao2.objects.all()
         alocacoes = Alocacao.objects.all()
@@ -1796,7 +1795,7 @@ def evolucao_objetivos(request):
     configuracao = get_object_or_404(Configuracao)
     edicoes = get_edicoes(Avaliacao2)[0]
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         if "curso" in request.POST:
             curso = request.POST["curso"]
@@ -1940,33 +1939,34 @@ def evolucao_objetivos(request):
 @permission_required("projetos.view_projeto", raise_exception=True)
 def filtro_projetos(request):
     """Filtra os projetos."""
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            if edicao == "todas":
-                projetos_filtrados = Projeto.objects.all()
-            else:
-                ano, semestre = request.POST["edicao"].split('.')
-                projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
-
-            cabecalhos = [{"pt": "Projeto", "en": "Project"},
-                            {"pt": "Áreas", "en": "Areas"},
-                            {"pt": "Estudantes", "en": "Students"},
-                            {"pt": "Período", "en": "Period"},
-                            {"pt": "Orientador", "en": "Advisor"},
-                            {"pt": "Organização", "en": "Organization"},
-                            {"pt": "Orientador", "en": "Advisor"},
-                            {"pt": "Bancas", "en": "Examination Boards"},
-                            {"pt": "Falconi", "en": "Falconi"},
-                            {"pt": "Média", "en": "Average"}
-                          ]
-
-            context = {
-                "projetos": projetos_filtrados,
-                "cabecalhos": cabecalhos,
-            }
-        else:
+    if request.method == "POST":
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        edicao = request.POST["edicao"]
+        if edicao == "todas":
+            projetos_filtrados = Projeto.objects.all()
+        else:
+            ano, semestre = request.POST["edicao"].split('.')
+            projetos_filtrados = Projeto.objects.filter(ano=ano, semestre=semestre)
+
+        cabecalhos = [{"pt": "Projeto", "en": "Project"},
+                        {"pt": "Áreas", "en": "Areas"},
+                        {"pt": "Estudantes", "en": "Students"},
+                        {"pt": "Período", "en": "Period"},
+                        {"pt": "Orientador", "en": "Advisor"},
+                        {"pt": "Organização", "en": "Organization"},
+                        {"pt": "Orientador", "en": "Advisor"},
+                        {"pt": "Bancas", "en": "Examination Boards"},
+                        {"pt": "Falconi", "en": "Falconi"},
+                        {"pt": "Média", "en": "Average"}
+                        ]
+
+        context = {
+            "projetos": projetos_filtrados,
+            "cabecalhos": cabecalhos,
+        }
+    
+            
     else:
         context = {
             "titulo": {"pt": "Filtro para Projetos", "en": "Filter for Projects"},
@@ -1981,7 +1981,8 @@ def filtro_projetos(request):
 @permission_required("projetos.view_projeto", raise_exception=True)
 def interesses_projetos(request):
     """Verifica interesse para com projetos (na verdade verifico as propostas)."""
-    if request.is_ajax():
+
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -2022,72 +2023,71 @@ def evolucao_por_objetivo(request):
 
     objetivos = ObjetivosDeAprendizagem.objects.all()
 
-    if request.is_ajax():
+    if request.method == "POST":
 
-        if "curso" in request.POST:
-            curso = request.POST["curso"]
-            grupo = "grupo" in request.POST and request.POST["grupo"]=="true"
-            individuais = "individuais" in request.POST and request.POST["individuais"]=="true"
+        if "curso" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
 
-            so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
+        curso = request.POST["curso"]
+        grupo = "grupo" in request.POST and request.POST["grupo"]=="true"
+        individuais = "individuais" in request.POST and request.POST["individuais"]=="true"
 
-            if so_finais:
-                # Somenete avaliações finais do Capstone
-                # tipos = [2, 12, 22, 52, 54]
-                exames = Exame.objects.filter(titulo="Banca Final") |\
-                         Exame.objects.filter(titulo="Relatório Final de Grupo") |\
-                         Exame.objects.filter(titulo="Relatório Final Individual") |\
-                         Exame.objects.filter(titulo="Avaliação Final Individual") |\
-                         Exame.objects.filter(titulo="Avaliação Final de Grupo")
-                avaliacoes_sep = Avaliacao2.objects.filter(exame__in=exames)
+        so_finais = "so_finais" in request.POST and request.POST["so_finais"]=="true"
+
+        if so_finais:
+            # Somenete avaliações finais do Capstone
+            # tipos = [2, 12, 22, 52, 54]
+            exames = Exame.objects.filter(titulo="Banca Final") |\
+                        Exame.objects.filter(titulo="Relatório Final de Grupo") |\
+                        Exame.objects.filter(titulo="Relatório Final Individual") |\
+                        Exame.objects.filter(titulo="Avaliação Final Individual") |\
+                        Exame.objects.filter(titulo="Avaliação Final de Grupo")
+            avaliacoes_sep = Avaliacao2.objects.filter(exame__in=exames)
+        else:
+            avaliacoes_sep = Avaliacao2.objects.all()
+
+        if curso == 'T':
+
+            # Avaliações Individuais
+            if (individuais):
+                avaliacoes_ind = avaliacoes_sep.filter(alocacao__isnull=False)
             else:
-                avaliacoes_sep = Avaliacao2.objects.all()
+                avaliacoes_ind = avaliacoes_sep.none()
 
-            if curso == 'T':
-
-                # Avaliações Individuais
-                if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__isnull=False)
-                else:
-                    avaliacoes_ind = avaliacoes_sep.none()
-
-                # Avaliações Grupais
-                if grupo:
-                    avaliacoes_grupo = avaliacoes_sep.filter(alocacao__isnull=True, projeto__isnull=False)
-                else:
-                    avaliacoes_grupo = avaliacoes_sep.none()
-
-                avaliacoes = avaliacoes_ind | avaliacoes_grupo
-
+            # Avaliações Grupais
+            if grupo:
+                avaliacoes_grupo = avaliacoes_sep.filter(alocacao__isnull=True, projeto__isnull=False)
             else:
+                avaliacoes_grupo = avaliacoes_sep.none()
 
-                # Avaliações Individuais
-                if (individuais):
-                    avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla_curta=curso)
-                else:
-                    avaliacoes_ind = avaliacoes_sep.none()
-
-                # Avaliações Grupais
-                if grupo:
-                    # identificando projetos com estudantes do curso (pelo menos um)
-                    projetos_selecionados = []
-                    projetos = Projeto.objects.all()
-                    for projeto in projetos:
-                        alocacoes = Alocacao.objects.filter(projeto=projeto)
-                        for alocacao in alocacoes:
-                            if alocacao.aluno.curso2.sigla_curta == curso:
-                                projetos_selecionados.append(projeto)
-                                break
-                            
-                    avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__in=projetos_selecionados)
-
-                else:
-                    avaliacoes_grupo = Avaliacao2.objects.none()
-
-                avaliacoes = avaliacoes_ind | avaliacoes_grupo
+            avaliacoes = avaliacoes_ind | avaliacoes_grupo
 
         else:
-            return HttpResponse("Algum erro não identificado.", status=401)
+
+            # Avaliações Individuais
+            if (individuais):
+                avaliacoes_ind = avaliacoes_sep.filter(alocacao__aluno__curso2__sigla_curta=curso)
+            else:
+                avaliacoes_ind = avaliacoes_sep.none()
+
+            # Avaliações Grupais
+            if grupo:
+                # identificando projetos com estudantes do curso (pelo menos um)
+                projetos_selecionados = []
+                projetos = Projeto.objects.all()
+                for projeto in projetos:
+                    alocacoes = Alocacao.objects.filter(projeto=projeto)
+                    for alocacao in alocacoes:
+                        if alocacao.aluno.curso2.sigla_curta == curso:
+                            projetos_selecionados.append(projeto)
+                            break
+                        
+                avaliacoes_grupo = Avaliacao2.objects.filter(alocacao__isnull=True, projeto__in=projetos_selecionados)
+
+            else:
+                avaliacoes_grupo = Avaliacao2.objects.none()
+
+            avaliacoes = avaliacoes_ind | avaliacoes_grupo
 
         low = []
         mid = []
@@ -2214,7 +2214,7 @@ def correlacao_medias_cr(request):
     edicoes, _, semestre = get_edicoes(Avaliacao2)
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         periodo = ["todo", "periodo"]
         alocacoes = None
@@ -2377,7 +2377,7 @@ def nomes(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def acompanhamento_view(request):
     """Cria um anotação para uma organização parceira."""
-    if request.is_ajax() and "texto" in request.POST:
+    if request.method == "POST" and "texto" in request.POST:
         acompanhamento = Acompanhamento()
 
         try:
@@ -2415,9 +2415,7 @@ def acompanhamento_view(request):
         "url": request.get_full_path(),
     }
 
-    return render(request,
-                  "projetos/acompanhamento_view.html",
-                  context=context)
+    return render(request, "projetos/acompanhamento_view.html", context=context)
 
 
 @login_required

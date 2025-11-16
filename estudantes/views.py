@@ -438,7 +438,10 @@ def estilo_comunicacao(request):
 @login_required
 def funcionalidade_grupo(request):
     """Para passar links de alinhamentos gerais de início de semestre."""   
-    if request.is_ajax():  # Trata uma questão por vez via Ajax
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.method == 'POST': # Ajax check
+
+         # Trata uma questão por vez via Ajax
         if not request.user.funcionalidade_grupo:
             request.user.funcionalidade_grupo = FuncionalidadeGrupo.objects.create()
             request.user.save()

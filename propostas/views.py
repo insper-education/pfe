@@ -68,7 +68,7 @@ def index_propostas(request):
 def mapeamento_estudantes_propostas(request):
     """Faz o mapeamento entre estudantes e propostas do próximo semestre."""
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             ano, semestre = request.POST["edicao"].split('.')
         else:
@@ -154,7 +154,7 @@ def procura_propostas(request):
     
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     
-    if request.is_ajax():
+    if request.method == "POST":
 
         configuracao = get_object_or_404(Configuracao)
         ano, semestre = adianta_semestre(configuracao.ano, configuracao.semestre)
@@ -290,7 +290,7 @@ def propostas_apresentadas(request):
     """Lista todas as propostas de projetos."""
     configuracao = get_object_or_404(Configuracao)
     
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -410,7 +410,7 @@ def propostas_apresentadas(request):
 def propostas_lista(request):
     """Lista todas as propostas de projetos."""
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -451,42 +451,41 @@ def ajax_proposta(request, primarykey=None):
     if primarykey is None:
         return HttpResponse("Erro não identificado.", status=401)
     
-    if request.is_ajax():
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
 
-        proposta = get_object_or_404(Proposta, pk=primarykey)
+    proposta = get_object_or_404(Proposta, pk=primarykey)
 
-        # Troca Conformidade de Proposta
-        for dict in request.POST:
-            if dict[0:5]=="dict[":
-                tmp = False
-                if request.POST[dict] == "true":
-                    tmp = True
-                setattr(proposta, dict[5:-1], tmp)
+    # Troca Conformidade de Proposta
+    for dict in request.POST:
+        if dict[0:5]=="dict[":
+            tmp = False
+            if request.POST[dict] == "true":
+                tmp = True
+            setattr(proposta, dict[5:-1], tmp)
 
-        # Define analisador
-        if "autorizador" in request.POST:
-            try:
-                if request.POST["autorizador"] == "0":
-                    proposta.autorizado = None
-                else:
-                    proposta.autorizado = PFEUser.objects\
-                        .get(pk=request.POST["autorizador"])
-            except PFEUser.DoesNotExist:
-                return HttpResponse("Analisador não encontrado.", status=401)
-        
-        # Disponibiliza proposta
-        if "disponibilizar" in request.POST:
-            proposta.disponivel = request.POST["disponibilizar"] == "sim"
+    # Define analisador
+    if "autorizador" in request.POST:
+        try:
+            if request.POST["autorizador"] == "0":
+                proposta.autorizado = None
+            else:
+                proposta.autorizado = PFEUser.objects\
+                    .get(pk=request.POST["autorizador"])
+        except PFEUser.DoesNotExist:
+            return HttpResponse("Analisador não encontrado.", status=401)
+    
+    # Disponibiliza proposta
+    if "disponibilizar" in request.POST:
+        proposta.disponivel = request.POST["disponibilizar"] == "sim"
 
-        # Anotações internas
-        if "anotacoes" in request.POST:
-            proposta.anotacoes = request.POST["anotacoes"]
+    # Anotações internas
+    if "anotacoes" in request.POST:
+        proposta.anotacoes = request.POST["anotacoes"]
 
-        proposta.save()
-        data = {"atualizado": True,}
-        return JsonResponse(data)
+    proposta.save()
+    return JsonResponse({"atualizado": True,})
 
-    return HttpResponse("Erro não identificado.", status=401)
 
 
 @login_required
@@ -497,38 +496,39 @@ def ajax_proposta_pergunta(request, primarykey=None):
     if primarykey is None:
         return HttpResponse("Erro não identificado.", status=401)
     
-    if request.is_ajax():
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
 
-        proposta = get_object_or_404(Proposta, pk=primarykey)
-        
-        # Define analisador
-        if "pergunta" in request.POST:
-            pergunta_resposta = PerguntasRespostas(
-                proposta=proposta,
-                pergunta=request.POST["pergunta"],
-                quem_perguntou=request.user,
-            )
-            pergunta_resposta.save()
-
-        
-            # Enviando e-mail com mensagem para usuários.
-            mensagem = f"O estudante: <b>{request.user.get_full_name()}</b>, fez uma pergunta sobre a proposta: <b>{proposta.titulo}</b>."
-            mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
-            mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_completa/{proposta.id}"
-            subject = "Capstone | Pergunta sobre proposta de projeto"
-            configuracao = get_object_or_404(Configuracao)
-            recipient_list = [str(configuracao.coordenacao.user.email)]
-            if proposta.autorizado:
-                recipient_list.append(str(proposta.autorizado.email))
-
-            email(subject, recipient_list, mensagem)
-            data = {
-                "atualizado": True,
-                "data_hora": pergunta_resposta.data_pergunta.strftime("%d/%m/%Y %H:%M"),
-                }
-            return JsonResponse(data)
+    proposta = get_object_or_404(Proposta, pk=primarykey)
     
-    return HttpResponse("Erro não identificado.", status=401)
+    # Define analisador
+    if "pergunta" in request.POST:
+        pergunta_resposta = PerguntasRespostas(
+            proposta=proposta,
+            pergunta=request.POST["pergunta"],
+            quem_perguntou=request.user,
+        )
+        pergunta_resposta.save()
+
+    
+        # Enviando e-mail com mensagem para usuários.
+        mensagem = f"O estudante: <b>{request.user.get_full_name()}</b>, fez uma pergunta sobre a proposta: <b>{proposta.titulo}</b>."
+        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
+        mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_completa/{proposta.id}"
+        subject = "Capstone | Pergunta sobre proposta de projeto"
+        configuracao = get_object_or_404(Configuracao)
+        recipient_list = [str(configuracao.coordenacao.user.email)]
+        if proposta.autorizado:
+            recipient_list.append(str(proposta.autorizado.email))
+
+        email(subject, recipient_list, mensagem)
+        data = {
+            "atualizado": True,
+            "data_hora": pergunta_resposta.data_pergunta.strftime("%d/%m/%Y %H:%M"),
+            }
+        return JsonResponse(data)
+    
+    
 
 
 @login_required
@@ -538,41 +538,40 @@ def ajax_proposta_resposta(request, primarykey=None):
 
     if primarykey is None:
         return HttpResponse("Erro não identificado.", status=401)
+
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
+
+    proposta = get_object_or_404(Proposta, pk=primarykey)
     
-    if request.is_ajax():
+    # Define analisador
+    if "pergunta_id" in request.POST and "resposta" in request.POST:
+        pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
+        pergunta_resposta.resposta = request.POST["resposta"]
+        pergunta_resposta.quem_respondeu = request.user
 
-        proposta = get_object_or_404(Proposta, pk=primarykey)
-        
-        # Define analisador
-        if "pergunta_id" in request.POST and "resposta" in request.POST:
-            pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
-            pergunta_resposta.resposta = request.POST["resposta"]
-            pergunta_resposta.quem_respondeu = request.user
+        if "em_nome" in request.POST and request.POST["em_nome"]:
+            pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
+        else:
+            pergunta_resposta.em_nome_de = None
 
-            if "em_nome" in request.POST and request.POST["em_nome"]:
-                pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
-            else:
-                pergunta_resposta.em_nome_de = None
+        pergunta_resposta.data_resposta = timezone.now()
+        pergunta_resposta.save()
 
-            pergunta_resposta.data_resposta = timezone.now()
-            pergunta_resposta.save()
+        # Enviando e-mail com mensagem para usuários.
+        mensagem = f"Sua pergunta sobre a proposta <b>[{proposta.organizacao.sigla}] {proposta.titulo}</b> foi respondida."
+        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
+        mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
+        mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_detalhes/{proposta.id}"
+        subject = "Capstone | Pergunta sobre proposta de projeto"
+        configuracao = get_object_or_404(Configuracao)
+        recipient_list = [
+            str(pergunta_resposta.quem_perguntou.email),
+            str(configuracao.coordenacao.user.email)
+            ]
 
-            # Enviando e-mail com mensagem para usuários.
-            mensagem = f"Sua pergunta sobre a proposta <b>[{proposta.organizacao.sigla}] {proposta.titulo}</b> foi respondida."
-            mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
-            mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
-            mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_detalhes/{proposta.id}"
-            subject = "Capstone | Pergunta sobre proposta de projeto"
-            configuracao = get_object_or_404(Configuracao)
-            recipient_list = [
-                str(pergunta_resposta.quem_perguntou.email),
-                str(configuracao.coordenacao.user.email)
-                ]
-
-            email(subject, recipient_list, mensagem)
-            return JsonResponse({"atualizado": True,})
-    
-    return HttpResponse("Erro não identificado.", status=401)
+        email(subject, recipient_list, mensagem)
+        return JsonResponse({"atualizado": True,})
 
 
 @login_required
@@ -1003,25 +1002,22 @@ def publicar_propostas(request):
     """Definir datas de publicação de propostas."""
     configuracao = get_object_or_404(Configuracao)
 
-    if request.is_ajax():
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         if not request.user.eh_admin:  # Administrador
             return HttpResponse("Somente coordenadores podem alterar valores de publicação de propostas.", status=401)
-        if "min_props" in request.POST:
-            data = {"atualizado": True,}
-            try:
-                data["liberadas_propostas"] = propostas_liberadas(configuracao)
-                if int(request.POST["min_props"]) != configuracao.min_props:
-                    configuracao.min_props = int(request.POST["min_props"])
-                    data["min_props"] = configuracao.min_props
-                configuracao.save()
-            except (ValueError, OverflowError, MultiValueDictKeyError):
-                return HttpResponse("Algum erro não identificado.", status=401)
-             
-            return JsonResponse(data)
-        
-        else:
+        if "min_props" not in request.POST:
             return HttpResponse("Algum erro ao passar parâmetros.", status=401)
-    
+        data = {"atualizado": True,}
+        try:
+            data["liberadas_propostas"] = propostas_liberadas(configuracao)
+            if int(request.POST["min_props"]) != configuracao.min_props:
+                configuracao.min_props = int(request.POST["min_props"])
+                data["min_props"] = configuracao.min_props
+            configuracao.save()
+        except (ValueError, OverflowError, MultiValueDictKeyError):
+            return HttpResponse("Algum erro não identificado.", status=401)
+        return JsonResponse(data)
+
     context = {
         "titulo": {"pt": "Publicação das Propostas de Projetos", "en": "Publication of Project Proposals"},
         "liberadas_propostas": propostas_liberadas(configuracao),
@@ -1066,7 +1062,7 @@ def link_organizacao(request, proposta_id):
     """Cria um anotação para uma organização parceira."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
 
-    if request.is_ajax() and "organizacao_id" in request.POST:
+    if request.method == "POST" and "organizacao_id" in request.POST:
 
         organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao_id"])
 
@@ -1101,7 +1097,10 @@ def link_organizacao(request, proposta_id):
 def link_disciplina(request, proposta_id):
     """Adicionar Disciplina Recomendada."""
     proposta = get_object_or_404(Proposta, id=proposta_id)
-    if request.is_ajax() and "disciplina_id" in request.POST:
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+
+        if "disciplina_id" not in request.POST:
+            return HttpResponse("Algum erro ao passar parâmetros.", status=401)
 
         disciplina_id = int(request.POST["disciplina_id"])
         disciplina = get_object_or_404(Disciplina, id=disciplina_id)
@@ -1139,21 +1138,22 @@ def link_disciplina(request, proposta_id):
 @permission_required("users.altera_professor", raise_exception=True)
 def remover_disciplina(request):
     """Remove Disciplina Recomendada."""
-    if request.is_ajax() and "disciplina_id" in request.POST and "proposta_id" in request.POST:
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
+    if "disciplina_id" not in request.POST or "proposta_id" not in request.POST:
+        return HttpResponse("Algum erro ao passar parâmetros.", status=401)
 
-        try:
-            proposta_id = int(request.POST["proposta_id"])
-            disciplina_id = int(request.POST["disciplina_id"])
-        except:
-            return HttpResponse("Erro ao recuperar proposta e disciplinas.", status=401)
+    try:
+        proposta_id = int(request.POST["proposta_id"])
+        disciplina_id = int(request.POST["disciplina_id"])
+    except:
+        return HttpResponse("Erro ao recuperar proposta e disciplinas.", status=401)
 
-        instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id=disciplina_id)
-        for instance in instances:
-            instance.delete()
+    instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id=disciplina_id)
+    for instance in instances:
+        instance.delete()
 
-        return JsonResponse({"atualizado": True},)
-
-    return HttpResponseNotFound("Requisição errada")
+    return JsonResponse({"atualizado": True},)
 
 
 @login_required

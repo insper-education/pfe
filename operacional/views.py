@@ -138,51 +138,50 @@ def emails(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def emails_semestre(request):
     """Gera listas de emails por semestre."""
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            ano, semestre = request.POST["edicao"].split('.')
+    if request.method == "POST" and "edicao" in request.POST:
+        ano, semestre = request.POST["edicao"].split('.')
 
-            orientadores = set()  # Orientadores por semestre
-            organizacoes = set()  # Controla as organizações participantes p/semestre
-            conexoes = []  # Parceiros das Organizações no semestre
-            membros_bancas = set()  # Membros das bancas
+        orientadores = set()  # Orientadores por semestre
+        organizacoes = set()  # Controla as organizações participantes p/semestre
+        conexoes = []  # Parceiros das Organizações no semestre
+        membros_bancas = set()  # Membros das bancas
 
-            for projeto in Projeto.objects.filter(ano=ano, semestre=semestre):
-                if projeto.orientador:
-                    orientadores.add(projeto.orientador)  # Junta orientadores do semestre
-                if projeto.organizacao:
-                    organizacoes.add(projeto.organizacao)  # Junta organizações do semestre
+        for projeto in Projeto.objects.filter(ano=ano, semestre=semestre):
+            if projeto.orientador:
+                orientadores.add(projeto.orientador)  # Junta orientadores do semestre
+            if projeto.organizacao:
+                organizacoes.add(projeto.organizacao)  # Junta organizações do semestre
 
-                conexoes += list(Conexao.objects.filter(projeto=projeto))
+            conexoes += list(Conexao.objects.filter(projeto=projeto))
 
-                bancas = Banca.objects.filter(projeto=projeto)
-                for banca in bancas:
-                    membros_bancas.update(banca.membros())
+            bancas = Banca.objects.filter(projeto=projeto)
+            for banca in bancas:
+                membros_bancas.update(banca.membros())
 
-            data = {}  # Dicionario com as pessoas do projeto
+        data = {}  # Dicionario com as pessoas do projeto
 
-            # Estudantes do semestre
-            estudantes = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
-            data["Estudantes"] = list(estudantes.values_list("user__first_name", "user__last_name", "user__email"))
+        # Estudantes do semestre
+        estudantes = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
+        data["Estudantes"] = list(estudantes.values_list("user__first_name", "user__last_name", "user__email"))
 
-            # Estudantes do semestre do Insper
-            estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, curso2__curso_do_insper=True).select_related("user")
-            data["EstudantesInsper"] = list(estudantesInsper.values_list("user__first_name", "user__last_name", "user__email"))
+        # Estudantes do semestre do Insper
+        estudantesInsper = Aluno.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, curso2__curso_do_insper=True).select_related("user")
+        data["EstudantesInsper"] = list(estudantesInsper.values_list("user__first_name", "user__last_name", "user__email"))
 
-            # Estudantes do semestre, mas que não estão alocados
-            estudantesNaoAlocados = Aluno.objects.filter(ano=ano, semestre=semestre).exclude(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
-            data["EstudantesNaoAlocados"] = list(estudantesNaoAlocados.values_list("user__first_name", "user__last_name", "user__email"))
+        # Estudantes do semestre, mas que não estão alocados
+        estudantesNaoAlocados = Aluno.objects.filter(ano=ano, semestre=semestre).exclude(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre).select_related("user")
+        data["EstudantesNaoAlocados"] = list(estudantesNaoAlocados.values_list("user__first_name", "user__last_name", "user__email"))
 
-            # Orientadores
-            data["Orientadores"] = [[i.user.first_name, i.user.last_name, i.user.email] for i in orientadores]
+        # Orientadores
+        data["Orientadores"] = [[i.user.first_name, i.user.last_name, i.user.email] for i in orientadores]
 
-            # Parceiros
-            data["Parceiros"] = [[c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email] for c in conexoes]
+        # Parceiros
+        data["Parceiros"] = [[c.parceiro.user.first_name, c.parceiro.user.last_name, c.parceiro.user.email] for c in conexoes]
 
-            # Bancas
-            data["Bancas"] = [[i.first_name, i.last_name, i.email] for i in membros_bancas]
+        # Bancas
+        data["Bancas"] = [[i.first_name, i.last_name, i.email] for i in membros_bancas]
 
-            return JsonResponse(data)
+        return JsonResponse(data)
 
     return HttpResponse("Algum erro não identificado.", status=401)
 
@@ -191,7 +190,7 @@ def emails_semestre(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def emails_projetos(request):
     """Gera listas de emails, com alunos, professores, parceiros, etc."""
-    if request.is_ajax() and "edicao" in request.POST:
+    if request.method == "POST" and "edicao" in request.POST:
         ano, semestre = request.POST["edicao"].split('.')
         context = {"projetos": Projeto.objects.filter(ano=ano).filter(semestre=semestre),}
         return render(request, "operacional/emails_projetos.html", context=context)
@@ -369,17 +368,13 @@ def deleta_aviso(request, primarykey):
 def plano_aulas(request):
     """Gera tabela com aulas do semestre."""
 
-    if request.is_ajax():
-
-        if "edicao" in request.POST:
-            ano, semestre = map(int, request.POST["edicao"].split('.'))
-            context = {
-                "aulas": Evento.get_eventos(nome="Aula", ano=ano, semestre=semestre),
-                "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),
-                }
-            return render(request, "operacional/plano_aulas.html", context=context)
-        
-        return HttpResponse("Algum erro não identificado.", status=401)
+    if request.method == "POST" and "edicao" in request.POST:
+        ano, semestre = map(int, request.POST["edicao"].split('.'))
+        context = {
+            "aulas": Evento.get_eventos(nome="Aula", ano=ano, semestre=semestre),
+            "composicoes": filtra_composicoes(Composicao.objects.all(), ano, semestre),
+            }
+        return render(request, "operacional/plano_aulas.html", context=context)
     
     context = {
         "titulo": { "pt": "Plano de Aulas", "en": "Class Schedule" },

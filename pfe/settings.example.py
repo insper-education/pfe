@@ -309,7 +309,7 @@ DEBUG_TOOLBAR_PANELS = [
 
 def show_toolbar(request):
     """Controle se exibe a barra do Debbuger."""
-    return not request.is_ajax() and request.user and request.user.username == "lpsoares"
+    return not request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.user and request.user.username == "lpsoares"
     # Só funciona em debug
 
 DEBUG_TOOLBAR_CONFIG = {

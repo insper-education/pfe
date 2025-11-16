@@ -94,7 +94,7 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
     if proj_id:
         context["projetos"] = Projeto.objects.filter(id=proj_id, orientador=orientador)
         
-    elif request.is_ajax():
+    elif request.method == "POST":
         
         projetos = Projeto.objects.filter(ano__gte=2023)  # 2023 é o ano que comecou a avaliacao de pares no sistema do PFE
         
@@ -131,95 +131,105 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
 # Permite que compartilhe com a agenda mesmo com pessoas não logadas
 def ajax_bancas(request):
     """Retorna as bancas do ano."""
-    if request.is_ajax() and "start" in request.POST and "end" in request.POST:
-        start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
-        end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
-        bancas = {}
 
-        for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
-            projeto = banca.get_projeto()
-            orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
-            organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
-            estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
-            membros = banca.membros()
-            if request.user.is_authenticated and request.user.eh_prof_a:
-                editable = request.user.eh_admin or (projeto and projeto.orientador == request.user.professor)
-            else:
-                editable = False
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro.", status=401)
 
-            title = f"{projeto.get_titulo_org()}" if projeto else "Projeto ou alocação não identificados"
-            if banca.alocacao:
-                title = f"Estudante: {estudante} - {projeto.get_titulo_org()}"
-            if banca.location:
-                title += f"\n<br>Local: {banca.location}"
-            title += "\n<br>Banca:"
-            for membro in membros:
-                title += f"\n<br>&bull; {membro.get_full_name()}"
-                if projeto.orientador and projeto.orientador.user == membro:
-                    title += " (O)"
+    if "start" not in request.POST or "end" not in request.POST:
+        return HttpResponse("Erro.", status=401)
 
-            if banca.composicao and banca.composicao.exame:
-                cor = banca.composicao.exame.cor
-                className = banca.composicao.exame.className
-            else:
-                cor = "808080"
-                className = ""
+    start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
+    end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
+    bancas = {}
 
-            bancas[banca.id] = {
-                "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
-                "end": banca.endDate.strftime("%Y-%m-%dT%H:%M:%S"),
-                "local": banca.location,
-                "organizacao": organizacao_sigla,
-                "orientador": orientador,
-                "estudante": estudante,
-                "color": f"#{cor}",
-                "className": className,
-                "editable": editable,
-                "title": title,
-                **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
-            }
+    for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
+        projeto = banca.get_projeto()
+        orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
+        organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
+        estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
+        membros = banca.membros()
+        if request.user.is_authenticated and request.user.eh_prof_a:
+            editable = request.user.eh_admin or (projeto and projeto.orientador == request.user.professor)
+        else:
+            editable = False
 
-        return JsonResponse(bancas)
+        title = f"{projeto.get_titulo_org()}" if projeto else "Projeto ou alocação não identificados"
+        if banca.alocacao:
+            title = f"Estudante: {estudante} - {projeto.get_titulo_org()}"
+        if banca.location:
+            title += f"\n<br>Local: {banca.location}"
+        title += "\n<br>Banca:"
+        for membro in membros:
+            title += f"\n<br>&bull; {membro.get_full_name()}"
+            if projeto.orientador and projeto.orientador.user == membro:
+                title += " (O)"
 
-    return HttpResponse("Erro.", status=401)
+        if banca.composicao and banca.composicao.exame:
+            cor = banca.composicao.exame.cor
+            className = banca.composicao.exame.className
+        else:
+            cor = "808080"
+            className = ""
+
+        bancas[banca.id] = {
+            "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
+            "end": banca.endDate.strftime("%Y-%m-%dT%H:%M:%S"),
+            "local": banca.location,
+            "organizacao": organizacao_sigla,
+            "orientador": orientador,
+            "estudante": estudante,
+            "color": f"#{cor}",
+            "className": className,
+            "editable": editable,
+            "title": title,
+            **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
+        }
+
+    return JsonResponse(bancas)
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_banca(request):
     """Atualiza os dados de uma banca por ajax."""
-    if request.is_ajax() and all(key in request.POST for key in ("id", "start", "end")):
-        try:
-            banca = Banca.objects.get(id=request.POST["id"])
-            banca.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-            banca.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
-            banca.save()
-            return JsonResponse({"atualizado": True})
-        except Banca.DoesNotExist:
-            return HttpResponse("Banca não encontrada", status=404)
-        except ValueError:
-            return HttpResponse("Formado de data inválido", status=400)
-    return HttpResponse("Erro.", status=400)
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro.", status=400)
+    if not all(key in request.POST for key in ("id", "start", "end")):
+        return HttpResponse("Erro.", status=400)
+
+    try:
+        banca = Banca.objects.get(id=request.POST["id"])
+        banca.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+        banca.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
+        banca.save()
+        return JsonResponse({"atualizado": True})
+    except Banca.DoesNotExist:
+        return HttpResponse("Banca não encontrada", status=404)
+    except ValueError:
+        return HttpResponse("Formado de data inválido", status=400)
+    
 
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def ajax_atualiza_dinamica(request):
     """Atualiza os dados de uma dinamica por ajax."""
-    if request.is_ajax() and all(key in request.POST for key in ("id", "start", "end")):
-        try:
-            encontro = Encontro.objects.get(id = request.POST["id"])
-            encontro.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-            encontro.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
-            encontro.save()
-            return JsonResponse({"atualizado": True,})
-        except Encontro.DoesNotExist:
-            return HttpResponse("Encontro não encontrada", status=404)
-        except ValueError:
-            return HttpResponse("Formado de data inválido", status=400)
-    return HttpResponse("Erro.", status=400)
 
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro.", status=400)
+    if not all(key in request.POST for key in ("id", "start", "end")):
+        return HttpResponse("Erro.", status=400)
 
+    try:
+        encontro = Encontro.objects.get(id = request.POST["id"])
+        encontro.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
+        encontro.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
+        encontro.save()
+        return JsonResponse({"atualizado": True,})
+    except Encontro.DoesNotExist:
+        return HttpResponse("Encontro não encontrada", status=404)
+    except ValueError:
+        return HttpResponse("Formado de data inválido", status=400)
 
 
 def get_edicoes_orientador(orientador, configuracao_ate):
@@ -260,7 +270,7 @@ def avaliar_entregas(request, prof_id=None):
     # Identifica o projeto, se houver
     projeto_id = request.GET.get("projeto", None)
 
-    if request.is_ajax():
+    if request.method == "POST":
 
         projetos = Projeto.objects.all()
 
@@ -306,7 +316,7 @@ def avaliar_entregas(request, prof_id=None):
             "hoje": datetime.date.today(),
         }
 
-    else:  # Não é AJAX
+    else:
         
         configuracao = get_object_or_404(Configuracao)
         if projeto_id:
@@ -356,7 +366,7 @@ def avaliar_entregas(request, prof_id=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def aulas_tabela(request):
     """Lista todas as aulas agendadas, conforme periodo pedido."""
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -393,24 +403,22 @@ def aulas_tabela(request):
 def avaliar_bancas(request, prof_id=None):
     """Visualiza os resultados das bancas de um projeto."""
 
-    if request.is_ajax():
+    if request.method == "POST":
 
-        if "edicao" in request.POST:
-
-            if prof_id and request.user.eh_admin:  # Administrador
-                professor = get_object_or_404(Professor, pk=prof_id)
-            else:
-                professor = request.user.professor
-
-            bancas = Banca.get_bancas_com_membro(professor.user).order_by("composicao__exame__id")
-
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = request.POST["edicao"].split('.')
-                bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Erro ao carregar dados.", status=401)
+
+        if prof_id and request.user.eh_admin:  # Administrador
+            professor = get_object_or_404(Professor, pk=prof_id)
+        else:
+            professor = request.user.professor
+
+        bancas = Banca.get_bancas_com_membro(professor.user).order_by("composicao__exame__id")
+
+        edicao = request.POST["edicao"]
+        if edicao != "todas":
+            ano, semestre = request.POST["edicao"].split('.')
+            bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
         
         context = {
             "objetivos": ObjetivosDeAprendizagem.objects.all(),
@@ -871,7 +879,7 @@ def bancas_criar(request, data=None):
 
     configuracao = get_object_or_404(Configuracao)
 
-    if request.is_ajax() and request.method == "POST":
+    if  request.headers.get("X-Requested-With") == "XMLHttpRequest"  and request.method == "POST":
 
         atualizado = True
         mensagem, banca = editar_banca(None, request)
@@ -950,8 +958,7 @@ def bancas_editar(request, primarykey=None):
 
     banca = get_object_or_404(Banca, pk=primarykey)
 
-    if request.is_ajax() and request.method == "POST":
-
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
         atualizado = True
         mensagem = ""
         if "atualizar" in request.POST:
@@ -1009,7 +1016,7 @@ def bancas_editar(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_tabela_alocacao(request):
     """Lista todas as bancas agendadas, conforme periodo pedido."""
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -1122,7 +1129,7 @@ def bancas_index(request, prof_id=None):
 def dinamicas_lista(request, edicao=None):
     """Mostra os horários de dinâmicas."""
 
-    if request.is_ajax() and "edicao" in request.POST:
+    if request.method == "POST" and "edicao" in request.POST:
         context = puxa_encontros(request.POST["edicao"])
 
     else:
@@ -1171,13 +1178,13 @@ def dinamicas_lista(request, edicao=None):
 def ajax_permite_agendar_mentorias(request):
     """Atualiza uma configuração de agendamento de mentorias."""
 
-    if request.is_ajax():
-        configuracao = get_object_or_404(Configuracao)
-        configuracao.permite_agendar_mentorias = request.POST.get("permite_agendar_mentorias") == "true"
-        configuracao.save()
-        return JsonResponse({"atualizado": True})
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
 
-    return HttpResponse("Erro não identificado.", status=401)
+    configuracao = get_object_or_404(Configuracao)
+    configuracao.permite_agendar_mentorias = request.POST.get("permite_agendar_mentorias") == "true"
+    configuracao.save()
+    return JsonResponse({"atualizado": True})
 
 
 @login_required
@@ -1186,20 +1193,19 @@ def ajax_permite_agendar_mentorias(request):
 def ajax_atualiza_visibilidade_tematica(request):
     """Atualiza uma configuração de visibilidade de temáticas de mentorias."""
 
-    if request.is_ajax():
-        tematica_id = request.POST.get("tematica_id", None)
-        visibilidade = request.POST.get("visibilidade", None)
-        if tematica_id and visibilidade is not None:
-            try:
-                tematica = get_object_or_404(TematicaEncontro, pk=int(tematica_id))
-            except ValueError:
-                return HttpResponse("Temática não encontrada.", status=404)
-            tematica.visibilidade = True if visibilidade == "true" else False
-            tematica.save()
-            return JsonResponse({"atualizado": True})
-
-    return HttpResponse("Erro não identificado.", status=401)
-
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
+    
+    tematica_id = request.POST.get("tematica_id", None)
+    visibilidade = request.POST.get("visibilidade", None)
+    if tematica_id and visibilidade is not None:
+        try:
+            tematica = get_object_or_404(TematicaEncontro, pk=int(tematica_id))
+        except ValueError:
+            return HttpResponse("Temática não encontrada.", status=404)
+        tematica.visibilidade = True if visibilidade == "true" else False
+        tematica.save()
+        return JsonResponse({"atualizado": True})
 
 
 @login_required
@@ -1210,49 +1216,51 @@ def ajax_verifica_membro_banca(request):
     edicao = request.POST.get("edicao", None)
     tipo = [request.POST.get("tipo", None)]  # "BI", "BF", "P", "F"
     remove_banca = request.POST.get("remove_banca", None)
-    if request.is_ajax() and membro_id and tipo:
-        try:
-            membro = get_object_or_404(PFEUser, pk=int(membro_id))
-        except ValueError:
-            return HttpResponse("Membro não encontrado.", status=404)
-        bancas = Banca.get_bancas_com_membro(membro, siglas=tipo)
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
+        return HttpResponse("Erro não identificado.", status=401)
+    if not membro_id or not tipo:
+        return HttpResponse("Parâmetros insuficientes.", status=400)
+    try:
+        membro = get_object_or_404(PFEUser, pk=int(membro_id))
+    except ValueError:
+        return HttpResponse("Membro não encontrado.", status=404)
+    bancas = Banca.get_bancas_com_membro(membro, siglas=tipo)
 
-        if edicao and '.' in edicao:
-            ano, semestre = edicao.split('.')
-            bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+    if edicao and '.' in edicao:
+        ano, semestre = edicao.split('.')
+        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+    else:
+        configuracao = get_object_or_404(Configuracao)
+        bancas = bancas.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+    
+    if remove_banca:
+        remove_banca = int(remove_banca)
+        bancas = bancas.exclude(id=remove_banca)
+
+    lista_bancas = []
+    for banca in bancas:
+        if banca.alocacao:
+            aluno_nome = banca.alocacao.aluno.user.get_full_name()
+            aluno_email = banca.alocacao.aluno.user.email
+            projeto_titulo = banca.alocacao.projeto.get_titulo_org()
         else:
-            configuracao = get_object_or_404(Configuracao)
-            bancas = bancas.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
-        
-        if remove_banca:
-            remove_banca = int(remove_banca)
-            bancas = bancas.exclude(id=remove_banca)
+            aluno_nome = ""
+            aluno_email = ""
+            projeto_titulo = banca.projeto.get_titulo_org() if banca.projeto else ""
+        data = banca.startDate.strftime("%d/%m %H:%M") if banca.startDate else ""
+        data += " às " + banca.endDate.strftime("%H:%M") if banca.endDate else ""
+        lista_bancas.append({
+            "id": banca.id,
+            "data": data,
+            "tipo": banca.composicao.exame.titulo if banca.composicao and banca.composicao.exame else "",
+            "projeto": projeto_titulo,
+            "aluno_nome": aluno_nome,
+            "aluno_email": aluno_email,
+            "local": banca.location if banca.location else "",
+            "link": banca.link if banca.link else "",
+        })
 
-        lista_bancas = []
-        for banca in bancas:
-            if banca.alocacao:
-                aluno_nome = banca.alocacao.aluno.user.get_full_name()
-                aluno_email = banca.alocacao.aluno.user.email
-                projeto_titulo = banca.alocacao.projeto.get_titulo_org()
-            else:
-                aluno_nome = ""
-                aluno_email = ""
-                projeto_titulo = banca.projeto.get_titulo_org() if banca.projeto else ""
-            data = banca.startDate.strftime("%d/%m %H:%M") if banca.startDate else ""
-            data += " às " + banca.endDate.strftime("%H:%M") if banca.endDate else ""
-            lista_bancas.append({
-                "id": banca.id,
-                "data": data,
-                "tipo": banca.composicao.exame.titulo if banca.composicao and banca.composicao.exame else "",
-                "projeto": projeto_titulo,
-                "aluno_nome": aluno_nome,
-                "aluno_email": aluno_email,
-                "local": banca.location if banca.location else "",
-                "link": banca.link if banca.link else "",
-            })
-
-        return JsonResponse({"lista_bancas": lista_bancas})
-    return HttpResponse("Erro não identificado.", status=401)
+    return JsonResponse({"lista_bancas": lista_bancas})
 
 
 @login_required
@@ -1269,8 +1277,9 @@ def bancas_lista(request, edicao=None):
     context["dias_bancas"] = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F", "FERI"))
     context["tipos_bancas"] = Exame.objects.filter(banca=True).order_by("id")
         
-    if request.is_ajax() and "edicao" in request.POST:
-        context.update(puxa_bancas(request.POST["edicao"]))
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+        if "edicao" in request.POST:
+            context.update(puxa_bancas(request.POST["edicao"]))
         
     elif request.method == "POST":
 
@@ -1342,7 +1351,7 @@ def mensagem_email(request, tipo=None, primarykey=None):
         return HttpResponseNotFound("<h1>Erro!</h1>")
 
     # Envia mensagem diretamente
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
 
         mensagem = ""
         if "assunto" in request.POST and "para" in request.POST and "mensagem" in request.POST:
@@ -1392,7 +1401,7 @@ def mentorias_alocadas(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def mentorias_tabela(request):
     """Lista todas as mentorias agendadas, conforme periodo pedido."""
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
             if edicao == "todas":
@@ -1791,7 +1800,7 @@ def dinamicas_criar(request, data=None):
     """Cria um encontro."""
     configuracao = get_object_or_404(Configuracao)
     
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
 
         mensagem = ""
         if "criar" in request.POST:
@@ -1921,7 +1930,7 @@ def dinamicas_editar(request, primarykey=None):
 
     configuracao = get_object_or_404(Configuracao)
 
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         encontro.bloqueado = False  # Desbloqueia o encontro
         encontro.save()
 
@@ -2048,8 +2057,9 @@ def dinamicas_editar(request, primarykey=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def dinamicas_editar_edicao(request, edicao):
     """Edita vários encontros."""
-    
-    if request.is_ajax() and request.method == "POST":
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+
         encontros = puxa_encontros(edicao)
         for encontro in encontros:
             encontro.location = request.POST.get("local")
@@ -2098,9 +2108,8 @@ def orientadores_tabela_completa(request):
 @permission_required("users.altera_professor", raise_exception=True)
 def orientadores_tabela(request):
     """Alocação dos Orientadores por semestre."""
-    #configuracao = get_object_or_404(Configuracao)
-
-    if request.is_ajax():
+    
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -2192,7 +2201,7 @@ def coorientadores_tabela_completa(request):
 def coorientadores_tabela(request):
     """Alocação dos Coorientadores por semestre."""
     
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 
@@ -2300,38 +2309,36 @@ def relatos_quinzenais(request, todos=None):
     if todos is not None and not request.user.eh_admin:  # Administrador
         return HttpResponse("Acesso negado.", status=401)
 
-    if request.is_ajax():
+    if request.method == "POST":
 
-        if "edicao" in request.POST:
-
-            projetos = Projeto.objects.all()
-            if todos == "todos":
-                pass
-            elif todos is not None:
-                professor = get_object_or_404(Professor, pk=todos)
-                projetos = projetos.filter(orientador=professor)
-            else:
-                projetos = projetos.filter(orientador=request.user.professor)
-
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-            
-            alocacoes = []
-            for projeto in projetos:
-                alocacoes.append(get_alocacoes(projeto))
-            
-            proj_aloc = zip(projetos, alocacoes)
-
-            context = {
-                "administracao": True,
-                "proj_aloc": proj_aloc,
-                "edicao": edicao,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+
+        projetos = Projeto.objects.all()
+        if todos == "todos":
+            pass
+        elif todos is not None:
+            professor = get_object_or_404(Professor, pk=todos)
+            projetos = projetos.filter(orientador=professor)
+        else:
+            projetos = projetos.filter(orientador=request.user.professor)
+
+        edicao = request.POST["edicao"]
+        if edicao != "todas":
+            ano, semestre = map(int, edicao.split('.'))
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+        
+        alocacoes = []
+        for projeto in projetos:
+            alocacoes.append(get_alocacoes(projeto))
+        
+        proj_aloc = zip(projetos, alocacoes)
+
+        context = {
+            "administracao": True,
+            "proj_aloc": proj_aloc,
+            "edicao": edicao,
+        }
 
     else:
         configuracao = get_object_or_404(Configuracao)
@@ -2598,24 +2605,22 @@ def planos_de_orientacao_todos(request):
     """Formulários com os projetos e planos de orientação dos professores orientadores."""
     usuario_sem_acesso(request, (4,)) # Soh Parc Adm
 
-    if request.is_ajax():
+    if request.method == "POST":
 
-        if "edicao" in request.POST:
-
-            projetos = Projeto.objects.all()
-
-            edicao = request.POST["edicao"]
-            if edicao != "todas":
-                ano, semestre = edicao.split('.')
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-                
-            context = {
-                "administracao": True,
-                "projetos": projetos,
-            }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+
+        projetos = Projeto.objects.all()
+
+        edicao = request.POST["edicao"]
+        if edicao != "todas":
+            ano, semestre = edicao.split('.')
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+            
+        context = {
+            "administracao": True,
+            "projetos": projetos,
+        }
 
     else:
         context = {
@@ -2655,67 +2660,67 @@ def resultado_meus_projetos(request):
 @login_required
 @permission_required("projetos.view_avaliacao2", raise_exception=True)
 def resultado_p_certificacao(request):
-    if request.is_ajax():
-        if "edicao" in request.POST:
-            edicao = request.POST["edicao"]
-            projetos = Projeto.objects.all()
-            if edicao != "todas":
-                ano, semestre = map(int, edicao.split('.'))
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-            else:
-                ano, semestre = 0, 0
+    if request.method == "POST":
 
-            recomendacoes = {nome: [] for nome in ["Banca Final", "Banca Intermediária"]}
-            notas = {nome: [] for nome in ["Falconi"]}
-
-            for projeto in projetos:
-                bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
-                recomendacoes["Banca Intermediária"].append(bi.get_recomendacao_destaque() if bi else None)
-                bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
-                recomendacoes["Banca Final"].append(bf.get_recomendacao_destaque() if bf else None)
-
-                # Banca Intermediária
-                aval_i = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="BI")  # BI
-
-                # Banca Falconi
-                aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
-                banca_info = get_banca_estudante(aval_b, ano=projeto.ano, semestre=projeto.semestre)
-                
-                nota_b = banca_info["media"]
-                peso = banca_info["peso"]
-                avaliadores = banca_info["avaliadores"]
-                nota_incompleta, banca = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
-
-                certificacao = ""
-                if nota_b >= 8:
-                    certificacao = "E"  # Excelencia FALCONI-INSPER
-                elif nota_b >= 6:
-                    certificacao = "D"  # Destaque FALCONI-INSPER
-
-                notas["Falconi"].append({
-                                    #"avaliadores": "{0}".format(nomes),
-                                    "avaliadores": avaliadores,
-                                    "nota_texto": "{0:5.2f}".format(nota_b) if avaliadores else "",
-                                    "nota": nota_b,
-                                    "certificacao": certificacao,
-                                    "nota_incompleta": nota_incompleta,
-                                    "banca": banca,
-                                    "peso": peso,
-                                    })
-            
-            tabela = zip(projetos,
-                         recomendacoes["Banca Intermediária"],
-                         recomendacoes["Banca Final"],
-                         notas["Falconi"],
-                         )
-
-            context = {
-                    "tabela": tabela,
-                    "edicao": edicao,
-                }
-
-        else:
+        if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
+        
+        edicao = request.POST["edicao"]
+        projetos = Projeto.objects.all()
+        if edicao != "todas":
+            ano, semestre = map(int, edicao.split('.'))
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+        else:
+            ano, semestre = 0, 0
+
+        recomendacoes = {nome: [] for nome in ["Banca Final", "Banca Intermediária"]}
+        notas = {nome: [] for nome in ["Falconi"]}
+
+        for projeto in projetos:
+            bi = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BI").last()
+            recomendacoes["Banca Intermediária"].append(bi.get_recomendacao_destaque() if bi else None)
+            bf = Banca.objects.filter(projeto=projeto, composicao__exame__sigla="BF").last()
+            recomendacoes["Banca Final"].append(bf.get_recomendacao_destaque() if bf else None)
+
+            # Banca Intermediária
+            aval_i = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="BI")  # BI
+
+            # Banca Falconi
+            aval_b = Avaliacao2.objects.filter(projeto=projeto, exame__sigla="F")  # Falc.
+            banca_info = get_banca_estudante(aval_b, ano=projeto.ano, semestre=projeto.semestre)
+            
+            nota_b = banca_info["media"]
+            peso = banca_info["peso"]
+            avaliadores = banca_info["avaliadores"]
+            nota_incompleta, banca = get_banca_incompleta(projeto=projeto, sigla="F", avaliadores=avaliadores)
+
+            certificacao = ""
+            if nota_b >= 8:
+                certificacao = "E"  # Excelencia FALCONI-INSPER
+            elif nota_b >= 6:
+                certificacao = "D"  # Destaque FALCONI-INSPER
+
+            notas["Falconi"].append({
+                                #"avaliadores": "{0}".format(nomes),
+                                "avaliadores": avaliadores,
+                                "nota_texto": "{0:5.2f}".format(nota_b) if avaliadores else "",
+                                "nota": nota_b,
+                                "certificacao": certificacao,
+                                "nota_incompleta": nota_incompleta,
+                                "banca": banca,
+                                "peso": peso,
+                                })
+        
+        tabela = zip(projetos,
+                        recomendacoes["Banca Intermediária"],
+                        recomendacoes["Banca Final"],
+                        notas["Falconi"],
+                        )
+
+        context = {
+                "tabela": tabela,
+                "edicao": edicao,
+            }
 
     else:
         edicoes = get_edicoes(Projeto)[0]

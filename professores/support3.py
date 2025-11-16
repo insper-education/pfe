@@ -57,7 +57,7 @@ def get_banca_incompleta(projeto, sigla, avaliadores):
 
 # Criei esse função temporária para tratar caso a edição seja passada diretamente na URL
 def resultado_projetos_intern(request, ano=None, semestre=None, professor=None):
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" in request.POST:
             edicao = request.POST["edicao"]
 

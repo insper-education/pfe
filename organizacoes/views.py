@@ -52,7 +52,7 @@ def anotacao(request, organizacao_id=None, anotacao_id=None):  # acertar isso pa
     """Cria um anotação para uma organização parceira."""
     organizacao = get_object_or_404(Organizacao, id=organizacao_id) if organizacao_id else None
 
-    if request.is_ajax() and "texto" in request.POST:
+    if request.method == "POST" and "texto" in request.POST:
         if anotacao_id:
             anotacao_obj = get_object_or_404(Anotacao, id=anotacao_id)
         else:
@@ -120,12 +120,11 @@ def adiciona_despesa(request, despesa_id=None):
     else:
         despesa = None
 
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+
         if despesa and "excluir" in request.POST:
             despesa.delete()
             return JsonResponse({"atualizado": True,})
-        # elif "atualiza" not in request.POST:
-        #     return HttpResponse("Atualização não realizada.", status=401)
 
         if despesa is None:
             despesa = Despesa()
@@ -191,7 +190,8 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
     usuario = documento.usuario if documento else request.user
 
-    if request.is_ajax() and request.method == "POST":
+    
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         erro = cria_documento(request, usuario=usuario)
         if erro:
            return HttpResponseBadRequest(erro)
@@ -257,7 +257,7 @@ def adiciona_documento(request, organizacao_id=None, projeto_id=None, tipo_nome=
     documento = get_object_or_404(Documento, id=documento_id) if documento_id else None
     usuario = documento.usuario if documento else request.user
 
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         erro = cria_documento(request, usuario=usuario)
         if erro:
            return HttpResponseBadRequest(erro)
@@ -338,7 +338,7 @@ def adiciona_documento_estudante(request, tipo_nome=None, documento_id=None):
     """Cria um documento pelos estudantes somente."""
     usuario_sem_acesso(request, (1,)) # Soh Estudantes
 
-    if request.is_ajax() and request.method == "POST":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         erro = cria_documento(request, forca_confidencial=True)
         if erro:
            return HttpResponseBadRequest(erro)
@@ -495,7 +495,7 @@ def organizacoes_prospect(request):
     organizacoes = []
 
     periodo = 90
-    if request.is_ajax() and "periodo" in request.POST:
+    if request.method == "POST" and "periodo" in request.POST:
         periodo = int(request.POST["periodo"])*30  # periodo vem em meses
 
     for organizacao in Organizacao.objects.all():
@@ -557,7 +557,7 @@ def organizacoes_prospect(request):
 def organizacoes_projetos(request):
     """Exibe as organizações prospectadas e a última comunicação."""
     
-    if request.is_ajax() and "edicao" in request.POST:
+    if request.method == "POST" and "edicao" in request.POST:
         edicao = request.POST["edicao"]
         
         evento = None
@@ -707,7 +707,7 @@ def organizacoes_tabela(request):
     """Alocação das Organizações por semestre."""
     # configuracao = get_object_or_404(Configuracao)
 
-    if request.is_ajax():
+    if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponseNotFound("<h1>Edição não encontrada!</h1>")
         
@@ -788,7 +788,7 @@ def todos_parceiros(request):
     """Exibe todas os parceiros de organizações que já submeteram projetos."""
     parceiros = None
     edicao = "todas"
-    if request.is_ajax():
+    if request.method == "POST":
         
         if request.POST.get("todos") == "true":
             parceiros = Parceiro.objects.all()
@@ -860,7 +860,7 @@ def todos_usuarios(request):
         "cabecalhos": [{"pt": "Nome", "en": "Name", }, {"pt": "e-mail", "en": "e-mail", }, {"pt": "Tipo", "en": "Type", }, ],
         "titulo": {"pt": "Todos os Usuários", "en": "All Users"},
     }
-    if request.is_ajax():                
+    if request.method == "POST":
         nome = request.POST.get("nome", None).strip()
         context["usuarios"] = PFEUser.objects.filter(Q(first_name__icontains=nome) | Q(last_name__icontains=nome)) if nome else []
     return render(request, "organizacoes/todos_usuarios.html", context)
@@ -875,8 +875,7 @@ def seleciona_conexoes(request):
     projeto_id = request.GET.get("projeto", None)
     projeto = get_object_or_404(Projeto, id=projeto_id)
 
-    if request.is_ajax():
-
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
         # Identifica Parceiro
         if "parceiro_id" in request.POST:
             parceiro_id = request.POST.get("parceiro_id", None)
