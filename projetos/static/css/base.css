@@ -1,7 +1,7 @@
 /* Tem os parâmetros para o topnav e outros elementos comuns a todas as páginas. */
 
 :root {
-  --topnav-height: 53px;
+  --topnav-height: 54px;
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
   --transition: 0.2s ease;
@@ -15,7 +15,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   line-height: 1.45;
-  
+  margin: 0;
+  padding-top: var(--topnav-height);
 }
 
 h1 { font-size: clamp(1.6rem, 1.2rem + 1.8vw, 2.2rem); }
@@ -26,9 +27,11 @@ h3 { font-size: clamp(1.2rem, 1.0rem + 0.8vw, 1.4rem); }
 .topnav {
   background: var(--primary-gradient);
   box-shadow: var(--shadow-md);
-  position: sticky;
+  position: fixed;
+  position: -webkit-fixed;
+  width: 100%;
   top: 0;
-  z-index: 999;
+  z-index: 1999;
 }
 
 p {margin-bottom: 0.1em;}

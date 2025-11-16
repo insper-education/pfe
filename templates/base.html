@@ -47,9 +47,10 @@
 <body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
 
   <header>
-    <nav class="topnav" role="navigation" aria-label="Navegação principal">
+    <nav class="topnav fixed-top" role="navigation" aria-label="Navegação principal">
       <div id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
         
+        {% comment %} Logo do Insper e link para a página inicial {% endcomment %}
         {% if user.is_authenticated %}
           <a id="logo_inicial" href="{% url 'index' %}" aria-label="Ir para página inicial">
         {% endif %}
@@ -59,6 +60,7 @@
           </div>
         {% if user.is_authenticated %}</a>{% endif %}
 
+        {% comment %} Ícone e nome do usuário {% endcomment %}
         {% if user.is_authenticated %}
           <a href="{% url 'perfil' %}" id="link_username">
             {% if user.eh_estudante %}
@@ -83,8 +85,14 @@
         {% else %}
           <a href="{% url 'login' %}" id="link_username"><i class="fas fa-question interrogacao" aria-hidden="true"></i>&nbsp;Login</a>
         {% endif %}
+
+        {% comment %} Botão de seleção de idioma {% endcomment %}
         <div id="language_box" aria-label="Seleção de idioma"><div id="language_button"></div></div>
 
+        {% comment %} Menu lateral {% endcomment %}
+        <button id="hamburger" class="icon" aria-label="Menu" aria-expanded="false" aria-controls="links_menu_lat">
+          <i class="fa fa-bars"></i>
+        </button>
         <div id="links_menu_lat" class="links-container" aria-label="Menu lateral">
           {% if user.is_authenticated %}
             <a href="#" style="padding-left: 30px;">
@@ -147,10 +155,6 @@
           {% endif %} 
         </div>
 
-        <button id="hamburger" class="icon" aria-label="Menu" aria-expanded="false" aria-controls="links_menu_lat">
-          <i class="fa fa-bars"></i>
-        </button>
-
       </div>
 
     </nav>
@@ -185,9 +189,7 @@
     {% endif %}
 
     <div id="tudo" class="container-fluid">    
-      {% if titulo %}
-        <h1 class="titulo">{% lng titulo.pt titulo.en %}</h1>
-      {% endif %}
+      {% if titulo %}<h1 class="titulo">{% lng titulo.pt titulo.en %}</h1>{% endif %}
       {% block content %}{% endblock %}
     </div>
   </main>
@@ -206,7 +208,6 @@
       </small>
     </div>
   </footer> {% endcomment %}
-
 
   {% include "linguas.html" %}
   
