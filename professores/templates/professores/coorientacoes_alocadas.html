@@ -5,10 +5,11 @@
   Data: 3 de Abril de 2023
 {% endcomment %}
 
+{% load static %}
+{% load certificados %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load certificados %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   {% include "reload.html" %}
 {% endblock %}

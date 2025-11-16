@@ -5,10 +5,11 @@
   Data: 17 de Abril de 2024
 {% endcomment %}
 
+{% load static %}
+{% load coluna %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load coluna %}
-  {% load linguas %}
   <style>
     table {border-collapse: collapse;}
     th, td {
@@ -17,7 +18,6 @@
     }
     thead {background-color: #EEF;}
   </style>
-
 {% endblock %}
 
 {% block content %}

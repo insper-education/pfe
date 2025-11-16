@@ -5,18 +5,19 @@
   Data: 23 de Fevereiro de 2025
 {% endcomment %}
 
+{% load static %}
+{% load bleach %}
+{% load l10n %}
+{% load alocacoes %}
+{% load relatos %}
+{% load addhttp %}
+{% load linguas %}
+{% load get_notas %}
+{% load get_descontos %}
+{% load exibe_notas %}
+{% load documentos %}
+
 {% block head %}
-  {% load static %}
-  {% load bleach %}
-  {% load l10n %}
-  {% load alocacoes %}
-  {% load relatos %}
-  {% load addhttp %}
-  {% load linguas %}
-  {% load get_notas %}
-  {% load get_descontos %}
-  {% load exibe_notas %}
-  {% load documentos %}
 
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
   <link rel="stylesheet" href="{% static 'css/mostra_horarios.css' %}">

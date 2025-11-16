@@ -5,22 +5,20 @@
   Data: 15 de Maio de 2020
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
-  {% load l10n %}
-  {% load addstr %}
-  {% load dictionary %}
-  {% load linguas %}
+{% load static %}
+{% load l10n %}
+{% load addstr %}
+{% load dictionary %}
+{% load linguas %}
 
+{% block head %}
   <link rel="stylesheet" href="{% static 'css/tab_simples.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_anotacoes.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} Para as setas {% endcomment %}
   <script src="{% static 'js/sort.js' %}"></script>
-  <script src="{% static 'js/Chart.min.js' %}"></script>
-  
+  <script src="{% static 'js/Chart.min.js' %}"></script>  
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
 {% endblock %}
 
 {% block content %}

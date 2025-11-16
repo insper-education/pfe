@@ -5,11 +5,12 @@
   Data: 20 de Fevereiro de 2022
 {% endcomment %}
 
+{% load static %}
+{% load i18n %}
+{% load linguas %}
+{% load relatos %}
+
 {% block head %}
-  {% load static %}
-  {% load i18n %}
-  {% load linguas %}
-  {% load relatos %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 {% endblock %}

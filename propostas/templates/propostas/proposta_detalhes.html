@@ -5,10 +5,10 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% block head %}
+{% load static %}
+{% load linguas %}
 
-  {% load static %}
-  {% load linguas %}
+{% block head %}
 
   {% comment %} Para o gráfico no final da página {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>

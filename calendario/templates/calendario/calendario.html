@@ -5,16 +5,15 @@
   Data: 24 de Junho de 2019
 {% endcomment %}
 
+{% load static %}
+{% load i18n %}
+{% load get_field %}
+{% load nospaces %}
+{% load date_extras %}
+{% load addhttp %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load i18n %}
-  {% load get_field %}
-  {% load nospaces %}
-  {% load date_extras %}
-  {% load addhttp %}
-  {% load linguas %}
-
-
   <script src="{% static 'js-year-calendar/dist/js-year-calendar.min.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'js-year-calendar/dist/js-year-calendar.min.css' %}" />
   <link rel='stylesheet' href="{% static 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css' %}" crossorigin="anonymous">

@@ -5,17 +5,16 @@
   Data: 10 de Abril de 2020
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
-  {% load i18n %}
-  {% load tz %}
-  {% load get_field %}
-  {% load linguas %}
-  {% load bleach %}
-  
+{% load static %}
+{% load i18n %}
+{% load tz %}
+{% load get_field %}
+{% load linguas %}
+{% load bleach %}
+
+{% block head %}  
   <link rel="stylesheet" href="{% static 'css/form_aval.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
-
   <style>
     .borientacoes {
       border: 1px solid #ccc;
@@ -26,7 +25,6 @@
       background-color: #ffffdd;
     }
   </style>
-
 {% endblock %}
 
 {% block content %}

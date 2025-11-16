@@ -5,12 +5,13 @@
   Data: 31 de Janeiro de 2022
 {% endcomment %}
 
+{% load static %}
+{% load i18n %}
+{% load get_field %}
+{% load linguas %}
+{% load github %}
+
 {% block head %}
-  {% load static %}
-  {% load i18n %}
-  {% load get_field %}
-  {% load linguas %}
-  {% load github %}
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">

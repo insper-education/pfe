@@ -5,16 +5,14 @@
   Data: 8 de Junho de 2021
 {% endcomment %}
 
+{% load static %}
+{% load get_field %}
+{% load index %}
+{% load linguas %}
+
 {% block head %}
-
-  {% load static %}
-  {% load get_field %}
-  {% load index %}
-  {% load linguas %}
-
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
-
   <style>
     label {
       margin-bottom: 2px;

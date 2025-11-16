@@ -5,9 +5,10 @@
   Data: 6 de Abril de 2023
 {% endcomment %}
 
+{% load static %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'css/tabela_reduzida_estudantes.css' %}">

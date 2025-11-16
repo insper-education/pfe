@@ -5,21 +5,17 @@
   Data: 27 de Abril de 2020
 {% endcomment %}
 
+{% load static %}
+{% load linguas %}
+{% load get_field %}
+
 {% block head %}
-  {% load static %}
-  {% load linguas %}
-  {% load get_field %}
-
-  {% comment %} <script src="https://www.geradorcnpj.com/assets/js/jquery.maskedinput-1.1.4.pack.js"></script> {% endcomment %}
-  {% comment %} <script src="{% static 'js/jquery.maskedinput-1.1.4.pack.js' %}"></script> {% endcomment %}
   <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
-
   <script>
     $(document).ready(function(){	
       $("#cnpj").mask("99.999.999/9999-99");
     });
   </script>
-
 {% endblock %}
 
 {% block content %}

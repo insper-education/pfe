@@ -5,10 +5,11 @@
   Data: 24 de Abril de 2020
 {% endcomment %}
 
+{% load static %}
+{% load aderencia_aluno %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load aderencia_aluno %}
-  {% load linguas %}
 
   {% comment %} Para recarregar a página em caso de um botão back ou similar {% endcomment %}
   {% include "reload.html" %}

@@ -5,30 +5,16 @@
   Data: 5 de Agosto de 2019
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
-  {% load certificados %}
-  {% load get_notas %}
-  {% load linguas %}
-  {% load get_descontos %}
+{% load static %}
+{% load certificados %}
+{% load get_notas %}
+{% load linguas %}
+{% load get_descontos %}
 
+{% block head %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
-  {% comment %} <style>
-    hr.style-five {
-      border: 0;
-      height: 0;
-      box-shadow: 0 0 10px 1px black;
-    }
-    hr.style-five:after {
-      content: "\00a0";
-    }
-    p {
-      margin-bottom: 0.1em;
-    }
-  </style> {% endcomment %}
 {% endblock %}
-
 
 {% block content %}
   

@@ -5,13 +5,10 @@
   Data: 27 de Maio de 2025
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
-  {% load linguas %}
-{% endblock %}
+{% load static %}
+{% load linguas %}
 
 {% block content %}
-
     {% include "tabelas_top_ml.html" with tabela="AreasInteresse" cabecalhos=cabecalhos tabela_simples=True %}
       {% for area in areas %}
         <tr class="item">
@@ -21,5 +18,4 @@
       {% endfor %}
     {% include "tabelas_bottom.html" %}
   </div>
-
 {% endblock %}

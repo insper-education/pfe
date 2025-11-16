@@ -5,9 +5,10 @@
   Data: 22 de Março de 2021
 {% endcomment %}
 
+{% load static %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   {% include "heads_calendar.html" %}
   {% include "cores_bancas_mentorias.html" %}

@@ -5,23 +5,22 @@
   Data: 20 de Abril de 2021
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
-  {% load dictionary %}
-  {% load l10n %}
-  {% load i18n %}
-  {% load linguas %}
-  {% load exibe_notas %}
-  {% load documentos %}
-  {% load negate %}
-  {% include "tabelas_includes.html" %}
+{% load static %}
+{% load dictionary %}
+{% load l10n %}
+{% load i18n %}
+{% load linguas %}
+{% load exibe_notas %}
+{% load documentos %}
+{% load negate %}
 
+{% block head %}
+  {% include "tabelas_includes.html" %}
   <style>
     .pesos_aval {display: none;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
   </style>
-
 {% endblock %}
 
 {% block content %}

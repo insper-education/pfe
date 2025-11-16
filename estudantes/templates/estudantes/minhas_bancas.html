@@ -5,15 +5,15 @@
   Data: 22 de Novembro de 2019
 {% endcomment %}
 
+{% load static %}
+{% load exibe_notas %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load exibe_notas %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 {% endblock %}
 
 {% block content %}
-
   {% if bancas %}
     {% for banca in bancas.reverse %} 
       <div class="div_arredondado">

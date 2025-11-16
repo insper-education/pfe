@@ -5,12 +5,14 @@
   Data: 8 de Março de 2020
 {% endcomment %}
 
+{% load static %}
+{% load linguas %}
+{% load define_action %}
+{% load get_field %}
+{% load propostas %}
+
 {% block head %}
-  {% load static %}
-  {% load linguas %}
-  {% load define_action %}
-  {% load get_field %}
-  {% load propostas %}
+
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 
   <style>

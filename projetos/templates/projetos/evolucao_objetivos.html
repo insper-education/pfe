@@ -5,11 +5,11 @@
   Data: 22 de Setembro de 2020
 {% endcomment %}
 
-{% block head %}
+{% load static %}
+{% load addstr %}
+{% load l10n %}
 
-  {% load static %}
-  {% load addstr %}
-  {% load l10n %}
+{% block head %}
 
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>

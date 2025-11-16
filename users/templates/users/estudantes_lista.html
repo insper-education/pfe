@@ -5,21 +5,16 @@
   Data: 23 de Maio de 2019
 {% endcomment %}
 
+{% load static %}
+{% load dictionary %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load dictionary %}
-  {% load linguas %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   {% include "tabelas_includes.html" %}
   {% include "reload.html" %}
-
   {% comment %} Melhor não usar números absolutos de gênero visto que os estudantes não foram consultados sobre isso. {% endcomment %}
   {% comment %} <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script> {% endcomment %}
-
-  {% comment %} <style>
-    th {padding: 1px 4px 1px 4px;}
-  </style> {% endcomment %}
-
 {% endblock %}
 
 {% block content %}

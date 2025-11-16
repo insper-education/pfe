@@ -5,9 +5,10 @@
   Data: 3 de Outubro de 2019
 {% endcomment %}
 
+{% load static %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <link rel="stylesheet" href="{% static 'professores/css/agendamentos.css' %}">
   {% include "heads_calendar.html" %}

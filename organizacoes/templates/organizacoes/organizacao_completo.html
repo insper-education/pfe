@@ -5,11 +5,12 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% load static %}
+{% load format_cnpj %}
+{% load order_by %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load format_cnpj %}
-  {% load order_by %}
-  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}

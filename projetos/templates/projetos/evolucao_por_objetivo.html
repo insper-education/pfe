@@ -5,15 +5,13 @@
   Data: 23 de Fevereiro de 2022
 {% endcomment %}
 
+{% load static %}
+{% load addstr %}
+{% load l10n %}
+
 {% block head %}
-
-  {% load static %}
-  {% load addstr %}
-  {% load l10n %}
-
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
-
 {% endblock %}
 
 {% block content %}

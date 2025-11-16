@@ -5,10 +5,11 @@
   Data: 14 de Janeiro de 2024
 {% endcomment %}
 
+{% load static %}
+{% load date_extras %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load date_extras %}
-  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 

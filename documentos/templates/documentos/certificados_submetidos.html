@@ -5,11 +5,12 @@
   Data: 25 de Abril de 2020
 {% endcomment %}
 
+{% load static %}
+{% load escape_emails %}
+{% load nospaces %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load escape_emails %}
-  {% load nospaces %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
 

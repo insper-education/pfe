@@ -5,12 +5,13 @@
   Data: 18 de Agosto de 2023
 {% endcomment %}
 
+{% load static %}
+{% load certificados %}
+{% load tipo_documento %}
+{% load documentos %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load certificados %}
-  {% load tipo_documento %}
-  {% load documentos %}
-  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
 {% endblock %}

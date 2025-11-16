@@ -5,11 +5,12 @@
   Data: 4 de Setembro de 2019
 {% endcomment %}
 
+{% load static %}
+{% load certificados %}
+{% load addhttp %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load certificados %}
-  {% load addhttp %}
-  {% load linguas %}
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}

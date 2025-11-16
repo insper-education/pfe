@@ -5,11 +5,12 @@
   Data: 26 de Janeiro de 2022
 {% endcomment %}
 
+{% load static %}
+{% load get_field %}
+{% load get_prazo %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load get_field %}
-  {% load get_prazo %}
-  {% load linguas %}
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}">
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
 

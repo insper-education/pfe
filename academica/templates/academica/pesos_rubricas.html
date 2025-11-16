@@ -5,16 +5,16 @@
   Data: 11 de Outubro de 2025
 {% endcomment %}
 
+{% load static %}
+{% load i18n %}
+{% load l10n %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load i18n %}
-  {% load l10n %}
-  {% load linguas %}
   <script src="{% static 'js/sort.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-
 
   <h4>{% lng "Objetivos de Aprendizagem e Rubricas" "Learning Goals and Rubrics" %}</h4>
   {% include "professores/includes/tabela_objetivos_rubricas.html" %}
@@ -48,6 +48,5 @@
       </small>
     </caption>
   {% include "tabelas_bottom.html" %}
-  
 
 {% endblock %}

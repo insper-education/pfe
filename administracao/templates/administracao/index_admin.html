@@ -5,14 +5,13 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-{% block head %}
-  {% load static %}
+{% load static %}
+
+{% block head %} 
   <link rel="stylesheet" href="{% static 'css/indexes.css' %}">
   {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
-
   {% include "administracao/administracao.html" %}
-  
 {% endblock %}

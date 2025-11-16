@@ -5,15 +5,13 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
+{% load static %}
+{% load get_field %}
+{% load linguas %}
+
 {% block head %}
-  {% load static %}
-  {% load get_field %}
-  {% load linguas %}
-
   <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
-
   <script src="{% static 'js/aviso_perda_edicao.js' %}"></script>
-
   <style>
     .ent_nome {cursor:pointer;}
     .ent_nome:hover {background-color: #eee;}
