@@ -113,6 +113,7 @@
 
 {% with estilos_respostas=usuario|estilos_respostas %}
   {% if estilos_respostas %}
+    <br>
     {% with estilos=usuario|estilos_comunicacao %}
       {% include "estudantes/includes/estilos_respostas.html"  with usuario=usuario %}
     {% endwith %}

@@ -113,7 +113,13 @@
 
   {% include "toggle_anteriores.html" %}
 
-  {% lng 'Obs: Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua' 'Note: Professor, to schedule/update an examination board, access "Agendar Bancas" in your' %}
-  <a href="{% url 'index_professores' %}">{% lng "página do Professor" "Professor's page" %}</a>.
+  <div class="alert alert-info alert-dismissible fade show d-flex align-items-center mt-3" role="alert" aria-live="polite">
+    <i class="fas fa-calendar-plus fa-lg mr-2" aria-hidden="true"></i>
+    <div>
+      <strong>{% lng "Obs" "Note" %}:</strong>
+      {% lng 'Professor, para cadastrar/atualizar uma banca, acesse "Agendar Bancas" na sua' 'Professor, to schedule/update an examination board, access "Schedule Boards" in your' %}
+      <a class="alert-link" href="{% url 'index_professores' %}">{% lng "página do Professor" "Professor&#39;s page" %} <i class="fas fa-link"></i></a>.
+    </div>
+  </div>
 
 {% endblock %}

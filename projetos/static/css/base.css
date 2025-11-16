@@ -277,18 +277,6 @@ a#logo_inicial:hover {
   
 }
 
-/* Aparentemente não mais usado */
-/* #username { 
-  color: rgb(250, 250, 250);
-  font-size: 12px;
-  vertical-align: middle;
-  display: inline-block;
-  width: 57%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-} */
-
 @media only screen and (max-width: 740px) {
   .titulo {
     font-size: 21px;

@@ -81,7 +81,7 @@ def index(request):
 def info(request):
     """Página com informações."""
     info = get_object_or_404(Carta, template="Informação")
-    return render(request, "info.html", {"info": info})
+    return render(request, "info.html", {"info": info, "titulo": {"pt": "Informações Capstone", "en": "Capstone Information"}})
 
 def sistema(request):
     """Página com informações sobre o sistema."""

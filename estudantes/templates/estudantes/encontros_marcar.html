@@ -52,19 +52,11 @@
 
 {% block content %}
 
-  {% if user.eh_estud %}
-  <h5 class="mb-3">
+  <h5 class="mb-3 mt-3">
     <span style="background:#e3f2fd; color:#0d47a1; padding:0.3em 0.7em; border-radius:8px;">
       {% lng "Projeto" "Project" %}: {{ projeto.get_titulo_org }}
     </span>
-  </h5> 
-  {% else %}
-    <h5 class="mb-3">{% lng "Somente visualização das opções de encontros (você não está registrado como estudante)" "Only viewing the meeting options (you are not registered as a student)" %}</h5>
-  {% endif %}
-
-  {% if aviso %}
-    <h4 class="red-bold">{{aviso|linebreaks}}</h4><br><br>
-  {% endif %}
+  </h5>
 
   <div id="horarios">
 

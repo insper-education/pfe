@@ -207,12 +207,13 @@ def encontros_marcar(request):
     ano = configuracao.ano
     semestre = configuracao.semestre
 
-    aviso = None  # Mensagem de aviso caso algum problema
+    mensagem_aviso = None  # Mensagem de aviso caso algum problema
 
     if request.user.eh_estud:  # Estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno, ano=ano, semestre=semestre).last()
     elif request.user.eh_prof_a: # caso Professor ou Administrador
-        projeto = None
+        projeto = {"get_titulo_org": "---"}
+        mensagem_aviso = {"pt": "Somente visualização das opções de encontros (você não está registrado como estudante)", "en": "Only viewing the meeting options (you are not registered as a student)"}
     else:
         return HttpResponse("Você não possui conta de estudante.", status=401)
 
@@ -253,18 +254,18 @@ def encontros_marcar(request):
         cancelado = None
 
         if not check_values:
-            aviso = "Selecione um horário."
+            mensagem_aviso = {"pt": "Selecione um horário.", "en": "Select a time."}
 
         else:    
             for encontro in encontros_da_tematica:
                 if str(encontro.id) == check_values[0]:  # Agenda Encontro
                     
                     if encontro.bloqueado:
-                        aviso = "Horário está bloqueado para agendamento."
+                        mensagem_aviso = {"pt": "Horário está bloqueado para agendamento.", "en": "Time slot is blocked for scheduling."}
                         break
 
                     elif encontro.startDate.date() <= hoje:
-                        aviso = "Horário já vencido."
+                        mensagem_aviso = {"pt": "Horário já vencido.", "en": "Time slot has already passed."}
                         break
 
                     elif encontro.projeto is None or encontro.projeto == projeto:
@@ -276,10 +277,10 @@ def encontros_marcar(request):
 
                     elif encontro.projeto != projeto:
                         # Se projeto foi selecionad por outro grupo
-                        aviso = "Infelizmente nesse meio tempo algum grupo selecionou o horário indicado!\nPor favor, selecione outro horário."
+                        mensagem_aviso = {"pt": "Infelizmente nesse meio tempo algum grupo selecionou o horário indicado!\nPor favor, selecione outro horário.", "en": "Unfortunately, in the meantime, another group selected the indicated time slot!\nPlease select another time slot."}
                         break
 
-            if aviso is None:
+            if mensagem_aviso is None:
                 for encontro in encontros_da_tematica:  # Cancela outro encontro
 
                     # Limpa seleção caso haja uma mudança
@@ -295,9 +296,6 @@ def encontros_marcar(request):
             for alocacao in alocacoes:
                 # mandar para cada membro do grupo
                 recipient_list.append(alocacao.aluno.user.email)
-            
-            # coordenação
-            #recipient_list.append(str(configuracao.coordenacao.user.email))
 
             message = message_agendamento_dinamica(agendado, cancelado)
             email(subject, recipient_list, message)
@@ -308,14 +306,14 @@ def encontros_marcar(request):
             }
             return render(request, "generic_ml.html", context=context)
 
-        if not aviso:
-            return HttpResponse("Problema! Por favor reportar.")
+        if not mensagem_aviso:
+            return HttpResponse("Algum Problema! Por favor reportar.")
 
     context = {
         "titulo": {"pt": "Agendar Mentorias", "en": "Schedule Mentoring"},
         "encontros_por_tematica_agendamento": encontros_por_tematica_agendamento,
         "projeto": projeto,
-        "aviso": aviso,
+        "mensagem_aviso": mensagem_aviso,
         "hoje": hoje,
         "configuracao": configuracao,
     }

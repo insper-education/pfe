@@ -5,25 +5,13 @@
   Data: 2 de Novembro de 2024
 {% endcomment %}
 
-{% block head %}
-  {% load linguas %}
-  <style>
-    .quad_pfe {
-      border: solid black 2px;
-      border-radius: 8px;
-      padding: 16px;
-    }
-  </style>
-{% endblock %}
+{% load linguas %}
 
 {% block content %}
-
   <div class="container-fluid" style="max-width:740px; padding-left: 6px; padding-right: 6px;">
     <div class="row justify-content-around">
-      <div class="col-xl-auto" style="margin-bottom: 18px;">
+      <div class="col-xl-auto" style="margin-bottom: 18px; margin-top: 18px;">
         <div class="quad_pfe texto-alinhado">
-          <h2>Capstone</h2>
-          <br>
           <span lang="pt">{{info.texto|safe}}</span>
           <span lang="en" style="display:none">{{info.texto_en|safe}}</span>
         </div>

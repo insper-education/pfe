@@ -56,30 +56,24 @@
     <hr>
     <h4>{% lng "Professor Responsável" "Professor in charge" %}</h4>
     <ol>
-    {% for projeto in responsavel %}
-      {% if projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_infos' projeto.id %}">
-        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-        {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-        </a>
-        {% comment %} {% with certificado_orientador=projeto|certificado_responsavel %}
-          {% if certificado_orientador %}
-            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
-          {% endif %}
-        {% endwith %} {% endcomment %}
-        </li>
-      {% endif %}
-    {% empty %}
-      {% lng "Projetos não encontrados" "Projects not found" %}
-    {% endfor %}
+      {% for projeto in responsavel %}
+        {% if projeto.alocacao_set.all.count > 0 %}
+          <li><a href="{% url 'projeto_infos' projeto.id %}">
+          {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+          {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
+          </a></li>
+        {% endif %}
+      {% empty %}
+        {% lng "Projetos não encontrados" "Projects not found" %}
+      {% endfor %}
     </ol>
   {% endif %}
 
   {% include "participacoes_usuario.html" with usuario=professor.user %}
-
+  
   {% if user.eh_admin %}
     <a href="{% url 'edita_usuario' professor.user.id %}">
-      <button class="btn btn-primary mb-1" style="float: right;">
+      <button class="btn btn-primary mb-1">
         {% lng "Editar" "Edit" %}
       </button>
     </a>
