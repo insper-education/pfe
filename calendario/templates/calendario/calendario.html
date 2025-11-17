@@ -126,8 +126,9 @@
           }
 
           // Em caso de eventos que passam pelo final de semana ou feriado, essa rotina remove se o evento não começa ou acabar exatamente no dia
-          if (date.getDay() === 6 || date.getDay() === 0 || feriado) { // sábado ou domingo ou feriado
+          if (date.getDay() === 6 || date.getDay() === 0 || feriado ) { // sábado ou domingo ou feriado (que não seja o próprio feriado)
             eventos = eventos.filter(e => 
+              e.sigla == "FERI" ||
               e.startDate.toISOString().slice(0, 10) === date.toISOString().slice(0, 10) || 
               e.endDate.toISOString().slice(0, 10) === date.toISOString().slice(0, 10)
             );
