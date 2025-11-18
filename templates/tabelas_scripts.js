@@ -96,6 +96,7 @@ var textos_linguas = {
 
 /** Quando exportando, função obtem o texto visível de um nó, considerando a língua atual. **/
 function getVisibleTextInNode(node) {
+  console.log(node);
   var text = '';
   const lingua = localStorage.getItem("lingua"); // Identifica a língua atual
   $(node).contents().each(function() {
@@ -107,6 +108,57 @@ function getVisibleTextInNode(node) {
   });
   return text.replace(/[\r\n]+/g, ' ').trim();
 }
+
+{% comment %} 
+/** Quando exportando, função obtem o texto visível de um nó, considerando a língua atual e visibilidade no DOM. **/
+function getVisibleTextInNode(node) {
+  if (!node) return '';
+  const lingua = localStorage.getItem("lingua") || "pt";
+  let out = '';
+
+  function isVisible(el) {
+    const $el = $(el);
+    if (!$el.is(':visible')) return false;              // display:none, visibility:hidden, d-none, etc.
+    if ($el.attr('aria-hidden') === 'true') return false;
+    return true;
+  }
+
+  function walk(n) {
+    if (!n) return;
+
+    if (n.nodeType === 3) { // Text node
+      // Só inclui se toda a cadeia de pais for visível e a língua não conflitar
+      let el = n.parentNode;
+      while (el && el.nodeType === 1) {
+        const $el = $(el);
+        const langAttr = $el.attr('lang');
+        if (langAttr && langAttr !== lingua) return;
+        if (!isVisible(el)) return;
+        if ($el.hasClass('no-export')) return; // opcional: permita marcar trechos que nunca devem exportar
+        el = el.parentNode;
+      }
+      out += n.nodeValue;
+      return;
+    }
+
+    if (n.nodeType === 1) { // Elemento
+      const $n = $(n);
+      const langAttr = $n.attr('lang');
+      if (langAttr && langAttr !== lingua) return;
+      if (!isVisible(n)) return;
+      if ($n.hasClass('no-export')) return;
+
+      for (let i = 0; i < n.childNodes.length; i++) {
+        walk(n.childNodes[i]);
+      }
+    }
+  }
+
+  walk(node);
+  return out.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+} {% endcomment %}
+
+
 
 var configuracao_table = {
     dom: "<'row mr-1'<'col-md-6'><'col-md-6 d-flex flex-row-reverse'f>>t<'row'<'col-md-6'i><'col-md-6'p>><'row'<'col-sm'><'col-md'><'col-md text-right'l>>",
