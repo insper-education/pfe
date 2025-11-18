@@ -117,6 +117,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                 "nota": banca_info["media"],
                                 "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
                                 "nome": exame.titulo,
+                                "nome_en": exame.titulo_en,
                                 "banca": True,
                                 "objetivos": banca_info["objetivos"]
                             })
@@ -129,6 +130,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     "nota": float(pnp.nota) if pnp.nota else None,
                                     "peso": 0,
                                     "nome": exame.titulo,
+                                    "nome_en": exame.titulo_en,
                                     "banca": True,
                                     "objetivos": None
                                 })
@@ -145,6 +147,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             "nota": banca_info["media"],
                             "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
                             "nome": exame.titulo,
+                            "nome_en": exame.titulo_en,
                             "banca": False,
                             "objetivos": banca_info["objetivos"]
                         })
@@ -155,6 +158,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             "nota": float(pnp.nota) if pnp.nota else None,
                             "peso": pnp.peso/100 if pnp.peso else 0,
                             "nome": exame.titulo,
+                            "nome_en": exame.titulo_en,
                             "banca": False,
                             "objetivos": None
                         })
