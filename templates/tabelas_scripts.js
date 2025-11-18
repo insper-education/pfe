@@ -96,7 +96,6 @@ var textos_linguas = {
 
 /** Quando exportando, função obtem o texto visível de um nó, considerando a língua atual. **/
 function getVisibleTextInNode(node) {
-  console.log(node);
   var text = '';
   const lingua = localStorage.getItem("lingua"); // Identifica a língua atual
   $(node).contents().each(function() {
@@ -108,56 +107,6 @@ function getVisibleTextInNode(node) {
   });
   return text.replace(/[\r\n]+/g, ' ').trim();
 }
-
-{% comment %} 
-/** Quando exportando, função obtem o texto visível de um nó, considerando a língua atual e visibilidade no DOM. **/
-function getVisibleTextInNode(node) {
-  if (!node) return '';
-  const lingua = localStorage.getItem("lingua") || "pt";
-  let out = '';
-
-  function isVisible(el) {
-    const $el = $(el);
-    if (!$el.is(':visible')) return false;              // display:none, visibility:hidden, d-none, etc.
-    if ($el.attr('aria-hidden') === 'true') return false;
-    return true;
-  }
-
-  function walk(n) {
-    if (!n) return;
-
-    if (n.nodeType === 3) { // Text node
-      // Só inclui se toda a cadeia de pais for visível e a língua não conflitar
-      let el = n.parentNode;
-      while (el && el.nodeType === 1) {
-        const $el = $(el);
-        const langAttr = $el.attr('lang');
-        if (langAttr && langAttr !== lingua) return;
-        if (!isVisible(el)) return;
-        if ($el.hasClass('no-export')) return; // opcional: permita marcar trechos que nunca devem exportar
-        el = el.parentNode;
-      }
-      out += n.nodeValue;
-      return;
-    }
-
-    if (n.nodeType === 1) { // Elemento
-      const $n = $(n);
-      const langAttr = $n.attr('lang');
-      if (langAttr && langAttr !== lingua) return;
-      if (!isVisible(n)) return;
-      if ($n.hasClass('no-export')) return;
-
-      for (let i = 0; i < n.childNodes.length; i++) {
-        walk(n.childNodes[i]);
-      }
-    }
-  }
-
-  walk(node);
-  return out.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-} {% endcomment %}
-
 
 
 var configuracao_table = {
@@ -191,7 +140,11 @@ var configuracao_table = {
 
         $.extend( true, {}, buttonCommon, {
             extend: "csv",
-            title: titulo_arquivo,
+            title: function() {
+                var edicao = $("#filterEdicao option:selected").attr("value") || "";
+                edicao = edicao.replace(/\./g, '_');
+                return titulo_arquivo + (edicao ? "_" + edicao : "");
+            },
             fieldBoundary: '"',
             fieldSeparator: ',',
             exportOptions: {
@@ -205,7 +158,11 @@ var configuracao_table = {
 
         $.extend( true, {}, buttonCommon, {
             text: "JSON",
-            filename: titulo_arquivo,
+            filename: function() {
+                var edicao = $("#filterEdicao option:selected").attr("value") || "";
+                edicao = edicao.replace(/\./g, '_');
+                return titulo_arquivo + (edicao ? "_" + edicao : "");
+            },
             action: function (e, dt, node, config) {
                 var data = dt.buttons.exportData($.extend(true, {}, config.exportOptions));
                 var json = JSON.stringify(data, null, 2);
@@ -213,7 +170,8 @@ var configuracao_table = {
                 var url = URL.createObjectURL(blob);
                 var a = document.createElement('a');
                 a.href = url;
-                a.download = (config.filename || "datatable") + ".json";
+                var nomeArquivo = typeof config.filename === 'function' ? config.filename() : (config.filename || "datatable");
+                a.download = nomeArquivo + ".json";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -230,7 +188,11 @@ var configuracao_table = {
 
         $.extend( true, {}, buttonCommon, {
             extend: "excel",
-            title: titulo_arquivo,
+            title: function() {
+                var edicao = $("#filterEdicao option:selected").attr("value") || "";
+                edicao = edicao.replace(/\./g, '_');
+                return titulo_arquivo + (edicao ? "_" + edicao : "");
+            },
             exportOptions: {
               format: {
                 body: function (data, row, column, node) {
@@ -242,7 +204,11 @@ var configuracao_table = {
 
         $.extend( true, {}, buttonCommon, {
             extend: "pdf",
-            title: titulo_arquivo,
+            title: function() {
+                var edicao = $("#filterEdicao option:selected").attr("value") || "";
+                edicao = edicao.replace(/\./g, '_');
+                return titulo_arquivo + (edicao ? "_" + edicao : "");
+            },
             orientation: "landscape",
             pageSize: "A4",
             text: '<span class="fa fa-file-pdf-o">PDF</span>',
@@ -255,12 +221,12 @@ var configuracao_table = {
             }
         } ),
         
-        'colvis'
+        "colvis"
     ],
     lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "todos"] ],
     stateSave: true,
     columnDefs: [  {% comment %} Para ordenar com os acentos {% endcomment %}
-        { type: 'chinese-string', targets: 0 }
+        { type: "chinese-string", targets: 0 }
     ],
 
     language: textos_linguas["pt"],
