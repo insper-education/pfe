@@ -21,7 +21,17 @@
     }
     .errorlist {list-style-type: none; padding: 0; margin: 0;}
     .errorlist li {color: red;}
+    .card-login-header {
+      background: linear-gradient(135deg, #c53030 0%, #e65252 65%);
+      color: #fff;
+      padding-top: 1.1rem;
+      padding-bottom: 0.9rem;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    }
   </style>
+
 {% endblock %}
 
 {% block content %}
@@ -29,7 +39,7 @@
     <div class="row justify-content-center">
       <div class="col-sm-9 col-md-7 col-lg-7">
         <div class="card shadow-sm">
-          <div class="card-header text-center bg-primary text-white">
+          <div class="card-login-header text-center">
             <h2>{% lng "Autenticação de Usuário" "User Authentication" %}</h2>
           </div>
           <div class="card-body">
