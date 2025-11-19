@@ -19,6 +19,7 @@
   {% include "tabelas_includes.html" %}
   <style>
     .pesos_aval {display: none;}
+    .objet_aval {display: none;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
   </style>
@@ -70,21 +71,25 @@
         {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
           <td>
             {% for aval in aluno|recuper_notas_estudante|dict_key:ano_semestre %}{% nospaces %}<!-- Notas -->
+              {% with objs_items=aval.objetivos.items %}
               {% language "pt-br" %}<span style="white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
+              title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in objs_items %}&bull;{{o.titulo}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
               lang="pt">
                 {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
                 >={% if aval.peso > 0 %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                 {% if aval.nota == None %}<span style="color:red">??,??</span>{% endif %}
+                {% if objs_items %}<span class="objet_aval">[{% for o,p in objs_items %}{{o.sigla}}={{p.0|floatformat:1}}{% if forloop.last %}{% else %};{% endif %}{% endfor %}]</span>{% endif %}
               </span>{% endlanguage %}
               {% language "en" %}<span style="white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{aval.nome_en}} | weight={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo_en}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
+              title="{{aval.nome_en}} | weight={% widthratio aval.peso 1 100 %}%<br>{% for o,p in objs_items %}&bull;{{o.titulo_en}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
               lang="en" style="display:none">
                 {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
                 >={% if aval.peso > 0 %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                 {% if aval.nota == None %}<span style="color:red">??.??</span>{% endif %}
+                {% if objs_items %}<span class="objet_aval">[{% for o,p in objs_items %}{{o.sigla}}={{p.0|floatformat:1}}{% if forloop.last %}{% else %};{% endif %}{% endfor %}]</span>{% endif %}
               </span>{% endlanguage %}
-            {% endnospaces %} {% endfor %}{% comment %} Para o espaço para as notas acima {% endcomment %}
+              
+            {% endwith %}{% endnospaces %} {% endfor %}{% comment %} Para o espaço para as notas acima {% endcomment %}
           </td>
 
           {% if alocacao %}
