@@ -15,9 +15,9 @@
 </script>
 
 <script>
-  var nota = 0.0;
-  var peso = 0.0;
-  var descontos = 0.0;
+  var nota_{{alocacao.id}} = 0.0;
+  var peso_{{alocacao.id}} = 0.0;
+  var descontos_{{alocacao.id}} = 0.0;
 </script>
 
 {% if user.eh_admin and alocacao %}
@@ -31,17 +31,16 @@
       <tbody>
         <tr>
           <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
-          {% comment %} {% for aval, nota, peso, descr in notas %} {% endcomment %}
           {% for aval in notas %}
             {% if alocacao|exibe_notas:aval.sigla or not user.eh_estud  %} <!-- Filtra certas avaliações para estudantes não verem -->
               <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
-                <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
+                <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                 {% if not forloop.last %}<span class="short">|</span>{% endif %}
                 {% if aval.peso > 0 %}
                   <script>
-                    nota += {{aval.nota|unlocalize}} * {{aval.peso|unlocalize}};
-                    peso += {{aval.peso|unlocalize}};
+                    nota_{{alocacao.id}} += {{aval.nota|unlocalize}} * {{aval.peso|unlocalize}};
+                    peso_{{alocacao.id}} += {{aval.peso|unlocalize}};
                   </script>
                 {% endif %}
               </td>
@@ -51,18 +50,18 @@
           {% if descontos.0 > 0 %}
             <td class="td_desc" style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
                 title="{% for e in descontos.1 %}{{e}}<br>{% endfor %}">
-              {% lng "Descontos" "Discounts" %} = {{descontos.0|floatformat:2}}
+              {% lng "Descontos" "Discounts" %} = {% lng_2 descontos.0 %}
             </td>
             <script>
-              descontos = {{descontos.0|unlocalize}};
+              descontos_{{alocacao.id}} = {{descontos.0|unlocalize}};
             </script>
           {% endif %}
           
           <td data-toggle="tooltip" data-html="true" animation="true" title="
-          A média final é calculada considerando todas as avaliações e seus respectivos pesos mesmo as avaliações ainda não realizadas.<br>
-          A média provisória é calculada como a soma ponderada das avaliações dividida pela soma dos pesos das avaliações já realizadas.
+          A média é calculada como a soma ponderada das avaliações dividida pela soma dos pesos das avaliações já realizadas.<br>
+          Se houver descontos, eles já foram subtraídos da média calculada e apresentados aqui.
           ">
-            <b>{% lng "Média Final" "Final Grade" %} = <span id="media{{alocacao.id}}">0.0</span> <span id="aviso{{alocacao.id}}"></span></b>    
+            <b>{% lng "Média" "Grade" %} = <span id="media{{alocacao.id}}"></span> <span id="aviso{{alocacao.id}}"></span></b>    
           </td>
 
         </tr>
@@ -81,23 +80,33 @@
     {% endif %}
 
     <script>
-      if(peso > 0.0) {
+
+    function mostra_notas_ind_{{alocacao.id}}() {
+      lingua = localStorage.getItem("lingua");
+      if(peso_{{alocacao.id}} > 0.999) { {% comment %} Considerando que já fechou as notas e é a final {% endcomment %}
         {% with media=alocacao|get_media_alocacao:request %}
           {% if media %}
             {% if media.probation %}
               document.getElementById("media{{alocacao.id}}").innerHTML = "probatório";
               {% if user.eh_admin %}
-                document.getElementById("media{{alocacao.id}}").innerHTML += " ({{media.media|floatformat:2}})";
+                document.getElementById("aviso{{alocacao.id}}").innerHTML = "(" + loc({{media.media|unlocalize}}, lingua, 2) + ")";
               {% endif %}
             {% else %}
-              document.getElementById("media{{alocacao.id}}").innerHTML = "{{media.media|floatformat:2}}";
+              document.getElementById("media{{alocacao.id}}").innerHTML = loc({{media.media|unlocalize}}, lingua, 2);
+              document.getElementById("aviso{{alocacao.id}}").innerHTML = "(final)";
             {% endif %}
           {% endif %}
         {% endwith %}
-        if(peso < 0.99) {
-            document.getElementById("aviso{{alocacao.id}}").innerHTML = "<span style='white-space: nowrap;''> (média provisória = " + loc( (nota/peso) - descontos ) +  ")</span>";
+      } else { {% comment %} Média provisória {% endcomment %}
+        if(peso_{{alocacao.id}} > 0.001) {
+          document.getElementById("media{{alocacao.id}}").innerHTML = loc( (nota_{{alocacao.id}}/peso_{{alocacao.id}}) - descontos_{{alocacao.id}}, lingua, 2 );
+          document.getElementById("aviso{{alocacao.id}}").innerHTML = "<span style='white-space: nowrap;''> (parcial = " + loc(peso_{{alocacao.id}}*100, lingua, 0 ) +  "%)</span>";
         }
       }
+    }
+    mostra_notas_ind_{{alocacao.id}}();
+    document.addEventListener("languageChanged", mostra_notas_ind_{{alocacao.id}});
+
     </script>
   </div>
 {% endif %}

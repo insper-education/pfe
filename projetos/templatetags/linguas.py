@@ -98,6 +98,21 @@ def lng_2(numero):
     en_text = locale.format_string("%.2f", numero, grouping=True)
     return thtml(pt_text, en_text)
 
+# Para números com uma casa decimal
+@register.simple_tag
+def lng_1(numero):
+    try:
+        numero = float(numero)
+    except (ValueError, TypeError):
+        return thtml(numero, numero)
+    try:
+        locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
+    except locale.Error:  
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+    pt_text = locale.format_string("%.1f", numero, grouping=True)
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    en_text = locale.format_string("%.1f", numero, grouping=True)
+    return thtml(pt_text, en_text)
 
 # Para números com zero casas decimais
 @register.simple_tag
