@@ -17,11 +17,11 @@
 
   <style>
     .resizable-content {
-        min-height: 350px;
-        resize: both;
-        overflow: auto;
-        position: relative;
-        margin: auto;
+      min-height: 350px;
+      resize: both;
+      overflow: auto;
+      position: relative;
+      margin: auto;
     }
   </style>
 
@@ -41,11 +41,9 @@
 
   <div id="atualizar">
 
-    <br><br>
+    <div class="container mt-1">
 
-    <div class="container">
-
-      <div class="row mt-5"><div style="height: {{edicoes|length}}00px" class="col resizable-content">
+      <div class="row mt-1"><div style="height: {{edicoes|length}}00px" class="col resizable-content">
         <canvas id="horizontal-div_objetivos"></canvas>
       </div></div>
 
@@ -53,18 +51,16 @@
         <canvas id="horizontal-objetivos"></canvas>
       </div></div>
 
-      <div class="row mt-5"><div style="height: {{edicoes|length}}00px" class="col resizable-content">
+      <div class="row mt-5"><div  class="col resizable-content">
         <canvas id="chart-medias"></canvas>
       </div></div>
-
-      <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
       <script>
 
         var labels = [{% for edicao in edicoes %}"{{edicao}}",{% endfor %}]
 
-        var students_pt = [{% for student in students %}"{{student}} estudante{% if student > 1 %}s{% endif %}",{% endfor %}]
-        var students_en = [{% for student in students %}"{{student}} student{% if student > 1 %}s{% endif %}",{% endfor %}]
+        var students_pt = [{% for qtd_alocacoes in alocacoes %}"{{qtd_alocacoes}} estudante{% if qtd_alocacoes > 1 %}s{% endif %}",{% endfor %}]
+        var students_en = [{% for qtd_alocacoes in alocacoes %}"{{qtd_alocacoes}} student{% if qtd_alocacoes > 1 %}s{% endif %}",{% endfor %}]
 
         var datasets = [
           {% for media in medias %}{ 
@@ -192,8 +188,8 @@
                 label: "{{media.objetivo.titulo}}",
                 label_pt: "{{media.objetivo.titulo}}",
                 label_en: "{{media.objetivo.titulo_en}}",
-                borderColor: "red",
-                backgroundColor: "red",
+                borderColor: "rgb(255,87,31)",
+                backgroundColor: "rgb(255,87,31)",
                 fill: false,
                 spanGaps: true,
                 stack: "{{media.objetivo.titulo}}",
@@ -204,8 +200,8 @@
                 label: "{{media.objetivo.titulo}}",
                 label_pt: "{{media.objetivo.titulo}}",
                 label_en: "{{media.objetivo.titulo_en}}",
-                borderColor: "yellow",
-                backgroundColor: "yellow",
+                borderColor: "rgb(204,204,0)",
+                backgroundColor: "rgb(204,204,0)",
                 fill: false,
                 spanGaps: true,
                 stack: "{{media.objetivo.titulo}}",
@@ -216,8 +212,8 @@
                 label: "{{media.objetivo.titulo}}",
                 label_pt: "{{media.objetivo.titulo}}",
                 label_en: "{{media.objetivo.titulo_en}}",
-                borderColor: "green",
-                backgroundColor: "green",
+                borderColor: "rgb(0,166,149)",
+                backgroundColor: "rgb(0,166,149)",
                 fill: false,
                 spanGaps: true,
                 stack: "{{media.objetivo.titulo}}",
@@ -231,7 +227,37 @@
           type: "horizontalBar",
           data: {datasets: div_datasets,},
           options: {            
-              legend: {display: false },
+              legend: {
+                display: true,
+                labels: {
+                  generateLabels: function(chart) {
+                    return [
+                      {
+                        text: "< 5.0",
+                        fillStyle: "rgb(255,87,31)",
+                        strokeStyle: "rgb(255,87,31)",
+                        hidden: false
+                      },
+                      {
+                        text: ">= 5.0 & <= 7.0",
+                        fillStyle: "rgb(204,204,0)",
+                        strokeStyle: "rgb(204,204,0)",
+                        hidden: false
+                      },
+                      {
+                        text: "> 7.0",
+                        fillStyle: "rgb(0,166,149)",
+                        strokeStyle: "rgb(0,166,149)",
+                        hidden: false
+                      }
+                    ];
+                  }
+                },
+                onClick: function(){} // desativa esconder ao clicar
+              
+                {% comment %} display: false  {% endcomment %}
+              },
+              tooltips: { enabled: false },
               maintainAspectRatio: false,
               title: {
                   display: true,

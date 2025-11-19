@@ -1901,19 +1901,18 @@ def evolucao_objetivos(request):
                 notas.append(media(notas_lista))
                 faixas.append(faixa)
 
-            #titulo = objetivo.titulo if configuracao.lingua == "pt" else objetivo.titulo_en
             medias.append({"objetivo": objetivo, "media": notas, "cor": cores[count], "faixas": faixas})
             count += 1
 
-        # Número de estudantes por semestre
-        students = []
+        # Número de estudantes alocados por semestre
+        alocacoes = []
         if curso == 'T':
-            alunos = Aluno.objects.all()
+            alocados = Alocacao.objects.all() #filter(projeto__ano=configuracao.ano, semestre=configuracao.semestre)
         else:
-            alunos = Aluno.objects.filter(curso2__sigla_curta=curso)
+            alocados = Alocacao.objects.filter(aluno__curso2__sigla_curta=curso) # , projeto__ano=configuracao.ano, semestre=configuracao.semestre)
         for edicao in edicoes:
             periodo = edicao.split('.')
-            students.append(alunos.filter(ano=periodo[0], semestre=periodo[1]).count())
+            alocacoes.append(alocados.filter(projeto__ano=periodo[0], projeto__semestre=periodo[1]).count())
 
         context = {
             "medias": medias,
@@ -1921,7 +1920,7 @@ def evolucao_objetivos(request):
             "semestre": configuracao.semestre,
             "edicoes": edicoes,
             "curso": curso,
-            "students": students,
+            "alocacoes": alocacoes,
         }
 
     else:
