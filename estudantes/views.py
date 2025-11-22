@@ -799,7 +799,7 @@ def minhas_bancas(request):
         # Banca do projeto (grupo, não probation)
         bancag = Banca.objects.filter(projeto=alocacao.projeto).order_by("-startDate")
 
-        # Banca do aluno (probation)
+        # Banca de estudante (individual, probation)
         bancai = Banca.objects.filter(alocacao=alocacao).order_by("-startDate")
         
         context["bancas"] =  bancag | bancai

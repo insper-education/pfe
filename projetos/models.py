@@ -956,7 +956,11 @@ class Banca(models.Model):
     
     def get_anotacoes_estudantes(self, avaliador):
         """Retorna as anotações dos estudantes."""
-        return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMB", usuario=avaliador).order_by("data")
+        if self.composicao.exame.sigla == "BI":
+            return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMBI", usuario=avaliador).order_by("data")
+        elif self.composicao.exame.sigla == "BF":
+            return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMBF", usuario=avaliador).order_by("data")
+        return Documento.objects.none()
     
     def get_observacoes_anotacoes_estudantes(self):
         """Retorna as observações e anotações dos estudantes."""

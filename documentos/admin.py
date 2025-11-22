@@ -11,9 +11,11 @@ from django.contrib import admin
 
 from .models import *
 
+from projetos.support_admin import dup_entrada
 
 @admin.register(TipoDocumento)
 class TipoDocumentoAdmin(admin.ModelAdmin):
     """Tipo Documento."""
     list_display = ("nome", "sigla", "projeto", "gravar", "arquivo", "link",)
     search_fields = ["nome",]
+    actions = [dup_entrada]
