@@ -617,8 +617,12 @@ def banca_avaliar(request, slug, documento_id=None):
                 julgamento_observacoes.save()
 
             if "arquivo" in request.FILES:
+                if banca.composicao.exame.sigla == "BI":
+                    doc__sigla="RAMBI"
+                else:  #elif banca.composicao.exame.sigla == "BF":
+                    doc__sigla="RAMBF"
                 # Envia documento com anotações para os envolvidos intantanemente
-                documento = cria_material_documento(request, "arquivo", sigla="RAMB", confidencial=False,
+                documento = cria_material_documento(request, "arquivo", sigla=doc__sigla, confidencial=False,
                                                     projeto=projeto, usuario=avaliador,
                                                     prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
                 if documento:
