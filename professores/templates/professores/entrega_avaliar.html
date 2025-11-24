@@ -127,24 +127,26 @@
         {% if not editor %}disabled{% endif %}
         rows="8" cols="100" maxlength="2048">{{observacao.observacoes_estudantes}}</textarea>
         
-        <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
-          <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
-            <i class="fas fa-paperclip" aria-hidden="true"></i>
-          </span>
-          <div style="flex: 1;">
-            <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
-              {% lng "Envio de documento com suas anotações (opcional e será enviado automaticamente para o grupo)" "Submission of document with your notes (optional and will be automatically sent to the group)" %}
-            </label>
-            <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
-            {% if relatorio_revisado_orientador %}
-              <span style="font-size: 0.8em; color: #1976d2; margin-top: 4px;  white-space: nowrap;">
-                <a href="{{request.scheme}}://{{request.get_host}}{{relatorio_revisado_orientador.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  [{% lng "última anotação" "last note" %} {{ relatorio_revisado_orientador.data|date:"d/m" }}]
-                </a>
-              </span>
-            {% endif %}
+        {% if composicao.exame.grupo %} {% comment %} Por enquando só é possível enviar um documento com suas anotações para todo o grupo. {% endcomment %}
+          <div style="background: #eefdfe; border: 1.5px dashed #1976d2; border-radius: 7px; padding: 2px 7px; margin-top: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 2px;">
+            <span style="font-size: 1.0em; color: #1976d2; margin: 5px;">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+            </span>
+            <div style="flex: 1;">
+              <label for="arquivo" style="font-size: 0.88em; color: #1976d2;">
+                {% lng "Envio de documento com suas anotações (opcional e será enviado automaticamente para o grupo)" "Submission of document with your notes (optional and will be automatically sent to the group)" %}
+              </label>
+              <input id="arquivo" type="file" name="arquivo" style="font-size: 0.8em; margin: 5px;" {% include "formatos_suportados.html" %}>
+              {% if relatorio_revisado_orientador %}
+                <span style="font-size: 0.8em; color: #1976d2; margin-top: 4px;  white-space: nowrap;">
+                  <a href="{{request.scheme}}://{{request.get_host}}{{relatorio_revisado_orientador.documento.url}}" target="_blank" rel="noopener noreferrer">
+                    [{% lng "última anotação" "last note" %} {{ relatorio_revisado_orientador.data|date:"d/m" }}]
+                  </a>
+                </span>
+              {% endif %}
+            </div>
           </div>
-        </div>
+        {% endif %}
 
       </div>
 

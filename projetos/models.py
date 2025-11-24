@@ -220,7 +220,7 @@ class Projeto(models.Model):
         return banca
     
     def get_documentos(self):  # Alguns documentos de interesse dos alunos
-        tipos_documentos_siglas = ["APE", "COP", "CC", "COE", "RFA", "RFR", "RFG", "RIG", "RPR", "RPU", "VP"]
+        tipos_documentos_siglas = ["APE", "COP", "CC", "COE", "RFA", "RFR", "RFG", "RIG", "RPR", "RPU", "VP", "RAO", "RAMBI", "RAMBF"]
         return Documento.objects.filter(projeto=self, tipo_documento__sigla__in=tipos_documentos_siglas).order_by("tipo_documento", "-data")
     
 class PropostaContato(models.Model):
