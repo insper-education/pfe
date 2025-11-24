@@ -92,4 +92,6 @@ def get_descontos_alocacao(alocacao):
         if desconto.nota is not None:
             nota_descontos += float(desconto.nota)
             mensagens.append(desconto.get_mensagem())
+        else:
+            mensagens.append(f"Desconto sem nota definido: {desconto.get_mensagem()}")
     return nota_descontos, mensagens

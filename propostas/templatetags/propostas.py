@@ -55,3 +55,17 @@ def opcao_alocacao(proposta, alocacao):
     if opcao:
         return opcao.prioridade
     return 'X'  # Retorna 'X' se não houver opção registrada
+
+
+@register.simple_tag
+def select_by_periodo(opcoes, ano, semestre):
+    if ano is None or semestre is None:
+        return opcoes.none()
+    return opcoes.filter(proposta__ano=ano, proposta__semestre=semestre)
+
+@register.simple_tag
+def exclude_by_periodo(opcoes, ano, semestre):
+    if ano is None or semestre is None:
+        return opcoes
+    return opcoes.exclude(proposta__ano=ano, proposta__semestre=semestre)
+
