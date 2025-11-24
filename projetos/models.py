@@ -2236,21 +2236,6 @@ class Desconto(models.Model):
                                  related_name="projeto_alocado_desconto",
                                  help_text="relacao de alocação entre projeto e estudante")
 
-    def __str__(self):
-        if self.projeto:
-            return f"{str(self.projeto)[:28]} > {str(self.nota)}"
-        else:
-            return f"{str(self.alocacao)[:28]} > {str(self.nota)}"
-
-    def get_mensagem(self):
-        mensagem = f"[{self.nota}] "
-        if self.evento:
-            return mensagem + str(self.evento)
-        elif self.reuniao:
-            return mensagem + str(self.reuniao)
-        elif self.encontro:
-            return mensagem + str(self.encontro)
-
     def get_referencia(self):
         if self.evento:
             return self.evento.get_title()
@@ -2268,6 +2253,23 @@ class Desconto(models.Model):
         elif self.encontro:
             return self.encontro.get_data()
         return None
+    
+    def get_mensagem(self):
+        data = self.get_data()
+        if data:
+            if isinstance(data, datetime.datetime):
+                horario = data.strftime("%d/%m/%Y %H:%M")
+            else:  # isinstance(data, datetime.date)
+                horario = data.strftime("%d/%m/%Y")
+        else:
+            horario = "Data Não Definida"
+        return f"[{self.nota}] " + self.get_referencia() + f" - {horario}"
+
+    def __str__(self):
+        if self.projeto:
+            return f"{str(self.projeto)[:36]} [{self.get_referencia()}] > {str(self.nota)}"
+        else:
+            return f"{str(self.alocacao)[:36]} [{self.get_referencia()}] > {str(self.nota)}"
 
     class Meta:
         verbose_name = "Desconto"
