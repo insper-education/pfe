@@ -622,7 +622,7 @@ def banca_avaliar(request, slug, documento_id=None):
                 else:  #elif banca.composicao.exame.sigla == "BF":
                     doc__sigla="RAMBF"
                 # Envia documento com anotações para os envolvidos intantanemente
-                documento = cria_material_documento(request, "arquivo", sigla=doc__sigla, confidencial=False,
+                documento = cria_material_documento(request, "arquivo", sigla=doc__sigla, confidencial=True,
                                                     projeto=projeto, usuario=avaliador,
                                                     prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
                 if documento:
@@ -1564,8 +1564,8 @@ def entrega_avaliar(request, composicao_id, projeto_id, estudante_id=None):
 
 
         if "arquivo" in request.FILES:
-            # Envia documento com anotações para os envolvidos intantanemente
-            documento = cria_material_documento(request, "arquivo", sigla="RAO", confidencial=False,
+            # Envia documento com anotações para os envolvidos instantanemente
+            documento = cria_material_documento(request, "arquivo", sigla="RAO", confidencial=True,
                                                 projeto=projeto, usuario=request.user,
                                                 prefix="rev_"+str(request.user.first_name)+"_"+str(composicao.exame.sigla)+"_")
             if documento:

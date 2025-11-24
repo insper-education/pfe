@@ -140,8 +140,6 @@ def le_arquivo(request, local_path, path, bypass_confidencial=False):
     file_path = os.path.abspath(local_path)
     if ".." in file_path:   # Protecao
         raise PermissionDenied
-    # if "\\" in file_path:   # Protecao, porem nao funciona no windows
-    #     raise PermissionDenied
     if os.path.exists(file_path):
         documento = local_path[len(settings.BASE_DIR) + len(settings.MEDIA_URL):]
         
