@@ -22,6 +22,168 @@
     .objet_aval {display: none;}
     tbody tr:nth-child(even) {background-color: #f2f2f2;}
     tbody tr:nth-child(odd) {background-color: #f9f9f9;}
+
+    /* Estatísticas modernas */
+    .estatisticas_notas {
+      display: none;
+      margin-top: 2rem;
+    }
+    .stats-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .stats-header h4 {
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .stats-header h5 {
+      color: #6c757d;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 0.4rem;
+      margin: 0.9rem 0;
+      max-width: 100%;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 0.95rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+    .stat-card.green {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+    }
+    .stat-card.orange {
+      background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+      box-shadow: 0 4px 15px rgba(242, 153, 74, 0.4);
+    }
+    .stat-card.red {
+      background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+      box-shadow: 0 4px 15px rgba(235, 51, 73, 0.4);
+    }
+    .stat-card.blue {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-icon {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.75rem;
+      font-size: 2.5rem;
+      opacity: 0.3;
+    }
+    .stat-detail {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-top: 0.5rem;
+    }
+    
+    /* Mini gráfico de distribuição */
+    .distribution-chart {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-top: 1rem;
+    }
+    .chart-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .bars-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 120px;
+      gap: 0.5rem;
+    }
+    .bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .bar {
+      width: 100%;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 6px 6px 0 0;
+      transition: all 0.3s;
+      position: relative;
+      min-height: 4px;
+    }
+    .bar:hover {
+      opacity: 0.8;
+      transform: scaleY(1.05);
+    }
+    .bar-label {
+      font-size: 0.7rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+    .bar-count {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #495057;
+      white-space: nowrap;
+    }
+    
+    @media (max-width: 768px) {
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      .stat-value {
+        font-size: 1.75rem;
+      }
+    }
+
+
   </style>
 {% endblock %}
 
@@ -69,26 +231,27 @@
         </td>
 
         {% with alocacao=aluno.get_alocacoes|dict_key:ano_semestre %}
-          <td>
+          <td style="line-height: 1.6em;">
             {% for aval in aluno|recuper_notas_estudante|dict_key:ano_semestre %}{% nospaces %}<!-- Notas -->
               {% with objs_items=aval.objetivos.items %}
-              {% language "pt-br" %}<span style="white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
+              {% language "pt-br" %}<span data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in objs_items %}&bull;{{o.titulo}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
-              lang="pt">
+              lang="pt" style="white-space: nowrap; border-radius: 6px; background: #e0e9ec; margin-bottom: 0.08em; padding: 0.15em 0.15em;">
                 {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
                 >={% if aval.peso > 0 %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                 {% if aval.nota == None %}<span style="color:red">??,??</span>{% endif %}
                 {% if objs_items %}<span class="objet_aval">[{% for o,p in objs_items %}{{o.sigla}}={{p.0|floatformat:1}}{% if forloop.last %}{% else %};{% endif %}{% endfor %}]</span>{% endif %}
+                {% if aval.bloqueado %}<span style="color:orange; cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="Nota não visível para estudantes"><sup><i class="fas fa-eye-slash" style="font-size:0.85em;"></i></sup></span>{% endif %}
               </span>{% endlanguage %}
-              {% language "en" %}<span style="white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
+              {% language "en" %}<span data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome_en}} | weight={% widthratio aval.peso 1 100 %}%<br>{% for o,p in objs_items %}&bull;{{o.titulo_en}}=<b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}"
-              lang="en" style="display:none">
+              lang="en" style="white-space: nowrap; border-radius: 6px; background: #e0e9ec; margin-bottom: 0.08em; padding: 0.15em 0.15em; display:none">
                 {{aval.sigla}}<span class="pesos_aval">({% widthratio aval.peso 1 100 %}%)</span
                 >={% if aval.peso > 0 %}{{aval.nota|floatformat:1}}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
                 {% if aval.nota == None %}<span style="color:red">??.??</span>{% endif %}
                 {% if objs_items %}<span class="objet_aval">[{% for o,p in objs_items %}{{o.sigla}}={{p.0|floatformat:1}}{% if forloop.last %}{% else %};{% endif %}{% endfor %}]</span>{% endif %}
+                {% if aval.bloqueado %}<span style="color:orange; cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="Grade not visible to students"><sup><i class="fas fa-eye-slash" style="font-size:0.85em;"></i></sup></span>{% endif %}
               </span>{% endlanguage %}
-              
             {% endwith %}{% endnospaces %} {% endfor %}{% comment %} Para o espaço para as notas acima {% endcomment %}
           </td>
 
@@ -110,7 +273,7 @@
                 {{media.media_parcial|floatformat:2}}
               </td>
 
-              <td id="media{{aluno.id}}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
+              <td id="media{{aluno.id}}" data-pesos="{{ media.pesos }}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
 
                   {% if media.probation and user == alocacao.projeto.orientador.user %}
                     {% with parecer=alocacao.projeto|get_parecer_de_probatorio %}
@@ -141,7 +304,7 @@
                     style="color:red;"
                     title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">
                   {% else %}
-                    {% if media.pesos != 1 %}
+                    {% if media.pesos < 0.999 %}
                       style="color:orange;"
                       title="Pesos da média diferente de 100% ({% widthratio media.pesos 1 100 %}%)">
                     {% elif media.media < 5 %}
@@ -162,64 +325,174 @@
       {% endfor %}
     {% include "tabelas_bottom.html" %}
     
-   
     {% if alunos_list %}
-      <div id="medias" style="padding: 4px;">
-        <b>
-          {% lng "Média no semestre" "Semester average" %}
-          = <span id="media"></span>
-        </b><br>
-        <b>
-          {% lng "Desvio padrão no semestre" "Standard deviation in the semester" %}
-           = <span id="desvio"></span>
-        </b><br>
-      </div>
       {% if user.eh_admin %}
         <br>
-        <div style="padding-left: 46px"> 
-          <a target="_blank" rel="noopener noreferrer" href="{% url 'blackboard_notas' ano_semestre %}">
+        <a target="_blank" rel="noopener noreferrer" href="{% url 'blackboard_notas' ano_semestre %}">
+          <button class="btn btn-info" type="button">
             {% lng "Tabela para Blackboard" "Table for Blackboard" %}
-          </a>
-        </div>
+          </button>
+        </a><br>
       {% endif %}
     {% endif %}
 
-    <script>
+  </div>
 
-      var sum = 0;
-      var count = 0;
-      var array = [];
-      var all = $("#EstudantesTable > tbody > tr");
-      all.each(function() {
-          texto = $("td:eq(4)", this).text().trim().replace(",", ".");
-          nota = parseFloat(texto)
-          if(!isNaN(nota)) {
-            sum += nota
-            array.push(nota);
-            count++;
-          }
-      });
+  <div id="estatisticas_notas">
+    <div class="stats-header">
+      <h4><i class="fas fa-chart-pie"></i> {% lng "Estatísticas das Notas" "Grade Statistics" %}</h4>
+      <h5>{% lng "Somente considerando notas válidas com pesos fechados (100%)" "Only considering valid grades with closed weights (100%)" %}</h5>
+    </div>
+  </div>
 
-      if(count > 0) {
-        $("#medias").show();
-        $("#media").html((sum / count).toFixed(3));
-        var tamanho = array.length
-        var mean = array.reduce((a, b) => a + b) / tamanho
-        std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / tamanho)
-        $("#desvio").html(std.toFixed(5));
+  <div class="stats-container" id="stats-container" style="display:none;">
 
-      } else {
-        $("#medias").hide();
-      }
+    <div class="stat-card">
+      <div class="stat-label">{% lng "Média Geral" "Overall Average" %}</div>
+      <div class="stat-value" id="media-valor">--</div>
+      <div class="stat-detail">{% lng 'de' 'out of' %} <span id="media-detalhe"></span> {% lng 'estudantes' 'students' %}</div>
+      <i class="fas fa-chart-line stat-icon"></i>
+    </div>
     
-    </script>
-
+    <div class="stat-card green">
+      <div class="stat-label">{% lng "Desvio Padrão" "Standard Deviation" %}</div>
+      <div class="stat-value" id="desvio-valor">--</div>
+      <div class="stat-detail">{% lng 'dispersão dos dados' 'data dispersion' %}</div>
+      <i class="fas fa-wave-square stat-icon"></i>
+    </div>
+    
+    <div class="stat-card orange">
+      <div class="stat-label">{% lng "Mediana" "Median" %}</div>
+      <div class="stat-value" id="mediana-valor">--</div>
+      <div class="stat-detail">{% lng 'valor central' 'middle value' %}</div>
+      <i class="fas fa-align-center stat-icon"></i>
+    </div>
+    
+    <div class="stat-card red">
+      <div class="stat-label">{% lng "Taxa de Reprovação" "Failure Rate" %}</div>
+      <div class="stat-value" id="reprovacao-valor">--</div>
+      <div class="stat-detail" id="reprovacao-detalhe"></div>
+      <div class="stat-detail"><span id="reprovacao-detalhe_reprovados"></span> {% lng 'de' 'out of' %} <span id="reprovacao-detalhe_count"></span> {% lng 'estudantes' 'students' %}</div>
+      <i class="fas fa-exclamation-triangle stat-icon"></i>
+    </div>
+    
+    <div class="stat-card blue">
+      <div class="stat-label">{% lng "Maior Nota" "Highest Grade" %}</div>
+      <div class="stat-value" id="max-valor">--</div>
+      <div class="stat-detail">{% lng 'melhor desempenho' 'best performance' %}</div>
+      <i class="fas fa-trophy stat-icon"></i>
+    </div>
+    
+    <div class="stat-card blue">
+      <div class="stat-label">{% lng "Menor Nota" "Lowest Grade" %}</div>
+      <div class="stat-value" id="min-valor">--</div>
+      <div class="stat-detail">{% lng 'necessita atenção' 'needs attention' %}</div>
+      <i class="fas fa-arrow-down stat-icon"></i>
+    </div>
+  </div>
+  
+  <div class="distribution-chart" id="distribution-chart" style="display:none;">
+    <div class="chart-title">
+      <i class="fas fa-chart-bar"></i>
+      {% lng "Distribuição de Notas" "Grade Distribution" %}
+    </div>
+    <div class="bars-container" id="bars-container"></div>
   </div>
 
   <script>
-    {% comment %} function carrega_pagina() {}; {% endcomment %}
+    function calcularTudo() {
+      var array = [];
+      var all = $("#EstudantesTable > tbody > tr");
+      
+      all.each(function() {
+        texto = $("td:eq(7)", this).text().trim().replace(",", ".");
+        pesos = $("td:eq(7)", this).data("pesos");
+        nota = parseFloat(texto);
+        pesos = parseFloat(pesos);
+        // Considerar apenas notas válidas com pesos corretos
+        if(!isNaN(pesos) && pesos >= 0.999 && pesos <= 1.001) {
+          array.push(nota);
+        }
+      });
+
+      console.log("Notas coletadas:", array);
+
+      if(array.length > 0) {
+        $("#stats-container").show();
+        $("#distribution-chart").show();
+        $("#estatisticas_notas").show();
+        
+        // Cálculos estatísticos
+        var sum = array.reduce((a, b) => a + b, 0);
+        var count = array.length;
+        var mean = sum / count;
+        var std = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / count);
+        var sortedArray = [...array].sort((a, b) => a - b);
+        var median = count % 2 === 0 
+          ? (sortedArray[count/2 - 1] + sortedArray[count/2]) / 2 
+          : sortedArray[Math.floor(count/2)];
+        var maximo = Math.max(...array);
+        var minimo = Math.min(...array);
+        var reprovados = array.filter(x => x < 5).length;
+        var taxaReprovacao = (reprovados / count * 100);
+        
+        // Preencher cards
+        $("#media-valor").html(mean.toFixed(2));
+        $("#media-detalhe").html(count);
+        $("#desvio-valor").html(std.toFixed(2));
+        $("#mediana-valor").html(median.toFixed(2));
+        $("#reprovacao-valor").html(taxaReprovacao.toFixed(1) + "%");
+        $("#reprovacao-detalhe_reprovados").html(reprovados);
+        $("#reprovacao-detalhe_count").html(count );
+        $("#max-valor").html(maximo.toFixed(2));
+        $("#min-valor").html(minimo.toFixed(2));
+        
+        // Criar gráfico de distribuição
+        var ranges = [
+          {min: 0, max: 2.99, label: "0-2.9"},
+          {min: 3, max: 4.99, label: "3.0-4.9"},
+          {min: 5, max: 5.99, label: "5.0-5.9"},
+          {min: 6, max: 6.99, label: "6.0-6.9"},
+          {min: 7, max: 7.99, label: "7.0-7.9"},
+          {min: 8, max: 8.99, label: "8.0-8.9"},
+          {min: 9, max: 10, label: "9.0-10"}
+        ];
+        
+        var distribution = ranges.map(range => {
+          return {
+            label: range.label,
+            count: array.filter(x => x >= range.min && x <= range.max).length
+          };
+        });
+        
+        var maxCount = Math.max(...distribution.map(d => d.count));
+        
+        $("#bars-container").html(
+          distribution.map(d => {
+            var height = maxCount > 0 ? (d.count / maxCount * 100) : 0;
+            return `
+              <div class="bar-wrapper">
+                <div class="bar" style="height: ${height}%;">
+                  ${d.count > 0 ? `<div class="bar-count">${d.count}</div>` : ''}
+                </div>
+                <div class="bar-label">${d.label}</div>
+              </div>
+            `;
+          }).join('')
+        );
+      } else {
+        $("#stats-container").hide();
+        $("#distribution-chart").hide();
+        $("#estatisticas_notas").hide();
+      }
+    }
+
+    function carrega_pagina() {
+      calcularTudo();
+    };
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}
+      carrega_pagina();
     };
     window.onload = carrega_site;
 
