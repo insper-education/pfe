@@ -311,6 +311,7 @@ class DescontoAdmin(admin.ModelAdmin):
     """Descontos nas notas dos estudantes."""
     list_display = ("nota", "projeto", "alocacao",)
     list_filter = ("projeto__ano", "projeto__semestre","alocacao__projeto__ano", "alocacao__projeto__semestre",)
+    search_fields = ["projeto__titulo_final", "alocacao__aluno__user__username",]
     actions = [dup_entrada]
 
 @admin.register(Reuniao)
