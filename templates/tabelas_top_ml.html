@@ -28,7 +28,7 @@
       <caption style="text-align: right; padding-top: 6px;"><small>
         {% for linhas in captions %}
           {% for caption in linhas %}
-            <span style="white-space: nowrap;"><b {% if caption.cor %}style="color: {{caption.cor}};"{% endif %}>{{caption.sigla}}</b>:
+            <span style="white-space: nowrap;"><b {% if caption.cor %}style="color: {{caption.cor}};"{% endif %}>{{caption.sigla|safe}}</b>:
               {% lng caption.pt|safe caption.en|safe %}
             </span>
             {% if not forloop.last %}|{% endif %}

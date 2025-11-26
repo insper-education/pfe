@@ -32,7 +32,8 @@
         <tr>
           <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
           {% for aval in notas %}
-            {% if alocacao|exibe_notas:aval.sigla or not user.eh_estud  %} <!-- Filtra certas avaliações para estudantes não verem -->
+            {% if alocacao|exibe_notas:aval.sigla or user.eh_prof_a  %} <!-- Filtra certas avaliações para estudantes não verem -->
+            {% if not aval.bloqueado %}
               <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
                 <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
@@ -44,6 +45,7 @@
                   </script>
                 {% endif %}
               </td>
+            {% endif %}
             {% endif %}
           {% endfor %}
 
@@ -58,7 +60,7 @@
           {% endif %}
           
           <td data-toggle="tooltip" data-html="true" animation="true" title="
-          A média é calculada como a soma ponderada das avaliações dividida pela soma dos pesos das avaliações já realizadas.<br>
+          A média é calculada como a soma ponderada das avaliações já realizadas.<br>
           Se houver descontos, eles já foram subtraídos da média calculada e apresentados aqui.
           ">
             <b>{% lng "Média" "Grade" %} = <span id="media{{alocacao.id}}"></span> <span id="aviso{{alocacao.id}}"></span></b>    

@@ -151,8 +151,7 @@ def get_media_alocacao_i(alocacao, request=None):
 
     # Media parcial (com os pesos disponíveis) antes dos descontos
     media_parcial = nota_final / peso_final if peso_final > 0 else 0
-    media_parcial -= nota_descontos
-
+    
     nota_final -= nota_descontos
     if nota_final < 0:
         nota_final = 0

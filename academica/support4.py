@@ -110,17 +110,18 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                         valido = False
                                         break
 
-                        if valido:
-                            banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
-                            notas.append({
-                                "sigla": exame.sigla,
-                                "nota": banca_info["media"],
-                                "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                                "nome": exame.titulo,
-                                "nome_en": exame.titulo_en,
-                                "banca": True,
-                                "objetivos": banca_info["objetivos"]
-                            })
+                        
+                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                        notas.append({
+                            "sigla": exame.sigla,
+                            "nota": banca_info["media"],
+                            "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
+                            "nome": exame.titulo,
+                            "nome_en": exame.titulo_en,
+                            "banca": True,
+                            "objetivos": banca_info["objetivos"],
+                            "bloqueado": not valido
+                        })
                     else:
                         if exame.sigla == 'P':  # Probation sem banca (NÃO DEVERIA ACONTECER MAS SERVE PARA VALIDAR NOTAS)
                             pnp = paval.order_by("momento").last()   # USEI ISSO PARA PROJETOS ANTIGOS SEM REGISTRO DE BANCAS
@@ -132,7 +133,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     "nome": exame.titulo,
                                     "nome_en": exame.titulo_en,
                                     "banca": True,
-                                    "objetivos": None
+                                    "objetivos": None,
+                                    "bloqueado": False
                                 })
                         else:  # Exame sem banca (não deveria acontecer)
                             logger.error(f"Erro, exame com banca mas sem banca registrada: {exame.sigla} => {alocacao.projeto.get_titulo_org_periodo()}")
@@ -149,7 +151,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             "nome": exame.titulo,
                             "nome_en": exame.titulo_en,
                             "banca": False,
-                            "objetivos": banca_info["objetivos"]
+                            "objetivos": banca_info["objetivos"],
+                            "bloqueado": False
                         })
                     else:  # Check
                         pnp = paval.order_by("momento").last()
@@ -160,7 +163,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             "nome": exame.titulo,
                             "nome_en": exame.titulo_en,
                             "banca": False,
-                            "objetivos": None
+                            "objetivos": None,
+                            "bloqueado": False
                         })
 
             except Exame.DoesNotExist:

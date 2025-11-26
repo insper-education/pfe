@@ -16,6 +16,8 @@
 {% load get_notas %}
 {% load get_descontos %}
 {% load linguas %}
+{% load reunioes %}
+{% load propostas %}
 
 {% block head %}
 
@@ -31,6 +33,262 @@
     @media (max-width: 740px) {
       .tit_rel {font-size: 17px;}
     } 
+
+    .reunioes-list {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 0.15rem;
+      max-width: 100%;
+      width: 750px;
+      margin-left: 0.5em;
+    }
+    .reuniao-linha {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      padding: 0.05rem 0.1rem;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .reuniao-linha:last-child {border-bottom: none;}
+    .reuniao-linha:hover {background: #fff;}
+
+    .mostra-data-hora {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6c757d;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .mostra-data {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+      width: 86px;
+    }
+    .mostra-hora {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+      width: 70px;
+    }
+
+    .reuniao-titulo-compacto {
+      flex: 1;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge-mini {
+      padding: 0.25em 0.5em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+/* Estilos para Bancas */
+    .bancas-list {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 0.15rem;
+      max-width: 100%;
+      width: 750px;
+      margin-left: 0.5em;
+    }
+    .banca-linha {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      padding: 0.05rem 0.1rem;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .banca-linha:last-child {border-bottom: none;}
+    .banca-linha:hover {background: #fff;}
+    .banca-linha a {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      flex: 1;
+      text-decoration: none;
+      color: inherit;
+    }
+    .banca-linha a:hover {
+      text-decoration: none;
+    }
+    
+    .banca-icone {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+      color: #6c757d;
+      flex-shrink: 0;
+    }
+
+    .banca-tipo {
+      flex: 1;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 740px) {
+      .mostra-data-hora {min-width: 140px; font-size: 0.8rem; gap: 0.3rem;}
+      .reuniao-linha {gap: 0.3rem; padding: 0.3rem 0.4rem; font-size: 0.85rem;}
+      .banca-linha {gap: 0.3rem; padding: 0.3rem 0.4rem; font-size: 0.85rem;}
+    }
+
+    /* Relatos Quinzenais (compacto) */
+    .relatos-list {
+      background:#f8f9fa;
+      border-radius:6px;
+      padding:0.15rem;
+      max-width:100%;
+      width:750px;
+      margin-left:0.5em;
+    }
+    .relato-linha {
+      display:flex;
+      align-items:center;
+      gap:0.4rem;
+      padding:0.13rem 0.14rem;
+      border-bottom:1px solid #e9ecef;
+      font-size:0.85rem;
+      transition:background .15s;
+    }
+    .relato-linha:last-child {border-bottom:none;}
+    .relato-linha:hover {background:#fff;}
+    .relato-ordem {
+      width:26px;
+      font-weight:600;
+      flex-shrink:0;
+      text-align:right;
+      color:#495057;
+    }
+    .relato-data {
+      display:flex;
+      align-items:center;
+      gap:0.25rem;
+      color:#6c757d;
+      white-space:nowrap;
+      width:92px;
+      flex-shrink:0;
+      font-size:0.75rem;
+    }
+    .relato-status {
+      flex:1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:#2c3e50;
+    }
+    .relato-badge {
+      padding:0.25em 0.45em;
+      font-size:0.65rem;
+      font-weight:600;
+      border-radius:4px;
+      flex-shrink:0;
+      white-space:nowrap;
+    }
+    .relato-icone {width:18px; text-align:center; flex-shrink:0; font-size:0.9rem;}
+    @media (max-width:740px){
+      .relato-linha{gap:0.3rem; padding:0.25rem 0.3rem;}
+      .relato-data{width:78px; font-size:0.7rem;}
+      .relato-ordem{width:32px;}
+    }
+
+        .propostas-list {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 0.15rem;
+      max-width: 100%;
+      width: 750px;
+      margin-left: 0.5em;
+    }
+    .proposta-linha {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.4rem;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 0.85rem;
+      transition: background 0.15s;
+    }
+    .proposta-linha:last-child {border-bottom: none;}
+    .proposta-linha:hover {background: #fff;}
+    .proposta-linha a {
+  display:grid;
+  grid-template-columns: 26px 140px 1fr 60px 52px;
+  gap:0.4rem;
+  width:100%;
+  min-width:0;
+}
+@media (max-width:740px){
+  .proposta-linha a {grid-template-columns:26px 95px 1fr 54px 46px;}
+}
+.proposta-org, .proposta-titulo {
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+    .proposta-linha a:hover {text-decoration: none;}
+    
+    .proposta-prioridade {
+      width: 26px;
+      font-weight: 700;
+      flex-shrink: 0;
+      text-align: center;
+      color: #495057;
+      background: #e9ecef;
+      border-radius: 4px;
+      padding: 0.2em 0.3em;
+      font-size: 0.8rem;
+    }
+
+    .proposta-periodo {
+      color: #6c757d;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .proposta-aderencia {
+      padding: 0.25em 0.45em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 4px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .proposta-divisor {
+      margin: 1rem 0;
+      border-top: 2px dashed #dee2e6;
+      text-align: center;
+      position: relative;
+    }
+    .proposta-divisor span {
+      background: #fff;
+      padding: 0 1rem;
+      color: #6c757d;
+      font-size: 0.75rem;
+      position: relative;
+      top: -0.6rem;
+    }
+    
+    @media (max-width: 740px) {
+      .proposta-linha {gap: 0.3rem; padding: 0.25rem 0.3rem; font-size: 0.8rem;}
+      .proposta-org {max-width: 100px;}
+    }
+
   </style>
 {% endblock %}
 
@@ -87,43 +345,50 @@
 
     {% if aluno.opcao_set.all %}
       <hr>
-      <h4>{% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
-      <div id="regular"> 
-        {% for opcao in aluno.opcao_set.all %}
-          {% if opcao.proposta.ano == opcao.aluno.ano and opcao.proposta.semestre == opcao.aluno.semestre %}
-            <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-              <div><b>{{opcao.prioridade}}</b> - 
-                [{{opcao.proposta.organizacao.nome}}] {{opcao.proposta.titulo}}
-                {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-                | {% mede_aderencia aluno opcao.proposta %}%|
-              </div>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-      <script>
-        if($.trim($("#regular").html())=='') {
-          $("#regular").text("Nenhuma proposta selecionada para o semestre regular.");
-        }
-      </script>
-      <p id="quebra" style="line-height:2px; display:none">
-          --------------------------------------------------------------------------------------
-      </p>
-      {% for opcao in aluno.opcao_set.all %}
-        {% if opcao.proposta.ano != opcao.aluno.ano or opcao.proposta.semestre != opcao.aluno.semestre %}
-          <script>
-            $("#quebra").show();
-          </script>
-          <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-            <div><b>{{opcao.prioridade}}</b> - 
-              {{opcao.proposta.titulo}}
-              ({{opcao.proposta.organizacao.nome}})
-              {{ '{' }}{{opcao.proposta.ano}}.{{opcao.proposta.semestre}}{{ '}' }}
-              |{% mede_aderencia aluno opcao.proposta %}%|
+      <h4><i class="fas fa-list-ol"></i> {% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
+
+      {% select_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_regulares %}
+      {% exclude_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_outros %}
+
+      {% if opcoes_regulares %}
+        <div class="propostas-list mt-2">
+          {% for opcao in opcoes_regulares %}
+            <div class="proposta-linha">
+              <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
+                <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
+                <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
+                <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
+                <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
+              </a>
             </div>
-          </a>
-        {% endif %}
-      {% endfor %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info mt-2" role="alert">
+          <i class="fas fa-info-circle"></i>
+          {% lng "Nenhuma proposta selecionada para o semestre regular." "No proposal selected for the regular semester." %}
+        </div>
+      {% endif %}
+
+      {% if opcoes_outros %}
+        <div class="proposta-divisor">
+          <span>{% lng "Outros Semestres" "Other Semesters" %}</span>
+        </div>
+        <div class="propostas-list">
+          {% for opcao in opcoes_outros %}
+            <div class="proposta-linha">
+              <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
+                <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
+                <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
+                <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
+                <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endif %}
 
     {% if certificados %}
@@ -161,43 +426,89 @@
         {% include "display_graficos_individuais.html" %}
         <br><br>
 
+        <!-- RELATOS QUINZENAIS -->
         {% with relatos=alocacao|get_relatos %}
-
-          {% if alocacao.projeto.ano > 2021 and relatos %}  <!-- projetos até 2021 tinham o relato pelo Blackboad -->
-            <span class="tit_rel ml-2">{% lng "Relatos Quinzenais" "Biweekly Reports" %}</span><br>
-            {% for evento, relato, ordem in relatos %}
-              <div style="padding-left: 0.8em;">
-                {% if relato %}
-                  <a href="{% url 'relato_visualizar' relato.id %}">
-                    {{ordem|add:1}}&ordm; - 
-                    <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                    <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                    {% lng "Preenchido" "Filled out" %}
-                    <span class="texto-longo">{% lng "pelo estudante em" "by the student on" %}</span>
-                    <span class="texto-longo">{{ relato.momento|date:"DATETIME_FORMAT" }}</span>
-                    <span class="texto-curto">{{ relato.momento|date:"SHORT_DATETIME_FORMAT" }}</span>
-                  </a>
-                  {% if relato.avaliacao >= 0 %}
-                    {% if relato.avaliacao > 0 %}
-                      <span data-toggle="tooltip" data-html="true" animation="true" title="Acima do desempenho esperado">&#128077;</span> 
+          {% if alocacao.projeto.ano > 2021 and relatos %}
+            <span class="tit_rel ml-2"><i class="fas fa-clipboard-list"></i> {% lng "Relatos Quinzenais" "Biweekly Reports" %}</span>
+            <div class="relatos-list mt-2">
+              {% for evento, relato, ordem in relatos %}
+                <div class="relato-linha">
+                  <div class="relato-ordem">{{ ordem|add:1 }}&ordm;</div>
+                  <div class="relato-data">
+                    <i class="far fa-calendar"></i>
+                    <span class="texto-longo">{{ evento.endDate|date:"d/m/Y" }}</span>
+                    <span class="texto-curto">{{ evento.endDate|date:"d/m/y" }}</span>
+                  </div>
+                  <div class="relato-status">
+                    {% if relato %}
+                      <a href="{% url 'relato_visualizar' relato.id %}">
+                        {% lng "Preenchido" "Filled" %} ·
+                        <span class="texto-longo">{{ relato.momento|date:"d/m/Y H:i" }}</span>
+                        <span class="texto-curto">{{ relato.momento|date:"d/m/y H:i" }}</span>
+                      </a>
                     {% else %}
-                      <span data-toggle="tooltip" data-html="true" animation="true" title="Abaixo do desempenho esperado">&#128078;</span>
+                      {% lng "Não preenchido por estudante" "Not filled by student" %}
                     {% endif %}
-                  {% else %}
-                    <span data-toggle="tooltip" data-html="true" animation="true" title="Aguardando orientador conferir">&#x23F3;</span>
-                  {% endif %}
-                {% else %}
-                  {{ordem|add:1}}&ordm; - 
-                  <span class="texto-longo">{{ evento.endDate|date:"DATE_FORMAT" }}:</span>
-                  <span class="texto-curto">{{ evento.endDate|date:"d/m/Y" }}:</span>
-                  {% lng "Não preenchido por estudante" "Not filled by student" %}
-                {% endif %}
+                  </div>
+                  <div class="relato-icone">
+                    {% if relato %}
+                      {% if relato.avaliacao >= 0 %}
+                        {% if relato.avaliacao > 0 %}
+                          <span data-toggle="tooltip" data-html="true" animation="true" title="Adequado">&#128077;</span>
+                        {% else %}
+                          <span data-toggle="tooltip" data-html="true" animation="true" title="Inadequado">&#128078;</span>
+                        {% endif %}
+                      {% else %}
+                        <span data-toggle="tooltip" data-html="true" animation="true" title="Aguardando avaliação">&#x23F3;</span>
+                      {% endif %}
+                    {% else %}
+                      <span data-toggle="tooltip" data-html="true" animation="true" title="Sem preenchimento">—</span>
+                    {% endif %}
+                  </div>
                 </div>
-            {% empty%}
-              <div style="padding-left: 0.8em;">
-                {% lng "Nenhum relato quinzenal preenchido" "No biweekly report filled" %}
-              </div>
-            {% endfor %}
+              {% endfor %}
+            </div>
+            <br>
+          {% endif %}
+        {% endwith %}
+
+        <!-- REUNIÕES -->
+        {% with reunioes=alocacao|get_reunioes %}
+          {% if reunioes %}
+            <span class="tit_rel ml-2"><i class="fas fa-users"></i> {% lng "Reuniões" "Meetings" %}</span>
+            <div class="reunioes-list mt-2">
+              {% for reuniao in reunioes %}
+                {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
+                  <div class="reuniao-linha">
+                    <div class="mostra-data-hora">
+                      <div class="mostra-data">
+                        <i class="far fa-calendar"></i>
+                        <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
+                        <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
+                      </div>
+                      <div class="mostra-hora">
+                        <i class="far fa-clock ml-2"></i>
+                        {{ reuniao.data_hora|date:"H:i" }}
+                      </div>
+                    </div>
+                    <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
+                      {{ reuniao.titulo }}
+                    </div>
+                    {% if participacao %}
+                      {% if participacao.situacao == 1 %}
+                        <span class="badge badge-success badge-mini">{% lng "Presente" "Present" %}</span>
+                      {% elif participacao.situacao == 2 %}
+                        <span class="badge badge-danger badge-mini">{% lng "Ausente" "Absent" %}</span>
+                      {% elif participacao.situacao == 3 %}
+                        <span class="badge badge-warning badge-mini text-dark">{% lng "Justificado" "Excused" %}</span>
+                      {% endif %}
+                    {% else %}
+                      <span class="badge badge-secondary badge-mini">—</span>
+                    {% endif %}
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
             <br>
           {% endif %}
         {% endwith %}
@@ -205,12 +516,30 @@
         <!-- BANCAS -->
         {% with bancas=alocacao|get_bancas %}
           {% if bancas %}
-            <span class="tit_rel ml-2">{% lng "Participação em Bancas" "Examination Boards" %}</span><br>
-            <ul>
-            {% for banca in alocacao|get_bancas %}
-              <li><a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">{{banca.composicao.exame}}</a></li>
-            {% endfor %}
-            </ul>
+            <span class="tit_rel ml-2"><i class="fas fa-gavel"></i> {% lng "Participação em Bancas" "Examination Boards" %}</span>
+            <div class="bancas-list mt-2">
+              {% for banca in bancas %}
+                <div class="banca-linha">
+                  <a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">
+                    <div class="mostra-data-hora">
+                      <div class="mostra-data">
+                        <i class="far fa-calendar"></i>
+                        <span class="texto-longo">{{ banca.startDate|date:"d/m/Y" }}</span>
+                        <span class="texto-curto">{{ banca.startDate|date:"d/m/y" }}</span>
+                      </div>
+                      <div class="mostra-hora">
+                        <i class="far fa-clock ml-2"></i>
+                        {{ banca.startDate|date:"H:i" }}
+                      </div>
+                    </div>
+                    <div class="banca-tipo" title="{{ banca.composicao.exame }}">{{ banca.composicao.exame }}</div>
+                    <span class="badge badge-info badge-mini">
+                      {% lng "Ver" "View" %}
+                    </span>
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
             <br>
           {% endif %}
         {% endwith %}
@@ -218,7 +547,7 @@
 
         {% with documentos=alocacao|get_documentos_individuais %}
           {% if documentos %}
-            <span class="tit_rel ml-2">{% lng "Documentos Individuais" "Individual Documents" %}</span><br>
+            <span class="tit_rel ml-2"><i class="fas fa-file-alt"></i> {% lng "Documentos Individuais" "Individual Documents" %}</span>
             <div class="caixa_rolante">
               {% include "documentos.html" %}
             </div>

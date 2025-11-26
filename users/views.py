@@ -306,10 +306,11 @@ def estudantes_notas(request, professor=None):
         captions = [ [
             {"sigla": "XX", "pt": "Abaixo da Média", "en": "Below Average", "cor": "red"},
             {"sigla": "XX", "pt": "Peso da Média Incompleto", "en": "Incomplete Average Weight", "cor": "orange"},
+            {"sigla": "<i class=\"fas fa-eye-slash\" style=\"font-size:0.85em;\"></i>", "pt": "Nota não visível para o estudante", "en": "Grade not visible to the student", "cor": "orange"},
         ], 
         [
-            {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Jury"},
-            {"sigla": "BF", "pt": "Banca Final", "en": "Final Jury"},
+            {"sigla": "BI", "pt": "Banca Intermediária", "en": "Midterm Examination Board"},
+            {"sigla": "BF", "pt": "Banca Final", "en": "Final Examination Board"},
             {"sigla": "RIG", "pt": "Relatório Intermediário de Grupo", "en": "Midterm Group Report"},
             {"sigla": "RFG", "pt": "Relatório Final de Grupo", "en": "Final Group Report"},
             {"sigla": "RII", "pt": "Relatório Intermediário Individual", "en": "Midterm Individual Report"},
@@ -318,7 +319,7 @@ def estudantes_notas(request, professor=None):
         [
             {"sigla": "Individual", "pt": "Média só das avaliações individuais", "en": "Average of individual assessments only"},
             {"sigla": "Descontos", "pt": "Total de descontos na média final a ser aplicado", "en": "Total discounts on the final average to be applied"},
-            {"sigla": "Média Parcial", "pt": "Média das avaliações até o momento já com descontos", "en": "Average of assessments so far with discounts"},
+            {"sigla": "Média Parcial", "pt": "Média das avaliações até o momento (sem os descontos)", "en": "Average of assessments so far (without discounts)"},
             {"sigla": "Média Final", "pt": "Média final do estudante no projeto", "en": "Student's final average in the project"},
         ] ]
 
