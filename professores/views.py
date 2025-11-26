@@ -1773,11 +1773,19 @@ def resultado_bancas(request):
     projeto_id = request.GET.get("projeto", None)
     banca_id = request.GET.get("banca", None)
     if projeto_id:
-        projeto = Projeto.objects.get(pk=projeto_id)
-        bancas = Banca.objects.filter(projeto=projeto_id)
+        try:
+            projeto = get_object_or_404(Projeto, pk=projeto_id)
+            bancas = Banca.objects.filter(projeto=projeto_id)
+        except (ValueError, TypeError):
+            return HttpResponseNotFound("<h1>ID de projeto inválido!</h1>")
     elif banca_id:
-        bancas = Banca.objects.filter(pk=banca_id)
-        projeto = bancas.last().get_projeto()
+        try:
+            bancas = Banca.objects.filter(pk=banca_id)
+            if not bancas.exists():
+                return HttpResponseNotFound("<h1>Banca não encontrada!</h1>")
+            projeto = bancas.last().get_projeto()
+        except (ValueError, TypeError):
+            return HttpResponseNotFound("<h1>ID de banca inválido!</h1>")
     else:
         return HttpResponseNotFound("<h1>Bancas não encontradas!</h1>")
 
