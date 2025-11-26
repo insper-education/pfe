@@ -30,14 +30,14 @@
     <table class="one-line mb-1" style="max-width: 100%;">
       <tbody>
         <tr>
-          <td><b>{% lng "Avaliações" "Evaluations" %}</b></td>
+          <td style="white-space: nowrap;"><b>{% lng "Avaliações" "Evaluations" %}</b></td>
           {% for aval in notas %}
-            {% if alocacao|exibe_notas:aval.sigla or user.eh_prof_a  %} <!-- Filtra certas avaliações para estudantes não verem -->
-            {% if not aval.bloqueado %}
-              <td style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
+            {% if user.eh_prof_a or alocacao|exibe_notas:aval.sigla %} <!-- Filtra certas avaliações para estudantes não verem -->
+            {% if user.eh_prof_a or not aval.bloqueado %}
+              <td style="cursor:pointer; border-right: 0.5px solid grey;" data-toggle="tooltip" data-html="true" animation="true" 
               title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
-                <span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span> = {% if aval.peso > 0 or aval.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}
-                {% if not forloop.last %}<span class="short">|</span>{% endif %}
+                <span style="white-space: nowrap;"><span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span>=</span><span style="white-space: nowrap;">{% if aval.peso > 0 or aval.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}</span>
+                {% if aval.bloqueado %}<span style="color:orange; cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="Nota não visível para estudantes"><sup><i class="fas fa-eye-slash" style="font-size:0.85em;"></i></sup></span>{% endif %}
                 {% if aval.peso > 0 %}
                   <script>
                     nota_{{alocacao.id}} += {{aval.nota|unlocalize}} * {{aval.peso|unlocalize}};
@@ -50,9 +50,9 @@
           {% endfor %}
 
           {% if descontos.0 > 0 %}
-            <td class="td_desc" style="cursor:pointer; white-space: nowrap;" data-toggle="tooltip" data-html="true" animation="true" 
+            <td class="td_desc" style="cursor:pointer;" data-toggle="tooltip" data-html="true" animation="true" 
                 title="{% for e in descontos.1 %}{{e}}<br>{% endfor %}">
-              {% lng "Descontos" "Discounts" %} = {% lng_2 descontos.0 %}
+              <span style="white-space: nowrap;">{% lng "Descontos" "Discounts" %}=</span><span style="white-space: nowrap;">{% lng_2 descontos.0 %}</span>
             </td>
             <script>
               descontos_{{alocacao.id}} = {{descontos.0|unlocalize}};
@@ -63,7 +63,7 @@
           A média é calculada como a soma ponderada das avaliações já realizadas.<br>
           Se houver descontos, eles já foram subtraídos da média calculada e apresentados aqui.
           ">
-            <b>{% lng "Média" "Grade" %} = <span id="media{{alocacao.id}}"></span> <span id="aviso{{alocacao.id}}"></span></b>    
+            <span style="white-space: nowrap;"><b>{% lng "Média" "Grade" %}=<span id="media{{alocacao.id}}"></span></span> <span id="aviso{{alocacao.id}}"></span></b>    
           </td>
 
         </tr>
@@ -101,8 +101,12 @@
         {% endwith %}
       } else { {% comment %} Média provisória {% endcomment %}
         if(peso_{{alocacao.id}} > 0.001) {
+          if(lingua == "pt")
+            var parcial = "parcial";
+          else
+            var parcial = "partial";
           document.getElementById("media{{alocacao.id}}").innerHTML = loc( (nota_{{alocacao.id}}/peso_{{alocacao.id}}) - descontos_{{alocacao.id}}, lingua, 2 );
-          document.getElementById("aviso{{alocacao.id}}").innerHTML = "<span style='white-space: nowrap;''> (parcial = " + loc(peso_{{alocacao.id}}*100, lingua, 0 ) +  "%)</span>";
+          document.getElementById("aviso{{alocacao.id}}").innerHTML = "<span style='white-space: nowrap;''> (" + parcial + "=" + loc(peso_{{alocacao.id}}*100, lingua, 0 ) +  "%)</span>";
         }
       }
     }

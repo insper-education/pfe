@@ -41,7 +41,7 @@
 
           {% include "projeto.html" with projeto=alocacao.projeto alocacao=alocacao %}
 
-          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+          {% with notas=alocacao|get_notas_alocacao descontos=alocacao|get_descontos_alocacao %}
             {% if notas or descontos %}
               <div>
                 <h5>{% lng "Resultados" "Results" %}</h5>

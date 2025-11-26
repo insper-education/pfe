@@ -422,7 +422,7 @@
         </a>
         <br>
 
-        {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request rubricas=True %}
+        {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao rubricas=True %}
         {% include "display_graficos_individuais.html" %}
         <br><br>
 
