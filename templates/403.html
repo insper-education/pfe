@@ -1,77 +1,234 @@
-<!DOCTYPE html>
-{% comment %}
-  Desenvolvido para o Projeto Final de Engenharia
-  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 18 de Junho de 2023
-{% endcomment %}
+{% extends "error_base.html" %}
 
-{% comment %} Fonte: https://github.com/dr5hn/403 {% endcomment %}
+{% block title %}403 Forbidden{% endblock %}
 
-<html>
+{% block extra_styles %}
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>403 Forbidden</title>
-    <style>
-        @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
+      h1 { color: var(--danger); }
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
+      /* Sistema de Firewall/Security Grid */
+      .security-grid {
+        width: 300px;
+        height: 300px;
+        margin: 2rem auto 1.5rem auto;
+        position: relative;
+      }
+
+      /* Escudo hexagonal central simplificado */
+      .shield {
+        width: 180px;
+        height: 180px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .shield svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 0 25px rgba(255,85,85,0.7));
+      }
+
+      .shield-path {
+        fill: rgba(255,85,85,0.05);
+        stroke: var(--danger);
+        stroke-width: 3;
+        stroke-dasharray: 600;
+        stroke-dashoffset: 600;
+        animation: draw-shield 1.5s ease-out forwards, shield-breath 3s ease-in-out infinite 1.5s;
+      }
+
+      @keyframes draw-shield {
+        to { stroke-dashoffset: 0; }
+      }
+
+      @keyframes shield-breath {
+        0%, 100% { 
+          stroke-width: 3;
+          filter: drop-shadow(0 0 20px rgba(255,85,85,0.6));
         }
-
-        * {
-            font-family: 'Press Start 2P', cursive;
-            box-sizing: border-box;
+        50% { 
+          stroke-width: 4;
+          filter: drop-shadow(0 0 30px rgba(255,85,85,0.9));
         }
+      }
 
-        #app {
-            padding: 1rem;
-            background: black;
-            display: flex;
-            height: 100%;
-            justify-content: center;
-            align-items: center;
-            color: #54FE55;
-            text-shadow: 0px 0px 10px;
-            font-size: 6rem;
-            flex-direction: column;
+      /* Lock icon no centro - mais elegante */
+      .lock-icon {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3.5rem;
+        color: var(--danger);
+        text-shadow: 
+          0 0 20px rgba(255,85,85,1),
+          0 0 40px rgba(255,85,85,0.6);
+        animation: lock-pulse 2.5s ease-in-out infinite;
+        z-index: 2;
+      }
+
+      @keyframes lock-pulse {
+        0%, 100% { 
+          transform: translate(-50%, -50%) scale(1);
+          text-shadow: 
+            0 0 20px rgba(255,85,85,1),
+            0 0 40px rgba(255,85,85,0.6);
         }
-
-        #app .txt {font-size: 1.8rem;}
-
-        #app .contato {font-size: 0.8rem;}
-
-        @keyframes blink {
-            0% {opacity: 0;}
-            49% {opacity: 0;}
-            50% {opacity: 1;}
-            100% {opacity: 1;}
+        50% { 
+          transform: translate(-50%, -50%) scale(1.08);
+          text-shadow: 
+            0 0 30px rgba(255,85,85,1),
+            0 0 60px rgba(255,85,85,0.8);
         }
+      }
 
-        .blink {
-            animation-name: blink;
-            animation-duration: 1s;
-            animation-iteration-count: infinite;
+      /* Anel único mais elegante */
+      .security-ring {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 250px;
+        height: 250px;
+        margin: -125px 0 0 -125px;
+        border: 2px solid var(--danger);
+        border-radius: 50%;
+        opacity: 0.3;
+        box-shadow: 
+          0 0 20px rgba(255,85,85,0.3),
+          inset 0 0 20px rgba(255,85,85,0.2);
+        animation: ring-rotate 12s linear infinite;
+      }
+
+      .security-ring::before {
+        content: "";
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: var(--danger);
+        border-radius: 50%;
+        top: -4px;
+        left: 50%;
+        margin-left: -4px;
+        box-shadow: 0 0 15px rgba(255,85,85,1);
+      }
+
+      @keyframes ring-rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      /* Ondas de pulso expandindo */
+      .pulse-wave {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 180px;
+        height: 180px;
+        margin: -90px 0 0 -90px;
+        border: 2px solid var(--danger);
+        border-radius: 50%;
+        opacity: 0;
+        animation: pulse-expand 3s ease-out infinite;
+      }
+
+      .pulse-wave:nth-child(2) {
+        animation-delay: 1.5s;
+      }
+
+      @keyframes pulse-expand {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.8;
         }
-    </style>
-  </head>
+        50% {
+          opacity: 0.4;
+        }
+        100% {
+          transform: scale(1.6);
+          opacity: 0;
+        }
+      }
 
-  <body>
-    <div id="app">
-      <div>403</div>
-      <div class="txt">
-        Forbidden<span class="blink">_</span>
+      /* Scanline horizontal mais sutil */
+      .scan-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+          transparent, 
+          rgba(255,85,85,0.8) 50%, 
+          transparent
+        );
+        box-shadow: 0 0 10px rgba(255,85,85,0.6);
+        animation: scan-vertical 4s ease-in-out infinite;
+      }
+
+      @keyframes scan-vertical {
+        0%, 100% { 
+          top: 20%; 
+          opacity: 0; 
+        }
+        5% { opacity: 0.8; }
+        50% { top: 80%; }
+        95% { opacity: 0.8; }
+        100% { opacity: 0; }
+      }
+
+      /* Texto de alerta */
+      .alert-text {
+        font-size: 0.75rem;
+        color: var(--danger);
+        text-shadow: 0 0 8px rgba(255,85,85,0.7);
+        margin-top: 1rem;
+        letter-spacing: 0.15rem;
+        animation: alert-blink 1.5s ease-in-out infinite;
+      }
+
+      @keyframes alert-blink {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+      }
+{% endblock %}
+
+{% block responsive_styles %}
+        .security-grid { width: 260px; height: 260px; }
+        .shield { width: 150px; height: 150px; }
+        .lock-icon { font-size: 3rem; }
+        .security-ring { width: 220px; height: 220px; margin: -110px 0 0 -110px; }
+{% endblock %}
+
+{% block content %}
+      <h1>403</h1>
+      <div class="subtitle">Acesso Negado<span class="blink">_</span></div>
+
+      <div class="security-grid">
+        <div class="pulse-wave"></div>
+        <div class="pulse-wave"></div>
+        <div class="security-ring"></div>
+        
+        <div class="shield">
+          <svg viewBox="0 0 100 100">
+            <path class="shield-path" d="M50,10 L80,25 L80,50 Q80,75 50,90 Q20,75 20,50 L20,25 Z"/>
+          </svg>
+        </div>
+        
+        <div class="lock-icon">🔒</div>
+        
+        <div class="scan-line"></div>
       </div>
-      <br>
+
+      <div class="alert-text">⚠ ACESSO RESTRITO ⚠</div>
+
+      <div class="subtitle" style="font-size:0.9rem">
+        Você não possui permissão para acessar este recurso.<br>
+        Todas as tentativas são monitoradas e registradas.
+      </div>
+
       <div class="contato">
         se acredita haver um problema no acesso, notificar:
         <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>
       </div>
-    </div>
-  </body>
-
-</html>
+{% endblock %}

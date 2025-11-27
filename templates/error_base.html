@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% comment %}
+  Template base para páginas de erro
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 27 de Novembro de 2025
+{% endcomment %}
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Erro{% endblock %}</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
+
+      :root {
+        --primary: #54FE55;
+        --danger: #FF5555;
+        --warning: #FFAA00;
+        --bg: #000000;
+      }
+
+      html, body { height: 100%; margin: 0; overflow: hidden; }
+      * { box-sizing: border-box; }
+
+      body {
+        background: var(--bg);
+        color: var(--primary);
+        font-family: 'Press Start 2P', cursive;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      /* Canvas Matrix no fundo */
+      #matrix-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.4;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 960px;
+        padding: 2rem 1.25rem;
+        text-align: center;
+        text-shadow: 0 0 8px rgba(84,254,85,0.7);
+        position: relative;
+        z-index: 1;
+      }
+
+      /* efeito de scanlines/CRT */
+      .wrap::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.03) 0px,
+          rgba(255,255,255,0.03) 1px,
+          transparent 2px,
+          transparent 4px
+        );
+        pointer-events: none;
+        mix-blend-mode: overlay;
+        animation: flicker 3.5s infinite linear;
+      }
+
+      @keyframes flicker {
+        0%, 100% { opacity: 0.35; }
+        50% { opacity: 0.15; }
+      }
+
+      h1 {
+        font-size: 6rem;
+        line-height: 1;
+        letter-spacing: 0.1rem;
+        margin: 0 0 0.5rem 0;
+        text-shadow: 0px 0px 10px;
+      }
+
+      .subtitle {
+        font-size: 1.15rem;
+        line-height: 1.6;
+        opacity: 0.95;
+      }
+
+      .blink { animation: blink 1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      .contato { 
+        margin-top: 1.5rem; 
+        font-size: 0.8rem; 
+        opacity: 0.85; 
+        color: var(--primary);
+        text-shadow: 0 0 5px rgba(84,254,85,0.5);
+      }
+      .contato a { color: var(--primary); }
+
+      /* Estilos específicos por página */
+      {% block extra_styles %}{% endblock %}
+
+      /* Responsivo base */
+      @media (max-width: 520px) {
+        h1 { font-size: 4rem; }
+        .subtitle { font-size: 0.95rem; }
+        {% block responsive_styles %}{% endblock %}
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="wrap">
+      {% block content %}{% endblock %}
+    </div>
+
+    <script>
+      // Matrix Rain Effect
+      const canvas = document.getElementById('matrix-canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Caracteres para o efeito Matrix (mix de katakana, números e símbolos)
+      const matrixChars = 'ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾁﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()';
+      const fontSize = 16;
+      const columns = Math.floor(canvas.width / fontSize);
+
+      // Array para armazenar a posição Y de cada coluna
+      const drops = Array(columns).fill(1);
+
+      function drawMatrix() {
+        // Semi-transparente para criar efeito de trilha
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#54FE55'; // Verde matrix
+        ctx.font = `${fontSize}px monospace`;
+
+        for (let i = 0; i < drops.length; i++) {
+          // Caractere aleatório
+          const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+
+          // Variação de opacidade para caracteres mais recentes (mais brilhantes)
+          const opacity = Math.random() * 0.5 + 0.5;
+          ctx.fillStyle = `rgba(84, 254, 85, ${opacity})`;
+          ctx.fillText(char, x, y);
+
+          // Reset aleatório: quando chega no fim ou aleatoriamente
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+
+          drops[i]++;
+        }
+      }
+
+      // Animar o efeito Matrix
+      setInterval(drawMatrix, 50);
+
+      // Ajustar canvas quando redimensionar janela
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const newColumns = Math.floor(canvas.width / fontSize);
+        drops.length = newColumns;
+        drops.fill(1);
+      });
+    </script>
+  </body>
+</html>
