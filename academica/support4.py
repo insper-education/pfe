@@ -52,7 +52,7 @@ def get_banca_estudante(avaliacoes_banca, ano, semestre):
 
 def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_banca=True):
     """Recuper as notas do Estudante."""
-    
+
     if ano and semestre:
         alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre)
     else:
@@ -103,12 +103,11 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             checa_b = False
 
                         if checa_b:
-                            if (request is None) or (not request.user.eh_prof_a):  # Se não for professor/administrador
-                                for membro in banca.membros():
-                                    avaliacao = paval.filter(avaliador=membro).last()
-                                    if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
-                                        valido = False
-                                        break
+                            for membro in banca.membros():
+                                avaliacao = paval.filter(avaliador=membro).last()
+                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                    valido = False
+                                    break
 
                         
                         banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)

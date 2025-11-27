@@ -26,11 +26,11 @@
     /* Estatísticas modernas */
     .estatisticas_notas {
       display: none;
-      margin-top: 2rem;
     }
     .stats-header {
       text-align: center;
       margin-bottom: 1.5rem;
+      margin-top: 2rem;
     }
     .stats-header h4 {
       color: #2c3e50;
@@ -255,6 +255,7 @@
             {% endwith %}{% endnospaces %} {% endfor %}{% comment %} Para o espaço para as notas acima {% endcomment %}
           </td>
 
+          {% nospaces %}
           {% if alocacao %}
             {% with media=alocacao|get_media_alocacao %}
 
@@ -268,12 +269,12 @@
               <td data-order="{% if media.descontos %}{{ media.descontos|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Descontos --> {% endcomment %}
                 {{ media.descontos|floatformat:2}}
               </td>
-
+              
               <td>
                 {{media.media_parcial|floatformat:2}}
               </td>
-
-              <td id="media{{aluno.id}}" data-pesos="{{ media.pesos }}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
+              
+              <td id="media{{aluno.id}}" data-pesos="{% if media.probation %}-1{% else %}{{ media.pesos }}{% endif %}" data-order="{% if media.media %}{{ media.media|unlocalize }}{% else %}0{% endif %}"> {% comment %} <!-- Média --> {% endcomment %}
 
                   {% if media.probation and user == alocacao.projeto.orientador.user %}
                     {% with parecer=alocacao.projeto|get_parecer_de_probatorio %}
@@ -299,7 +300,7 @@
      
                   {% if media.probation %}
                     style="color:#e6a10f;"
-                    title="Estudante em Probatório">P
+                    title="Estudante em Probatório"><b>P:&nbsp;</b>
                   {% elif alocacao.projeto_alocado_reprovacao.all %}
                     style="color:red;"
                     title="Reprovação por alguma falha de objetivo de aprendizado ou não obtida média individual suficiente">
@@ -320,6 +321,7 @@
           {% else %}
             <td></td><td></td><td></td>
           {% endif %}
+          {% endnospaces %}
         {% endwith %}
       </tr>
       {% endfor %}
@@ -414,8 +416,6 @@
           array.push(nota);
         }
       });
-
-      console.log("Notas coletadas:", array);
 
       if(array.length > 0) {
         $("#stats-container").show();

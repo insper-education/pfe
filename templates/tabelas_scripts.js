@@ -324,13 +324,68 @@ function buildTypedColumnDefs(lang, tableId) {
             // Format visible text (display) while preserving HTML
             createdCell: function(td, cellData, rowData, row, col) {
                 var lang = localStorage.getItem("lingua") || "pt";
+
+                // Formata um número conforme a língua (mantém casas decimais)
+                function formatNumber(raw) {
+                    if (!raw) return raw;
+                    // Normaliza para ponto decimal
+                    var normalized = String(raw).replace(',', '.');
+                    var num = parseFloat(normalized);
+                    if (isNaN(num)) return raw;
+                    
+                    // Conta casas decimais originais
+                    var decimalPart = normalized.split('.')[1];
+                    var decimals = decimalPart ? decimalPart.length : 0;
+                    
+                    // Formata com as mesmas casas decimais
+                    var formatted = num.toFixed(decimals);
+                    
+                    // Troca separador conforme língua
+                    return lang === 'pt' ? formatted.replace('.', ',') : formatted;
+                }
+
+                // Percorre text nodes e substitui números
+                function replaceInTextNodes(node) {
+                    // Regex simples: número inteiro ou decimal (com . ou ,)
+                    var numRegex = /-?\d+(?:[.,]\d+)?/g;
+                    
+                    node.childNodes.forEach(function(child) {
+                        if (child.nodeType === 3) { // Text node
+                            var original = child.nodeValue;
+                            var replaced = original.replace(numRegex, function(match) {
+                                return formatNumber(match);
+                            });
+                            if (replaced !== original) {
+                                child.nodeValue = replaced;
+                            }
+                        } else if (child.nodeType === 1) { // Element node
+                            replaceInTextNodes(child);
+                        }
+                    });
+                }
+
+                replaceInTextNodes(td);
+
+                // Define data-order para ordenação correta
+                var text = $(td).text().trim();
+                var match = text.match(/-?\d+(?:[.,]\d+)?/);
+                if (match) {
+                    var numValue = parseFloat(match[0].replace(',', '.'));
+                    if (!isNaN(numValue)) {
+                        $(td).attr("data-order", numValue);
+                    }
+                }
+
+
+                {% comment %}                 
+                VERSÃO ANTIGA EM CASO DE PROBLEMAS:
                 var html = $(td).html();
                 var text = $(td).text();
                 var formatted = convertNotation(text || "", "display", rowData, { row: row, col: col }, lang);
                 var m = text.match(/-?\d+(?:[.,]\d+)?/);
                 if (m) {
                     $(td).html(html.replace(m[0], formatted));
-                }
+                } {% endcomment %}
             },
             // Sort fallback when data-order is missing
             render: function(data, type, row, meta) {

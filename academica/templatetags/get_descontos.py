@@ -12,6 +12,6 @@ register = template.Library()
 
 
 @register.filter
-def get_descontos_alocacao(alocacao, request=None):
+def get_descontos_alocacao(alocacao):
     """Recupera os descontos de alocação."""
     return get_descontos_alocacao_extern(alocacao)

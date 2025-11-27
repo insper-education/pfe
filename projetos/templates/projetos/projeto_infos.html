@@ -215,22 +215,6 @@
 
     <hr>
 
-    {% comment %} <div class="endereco mt-3">
-      <strong>{% lng "Endereço" "Address" %}:</strong><br>
-      <a style="display: inline-block; padding-left: 0.7em;" href="http://maps.google.com/maps?q={{projeto.organizacao.endereco}}">{{ projeto.organizacao.endereco|linebreaks }}</a></p>
-    </div>
-    
-    {% if projeto.organizacao.website or projeto.proposta.website %}
-      <div class="website mt-3">
-        <strong>website:</strong>
-        {% if projeto.organizacao and projeto.organizacao.website %}
-          <a href="{{projeto.organizacao.website|add_http}}">{{projeto.organizacao.website}}</a>
-        {% elif projeto.proposta and projeto.proposta.website %}
-          <a href="{{projeto.proposta.website|add_http}}">{{projeto.proposta.website}}</a>
-        {% endif %}
-      </div>
-    {% endif %} {% endcomment %}
-
     {% if projeto.proposta.descricao %}
       <div class="descricao mt-3">
         <strong>{% lng "Descrição da Proposta do Projeto (escrito por parceiro)" "Description of the Project Proposal (written by partner)" %}:</strong>
@@ -447,7 +431,7 @@
     <div class="mt-2">
       <ul class="usuarios-stack">
         {% for alocacao in alocacoes %}
-          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao:request %}
+          {% with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao %}
           <details class="usuario-item {% if alocacao.aluno.externo %}is-externo{% endif %}">
             <summary>
               <span class="aluno-accent"></span>
