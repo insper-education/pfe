@@ -1223,7 +1223,7 @@ def ajax_verifica_membro_banca(request):
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
         return HttpResponse("Erro não identificado.", status=401)
     if not membro_id or not tipo:
-        return HttpResponse("Parâmetros insuficientes.", status=400)
+        return JsonResponse({"lista_bancas": []})
     try:
         membro = get_object_or_404(PFEUser, pk=int(membro_id))
     except ValueError:
@@ -1237,6 +1237,7 @@ def ajax_verifica_membro_banca(request):
         configuracao = get_object_or_404(Configuracao)
         bancas = bancas.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
     
+    # Para não contar a própria banca que está sendo editada
     if remove_banca:
         remove_banca = int(remove_banca)
         bancas = bancas.exclude(id=remove_banca)
