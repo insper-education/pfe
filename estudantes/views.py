@@ -47,6 +47,7 @@ from users.models import PFEUser, Aluno, Alocacao, Opcao, OpcaoTemporaria
 from users.models import UsuarioEstiloComunicacao, Associado
 from users.support import configuracao_estudante_vencida, configuracao_pares_vencida, adianta_semestre
 from users.support import adianta_semestre_conf
+from .forms import EstudanteInformacoesForm
 
 
 # Get an instance of a logger
@@ -718,42 +719,55 @@ def informacoes_adicionais(request):
 
         if (not vencido) and request.method == "POST":
 
-            cria_area_estudante(request, request.user.aluno)
+            form = EstudanteInformacoesForm(request.POST)
+            if form.is_valid():
+                cria_area_estudante(request, request.user.aluno)
 
-            request.user.aluno.trabalhou = request.POST.get("trabalhou", None)
-            request.user.aluno.atividades = request.POST.get("atividades", None)
-            request.user.aluno.familia = request.POST.get("familia", None)
-            request.user.aluno.trabalhara = request.POST.get("trabalhara", None)
-            request.user.aluno.recrutadores = request.POST.get("recrutadores", None) == "on"
+                cd = form.cleaned_data
+                # Campos em Aluno
+                request.user.aluno.trabalhou = cd.get("trabalhou")
+                request.user.aluno.atividades = cd.get("atividades")
+                request.user.aluno.familia = cd.get("familia")
+                request.user.aluno.trabalhara = cd.get("trabalhara")
+                request.user.aluno.recrutadores = bool(cd.get("recrutadores"))
 
-            link = request.POST.get("linkedin", "").strip()
-            if not (link and link != ""):
-                link = None
-            if link:
-                if link[:4] != "http":
-                    link = "https://" + link
+                # Campos em PFEUser
+                request.user.linkedin = cd.get("linkedin")
+                request.user.celular = cd.get("celular")
+                request.user.conta_github = cd.get("conta_github")
 
-                max_length = PFEUser._meta.get_field("linkedin").max_length
-                if len(link) > max_length:
-                    raise ValidationError("<h1>Erro: link do LinkedIn informado maior que " + str(max_length) + " caracteres.</h1>")
+                request.user.save()
+                request.user.aluno.save()
 
-            request.user.linkedin = link
+                context = {
+                    "area_principal": True,
+                    "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
+                }
+                return render(request, "generic_ml.html", context=context)
+            else:
+                # Cai para o render abaixo com erros no form
+                pass
 
-            request.user.celular = request.POST.get("celular", None)
-            request.user.conta_github = request.POST.get("conta_github", None)
-
-            request.user.save()
-            request.user.aluno.save()
-            
-            context = {
-                "area_principal": True,
-                "mensagem": {"pt": "Dados atualizados.", "en": "Data updated."},
-            }
-            return render(request, "generic_ml.html", context=context)
-
+        # Inicializa o form com dados atuais em GET ou em POST inválido
+        initial = {
+            "trabalhou": estudante.trabalhou,
+            "atividades": estudante.atividades,
+            "familia": estudante.familia,
+            "trabalhara": estudante.trabalhara,
+            "recrutadores": estudante.recrutadores,
+            "linkedin": request.user.linkedin,
+            "celular": request.user.celular,
+            "conta_github": request.user.conta_github,
+        }
+        form = EstudanteInformacoesForm(
+            request.POST if request.method == "POST" else None,
+            initial=initial,
+            vencido=vencido
+        )
         context = {
             "vencido": vencido,
             "estudante": estudante,
+            "form": form,
         }
     else:  # Supostamente professores
         context = {
