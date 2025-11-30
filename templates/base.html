@@ -53,10 +53,10 @@
 
   {% block head %}{% endblock %}
 </head>
-<body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt">
+<body{% if request.get_host == "127.0.0.1:8000" %} style="background-color: #FFECEC;"{% endif %} class="pt has-fixed-topnav">
 
   <header>
-    <nav class="topnav fixed-top" role="navigation" aria-label="Navegação principal">
+    <nav class="topnav" role="navigation" aria-label="Navegação principal">
       <div id="barra_do_top_nav" class="{% if request.get_host == "127.0.0.1:8000" %}active_local{% else %}active{% endif %}">
         
         {% comment %} Logo do Insper e link para a página inicial {% endcomment %}
@@ -219,6 +219,22 @@
   </footer> {% endcomment %}
 
   {% include "linguas.html" %}
+  <script>
+    (function() {
+      function updateTopnavOffsets() {
+        var nav = document.querySelector('nav.topnav');
+        var spacer = document.querySelector('.topnav-spacer');
+        if (!nav) return;
+        var h = nav.offsetHeight || 53;
+        // Update CSS var and scroll padding
+        document.documentElement.style.setProperty('--topnav-height', h + 'px');
+        document.documentElement.style.scrollPaddingTop = h + 'px';
+        if (spacer) { spacer.style.height = h + 'px'; }
+      }
+      document.addEventListener('DOMContentLoaded', updateTopnavOffsets);
+      window.addEventListener('resize', updateTopnavOffsets);
+    })();
+  </script>
   
   {% if request.get_host == "127.0.0.1:8000" %}
     <p id="pi_the_net" style="cursor: pointer; float: right; margin-right: 12px;">&pi;</p>
@@ -237,7 +253,7 @@
   {% comment %} Modal comum para ser usado em várias páginas {% endcomment %}
   <div class="modal fade" id="popup" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content"></div>
+      <br><br><div class="modal-content"></div>  {% comment %} Os <br> são usados para afastar o modal do topo da página. {% endcomment %}
     </div>
   </div>
 
