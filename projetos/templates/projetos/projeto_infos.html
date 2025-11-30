@@ -428,6 +428,47 @@
         </a>
       </span>
     {% endif %}
+
+    {% if user.eh_prof_a and alocacoes|probations %}
+      <div style="cursor: pointer; display: inline-block; background: #fff3cd; border: 2px solid #ffc107; border-radius: 6px; padding: 0.5em 0.5em; margin-left: 0.5em; box-shadow: 0 2px 8px rgba(255,193,7,0.15);">
+        {% with parecer=projeto|get_parecer_de_probatorio %}
+          <a class="open-modal" title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
+            data-toggle="tooltip" data-html="true" animation="true"
+            {% if parecer %}
+              style="color: #856404;"
+              data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' parecer.id %}"
+            {% else %}
+              style="color: red;"
+              data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' %}"
+            {% endif %}
+          >
+            <span class="badge badge-warning" style="font-size: 1.1em; margin-right: 0.5em; margin-left: 0.0em;">
+              <i class="fas fa-exclamation-triangle" style="color: #856404;"></i>
+              {% lng "probatório" "probatory" %}
+            </span>
+            <span style="font-weight: bold; color: #856404;" class="mr-2">
+              {% lng "Estudantes em probatório" "Students on probation" %}{% if not parecer %}{% lng ", orientador deve enviar parecer para a Banca de Probatório." ", advisor must send opinion to the Probation Committee." %}{% endif %}
+            </span>
+            {% if parecer %}
+              <i class="fas fa-file-alt"></i>
+              {% lng "(clique para atualizar)" "(click to update)" %}</a>
+              (<a href="{{request.scheme}}://{{request.get_host}}{{parecer.documento.url}}" target="_blank" rel="noopener noreferrer">
+                {% lng "Enviado" "Sent" %}: {{parecer}}
+              </a>)
+            {% else %}
+              <i class="far fa-file"></i>
+              {% lng "(clique para enviar)" "(click to send)" %}</a>
+            {% endif %}
+          
+        {% endwith %}
+      </div>
+          
+      {% comment %} href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer" {% endcomment %}
+      {% comment %} data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}" {% endcomment %}
+
+    {% endif %}
+
+
     <div class="mt-2">
       <ul class="usuarios-stack">
         {% for alocacao in alocacoes %}
@@ -525,46 +566,6 @@
           </details>
         {% endfor %}
         </ul>
-      {% endif %}
-
-
-      {% if user.eh_prof_a and alocacoes|probations %}
-        <div style="cursor: pointer; display: inline-block; background: #fff3cd; border: 2px solid #ffc107; border-radius: 6px; padding: 0.5em 0.5em; margin-left: 0.5em; box-shadow: 0 2px 8px rgba(255,193,7,0.15);">
-          {% with parecer=projeto|get_parecer_de_probatorio %}
-            <a class="open-modal" title="O parecer de probatório é único para o projeto e deve explicar a situação dos estudantes"
-              data-toggle="tooltip" data-html="true" animation="true"
-              {% if parecer %}
-                style="color: #856404;"
-                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' parecer.id %}"
-              {% else %}
-                style="color: red;"
-                data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PPP' %}"
-              {% endif %}
-            >
-              <span class="badge badge-warning" style="font-size: 1.1em; margin-right: 0.5em; margin-left: 0.0em;">
-                <i class="fas fa-exclamation-triangle" style="color: #856404;"></i>
-                {% lng "probatório" "probatory" %}
-              </span>
-              <span style="font-weight: bold; color: #856404;" class="mr-2">
-                {% lng "Estudantes em probatório, orientador deve enviar parecer para a Banca de Probatório." "Students on probation, advisor must send opinion to the Probation Committee." %}
-              </span>
-              {% if parecer %}
-                <i class="fas fa-file-alt"></i>
-                {% lng "(clique para atualizar)" "(click to update)" %}</a>
-                (<a href="{{request.scheme}}://{{request.get_host}}{{parecer.documento.url}}" target="_blank" rel="noopener noreferrer">
-                  {% lng "Enviado" "Sent" %}: {{parecer}}
-                </a>)
-              {% else %}
-                <i class="far fa-file"></i>
-                {% lng "(clique para enviar)" "(click to send)" %}</a>
-              {% endif %}
-            
-          {% endwith %}
-        </div>
-            
-        {% comment %} href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer" {% endcomment %}
-        {% comment %} data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}" {% endcomment %}
-
       {% endif %}
 
     </div>
