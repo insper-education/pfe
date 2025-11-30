@@ -10,12 +10,15 @@ import logging
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.db.models import Prefetch
 
 from .models import Exame
+
 
 from .support2 import get_objetivos
 
 from projetos.models import Avaliacao2, Banca, Evento
+from academica.models import Composicao
 
 from users.models import Alocacao
 
@@ -54,18 +57,29 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
     """Recuper as notas do Estudante."""
 
     if ano and semestre:
-        alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre)
+        alocacoes = Alocacao.objects.filter(aluno=estudante.pk, projeto__ano=ano,projeto__semestre=semestre).select_related("projeto")
     else:
-        alocacoes = Alocacao.objects.filter(aluno=estudante.pk)
-
+        alocacoes = Alocacao.objects.filter(aluno=estudante.pk).select_related("projeto")
+    
     now = datetime.datetime.now()
 
-    exames = Exame.objects.all().order_by("ordem")
-    exames = exames.exclude(sigla="F")  # Exclui o exame de certificação Falconi
-    
+    exames = list(Exame.objects.exclude(sigla="F").order_by("ordem"))
+
+    # Cache de eventos por semestre
+    eventos_cache = {}
+
     edicao = {}  # dicionário para cada alocação do estudante
     for alocacao in alocacoes:
         
+        ano_proj = alocacao.projeto.ano
+        semestre_proj = alocacao.projeto.semestre
+        
+        # Cache de evento de encerramento (evita query repetida)
+        key_evento = f"{ano_proj}.{semestre_proj}"
+        if key_evento not in eventos_cache:
+            eventos_cache[key_evento] = Evento.get_evento(sigla="EE", ano=ano_proj, semestre=semestre_proj)
+        evento_encerram = eventos_cache[key_evento]
+
         notas = []  # iniciando uma lista de notas vazia
 
         for exame in exames:
@@ -90,8 +104,6 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
 
                         # Verifica se já passou o evento de encerramento e assim liberar notas
-                        evento_encerram = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
-
                         if evento_encerram:  # Não é banca probation e tem evento de encerramento
                             if exame.sigla != 'P': 
                                 if now.date() > evento_encerram.endDate:  # Após o evento de encerramento liberar todas as notas
@@ -99,7 +111,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         # else:  # Não tem evento de encerramento
 
                         # Verifica se já passou o semestre e assim liberar notas
-                        if now.date() > datetime.date(alocacao.projeto.ano, 6 if alocacao.projeto.semestre == 1 else 12, 30):
+                        if now.date() > datetime.date(ano_proj, 6 if semestre_proj == 1 else 12, 30):
                             checa_b = False
 
                         if checa_b:
@@ -110,7 +122,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                                     break
 
                         
-                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                        banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
                             "sigla": exame.sigla,
                             "nota": banca_info["media"],
@@ -142,7 +154,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
                 if not exame.banca:  # Exame sem banca (SERIA QUASE COMO UM ELSE DO ANTERIOR)
                     if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)
-                        banca_info = get_banca_estudante(paval, ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
+                        banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
                             "sigla": exame.sigla,
                             "nota": banca_info["media"],
@@ -169,7 +181,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
             except Exame.DoesNotExist:
                 raise ValidationError("<h2>Erro ao identificar tipos de avaliações!</h2>")
 
-        key = f"{alocacao.projeto.ano}.{alocacao.projeto.semestre}"
+        key = f"{ano_proj}.{semestre_proj}"
         if key in edicao:
             logger.error("Erro, duas alocações no mesmo semestre! " + estudante.user.get_full_name() + " " + key)
         edicao[key] = notas

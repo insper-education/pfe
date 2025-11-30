@@ -297,15 +297,18 @@ def propostas_apresentadas(request):
             if edicao == "todas":
                 ano, semestre = None, None
                 propostas_filtradas = Proposta.objects.all().order_by("ano", "semestre", "organizacao", "titulo")
+                propostas_filtradas = Proposta.objects.all()\
+                    .select_related("organizacao")\
+                    .prefetch_related("perfil1", "perfil2", "perfil3", "perfil4")\
+                    .order_by("ano", "semestre", "organizacao", "titulo")
             else:
                 ano, semestre = edicao.split('.')
-                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre).order_by("organizacao", "titulo")
+                propostas_filtradas = Proposta.objects.filter(ano=ano, semestre=semestre)\
+                    .select_related("organizacao")\
+                    .prefetch_related("perfil1", "perfil2", "perfil3", "perfil4")\
+                    .order_by("organizacao", "titulo")
 
-            unique_organizacoes = set()
-            for proposta in propostas_filtradas:
-                if proposta.organizacao:
-                    unique_organizacoes.add(proposta.organizacao)
-            num_organizacoes = len(unique_organizacoes)
+            num_organizacoes = propostas_filtradas.filter(organizacao__isnull=False).values("organizacao").distinct().count()
 
             # Contando propostas disponíveis e escolhas
             disponivel_propostas = {}
@@ -889,38 +892,9 @@ def publicar_propostas(request):
 
     return render(request, "propostas/publicar_propostas.html", context)
 
-
-
-
-
-
-
 @login_required
 @transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def remover_disciplina(request):
-    """Remove Disciplina Recomendada."""
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-    if "disciplina_id" not in request.POST or "proposta_id" not in request.POST:
-        return HttpResponse("Algum erro ao passar parâmetros.", status=401)
-
-    try:
-        proposta_id = int(request.POST["proposta_id"])
-        disciplina_id = int(request.POST["disciplina_id"])
-    except:
-        return HttpResponse("Erro ao recuperar proposta e disciplinas.", status=401)
-
-    instances = Recomendada.objects.filter(proposta__id=proposta_id, disciplina__id=disciplina_id)
-    for instance in instances:
-        instance.delete()
-
-    return JsonResponse({"atualizado": True},)
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
+@permission_required("users.view_administrador", raise_exception=True)
 def projeto_criar(request, proposta_id):
     """Criar projeto de proposta."""
     proposta = get_object_or_404(Proposta, id=proposta_id)

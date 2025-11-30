@@ -266,8 +266,9 @@ def estudantes_notas(request, professor=None):
             return HttpResponse("Algum erro não identificado.", status=401)
         ano, semestre = map(int, request.POST["edicao"].split('.'))
 
-        alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)
-        alunos_list = alunos_list.order_by(Lower("user__first_name"), Lower("user__last_name"))
+        alunos_list = Aluno.objects.filter(trancado=False, externo__isnull=True)\
+            .select_related("user", "curso2")\
+            .order_by(Lower("user__first_name"), Lower("user__last_name"))
 
         if professor is not None:  # A chamada padrão é com o argumento "meus_projetos"
             user = get_object_or_404(PFEUser, pk=request.user.pk)
