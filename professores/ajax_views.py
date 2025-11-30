@@ -20,7 +20,7 @@ from users.models import PFEUser
 # @login_required
 # @permission_required("users.altera_professor", raise_exception=True)
 # Permite que compartilhe com a agenda mesmo com pessoas não logadas
-def ajax_bancas(request):
+def retorna_bancas(request):
     """Retorna as bancas do ano."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
@@ -81,7 +81,7 @@ def ajax_bancas(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_banca(request):
+def atualiza_banca(request):
     """Atualiza os dados de uma banca por ajax."""
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
         return HttpResponse("Erro.", status=400)
@@ -102,7 +102,7 @@ def ajax_atualiza_banca(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_dinamica(request):
+def atualiza_dinamica(request):
     """Atualiza os dados de uma dinamica por ajax."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
@@ -125,7 +125,7 @@ def ajax_atualiza_dinamica(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def ajax_permite_agendar_mentorias(request):
+def permite_agendar_mentorias(request):
     """Atualiza uma configuração de agendamento de mentorias."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
@@ -140,7 +140,7 @@ def ajax_permite_agendar_mentorias(request):
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_visibilidade_tematica(request):
+def atualiza_visibilidade_tematica(request):
     """Atualiza uma configuração de visibilidade de temáticas de mentorias."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST":
@@ -160,7 +160,7 @@ def ajax_atualiza_visibilidade_tematica(request):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def ajax_verifica_membro_banca(request):
+def verifica_membro_banca(request):
     """Verifica se o usuário é membro de alguma banca."""
     membro_id = request.POST.get("membro_id", None)
     edicao = request.POST.get("edicao", None)

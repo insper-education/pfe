@@ -265,7 +265,7 @@
 
         function disp(proposta_id) {
           var span = $("#disp" + proposta_id);
-          url = "{% url 'ajax_proposta' %}"+proposta_id;
+          url = "{% url 'atualiza_proposta' %}"+proposta_id;
           if (span.hasClass("text-success")) {
             data = {disponibilizar: "nao",};
             span.removeClass("text-success").addClass("text-danger").html("&#x2718;");

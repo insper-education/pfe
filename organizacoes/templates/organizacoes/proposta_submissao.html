@@ -109,6 +109,11 @@
 
   <div class="container-fluid principal">
     <div class="row justify-content-around">
+
+
+
+
+
       <div class="col-xl-auto">
         {% if liberadas_propostas %}
           <h5 class="red-bold">
@@ -132,8 +137,11 @@
         {% elif request.user.eh_admin %}
           <b>{% lng "Seu Perfil é de Administrador, você está preenchendo para alguma organização." "Your Profile is of Administrator, you are filling in for some organization." %}</b><br>
         {% endif %}
-        
       </div>
+
+
+
+      
 
       <div class="col-xl-auto ">
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 

@@ -28,6 +28,7 @@ from .models import PerguntasRespostas
 from .support import ordena_propostas_novo, ordena_propostas
 from .support import envia_proposta, preenche_proposta, preenche_proposta_pdf
 from .support import contem_caracteres_invalidos
+from .forms import PropostaForm
 
 from administracao.models import Estrutura
 from administracao.support import get_limite_propostas, get_data_planejada, propostas_liberadas, usuario_sem_acesso
@@ -442,136 +443,10 @@ def propostas_lista(request):
     return render(request, "propostas/propostas_lista.html", context)
 
 
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_proposta(request, primarykey=None):
-    """Atualiza uma proposta."""
-
-    if primarykey is None:
-        return HttpResponse("Erro não identificado.", status=401)
-    
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-
-    proposta = get_object_or_404(Proposta, pk=primarykey)
-
-    # Troca Conformidade de Proposta
-    for dict in request.POST:
-        if dict[0:5]=="dict[":
-            tmp = False
-            if request.POST[dict] == "true":
-                tmp = True
-            setattr(proposta, dict[5:-1], tmp)
-
-    # Define analisador
-    if "autorizador" in request.POST:
-        try:
-            if request.POST["autorizador"] == "0":
-                proposta.autorizado = None
-            else:
-                proposta.autorizado = PFEUser.objects\
-                    .get(pk=request.POST["autorizador"])
-        except PFEUser.DoesNotExist:
-            return HttpResponse("Analisador não encontrado.", status=401)
-    
-    # Disponibiliza proposta
-    if "disponibilizar" in request.POST:
-        proposta.disponivel = request.POST["disponibilizar"] == "sim"
-
-    # Anotações internas
-    if "anotacoes" in request.POST:
-        proposta.anotacoes = request.POST["anotacoes"]
-
-    proposta.save()
-    return JsonResponse({"atualizado": True,})
 
 
 
-@login_required
-@transaction.atomic
-def ajax_proposta_pergunta(request, primarykey=None):
-    """Atualiza perguntas sobre uma proposta."""
 
-    if primarykey is None:
-        return HttpResponse("Erro não identificado.", status=401)
-    
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-
-    proposta = get_object_or_404(Proposta, pk=primarykey)
-    
-    # Define analisador
-    if "pergunta" in request.POST:
-        pergunta_resposta = PerguntasRespostas(
-            proposta=proposta,
-            pergunta=request.POST["pergunta"],
-            quem_perguntou=request.user,
-        )
-        pergunta_resposta.save()
-
-    
-        # Enviando e-mail com mensagem para usuários.
-        mensagem = f"O estudante: <b>{request.user.get_full_name()}</b>, fez uma pergunta sobre a proposta: <b>{proposta.titulo}</b>."
-        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
-        mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_completa/{proposta.id}"
-        subject = "Capstone | Pergunta sobre proposta de projeto"
-        configuracao = get_object_or_404(Configuracao)
-        recipient_list = [str(configuracao.coordenacao.user.email)]
-        if proposta.autorizado:
-            recipient_list.append(str(proposta.autorizado.email))
-
-        email(subject, recipient_list, mensagem)
-        data = {
-            "atualizado": True,
-            "data_hora": pergunta_resposta.data_pergunta.strftime("%d/%m/%Y %H:%M"),
-            }
-        return JsonResponse(data)
-    
-    
-
-
-@login_required
-@transaction.atomic
-def ajax_proposta_resposta(request, primarykey=None):
-    """Atualiza perguntas sobre uma proposta."""
-
-    if primarykey is None:
-        return HttpResponse("Erro não identificado.", status=401)
-
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-
-    proposta = get_object_or_404(Proposta, pk=primarykey)
-    
-    # Define analisador
-    if "pergunta_id" in request.POST and "resposta" in request.POST:
-        pergunta_resposta = get_object_or_404(PerguntasRespostas, pk=request.POST["pergunta_id"])
-        pergunta_resposta.resposta = request.POST["resposta"]
-        pergunta_resposta.quem_respondeu = request.user
-
-        if "em_nome" in request.POST and request.POST["em_nome"]:
-            pergunta_resposta.em_nome_de = PFEUser.objects.get(pk=int(request.POST["em_nome"]))
-        else:
-            pergunta_resposta.em_nome_de = None
-
-        pergunta_resposta.data_resposta = timezone.now()
-        pergunta_resposta.save()
-
-        # Enviando e-mail com mensagem para usuários.
-        mensagem = f"Sua pergunta sobre a proposta <b>[{proposta.organizacao.sigla}] {proposta.titulo}</b> foi respondida."
-        mensagem += f"\n\n<br><br>Pergunta: <i>{pergunta_resposta.pergunta}</i>"
-        mensagem += f"\n\n<br><br>Resposta: <i>{pergunta_resposta.resposta}</i>"
-        mensagem += f"\n\n<br><br>Link para a proposta: {request.scheme}://{request.get_host()}/propostas/proposta_detalhes/{proposta.id}"
-        subject = "Capstone | Pergunta sobre proposta de projeto"
-        configuracao = get_object_or_404(Configuracao)
-        recipient_list = [
-            str(pergunta_resposta.quem_perguntou.email),
-            str(configuracao.coordenacao.user.email)
-            ]
-
-        email(subject, recipient_list, mensagem)
-        return JsonResponse({"atualizado": True,})
 
 
 @login_required
@@ -656,7 +531,7 @@ def proposta_detalhes(request, primarykey):
 @ratelimit(key="ip", rate="5/m", block=False)
 def proposta_editar(request, slug=None):
     """Formulário de Submissão de Proposta de Projetos."""
-    if getattr(request, 'limited', False):
+    if getattr(request, "limited", False):
         mensagem_erro = {
             "pt": "Você enviou propostas demais em pouco tempo. Por favor, aguarde um instante antes de tentar novamente.",
             "en": "You have submitted too many proposals in a short period. Please wait a moment before trying again.",
@@ -699,9 +574,19 @@ def proposta_editar(request, slug=None):
     if request.method == "POST":
 
         if (not liberadas_propostas) or (request.user.is_authenticated and request.user.eh_admin):
-            
+            form = PropostaForm(request.POST, request.FILES)
+            if not form.is_valid():
+                # Volta com erros; página de submissão mostra o form novamente
+                context = {
+                    "voltar": True,
+                    "mensagem_erro": {"pt": "Formulário inválido.", "en": "Invalid form."},
+                }
+                return render(request, "generic_ml.html", context=context)
+
+            cd = form.cleaned_data
+
             if "new" in request.POST:
-                titulo = request.POST.get("titulo_prop", "").strip()
+                titulo = cd.get("titulo_prop", "").strip()
 
                 if contem_caracteres_invalidos(titulo):
                     mensagem_erro = {
@@ -716,11 +601,7 @@ def proposta_editar(request, slug=None):
                         "pt": "Uma proposta com este título já existe para o próximo semestre e aparentemente está sendo duplicada.<br> Caso considere que isso não deveria acontecer, por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> A proposta não foi salva.",
                         "en": "A proposal with this title already exists for the next semester and appears to be duplicated.<br> If you believe this should not happen, please contact: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>.<br> The proposal has not been saved.",
                     }
-  
-                    context = {
-                        "voltar": True,
-                        "mensagem_erro": mensagem_erro,
-                    }
+                    context = {"voltar": True, "mensagem_erro": mensagem_erro}
                     return render(request, "generic_ml.html", context=context)
 
                 if proposta:  # Nova proposta baseada na antiga
@@ -750,50 +631,36 @@ def proposta_editar(request, slug=None):
             else:
                 return HttpResponse("Erro não identificado.", status=401)
 
-            if "arquivo" in request.FILES:
+            # Upload de arquivo via form (se presente)
+            if cd.get("arquivo"):
                 try:
-                    arquivo = simple_upload(request.FILES["arquivo"],
-                                            path=get_upload_path(proposta, ""))
+                    arquivo = simple_upload(cd["arquivo"], path=get_upload_path(proposta, ""))
                     proposta.anexo = arquivo[len(settings.MEDIA_URL):]
                     proposta.save()
                 except Exception as e:
                     logger.error(f"Erro ao fazer upload do arquivo: {e}")
-                    mensagem_erro = {
-                        "pt": f"Erro no upload do arquivo: {e}",
-                        "en": f"Error uploading file: {e}",
-                    }
-                    context = {
-                        "voltar": True,
-                        "mensagem_erro": mensagem_erro,
-                    }
+                    mensagem_erro = {"pt": f"Erro no upload do arquivo: {e}", "en": f"Error uploading file: {e}"}
+                    context = {"voltar": True, "mensagem_erro": mensagem_erro}
                     return render(request, "generic_ml.html", context=context)
 
             # Só faz essa parte se usuário logado e professor ou administrador:
             if request.user.is_authenticated and request.user.eh_prof_a:
-                proposta.internacional = True if request.POST.get("internacional", None) else False
-                proposta.intercambio = True if request.POST.get("intercambio", None) else False
-                proposta.empreendendo = True if request.POST.get("empreendendo", None) else False
-                colaboracao_id = request.POST.get("colaboracao", None)
-                if colaboracao_id:
-                    proposta.colaboracao = Organizacao.objects.filter(pk=colaboracao_id).last()
-                else:
-                    proposta.colaboracao = None
+                proposta.internacional = bool(cd.get("internacional"))
+                proposta.intercambio = bool(cd.get("intercambio"))
+                proposta.empreendendo = bool(cd.get("empreendendo"))
+                proposta.colaboracao = cd.get("colaboracao") or None
                 proposta.save()
 
-            enviar = "mensagem" in request.POST  # Por e-mail se enviar
+            enviar = bool(cd.get("mensagem"))  # Por e-mail se enviar
             mensagem = envia_proposta(proposta, request, enviar)
 
             if enviar:
                 resposta["pt"] += "Você deve receber um e-mail de confirmação nos próximos instantes.<br>"
                 resposta["en"] += "You should receive a confirmation email in the next few moments.<br>"
-            resposta["pt"] += "<br><hr>" + mensagem  # Precisa acertar isso
-            resposta["en"] += "<br><hr>" + mensagem  # Precisa acertar isso
+            resposta["pt"] += "<br><hr>" + mensagem
+            resposta["en"] += "<br><hr>" + mensagem
 
-            context = {
-                "voltar": True,
-                "mensagem": resposta,
-                "ver_proposta": proposta,
-            }
+            context = {"voltar": True, "mensagem": resposta, "ver_proposta": proposta}
             return render(request, "generic_ml.html", context=context)
 
         else:
@@ -818,39 +685,14 @@ def proposta_editar(request, slug=None):
         ]
 
     ano_semestre = f"{ano}.{semestre}"
-
-    obs = {
-           "pt": """
-                Observação: Ao submeter o projeto, é fundamental deixar claro que o objetivo do Capstone é 
-                proporcionar aos estudantes um contato próximo com os responsáveis das organizações parceiras 
-                para o desenvolvimento de uma solução tecnológica. Em geral, os estudantes se comunicam 
-                semanalmente com a instituição para compreender melhor o desafio, apresentar os resultados 
-                obtidos até o momento, planejar as próximas etapas em conjunto e tratar de outros aspectos 
-                que podem variar conforme o projeto.
-                Além disso, deve-se esclarecer que, embora não haja um custo direto para as organizações 
-                parceiras, será necessário que pelo menos um profissional dedique algumas horas semanais 
-                para acompanhar os estudantes. Caso a proposta envolva custos, como servidores ou materiais, 
-                o Insper pode não ter condições de arcar com essas despesas, cabendo à empresa assumi-las. 
-                Os estudantes, no entanto, terão acesso aos laboratórios do Insper para o desenvolvimento 
-                do projeto, mediante agendamento.
-           """,
-           "en": """
-                Note: When submitting the project, it is essential to clarify that the goal of the Capstone 
-                is to provide students with close contact with the representatives of partner institutions 
-                for the development of a technological solution. In general, students communicate with the 
-                institution on a weekly basis to better understand the challenge, present the results obtained 
-                so far, plan the next steps together, and address other aspects that may vary depending on 
-                the project.
-                Additionally, it should be made clear that although there is no direct cost for partner 
-                institutions, at least one professional will need to dedicate a few hours per week to support 
-                the students. If the proposal involves costs such as servers or materials, Insper may not be 
-                able to cover these expenses, and it will be up to the company to assume them. However, 
-                students will have access to Insper's laboratories for project development, subject to scheduling.
-           """
-    }
+    obs = Estrutura.loads(nome="Obs Submeter Proposta")
 
     tipo_pt = "Edição" if proposta else "Submissão"
     tipo_en = "Edit" if proposta else "Submission"
+
+
+
+
 
     context = {
         "titulo": {"pt": tipo_pt + " de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal " + tipo_en + " (Capstone " + ano_semestre + ")" },
@@ -1029,108 +871,9 @@ def publicar_propostas(request):
     return render(request, "propostas/publicar_propostas.html", context)
 
 
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def validate_alunos(request):
-    """Ajax para validar vaga de estudantes em propostas."""
-    try:
-        proposta_id = int(request.GET.get("proposta"))
-        vaga = request.GET.get("vaga", " - ").split('-')
-        checked = request.GET.get("checked") == "true"
-        proposta = Proposta.objects.select_for_update().get(id=proposta_id)
-        curso = Curso.objects.get(sigla_curta=vaga[0])
-        perfil_num = vaga[1]
-        if perfil_num in {'1', '2', '3', '4'}:
-            perfil_attr = f'perfil{perfil_num}'
-            perfil = getattr(proposta, perfil_attr)
-            if checked:
-                perfil.add(curso)
-            else:
-                perfil.remove(curso)
-            proposta.save()
-            return JsonResponse({"atualizado": True})
-        else:
-            return HttpResponse("Perfil inválido.", status=400)
-    except (Proposta.DoesNotExist, Curso.DoesNotExist, ValueError, TypeError):
-        return HttpResponseNotFound("Erro ao validar vaga.")
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def link_organizacao(request, proposta_id):
-    """Cria um anotação para uma organização parceira."""
-    proposta = get_object_or_404(Proposta, id=proposta_id)
-
-    if request.method == "POST" and "organizacao_id" in request.POST:
-
-        organizacao = get_object_or_404(Organizacao, id=request.POST["organizacao_id"])
-
-        proposta.organizacao = organizacao
-
-        proposta.save()
-
-        data = {
-            "organizacao": str(organizacao),
-            "organizacao_id": organizacao.id,
-            "organizacao_sigla": organizacao.sigla,
-            "organizacao_endereco": organizacao.endereco,
-            "organizacao_logotipo_url": (organizacao.logotipo.url if organizacao.logotipo else None),
-            "organizacao_website": organizacao.website,
-            "proposta": proposta_id,
-            "atualizado": True,
-        }
-
-        return JsonResponse(data)
-
-    context = {
-        "organizacoes": Organizacao.objects.all().order_by(Lower("sigla")),
-        "proposta": proposta,
-        "url": request.get_full_path(),
-    }
-    return render(request, "propostas/organizacao_view.html", context=context)
 
 
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def link_disciplina(request, proposta_id):
-    """Adicionar Disciplina Recomendada."""
-    proposta = get_object_or_404(Proposta, id=proposta_id)
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
 
-        if "disciplina_id" not in request.POST:
-            return HttpResponse("Algum erro ao passar parâmetros.", status=401)
-
-        disciplina_id = int(request.POST["disciplina_id"])
-        disciplina = get_object_or_404(Disciplina, id=disciplina_id)
-
-        ja_existe = Recomendada.objects.filter(proposta=proposta, disciplina=disciplina)
-
-        if ja_existe:
-            return HttpResponseNotFound("Já existe")
-
-        recomendada = Recomendada()
-        recomendada.proposta = proposta
-        recomendada.disciplina = disciplina
-        recomendada.save()
-
-        data = {
-            "disciplina": str(disciplina),
-            "disciplina_id": disciplina.id,
-            "proposta_id": proposta_id,
-            "atualizado": True,
-        }
-
-        return JsonResponse(data)
-
-    context = {
-        "disciplinas": Disciplina.objects.all().order_by("nome"),
-        "proposta": proposta,
-        "url": request.get_full_path(),
-    }
- 
-    return render(request, "propostas/disciplina_view.html", context=context)
 
 
 @login_required

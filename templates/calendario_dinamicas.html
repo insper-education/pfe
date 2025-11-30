@@ -44,7 +44,7 @@
   function atualiza(event) {
     $.ajax({
       type: "POST",
-      url: '{% url "ajax_atualiza_dinamica" %}',
+      url: '{% url "atualiza_dinamica" %}',
       data: {
           "id": event.id,
           "start": event.start.toLocaleString("pt-BR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false  }),

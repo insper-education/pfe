@@ -65,7 +65,7 @@
 
       $.ajax({
           type: "POST",
-          url: "{% url 'ajax_proposta_pergunta' proposta.id %}",
+          url: "{% url 'proposta_pergunta' proposta.id %}",
           data: {
             "pergunta": pergunta,
             "csrfmiddlewaretoken": "{{ csrf_token }}",

@@ -10,6 +10,7 @@ Data: 15 de Dezembro de 2020
 from django.urls import path
 
 from . import views
+from . import ajax_views
 
 urlpatterns = [
     path("", views.index_propostas, name="index_propostas"),  # pagina inicial
@@ -27,12 +28,13 @@ urlpatterns = [
     path("projeto_criar/<int:proposta_id>", views.projeto_criar, name="projeto_criar"),
     path("publicar_propostas/", views.publicar_propostas, name="publicar_propostas"),
 
-    path("ajax/validate_alunos/", views.validate_alunos, name="validate_alunos"),
-    path("ajax/link_organizacao/<int:proposta_id>", views.link_organizacao, name="link_organizacao"),
-    path("ajax/link_disciplina/<int:proposta_id>", views.link_disciplina, name="link_disciplina"),
-    path("ajax/remover_disciplina", views.remover_disciplina, name="remover_disciplina"),
-    path("ajax_proposta/", views.ajax_proposta, name="ajax_proposta"),    
-    path("ajax_proposta/<int:primarykey>", views.ajax_proposta, name="ajax_proposta"),
-    path("ajax_proposta_pergunta/<int:primarykey>", views.ajax_proposta_pergunta, name="ajax_proposta_pergunta"),
-    path("ajax_proposta_resposta/<int:primarykey>", views.ajax_proposta_resposta, name="ajax_proposta_resposta"),
+    # AJAX Endpoints
+    path("ajax/validate_alunos/", ajax_views.validate_alunos, name="validate_alunos"),
+    path("ajax/link_organizacao/<int:proposta_id>", ajax_views.link_organizacao, name="link_organizacao"),
+    path("ajax/link_disciplina/<int:proposta_id>", ajax_views.link_disciplina, name="link_disciplina"),
+    path("ajax/remover_disciplina", ajax_views.remover_disciplina, name="remover_disciplina"),
+    path("ajax/atualiza_proposta/", ajax_views.atualiza_proposta, name="atualiza_proposta"),    
+    path("ajax/atualiza_proposta/<int:primarykey>", ajax_views.atualiza_proposta, name="atualiza_proposta"),
+    path("ajax/proposta_pergunta/<int:primarykey>", ajax_views.proposta_pergunta, name="proposta_pergunta"),
+    path("ajax/proposta_resposta/<int:primarykey>", ajax_views.proposta_resposta, name="proposta_resposta"),
 ]

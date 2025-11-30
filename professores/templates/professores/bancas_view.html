@@ -546,7 +546,7 @@
     var tipo = $("input[name='tipo']:checked").val();
 
     $.ajax({
-      url: "{% url 'ajax_verifica_membro_banca' %}",
+      url: "{% url 'verifica_membro_banca' %}",
       data: {
         "csrfmiddlewaretoken": "{{ csrf_token }}",
         "membro_id": membro_id,

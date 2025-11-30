@@ -630,7 +630,7 @@
         dict[$(this).attr("name")] = $(this).is(":checked");
       })
 
-      url = "{% url 'ajax_proposta' proposta.id %}";
+      url = "{% url 'atualiza_proposta' proposta.id %}";
 
       data = {
         autorizador: autorizador,

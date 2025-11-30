@@ -80,7 +80,7 @@
 
           $.ajax({
               type: "POST",
-              url: "{% url 'ajax_proposta_resposta' proposta.id %}",
+              url: "{% url 'proposta_resposta' proposta.id %}",
               data: {
                 "pergunta_id": perguntaId,
                 "resposta": resposta,

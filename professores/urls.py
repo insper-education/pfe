@@ -78,10 +78,10 @@ urlpatterns = [
     path("ver_pares_projeto/<int:projeto_id>/<str:momento>", views.ver_pares_projeto, name="ver_pares_projeto"),
 
     # AJAX Endpoints
-    path("ajax_bancas/", ajax_views.ajax_bancas, name="ajax_bancas"),
-    path("ajax_atualiza_banca/", ajax_views.ajax_atualiza_banca, name="ajax_atualiza_banca"),
-    path("ajax_atualiza_dinamica/", ajax_views.ajax_atualiza_dinamica, name="ajax_atualiza_dinamica"),
-    path("ajax_permite_agendar_mentorias/", ajax_views.ajax_permite_agendar_mentorias, name="ajax_permite_agendar_mentorias"),
-    path("ajax_verifica_membro_banca/", ajax_views.ajax_verifica_membro_banca, name="ajax_verifica_membro_banca"),
-    path("ajax_atualiza_visibilidade_tematica/", ajax_views.ajax_atualiza_visibilidade_tematica, name="ajax_atualiza_visibilidade_tematica"),
+    path("ajax/retorna_bancas/", ajax_views.retorna_bancas, name="retorna_bancas"),
+    path("ajax/atualiza_banca/", ajax_views.atualiza_banca, name="atualiza_banca"),
+    path("ajax/atualiza_dinamica/", ajax_views.atualiza_dinamica, name="atualiza_dinamica"),
+    path("ajax/permite_agendar_mentorias/", ajax_views.permite_agendar_mentorias, name="permite_agendar_mentorias"),
+    path("ajax/verifica_membro_banca/", ajax_views.verifica_membro_banca, name="verifica_membro_banca"),
+    path("ajax/atualiza_visibilidade_tematica/", ajax_views.atualiza_visibilidade_tematica, name="atualiza_visibilidade_tematica"),
 ]

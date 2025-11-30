@@ -60,7 +60,7 @@
         $(".tematicas_checkbox").change(function(evt){
 
           $.ajax({
-            url: "{% url 'ajax_atualiza_visibilidade_tematica' %}",
+            url: "{% url 'atualiza_visibilidade_tematica' %}",
             data: {
               "csrfmiddlewaretoken": "{{ csrf_token }}",
               "visibilidade": evt.target.checked,
@@ -85,7 +85,7 @@
     $("#agendamentos").change(function(evt){
 
       $.ajax({
-        url: "{% url 'ajax_permite_agendar_mentorias' %}",
+        url: "{% url 'permite_agendar_mentorias' %}",
         data: {
           "csrfmiddlewaretoken": "{{ csrf_token }}",
           "permite_agendar_mentorias": evt.target.checked
