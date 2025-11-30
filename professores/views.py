@@ -8,7 +8,6 @@ Data: 15 de Dezembro de 2020
 
 import os
 import datetime
-import dateutil.parser
 import logging
 import requests
 import json
@@ -18,7 +17,7 @@ from urllib.parse import unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Case, When, Value, F, Func, FloatField
+from django.db.models import Case, When, Value, F, Func, FloatField, Max
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -27,7 +26,7 @@ from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 
 from .support import coleta_membros_banca, editar_banca, mensagem_orientador
-from .support import recupera_orientadores_por_semestre
+from .support import recupera_orientadores_por_semestre, get_edicoes_orientador
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
 from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas
@@ -58,6 +57,8 @@ from projetos.arquivos import le_arquivo
 
 from users.models import PFEUser, Professor, Alocacao
 from users.support import get_edicoes
+
+from .forms import DinamicasForm, EncontroFeedbackForm
 
 
 # Get an instance of a logger
@@ -126,135 +127,10 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
     return render(request, "professores/avaliacoes_pares.html", context=context)
 
 
-# @login_required
-# @permission_required("users.altera_professor", raise_exception=True)
-# Permite que compartilhe com a agenda mesmo com pessoas não logadas
-def ajax_bancas(request):
-    """Retorna as bancas do ano."""
-
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro.", status=401)
-
-    if "start" not in request.POST or "end" not in request.POST:
-        return HttpResponse("Erro.", status=401)
-
-    start = datetime.datetime.strptime(request.POST["start"], "%Y-%m-%d").date() - datetime.timedelta(days=90)
-    end = datetime.datetime.strptime(request.POST["end"], "%Y-%m-%d").date() + datetime.timedelta(days=90)
-    bancas = {}
-
-    for banca in Banca.objects.filter(startDate__gte=start, startDate__lte=end):
-        projeto = banca.get_projeto()
-        orientador = projeto.orientador.user.get_full_name() if projeto and projeto.orientador else None
-        organizacao_sigla = projeto.organizacao.sigla if projeto and projeto.organizacao else None
-        estudante = banca.alocacao.aluno.user.get_full_name() if banca.alocacao else None
-        membros = banca.membros()
-        if request.user.is_authenticated and request.user.eh_prof_a:
-            editable = request.user.eh_admin or (projeto and projeto.orientador == request.user.professor)
-        else:
-            editable = False
-
-        title = f"{projeto.get_titulo_org()}" if projeto else "Projeto ou alocação não identificados"
-        if banca.alocacao:
-            title = f"Estudante: {estudante} - {projeto.get_titulo_org()}"
-        if banca.location:
-            title += f"\n<br>Local: {banca.location}"
-        title += "\n<br>Banca:"
-        for membro in membros:
-            title += f"\n<br>&bull; {membro.get_full_name()}"
-            if projeto.orientador and projeto.orientador.user == membro:
-                title += " (O)"
-
-        if banca.composicao and banca.composicao.exame:
-            cor = banca.composicao.exame.cor
-            className = banca.composicao.exame.className
-        else:
-            cor = "808080"
-            className = ""
-
-        bancas[banca.id] = {
-            "start": banca.startDate.strftime("%Y-%m-%dT%H:%M:%S"),
-            "end": banca.endDate.strftime("%Y-%m-%dT%H:%M:%S"),
-            "local": banca.location,
-            "organizacao": organizacao_sigla,
-            "orientador": orientador,
-            "estudante": estudante,
-            "color": f"#{cor}",
-            "className": className,
-            "editable": editable,
-            "title": title,
-            **{f"membro{num+1}": membro.get_full_name() for num, membro in enumerate(membros)}
-        }
-
-    return JsonResponse(bancas)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_banca(request):
-    """Atualiza os dados de uma banca por ajax."""
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro.", status=400)
-    if not all(key in request.POST for key in ("id", "start", "end")):
-        return HttpResponse("Erro.", status=400)
-
-    try:
-        banca = Banca.objects.get(id=request.POST["id"])
-        banca.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-        banca.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
-        banca.save()
-        return JsonResponse({"atualizado": True})
-    except Banca.DoesNotExist:
-        return HttpResponse("Banca não encontrada", status=404)
-    except ValueError:
-        return HttpResponse("Formado de data inválido", status=400)
-    
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_dinamica(request):
-    """Atualiza os dados de uma dinamica por ajax."""
-
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro.", status=400)
-    if not all(key in request.POST for key in ("id", "start", "end")):
-        return HttpResponse("Erro.", status=400)
-
-    try:
-        encontro = Encontro.objects.get(id = request.POST["id"])
-        encontro.startDate = datetime.datetime.strptime(request.POST["start"], "%d/%m/%Y, %H:%M")
-        encontro.endDate = datetime.datetime.strptime(request.POST["end"], "%d/%m/%Y, %H:%M")
-        encontro.save()
-        return JsonResponse({"atualizado": True,})
-    except Encontro.DoesNotExist:
-        return HttpResponse("Encontro não encontrada", status=404)
-    except ValueError:
-        return HttpResponse("Formado de data inválido", status=400)
-
-
-def get_edicoes_orientador(orientador, configuracao_ate):
-    """Função usada para recuperar todas as edições de orientação de um professor."""
-
-    pares = Projeto.objects.filter(orientador=orientador).values("ano", "semestre")
-
-    edicoes = []
-    ano, semestre = None, None
-    for pair in pares.distinct("ano", "semestre"):
-        ano = pair.get("ano")
-        semestre = pair.get("semestre")
-        if ano == None or semestre == None:
-            continue
-        edicoes.append(f"{ano}.{semestre}")
-        if ano == configuracao_ate.ano and semestre == configuracao_ate.semestre:
-            break
-
-    return edicoes, ano, semestre
-
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def avaliar_entregas(request, prof_id=None):
-    """Página para fzer e ver avaliação de entregas dos estudantes."""
+    """Página para fazer e ver avaliação de entregas dos estudantes."""
 
     # Identifica o professor
     professor = None
@@ -481,8 +357,20 @@ def encontro_feedback(request, pk):
     envolvidos = recupera_envolvidos(encontro.projeto, encontro=encontro, filtro=['E'])
 
     if request.method == "POST":
-        encontro.observacoes_estudantes = request.POST.get("observacoes_estudantes")
-        encontro.observacoes_orientador = request.POST.get("observacoes_orientador")
+        form = EncontroFeedbackForm(request.POST)
+        if not form.is_valid():
+            context = {
+                "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
+                "encontro": encontro,
+                "envolvidos": {encontro.projeto.id: envolvidos},
+                "form": form,
+                "errors": form.errors,
+            }
+            return render(request, "professores/encontro_feedback.html", context=context)
+
+        # Salva as observações
+        encontro.observacoes_estudantes = form.cleaned_data.get("observacoes_estudantes", "")
+        encontro.observacoes_orientador = form.cleaned_data.get("observacoes_orientador", "")
         encontro.save()
 
         participantes = anota_participacao(request.POST, encontro=encontro)
@@ -490,7 +378,6 @@ def encontro_feedback(request, pk):
         # Mensagem para facilitador
         subject = "Capstone | Anotações de Mentoria - " + encontro.projeto.get_titulo_org()
         configuracao = get_object_or_404(Configuracao)
-        #recipient_list = [encontro.facilitador.email, encontro.projeto.orientador.user.email, configuracao.coordenacao.user.email]
 
         recipient_list = list(filter(None, [
             getattr(encontro.facilitador, "email", None),
@@ -513,11 +400,19 @@ def encontro_feedback(request, pk):
             context = {"mensagem": {"pt": "Observações Enviadas, Obrigado", "en": "Notes Sent, Thank you"}}
             return render(request, "generic_ml.html", context=context)
 
+    # GET request - inicializa form com dados existentes
+    initial_data = {
+        "observacoes_estudantes": encontro.observacoes_estudantes or "",
+        "observacoes_orientador": encontro.observacoes_orientador or "",
+    }
+    form = EncontroFeedbackForm(initial=initial_data)
+
     context = {
-            "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
-            "encontro": encontro,
-            "envolvidos": {encontro.projeto.id: envolvidos},
-        }
+        "titulo": {"pt": "Feedback de Mentoria", "en": "Mentoring Feedback"},
+        "encontro": encontro,
+        "envolvidos": {encontro.projeto.id: envolvidos},
+        "form": form,
+    }
 
     return render(request, "professores/encontro_feedback.html", context=context)
 
@@ -1177,98 +1072,6 @@ def dinamicas_lista(request, edicao=None):
 
 
 @login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_permite_agendar_mentorias(request):
-    """Atualiza uma configuração de agendamento de mentorias."""
-
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-
-    configuracao = get_object_or_404(Configuracao)
-    configuracao.permite_agendar_mentorias = request.POST.get("permite_agendar_mentorias") == "true"
-    configuracao.save()
-    return JsonResponse({"atualizado": True})
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_atualiza_visibilidade_tematica(request):
-    """Atualiza uma configuração de visibilidade de temáticas de mentorias."""
-
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-    
-    tematica_id = request.POST.get("tematica_id", None)
-    visibilidade = request.POST.get("visibilidade", None)
-    if tematica_id and visibilidade is not None:
-        try:
-            tematica = get_object_or_404(TematicaEncontro, pk=int(tematica_id))
-        except ValueError:
-            return HttpResponse("Temática não encontrada.", status=404)
-        tematica.visibilidade = True if visibilidade == "true" else False
-        tematica.save()
-        return JsonResponse({"atualizado": True})
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def ajax_verifica_membro_banca(request):
-    """Verifica se o usuário é membro de alguma banca."""
-    membro_id = request.POST.get("membro_id", None)
-    edicao = request.POST.get("edicao", None)
-    tipo = [request.POST.get("tipo", None)]  # "BI", "BF", "P", "F"
-    remove_banca = request.POST.get("remove_banca", None)
-    if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponse("Erro não identificado.", status=401)
-    if not membro_id or not tipo:
-        return JsonResponse({"lista_bancas": []})
-    try:
-        membro = get_object_or_404(PFEUser, pk=int(membro_id))
-    except ValueError:
-        return HttpResponse("Membro não encontrado.", status=404)
-    bancas = Banca.get_bancas_com_membro(membro, siglas=tipo)
-
-    if edicao and '.' in edicao:
-        ano, semestre = edicao.split('.')
-        bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
-    else:
-        configuracao = get_object_or_404(Configuracao)
-        bancas = bancas.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
-    
-    # Para não contar a própria banca que está sendo editada
-    if remove_banca:
-        remove_banca = int(remove_banca)
-        bancas = bancas.exclude(id=remove_banca)
-
-    lista_bancas = []
-    for banca in bancas:
-        if banca.alocacao:
-            aluno_nome = banca.alocacao.aluno.user.get_full_name()
-            aluno_email = banca.alocacao.aluno.user.email
-            projeto_titulo = banca.alocacao.projeto.get_titulo_org()
-        else:
-            aluno_nome = ""
-            aluno_email = ""
-            projeto_titulo = banca.projeto.get_titulo_org() if banca.projeto else ""
-        data = banca.startDate.strftime("%d/%m %H:%M") if banca.startDate else ""
-        data += " às " + banca.endDate.strftime("%H:%M") if banca.endDate else ""
-        lista_bancas.append({
-            "id": banca.id,
-            "data": data,
-            "tipo": banca.composicao.exame.titulo if banca.composicao and banca.composicao.exame else "",
-            "projeto": projeto_titulo,
-            "aluno_nome": aluno_nome,
-            "aluno_email": aluno_email,
-            "local": banca.location if banca.location else "",
-            "link": banca.link if banca.link else "",
-        })
-
-    return JsonResponse({"lista_bancas": lista_bancas})
-
-
-@login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_lista(request, edicao=None):
     """Lista as bancas agendadas, conforme periodo ou projeto pedido."""
@@ -1817,85 +1620,58 @@ def dinamicas_criar(request, data=None):
 
         mensagem = ""
         if "criar" in request.POST:
+            form = DinamicasForm(request.POST)
+            if not form.is_valid():
+                return HttpResponse("Erro com dados do formulário: " + str(form.errors), status=400)
 
-            if ("inicio" in request.POST) and ("fim" in request.POST):
+            inicio = form.cleaned_data["inicio"]
+            fim = form.cleaned_data["fim"]
+            vezes = form.cleaned_data.get("vezes", 1)
+            intervalo = form.cleaned_data.get("intervalo", 0)
+            local = form.cleaned_data.get("local")
+            tematica = form.cleaned_data.get("tematica")
+            projeto = form.cleaned_data.get("projeto")
+            facilitador = form.cleaned_data.get("facilitador")
 
-                try:
-                    startDate = dateutil.parser.parse(request.POST["inicio"])
-                    endDate = dateutil.parser.parse(request.POST["fim"])
-                    diferenca = endDate - startDate
-                except (ValueError, OverflowError):
-                    return HttpResponse("Erro com data da Dinâmica!")
+            diferenca = fim - inicio
+            current_start = inicio
+            current_end = fim
 
-                vezes = int(request.POST["vezes"])
-                intervalo = int(request.POST["intervalo"])
-                local = request.POST.get("local", None)
-                tematica_id = request.POST.get("tematica", None)
-                if tematica_id:
-                    try:
-                        tematica = TematicaEncontro.objects.get(id=tematica_id)
-                    except TematicaEncontro.DoesNotExist:
-                        return HttpResponse("Temática não encontrada.", status=401)
-                projeto_id = request.POST.get("projeto", None)
-                if projeto_id and projeto_id != "0":
-                    try:
-                        projeto = Projeto.objects.get(id=projeto_id)
-                    except Projeto.DoesNotExist:
-                        return HttpResponse("Projeto não encontrado.", status=401)
-                else:
-                    projeto = None
-                facilitador_id = request.POST.get("facilitador", None)
-                if facilitador_id and facilitador_id != "0":
-                    try:
-                        facilitador = PFEUser.objects.get(id=facilitador_id)
-                    except PFEUser.DoesNotExist:
-                        return HttpResponse("Facilitador não encontrado.", status=401)
-                else:
-                    facilitador = None
-                        
-                for vez in range(vezes):
+            for _ in range(vezes):
+                encontro = Encontro(startDate=current_start, endDate=current_end)
+                
+                if tematica:
+                    encontro.tematica = tematica
+                if local:
+                    encontro.location = local
+                if projeto:
+                    encontro.projeto = projeto
+                if facilitador:
+                    encontro.facilitador = facilitador
+                
+                encontro.save()
 
-                    encontro = Encontro(startDate=startDate, endDate=endDate)
+                current_start += diferenca + datetime.timedelta(minutes=intervalo)
+                current_end += diferenca + datetime.timedelta(minutes=intervalo)
 
-                    startDate += diferenca +  datetime.timedelta(minutes=intervalo)
-                    endDate += diferenca +  datetime.timedelta(minutes=intervalo)
-
-                    if tematica_id:
-                        try:
-                            encontro.tematica = TematicaEncontro.objects.get(id=tematica_id)
-                        except TematicaEncontro.DoesNotExist:
-                            return HttpResponse("Temática não encontrada.", status=401)
-
-                    if local:
-                        encontro.location = local
-
-                    if projeto:
-                        encontro.projeto = projeto
-                        
-                    if facilitador:
-                        encontro.facilitador = facilitador
-
-                    encontro.save()
-
-                    if "enviar_mensagem" in request.POST:
-                        if encontro.projeto or encontro.facilitador:
-                            subject = "Capstone | Dinâmica agendada"
-                            recipient_list = []
+                if "enviar_mensagem" in request.POST:
+                    if encontro.projeto or encontro.facilitador:
+                        subject = "Capstone | Dinâmica agendada"
+                        recipient_list = []
+                        if encontro.projeto:
                             alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
                             for alocacao in alocacoes:
                                 recipient_list.append(alocacao.aluno.user.email)
-                            if encontro.facilitador:
-                                recipient_list.append(encontro.facilitador.email)
-                            recipient_list.append(str(configuracao.coordenacao.user.email))
-                            message = message_agendamento_dinamica(encontro, False) # Atualizada
-                            email(subject, recipient_list, message)
+                        if encontro.facilitador:
+                            recipient_list.append(encontro.facilitador.email)
+                        recipient_list.append(str(configuracao.coordenacao.user.email))
+                        message = message_agendamento_dinamica(encontro, False) # Atualizada
+                        email(subject, recipient_list, message)
 
-                if vezes > 1:
-                    mensagem = "Dinâmicas criadas."
-                else:
-                    mensagem = "Dinâmica criada."
+            if vezes > 1:
+                mensagem = "Dinâmicas criadas."
             else:
-                return HttpResponse("Dinâmica não registrada, erro!", status=401)
+                mensagem = "Dinâmica criada."
 
         # else Atualização não realizada.
 
@@ -1920,6 +1696,7 @@ def dinamicas_criar(request, data=None):
         context["data"] = data
 
     return render(request, "professores/dinamicas_view.html", context)
+
 
 
 @login_required
@@ -1949,83 +1726,63 @@ def dinamicas_editar(request, primarykey=None):
 
         mensagem = ""
         if "atualizar" in request.POST:
-            
-            if ("inicio" in request.POST) and ("fim" in request.POST):
+            form = DinamicasForm(request.POST)
+            if not form.is_valid():
+                return HttpResponse("Erro com dados do formulário: " + str(form.errors), status=400)
 
-                projeto_antigo = None
-                facilitador_antigo = None
-                projeto_id = request.POST.get("projeto")
-                if projeto_id:
-                    projeto_novo = get_object_or_404(Projeto, id=projeto_id) if projeto_id != '0' else None
-                    if encontro.projeto and projeto_novo != encontro.projeto:
-                        projeto_antigo = encontro.projeto
-                    encontro.projeto = projeto_novo
-                facilitador_id = request.POST.get("facilitador")
-                if facilitador_id:
-                    facilitador_novo = get_object_or_404(PFEUser, id=facilitador_id) if facilitador_id != '0' else None
-                    if encontro.facilitador and facilitador_novo != encontro.facilitador:
-                        facilitador_antigo = encontro.facilitador
-                    encontro.facilitador = facilitador_novo
-                encontro.save()
+            # Guarda valores antigos para notificação de cancelamento
+            projeto_antigo = encontro.projeto
+            facilitador_antigo = encontro.facilitador
+            data_antiga = encontro.startDate
 
-                if "enviar_mensagem" in request.POST:
-                    if projeto_antigo or facilitador_antigo:
-                        subject = "Capstone | Dinâmica cancelada"
-                        recipient_list = []
-                        if projeto_antigo:
-                            alocacoes = Alocacao.objects.filter(projeto=projeto_antigo)
-                            for alocacao in alocacoes:
-                                recipient_list.append(alocacao.aluno.user.email)
-                        if facilitador_antigo:
-                            recipient_list.append(facilitador_antigo.email)
-                        recipient_list.append(str(configuracao.coordenacao.user.email))
-                        message = message_agendamento_dinamica(encontro, encontro.startDate)
-                        email(subject, recipient_list, message)
+            # Atualiza com valores do form
+            encontro.startDate = form.cleaned_data["inicio"]
+            encontro.endDate = form.cleaned_data["fim"]
+            encontro.location = form.cleaned_data.get("local")
+            encontro.tematica = form.cleaned_data.get("tematica")
+            encontro.projeto = form.cleaned_data.get("projeto")
+            encontro.facilitador = form.cleaned_data.get("facilitador")
+            encontro.save()
 
-                cancelado = None
-                try:
-                    startDate_novo = datetime.datetime.strptime(request.POST["inicio"], "%Y-%m-%dT%H:%M")
-                    endDate_novo = datetime.datetime.strptime(request.POST["fim"], "%Y-%m-%dT%H:%M")
-                    if encontro.startDate != startDate_novo or encontro.endDate != endDate_novo:
-                        cancelado = "dia " + str(encontro.startDate.strftime("%d/%m/%Y")) + " das " + str(encontro.startDate.strftime("%H:%M")) + ' às ' + str(encontro.endDate.strftime("%H:%M"))
-                    encontro.startDate = startDate_novo
-                    encontro.endDate = endDate_novo
+            # Notifica sobre cancelamento se mudou projeto/facilitador
+            if "enviar_mensagem" in request.POST:
+                if projeto_antigo and projeto_antigo != encontro.projeto:
+                    subject = "Capstone | Dinâmica cancelada"
+                    recipient_list = []
+                    alocacoes = Alocacao.objects.filter(projeto=projeto_antigo)
+                    for alocacao in alocacoes:
+                        recipient_list.append(alocacao.aluno.user.email)
+                    recipient_list.append(str(configuracao.coordenacao.user.email))
+                    message = message_agendamento_dinamica(encontro, data_antiga)
+                    email(subject, recipient_list, message)
 
-                    encontro.location = request.POST.get("local")
-                    tematica_id = request.POST.get("tematica", None)
-                    if tematica_id:
-                        try:
-                            encontro.tematica = TematicaEncontro.objects.get(id=tematica_id)
-                        except TematicaEncontro.DoesNotExist:
-                            return HttpResponse("Temática não encontrada.", status=401)
-                    
-                except (ValueError, OverflowError):
-                    return HttpResponse("Erro com data da Dinâmica!", status=401)
-                encontro.save()
+                if facilitador_antigo and facilitador_antigo != encontro.facilitador:
+                    subject = "Capstone | Dinâmica cancelada"
+                    recipient_list = [facilitador_antigo.email, str(configuracao.coordenacao.user.email)]
+                    message = message_agendamento_dinamica(encontro, data_antiga)
+                    email(subject, recipient_list, message)
 
-                if "enviar_mensagem" in request.POST:
-                    if encontro.projeto or encontro.facilitador:
-                        subject = "Capstone | Dinâmica agendada"
-                        recipient_list = []
-                        if encontro.projeto:
-                            alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
-                            for alocacao in alocacoes:
-                                recipient_list.append(alocacao.aluno.user.email)
-                        if encontro.facilitador:
-                            recipient_list.append(encontro.facilitador.email)
-                        recipient_list.append(str(configuracao.coordenacao.user.email))
-                        message = message_agendamento_dinamica(encontro, cancelado) # Atualizada
-                        email(subject, recipient_list, message)
+                # Notifica novo agendamento
+                if encontro.projeto or encontro.facilitador:
+                    subject = "Capstone | Dinâmica agendada"
+                    recipient_list = []
+                    if encontro.projeto:
+                        alocacoes = Alocacao.objects.filter(projeto=encontro.projeto)
+                        for alocacao in alocacoes:
+                            recipient_list.append(alocacao.aluno.user.email)
+                    if encontro.facilitador:
+                        recipient_list.append(encontro.facilitador.email)
+                    recipient_list.append(str(configuracao.coordenacao.user.email))
+                    cancelado = None
+                    if data_antiga != encontro.startDate:
+                        cancelado = f"dia {data_antiga.strftime('%d/%m/%Y')} das {data_antiga.strftime('%H:%M')} às {encontro.endDate.strftime('%H:%M')}"
+                    message = message_agendamento_dinamica(encontro, cancelado)
+                    email(subject, recipient_list, message)
 
-                mensagem = "Dinâmica atualizada."
-                
-            else:
-                return HttpResponse("Dinâmica não atualizada, erro!", status=401)
+            mensagem = "Dinâmica atualizada."
 
         elif "excluir" in request.POST:
-            mensagem = "Mentoria excluída!"
-
-            if "enviar_mensagem" in request.POST:
+            if "enviar_mensagem" in request.POST and (encontro.projeto or encontro.facilitador):
                 subject = "Capstone | Dinâmica cancelada"
                 recipient_list = []
                 if encontro.projeto:
@@ -2035,17 +1792,12 @@ def dinamicas_editar(request, primarykey=None):
                 if encontro.facilitador:
                     recipient_list.append(encontro.facilitador.email)
                 recipient_list.append(str(configuracao.coordenacao.user.email))
-                message = message_agendamento_dinamica(encontro, encontro.startDate) # Cancelada
+                message = message_agendamento_dinamica(encontro, encontro.startDate)
                 email(subject, recipient_list, message)
-
             encontro.delete()
+            mensagem = "Mentoria excluída!"
 
-        # else Atualização não realizada. / Serve para desbloquear agendamento
-        context = {
-            "atualizado": True,
-            "mensagem": mensagem,
-        }
-        return JsonResponse(context)
+        return JsonResponse({"atualizado": True, "mensagem": mensagem})
     
     else:  # Não é POST (e GET)
         encontro.bloqueado = True  # Bloqueia para evitar edição concorrente
@@ -2565,10 +2317,6 @@ def objetivo_editar(request, primarykey):
     objetivo = get_object_or_404(ObjetivosDeAprendizagem, pk=primarykey)
 
     if request.method == "POST":
-        # if editar_objetivo(objetivo, request):
-        #     mensagem = {"pt": "Banca editada.", "en": "Banca edited."}
-        # else:
-        #     mensagem = {"pt": "Erro ao Editar banca.", "en": "Error editing banca."}
         context = {
             "area_principal": True,
             "bancas_index": True,
@@ -2790,53 +2538,48 @@ def todos_professores(request):
 def ver_pares_projeto(request, projeto_id, momento):
     """Permite visualizar a avaliação de pares."""
 
-    configuracao = get_object_or_404(Configuracao)
-    projeto = get_object_or_404(Projeto, pk=projeto_id)
-    alocacoes = Alocacao.objects.filter(projeto=projeto)
-    tipo = 0 if momento=="intermediaria" else 1
+    projeto = get_object_or_404(Projeto.objects.select_related("orientador__user"), pk=projeto_id)  # Projeto com orientador e usuário pré-carregados
+    alocacoes_qs = Alocacao.objects.filter(projeto=projeto).select_related("aluno__user")  # Alocações com aluno e usuário pré-carregados
+    tipo = 0 if momento == "intermediaria" else 1
 
+    # Permissão: apenas orientador do projeto ou admin
     if request.user != projeto.orientador.user and not request.user.eh_admin:
         return HttpResponse("Somente o próprio orientador pode confirmar uma avaliação de pares.", status=401)
 
     # Marcando que orientador viu avaliação
-    editor = False
-    if request.user == projeto.orientador.user:
-        editor = True
-        for alocacao in alocacoes:
-            if momento=="intermediaria" and not alocacao.avaliacao_intermediaria:
-                alocacao.avaliacao_intermediaria = datetime.datetime.now()
-            elif momento=="final" and not alocacao.avaliacao_final:
-                alocacao.avaliacao_final = datetime.datetime.now()
-            alocacao.save()
+    editor = request.user == projeto.orientador.user
+    if editor:
+        agora = timezone.now()
+        if momento == "intermediaria":
+            Alocacao.objects.filter(projeto=projeto, avaliacao_intermediaria__isnull=True).update(avaliacao_intermediaria=agora)
+        else:
+            Alocacao.objects.filter(projeto=projeto, avaliacao_final__isnull=True).update(avaliacao_final=agora)
+
         if request.method == "POST":
-            for alocacao in alocacoes:
-                feedback = request.POST.get("feedback" + str(alocacao.id), None)
-                if feedback and feedback != "":
-                    feedbackpares = FeedbackPares.objects.get_or_create(alocacao=alocacao, tipo=tipo)[0]
-                    if feedback != feedbackpares.feedback:
-                        feedbackpares.feedback = feedback
-                        feedbackpares.momento = datetime.datetime.now()
-                        feedbackpares.save()
+            aloc_ids = list(alocacoes_qs.values_list("id", flat=True))
+            existentes = {fp.alocacao_id: fp for fp in FeedbackPares.objects.filter(alocacao_id__in=aloc_ids, tipo=tipo)}
+
+            for alocacao in alocacoes_qs:
+                feedback = request.POST.get(f"feedback{alocacao.id}")
+                if feedback and feedback.strip():
+                    fp = existentes.get(alocacao.id)
+                    if not fp:
+                        fp = FeedbackPares(alocacao=alocacao, tipo=tipo)
+                        existentes[alocacao.id] = fp
+                    if fp.feedback != feedback:
+                        fp.feedback = feedback
+                        fp.momento = agora
+                        fp.save()
 
                         # Manda mensagem para estudante
-                        corpo_email = f"{alocacao.aluno.user.get_full_name()},<br>\n<br>\n"
-                        corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Você teve feedbacks da sua avaliação de pares "
-                        if projeto.orientador.user.genero == "F":
-                            corpo_email += "pela sua orientadora"
-                        else:
-                            corpo_email += "pelo seu orientador"
-                        corpo_email += f" ({projeto.orientador.user.get_full_name()}).<br>\n"
-                        corpo_email += "&nbsp;&nbsp;&nbsp;&nbsp;Por favor, observe com muita atenção a fim de melhor entender como você está se saindo no projeto.<br>\n<br>\n"
-                        corpo_email += "<br>\n<br>\n"
-                        corpo_email += "Feedback:<br>\n" 
-                        corpo_email += "<b>" + htmlizar(feedback) + "</b><br>\n"
-                        email_dest = [alocacao.aluno.user.email, projeto.orientador.user.email] #, configuracao.coordenacao.user.email
+                        corpo_email = render_message("Feedback Avaliação de Pares", {"alocacao": alocacao, "feedback": feedback})
+                        email_dest = [alocacao.aluno.user.email, alocacao.projeto.orientador.user.email]
                         email("Capstone | Feedback de Avaliação de Pares", email_dest, corpo_email)
-                        
                 else:
-                    feedbackpares = FeedbackPares.objects.filter(alocacao=alocacao, tipo=tipo).last()
-                    if feedbackpares:
-                        feedbackpares.delete()
+                    # Sem feedback: remove registro existente, se houver
+                    fp = existentes.get(alocacao.id)
+                    if fp:
+                        fp.delete()
 
             # Mensagem que feedbacks foram enviados
             context = {
@@ -2844,26 +2587,25 @@ def ver_pares_projeto(request, projeto_id, momento):
                 "mensagem": {"pt": "feedbacks enviados", "en": "feedbacks sent"},
             }
             return render(request, "generic_ml.html", context=context)
-            
-    verificada = None
-    for alocacao in alocacoes:
-        if momento=="intermediaria" and not verificada:
-            verificada = alocacao.avaliacao_intermediaria
-        elif momento=="final" and not verificada:
-            verificada = alocacao.avaliacao_final
+
+    # Momento verificado (timestamp agregado)
+    if momento == "intermediaria":
+        verificada = alocacoes_qs.aggregate(v=Max("avaliacao_intermediaria"))['v']
+    else:
+        verificada = alocacoes_qs.aggregate(v=Max("avaliacao_final"))['v']
 
     colegas = get_pares_colegas(projeto, tipo)
-    
+
     entregas = [resposta[1] for resposta in Pares.TIPO_ENTREGA]
     iniciativas = [resposta[1] for resposta in Pares.TIPO_INICIATIVA]
     comunicacoes = [resposta[1] for resposta in Pares.TIPO_COMUNICACAO]
 
+    tipo_pt = "Intermediária" if momento == "intermediaria" else "Final"
+    tipo_en = "Intermediate" if momento == "intermediaria" else "Final"
+
     context = {
-        "titulo": {
-            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
-            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
-            },
-        "alocacoes": alocacoes,
+        "titulo": {"pt": f"Avaliação de Pares {tipo_pt}", "en": f"{tipo_en} Peer Evaluation"},
+        "alocacoes": alocacoes_qs,
         "colegas": colegas,
         "momento": momento,
         "projeto": projeto,
@@ -2874,10 +2616,7 @@ def ver_pares_projeto(request, projeto_id, momento):
         "FeedbackPares": FeedbackPares,
         "verificada": verificada,
         "editor": editor,
-        "tipo_aval": {
-            "pt": "Avaliação de Pares " + ("Intermediária" if momento=="intermediaria" else "Final"),
-            "en": ("Intermediate" if momento=="intermediaria" else "Final") + " Peer Evaluation",
-            },
+        "tipo_aval": {"pt": f"Avaliação de Pares {tipo_pt}", "en": f"{tipo_en} Peer Evaluation"},
     }
 
     return render(request, "professores/ver_pares_projeto.html", context)

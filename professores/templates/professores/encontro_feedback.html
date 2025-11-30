@@ -62,29 +62,29 @@
     {% include "professores/includes/ver_site.html" %}
 
     {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
-    <label for="observacoes_estudantes">
+    <label for="{{ form.observacoes_estudantes.id_for_label }}">
       <b data-toggle="tooltip" data-html="true" animation="true"
           title="Insira qualquer observação que achar relavante para o grupo de estudantes.">
         {% lng "Observações Estudantes (enviada para todo o grupo)" "Evaluation Observations for Students (will be sent to all students)" %}:
       </b>
     </label><br>
-    <textarea id="observacoes_estudantes" name="observacoes_estudantes"
-     rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_estudantes' %}"
-     {% if not encontro.projeto %}disabled{% endif %}
-     >{% if encontro.observacoes_estudantes %}{{encontro.observacoes_estudantes}}{% endif %}</textarea>
+    {{ form.observacoes_estudantes }}
+    {% if form.observacoes_estudantes.errors %}
+      <div class="alert alert-danger">{{ form.observacoes_estudantes.errors }}</div>
+    {% endif %}
     <br><br>
   
     {% comment %} Observações somente para leitura de orientador/coordenador {% endcomment %}
-    <label for="observacoes_orientador">
+    <label for="{{ form.observacoes_orientador.id_for_label }}">
       <b data-toggle="tooltip" data-html="true" animation="true"
           title="Insira qualquer observação que achar relavante. O texto será encaminhado para os orientadores do projeto.">
         {% lng "Observações Orientador (somente enviada para orientador)" "Evaluation Observations (will only be sent to advisor)" %}:
       </b>
     </label><br>
-    <textarea id="observacoes_orientador" name="observacoes_orientador"
-     rows="8" cols="100" maxlength="{% max_length encontro 'observacoes_orientador' %}"
-     {% if not encontro.projeto %}disabled{% endif %}
-     >{% if encontro.observacoes_orientador %}{{encontro.observacoes_orientador}}{% endif %}</textarea>
+    {{ form.observacoes_orientador }}
+    {% if form.observacoes_orientador.errors %}
+      <div class="alert alert-danger">{{ form.observacoes_orientador.errors }}</div>
+    {% endif %}
     <br><br>
     
     {% if evento.startDate.date > today.date %}

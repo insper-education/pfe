@@ -683,3 +683,22 @@ def mensagem_orientador(banca, geral=False):
         message = render_message("Informe de Avaliação de Banca", context_carta)
     
     return message+message2+message3
+
+
+def get_edicoes_orientador(orientador, configuracao_ate):
+    """Função usada para recuperar todas as edições de orientação de um professor."""
+
+    pares = Projeto.objects.filter(orientador=orientador).values("ano", "semestre")
+
+    edicoes = []
+    ano, semestre = None, None
+    for pair in pares.distinct("ano", "semestre"):
+        ano = pair.get("ano")
+        semestre = pair.get("semestre")
+        if ano == None or semestre == None:
+            continue
+        edicoes.append(f"{ano}.{semestre}")
+        if ano == configuracao_ate.ano and semestre == configuracao_ate.semestre:
+            break
+
+    return edicoes, ano, semestre
