@@ -685,14 +685,23 @@ def proposta_editar(request, slug=None):
         ]
 
     ano_semestre = f"{ano}.{semestre}"
-    obs = Estrutura.loads(nome="Obs Submeter Proposta")
 
     tipo_pt = "Edição" if proposta else "Submissão"
     tipo_en = "Edit" if proposta else "Submission"
 
-
-
-
+    mensagem_aviso = {"pt": "", "en": ""}
+    if liberadas_propostas:
+        mensagem_aviso["pt"] += "Propostas de Projetos já liberadas para estudantes, edição desabilitada.<br> Caso precise fazer alguma alteração, entre em contato com: <a href='mailto:" + configuracao.coordenacao.user.email + "'>" + configuracao.coordenacao.user.email + "</a>."
+        mensagem_aviso["en"] += "Project Proposals already released to students, edition disabled.<br> If you need to make any changes, please contact: <a href='mailto:" + configuracao.coordenacao.user.email + "'>" + configuracao.coordenacao.user.email + "</a>."
+        if request.user.is_authenticated and request.user.eh_admin:
+            mensagem_aviso["pt"] += "<br> Você está logado como administrador e pode editar a proposta."
+            mensagem_aviso["en"] += "<br> You are logged in as an administrator and can edit the proposal."
+    if request.user.is_authenticated and request.user.eh_prof:
+        mensagem_aviso["pt"] += "<br> Seu Perfil é de Professor, você está preenchendo para alguma organização."
+        mensagem_aviso["en"] += "<br> Your Profile is of Professor, you are filling in for some organization."
+    elif request.user.is_authenticated and request.user.eh_admin:
+        mensagem_aviso["pt"] += "<br> Seu Perfil é de Administrador, você está preenchendo para alguma organização."
+        mensagem_aviso["en"] += "<br> Your Profile is of Administrator, you are filling in for some organization."
 
     context = {
         "titulo": {"pt": tipo_pt + " de Proposta de Projeto (Capstone " + ano_semestre + ")", "en": "Project Proposal " + tipo_en + " (Capstone " + ano_semestre + ")" },
@@ -701,13 +710,14 @@ def proposta_editar(request, slug=None):
         "proposta": proposta,
         "Proposta": Proposta,
         "Contato": Contato,
-        "obs": obs,
+        "obs": Estrutura.loads(nome="Obs Submeter Proposta"),
         "areas_de_interesse_possiveis": Area.objects.filter(ativa=True),
         "edicao": True if proposta else False,
         "interesses": interesses,
         "configuracao": configuracao,
         "vencida": vencida,
         "organizacoes": Organizacao.objects.all(),
+        "mensagem_aviso": mensagem_aviso,
     }
     return render(request, "organizacoes/proposta_submissao.html", context)
 
@@ -831,9 +841,18 @@ def carrega_proposta(request):
 
     ano_semestre = f"{ano}.{semestre}"
     
+    mensagem_aviso = {"pt": "", "en": ""}
+    if request.user.is_authenticated and request.user.eh_prof:
+        mensagem_aviso["pt"] += "<br> Seu Perfil é de Professor, você está preenchendo para alguma organização."
+        mensagem_aviso["en"] += "<br> Your Profile is of Professor, you are filling in for some organization."
+    elif request.user.is_authenticated and request.user.eh_admin:
+        mensagem_aviso["pt"] += "<br> Seu Perfil é de Administrador, você está preenchendo para alguma organização."
+        mensagem_aviso["en"] += "<br> Your Profile is of Administrator, you are filling in for some organization."
+
     context = {
         "titulo": {"pt": "Carrega Proposta de Projeto em PDF (Capstone " + ano_semestre + ")", 
                    "en": "Upload Project Proposal in PDF (Capstone " + ano_semestre + ")" },
+        "mensagem_aviso": mensagem_aviso,
     }
     return render(request, "organizacoes/carrega_proposta.html", context)
 

@@ -107,42 +107,11 @@
 
 {% block content %}
 
+  {% comment %} Isso permite o Administrador continuar editando a proposta {% endcomment %}
+  {% if user.eh_admin %}{% define False as liberadas_propostas %}{% endif %}
+
   <div class="container-fluid principal">
     <div class="row justify-content-around">
-
-
-
-
-
-      <div class="col-xl-auto">
-        {% if liberadas_propostas %}
-          <h5 class="red-bold">
-            {% lng "Propostas de Projetos já liberadas para estudantes, edição desabilitada." "Project Proposals already released to students, edition disabled." %}<br>
-            {% lng "Caso precise fazer alguma alteração, entre em contato com:" "If you need to make any changes, please contact:" %}
-            <a href="mailto:{{ configuracao.coordenacao.user.email }}">{{ configuracao.coordenacao.user.email }}</a>
-          </h5>
-          {% if user.eh_admin %}
-            <h5 class="red-bold">
-              {% lng "Você está logado como administrador e pode editar a proposta." "You are logged in as an administrator and can edit the proposal." %}
-            </h5>
-          {% endif %}
-          <br>
-        {% endif %}
-
-        {% comment %} Isso permite o Administrador continuar editando a proposta {% endcomment %}
-        {% if user.eh_admin %}{% define False as liberadas_propostas %}{% endif %}
-
-        {% if request.user.eh_prof %}
-          <b>{% lng "Seu Perfil é de Professor, você está preenchendo para alguma organização." "Your Profile is of Professor, you are filling in for some organization." %}</b><br>
-        {% elif request.user.eh_admin %}
-          <b>{% lng "Seu Perfil é de Administrador, você está preenchendo para alguma organização." "Your Profile is of Administrator, you are filling in for some organization." %}</b><br>
-        {% endif %}
-      </div>
-
-
-
-      
-
       <div class="col-xl-auto ">
         <form method="post" enctype="multipart/form-data"> {% csrf_token %} 
           <div class="quad_pfe">
