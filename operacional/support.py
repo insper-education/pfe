@@ -15,6 +15,7 @@ def trata_aviso(aviso, request):
     
     titulo = request.POST.get("titulo", "").strip()
     delta = request.POST.get("delta", None)
+    delta_fim = request.POST.get("delta_fim", None)
     id_evento = request.POST.get("evento", None)
 
     if not all([id_evento, titulo, delta]):
@@ -23,6 +24,7 @@ def trata_aviso(aviso, request):
     try:
         aviso.titulo = titulo
         aviso.delta = int(delta)
+        aviso.delta_fim = bool(delta_fim)
         aviso.tipo_evento = TipoEvento.objects.get(id=id_evento)
         aviso.mensagem = request.POST["mensagem"]
     except (ValueError, TipoEvento.DoesNotExist):

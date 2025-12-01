@@ -745,8 +745,10 @@ class Evento(models.Model):
         """Retorna o semestre do evento."""
         return 1 if self.startDate.month <= 6 else 2
 
-    def get_data(self):
+    def get_data(self, final=False):
         """Retorna a data do evento."""
+        if final:
+            return self.endDate
         return self.startDate
 
     def em_prazo(self):
@@ -1449,6 +1451,9 @@ class Aviso(models.Model):
     delta = models.SmallIntegerField(default=0,
                                      help_text="dias passados do evento definido")
     
+    # Usado para definir se o delta é em relação ao início ou fim do evento
+    delta_fim = models.BooleanField(default=False, help_text="Se o delta é em relação ao fim do evento")
+
     mensagem = models.TextField(max_length=4096, null=True, blank=True,
                                 help_text="mensagem a ser enviar no texto")
     
@@ -1476,12 +1481,18 @@ class Aviso(models.Model):
             return self.tipo_evento.nome
         return "Sem evento"
     
-    def get_evento_curto(self):
+    def get_evento_curto(self, lingua="pt"):
         """Retorna em string cortada."""
         if self.tipo_evento:
-            return self.tipo_evento.nome[:20] + "..." if len(self.tipo_evento.nome) > 20 else self.tipo_evento.nome
+            return self.tipo_evento.nome[:20] + "..." if len(self.tipo_evento.nome) > 20 else self.tipo_evento.nome 
         return "Sem evento"
     
+    def get_evento_curto_en(self):
+        """Retorna em string cortada em inglês."""
+        if self.tipo_evento:
+            return self.tipo_evento.nome_en[:20] + "..." if len(self.tipo_evento.nome_en) > 20 else self.tipo_evento.nome_en
+        return "No event"
+
     def __str__(self):
         return str(self.titulo)
 

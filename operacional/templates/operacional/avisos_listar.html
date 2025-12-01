@@ -51,7 +51,8 @@
             class="linha {% if hoje < a.evento.get_data %}atual{% endif %}" data-type="Co Ev">
             <th scope="row"></th>
             <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
-              <span class="texto-longo">{{a.evento.get_data}}</span><span class="texto-curto">{{a.evento.get_data|date:"d/m/y"}}</span>
+              <span class="texto-longo">{% lng_dl a.evento.get_data %}</span>
+              <span class="texto-curto">{% lng_d a.evento.get_data %}</span>
             </td>
             <td></td>
             <td class="{% if a.evento.get_data < hoje %}text-success{% else %}text-info{% endif %}">
@@ -91,16 +92,16 @@
               {% with instante=a.data|date:"md"%}
                 <input class="aviso" type="checkbox" id="{{forloop.counter}}" name="aviso{{a.id}}" value="{{instante}}" 
                   {% if instante in a.aviso.datas_realizado %}checked{% endif %}
-                  {% if user.tipo_de_usuario != 4 %}disabled{% endif %}>
+                  {% if not user.tipo_de_usuario.eh_admin %}disabled{% endif %}>
               {% endwith %}
             {% endif %}
           </th>
           
-          <td> {% comment %} data-toggle="tooltip" data-html="true" animation="true" title="{% if a.aviso.tipo_evento %}{{a.aviso.evento}} {%if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}{% else %}delta={{a.aviso.delta}}{% endif %}" {% endcomment %}
+          <td>
             <label style="line-height: 1;" for="{{forloop.counter}}">
               {% if a.data%}
-                <span class="texto-longo">{{a.data}}</span>
-                <span class="texto-curto">{{a.data|date:"d/m/y"}}</span>
+                <span class="texto-longo">{% lng_dl a.data %}</span>
+                <span class="texto-curto">{% lng_d a.data %}</span>
               {% else %}
                 {% lng "Sem evento no semestre" "No event this semester" %}
               {% endif %}
@@ -110,16 +111,14 @@
           <td>
             <label style="line-height: 1;" for="{{forloop.counter}}">
               {% if a.aviso.tipo_evento %}
-                {{a.aviso.get_evento_curto}} 
+                {% if a.aviso.delta_fim %}{% lng "fim" "end" %}{% else %}{% lng "início" "start" %}{% endif %}
+                ({% lng a.aviso.get_evento_curto a.aviso.get_evento_curto_en %})
                 {% if a.aviso.delta >= 0 %}+ {{a.aviso.delta}}{%else%}- {% widthratio a.aviso.delta 1 -1 %}{%endif%}
               {% else %}
                 {% lng "Sem referência" "No reference" %}
               {% endif %}
             </label>
           </td>
-
-          
-        
 
           {% comment %} Publico alvo {% endcomment %}
           <td>

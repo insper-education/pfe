@@ -49,7 +49,7 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
                 if not avisos and aviso.id == aviso_id:  # Se for um aviso específico, envia só ele
                     avisos.append([aviso, evento])
             else:  # Se não for um aviso específico, checa todos os avisos
-                data_evento = evento.get_data() + datetime.timedelta(days=aviso.delta)
+                data_evento = evento.get_data(aviso.delta_fim) + datetime.timedelta(days=aviso.delta)
                 if data_evento == datetime.date.today():
                     avisos.append([aviso, evento])
 
@@ -70,6 +70,7 @@ def envia_mensagens_avisos(aviso_id=None, endereco=None):
                 "edicao": f"{configuracao.ano}.{configuracao.semestre}",
                 "delta": aviso.delta,
                 "delta_invert": -aviso.delta,
+                "delta_fim": aviso.delta_fim,
                 "evento": evento,
                 "eventos": eventos,
                 "orientadores": orientadores,

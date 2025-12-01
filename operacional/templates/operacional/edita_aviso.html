@@ -43,17 +43,22 @@
       </select>
     </div>
 
-    <div style="margin-top: 6px; margin-bottom: 8px; display: inline-block;">
+    <div style="margin-top: 6px; margin-bottom: 8px;">
       <label for="delta">
         <b>{% lng "Delta:" "Delta:" %}</b>
       <input name="delta" id="delta" type="number" min="-186" max="186" step="1" value="{{aviso.delta}}" required/></label>
-    </div><br>
+
+      <label for="delta_fim" style="margin-left: 15px;">
+        <input type="checkbox" id="delta_fim" name="delta_fim" {% if aviso.delta_fim %}checked{% endif %}>
+        {% lng "em relação ao fim do evento" "relative to the end of the event" %}
+      </label>
+    </div>
 
     <div style="margin-bottom: 8px; display: inline-block;">
-      <label for="delta">
+      <label for="mensagem">
         <b>{% lng "Mensagem:" "Message:" %}</b>
         <br>
-      <textarea name="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
+      <textarea name="mensagem" id="mensagem" rows="12" cols="98">{{ aviso.mensagem }}</textarea></label>
     </div><br>
     
     <div style="margin-bottom: 8px; display: inline-block;">
