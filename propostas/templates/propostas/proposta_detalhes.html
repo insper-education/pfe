@@ -37,17 +37,16 @@
     {% include "perfil_estudantes.html" %}
     {% include "prioridades.html" %}
 
-
     {% if proposta.autorizado %}
-      <hr><br>
+      <hr>
       <b><label for="autorizador">
         {% lng "Membro do comitê do Capstone responsável pela proposta" "Capstone committee member responsible for the proposal" %}
       </label></b>:
-      <span id="autorizador">
+      <span id="autorizador" style="white-space: nowrap; margin-left: 8px;">
         {{ proposta.autorizado.get_full_name }}
         <a href="mailto:{{proposta.autorizado.email}}"> &lt;{{proposta.autorizado.email}}&gt;</a>
       </span><br>
-      <small class="lh-1">
+      <small class="lh-1 mt-3">
         {% lng "Obs: O responsável da proposta não necessariamente será o orientador do projeto, e muitas vezes não é. Use esse contato para tirar dúvidas da proposta. Perceba também que o responsável pode demorar para responder suas dúvidas. Não espere respostas imediatas, pois não as terá." "Note: The proposal manager will not necessarily be the project advisor, and often is not. Use this contact to ask questions about the proposal. Also note that the manager may take a while to respond to your questions. Do not expect immediate answers, as you will not have them." %}
       </small>
     {% endif %}
