@@ -346,7 +346,7 @@
         error: function (request, status, error) {
           $("#carregando_arquivo").hide();
           $("#popup").modal("hide");
-          {% if user.tipo_de_usuario == 4 %} 
+          {% if user.tipo_de_usuario.eh_admin %} 
             alert(request.responseText);
             jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
             console.log("error"+request.responseText);

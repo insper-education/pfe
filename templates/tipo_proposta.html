@@ -8,29 +8,52 @@
 
 {% if proposta.internacional or proposta.intercambio or proposta.colaboracao or proposta.empreendendo %}
   {% if com_tipo %}<p><b>Tipo</b>: {% endif %}
-  <b style="color:red">
+  <b>
     {% if proposta.internacional %}
       {% if descr_long %}
         {% lng "Proposta Internacional de Projeto, a comunicação do projeto será em inglês." "International Project Proposal, the project communication will be in English." %}<br>
-      {% elif descr_short %}IN{% else %}[Internacional]{% endif %}
+      {% elif descr_short %}
+        <span class="badge badge-primary badge-pill mr-1" title="{% lng 'Internacional' 'International' %}">IN</span>
+      {% else %}
+        <span class="badge badge-primary badge-pill mr-1"><i class="fas fa-globe-americas"></i> {% lng "Internacional" "International" %}</span>
+      {% endif %}
     {% endif %}
+
     {% if proposta.intercambio %}
       {% if descr_long %}
         {% lng "Proposta em Programa de Intercâmbio." "International Exchange Program Proposal." %}<br>
-      {% elif descr_short %}IC{% else %}[Intercâmbio]{% endif %}
+      {% elif descr_short %}
+        <span class="badge badge-info badge-pill mr-1" title="{% lng 'Intercâmbio' 'Exchange' %}">IC</span>
+      {% else %}
+        <span class="badge badge-info badge-pill mr-1"><i class="fas fa-plane-departure"></i> {% lng "Intercâmbio" "Exchange" %}</span>
+      {% endif %}
     {% endif %}
+
     {% if proposta.colaboracao %}
       {% if descr_long %}
         {% lng "Proposta em colaboração com" "Proposal in collaboration with" %}: {{ proposta.colaboracao }}.<br>
-      {% elif descr_short %}CO{% else %}[Em colaboração com: {{ proposta.colaboracao }}]{% endif %}
+      {% elif descr_short %}
+        <span class="badge badge-secondary badge-pill mr-1" title="{% lng 'Colaboração' 'Collaboration' %}">CO</span>
+      {% else %}
+        <span class="badge badge-secondary badge-pill mr-1"><i class="fas fa-handshake"></i> {% lng "Em colaboração com" "In collaboration with" %}: {{ proposta.colaboracao }}</span>
+      {% endif %}
     {% endif %}
+
     {% if proposta.empreendendo %}
       {% if descr_long %}
         {% lng "Proposta de grupo de estudantes regulares empreendendo em próprio projeto." "Regular students group proposal undertaking their own project." %}<br>
-      {% elif descr_short %}E!{% else %}[Empreendendo]{% endif %}
+      {% elif descr_short %}
+        <span class="badge badge-warning badge-pill mr-1" title="{% lng 'Empreendendo' 'Entrepreneurship' %}">E!</span>
+      {% else %}
+        <span class="badge badge-warning badge-pill mr-1"><i class="fas fa-rocket"></i> {% lng "Empreendendo" "Entrepreneurship" %}</span>
+      {% endif %}
     {% endif %}
   </b>
   {% if com_tipo %}</p>{% endif %}
 {% else %}
-  {% if descr_short %}RE{% else %}[Regular]{% endif %}
+  {% if descr_short %}
+    <span class="badge badge-light text-dark border border-secondary badge-pill mr-1" title="{% lng 'Regular' 'Regular' %}">RE</span>
+  {% else %}
+    <span class="badge badge-light text-dark border border-secondary badge-pill mr-1">{% lng "Regular" "Regular" %}</span>
+  {% endif %}
 {% endif %}

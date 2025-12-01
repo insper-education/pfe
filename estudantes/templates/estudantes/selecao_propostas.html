@@ -253,20 +253,20 @@
                     </th>
                     <td class="linha_td">
                       <a href="{% url 'proposta_detalhes' proposta.pk %}">
+                        <font color="darkblue">
+                          {% if proposta.organizacao and proposta.organizacao.nome %}
+                            [{{ proposta.organizacao.nome }}]
+                          {% elif proposta.nome_organizacao %}
+                            [{{ proposta.nome_organizacao }}]
+                          {% else %}
+                            {% lng "PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA" "PROBLEM IN RETRIEVING PROPOSAL ORGANIZATION" %}
+                          {% endif %}
+                        </font>
                         {% if proposta.titulo %}
                           {{proposta.titulo}}
                         {% else %}
                           {% lng "PROBLEMA EM RECUPERAR TÍTULO DA PROPOSTA" "PROBLEM IN RETRIEVING PROPOSAL TITLE" %}
                         {% endif %}
-                        <font color="darkblue">
-                          {% if proposta.nome_organizacao %}
-                            ({{ proposta.nome_organizacao }})
-                          {% elif proposta.organizacao and proposta.organizacao.nome %}
-                            ({{ proposta.organizacao.nome }})
-                          {% else %}
-                            {% lng "PROBLEMA EM RECUPERAR ORGANIZAÇÃO DA PROPOSTA" "PROBLEM IN RETRIEVING PROPOSAL ORGANIZATION" %}
-                          {% endif %}
-                        </font>
 
                         {% include "tipo_proposta.html" %}
 
@@ -338,6 +338,7 @@
   <!-- Modal Window -->
   <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
+      <br><br>
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="filterModalLabel">{% lng "Filtrar Propostas" "Filter Proposals" %}</h5>

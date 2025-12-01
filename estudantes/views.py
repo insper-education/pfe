@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -1052,7 +1053,7 @@ def selecao_propostas(request):
     liberadas_propostas = propostas_liberadas(configuracao)
     ano, semestre = adianta_semestre_conf(configuracao)
 
-    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)
+    propostas = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True).order_by(Lower("organizacao__nome"))
 
     warnings = ""
 

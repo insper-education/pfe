@@ -7,20 +7,15 @@
 
 {% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}
 
-<script>
-  {% comment %} var documento; {% endcomment %}
+{% comment %} <script>
   var url;
   
   $(document).on("click", ".open-documento", function (e) {
     e.preventDefault();
     var $popup = $("#popup");
-    //documento = $(this).data("documento");
     url = $(this).data("url");
 
     var address = url
-    //if(documento) {
-    //    address += '/'+documento+'/';
-    //}
 
     $(".modal-content", $popup).load(address, function(response, status, xhr) {
       if(status == "error") {
@@ -31,6 +26,6 @@
     });
   });
 
-</script>
+</script> {% endcomment %}
 
 {% comment %} REMOVER ESSE DOCUMENTO, NAO DEVE MAIS SER USADO {% endcomment %}
