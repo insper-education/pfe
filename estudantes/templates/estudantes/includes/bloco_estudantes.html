@@ -13,14 +13,15 @@
       <li style="line-height: 1.0; margin-bottom: 0.5em;">
         {% if pequeno %}<small>{% endif %}
         {% if user.eh_prof_a %}
-          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">  {% comment %} target="_blank" {% endcomment %}
+          <a class="imprimir" href="{% url 'estudante_detail' alocacao.aluno.id %}">
         {% endif %}
         {{alocacao.aluno.user.get_full_name}}
         {% if user.eh_prof_a %}</a>{% endif %}
         <span class="curso">
           <span class="texto-longo">[{{ alocacao.aluno.curso2 }}]</span>
-          <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>  
+          <span class="texto-curto">[{{ alocacao.aluno.curso2.sigla_curta }}]</span>
         </span>
+        {% if alocacao.aluno.externo %}<span class="externo" style="color:red">[{{alocacao.aluno.externo}}]</span>{% endif %}
         {% if pequeno %}</small>{% endif %}
       </li>
     {% endfor %}
