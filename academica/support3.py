@@ -23,7 +23,7 @@ logger = logging.getLogger("django")
 
 
 def em_probation(alocacao):
-    """Retorna se alocação está em probation (mas não verifica se já reprovado, a menos que reprovado direto)."""
+    """Retorna se alocação está em probatório (mas não verifica se já reprovado, a menos que reprovado direto)."""
     reprovacao = Reprovacao.objects.filter(alocacao=alocacao).exists()
     if reprovacao:
         return False
@@ -59,7 +59,8 @@ def em_probation(alocacao):
             if paval:
                 val_objetivos = None
                 if pa[4] and banca:  # Banca
-                    valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+                    prazo = 2 if pa[0] == "P" else 24  # Horas para liberar notas de probation ou normais
+                    valido = True  # Verifica se todos avaliaram a pelo menos PRAZO horas atrás
 
                     # Verifica se já passou o evento de encerramento e assim liberar notas
                     evento = Evento.get_evento(sigla="EE", ano=alocacao.projeto.ano, semestre=alocacao.projeto.semestre)
@@ -71,7 +72,7 @@ def em_probation(alocacao):
                     if checa_b:
                         for membro in banca.membros():
                             avaliacao = paval.filter(avaliador=membro).last()
-                            if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                            if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=prazo)):
                                 valido = False
 
                     if valido:

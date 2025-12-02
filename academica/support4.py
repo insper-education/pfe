@@ -101,7 +101,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
 
                 if exame.banca:
                     if banca:  # Banca
-                        valido = True  # Verifica se todos avaliaram a pelo menos 24 horas atrás
+                        prazo = 2 if exame.sigla == 'P' else 24  # Horas para liberar notas de probation ou normais
+                        valido = True  # Verifica se todos avaliaram a pelo menos PRAZO horas atrás
 
                         # Verifica se já passou o evento de encerramento e assim liberar notas
                         if evento_encerram:  # Não é banca probation e tem evento de encerramento
@@ -117,7 +118,7 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         if checa_b:
                             for membro in banca.membros():
                                 avaliacao = paval.filter(avaliador=membro).last()
-                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=24)):
+                                if (not avaliacao) or (now - avaliacao.momento < datetime.timedelta(hours=prazo)):
                                     valido = False
                                     break
 
