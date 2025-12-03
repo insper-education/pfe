@@ -99,7 +99,25 @@
           {% lng "horário alocado comum para grupo" "common allocated hours for group" %}
         </span>
 
+        <span class="text-nowrap mr-3 legend-explain">
+          <span class="legend-brackets">
+            <b>(</b>{% lng "horas diurnas" "regular hours" %} 
+            <span>[7:30-18:30]</span> 
+            <span>/</span> 
+            {% lng "total de horas" "total hours" %} 
+            <span>[7:30-21:00]</span><b>)</b>
+          </span>
+        </span>
+
       </caption>
+
+      <style>
+        .legend-brackets {
+          font-family: ui-monospace, monospace;
+          font-size: 0.9rem;
+          opacity: 0.85;
+        }
+      </style>
 
     </table>
 
