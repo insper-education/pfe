@@ -59,7 +59,7 @@ def em_probation(alocacao):
             if paval:
                 val_objetivos = None
                 if pa[4] and banca:  # Banca
-                    prazo = 2 if pa[0] == "P" else 24  # Horas para liberar notas de probation ou normais
+                    prazo = 2 if pa[4] == "P" else 24  # Horas para liberar notas de probation ou normais
                     valido = True  # Verifica se todos avaliaram a pelo menos PRAZO horas atrás
 
                     # Verifica se já passou o evento de encerramento e assim liberar notas

@@ -40,8 +40,13 @@
       {% endif %}
 
       {% if estudante %}
-        <b>{% lng "Estudante em Probation" "Student in Probation" %}:</b>
-        {{ estudante.user.get_full_name }}
+        <b>{% lng "Estudante em Probatório" "Student in Probation" %}:</b>
+        <a href="{% url 'estudante_detail' estudante.id %}">{{ estudante.user.get_full_name }}</a>
+        [{% lng estudante.curso2.nome estudante.curso2.nome_en %}]
+        <a href="mailto:{{estudante.user.email}}">
+          <span class="texto-longo">&lt;{{estudante.user.email}}&gt;</span>
+          <span class="texto-curto"><i class="far fa-envelope"></i></span>
+        </a>
         <br>
       {% endif %}
 
