@@ -498,6 +498,7 @@
                 {% if notas or descontos %}
                   <span class="badge badge-info unselectable">
                     <i class="fas fa-chart-bar"></i> {% lng "notas" "grades" %}
+                    <span class="seta seta-baixo"></span>
                   </span>
                 {% else %}
                   <span class="text-muted unselectable" style="font-size: .85em;">{% lng "sem notas" "no grades" %}</span>
@@ -518,7 +519,21 @@
         {% endfor %}
       </ul>
     </div>
-
+    <script>
+      document.querySelectorAll('.usuario-item').forEach((el) => {
+        el.addEventListener('toggle', function () {
+          const seta = this.querySelector('.seta');
+          if (!seta) return;
+          if (this.open) {
+            seta.classList.remove('seta-baixo');
+            seta.classList.add('seta-cima');
+          } else {
+            seta.classList.remove('seta-cima');
+            seta.classList.add('seta-baixo');
+          }
+        });
+      });
+    </script>
     
 
       {% if associados %}  
