@@ -17,7 +17,7 @@
   <table class="tabela_redu_estu table-striped"><tbody>
   {% for evento, relatos, avaliados, observacoes in projeto|busca_relatos %}
     <tr style="padding-left: 18px;">
-        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>{{ forloop.counter }}&ordm;</a></td>
+        <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}><span style="white-space: nowrap;">{{ forloop.counter }}&ordm;</span></a></td>
         <td><a href="{% url 'relato_avaliar' projeto.id evento.id %}" {% if evento.em_prazo %}style="color: lightgray;"{% endif %}>
           <span lang="pt">
             {% language "pt-br" %}
