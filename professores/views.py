@@ -17,7 +17,7 @@ from urllib.parse import unquote
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Case, When, Value, F, Func, FloatField, Max
+from django.db.models import Case, When, Value, F, Func, FloatField, Max, Q
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -280,8 +280,8 @@ def avaliar_bancas(request, prof_id=None):
     """Visualiza os resultados das bancas de um projeto."""
 
     if request.method == "POST":
-
-        if "edicao" not in request.POST:
+        edicao = request.POST.get("edicao")
+        if not edicao:
             return HttpResponse("Erro ao carregar dados.", status=401)
 
         if prof_id and request.user.eh_admin:  # Administrador
@@ -291,10 +291,13 @@ def avaliar_bancas(request, prof_id=None):
 
         bancas = Banca.get_bancas_com_membro(professor.user).order_by("composicao__exame__id")
 
-        edicao = request.POST["edicao"]
+        # Filtra por edição se necessário
         if edicao != "todas":
-            ano, semestre = request.POST["edicao"].split('.')
-            bancas = bancas.filter(projeto__ano=ano, projeto__semestre=semestre)
+            ano, semestre = edicao.split('.')
+            bancas = bancas.filter(
+                Q(projeto__ano=ano, projeto__semestre=semestre) |
+                Q(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre)
+            )
         
         context = {
             "objetivos": ObjetivosDeAprendizagem.objects.all(),
@@ -308,6 +311,7 @@ def avaliar_bancas(request, prof_id=None):
             "edicoes": get_edicoes(Projeto)[0],
             "selecionada_edicao": f"{configuracao.ano}.{configuracao.semestre}",
         }
+    
     return render(request, "professores/resultado_bancas.html", context=context)
 
 

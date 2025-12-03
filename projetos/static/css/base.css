@@ -312,3 +312,11 @@ a#logo_inicial:hover {
   white-space: nowrap;
   border-width: 0;
 }
+
+.info_simples {
+  background:#e8f5ec;
+  border:1px solid #e2e6f0;
+  border-radius:8px; 
+  width:100%;
+  padding: 0.5rem 1rem;
+}

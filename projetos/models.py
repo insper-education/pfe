@@ -1088,25 +1088,26 @@ class Banca(models.Model):
         return None
     
     @staticmethod
-    def get_bancas_com_membro(membro, siglas=("BI", "BF")):
+    def get_bancas_com_membro(membro, siglas=("BI", "BF", "P", "F")):
         """Retorna as bancas que o membro participa (ou é orientador)."""
         bancas = (Banca.objects.filter(membro1=membro) |
                   Banca.objects.filter(membro2=membro) |
-                  Banca.objects.filter(membro3=membro))
+                  Banca.objects.filter(membro3=membro)).filter(composicao__exame__sigla__in=siglas)
 
-        # if hasattr(membro, "Professor"):
         if membro.eh_prof_a:
             # Orientador é automaticamente membro de banca final e intermediária
-            bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor)
+            if "BI" in siglas:
+                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla="BI")
+            if "BF" in siglas:
+                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla="BF")
 
-        bancas = bancas.filter(composicao__exame__sigla__in=siglas)
         return bancas
 
 
     def get_recomendacao_destaque(self):
         """Retorna a recomendação de destaque para o projeto da banca."""
         if self:
-            if self.projeto.ano >= 2025:
+            if self.projeto and self.projeto.ano >= 2025:
                 sb, tb = "", False
                 if self:
                     observacoes = Observacao.objects.filter(projeto=self.projeto, exame__sigla=self.composicao.exame.sigla)
@@ -1114,7 +1115,7 @@ class Banca(models.Model):
                     sb = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
                 return {"destaque_texto": sb, "destaque_incompleta": tb}
 
-            elif self.projeto.ano >= 2023:
+            elif self.projeto and self.projeto.ano >= 2023:
                 if self.composicao.exame.sigla == "BI":
                     return {"destaque_texto": "media BI e RIG >= 8"}
                 else:

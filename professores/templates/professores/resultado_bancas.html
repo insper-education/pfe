@@ -26,8 +26,7 @@
   <div id="atualizar">
     {% for banca in bancas %}
       {% with lprojeto=banca.get_projeto %}
-
-        {% if not projeto %}  {% comment %} Para avaliar bancas que tem muitas bancas {% endcomment %}
+        {% if not projeto %}  {% comment %} Para avaliar bancas que tem muitas bancas, não mude para projeto {% endcomment %}
           {% ifchanged banca.composicao.exame %}
             {% if not forloop.first %}
               </div>
@@ -61,9 +60,17 @@
     </script>
 
   </div>
-  <div class="ml-2">
-    {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)" "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)" %}
-    {% lng "e finais) e depois de 24 horas (bancas regulares) ou 2 horas (bancas probatório) que a última avaliação foi feita." "and after 24 hours (regular examinations) or 2 hours (probation examinations) that the last evaluation was made." %}
+
+  <div class="col d-flex align-items-center mr-3">
+    <div class="alert mb-0 info_simples">
+      <div class="d-flex align-items-start">
+        <i class="fas fa-info-circle text-primary mr-2 mt-1"></i>
+        <div style="font-size:.85rem; line-height:1.5;">
+          {% lng "Observação: As notas das bancas só serão fechadas quando todos os avaliadores tiverem avaliado (incluindo o orientador nas bancas intermediárias e finais)" "Note: The grades of the examining boards will only be closed when all evaluators have evaluated (including the advisor in the intermediate and final boards)" %}
+          {% lng "e depois de 24 horas (bancas regulares) ou 2 horas (bancas probatório) que a última avaliação foi feita." "and after 24 hours (regular examinations) or 2 hours (probation examinations) that the last evaluation was made." %}
+        </div>
+      </div>
+    </div>
   </div>
 
   {% include "edicoes_ajax.html" %}
