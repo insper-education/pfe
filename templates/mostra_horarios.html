@@ -9,6 +9,14 @@
 {% load linguas %}
 <link rel="stylesheet" href="{% static 'estudantes/css/mostra_horarios.css' %}">
 
+<style>
+  .legend-brackets {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+</style>
+
 {% with alocacoes=projeto.alocacao_set.all %}
   {% for alocacao in alocacoes %}
     <b>
@@ -110,14 +118,6 @@
         </span>
 
       </caption>
-
-      <style>
-        .legend-brackets {
-          font-family: ui-monospace, monospace;
-          font-size: 0.9rem;
-          opacity: 0.85;
-        }
-      </style>
 
     </table>
 
