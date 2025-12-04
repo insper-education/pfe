@@ -154,14 +154,16 @@
         $("#banca{{banca.id}}").html(banca.media_calculada());
       </script>
 
-      {% with recomendacao=banca.get_recomendacao_destaque %}
-        {% if recomendacao %}
-          <span style="white-space: nowrap;">
-            <br>&#10149; {% lng "Recomendações" "Recommendations" %}:
-            {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao %}
-          </span>
-        {% endif %}
-      {% endwith %}
+      {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
+        {% with recomendacao=banca.get_recomendacao_destaque %}
+          {% if recomendacao %}
+            <span style="white-space: nowrap;">
+              <br>&#10149; {% lng "Recomendações" "Recommendations" %}:
+              {% include "professores/includes/mostra_destaque.html" with recomendacao=recomendacao %}
+            </span>
+          {% endif %}
+        {% endwith %}
+      {% endif %}
 
     </td></tr>
   </table>
