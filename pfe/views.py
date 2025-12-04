@@ -42,8 +42,8 @@ def index(request):
                 visible = True
             
             # Cards baseados em atributos do usuário
-            elif not card.get("permission_based") and "visible_for" in card:
-                for attr in card["visible_for"]:
+            if "visible_for_type" in card:
+                for attr in card["visible_for_type"]:
                     # Verificar atributos no usuário
                     if attr.startswith("eh_") or attr.startswith("membro_"):
                         if getattr(request.user, attr, False):
@@ -51,8 +51,8 @@ def index(request):
                             break
             
             # Cards baseados em permissões
-            elif card.get("permission_based") and "visible_for" in card:
-                for perm in card["visible_for"]:
+            if "visible_for_permission" in card:
+                for perm in card["visible_for_permission"]:
                     if request.user.has_perm(f"{card.get('app', 'projetos')}.{perm}"):
                         visible = True
                         break
@@ -72,7 +72,7 @@ def index(request):
             "card_groups": card_groups
         }
         
-        return render(request, 'index.html', context)
+        return render(request, "index.html", context)
 
     else:
         info = get_object_or_404(Carta, template="Informação")

@@ -34,7 +34,7 @@ def get_navigation_items():
             "icon": "fas fa-user-graduate",
             "url": "estudantes",
             "highlight_for": "eh_estud",
-            "visible_for": ["eh_admin", "eh_estud"],
+            "visible_for_type": ["eh_admin", "eh_estud"],
             "group": "usuarios"
         },
         {
@@ -42,7 +42,7 @@ def get_navigation_items():
             "icon": "fas fa-handshake",
             "url": "organizacoes",
             "highlight_for": "eh_parc",
-            "visible_for": ["eh_admin", "eh_parc", "membro_comite"],
+            "visible_for_type": ["eh_admin", "eh_parc", "membro_comite"],
             "group": "usuarios"
         },
         {
@@ -50,8 +50,7 @@ def get_navigation_items():
             "icon": "fas fa-chalkboard-teacher",
             "url": "professores",
             "highlight_for": "eh_prof",
-            "visible_for": ["change_professor"],
-            "permission_based": True,
+            "visible_for_permission": ["change_professor"],
             "app": "users",
             "group": "usuarios"
         },
@@ -59,8 +58,7 @@ def get_navigation_items():
             "title": {"pt": "Área da Coordenação", "en": "Coordination Area"},
             "icon": "fas fa-user-tie",
             "url": "coordenacao",
-            "visible_for": ["view_administrador"],
-            "permission_based": True,
+            "visible_for_type": ["eh_admin"],
             "app": "users",
             "group": "usuarios"
         },
@@ -70,22 +68,23 @@ def get_navigation_items():
             "title": {"pt": "Área Acadêmica", "en": "Academic Area"},
             "icon": "fas fa-book",
             "url": "academica",
-            "visible_for": ["eh_admin", "membro_comite"],
+            "visible_for_permission": ["change_exame"],
+            "visible_for_type": ["membro_comite"],
+            "app": "academica",
             "group": "admin"
         },
         {
             "title": {"pt": "Área Operacional", "en": "Operational Area"},
             "icon": "fas fa-clipboard-list",
             "url": "operacional",
-            "visible_for": ["eh_admin", "membro_operacional", "membro_tecnico"],
+            "visible_for_type": ["eh_admin", "membro_operacional", "membro_tecnico"],
             "group": "admin"
         },
         {
             "title": {"pt": "Área Administrativa", "en": "Administrative Area"},
             "icon": "fas fa-user-cog",
             "url": "administracao",
-            "visible_for": ["view_administrador"],
-            "permission_based": True,
+            "visible_for_type": ["eh_admin"],
             "app": "users",
             "group": "admin"
         },
@@ -95,15 +94,14 @@ def get_navigation_items():
             "title": {"pt": "Propostas", "en": "Proposals"},
             "icon": "fas fa-file-contract",
             "url": "propostas",
-            "visible_for": ["membro_comite", "membro_operacional", "eh_admin"],
+            "visible_for_type": ["membro_comite", "membro_operacional", "eh_admin"],
             "group": "projects"
         },
         {
             "title": {"pt": "Projetos", "en": "Projects"},
             "icon": "fas fa-sitemap",
             "url": "projetos",
-            "visible_for": ["view_projeto"],
-            "permission_based": True,
+            "visible_for_permission": ["view_projeto"],
             "app": "projetos",
             "group": "projects"
         },

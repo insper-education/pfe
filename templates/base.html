@@ -120,38 +120,6 @@
               <a href="{% url 'index_'|add:item.url %}">{% lng item.title.pt item.title.en %}</a>
             {% endfor %}
 
-            <a href="{% url 'calendario' %}">{% lng "Calendário" "Calendar" %}</a>
-            {% if user.eh_admin or user.eh_estud %}
-              <a href="{% url 'index_estudantes' %}">{% lng "Área dos Estudantes" "Students' Area" %}</a>
-            {% endif %}
-            
-            {% if user.eh_admin or user.eh_parc or request.user.membro_comite %}
-              <a href="{% url 'index_organizacoes' %}">{% lng "Área das Parceiros" "Partners' Area" %}</a>
-            {% endif %}
-          
-            {% if perms.users.altera_professor %}
-              <a href="{% url 'index_professores' %}">{% lng "Área dos Professores" "Professor's Area" %}</a>
-            {% endif %}
-            {% if perms.users.view_administrador %}
-              <a href="{% url 'index_coordenacao' %}">{% lng "Área da Coordenação" "Coordination Area" %}</a>
-            {% endif %}
-            {% if perms.users.altera_professor and request.user.membro_comite %}
-              <a href="{% url 'index_academica' %}">{% lng "Área Acadêmica" "Academic Area" %}</a>
-            {% endif %}
-            {% if user.eh_admin or user.membro_operacional or user.membro_tecnico %}
-              <a href="{% url 'index_operacional'%}">{% lng "Área Operacional" "Operational Area" %}</a>
-            {% endif %}
-            {% if perms.users.view_administrador %}
-              <a href="{% url 'index_administracao'%}">{% lng "Área Administrativa" "Administrative Area" %}</a>
-            {% endif %}
-            {% if perms.projetos.view_proposta or perms.projetos.view_projeto %}
-              {% if request.user.membro_comite or request.user.membro_operacional or request.user.eh_admin %}
-                <a href="{% url 'index_propostas'%}">{% lng "Propostas" "Proposals" %}</a>
-              {% endif %}
-              <a href="{% url 'index_projetos'%}">{% lng "Projetos" "Projects" %}</a>
-            {% endif %}
-          
-            <a href="{% url 'index_documentos'%}">{% lng "Documentos" "Documents" %}</a>
             <a href="{% url 'sistema'%}">{% lng "Sobre o Sistema" "About the System" %}</a>
 
           {% endif %}

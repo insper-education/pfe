@@ -24,19 +24,19 @@ def navigation_menu(request):
             visible = True
         
         # Itens baseados em atributos do usuário
-        elif not item.get("permission_based") and "visible_for" in item:
-            for attr in item["visible_for"]:
+        if "visible_for_type" in item:
+            for attr in item["visible_for_type"]:
                 if hasattr(request.user, attr) and getattr(request.user, attr):
                     visible = True
                     break
         
         # Itens baseados em permissões
-        elif item.get("permission_based") and "visible_for" in item:
-            for perm in item["visible_for"]:
+        if "visible_for_permission" in item:
+            for perm in item["visible_for_permission"]:
                 if request.user.has_perm(f"{item.get('app', 'projetos')}.{perm}"):
                     visible = True
                     break
-        
+
         if visible:
             visible_items.append(item)
     
