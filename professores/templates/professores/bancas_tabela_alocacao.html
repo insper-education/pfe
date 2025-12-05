@@ -44,7 +44,7 @@
         {% if membro.eh_prof_a %}
           <tr class="item" data-user="Insper">
             <td data-sort="{{membro.get_full_name}}"><a class="imprimir" href="{% url 'professor_detail' membro.professor.id %}">{{membro.get_full_name}}</a>
-        {% elif membro.eh_parc2 %}
+        {% elif membro.eh_parc %}
           <tr class="item" data-user="Externo">
             <td data-sort="{{membro.get_full_name}}"><a class="imprimir" href="{% url 'parceiro_detail' membro.parceiro.id %}">{{membro.get_full_name}}</a>
         {% else %}
