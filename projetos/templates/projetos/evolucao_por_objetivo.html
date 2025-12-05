@@ -12,6 +12,18 @@
 {% block head %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+
+  <style>
+    #chart-container {
+      margin: auto;
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      max-height: 90vh;
+    }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -30,74 +42,76 @@
 
     <div><br><br><br></div>{% comment %} Solução pouco elegante, mas funciona. {% endcomment %}
 
-      <div class="container">
+    <div class="container">
 
-        <div style="max-width:860px; margin: auto;"> 
-            <canvas id="chart-medias"></canvas>
-        </div>
+      <div id="chart-container">
+        <canvas id="chart-medias"></canvas>
+      </div>
 
-        <script>
+      <script>
 
-          var labels_pt = [];
-          var labels_en = [];
-          {% for edicao, alocacoes in estudantes %}
-            labels_pt.push(["{{edicao}}", "({{alocacoes}} estudantes)"]);
-            labels_en.push(["{{edicao}}", "({{alocacoes}} students)"]);
-          {% endfor %}
-          
-          var config_medias = {
-            type: "bar",
-            data: {
-              labels_pt: labels_pt,
-              labels_en: labels_en,
-              datasets: [{
-                  label: "< 5.0",
-                  data: [{% for nota in low %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(255,87,31)",
-                },
-                {
-                  label: ">= 5.0 & <= 7.0",
-                  data: [{% for nota in mid %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(204,204,0)",
-                },
-                {
-                  label: "> 7.0",
-                  data: [{% for nota in high %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
-                  backgroundColor: "rgb(0,166,149)",
-                }
-              ]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text_pt: "Proporção nos semestres",
-                    text_en: "Proportion in semesters"
-                }, 
-              scales: {
-                xAxes: [{
-                  stacked: true,
-                }],
-                yAxes: [{
-                  stacked: true,
-                  ticks: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                }]
+        var labels_pt = [];
+        var labels_en = [];
+        {% for edicao, alocacoes in estudantes %}
+          labels_pt.push(["{{edicao}}", "({{alocacoes}} estudantes)"]);
+          labels_en.push(["{{edicao}}", "({{alocacoes}} students)"]);
+        {% endfor %}
+        
+        var config_medias = {
+          type: "bar",
+          data: {
+            labels_pt: labels_pt,
+            labels_en: labels_en,
+            datasets: [{
+                label: "< 5.0",
+                data: [{% for nota in low %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
+                backgroundColor: "rgb(255,87,31)",
               },
-              plugins: {
-                datalabels: {
-                  color: "white",
-                  font: {
-                    weight: "bold"
-                  },
-                  formatter: function(value, context) {
-                    return Math.round(value) + '%';
+              {
+                label: ">= 5.0 & <= 7.0",
+                data: [{% for nota in mid %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
+                backgroundColor: "rgb(204,204,0)",
+              },
+              {
+                label: "> 7.0",
+                data: [{% for nota in high %}{{nota|stringformat:".2f"|unlocalize}}, {% endfor %}],
+                backgroundColor: "rgb(0,166,149)",
+              }
+            ]
+          },
+          options: {
+              maintainAspectRatio: false,
+              responsive: true,
+              title: {
+                  display: true,
+                  text_pt: "Proporção nos semestres",
+                  text_en: "Proportion in semesters"
+              }, 
+            scales: {
+              xAxes: [{
+                stacked: true,
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks: {
+                      beginAtZero: true,
+                      max: 100
                   }
+              }]
+            },
+            plugins: {
+              datalabels: {
+                color: "white",
+                font: {
+                  weight: "bold"
+                },
+                formatter: function(value, context) {
+                  return Math.round(value) + '%';
                 }
               }
             }
           }
+        }
 
       </script>
 

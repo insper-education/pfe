@@ -80,47 +80,21 @@
               var config_objetivos = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_geral.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
-                      {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_geral.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_geral.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
-                      }
-                  ]
+                    labels_pt: [{% for key, value in medias_geral.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_geral.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [{
+                        backgroundColor: [{% for key, value in medias_geral.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                        data: [{% for key, value in medias_geral.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
+                        }]
                   },
                   options: {
-                      legend: { display: false },
-                      title: {
+                    legend: { display: false },
+                    title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Médias Obtidas nos Objetivos de Aprendizagem [{{total_geral}} estudantes]{% else %}Grades Averages Obtained in Learning Goals [{{total_geral}} students]{% endif %}'
+                          text_pt: "Médias Obtidas nos Objetivos de Aprendizagem [{{total_geral}} estudantes]",
+                          text_en: "Grades Averages Obtained in Learning Goals [{{total_geral}} students]"
                       },
-                      scales: {
-                          xAxes: [{
-                              ticks: {
-                                  beginAtZero: true,
-                                  max: 10
-                              }
-                          }]
-                      },
+                      scales: {xAxes: [{ticks: {beginAtZero: true, max: 10}}]},
                       plugins: {
                           datalabels: {
                               formatter: (value, ctx) => {
@@ -211,30 +185,13 @@
               var config_objetivos_api = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_api.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_api.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_api.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+
+                    datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_api.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_api.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_api.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_api.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -242,7 +199,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Avaliação Parcial Individual{% else %}Individual Partial Assessment{% endif %}'
+                          text_pt: 'Avaliação Parcial Individual',
+                          text_en: 'Partial Individual Assessment'
                       },
                       scales: scales,
                       plugins: plugins,
@@ -253,30 +211,12 @@
               var config_objetivos_apg = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_apg.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_apg.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_apg.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [
                       {
-                      label: "{% if lingua == "pt" %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_apg.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_apg.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_apg.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_apg.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -284,7 +224,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Avaliação Parcial de Grupo{% else %}Partial Group Assessment{% endif %}'
+                          text_pt: 'Avaliação Parcial de Grupo',
+                          text_en: 'Partial Group Assessment'
                       },
                       scales: scales,
                       plugins: plugins,
@@ -296,30 +237,12 @@
               var config_objetivos_afi = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_afi.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_afi.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_afi.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_afi.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_afi.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_afi.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_afi.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}},{% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -327,7 +250,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Avaliação Final Individual{% else %}Individual Final Assessment{% endif %}'
+                          text_pt: 'Avaliação Final Individual',
+                          text_en: 'Individual Final Assessment'
                       },
                       scales: scales,
                       plugins: plugins,
@@ -338,30 +262,12 @@
               var config_objetivos_afg = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_afg.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_afg.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_afg.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_afg.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_afg.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_afg.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_afg.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -369,7 +275,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Avaliação Final de Grupo{% else %}Final Group Assessment{% endif %}'
+                          text_pt: "Avaliação Final de Grupo",
+                          text_en: "Final Group Assessment"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -380,30 +287,12 @@
               var config_objetivos_rii = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_rii.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
+                    labels_pt: [{% for key, value in medias_rii.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_rii.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
                   datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_rii.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_rii.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_rii.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_rii.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -411,7 +300,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Relatório Intermediário Individual{% else %}Individual Interim Report{% endif %}'
+                          text_pt: "Relatório Intermediário Individual",
+                          text_en: "Individual Interim Report"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -422,30 +312,12 @@
               var config_objetivos_rig = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_rig.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
+                    labels_pt: [{% for key, value in medias_rig.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_rig.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
                   datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_rig.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_rig.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_rig.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_rig.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -453,7 +325,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Relatório Intermediário de Grupo{% else %}Intermediate Group Report{% endif %}'
+                          text_pt: "Relatório Intermediário de Grupo",
+                          text_en: "Intermediate Group Report"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -464,30 +337,12 @@
               var config_objetivos_bi = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_bi.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
+                    labels_pt: [{% for key, value in medias_bi.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_bi.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
                   datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_bi.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_bi.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_bi.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_bi.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -495,7 +350,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Banca Intermediária{% else %}Interim Examination Board{% endif %}'
+                          text_pt: "Banca Intermediária",
+                          text_en: "Interim Examination Board"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -506,30 +362,12 @@
               var config_objetivos_rfi = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_rfi.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
+                    labels_pt: [{% for key, value in medias_rfi.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_rfi.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
                   datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_rfi.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_rfi.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_rfi.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_rfi.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -537,7 +375,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: '{% if lingua == "pt" %}Relatório Final Individual{% else %}Individual Final Report{% endif %}'
+                          text_pt: "Relatório Final Individual",
+                          text_en: "Individual Final Report"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -548,30 +387,12 @@
               var config_objetivos_rfg = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_rfg.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_rfg.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_rfg.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_rfg.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_rfg.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_rfg.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_rfg.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -579,7 +400,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: "{% if lingua == "pt" %}Relatório Final de Grupo{% else %}Final Group Report{% endif %}"
+                          text_pt: "Relatório Final de Grupo",
+                          text_en: "Final Group Report"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -590,30 +412,12 @@
               var config_objetivos_bf = {
                   type: "horizontalBar",
                   data: {
-                  labels: [
-                      {% for key, value in medias_bf.items %}
-                          {% if value.media >= 0 %}
-                              "{% if lingua == 'pt' %}{{key}}{% else %}{{key.titulo_en}}{% endif %}",
-                          {% endif %}
-                      {% endfor %}
-                      ],
-                  datasets: [
+                    labels_pt: [{% for key, value in medias_bf.items %}{% if value.media >= 0 %}"{{key.titulo}}", {% endif %}{% endfor %}],
+                    labels_en: [{% for key, value in medias_bf.items %}{% if value.media >= 0 %}"{{key.titulo_en}}", {% endif %}{% endfor %}],
+                    datasets: [
                       {
-                      label: "{% if lingua == 'pt' %}Objetivos de Aprendizagem{% else %}Learning Goals{% endif %}",
-                      backgroundColor: [
-                          {% for key, value in medias_bf.items %}
-                              {% if value.media >= 0 %}
-                                  "{{value.cor}}",
-                              {% endif %}
-                          {% endfor %}
-                          ],
-                      data: [
-                          {% for key, value in medias_bf.items %}
-                              {% if value.media >= 0 %}
-                                  {{value.media|stringformat:".2f"|unlocalize}},
-                              {% endif %}
-                          {% endfor %}
-                          ]
+                      backgroundColor: [{% for key, value in medias_bf.items %}{% if value.media >= 0 %}"{{value.cor}}", {% endif %}{% endfor %}],
+                      data: [{% for key, value in medias_bf.items %}{% if value.media >= 0 %}{{value.media|stringformat:".2f"|unlocalize}}, {% endif %}{% endfor %}]
                       }
                   ]
                   },
@@ -621,7 +425,8 @@
                       legend: { display: false },
                       title: {
                           display: true,
-                          text: "Banca Final"
+                          text_pt: "Banca Final",
+                          text_en: "Final Examination Board"
                       },
                       scales: scales,
                       plugins: plugins,
@@ -632,6 +437,125 @@
           </script>
 
           <script>
+
+            function lingua_grafico() {
+                {% if medias_geral %}if(window.objetivos == undefined) {return;}{% endif %}
+                {% if medias_api %}if(window.objetivos_api == undefined) {return;}{% endif %}
+                {% if medias_apg %}if(window.objetivos_apg == undefined) {return;}{% endif %}
+                {% if medias_afi %}if(window.objetivos_afi == undefined) {return;}{% endif %}
+                {% if medias_afg %}if(window.objetivos_afg == undefined) {return;}{% endif %}
+                {% if medias_rii %}if(window.objetivos_rii == undefined) {return;}{% endif %}
+                {% if medias_rig %}if(window.objetivos_rig == undefined) {return;}{% endif %}
+                {% if medias_bi %}if(window.objetivos_bi == undefined) {return;}{% endif %}
+                {% if medias_rfi %}if(window.objetivos_rfi == undefined) {return;}{% endif %}
+                {% if medias_rfg %}if(window.objetivos_rfg == undefined) {return;}{% endif %}
+                {% if medias_bf %}if(window.objetivos_bf == undefined) {return;}{% endif %}
+
+                if(localStorage.getItem("lingua") == "pt") {
+                    {% if medias_geral %}
+                        window.objetivos.options.title.text = window.objetivos.options.title.text_pt;
+                        window.objetivos.data.labels = window.objetivos.data.labels_pt;
+                    {% endif %}
+                    {% if medias_api %}
+                        window.objetivos_api.options.title.text = window.objetivos_api.options.title.text_pt;
+                        window.objetivos_api.data.labels = window.objetivos_api.data.labels_pt;
+                    {% endif %}
+                    {% if medias_apg %}
+                        window.objetivos_apg.options.title.text = window.objetivos_apg.options.title.text_pt;
+                        window.objetivos_apg.data.labels = window.objetivos_apg.data.labels_pt;
+                    {% endif %}
+                    {% if medias_afi %}
+                        window.objetivos_afi.options.title.text = window.objetivos_afi.options.title.text_pt;
+                        window.objetivos_afi.data.labels = window.objetivos_afi.data.labels_pt;
+                    {% endif %}
+                    {% if medias_afg %}
+                        window.objetivos_afg.options.title.text = window.objetivos_afg.options.title.text_pt;
+                        window.objetivos_afg.data.labels = window.objetivos_afg.data.labels_pt;
+                    {% endif %}
+                    {% if medias_rii %}
+                        window.objetivos_rii.options.title.text = window.objetivos_rii.options.title.text_pt;
+                        window.objetivos_rii.data.labels = window.objetivos_rii.data.labels_pt;
+                    {% endif %}
+                    {% if medias_rig %}
+                        window.objetivos_rig.options.title.text = window.objetivos_rig.options.title.text_pt;
+                        window.objetivos_rig.data.labels = window.objetivos_rig.data.labels_pt;
+                    {% endif %}
+                    {% if medias_bi %}
+                        window.objetivos_bi.options.title.text = window.objetivos_bi.options.title.text_pt;
+                        window.objetivos_bi.data.labels = window.objetivos_bi.data.labels_pt;
+                    {% endif %}
+                    {% if medias_rfi %}
+                        window.objetivos_rfi.options.title.text = window.objetivos_rfi.options.title.text_pt;
+                        window.objetivos_rfi.data.labels = window.objetivos_rfi.data.labels_pt;
+                    {% endif %}
+                    {% if medias_rfg %}
+                        window.objetivos_rfg.options.title.text = window.objetivos_rfg.options.title.text_pt;
+                        window.objetivos_rfg.data.labels = window.objetivos_rfg.data.labels_pt;
+                    {% endif %}
+                    {% if medias_bf %}
+                        window.objetivos_bf.options.title.text = window.objetivos_bf.options.title.text_pt;
+                        window.objetivos_bf.data.labels = window.objetivos_bf.data.labels_pt;
+                    {% endif %}
+                } else {
+                    {% if medias_geral %}
+                        window.objetivos.options.title.text = window.objetivos.options.title.text_en;
+                        window.objetivos.data.labels = window.objetivos.data.labels_en;
+                    {% endif %}
+                    {% if medias_api %}
+                        window.objetivos_api.options.title.text = window.objetivos_api.options.title.text_en;
+                        window.objetivos_api.data.labels = window.objetivos_api.data.labels_en;
+                    {% endif %}
+                    {% if medias_apg %}
+                        window.objetivos_apg.options.title.text = window.objetivos_apg.options.title.text_en;
+                        window.objetivos_apg.data.labels = window.objetivos_apg.data.labels_en;
+                    {% endif %}
+                    {% if medias_afi %}
+                        window.objetivos_afi.options.title.text = window.objetivos_afi.options.title.text_en;
+                        window.objetivos_afi.data.labels = window.objetivos_afi.data.labels_en;
+                    {% endif %}
+                    {% if medias_afg %}
+                        window.objetivos_afg.options.title.text = window.objetivos_afg.options.title.text_en;
+                        window.objetivos_afg.data.labels = window.objetivos_afg.data.labels_en;
+                    {% endif %}
+                    {% if medias_rii %}
+                        window.objetivos_rii.options.title.text = window.objetivos_rii.options.title.text_en;
+                        window.objetivos_rii.data.labels = window.objetivos_rii.data.labels_en;
+                    {% endif %}
+                    {% if medias_rig %}
+                        window.objetivos_rig.options.title.text = window.objetivos_rig.options.title.text_en;
+                        window.objetivos_rig.data.labels = window.objetivos_rig.data.labels_en;
+                    {% endif %}
+                    {% if medias_bi %}
+                        window.objetivos_bi.options.title.text = window.objetivos_bi.options.title.text_en;
+                        window.objetivos_bi.data.labels = window.objetivos_bi.data.labels_en;
+                    {% endif %}
+                    {% if medias_rfi %}
+                        window.objetivos_rfi.options.title.text = window.objetivos_rfi.options.title.text_en;
+                        window.objetivos_rfi.data.labels = window.objetivos_rfi.data.labels_en;
+                    {% endif %}
+                    {% if medias_rfg %}
+                        window.objetivos_rfg.options.title.text = window.objetivos_rfg.options.title.text_en;
+                        window.objetivos_rfg.data.labels = window.objetivos_rfg.data.labels_en;
+                    {% endif %}
+                    {% if medias_bf %}
+                        window.objetivos_bf.options.title.text = window.objetivos_bf.options.title.text_en;
+                        window.objetivos_bf.data.labels = window.objetivos_bf.data.labels_en;
+                    {% endif %}
+                }
+                {% if medias_geral %}window.objetivos.update();{% endif %}
+                {% if medias_api %}window.objetivos_api.update();{% endif %}
+                {% if medias_apg %}window.objetivos_apg.update();{% endif %}
+                {% if medias_afi %}window.objetivos_afi.update();{% endif %}
+                {% if medias_afg %}window.objetivos_afg.update();{% endif %}
+                {% if medias_rii %}window.objetivos_rii.update();{% endif %}
+                {% if medias_rig %}window.objetivos_rig.update();{% endif %}
+                {% if medias_bi %}window.objetivos_bi.update();{% endif %}
+                {% if medias_rfi %}window.objetivos_rfi.update();{% endif %}
+                {% if medias_rfg %}window.objetivos_rfg.update();{% endif %}
+                {% if medias_bf %}window.objetivos_bf.update();{% endif %}
+            }
+            document.addEventListener("languageChanged", lingua_grafico);
+
 
               function carrega_pagina() {  
 
@@ -645,63 +569,65 @@
                   {% if medias_api %}
                       // Chart do nível nos objetivos de aprendizagem em API
                       var objetivos_api = document.getElementById('objetivos-api').getContext('2d');
-                      window.objetivos = new Chart(objetivos_api, config_objetivos_api);
+                      window.objetivos_api = new Chart(objetivos_api, config_objetivos_api);
                   {% endif %}
 
                   {% if medias_apg %}
                       // Chart do nível nos objetivos de aprendizagem em APG
                       var objetivos_apg = document.getElementById('objetivos-apg').getContext('2d');
-                      window.objetivos = new Chart(objetivos_apg, config_objetivos_apg);
+                      window.objetivos_apg = new Chart(objetivos_apg, config_objetivos_apg);
                   {% endif %}
 
                   {% if medias_afi %}
                       // Chart do nível nos objetivos de aprendizagem em AFI
                       var objetivos_afi = document.getElementById('objetivos-afi').getContext('2d');
-                      window.objetivos = new Chart(objetivos_afi, config_objetivos_afi);
+                      window.objetivos_afi = new Chart(objetivos_afi, config_objetivos_afi);
                   {% endif %}
 
                   {% if medias_afg %}
                       // Chart do nível nos objetivos de aprendizagem em AFG
                       var objetivos_afg = document.getElementById('objetivos-afg').getContext('2d');
-                      window.objetivos = new Chart(objetivos_afg, config_objetivos_afg);
+                      window.objetivos_afg = new Chart(objetivos_afg, config_objetivos_afg);
                   {% endif %}
 
 
                   {% if medias_rii %}
                       // Chart do nível nos objetivos de aprendizagem em RII
                       var objetivos_rii = document.getElementById('objetivos-rii').getContext('2d');
-                      window.objetivos = new Chart(objetivos_rii, config_objetivos_rii);
+                      window.objetivos_rii = new Chart(objetivos_rii, config_objetivos_rii);
                   {% endif %}
 
                   {% if medias_rig %}
                       // Chart do nível nos objetivos de aprendizagem em RIG
                       var objetivos_rig = document.getElementById('objetivos-rig').getContext('2d');
-                      window.objetivos = new Chart(objetivos_rig, config_objetivos_rig);
+                      window.objetivos_rig = new Chart(objetivos_rig, config_objetivos_rig);
                   {% endif %}
 
                   {% if medias_bi %}
                       // Chart do nível nos objetivos de aprendizagem em BI
                       var objetivos_bi = document.getElementById('objetivos-bi').getContext('2d');
-                      window.objetivos = new Chart(objetivos_bi, config_objetivos_bi);
+                      window.objetivos_bi = new Chart(objetivos_bi, config_objetivos_bi);
                   {% endif %}
 
                   {% if medias_rfi %}
                       // Chart do nível nos objetivos de aprendizagem em RFI
                       var objetivos_rfi = document.getElementById('objetivos-rfi').getContext('2d');
-                      window.objetivos = new Chart(objetivos_rfi, config_objetivos_rfi);
+                      window.objetivos_rfi = new Chart(objetivos_rfi, config_objetivos_rfi);
                   {% endif %}
 
                   {% if medias_rfg %}
                       // Chart do nível nos objetivos de aprendizagem em RFG
                       var objetivos_rfg = document.getElementById('objetivos-rfg').getContext('2d');
-                      window.objetivos = new Chart(objetivos_rfg, config_objetivos_rfg);
+                      window.objetivos_rfg = new Chart(objetivos_rfg, config_objetivos_rfg);
                   {% endif %}
 
                   {% if medias_bf %}
                       // Chart do nível nos objetivos de aprendizagem em BF
                       var objetivos_bf = document.getElementById('objetivos-bf').getContext('2d');
-                      window.objetivos = new Chart(objetivos_bf, config_objetivos_bf);
+                      window.objetivos_bf = new Chart(objetivos_bf, config_objetivos_bf);
                   {% endif %}
+
+                  lingua_grafico();
 
               }
 
