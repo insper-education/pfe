@@ -74,7 +74,7 @@
       <div class="card-header">
         <h6 class="mb-0">
           <i class="fas fa-heart mr-2"></i>
-          <label for="titulo_areas" style="line-height:0.6em;"><b>
+          <label {% if titulo_areas %}for="titulo_areas"{% endif %} style="line-height:0.6em;"><b>
             {% lng "Áreas de Interesse" "Areas of Interest" %}
           </b></label>
           {% if titulo_areas %}

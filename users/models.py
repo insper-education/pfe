@@ -366,7 +366,7 @@ class Opcao(models.Model):
         """Meta para Opcao."""
         verbose_name = "Opção"
         verbose_name_plural = "Opções"
-        ordering = ["prioridade"]
+        ordering = ["prioridade", "-aluno__cr"]
         permissions = (("altera_professor", "Professor altera valores"), )
 
     def __str__(self):

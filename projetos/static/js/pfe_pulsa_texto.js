@@ -8,7 +8,7 @@ function pulsa_texto(atualizado, id) {
         f.id = id;
         f.style.color = "white";
         f.style.position = "fixed"; // Fixo na tela
-        f.style.top = "10px"; // Distância do topo
+        f.style.top = "76px"; // Distância do topo
         f.style.left = "50%"; // Centraliza horizontalmente
         f.style.transform = "translateX(-50%)"; // Ajusta a posição para centralizar
         f.style.borderRadius = "4px"; // Bordas arredondadas

@@ -11,56 +11,12 @@
 {% load propostas %}
 
 {% block head %}
-  
-  {% comment %} REMOVER ESSA PARTE E DEIXAR SÓ O SCRIPT ABAIXO {% endcomment %}
 
-  {% comment %} <script src="{% static 'js/pfe_pulsa_texto.js' %}"></script> {% endcomment %}
-
-<script>
-  function pulsa_texto(atualizado, id) {
-    // Verifica se o DIV já existe
-    var f = document.getElementById(id);
-    if (!f) {
-        // Cria o DIV se não existir
-        f = document.createElement('div');
-        f.id = id;
-        f.style.color = "white";
-        f.style.position = "fixed"; // Fixo na tela
-        f.style.top = "10px"; // Distância do topo
-        f.style.left = "50%"; // Centraliza horizontalmente
-        f.style.transform = "translateX(-50%)"; // Ajusta a posição para centralizar
-        f.style.borderRadius = "4px"; // Bordas arredondadas
-        f.style.padding = "10px"; // Espaçamento interno
-        f.style.zIndex = "1000"; // Garante que fique acima de outros elementos
-        f.style.transition = "opacity 0.5s"; // Transição suave
-        document.body.appendChild(f); // Adiciona o DIV ao corpo do documento
-    }
-
-    // Atualiza o conteúdo e a cor de fundo
-    if (atualizado) {
-        f.innerHTML = "Valores atualizados no servidor.";
-        f.style.backgroundColor = "green";
-    } else {
-        f.innerHTML = "Erro ao atualizar dados no servidor.";
-        f.style.backgroundColor = "red";
-    }
-
-    // Exibe o DIV
-    f.style.display = '';
-    
-    // Oculta após 2 segundos
-    setTimeout(function() {
-        f.style.display = 'none';
-    }, 2000);
-  }
-
-</script>
-{% comment %} REMOVER ˆˆˆ REMOVER  {% endcomment %}
-
-
+  <script src="{% static 'js/pfe_pulsa_texto.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
 
 {% comment %} vvv REMOVER REMOVER REMOVER vvv {% endcomment %}
-<style>
+{% comment %} <style>
 .div_arredondado_100_tmp {
   background: #f8fafc; /* azul bem claro */
   border: 1px solid #cfd8dc; /* cinza-azulado claro */
@@ -91,7 +47,7 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
-</style>
+</style> {% endcomment %}
 {% comment %} ˆˆˆ REMOVER REMOVER REMOVER ˆˆˆ {% endcomment %}
 {% comment %} E COLOCAR O DIV_ARREDONDADO_100 {% endcomment %}
 
@@ -272,7 +228,7 @@
 
 {% block content %}
 
-  <div class="div_arredondado_100_tmp">
+  <div class="div_arredondado_100">
 
     {% if not proposta.organizacao %}
     <h2 id="org_conectada" class="text-warning">
@@ -427,12 +383,13 @@
             {% lng "Disponibilização" "Availability" %}
           </h6>
         </div>
+        
         <div class="card-body">
           
-          <label class="font-weight-bold mb-2">
+          <span class="font-weight-bold mb-2">
             <i class="fas fa-unlock mr-1"></i>
             {% lng "Disponibilizar proposta:" "Make proposal available:" %}
-          </label>
+          </span>
           
           <div class="radio-group">
             <div class="radio-item">
@@ -498,7 +455,7 @@
                   <td class="text-center" data-order="0">
                     {% lng "SEM" "WITHOUT" %}
                   </td>
-                  <td class="text-right">{{estudante.cr|floatformat:2}}</td>
+                  <td class="text-right">{% lng_2 estudante.cr %}</td>
                 </tr>
               {% endfor %}
               {% for opcao in proposta.opcao_set.all %}
@@ -518,9 +475,9 @@
                     rgb(158, 158, 158)
                   {% endif %};">
                   <td><a href="{% url 'estudante_detail' opcao.aluno.id %}">{{opcao.aluno.user.get_full_name}}</a></td>
-                  <td>{{opcao.aluno.curso2}}</td>
+                  <td>{% lng opcao.aluno.curso2.nome opcao.aluno.curso2.nome_en %}</td>
                   <td class="text-center" data-order="{{opcao.prioridade}}">{{opcao.prioridade}}</td>
-                  <td class="text-right">{{opcao.aluno.cr|floatformat:2}}</td>
+                  <td class="text-right">{% lng_2 opcao.aluno.cr %}</td>
                 </tr>
               {% endfor %}
             </tbody>
