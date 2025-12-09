@@ -11,21 +11,55 @@
 {% load linguas %}
 
 {% block head %}
+  <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  {% include "usuario.html" with user=professor.user %}
-  
-  <b>{% lng "Tipo" "Type" %}:</b>
-  {% if professor.dedicacao %}{{professor.get_dedicacao_display}}{% else %}&lt;&lt;Não Definido&gt;&gt;{% endif %}<br>
-  {% if professor.lattes %}<b>Lattes:</b> <a href="{{ professor.lattes }}">{{ professor.lattes }}</a><br>{% endif %}
-  {% if professor.website %}<b>website:</b> <a href="{{ professor.website|add_http }}">{{ professor.website }}</a><br>{% endif %}
-  {% if professor.areas %}<b>{% lng "Áreas de Interesse" "Areas of Interest" %}:</b> {{ professor.areas }}<br>{% endif %}
+  <div class="user-info">
+    {% include "usuario.html" with user=professor.user %}
+    
+    <div class="user-info-row">
+      <label>{% lng "Tipo" "Type" %}:</label>
+      <span>
+        {% if professor.dedicacao %}
+          {{ professor.get_dedicacao_display }}
+        {% else %}
+          &lt;&lt;{% lng "Não Definido" "Not Defined" %}&gt;&gt;
+        {% endif %}
+      </span>
+    </div>
 
-  {% include "dados_usuario.html" with user=professor.user %}
+    {% if professor.lattes %}
+      <div class="user-info-row">
+        <label>Lattes:</label>
+        <span>
+          <a href="{{ professor.lattes }}" target="_blank">{{ professor.lattes }}</a>
+        </span>
+      </div>
+    {% endif %}
+
+    {% if professor.website %}
+      <div class="user-info-row">
+        <label>Website:</label>
+        <span>
+          <a href="{{ professor.website|add_http }}" target="_blank">{{ professor.website }}</a>
+        </span>
+      </div>
+    {% endif %}
+
+    {% if professor.areas %}
+      <div class="user-info-row">
+        <label>{% lng "Áreas de Interesse" "Areas of Interest" %}:</label>
+        <span>{{ professor.areas }}</span>
+      </div>
+    {% endif %}
+    
+    {% include "dados_usuario.html" with user=professor.user %}
+
+  </div>
 
   {% if projetos %}
     <hr>

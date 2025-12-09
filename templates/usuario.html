@@ -6,21 +6,24 @@
 
 {% load linguas %}
 
-<b>
-  {% lng "Nome completo:" "Full name:" %}
-</b> {{user.get_full_name}}<br>
+<div class="user-info-row">
+  <label>{% lng "Nome completo:" "Full name:" %}</label>
+  <span>{{ user.get_full_name }}</span>
+</div>
+
+<div class="user-info-row">
+  <label>{% lng "Usuário" "User" %}:</label>
+  <span>
+    {{ user.username }}
+    {% if user.membro_comite %}
+      <span class="badge badge-info">{% lng "Membro do Comitê" "Committee Member" %}</span>
+    {% endif %}
+  </span>
+</div>
 
 {% if not user.is_active %}
-  <p style="color: red;">
-    {% lng "- NÃO ATIVO -" "- NOT ACTIVE -" %}
-  </p><br>
+  <div class="user-info-row user-info-inactive">
+    <label>{% lng "Situação:" "Status:" %}</label>
+    <span class="text-danger">{% lng "NÃO ATIVO" "NOT ACTIVE" %}</span>
+  </div>
 {% endif %}
-
-<b>{% lng "Usuário" "User" %}:</b>
-{{ user.username }}
-
-{% if user.membro_comite %}
-  <i>{% lng "(Membro do Comitê)" "(Committee Member)" %}</i>
-{% endif %}
-<br>
-

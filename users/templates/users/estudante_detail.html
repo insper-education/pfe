@@ -20,7 +20,7 @@
 {% load propostas %}
 
 {% block head %}
-
+  <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
   <script src="{% static 'js/Chart.min.js' %}"></script>
   {% include "reload.html" %}
@@ -294,35 +294,58 @@
 
 {% block content %}
 
-  {% include "usuario.html" with user=aluno.user %}
+  <div class="user-info">
+    {% include "usuario.html" with user=aluno.user %}
 
-  {% if aluno.matricula %}
-    <b>{% lng "Matrícula" "Student ID" %}:</b> {{aluno.matricula}}<br>
-  {% endif %}
-
-  <b>{% lng "Curso" "Program" %}:</b> {{aluno.curso2}}<br>
-
-  <b>{% lng "Periodo do Capstone" "Capstone Semester" %}:</b> 
-  {% if aluno.ano and aluno.semestre %}
-    {{aluno.ano}}.{{aluno.semestre}}
-  {% else %}
-    {% lng "Período não definido" "Not defined" %}
-  {% endif %}<br>
-  
-  <b>{% lng "Situação Acadêmica" "Academic Status" %}:</b>
-  {% if aluno.trancado %}
-    {% lng "Trancado" "On leave" %}
-  {% else %}
-    {% lng "Regular" "Regular" %}
-  {% endif %}<br>
-
-  {% if not user.eh_estud %}
-    {% if aluno.cr %}
-      <b>{% lng "CR" "GPA" %}:</b> {{aluno.cr}}<br>
+    {% if aluno.matricula %}
+      <div class="user-info-row">
+        <label>{% lng "Matrícula" "Student ID" %}:</label>
+        <span>{{ aluno.matricula }}</span>
+      </div>
     {% endif %}
-    {% include "dados_usuario.html" with user=aluno.user %}
-  {% endif %}<br>
+
+    <div class="user-info-row">
+      <label>{% lng "Curso" "Program" %}:</label>
+      <span>{{ aluno.curso2 }}</span>
+    </div>
+
+    <div class="user-info-row">
+      <label>{% lng "Período Capstone" "Capstone Semester" %}:</label>
+      <span>
+        {% if aluno.ano and aluno.semestre %}
+          {{ aluno.ano }}.{{ aluno.semestre }}
+        {% else %}
+          {% lng "Período não definido" "Not defined" %}
+        {% endif %}
+      </span>
+    </div>
+    
+    <div class="user-info-row">
+      <label>{% lng "Situação Acadêmica" "Academic Status" %}:</label>
+      <span>
+        {% if aluno.trancado %}
+          {% lng "Trancado" "On leave" %}
+        {% else %}
+          {% lng "Regular" "Regular" %}
+        {% endif %}
+      </span>
+    </div>
+
+    {% if not user.eh_estud and aluno.cr %}
+      <div class="user-info-row">
+        <label>{% lng "CR" "GPA" %}:</label>
+        <span>{% lng_4 aluno.cr %}</span>
+      </div>
+    {% endif %}
+
+    {% if not user.eh_estud %}
+      {% include "dados_usuario.html" with user=aluno.user %}
+    {% endif %}
+
+  </div>
   
+  <hr>
+
   {% if aluno.trabalhou %}
     <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
   {% endif %}

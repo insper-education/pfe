@@ -8,57 +8,75 @@
 {% load linguas %}
 
 {% if user.tipo_lingua > 1 %}
-<strong>
-  {% lng "Linguagem de comunicação:" "Communication language:" %}  
-  {% if user.tipo_lingua == 2 %}
-    <span style="color: red;">
-      {% lng "Inglês" "English" %}
+  <div class="user-info-row">
+    <label>{% lng "Língua nativa:" "Native language:" %}</label>
+    <span>
+      {% if user.tipo_lingua == 2 %}
+        <span style="color: #dc3545; font-weight: 500;">{% lng "Inglês" "English" %}</span>
+      {% endif %}
     </span>
-  {% endif %}    
-  <br>
-</strong>
+  </div>
+{% endif %}
+
+{% if user.email %}
+  <div class="user-info-row">
+    <label>{% lng "E-mail:" "Email:" %}</label>
+    <span class="user-info-contact">
+      <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+    </span>
+  </div>
 {% endif %}
 
 {% if user.linkedin %}
-  <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank" style="overflow-wrap: break-word;">{{user.linkedin}}</a><br>
+  <div class="user-info-row">
+    <label>LinkedIn:</label>
+    <span class="user-info-contact">
+      <a href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a>
+    </span>
+  </div>
 {% endif %}
 
-<strong>e-mail:</strong> <a href="mailto:{{user.email}}" style="overflow-wrap: break-word;">{{user.email}}</a><br>
-
 {% if user.conta_github %}
-  <strong>GitHub:</strong> <a href="https://github.com/{{user.conta_github}}" target="_blank" style="overflow-wrap: break-word;">{{user.conta_github}}</a><br>
+  <div class="user-info-row">
+    <label>GitHub:</label>
+    <span class="user-info-contact">
+      <a href="https://github.com/{{ user.conta_github }}" target="_blank">{{ user.conta_github }}</a>
+    </span>
+  </div>
 {% endif %}
 
 {% if user.telefone or user.celular or user.instant_messaging %}
+  <div class="user-info-row">
+    <label>{% lng "Contatos:" "Contacts:" %}</label>
+    <span>
+      {% if user.telefone %}
+        <div class="user-info-phones">
+          ☎️ <a href="tel:{{ user.telefone }}">{{ user.telefone }}</a>
+        </div>
+      {% endif %}
 
-  <strong>
-    {% lng "Telefones:" "Phones:" %}
-  </strong><br>
-  {% if user.telefone %}
-    <div style="margin-left: 8px;">&#x260F;
-      <a href="tel:{{user.telefone}}">{{user.telefone}}</a>
-    </div>
-  {% endif %}
+      {% if user.celular %}
+        <div class="user-info-phones">
+          📱 <a href="tel:{{ user.celular }}">{{ user.celular }}</a>
+          <a class="unselectable" href="https://wa.me/{{ user.celular|cut:' ' }}" title="WhatsApp">
+            <img src="{% static 'images/whatsapp.svg' %}" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+          </a>
+        </div>
+      {% endif %}
 
-  {% if user.celular %}
-    <div style="margin-left: 8px;">&#x1F4F1;
-      <a href="tel:{{user.celular}}">{{user.celular}}</a>
-      <a class="unselectable" href="https://wa.me/{{user.celular|cut:' '}}"><img src="{% static 'images/whatsapp.svg' %}" alt="whatsapp" style="width:16px;height:16px;"></a>
-    </div>
-  {% endif %}
-
-  {% if user.instant_messaging %}
-    <div style="margin-left: 8px;"><img src="{% static 'images/skype.png' %}" alt="instant_messaging" style="width:16px; height:16px;"></span>
-      <a href="instant_messaging:{{instant_messaging}}" style="overflow-wrap: break-word;">{{user.instant_messaging}}</a>
-    </div>
-  {% endif %}
-
+      {% if user.instant_messaging %}
+        <div class="user-info-phones">
+          <img src="{% static 'images/skype.png' %}" alt="Instant Messaging" style="width: 16px; height: 16px; vertical-align: middle;">
+          <a href="skype:{{ user.instant_messaging }}">{{ user.instant_messaging }}</a>
+        </div>
+      {% endif %}
+    </span>
+  </div>
 {% endif %}
 
 {% if user.observacoes %}
-    <br>
-    <strong>
-      {% lng "Observações:" "Observations:" %}
-    </strong>
-    <div style="padding-left: 18px; overflow-wrap: break-word;">{{user.observacoes|linebreaks}}</div>
+  <div class="user-info-row">
+    <label>{% lng "Observações:" "Observations:" %}</label>
+    <span class="user-info-observation">{{ user.observacoes|linebreaks }}</span>
+  </div>
 {% endif %}

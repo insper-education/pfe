@@ -1,0 +1,15 @@
+/*
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 9 de Dezembro de 2025
+*/
+
+.user-info { display: flex; flex-direction: column; gap: 0.25rem; }
+.user-info-row { display: flex; align-items: center; gap: 0.5rem; }
+.user-info-row label { font-weight: bold; min-width: 156px; }
+.user-info-row span { flex: 1; }
+.user-info-contact { display: flex; align-items: center; gap: 0.5rem; }
+.user-info-contact a { overflow-wrap: break-word; }
+.user-info-phones { margin-left: 1rem; }
+.user-info-observation { padding-left: 1.125rem; overflow-wrap: break-word; border: dashed 1px var(--primary); padding: 0.5rem; border-radius: 4px; background: rgba(84,254,85,0.05); max-width: 600px; }
+.user-info-row a { overflow-wrap: break-word; }

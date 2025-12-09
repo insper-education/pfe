@@ -10,27 +10,41 @@
 {% load linguas %}
 
 {% block head %}
+  <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
   {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
 
-  {% include "usuario.html" with user=parceiro.user %}
+  <div class="user-info">
 
-  {% if parceiro.principal_contato %}
-    <span data-toggle="tooltip" data-html="true" animation="true" title="Principal Contato">&#x2B50;</span>
-  {% endif %}
+    {% include "usuario.html" with user=parceiro.user %}
+    
+    {% if parceiro.principal_contato %}
+      <div class="user-info-row">
+        <span>&#x2B50; {% lng "Principal Contato" "Main Contact" %}</span>
+      </div>
+    {% endif %}
 
-  {% if parceiro.organizacao %}
-    <b>{% lng "Organização:" "Organization:" %}</b>
-    <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">{{parceiro.organizacao.nome}}</a><br>
-  {% endif %}
+    {% if parceiro.organizacao %}
+      <div class="user-info-row">
+        <label>{% lng "Organização:" "Organization:" %}</label>
+        <span>
+          <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">{{ parceiro.organizacao.nome }}</a>
+        </span>
+      </div>
+    {% endif %}
 
-  {% if parceiro.cargo %}
-    <b>{% lng "Cargo:" "Position:" %}</b> {{parceiro.cargo}}<br>
-  {% endif %}
+    {% if parceiro.cargo %}
+      <div class="user-info-row">
+        <label>{% lng "Cargo:" "Position:" %}</label>
+        <span>{{ parceiro.cargo }}</span>
+      </div>
+    {% endif %}
+    
+    {% include "dados_usuario.html" with user=parceiro.user %}
 
-  {% include "dados_usuario.html" with user=parceiro.user %}
+  </div>
   
   {% if conexoes %}
     <hr>

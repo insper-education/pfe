@@ -82,6 +82,23 @@ def lng_dll_de_ate(data_inicial, data_final):
     return thtml(pt_text, en_text)
 
 
+# Para números com quatro casas decimais
+@register.simple_tag
+def lng_4(numero):
+    try:
+        numero = float(numero)
+    except (ValueError, TypeError):
+        return thtml(numero, numero)
+    try:
+        locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
+    except locale.Error:  
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+    pt_text = locale.format_string("%.4f", numero, grouping=True)
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+    en_text = locale.format_string("%.4f", numero, grouping=True)
+    return thtml(pt_text, en_text)
+
+
 # Para números com duas casas decimais
 @register.simple_tag
 def lng_2(numero):
