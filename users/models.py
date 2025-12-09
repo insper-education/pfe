@@ -45,9 +45,9 @@ class PFEUser(AbstractUser):
         models.PositiveSmallIntegerField(choices=TIPO_DE_USUARIO_CHOICES, default=1,
                                          help_text="cada usuário tem um perfil único")
 
-    telefone = models.CharField(max_length=26, null=True, blank=True,
+    telefone = models.CharField(max_length=30, null=True, blank=True,
                                 help_text="Telefone Fixo")
-    celular = models.CharField(max_length=26, null=True, blank=True,
+    celular = models.CharField(max_length=30, null=True, blank=True,
                                help_text="Telefone Celular")
     instant_messaging = models.CharField(max_length=32, null=True, blank=True,
                              help_text="Identificação IM, como Skype, Zoom, Teams, etc")
@@ -175,7 +175,21 @@ class PFEUser(AbstractUser):
         hashids = Hashids(salt=settings.SALT, min_length=8)
         hid = hashids.encode(self.id)
         return hid
+    
 
+    def get_celular_formatado(self):
+        """Retorna número formatado adequadamente."""
+        if not self.celular:
+            return None
+
+        clean = re.sub(r'\D', '', self.celular)  # Remove tudo que não é número
+        
+        # Adiciona código do Brasil se necessário
+        if len(clean) == 11 and not clean.startswith("55"):
+            clean = "55" + clean
+
+        return clean
+    
 class Professor(models.Model):
     """Classe de usuários com estatus de Professor."""
 

@@ -57,8 +57,8 @@
 
       {% if user.celular %}
         <div class="user-info-phones">
-          📱 <a href="tel:{{ user.celular }}">{{ user.celular }}</a>
-          <a class="unselectable" href="https://wa.me/{{ user.celular|cut:' ' }}" title="WhatsApp">
+          📱 <a href="tel:{{ user.get_celular_formatado }}">{{ user.celular }}</a>
+          <a class="unselectable" href="https://wa.me/{{ user.get_celular_formatado|cut:' ' }}" title="WhatsApp">
             <img src="{% static 'images/whatsapp.svg' %}" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
           </a>
         </div>
