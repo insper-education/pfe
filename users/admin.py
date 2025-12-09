@@ -126,7 +126,8 @@ class OpcaoAdmin(admin.ModelAdmin):
     """Definição de Opções de escolha de propostas."""
     list_display = ("aluno", "proposta", "prioridade")
     ordering = ("aluno", )
-    search_fields = ["aluno__user__first_name", "aluno__user__last_name", ]
+    list_filter = ("aluno__ano", "aluno__semestre", )
+    search_fields = ["aluno__user__first_name", "aluno__user__last_name", "aluno__user__username",]
 
 
 @admin.register(OpcaoTemporaria)
@@ -134,7 +135,8 @@ class OpcaoTemporariaAdmin(admin.ModelAdmin):
     """Definição de Opções Temporárias de escolha de propostas."""
     list_display = ("aluno", "proposta", "prioridade")
     ordering = ("aluno", )
-    search_fields = ["aluno__user__first_name", "aluno__user__last_name", ]
+    list_filter = ("aluno__ano", "aluno__semestre", )
+    search_fields = ["aluno__user__first_name", "aluno__user__last_name", "aluno__user__username",]
 
 
 class OpcaoInline(admin.TabularInline):

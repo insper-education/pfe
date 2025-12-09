@@ -43,12 +43,18 @@
                   data-toggle="tooltip" data-html="true" animation="true" title="
                   {% for opcao in opcoes %}
                     <b>#{{ opcao.prioridade }} :</b>  
-                      {{opcao.proposta.titulo}}
-                      ({{opcao.proposta.organizacao.nome}})
-                      {% comment %} |{% mede_aderencia aluno opcao.proposta %}%| {% endcomment %}
+                    {{opcao.proposta.titulo}}
+                    ({{opcao.proposta.organizacao.nome}})
                     <br>
                   {% empty %}
-                    Estudante não escolheu opções de proposta de projetos
+                    {% for opcao in opcoestemp %}
+                      <b>Temp#{{ opcao.prioridade }} :</b>  
+                      {{opcao.proposta.titulo}}
+                      ({{opcao.proposta.organizacao.nome}})
+                      <br>
+                    {% empty %}
+                      Estudante não escolheu opções de proposta de projetos
+                    {% endfor %}
                   {% endfor %}">{{aluno.user.get_full_name}}</a>
             </td>
             {% if aluno.curso2 %}
