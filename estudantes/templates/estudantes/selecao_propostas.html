@@ -187,6 +187,16 @@
 
   <div class="container-fluid mt-1">
 
+    <style>
+      .texto-explic {
+        font-size: 0.9rem;
+        line-height: 1.0;
+        margin-bottom: 10px;
+      }
+      .texto-explic strong {
+        font-weight: 600;
+      }
+    </style>
     <!-- Hero section com instruções visuais -->
     <div class="alert alert-light border mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.75rem 1rem;">
       <div class="d-flex align-items-center mb-3">
@@ -197,7 +207,7 @@
         <div class="col-md-4 mb-1">
           <div class="d-flex align-items-start">
             <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">1</span>
-            <div style="font-size: 0.9rem;">
+            <div class="texto-explic">
               <strong>{% lng "Veja os detalhes" "View details" %}</strong><br>
               <small>{% lng "Clique na seta (resumo) ou título (completo)" "Click the arrow (summary) or title (full)" %}</small>
             </div>
@@ -206,7 +216,7 @@
         <div class="col-md-4 mb-1">
           <div class="d-flex align-items-start">
             <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">2</span>
-            <div style="font-size: 0.9rem;">
+            <div class="texto-explic">
               <strong>{% lng "Escolha a prioridade" "Choose priority" %}</strong><br>
               <small>{% lng "Use o número ao lado de cada proposta" "Use the number next to each proposal" %}</small>
             </div>
@@ -215,11 +225,9 @@
         <div class="col-md-4 mb-1">
           <div class="d-flex align-items-start">
             <span class="badge badge-light text-dark mr-2" style="font-size: 0.95rem; padding: 0.25rem 0.5rem;">3</span>
-            <div style="font-size: 0.9rem;">
-              <strong>{% lng "Confirme" "Confirm" %}</strong><br>
-              <small>{% lng "Clique em" "Click " %}
-                 <b>{% lng "Confirmar " "Confirm" %}</b>
-                 {% lng "ao final" "at the end" %}</small>
+            <div class="texto-explic">
+              <strong>{% lng "Clique Confirme" "Click Confirm" %}</strong><br>
+              <small>{% lng "quantas vezes quiser até o prazo" "as many times as you want until the deadline" %}</small>
             </div>
           </div>
         </div>
