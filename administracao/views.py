@@ -743,10 +743,10 @@ def relatorios(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def propor(request):
-    """Monta grupos."""
+    """Monta grupos automaticamente com base na seleção de interesse dos estudantes."""
 
     if request.headers.get("X-Requested-With") != "XMLHttpRequest" or request.method != "POST": # Ajax check
-        return HttpResponseNotFound("Requisição errada")
+        return HttpResponseNotFound("Requisição inválida.")
     
     otimizar = True
 
