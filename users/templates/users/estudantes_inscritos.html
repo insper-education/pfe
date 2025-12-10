@@ -40,7 +40,7 @@
             </td>
             <td>
               <a href="{% url 'estudante_detail' aluno.id %}"
-                  data-toggle="tooltip" data-html="true" animation="true" title="
+                  data-toggle="tooltip" data-html="true" animation="true" title='
                   {% for opcao in opcoes %}
                     <b>#{{ opcao.prioridade }} :</b>  
                     {{opcao.proposta.titulo}}
@@ -53,9 +53,9 @@
                       ({{opcao.proposta.organizacao.nome}})
                       <br>
                     {% empty %}
-                    {% lng "Estudante não escolheu opções de proposta de projetos" "Student has not chosen project proposal options" %}
+                    Estudante não escolheu opções de proposta de projetos
                     {% endfor %}
-                  {% endfor %}">{{aluno.user.get_full_name}}</a>
+                  {% endfor %}'>{{aluno.user.get_full_name}}</a>
             </td>
             {% if aluno.curso2 %}
               <td style="color:#{{ aluno.curso2.cor }};">{{ aluno.curso2 }}</td>
