@@ -280,24 +280,26 @@
   <hr style="margin-top: 2px;">
   
   <form action="" method="post" class="esconder"> {% csrf_token %}
-    <input type="submit" class="btn btn-primary mb-1" name="limpar"
-           data-toggle="tooltip" data-html="true" animation="true"
-           title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.eh_admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Resetar Pré Alocações" {% if not user.eh_admin %}disabled{% endif %}>
+    <div class="form-group mb-2">
 
-    <input type="button" class="btn btn-primary mb-1" id="propor" name="propor"
-           data-toggle="tooltip" data-html="true" animation="true"
-           title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.eh_admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Montar Grupos Automaticamente" {% if not user.eh_admin %}disabled{% endif %}>
+      <button type="submit" class="btn btn-primary mb-1" name="limpar"
+        data-toggle="tooltip" data-html="true" animation="true"
+        title="Remove todos os movimentos de estudantes já realizadas e coloca todos de volta em suas primeiras opções.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        {% lng "Resetar Pré Alocações" "Reset Pre Allocations" %}</button>
+  
+      <button type="button" class="btn btn-primary mb-1" id="propor" name="propor"
+        data-toggle="tooltip" data-html="true" animation="true"
+        title="Sistema propõe uma montagem de grupos em função das opções, cursos, CR e interesses.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        {% lng "Montar Grupos Automaticamente" "Build Groups Automatically" %}</button>
 
-    <input type="submit" class="btn btn-primary mb-1" name="fechar"
-           data-toggle="tooltip" data-html="true" animation="true"
-           title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.eh_admin %}<p><b>Você não tem privilégios suficientes.</b></p>{% endif %}"
-           value="Fechar Projetos" {% if not user.eh_admin %}disabled{% endif %}>
-    <br><br>
+      <button type="submit" class="btn btn-primary mb-1" name="fechar"
+        data-toggle="tooltip" data-html="true" animation="true"
+        title="Cria efetivamente os projetos na base de dados e avança para a seleção de orientadores.{% if not user.eh_admin %}<br><b>Você não tem privilégios suficientes.</b>{% endif %}">
+        {% lng "Fechar Projetos" "Close Projects" %}</button>
+
+    </div>
   </form>
 
-  
   <div>
     <b class="esconder" style="font-size: 18px;">
       {% lng "Visualizar:" "View:" %}
@@ -523,12 +525,14 @@
       var $draggedItem;
 
       $(document).ready(function() {
-        $(".estudante").on("dragstart", dragging);
-        $(".estudante").on("dragend", draggingEnded);
-        $(".estudante").on("dblclick", estrela);
-        $(".proposta").on("dragenter", preventDefault);
-        $(".proposta").on("dragover", preventDefault);
-        $(".proposta").on("drop", dropAluno);
+
+        $(document).on("dragstart", ".estudante", dragging);
+        $(document).on("dragend", ".estudante", draggingEnded);
+        $(document).on("dblclick", ".estudante", estrela);
+        $(document).on("dragenter", ".proposta", preventDefault);
+        $(document).on("dragover", ".proposta", preventDefault);
+        $(document).on("drop", ".proposta", dropAluno);
+
         $(window).on("unload", salvar_estado );
 
         // ORDENA CRs por Projeto
@@ -562,26 +566,17 @@
       var balanceadas = {};
       var desbalanceadas = {};
       var vazias = 0;
-
-      var propostas = $(".proposta");
-      for (var i = 0; i < propostas.length; i++) {
-        qtd_estudantes = $(propostas[i]).children("div").length - 1
-        if(qtd_estudantes == 0) {
-          vazias += 1;
-        } else if(qtd_estudantes > 4 || qtd_estudantes < 3) {
-          if(desbalanceadas[qtd_estudantes] == undefined) {
-            desbalanceadas[qtd_estudantes] = 1;
+      
+      var propostas = Array.from(document.querySelectorAll(".proposta"));
+      propostas.forEach(function(prop) {
+          var qtd = prop.children.length - 1;
+          if(qtd == 0) vazias++;
+          else if(qtd > 4 || qtd < 3) {
+              desbalanceadas[qtd] = (desbalanceadas[qtd] || 0) + 1;
           } else {
-            desbalanceadas[qtd_estudantes] += 1;
+              balanceadas[qtd] = (balanceadas[qtd] || 0) + 1;
           }
-        } else {
-          if(balanceadas[qtd_estudantes] == undefined) {
-            balanceadas[qtd_estudantes] = 1;
-          } else {
-            balanceadas[qtd_estudantes] += 1;
-          }
-        }
-      }
+      });
 
       // Atualiza os valores de desbalanceadas
       val = sumValues(desbalanceadas);
@@ -632,22 +627,23 @@
         atualizar_count_propostas();
     }
 
-    var observer_proposta = new MutationObserver(function( mutations ) {
-        mutations.forEach(function( mutation ) {
-            target = $(mutation.target)
-            colorir_proposta(target);
-        });    
+    var observer_proposta = new MutationObserver(function(mutations) {
+        var propostas_afetadas = new Set();
+        mutations.forEach(function(mutation) {
+            propostas_afetadas.add($(mutation.target).closest(".proposta")[0]);
+        });
+        propostas_afetadas.forEach(function(proposta) {
+            colorir_proposta(proposta);
+        });
     });
 
     var config = { 
         childList: true
     };
 
-    var propostas = $(".proposta");
-    for (var i = 0; i < propostas.length; i++) {
-        colorir_proposta(propostas[i]);
-        observer_proposta.observe(propostas[i], config);
-    }
+    $(".proposta").each(function(i, proposta) {
+        observer_proposta.observe(proposta, config);
+    });
 
     function send_update(estudante, proposta) {
       $.ajax({

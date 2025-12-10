@@ -6,6 +6,8 @@
 
 {% comment %} Para o propor grupos automaticamente {% endcomment %}
 
+{% load linguas %}
+
 <style>
   body.disabled:before {
     content: "";
@@ -42,13 +44,16 @@
   }
 </style>
   
-<div class="popup"><span class="t_popup">Montando Grupos para os Projetos</span></div> 
+<div class="popup"><span class="t_popup">{% lng "Montando Grupos para os Projetos" "Building Groups for Projects" %}</span></div> 
   
 <script>
   $(document).ready(function(){
     $("#propor").click(function() {
 
-      certeza = confirm("Tem certeza que montar os grupos automaticamente, isso pode demorar bastante?");
+      var mensagem = "Tem certeza que montar os grupos automaticamente, isso pode demorar bastante?";
+      if(localStorage.getItem("lingua") == "en")
+        mensagem = "Are you sure to build the groups automatically, this may take a while?";
+      var certeza = confirm(mensagem);
       
       if(certeza) {
         $("body").addClass("disabled");
@@ -61,8 +66,6 @@
           success: function (data) {
             if (data.atualizado) {
               location.reload();
-            } else {
-              console.log("Erro: Valor não atualizado.");
             }
           },
           {% include "ajax_error_function.js" %}
