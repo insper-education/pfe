@@ -137,9 +137,58 @@
 
 {% block responsive_styles %}
         .gears-container { 
-          width: 280px; 
-          height: 150px;
-          transform: scale(0.85);
+          width: 198px;
+          height: 90px;
+          margin: 2rem auto 1.5rem auto;
+        }
+
+        .gear {
+          width: 60px;
+          height: 60px;
+        }
+
+        .gear::before {
+          left: 2.5px;
+          top: 2.5px;
+          right: 2.5px;
+          bottom: 2.5px;
+        }
+
+        .gear::after {
+          left: 12.5px;
+          top: 12.5px;
+          width: 35px;
+          height: 35px;
+          border: 2.5px solid var(--primary);
+        }
+
+        .gear.one {
+          left: 0px;
+          top: 15px;
+        }
+
+        .gear.two {
+          left: 69px;
+          top: 0;
+        }
+
+        .gear.three {
+          left: 138px;
+          top: 15px;
+        }
+
+        .gear .bar {
+          left: -7.5px;
+          width: 75px;
+          height: 15px;
+          margin-top: -7.5px;
+        }
+
+        .gear .bar::before {
+          left: 2.5px;
+          top: 2.5px;
+          right: 2.5px;
+          bottom: 2.5px;
         }
 {% endblock %}
 
@@ -173,7 +222,7 @@
       </div>
 
       <div class="contato">
-        para reportar o problema, contactar:
+        para reportar o problema, contactar:<br><br>
         <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>
       </div>
 {% endblock %}
