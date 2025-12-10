@@ -6,5 +6,4 @@
 
 $(document).ready(function() {
   $("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window"});
-  //$("[data-toggle='tooltip']").tooltip("dispose").tooltip({trigger : "hover", boundary: "window", delay: { "show": 500, "hide": 1000 } });
 });
