@@ -154,13 +154,13 @@
 
     {% for proposta in propostas %}   
 
-    <div style="width: 100%; border-collapse:separate;">
+    <div id="bas{{proposta.id}}" style="width: 100%; border-collapse:separate;">
 
-      <div style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
+      <div id="grp{{proposta.id}}" style="display: flex; align-items: center; align-content: center; margin-bottom: 8px;">
         
-        <div style="width: 68px; vertical-align:middle; margin-right: 8px;"
-        data-toggle="tooltip" data-html="true" animation="true" 
-        title="<b>{{proposta.get_titulo_org_periodo}}</b><br><br>
+        <div id="det{{proposta.id}}" style="width: 68px; vertical-align:middle; margin-right: 8px;"
+         data-toggle="tooltip" data-html="true" animation="true" 
+         title="<b>{{proposta.get_titulo_org_periodo}}</b><br><br>
          <b>Descrição</b>: {{proposta.descricao|linebreaks}}
          <b>Expectativas</b>: {{proposta.expectativas|linebreaks}}
          {% if proposta.recursos %}<br><b>Recursos</b>: {{proposta.recursos|linebreaks}}{% endif %}
@@ -738,10 +738,14 @@
           proposta = final_target.data("titulo");
 
           $("."+atual).each(function(i, obj) {
-            if($(this).parent().closest("div").attr("id").slice(3) == final_target.attr("id").slice(8)){
-              $(this).html("<u>"+proposta+"</u>");
+            const $obj = $(this);
+            const parentProposta = $obj.closest(".proposta").attr("id");
+            const targetProposta = final_target.attr("id");
+            
+            if (parentProposta && targetProposta && parentProposta.slice(3) === targetProposta.slice(8)) {
+              $obj.html("<u>" + proposta + "</u>");
             } else {
-              $(this).html(proposta);
+              $obj.html(proposta);
             }
           });
           update_tips();
