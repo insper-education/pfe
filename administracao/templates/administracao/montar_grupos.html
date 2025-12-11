@@ -96,6 +96,7 @@
 
     .opcao {
       padding-right: 2px;
+      float: right;
     }
 
     .l_curso {
@@ -208,8 +209,9 @@
           </div>
         </div>
 
-        <div id="proposta{{proposta.id}}" class="proposta imprimir_div" data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})" >
-
+        <div id="proposta{{proposta.id}}" class="proposta imprimir_div" 
+         data-propostaid="{{proposta.id}}" data-titulo="{{proposta.titulo|truncatechars:32}} ({{ proposta.organizacao.sigla }})"
+         data-perfs="{% for curso in proposta.cursos %}{{curso.sigla_curta}}{% if not forloop.last %},{% endif %}{% endfor %}">
           <div id="titulo{{proposta.id}}" class="etiqueta_proposta imprimir_div">
 
             <a target="_blank" rel="noopener noreferrer" class="ancora tip imprimir" data-tip="tip{{proposta.id}}" href="{% url 'proposta_completa' proposta.id %}" style="font-weight: 500; color: #000062;">
@@ -426,6 +428,15 @@
       var anterior = estudante.find(".opcao > span").html();
       estudante.find(".opcao > span").html(opcao);
 
+      // Para colocar um alerta se o curso do estudante não está entre os perfis da proposta
+      var perfs = $("#proposta"+proposta).data("perfs").split(",");
+      var curso = estudante.find(".l_curso")
+      if(perfs.includes(curso.text())) {
+        curso.css("background-color", "#555555");
+      } else {
+        curso.css("background-color", "#FF0000");
+      }
+
       return [anterior, opcao];
     }
 
@@ -473,7 +484,7 @@
       <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
       <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
       <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>{% if estudante.com_reprovacao %}<span class="esconder text-danger fw-bold"> &reg;</span>{% endif %}
-      <div class="opcao imprimir_div" style="float: right;"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
+      <div class="opcao imprimir_div"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
       </div>
       `
       
