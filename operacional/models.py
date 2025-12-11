@@ -28,6 +28,9 @@ class Curso(models.Model):
 
     curso_do_insper = models.BooleanField("Curso do Insper", default=True,
                              help_text="Indicar caso seja um curso do Insper (outros são usados para estudantes de intercâmbio)")
+    
+    curso_do_capstone = models.BooleanField("Curso do Capstone", default=True,
+                             help_text="Indicar caso seja um curso do Capstone")
 
     class Meta:
         ordering = [ "nome",]

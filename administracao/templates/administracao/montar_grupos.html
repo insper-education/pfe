@@ -136,8 +136,10 @@
       background-color: #f8f9fa;
       color: #000;
       text-align: left;
-      max-width: 400px;
-      border: 1px solid #ddd;
+      max-width: 90vw;
+      width: 1200px;
+      border: 2px solid #777;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
 
     .tooltip.show {
@@ -147,6 +149,17 @@
     .tooltip-arrow {
       border-top-color: #f8f9fa;
     }
+
+    .perfs div {
+      display: block;
+      font-size: 8px;
+      white-space: nowrap;
+    }
+    
+    .perfs div {
+      border-bottom: 1px solid #CCCCCC;
+    }
+  
 
   </style>
 
@@ -258,20 +271,22 @@
 
         </div>
 
-        <div class="esconder" style="width: 2.0em; vertical-align:middle; margin-right: 6px; margin-left: 4px;">
+        <div class="esconder" style="width: 2.75em; vertical-align:middle; margin-right: 6px; margin-left: 4px;"> {% comment %} width: 2.75em; para caber 4 cursos {% endcomment %}
           <a class="ancora" style="color: #000062;" data-toggle="tooltip" data-html="true" animation="true" title=
            "{% for rec in proposta.recomendada_set.all %}
             {{rec.disciplina.nome}}<br>
            {% endfor %}">
-            <tt style="display: block; font-size: 8px; white-space: nowrap;">
+            <code class="perfs">
               {% nospaces %}
               {% for perfil in proposta.perfis %}
-                {% for curso in cursos %}
-                  <span style="margin-right: 3px;">{% if curso in perfil.all %}{{curso.sigla_curta}}{% else %}&nbsp;&nbsp;{% endif %}</span>
-                {% endfor %}<br>
+                <div>
+                  {% for curso in cursos %}
+                    <span style="margin-right: 3px;">{% if curso in perfil.all %}{{curso.sigla_curta}}{% else %}&nbsp;&nbsp;{% endif %}</span>
+                  {% endfor %}
+                </div>
               {% endfor %}
               {% endnospaces %}
-            </tt>
+            </code>
           </a>
         </div>
 
@@ -441,7 +456,7 @@
         {% empty %}
           Estudante não escolheu opções de proposta de projetos<br>
         {% endfor %}
-        --------------------------------------------------------------------------<br>
+        <hr>
         {% if estudante.user.observacoes %}
         <b>OBSERVACÕES:</b><br>
         {{estudante.user.observacoes|linebreaks}}<br>{% endif %}

@@ -1041,7 +1041,7 @@ def montar_grupos(request):
         "configuracao": configuracao,
         "propostas": propostas,
         "estudantes_opcoes": estudantes_opcoes,
-        "cursos": Curso.objects.filter(curso_do_insper=True).order_by("id"),
+        "cursos": Curso.objects.filter(curso_do_capstone=True).order_by("id"),
         "cores_opcoes": Estrutura.loads(nome="Cores Opcoes"),
     }
 
