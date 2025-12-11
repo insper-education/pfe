@@ -131,6 +131,23 @@
         width: 8rem;
       }
     }
+
+    .tooltip-inner {
+      background-color: #f8f9fa;
+      color: #000;
+      text-align: left;
+      max-width: 400px;
+      border: 1px solid #ddd;
+    }
+
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    .tooltip-arrow {
+      border-top-color: #f8f9fa;
+    }
+
   </style>
 
 {% endblock %}
@@ -412,13 +429,15 @@
       data-prioridades="[{% for opcao in opcoes %}{{opcao.proposta.id}}{%if not forloop.last%},{%endif%}{% endfor %}]">
       <span id="estr{{estudante.id}}" class="estrela">{% if estudante.estrela %}&#9733;{% endif %}</span>
       <a target="_blank" rel="noopener noreferrer" style="display: inline; white-space: nowrap;"
-       class="ancora imprimir" href="{% url 'estudante_detail' estudante.id %}"
        data-toggle="tooltip" data-html="true" animation="true"
-        title="
+       class="ancora tip imprimir" href="{% url 'estudante_detail' estudante.id %}" data-tip="tipe{{estudante.id}}">
+      <div id="tipe{{estudante.id}}" hidden="hidden">
         {% for opcao in opcoes %}
-          <b>#{{ opcao.prioridade }} :</b>
-          [{{opcao.proposta.organizacao.nome}}] {{opcao.proposta.titulo}}
-          |{% mede_aderencia estudante opcao.proposta %}%|<br>
+          <span class='tgt_cor{{opcao.proposta.id}}'>
+            <b>#{{ opcao.prioridade }} :</b>
+            [{{opcao.proposta.organizacao.nome}}] {{opcao.proposta.titulo}}
+            |{% mede_aderencia estudante opcao.proposta %}%|
+          </span><br>
         {% empty %}
           Estudante não escolheu opções de proposta de projetos<br>
         {% endfor %}
@@ -435,12 +454,12 @@
         {% if estudante.familia %}
         <b>Você possui familiares em alguma empresa que está aplicando? Ou empresa concorrente direta?</b><br>
         {{estudante.familia|linebreaks}}<br>{% endif %}
-        ">
-        <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
-        <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
-        <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>{% if estudante.com_reprovacao %}<span class="esconder text-danger fw-bold"> &reg;</span>{% endif %}
-        <div class="opcao imprimir_div" style="float: right;"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
-        <br></div>
+      </div>
+      <span id="nome{{estudante.id}}">{{estudante.user.get_full_name}}</span></a>
+      <span class="l_curso">{{estudante.curso2.sigla_curta}}</span>
+      <span class="texto-longo esconder">CR:&nbsp;</span><span class="texto-curto esconder"></span><span class="esconder">{{estudante.cr|floatformat:2}}</span>{% if estudante.com_reprovacao %}<span class="esconder text-danger fw-bold"> &reg;</span>{% endif %}
+      <div class="opcao imprimir_div" style="float: right;"><div class="texto-longo">opção </div><div class="texto-curto">op</div>#<span>{% if opcoes %}1{% else %}?{% endif %}</span></div>
+      </div>
       `
       
       {% if estudante.pre_alocacao %}
@@ -514,6 +533,27 @@
     {% include "grafico_prioridades.html" %}
     
     <script>
+
+      // Atualiza a cor dentro do tooltip
+      $(document).on("inserted.bs.tooltip", function(e) {
+        var propostas = Array.from(document.querySelectorAll(".proposta"));
+        propostas.forEach(function(prop) {
+            var qtd = prop.children.length - 1;
+            var propostaId = $(prop).data("propostaid");
+            if(qtd == 0) {
+              $(".tooltip-inner .tgt_cor"+propostaId).css("color", "darkred");
+            } else if(qtd < 3) {
+              $(".tooltip-inner .tgt_cor"+propostaId).css("color", "orange");
+            } else if(qtd == 3) {
+              $(".tooltip-inner .tgt_cor"+propostaId).css("color", "goldenrod");
+            } else if(qtd == 4) {
+              $(".tooltip-inner .tgt_cor"+propostaId).css("color", "green");
+            } else {
+              $(".tooltip-inner .tgt_cor"+propostaId).css("color", "blue");
+            }
+        });
+
+      });
 
       function update_tips() {
         $(".tip").each(function () {
