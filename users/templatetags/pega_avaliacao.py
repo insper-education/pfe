@@ -5,11 +5,16 @@ Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
 Data: 11 de Novembro de 2023
 """
 
+import logging
+
 from django import template
 register = template.Library()
 
 from projetos.models import Avaliacao2
-from users.models import PFEUser
+#from users.models import PFEUser
+
+# Get an instance of a logger
+logger = logging.getLogger("django")
 
 @register.filter
 def pega_tipo(objeto, tipo):
@@ -41,12 +46,24 @@ def pega_avaliadores(objeto, tipo):
 @register.filter
 def add_orientador(lista, projeto):
     """adiciona orientador na lista."""
-    encontrou = False
-    id = projeto.orientador.user.id
-    for i in lista:
-        if id == i[0]:
-            encontrou = True
-            break
-    if not encontrou:
-        lista += [(id, projeto.orientador.user.first_name, projeto.orientador.user.last_name)]
+
+    # Validações de entrada
+    if not lista:
+        lista = []
+
+    if not projeto or not projeto.orientador or not projeto.orientador.user:
+        return lista
+
+    try:
+        orientador_id = projeto.orientador.user.id
+        orientador_nome = projeto.orientador.user.first_name or ""
+        orientador_sobrenome = projeto.orientador.user.last_name or ""
+        
+        # Verificar se já existe na lista
+        if not any(item[0] == orientador_id for item in lista):
+            lista = list(lista) + [(orientador_id, orientador_nome, orientador_sobrenome)]
+    
+    except (AttributeError, TypeError) as e:
+        logger.warning(f"Erro ao adicionar orientador: {e}")
+    
     return lista
