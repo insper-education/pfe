@@ -984,6 +984,7 @@ def areas(request):
 
     return JsonResponse({"atualizado": True,})
 
-# def proposta_submissao_velho(request):
-#     """Submissão de proposta de projeto (link antigo não deve mais ser usado)."""
-#     return redirect("proposta_submissao")
+# Deixar pois muita gente ainda usa esse link
+def proposta_submissao_velho(request):
+    """Submissão de proposta de projeto (link antigo não deve mais ser usado)."""
+    return redirect("proposta_submissao")
