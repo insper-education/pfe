@@ -745,6 +745,10 @@ def meuprojeto(request, primarykey=None):
     # Caso seja Professor ou Administrador
     if request.user.eh_prof_a:
         context["professor"] = request.user.professor
+        context["mensagem_aviso"] = {
+            "pt": "Mostrando como é a tela, usando qualquer estudante de exemplo.",
+            "en": "Showing how the screen looks, using any example student.",
+        }
 
         # Pegando um estudante de um projeto quando orientador
         if primarykey:
@@ -785,24 +789,27 @@ def gestao_projeto(request, primarykey=None):
     """Mostra o projeto do próprio estudante, se for estudante."""
     #usuario_sem_acesso(request, (1, 2, 4,)) # Soh Est Parc Adm
     
-    # Caso seja Professor ou Administrador
-    if request.user.eh_prof_a:
-        # Pegando um estudante de um projeto quando orientador
-        if primarykey:
-            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
-        else:
-            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
-    elif request.user.eh_aluno:  # Caso seja estudante
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
-    else:
-        return HttpResponse("Acesso negado.", status=401)
-    
     context = {
         "titulo": {"pt": "Gestão de Projeto", "en": "Project Management"},
         "configuracao": get_object_or_404(Configuracao),
         "Projeto": Projeto,
-        "projeto": projeto,
     }
+
+    # Caso seja Professor ou Administrador
+    if request.user.eh_prof_a:
+        context["mensagem_aviso"] = {
+            "pt": "Mostrando como é a tela, usando qualquer estudante de exemplo.",
+            "en": "Showing how the screen looks, using any example student.",
+        }
+        # Pegando um estudante de um projeto quando orientador
+        if primarykey:
+            context["projeto"] = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+        else:
+            context["projeto"] = Projeto.objects.filter(orientador=request.user.professor).last()
+    elif request.user.eh_aluno:  # Caso seja estudante
+        context["projeto"] = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
+    else:
+        return HttpResponse("Acesso negado.", status=401)
 
     return render(request, "projetos/gestao_projeto.html", context=context)
 

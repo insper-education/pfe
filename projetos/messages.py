@@ -143,33 +143,6 @@ def prepara_mensagem_email(request, tipo, primarykey):
 
         message = render_message("Mensagem Banca", context_carta, urlize=False)
 
-    #### NÃO PARECE FAZER SENTIDO ENVIAR MENSAGEM PARA UMA BANCA DE PROJETO SEM TER UMA BANCA ####
-    # if tipo == "banca_projeto":
-    
-    #     projeto = get_object_or_404(Projeto, pk=primarykey)
-    #     banca = None
-
-    #     para = ""
-    #     if banca.composicao.exame.sigla in ["BI", "BF"]:  # Interm ou Final
-    #         if projeto and projeto.orientador:
-    #             para += projeto.orientador.user.get_full_name() + " <" + projeto.orientador.user.email + ">; "
-    #             for coorientador in projeto.coorientador_set.all():
-    #                 para += coorientador.usuario.get_full_name() + " <" + coorientador.usuario.email + ">; "
-    #     if banca:
-    #         for membro in banca.membros():
-    #             para += membro.get_full_name() + " <" + membro.email + ">; "
-        
-    #     if banca and banca.alocacao:
-    #         subject = "Capstone | Banca: " + banca.alocacao.aluno.user.get_full_name() + " [" + banca.alocacao.projeto.organizacao.nome + "] " +  banca.alocacao.projeto.get_titulo()
-    #     else:
-    #         subject = "Capstone | Banca: [" + projeto.organizacao.nome + "] " +  projeto.get_titulo()
-        
-    #     context_carta = {
-    #         "request": request,
-    #         "projeto": projeto,
-    #     }
-    #     message = render_message("Mensagem Banca", context_carta)
-
     elif tipo == "certificado":
     
         certificado = get_object_or_404(Certificado, pk=primarykey)

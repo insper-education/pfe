@@ -92,7 +92,7 @@
               {% with instante=a.data|date:"md"%}
                 <input class="aviso" type="checkbox" id="{{forloop.counter}}" name="aviso{{a.id}}" value="{{instante}}" 
                   {% if instante in a.aviso.datas_realizado %}checked{% endif %}
-                  {% if not user.tipo_de_usuario.eh_admin %}disabled{% endif %}>
+                  {% if not user.eh_admin %}disabled{% endif %}>
               {% endwith %}
             {% endif %}
           </th>
