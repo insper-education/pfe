@@ -11,57 +11,115 @@
 
   <div>{% lng "Agora" "Now" %}: {{ agora }}</div><br>
 
-  <table>
-    <thead>
-      <tr>
-        {% comment %} <th>Worker</th> {% endcomment %}
-        <th>ETA</th>
-        {% comment %} <th>Priority</th> {% endcomment %}
-        <th>Task ID</th>
-        <th>Task Name</th>
-        <th>Args</th>
-        {% comment %} <th>Kwargs</th>
-        <th>Type</th>
-        <th>Hostname</th>
-        <th>Time Start</th>
-        <th>Acknowledged</th>
-        <th>Delivery Info</th>
-        <th>Worker PID</th> {% endcomment %}
-        
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for worker, tasks in scheduled_tasks.items %}
-        {% for task in tasks %}
-          <tr>
-            {% comment %} <td>{{ worker }}</td> {% endcomment %}
-            <td>{{ task.eta }}</td>
-            {% comment %} <td>{{ task.priority }}</td> {% endcomment %}
-            <td>{{ task.request.id }}</td>
-            <td>{{ task.request.name }}</td>
-            <td>{{ task.request.args }}</td>
-            {% comment %} <td>{{ task.request.kwargs }}</td>
-            <td>{{ task.request.type }}</td>
-            <td>{{ task.request.hostname }}</td>
-            <td>{{ task.request.time_start }}</td>
-            <td>{{ task.request.acknowledged }}</td>
-            <td>{{ task.request.delivery_info }}</td>
-            <td>{{ task.request.worker_pid }}</td> {% endcomment %}
-            
-            <td>
-              {% if task and task.request and task.request.id %}
-                <form method="post" action="{% url 'cancela_tarefa' task.request.id %}">
+  <!-- TAREFAS EM EXECUÇÃO (ACTIVE) -->
+  {% if active_tasks %}
+    <h3>{% lng "Tarefas em Execução" "Running Tasks" %}</h3>
+    <table border="1" style="width: 100%; margin-bottom: 20px;">
+      <thead>
+        <tr>
+          <th>Worker</th>
+          <th>Task ID</th>
+          <th>Task Name</th>
+          <th>Args</th>
+          <th>Time Start</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for worker, tasks in active_tasks.items %}
+          {% for task in tasks %}
+            <tr style="background-color: #fff3cd;">
+              <td>{{ worker }}</td>
+              <td>{{ task.id }}</td>
+              <td>{{ task.name }}</td>
+              <td>{{ task.args }}</td>
+              <td>{{ task.time_start }}</td>
+              <td>
+                <form method="post" action="{% url 'cancela_tarefa' task.id %}" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit">Cancel</button>
+                  <button type="submit" style="background-color: #ff6b6b; color: white; padding: 5px 10px; border: none; cursor: pointer;">{% lng "Cancelar" "Cancel" %}</button>
                 </form>
-              {% endif %}
-            </td>
-          </tr>
+              </td>
+            </tr>
+          {% endfor %}
         {% endfor %}
-      {% endfor %}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  {% endif %}
+
+  <!-- TAREFAS RESERVADAS (RESERVED) -->
+  {% if reserved_tasks %}
+    <h3>{% lng "Tarefas Reservadas" "Reserved Tasks" %}</h3>
+    <table border="1" style="width: 100%; margin-bottom: 20px;">
+      <thead>
+        <tr>
+          <th>Worker</th>
+          <th>Task ID</th>
+          <th>Task Name</th>
+          <th>Args</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for worker, tasks in reserved_tasks.items %}
+          {% for task in tasks %}
+            <tr style="background-color: #e7f3ff;">
+              <td>{{ worker }}</td>
+              <td>{{ task.id }}</td>
+              <td>{{ task.name }}</td>
+              <td>{{ task.args }}</td>
+              <td>
+                <form method="post" action="{% url 'cancela_tarefa' task.id %}" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" style="background-color: #ff6b6b; color: white; padding: 5px 10px; border: none; cursor: pointer;">{% lng "Cancelar" "Cancel" %}</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <!-- TAREFAS AGENDADAS (SCHEDULED) -->
+  {% if scheduled_tasks %}
+    <h3>{% lng "Tarefas Agendadas" "Scheduled Tasks" %}</h3>
+    <table border="1" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>ETA</th>
+          <th>Task ID</th>
+          <th>Task Name</th>
+          <th>Args</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for worker, tasks in scheduled_tasks.items %}
+          {% for task in tasks %}
+            <tr>
+              <td>{{ task.eta }}</td>
+              <td>{{ task.request.id }}</td>
+              <td>{{ task.request.name }}</td>
+              <td>{{ task.request.args }}</td>
+              <td>
+                {% if task and task.request and task.request.id %}
+                  <form method="post" action="{% url 'cancela_tarefa' task.request.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: #ff6b6b; color: white; padding: 5px 10px; border: none; cursor: pointer;">{% lng "Cancelar" "Cancel" %}</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if not active_tasks and not reserved_tasks and not scheduled_tasks %}
+    <p style="color: #666; font-style: italic;">{% lng "Nenhuma tarefa em execução, reservada ou agendada." "No running, reserved or scheduled tasks." %}</p>
+  {% endif %}
 
   <br>
   <div>

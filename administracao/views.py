@@ -1326,13 +1326,25 @@ def logs_django_admin(request, dias=30):
 def tarefas_agendadas(request):
     """Tarefas agendadas."""
     usuario_sem_acesso(request, (4,)) # Soh Adm
-    i = celery_app.control.inspect()
-    scheduled_tasks = i.scheduled()
+
+    active_tasks = {}
+    reserved_tasks = {}
+    scheduled_tasks = {}
+
+    try:
+        inspector = celery_app.control.inspect(timeout=2)
+        active_tasks = inspector.active() or {}
+        reserved_tasks = inspector.reserved() or {}
+        scheduled_tasks = inspector.scheduled() or {}
+    except Exception as exc:  # defensivo contra queda do broker/worker
+        logger.warning("Falha ao consultar tarefas do Celery: %s", exc)
 
     agora = datetime.datetime.now()
     context = {
         "titulo": { "pt": "Tarefas Agendadas", "en": "Scheduled Tasks" },
         "agora": agora,
+        "active_tasks": active_tasks,
+        "reserved_tasks": reserved_tasks,
         "scheduled_tasks": scheduled_tasks,
     }
     return render(request, "administracao/tarefas_agendadas.html", context)
