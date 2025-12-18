@@ -63,6 +63,8 @@ from projetos.models import Configuracao, Organizacao, Proposta, Projeto
 from projetos.models import Avaliacao2, Feedback, Disciplina, Area
 from projetos.support import simple_upload, get_upload_path
 from projetos.support2 import get_pares_colegas
+from projetos.tasks import mediabackup as mediabackup_task
+from projetos.tasks import backup as backup_task
 
 from users.models import PFEUser, Aluno, Professor, Parceiro, Administrador
 from users.models import Opcao, Alocacao
@@ -1480,3 +1482,23 @@ def bloqueados(request):
         "access_attempts": AccessAttempt.objects.all(),
     }
     return render(request, "administracao/bloqueados.html", context=context)
+
+
+@login_required
+@permission_required("users.view_administrador", raise_exception=True)
+def executa_backup(request):
+    """Executa backup do sistema."""
+
+    backup_task.delay()  # dispara a task Celery de backup do banco de dados de forma assíncrona
+    mediabackup_task.delay()  # dispara a task Celery de backup de mídia de forma assíncrona
+    
+    context = {
+        "voltar": True,
+        "area_principal": True,
+        "mensagem": {
+            "pt": "Backup iniciado em background (mídia).",
+            "en": "Media backup started in background.",
+        },
+    }   
+
+    return render(request, "generic_ml.html", context=context)

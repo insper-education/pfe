@@ -28,6 +28,7 @@ urlpatterns = [
     path("edita_usuario/<int:primarykey>", views.edita_usuario, name="edita_usuario"),
     path("estrela_estudante/", views.estrela_estudante, name="estrela_estudante"),
     # path("export/<str:modelo>/<str:formato>", views.export, name="export"),
+    path("executa_backup/", views.executa_backup, name="executa_backup"),
     path("exportar", views.exportar, name="exportar"),
     path("fechar_conexoes/", views.fechar_conexoes, name="fechar_conexoes"),
     path("index_carregar/", views.index_carregar, name="index_carregar"),
