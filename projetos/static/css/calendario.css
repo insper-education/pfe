@@ -29,18 +29,21 @@ table, th, td {border: 0px;}
   .tit_agenda {font-size:16px;}
   .t_f {display: none;}
   .t_s {display: none;}
+  .tab_pfe .cabec {font-size: 13px;}
 }
 
 @media only screen and (max-width: 480px) {
   #info_semestre {font-size:12px;}
   .colu {font-size:12px !important;}
   .tit_agenda {font-size:14px;}
+  .tab_pfe .cabec {font-size: 12px;}
 }
 
 @media only screen and (max-width: 400px) {
   #info_semestre {font-size:11px;}
   .colu {font-size:11px !important;}
   .tit_agenda {font-size:13px;}
+  .tab_pfe .cabec {font-size: 11px;}
 }
 
 .event-name, .event-type {
@@ -90,6 +93,14 @@ table, th, td {border: 0px;}
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 18px;
+}
+
+
+@media only screen and (max-width: 740px) {
+  .quad_pfe {
+    padding: 2px;
+    margin-bottom: 12px;
+  }
 }
 
 .quad_pfe br {

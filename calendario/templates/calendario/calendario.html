@@ -353,9 +353,9 @@
                       {% else %}
                         {% ifchanged evento.endDate.day evento.endDate.month %}
                           {% if evento.startDate == evento.endDate %} 
-                            ; {{ evento.endDate.day }}/{{ evento.endDate.month }}
+                            ;&thinsp;{{ evento.endDate.day }}/{{ evento.endDate.month }}
                           {% else %}
-                            ;  {{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
+                            ;&thinsp;{{ evento.startDate.day }}/{{ evento.startDate.month }} à {{ evento.endDate.day }}/{{ evento.endDate.month }} 
                           {% endif %}
                         {% endifchanged %}
                       {% endifchanged %}
