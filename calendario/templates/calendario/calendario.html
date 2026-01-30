@@ -26,6 +26,21 @@
     .tab_pfe td.colu2 {
       border-left: 1px solid !important;
     }
+
+    /* Calendário responsivo para telas pequenas */
+    @media (max-width: 430px) {
+      .calendar .day .day-content {padding: 4px 5px !important;}
+      .month-container {height: 208 !important;}
+      .month-title {padding-bottom: 1px !important;}
+    }
+    @media (max-width: 402px) {
+      .calendar .day .day-content {padding: 3px 4px !important;}
+      .month-container {height: 196 !important;}
+    }
+    @media (max-width: 374px) {
+      .calendar .day .day-content {padding: 2px 3px !important;}
+      .month-container {height: 184px !important;}
+    }
   </style>
 
   <script>

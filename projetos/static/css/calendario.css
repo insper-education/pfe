@@ -37,6 +37,12 @@ table, th, td {border: 0px;}
   .tit_agenda {font-size:14px;}
 }
 
+@media only screen and (max-width: 400px) {
+  #info_semestre {font-size:11px;}
+  .colu {font-size:11px !important;}
+  .tit_agenda {font-size:13px;}
+}
+
 .event-name, .event-type {
   font-weight: bold;
   padding-top: 6px;
