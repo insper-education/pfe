@@ -937,9 +937,9 @@ def seleciona_conexoes(request):
 
     captions = []
     for _, caption in Conexao.papel.items():
-        captions.append({"sigla": caption[1],
-                         "pt": caption[0],
-                         "en": caption[0], })
+        captions.append({"sigla": caption["sigla"],
+                         "pt": caption["nome"],
+                         "en": caption["nome_en"], })   #"cor": "#2563EB"
 
     context = {
         "titulo": {"pt": "Seleção de Conexões", "en": "Connection Selection"},
