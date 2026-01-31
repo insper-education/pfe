@@ -125,12 +125,13 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         
                         banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
-                            "sigla": exame.sigla,
+                            "exame": exame,
+                            # "sigla": exame.sigla,
                             "nota": banca_info["media"],
                             "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                            "nome": exame.titulo,
-                            "nome_en": exame.titulo_en,
-                            "banca": True,
+                            # "nome": exame.titulo,
+                            # "nome_en": exame.titulo_en,
+                            # "banca": True,
                             "objetivos": banca_info["objetivos"],
                             "bloqueado": not valido
                         })
@@ -139,12 +140,13 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             pnp = paval.order_by("momento").last()   # USEI ISSO PARA PROJETOS ANTIGOS SEM REGISTRO DE BANCAS
                             if pnp:  # Se não houver avaliação, não adiciona nota
                                 notas.append({
-                                    "sigla": exame.sigla,
+                                    "exame": exame,
+                                    # "sigla": exame.sigla,
                                     "nota": float(pnp.nota) if pnp.nota else None,
                                     "peso": 0,
-                                    "nome": exame.titulo,
-                                    "nome_en": exame.titulo_en,
-                                    "banca": True,
+                                    # "nome": exame.titulo,
+                                    # "nome_en": exame.titulo_en,
+                                    # "banca": True,
                                     "objetivos": None,
                                     "bloqueado": False
                                 })
@@ -152,29 +154,30 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             logger.error(f"Erro, exame com banca mas sem banca registrada: {exame.sigla} => {alocacao.projeto.get_titulo_org_periodo()}")
 
 
-
                 if not exame.banca:  # Exame sem banca (SERIA QUASE COMO UM ELSE DO ANTERIOR)
                     if exame.periodo_para_rubricas!=0:  # Nota (não é só um Check)
                         banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
-                            "sigla": exame.sigla,
+                            "exame": exame,
+                            # "sigla": exame.sigla,
                             "nota": banca_info["media"],
                             "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                            "nome": exame.titulo,
-                            "nome_en": exame.titulo_en,
-                            "banca": False,
+                            # "nome": exame.titulo,
+                            # "nome_en": exame.titulo_en,
+                            # "banca": False,
                             "objetivos": banca_info["objetivos"],
                             "bloqueado": False
                         })
                     else:  # Check
                         pnp = paval.order_by("momento").last()
                         notas.append({
-                            "sigla": exame.sigla,
+                            "exame": exame,
+                            # "sigla": exame.sigla,
                             "nota": float(pnp.nota) if pnp.nota else None,
                             "peso": pnp.peso/100 if pnp.peso else 0,
-                            "nome": exame.titulo,
-                            "nome_en": exame.titulo_en,
-                            "banca": False,
+                            # "nome": exame.titulo,
+                            # "nome_en": exame.titulo_en,
+                            # "banca": False,
                             "objetivos": None,
                             "bloqueado": False
                         })

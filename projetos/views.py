@@ -1497,8 +1497,7 @@ def analise_notas(request):
         for nota2 in notas_lista:
             for nota in nota2:
                 if nota["nota"] is not None:
-                    #key = nota["sigla"].lower()
-                    key = nota["sigla"]
+                    key = nota["exame"].sigla
                     if key:
                         if nota["nota"] >= valor["ideal"]:
                             notas[key]["ideal"] += 1

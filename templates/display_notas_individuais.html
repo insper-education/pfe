@@ -32,11 +32,11 @@
         <tr>
           <td style="white-space: nowrap;"><b>{% lng "Avaliações" "Evaluations" %}</b></td>
           {% for aval in notas %}
-            {% if user.eh_prof_a or alocacao|exibe_notas:aval.sigla %} <!-- Filtra certas avaliações para estudantes não verem -->
+            {% if user.eh_prof_a or alocacao|exibe_notas:aval.exame.sigla %} <!-- Filtra certas avaliações para estudantes não verem -->
             {% if user.eh_prof_a or not aval.bloqueado %}
               <td style="cursor:pointer; border-right: 0.5px solid grey;" data-toggle="tooltip" data-html="true" animation="true" 
-              title="{{aval.nome}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
-                <span style="white-space: nowrap;"><span class="short">{{aval.sigla}}</span><span class="long">{{aval.nome}}</span>=</span><span style="white-space: nowrap;">{% if aval.peso > 0 or aval.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}</span>
+              title="{{aval.exame.titulo}} | peso={% widthratio aval.peso 1 100 %}%<br>{% for o,p in aval.objetivos.items %}&bull;{{o.titulo}} = <b {% if p.0 < 5 %}class='text-danger'{% endif %}>{{p.0|floatformat:1}}</b><br>{% endfor %}">
+                <span style="white-space: nowrap;"><span class="short">{{aval.exame.sigla}}</span><span class="long">{{aval.exame.titulo}}</span>=</span><span style="white-space: nowrap;">{% if aval.peso > 0 or aval.exame.sigla == "P" %}{% lng_1 aval.nota %}{% else %}{% if aval.nota >= 5 %}&#128077;{% else %}&#128078;{% endif %}{% endif %}</span>
                 {% if aval.bloqueado %}<span style="color:orange; cursor: pointer;" data-toggle="tooltip" data-html="true" animation="true" title="Nota não visível para estudantes"><sup><i class="fas fa-eye-slash" style="font-size:0.85em;"></i></sup></span>{% endif %}
                 {% if aval.peso > 0 %}
                   <script>

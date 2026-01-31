@@ -123,19 +123,19 @@ def get_media_alocacao_i(alocacao, request=None):
     nota_descontos = 0
     
     for aval in edicao:
-        if aval["sigla"] is not None and aval["nota"] is not None and aval["peso"] is not None:
+        if aval["exame"].sigla is not None and aval["nota"] is not None and aval["peso"] is not None:
             peso_final += aval["peso"]
             nota_final += aval["nota"] * aval["peso"]
-            if aval["sigla"] in ("RII", "RFI", "API", "AFI"):
+            if not aval["exame"].grupo:
                 peso_individual += aval["peso"]
                 nota_individual += aval["nota"] * aval["peso"]
-            if aval["sigla"] in ("RIG", "APG", "RPL", "PPF"):
+            if aval["exame"].grupo and not aval["exame"].final:
                 peso_grupo_inter += aval["peso"]
                 nota_grupo_inter += aval["nota"] * aval["peso"]
-            if aval["sigla"] in ("RFG", "AFG"):
+            if aval["exame"].grupo and aval["exame"].final:
                 peso_grupo_final += aval["peso"]
                 nota_grupo_final += aval["nota"] * aval["peso"]
-            if aval["sigla"] in ("BI", "BF"):
+            if aval["exame"].banca and aval["exame"].sigla != "P":
                 peso_bancas += aval["peso"]
                 nota_bancas += aval["nota"] * aval["peso"]
 

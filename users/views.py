@@ -458,7 +458,7 @@ def blackboard_notas(request, anosemestre):
             # Convertendo lista de notas para dicionário
             avaliacao = {}
             for nota in notas:
-                avaliacao[nota["nome"]] = nota["nota"]
+                avaliacao[nota["exame"].titulo] = nota["nota"]
             
             media = get_media_alocacao_i(alocacao)
             for coluna in colunas:
