@@ -37,10 +37,10 @@
                 <a class="open-modal" href="{% url 'edita_aula' aula.id %}" data-url="{% url 'edita_aula' aula.id %}">
                   Aula {{forloop.counter|stringformat:"02d"}} <small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
                 </a>
-              <td>{{aula.questao_problema_desafio}}</td>
-              <td>{{aula.atividade}}</td>
-              <td>{{aula.evidencias_de_aprendizado}}</td>
-              <td>{{aula.descricao}}</td>
+              <td>{{aula.questao_problema_desafio|linebreaksbr}}</td>
+              <td>{{aula.atividade|linebreaksbr}}</td>
+              <td>{{aula.evidencias_de_aprendizado|linebreaksbr}}</td>
+              <td>{{aula.descricao|linebreaksbr}}</td>
             </tr>
           {% endfor %}
         </tbody>
