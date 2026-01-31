@@ -31,23 +31,87 @@
     {% else %}
       {% lng "Seu perfil não foi encontrado!" "Your profile was not found!" %}<br>
     {% endif %}
-    <br>
-    {% if user.linkedin %}
-      <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
-    {% endif %}
-    {% if user.email %}
-      <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
-    {% endif %}
 
-    <br><br>
-    {% if not user.eh_parc %} 
-      <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">
-        {% lng "Meus Detalhes" "My Details" %}
-      </a>
-    {% endif %}
-    <button type="submit" class="btn btn-primary mb-1">
-      {% lng "Atualizar Senha" "Update Password" %}
-    </button>
+    <div class="mt-1">
+      {% if user.linkedin %}
+        <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
+      {% endif %}
+      {% if user.email %}
+        <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
+      {% endif %}
+    </div>
+
+    <div class="text-center py-3">
+      <h4>{% lng "Código QR de Identificação" "Identification QR Code" %}</h4>
+      <div id="qrContainer" class="mt-1">
+          <div id="loadingSpinner">
+              <div class="spinner-border text-primary" role="status"></div>
+              <p class="mt-2">Gerando token...</p>
+          </div>
+          <img id="qrImage" src="" alt="QR Code" class="img-fluid d-none" style="max-height: 300px;">
+      </div>
+    </div>
+
+    <div class="mt-3">
+      {% if not user.eh_parc %} 
+        <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">
+          {% lng "Meus Detalhes" "My Details" %}
+        </a>
+      {% endif %}
+      <button type="submit" class="btn btn-primary mb-1">
+        {% lng "Atualizar Senha" "Update Password" %}
+      </button>
+    </div>
+    
   </form>
+
+
+  <script>
+    // Gerar QR automaticamente ao carregar a página
+    // Código desenvolvido por Jenifer Ferreira de Marcena e adaptado por Luciano Soares.
+
+    document.addEventListener("DOMContentLoaded", function() {
+        gerarQR();
+    });
+
+    function gerarQR() {
+        const qrImage = document.getElementById("qrImage");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const qrText = document.getElementById("qrText");
+
+        if (!qrImage || !loadingSpinner) {
+          return;
+        }
+
+        // Estado inicial
+        loadingSpinner.classList.remove("d-none");
+        qrImage.classList.add("d-none");
+        if (qrText) qrText.classList.add("d-none");
+
+        // Fazer requisição AJAX para o Django
+        fetch("/users/gerar-qr/")
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Falha ao gerar QR");
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (!data || !data.qr_image) {
+              throw new Error("Resposta inválida");
+            }
+
+            qrImage.src = data.qr_image;
+
+            loadingSpinner.classList.add("d-none");
+            qrImage.classList.remove("d-none");
+            if (qrText) qrText.classList.remove("d-none");
+          })
+          .catch(error => {
+            console.error("Erro ao gerar QR:", error);
+            loadingSpinner.innerHTML = '<p class="text-danger">Erro ao gerar código.</p>';
+          });
+    }
+  </script>
 
 {% endblock %}

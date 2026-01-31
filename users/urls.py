@@ -32,4 +32,6 @@ urlpatterns = [
     path("projetos_objetivos/", views.projetos_objetivos, name="projetos_objetivos"),
     path("user_detail", views.user_detail, name="user_detail"),
     path("user_detail/<int:primarykey>", views.user_detail, name="user_detail"),
+
+    path("gerar-qr/", views.gerar_qr_token, name="gerar_qr_token"),
 ]

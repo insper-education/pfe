@@ -322,6 +322,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 SALT = "pfe"
 
+HMAC_SECRET = b'sua_chave_secreta_aqui'  # Defina sua chave secreta aqui
+
 MAINTENANCE_MODE = int(os.environ.get("MAINTENANCE_MODE", 0))
 
 ADMIN_SITE = "admin/"

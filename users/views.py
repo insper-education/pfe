@@ -13,7 +13,15 @@ import tablib
 import logging
 import json
 import csv
+import hmac
+import hashlib
+import base64
+import time
+import uuid
+import io
+import qrcode
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -80,6 +88,57 @@ def perfil(request):
     """Retorna a página conforme o perfil do usuário."""
     context = {"titulo": {"pt": "Perfil", "en": "Profile"}}
     return render(request, "users/profile_detail.html", context=context)
+
+
+@login_required
+def gerar_qr_token(request):
+    """
+    Gera um token assinado e retorna a imagem QR em Base64.
+    Código desenvolvido por Jenifer Ferreira de Marcena e adaptado por Luciano Soares.
+    """
+    user = request.user
+
+    # 1. Construir o Payload
+    payload = {
+        "u": user.username,  # Nome de usuário
+        "d": datetime.date.today().strftime("%d%m"),  # Apenas dia e mês
+        "n": str(uuid.uuid4())[:8]    # Número único para evitar replay attacks
+    }
+    
+    # 2. Serializar e Codificar Payload (Base64 URL Safe)
+    payload_json = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+    payload_b64 = base64.urlsafe_b64encode(payload_json.encode("utf-8")).decode().rstrip("=")
+
+
+    # 3. Assinar (HMAC-SHA256)
+    secret = settings.HMAC_SECRET.encode("utf-8")
+    signature_bytes = hmac.new(secret, payload_b64.encode("utf-8"), hashlib.sha256).digest()
+    signature_b64 = base64.urlsafe_b64encode(signature_bytes).decode().rstrip("=")
+
+    # 4. Token Final
+    token_completo = f"{payload_b64}.{signature_b64}"
+    
+    # 5. Gerar Imagem QR Code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=8,
+        border=3,
+    )
+    qr.add_data(token_completo)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # 6. Converter imagem para Buffer em memória
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    
+    # Retorna como Data URL para ser colocado direto na tag <img>
+    return JsonResponse({
+        "qr_image": f"data:image/png;base64,{img_str}",
+    })
 
 
 class SignUp(generic.CreateView):

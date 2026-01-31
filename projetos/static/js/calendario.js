@@ -46,7 +46,7 @@ function dias_especiais(element, date) {
     if(date.toDateString() == hoje) {
         $(element).css("outline", "2px solid blue");
         $(element).css("position", "relative");
-        $(element).css("z-index", "12");
+        $(element).css("z-index", "3");
         $(element).addClass("hoje");
     }
   
@@ -243,7 +243,7 @@ $(document).ready(function() {
             mes = $(this).data("mes") - 1;
             $(".month-container[data-month-id=" + mes + "] div.day-content:not('.hoje')").filter(function() {
             return this.innerHTML == dia;
-            }).css({ "boxShadow": "0 0 9px 11px #F0F013", "position": "relative", "z-index": "9" });
+            }).css({ "boxShadow": "0 0 9px 11px #F0F013", "position": "relative", "z-index": "2" });
         }, 
         function() {
             $("div.day-content:not('.hoje')").css({ "boxShadow": "none", "z-index": "0" })
