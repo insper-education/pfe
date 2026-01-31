@@ -726,6 +726,13 @@ class Evento(models.Model):
                                   related_name="documento2",
                                   help_text="Material axuliar do evento, em caso de aulas, os slides da aula")
 
+    ## Só usado para aulas
+    questao_problema_desafio = models.CharField(max_length=512, blank=True,
+                                                help_text="Questão / Problema / Desafio")
+    
+    evidencias_de_aprendizado = models.CharField(max_length=512, blank=True,
+                                                 help_text="Evidências de Aprendizado")
+
     def get_title(self):
         """Retorna em string o nome do evento."""
         if self.tipo_evento:

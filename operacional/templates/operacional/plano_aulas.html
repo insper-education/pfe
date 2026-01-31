@@ -33,10 +33,13 @@
         <tbody>
           {% for aula in aulas %}
             <tr class="item">
-              <td>Aula {{forloop.counter|stringformat:"02d"}} <small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
-              <td>&nbsp;</td>
+              <td>
+                <a class="open-modal" href="{% url 'edita_aula' aula.id %}" data-url="{% url 'edita_aula' aula.id %}">
+                  Aula {{forloop.counter|stringformat:"02d"}} <small style="color: blue;">{{aula.startDate|date:"d/m/Y"}}</small></td>
+                </a>
+              <td>{{aula.questao_problema_desafio}}</td>
               <td>{{aula.atividade}}</td>
-              <td>&nbsp;</td>
+              <td>{{aula.evidencias_de_aprendizado}}</td>
               <td>{{aula.descricao}}</td>
             </tr>
           {% endfor %}
@@ -105,6 +108,7 @@
 
   </div>
 
+  {% include "base-modal.html" %}
   {% include "edicoes_ajax.html" %}
 
 {% endblock %}

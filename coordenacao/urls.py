@@ -13,4 +13,5 @@ from . import views
 urlpatterns = [
     path("", views.index_coordenacao, name="index_coordenacao"),  # pagina inicial
     path("coordenacao", views.index_coordenacao, name="coordenacao"),
+    path("edita_aula/<int:primarykey>", views.edita_aula, name="edita_aula"),
 ]
