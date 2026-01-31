@@ -43,8 +43,8 @@ from .models import Alocacao, OpcaoTemporaria
 from .support import get_edicoes, adianta_semestre, retrocede_semestre
 
 from academica.models import Composicao, CodigoColuna, Exame, CodigoConduta
-from academica.support import filtra_composicoes #, get_respostas_estilos
 from academica.support3 import get_media_alocacao_i
+from academica.support5 import filtra_composicoes
 
 from administracao.models import Carta, Estrutura
 from administracao.support import get_limite_propostas, usuario_sem_acesso

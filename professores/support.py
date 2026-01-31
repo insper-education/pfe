@@ -20,7 +20,8 @@ from django.urls import reverse
 from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
 
 from academica.models import Exame, Composicao
-from academica.support import filtra_composicoes, filtra_entregas
+from academica.support import filtra_entregas
+from academica.support5 import filtra_composicoes
 
 #from documentos.models import TipoDocumento
 

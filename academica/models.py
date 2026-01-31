@@ -31,6 +31,9 @@ class Exame(models.Model):
     banca = models.BooleanField("Banca", default=False,
                                 help_text="Caso Verdadeiro é um exame em formato de Banca")
     
+    final = models.BooleanField("Final", default=False,
+                                help_text="Caso Verdadeiro é um exame final do semestre")
+    
     ordem = models.PositiveSmallIntegerField("Ordem", default=999,
                                              help_text="Ordem do Exame, usado para ordenar os exames")
     

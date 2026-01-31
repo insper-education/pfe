@@ -36,7 +36,7 @@ from projetos.tipos import TIPO_EVENTO
 from projetos.support5 import envia_mensagens_avisos
 
 from academica.models import Composicao
-from academica.support import filtra_composicoes
+from academica.support5 import filtra_composicoes
 
 
 @login_required

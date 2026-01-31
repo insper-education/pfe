@@ -10,11 +10,14 @@ import logging
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
-from academica.models import Exame
+from academica.models import Exame, Composicao
+
 from academica.support2 import get_objetivos, get_descontos_alocacao
+from academica.support5 import filtra_composicoes
 
-from projetos.models import Reprovacao, Avaliacao2, Banca, Evento
+from projetos.models import Reprovacao, Avaliacao2, Banca, Evento, Configuracao
 from projetos.support3 import get_notas_alocacao
 
 
@@ -28,38 +31,33 @@ def em_probation(alocacao):
     if reprovacao:
         return False
     
+    configuracao = get_object_or_404(Configuracao)
+    if alocacao.projeto.ano != configuracao.ano or alocacao.projeto.semestre != configuracao.semestre:
+        return False  # Só verifica probation para o semestre atual
+
     now = datetime.datetime.now()
 
-    # Sigla, Nome, Grupo, Nota/Check, Banca
-    pavaliacoes = [
-        ("P", "Probation", False, True, "P"),
-        ### CHECK SE JA FECHOU BANCA DE PROBATION PRIMEIRO ####
-        ("RFG", "Relatório Final de Grupo", True, True, None),
-        ("RFI", "Relatório Final Individual", False, True, None),
-        ("BF", "Banca Final", True, True, "BF"),
-        ("AFI", "Avaliação Final Individual", False, True, None),
-        ("AFG", "Avaliação Final de Grupo", True, True, None),
-    ]
-
-    for pa in pavaliacoes:
+    composicoes = filtra_composicoes(Composicao.objects.all(), alocacao.projeto.ano, alocacao.projeto.semestre)
+    composicoes = composicoes.filter(exame__final=True, pesos__isnull=False).distinct().order_by("-exame__ordem")
+    for composicao in composicoes:
         checa_b = True
         banca = None
-        if pa[4]:  # Banca
-            if pa[2]:  # Grupo - Intermediária/Final
-                banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=pa[4]).last()
+        if composicao.exame.banca or composicao.exame.sigla == "P":  # Banca
+            if composicao.exame.grupo:  # Grupo - Intermediária/Final
+                banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=composicao.exame.sigla).last()
             else:  # Individual - Probation
-                banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=pa[4]).last()
+                banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=composicao.exame.sigla).last()
         try:
-            exame=Exame.objects.get(sigla=pa[0])
-            if pa[2]:  # GRUPO
+            exame=Exame.objects.get(sigla=composicao.exame.sigla)
+            if composicao.exame.grupo:  # GRUPO
                 paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
             else:  # INDIVIDUAL
                 paval = Avaliacao2.objects.filter(alocacao=alocacao, exame=exame)
 
             if paval:
                 val_objetivos = None
-                if pa[4] and banca:  # Banca
-                    prazo = 2 if pa[4] == "P" else 24  # Horas para liberar notas de probation ou normais
+                if (composicao.exame.banca or composicao.exame.sigla == "P") and banca:  # Banca
+                    prazo = 2 if composicao.exame.sigla == "P" else 24  # Horas para liberar notas de probation ou normais
                     valido = True  # Verifica se todos avaliaram a pelo menos PRAZO horas atrás
 
                     # Verifica se já passou o evento de encerramento e assim liberar notas
@@ -81,7 +79,7 @@ def em_probation(alocacao):
                 else:
                     val_objetivos, _, _ = get_objetivos(paval, alocacao.projeto.ano, alocacao.projeto.semestre)
 
-                if pa[0] == "P":
+                if composicao.exame.sigla == "P":
                     if val_objetivos:
                         for obj in val_objetivos:
                             if val_objetivos[obj][0] < 5:

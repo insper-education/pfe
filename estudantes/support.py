@@ -14,7 +14,8 @@ from django.shortcuts import get_object_or_404
 from .models import Pares, Relato
 
 from academica.models import Composicao
-from academica.support import filtra_composicoes, filtra_entregas
+from academica.support import filtra_entregas
+from academica.support5 import filtra_composicoes
 
 from administracao.models import TipoEvento
 

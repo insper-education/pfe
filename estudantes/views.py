@@ -29,7 +29,8 @@ from .support import cria_area_estudante, ver_pendencias_estudante
 from .support2 import estudante_feedback_geral
 
 from academica.models import Composicao, CodigoConduta
-from academica.support import filtra_composicoes, filtra_entregas, get_respostas_estilos
+from academica.support import filtra_entregas, get_respostas_estilos
+from academica.support5 import filtra_composicoes
 
 from administracao.models import Carta, TipoEvento, Estrutura
 from administracao.support import propostas_liberadas

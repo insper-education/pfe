@@ -32,8 +32,9 @@ from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_
 from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas
 
 from academica.models import Exame, Composicao, Peso
-from academica.support import filtra_composicoes, filtra_entregas
+from academica.support import filtra_entregas
 from academica.support4 import get_banca_estudante
+from academica.support5 import filtra_composicoes
 from academica.support_notas import converte_letra, converte_conceito
 
 from administracao.models import Estrutura, Carta
