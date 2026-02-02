@@ -15,7 +15,6 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
-#from django.utils.html import urlize
 
 from users.models import Opcao
 from projetos.models import Configuracao, Projeto, Banca, Certificado
@@ -31,6 +30,12 @@ def render_message(template, context, urlize=True):
     carta = get_object_or_404(Carta, template=template)
     t = Template(carta.texto)
     message = t.render(Context(context))
+    
+    if carta.texto_en:
+        t_en = Template(carta.texto_en)
+        message_en = t_en.render(Context(context))
+        message = f"{message}\n<hr style='margin: 2em 0; border: 1px solid #ddd;'>\n{message_en}"
+
     if urlize:
         message = html.urlize(message) # Faz links de e-mail e outros links funcionarem
     return message

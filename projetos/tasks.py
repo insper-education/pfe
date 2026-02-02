@@ -21,6 +21,9 @@ from .support5 import envia_mensagens_avisos, envia_mensagens_eventos
 
 from academica.support import lanca_descontos
 
+# Ensure shared tasks defined outside tasks.py are registered by Celery autodiscovery
+from .messages import send_mail_task  # noqa: F401
+
 logger = logging.getLogger("django")  # Get an instance of a logger
 
 
