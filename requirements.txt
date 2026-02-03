@@ -1,7 +1,7 @@
 # Para Python 3.10.12
 
 # Django
-Django==2.2.28  # sistema principal de gestão do sistema
+Django==4.2.18  # sistema principal de gestão do sistema
 django-axes==5.27.0  # Sistema que bloqueia usuário e IP após N tentativas invalidas de login 
 django-dbbackup==3.3.0  # backup de banco de dados
 django-debug-toolbar==2.2.1  # ferramenta de debug para Django
