@@ -1627,7 +1627,7 @@ class Conexao(models.Model):
                                  on_delete=models.SET_NULL,
                                  help_text="parceiro que se conecta ao projeto")
 
-    projeto = models.ForeignKey(Projeto, null=True, on_delete=models.SET_NULL,
+    projeto = models.ForeignKey(Projeto, null=True, on_delete=models.CASCADE,
                                 help_text="projeto que possui vínculo da conexão")
     
     observacao = models.TextField(max_length=256, null=True, blank=True,
@@ -1677,7 +1677,7 @@ class Coorientador(models.Model):
     usuario = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
                                 help_text="coorientador de um projeto")
     
-    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.SET_NULL,
+    projeto = models.ForeignKey(Projeto, null=True, blank=True, on_delete=models.CASCADE,
                                 help_text="projeto que foi coorientado")
     
     observacao = models.TextField(max_length=256, null=True, blank=True,
