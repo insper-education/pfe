@@ -8,15 +8,15 @@ Data: 29 de Dezembro de 2020
 
 import datetime
 import dateutil.parser
+import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
-
 from django.db.models.functions import Coalesce
-
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import TemplateSyntaxError
 
 from .support import trata_aviso
 
@@ -37,6 +37,8 @@ from projetos.support5 import envia_mensagens_avisos
 
 from academica.models import Composicao
 from academica.support5 import filtra_composicoes
+
+logger = logging.getLogger("django")  # Get an instance of a logger
 
 
 @login_required
@@ -215,7 +217,12 @@ def edita_aviso(request, primarykey=None):
             aviso.save()
 
             if "acao" in request.POST and request.POST["acao"] == "teste":
-                envia_mensagens_avisos(aviso_id=aviso.id if aviso else None, endereco=request.user.email)
+                try:
+                    envia_mensagens_avisos(aviso_id=aviso.id if aviso else None, endereco=request.user.email)
+                except TemplateSyntaxError:
+                    logger.exception("Erro de sintaxe no template do aviso %s", aviso.id)
+                    return HttpResponse("Erro de sintaxe no template do aviso. Verifique a mensagem e tente novamente.", status=400)
+
                 context = {
                     "area_principal": True,
                     "mensagem": {"pt": "Mensagem enviada.", "en": "Message sent."},
