@@ -10,6 +10,8 @@ import datetime
 import dateutil.parser
 import logging
 
+from urllib.parse import urlencode
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
@@ -17,6 +19,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import TemplateSyntaxError
+from django.urls import reverse
 
 from .support import trata_aviso
 
@@ -106,6 +109,14 @@ def avisos_listar(request):
           {"sigla": "Og", "pt": "Contatos nas Organizações", "en": "Contacts in Organizations"},
     ] ]
 
+    
+    try:
+        aviso_id = int(request.GET.get("aviso"))
+        if aviso_id <= 0:
+            aviso_id = None
+    except (TypeError, ValueError):
+        aviso_id = None
+    
     context = {
         "titulo": { "pt": "Agenda de Avisos Automáticos", "en": "Automatic Notices Agenda" },
         "avisos": avisos,
@@ -113,6 +124,7 @@ def avisos_listar(request):
         "filtro" : "todos",
         "cabecalhos": cabecalhos,
         "captions": captions,
+        "aviso": aviso_id,
     }
 
     return render(request, "operacional/avisos_listar.html", context)
@@ -229,7 +241,11 @@ def edita_aviso(request, primarykey=None):
                 }
                 return render(request, "generic_ml.html", context=context)
 
-            return redirect("avisos_listar")
+            # return redirect("avisos_listar")
+        
+            params = {"aviso": aviso.id}
+            url = reverse("avisos_listar") + "?" + urlencode(params)
+            return redirect(url)
 
         return HttpResponse("Problema com atualização de mensagem.", status=401)
 

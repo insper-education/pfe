@@ -69,23 +69,26 @@
         {% comment %} Caso um aviso {% endcomment %}
         {% else %}
           <tr 
-          class="linha
+           class="linha
             {% if a.data %}
               {% if a.data < hoje %}text-success{% else %}text-info{% endif %}
             {% else %}
               text-muted
             {% endif %}
             {% if hoje < a.data %}atual{% endif %}
-          "
-          data-type="
+           "
+
+           data-type="
             {% if a.aviso.coordenacao %}Co{% endif %}
             {% if a.aviso.operacional %}Op{% endif %}
             {% if a.aviso.comite %}Cm{% endif %}
             {% if a.aviso.todos_alunos %}Es{% endif %}
             {% if a.aviso.todos_orientadores %}Or{% endif %}
             {% if a.aviso.contatos_nas_organizacoes %}Og{% endif %}
-          " 
-          {% if a.data == hoje %}style="background-color: #F0FFFF;"{% endif %} >
+           " 
+
+           style="{% if a.data == hoje %}background-color: #F0FFFF; {% endif %}{% if a.aviso.id == aviso %}border: 3px solid #0033FF; box-shadow: 0 0 6px rgba(0, 51, 255, 0.6);{% endif %}"
+          >
 
           <th style="text-align:center;" scope="row">
             {% if a.data %}
