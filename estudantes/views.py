@@ -172,7 +172,9 @@ def alocacao_hora(request):
     """Ajax para definir horarios dos estudantes."""
     if request.user.eh_estud:  # Estudante
         configuracao = get_object_or_404(Configuracao)
-        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).last()
+        alocacao = Alocacao.objects.filter(aluno=request.user.aluno, projeto__ano=configuracao.ano+1, projeto__semestre=configuracao.semestre).last()
+        if not alocacao:
+            return JsonResponse({"mensagem": "Erro ao gravar dado, estudante não alocado no semestre."}, status=404)
         alocacao.horarios = json.loads(request.POST.get("horarios", None))
         if not alocacao.agendado_horarios:  # Salva data do primeiro agendamento
             alocacao.agendado_horarios = datetime.datetime.now()

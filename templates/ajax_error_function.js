@@ -6,13 +6,19 @@
 
 error: function(request, status, error) {
   if(request.responseText) {
-    {% if user.tipo_de_usuario == 4 %} 
+    {% if user.eh_admin %} 
       console.log("error"+request.responseText);
     {% endif %}
     {% if com_alerta %}
-      alert(request.responseText);
+      try {
+        var response = JSON.parse(request.responseText);
+        alert(response.mensagem || request.responseText);
+      } catch(e) {
+        alert(request.responseText);
+      }
+    {% else %}
+      jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
     {% endif %}
-    jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
   } else {
     jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
   }

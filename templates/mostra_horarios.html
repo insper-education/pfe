@@ -153,12 +153,21 @@
 
     function set_horas(horas_comerciais, horas_outras) {
       {% if request.user.eh_estud %}
-        document.getElementById("horas_alocadas_diurno").innerText = horas_comerciais*2;
-        document.getElementById("horas_alocadas_total").innerText = (horas_comerciais+horas_outras)*2;
+        horas_alocadas_diurno = document.getElementById("horas_alocadas_diurno");
+        horas_alocadas_total = document.getElementById("horas_alocadas_total");
+         if(!horas_alocadas_diurno || !horas_alocadas_total) {
+           return;
+         }
+        horas_alocadas_diurno.innerText = horas_comerciais*2;
+        horas_alocadas_total.innerText = (horas_comerciais+horas_outras)*2;
+        horas_alocadas = document.getElementById("horas_alocadas");
+        if(!horas_alocadas) {
+          return;
+        }
         if(horas_comerciais < 22/2) {
-          document.getElementById("horas_alocadas").style.color = "red";
+          horas_alocadas.style.color = "red";
         } else {
-          document.getElementById("horas_alocadas").style.color = "green";
+          horas_alocadas.style.color = "green";
         }
       {% endif %}
     }
@@ -195,11 +204,19 @@
       }
       {% if alocacoes %}
         contador--; // descontando aula regular
-        document.getElementById("horas_juntos_total").innerText = contador*2;
+        horas_juntos_total = document.getElementById("horas_juntos_total");
+        if(!horas_juntos_total) {
+          return;
+        }
+        horas_juntos_total.innerText = contador*2;
+        horas_juntos = document.getElementById("horas_juntos");
+        if(!horas_juntos) {
+          return;
+        }
         if(contador < 4) {
-          document.getElementById("horas_juntos").style.color = "red";
+          horas_juntos.style.color = "red";
         } else {
-          document.getElementById("horas_juntos").style.color = "green";
+          horas_juntos.style.color = "green";
         }
       {% endif %}
     }
@@ -262,8 +279,7 @@
             },
             dataType: "JSON",
             success: function (data) {},
-            {% comment %} Creio que melhor sem essa rotina de erro {% endcomment %}
-            {% comment %} {% include "ajax_error_function.js" %} {% endcomment %}
+            {% include "ajax_error_function.js" with com_alerta=True %}
           });
 
         });
