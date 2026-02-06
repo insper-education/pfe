@@ -991,6 +991,11 @@ def dinamicas_index(request, facilit_id=None):
 # @permission_required("users.altera_professor", raise_exception=True)
 def bancas_index(request, prof_id=None):
     """Menus de bancas e calendario de bancas."""
+    if prof_id is not None:
+        try:
+            prof_id = int(prof_id)
+        except (TypeError, ValueError):
+            raise Http404()
     dias_bancas = Evento.objects.filter(tipo_evento__sigla__in=("BI", "BF", "P", "F", "FERI"))
     if request.user.is_authenticated:
         usuario = request.user
