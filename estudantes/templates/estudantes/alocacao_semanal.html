@@ -16,5 +16,5 @@
   <div class="mt-1">
     <b>{% lng "Projeto" "Project" %}:</b>{{ projeto }}
   </div>
-  {% include "mostra_horarios.html" %}
+  {% include "mostra_horarios.html" with com_orientacoes=True %}
 {% endblock %}

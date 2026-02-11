@@ -2058,6 +2058,7 @@ def pendencias_professores(request):
 
     tipos = [
         ("Planos de Orientação", "planos_de_orientacao"),
+        ("Alocações Semanais", "alocacoes_semanais"),
         ("Relatos Quinzenais", "relatos_quinzenais"),
         ("Avaliar Entregas", "avaliar_entregas"),
         ("Agendar Bancas", "bancas_index"),
@@ -2074,6 +2075,51 @@ def pendencias_professores(request):
     
     return render(request, "professores/pendencias_professores.html", context=context)
 
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def alocacoes_semanais(request, todos=None):
+    """Formulários com as alocações semanais dos estudantes nos projetos."""
+
+    if todos is not None and not request.user.eh_admin:  # Administrador
+        return HttpResponse("Acesso negado.", status=401)
+
+    if request.method == "POST":
+
+        if "edicao" not in request.POST:
+            return HttpResponse("Algum erro não identificado.", status=401)
+
+        projetos = Projeto.objects.all()
+        n_todos = True
+        if todos == "todos":
+            n_todos = False
+        elif todos is not None:
+            professor = get_object_or_404(Professor, pk=todos)
+            projetos = projetos.filter(orientador=professor)
+        else:
+            projetos = projetos.filter(orientador=request.user.professor)
+
+        edicao = request.POST["edicao"]
+        if edicao != "todas":
+            ano, semestre = map(int, edicao.split('.'))
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+        
+        context = {
+            "administracao": request.user.eh_admin,
+            "projetos": projetos,
+            "edicao": edicao,
+            "horarios": Estrutura.loads(nome="Horarios Semanais"),
+            "n_todos": n_todos,
+        }
+
+    else:
+        context = {
+                "titulo": {"pt": "Alocações Semanais", "en": "Weekly Allocations"},
+                "administracao": request.user.eh_admin,
+                "edicoes": get_edicoes(Projeto)[0],
+            }
+
+    return render(request, "professores/alocacoes_semanais.html", context=context)
 
 
 @login_required

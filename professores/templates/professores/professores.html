@@ -30,6 +30,9 @@
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.planos_de_orientacao %}</span> <a href="{% url 'planos_de_orientacao' %}">
   {% lng "Planos de Orientação" "Advisory Plans" %}
 </a></div>
+<div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.alocacoes_semanais %}</span> <a href="{% url 'alocacoes_semanais' %}">
+  {% lng "Alocações Semanais" "Weekly Allocations" %}
+</a></div>
 <div class="item_lista"><span class="circulo">{% include "circulo_estados.html" with estado=pendencias.relatos_quinzenais %}</span> <a href="{% url 'relatos_quinzenais' %}">
   {% lng "Relatos Quinzenais" "Biweekly Reports" %}
 </a></div>

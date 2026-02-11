@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 20 de Fevereiro de 2022
+{% endcomment %}
+
+{% load static %}
+{% load i18n %}
+{% load linguas %}
+{% load relatos %}
+
+{% block head %}
+  {% include "reload.html" %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+{% endblock %}
+
+{% block content %}
+  
+  {% include "edicoes.html" %}
+  
+  <div id="atualizar">
+
+    {% if not edicoes %}
+      {% for projeto in projetos %}
+        {% if projeto %}
+          <div class="div_arredondado">
+          
+            {% include "cabecalho_projeto.html" with com_tit_original=True %}
+            <hr>
+            <div class="mt-2" style="font-weight: 600; font-size: 1.05rem; color: #1f2a44;">
+              <strong>{% lng "Alocações Semanais dos Estudantes" "Weekly Allocations of Students" %}</strong>
+            </div>
+
+            {% include "mostra_horarios.html" with com_orientacoes=n_todos %}
+
+          </div>
+        {% endif %}
+      {% empty %}
+        {% lng "Sem alocações de projetos esse semestre." "No project allocations this semester." %}
+      {% endfor %}
+    {% endif %}
+
+    {% comment %} 
+    {% if edicao and administracao %}
+      <!-- Tabela com informações consolidadas da entregas de relatos quinzenais -->
+      <br>
+      <b>{% lng "Estatísticas" "Statistics" %}</b>:<br>
+      <table class="tabela-padrao table-bordered table-sm "></table>
+    {% endif %}
+    {% endcomment %}
+
+  </div> 
+
+  <script>
+    
+    {% if administracao %}
+      function carrega_pagina() {}
+    {% endif %}
+
+    function carrega_site() {
+      {% include "edicao_puxar_local_ou_versao.js" %}
+    };
+    window.onload = carrega_site
+  </script>
+
+  {% include "edicoes_ajax.html" %}
+
+{% endblock %}

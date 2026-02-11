@@ -15,8 +15,44 @@
     font-size: 0.9rem;
     opacity: 0.85;
   }
+
+  .orientacoes-box {
+    margin: 18px 0;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .orientacoes-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #111827;
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .orientacoes-box ul {
+    margin: 6px 0 0 20px;
+    padding: 0;
+  }
+
+  .orientacoes-box li {
+    margin: 4px 0;
+    line-height: 1.2;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+
+  .orientacoes-box li ul {
+    margin-top: 3px;
+  }
+
 </style>
 
+<div id="horarios_proj_{{projeto.id}}">
 {% with alocacoes=projeto.alocacao_set.all %}
   {% for alocacao in alocacoes %}
     <b>
@@ -33,9 +69,9 @@
     {% endif %}
     <br>
   {% endfor %}
-  <br>
+  
 
-  <div class="table-responsive">
+  <div class="table-responsive mt-2">
     <table class="tabela_horarios"> 
       <thead>
         <tr>
@@ -121,25 +157,45 @@
 
     </table>
 
-    
-
   </div>
+
+
+  {% if com_orientacoes %}
+    <div class="orientacoes-box">
+      <div class="orientacoes-title">{% lng "Orientações" "Guidelines" %}</div>
+      <ul>
+        <li>
+          {% lng "Mínimo de 22 horas de dedicação na semana (segunda a sexta)" "Minimum of 22 hours of dedication in the week (Monday to Friday)" %}
+          <ul>
+            <li>{% lng "2 horas de aula regular as sexta-feiras." "2 hours of regular class on Fridays." %}</li>
+            <li>{% lng "~2 horas de reuniões com o professor orientador." "~2 hours of meetings with the advising professor." %}</li>
+            <li>{% lng "~2 horas de reuniões com a organização parceira." "~2 hours of meetings with the partner organization." %}</li>
+            <li>{% lng "~16 horas dedicadas ao desenvolvimento do projeto." "~16 hours dedicated to project development." %}</li>
+          </ul>
+        </li>
+        <li>
+          {% lng "Priorizar a realização das atividades no período diurno." "Prioritize carrying out activities during daytime hours." %}
+          <ul>
+            <li>{% lng "Reuniões com orientador deverão ser presenciais e no período diurno." "Meetings with the advisor should be in-person and during daytime hours." %}</li>
+            <li>{% lng "Propor reuniões com a organização parceira no período diurno." "Propose meetings with the partner organization during daytime hours." %}</li>
+          </ul>
+        </li>
+        <li>{% lng "Mínimo 8 horas para todos os membros do grupo trabalharem juntos." "Minimum of 8 hours for all group members to work together." %}</li>
+      </ul>
+    </div>
+  {% endif %}
+
   {% if request.user.eh_estud %}
-    <br>
-    {% lng "Instruções" "Instructions" %}:<br>
-    {% lng "- Minimamente identifique 22 horas de dedicação ao Capstone na semana no período regular de aulas (das 7:30 as 18:30 de segunda a sexta fora a aula de sexta)." "- Minimally identify 22 hours of dedication to Capstone in the week during regular class hours (from 7:30 am to 6:30 pm from Monday to Friday, excluding Friday's class)." %}
-    <br>
-    
     <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
     <span id="horas_alocadas">
       <span id="horas_alocadas_diurno">0</span>
       {% lng "horas periodo diurno (total = " "hours daytime period (total = " %}
       <span id="horas_alocadas_total">0</span>
-      {% lng " horas)" " hours)" %}<br><br>
-    </span><br><br>
-    {% lng "- Sugerimos no mínimo 8 horas que todos os membros do grupo conseguem trabalhar juntos." "- We suggest a minimum of 8 hours that all group members can work together." %}
+      {% lng " horas)" " hours)" %}
+    </span>
     <br>
   {% endif %}
+  
 
   <b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
   <span id="horas_juntos">
@@ -153,14 +209,14 @@
 
     function set_horas(horas_comerciais, horas_outras) {
       {% if request.user.eh_estud %}
-        horas_alocadas_diurno = document.getElementById("horas_alocadas_diurno");
-        horas_alocadas_total = document.getElementById("horas_alocadas_total");
+        horas_alocadas_diurno = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas_diurno");
+        horas_alocadas_total = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas_total");
          if(!horas_alocadas_diurno || !horas_alocadas_total) {
            return;
          }
         horas_alocadas_diurno.innerText = horas_comerciais*2;
         horas_alocadas_total.innerText = (horas_comerciais+horas_outras)*2;
-        horas_alocadas = document.getElementById("horas_alocadas");
+        horas_alocadas = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas");
         if(!horas_alocadas) {
           return;
         }
@@ -173,7 +229,7 @@
     }
 
     function allElementsHaveHighlight(className) {
-      const elements = document.querySelectorAll(`.${className}`);
+      const elements = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.${className}`);
       for (let element of elements) {
         if (!element.classList.contains("highlight")) {
           return false;
@@ -187,13 +243,13 @@
       for (let i = 0; i < 5; i++) {  // Dias da semana (seg, ter, qua, qui, sex)
         for (let j = 0; j < {{horarios|length}}; j++) {
           if(allElementsHaveHighlight(`h_${i}_${j}`)) {
-            const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+            const allHighlighted = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.h_${i}_${j}`);
             for (let element of allHighlighted) {
               element.classList.add("borderhighlight");
             }
             contador++;
           } else {
-            const allHighlighted = document.querySelectorAll(`.h_${i}_${j}`);
+            const allHighlighted = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.h_${i}_${j}`);
             for (let element of allHighlighted) {
               if (element.classList) {
                 element.classList.remove("borderhighlight");
@@ -204,12 +260,12 @@
       }
       {% if alocacoes %}
         contador--; // descontando aula regular
-        horas_juntos_total = document.getElementById("horas_juntos_total");
+        horas_juntos_total = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_juntos_total");
         if(!horas_juntos_total) {
           return;
         }
         horas_juntos_total.innerText = contador*2;
-        horas_juntos = document.getElementById("horas_juntos");
+        horas_juntos = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_juntos");
         if(!horas_juntos) {
           return;
         }
@@ -225,7 +281,7 @@
       document.addEventListener("DOMContentLoaded", (event) => {
         let isMouseDown = false;
 
-        const table = document.querySelector("table");
+        const table = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("table");
         table.addEventListener("mousedown", (e) => {
           if (e.target.classList.contains("meu")) {
             isMouseDown = true;
@@ -248,7 +304,7 @@
           var horas_outras = 0;
           for (let i = 0; i < 5; i++) {
             for (let j = 0; j < {{horarios|length}}; j++) {
-              const element = document.getElementById(`h_${i}_${j}`);
+              const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${i}_${j}`);
               if (element && element.classList.contains("highlight")) {
                 horarios.push( [i,j] );
                 if (
@@ -307,7 +363,7 @@
             } else {
               horas_outras++;
             }
-            const element = document.getElementById(`h_${dia}_${horario}`);
+            const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${dia}_${horario}`);
             if (element) {
               element.classList.add("highlight");
             }
@@ -319,7 +375,7 @@
           alocacao = {{ alocacao.id }};
           for (let i = 0; i < horarios.length; i++) {
             const [dia, horario] = horarios[i];
-            const element = document.getElementById(`h_${dia}_${horario}_${alocacao}`);
+            const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${dia}_${horario}_${alocacao}`);
             if (element) {
               element.classList.add("highlight");
             }
@@ -367,18 +423,18 @@
                     horas_outras++;
                   }
                 }
-                document.getElementById("a"+id).innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
+                document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
 
                 if(horas_comerciais*2 < 22) {
-                  document.getElementById("a"+id).style.color = "red";
+                  document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).style.color = "red";
                 } else {
-                  document.getElementById("a"+id).style.color = "green";
+                  document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).style.color = "green";
                 }
               {% endif %}
 
               for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < {{horarios|length}}; j++) {
-                  const element = document.getElementById(`h_${i}_${j}_${id}`);
+                  const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${i}_${j}_${id}`);
                   if (element) {
                     if (isInHorarios(horarios, [i, j])) {
                       element.classList.add("highlight");
@@ -406,4 +462,5 @@
 
   </script>
 
+</div>
 {% endwith %}
