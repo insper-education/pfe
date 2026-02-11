@@ -340,7 +340,6 @@ def check_alocacoes_semanais(projetos, ano, semestre, PRAZO):
     itens = []
     atraso = 0
     prazo = None
-    today = datetime.date.today()
     return {"alocacoes_semanais": {"cor": cor, "prazo": prazo, "itens": itens, "atraso": atraso}}
 
 def check_relatos_quinzenais(projetos, ano, semestre, PRAZO):
@@ -585,7 +584,7 @@ def ver_pendencias_professor(user, ano, semestre):
         projetos = Projeto.objects.filter(orientador=user.professor, ano=ano, semestre=semestre)
         if projetos:
             context.update(check_planos_de_orientacao(projetos, ano, semestre, PRAZO))
-            context.update(check_alocacao_semanal(projetos, ano, semestre, PRAZO))
+            context.update(check_alocacoes_semanais(projetos, ano, semestre, PRAZO))
             context.update(check_relatos_quinzenais(projetos, ano, semestre, PRAZO))
             context.update(check_avaliar_entregas(projetos, ano, semestre, PRAZO))
             context.update(check_bancas_index(projetos, ano, semestre, PRAZO))

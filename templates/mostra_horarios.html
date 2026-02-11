@@ -17,9 +17,9 @@
   }
 
   .orientacoes-box {
-    margin: 18px 0;
+    margin: 6px 0;
     padding: 12px 14px;
-    background: #ffffff;
+    background: #f9f9f9;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -49,6 +49,19 @@
   .orientacoes-box li ul {
     margin-top: 3px;
   }
+
+  .horas {font-size: 1.0em;}
+  @media (max-width: 880px) {
+    .horas {font-size: 0.8em;}
+    .espaco {font-size: 0.4em;}
+  }
+  @media (max-width: 860px) {
+    .horas {font-size: 0.7em; font-weight: 600;}
+    .espaco {display: none;}
+  }
+    
+  
+
 
 </style>
 
@@ -96,7 +109,7 @@
         {% for inicio, fim, dark in horarios %}
           <tr>
             {% with hora=forloop.counter0 %}
-            <td {% if dark %}class="overlay"{% endif %} >{{inicio}} <span class="hifen"></span> {{fim}}</td>
+            <td {% if dark %}class="overlay"{% endif %} ><span class="horas">{{inicio}}<span class="espaco"> </span><span class="hifen"></span><span class="espaco"> </span>{{fim}}</span></td>
             {% for i in "01234" %}
               {% if i == "4" and hora == 1 %}
                 <td colspan="{{alocacoes|length}}" class="aula_regular">
@@ -139,7 +152,7 @@
         </span>
 
         <span class="text-nowrap mr-3">
-          <span class="badge rounded-0" style="font-size: 0.85em; background-color: #00FF00;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="badge rounded-0" style="font-size: 0.85em; background-color: rgba(7, 192, 109, 1.0);">&nbsp;&nbsp;&nbsp;&nbsp;</span>
           {% lng "horário alocado comum para grupo" "common allocated hours for group" %}
         </span>
 

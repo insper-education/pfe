@@ -824,7 +824,7 @@
     {% if user.eh_prof_a %}
       <hr>
       <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
-      {% include "mostra_horarios.html" %}
+      {% include "mostra_horarios.html" with com_orientacoes=True %}
     {% endif %}
 
 

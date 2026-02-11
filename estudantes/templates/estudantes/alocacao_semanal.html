@@ -13,8 +13,9 @@
 {% endblock %}
 
 {% block content %}
-  <div class="mt-1">
+  <div class="mt-1 mb-2" style="font-weight: 600; font-size: 1.05rem; color: #1f2a44;">
     <b>{% lng "Projeto" "Project" %}:</b>{{ projeto }}
   </div>
+  <hr>
   {% include "mostra_horarios.html" with com_orientacoes=True %}
 {% endblock %}
