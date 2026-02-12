@@ -112,6 +112,29 @@ def projeto_infos(request, primarykey):
         context["medias_oo"] = get_medias_oa(alocacoes)
         context["horarios"] = Estrutura.loads(nome="Horarios Semanais")
 
+    context["conexoes"] = Conexao.objects.filter(projeto=projeto)
+    context["coorientadores"] = Coorientador.objects.filter(projeto=projeto)
+    context["projetos_avancados"] = Projeto.objects.filter(avancado=projeto)
+    context["cooperacoes"] = Conexao.objects.filter(projeto=projeto, colaboracao=True)
+    
+    return render(request, "projetos/projeto_infos.html", context=context)
+
+
+
+@login_required
+def dinamicas_infos(request, primarykey):
+    """Mostra as dinâmicas de grupo de um projeto."""
+    projeto = get_object_or_404(Projeto, pk=primarykey)
+    alocacoes = Alocacao.objects.filter(projeto=projeto)
+    
+    context = {
+        "titulo": { "pt": "Dinâmicas de Grupo", "en": "Group Dynamics"},
+        "projeto": projeto,
+        "alocacoes": alocacoes,    
+    }
+
+    if request.user.eh_prof_a:  # Se usuário é professor ou administrador
+
         # Código de Conduta do Grupo
         codigo_conduta = CodigoConduta.objects.filter(content_type=ContentType.objects.get_for_model(projeto), object_id=projeto.id).last()
         if codigo_conduta:
@@ -138,14 +161,9 @@ def projeto_infos(request, primarykey):
         if dinamica_conflitos:
             context["questoes_dinamica_conflitos"] = Estrutura.loads(nome="Questões de Dinâmica de Conflitos")
             context["dinamica_conflitos"] = dinamica_conflitos
-
-
-    context["conexoes"] = Conexao.objects.filter(projeto=projeto)
-    context["coorientadores"] = Coorientador.objects.filter(projeto=projeto)
-    context["projetos_avancados"] = Projeto.objects.filter(avancado=projeto)
-    context["cooperacoes"] = Conexao.objects.filter(projeto=projeto, colaboracao=True)
     
-    return render(request, "projetos/projeto_infos.html", context=context)
+    return render(request, "projetos/dinamicas_infos.html", context=context)
+
 
 
 @login_required

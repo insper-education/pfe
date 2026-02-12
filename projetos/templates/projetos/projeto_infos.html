@@ -820,18 +820,10 @@
       {% endif %}
     {% endif %}
 
-    
     {% if user.eh_prof_a %}
       <hr>
       <h4>{% lng "Alocação Semanal dos Estudantes" "Weekly Allocation of Students" %}:</h4>
       {% include "mostra_horarios.html" with com_orientacoes=True %}
-    {% endif %}
-
-
-    {% if user.eh_prof_a %}
-      {% include "estudantes/includes/conduta_respostas.html" with grupo=True %}
-      {% include "estudantes/includes/funcionalidade_respostas.html" with mostra_resultados=True %}
-      {% include "estudantes/includes/pares_respostas.html" %}
     {% endif %}
 
     {% if user.eh_prof_a %}
@@ -890,7 +882,13 @@
           {% endif %}
           >
             {% lng "Avaliação de Pares" "Peer Evaluation" %}
-          </a>
+        </a>
+
+        <a class="btn btn-primary wbtn"
+          data-toggle="tooltip" data-html="true" animation="true" title="Acessa as dinâmicas do grupo"
+          href="{% url 'dinamicas_infos' projeto.id %}">
+           {% lng "Dinâmicas de Grupo" "Group Dynamics" %}
+        </a>
 
         </div>
       </div>

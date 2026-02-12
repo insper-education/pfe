@@ -46,6 +46,7 @@ urlpatterns = [
     path("nomes/", views.nomes, name="nomes"),
     path("projeto_avancado/<int:primarykey>", views.projeto_avancado, name="projeto_avancado"),
     path("projeto_infos/<int:primarykey>", views.projeto_infos, name="projeto_infos"),
+    path("dinamicas_infos/<int:primarykey>", views.dinamicas_infos, name="dinamicas_infos"),
     path("projetos_fechados/", views.projetos_fechados, name="projetos_fechados"),
     path("projetos_lista", views.projetos_lista, name="projetos_lista"),
     path("projetos_lista_completa", views.projetos_lista_completa, name="projetos_lista_completa"),
