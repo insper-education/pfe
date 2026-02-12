@@ -127,4 +127,5 @@ class EstruturaAdmin(admin.ModelAdmin):
     list_display = ("nome", "sigla",)
     ordering = ("nome",)
     search_fields = ["nome", "sigla", "descricao", "json",]
+    actions = [dup_entrada]
     

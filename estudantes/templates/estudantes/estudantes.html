@@ -182,6 +182,11 @@
         {% lng "Funcionalidade de Grupo (individual)" "Group Functionality (individual)" %}
       </a>
     </div>
+    <div class="item_lista"><span class="return">&#x21B3;</span>
+      <a {% if user.eh_estud and not semestre_alocado %}class="disabled" onclick="showMessage('periodo')" {% else %}href="{% url 'dinamica_conflitos' %}"{% endif %}>
+        {% lng "Dinâmica de Conflitos (individual)" "Conflict Dynamics (individual)" %}
+      </a>
+    </div>
   </div>
 {% endif %}
 

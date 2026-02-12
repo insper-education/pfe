@@ -1,0 +1,240 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 17 de Janeiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+{% load get_field %}
+
+{% if questoes_dinamica  %}
+
+  <style>
+    table#disfuncoes td {padding: 2px 5px; text-align:center;}
+    table#disfuncoes th {padding: 1px 4px; font-weight: normal;}
+    table#questoes th {padding: 1px 6px;}
+  </style>
+
+  <form method="post" enctype="multipart/form-data" action="{% url 'dinamica_conflitos' %}">{% csrf_token %}
+
+    <table id="questoes" class="tabela-padrao table-striped table-hover table-responsive mb-4" style="max-width: 1126px;">
+      <thead>
+        <tr>
+          <th class="hide-on-narrow" {% if mostra_resultados %}rowspan="2"{% endif %}>#</th>
+          <th {% if mostra_resultados %}rowspan="2"{% endif %}>{% lng "Questão" "Question" %}</th>
+          <th colspan="{{ dinamica_conflitos|length }}">{% lng "Resposta" "Answer" %}</th>
+        </tr>
+        {% comment %} {% if mostra_resultados %}
+          <tr>
+            {% for usuario, funcionalidade in dinamica_conflitos.items %}
+              <th class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
+                {% if usuario.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
+                <small>{{ usuario.first_name }}</small>
+              </th>
+            {% endfor %}
+          </tr>
+        {% endif %} {% endcomment %}
+      </thead>
+      <tbody>
+        {% for linha in questoes_dinamica.questoes %}
+          {% if ver or user.tipo_de_usuario in linha.usuarios %}
+            <tr>
+              {% with q=linha.numero %}
+                <td class="hide-on-narrow" style="text-align:center">{{ q }}</td>
+                <td>{{ linha.questao }}</td>
+                {% with question_key="question_"|concat:q|stringformat:"s" %}
+                  {% for usuario, respostas in dinamica_conflitos.items %}
+                    <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center white-space: nowrap;">
+                      {% with f=respostas|get_attr:question_key %}
+                        {% if ver %}
+                          {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Discordo totalmente" "Strongly Disagree" %}{% endif %}
+                          {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Discordo parcialmente" "Partially Disagree" %}{% endif %}
+                          {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}{% endif %}
+                          {% if f == 4 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">{% lng "Concordo parcialmente" "Partially Agree" %}{% endif %}
+                          {% if f == 5 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">{% lng "Concordo totalmente" "Strongly Agree" %}{% endif %}
+                        {% else %}
+                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Discordo totalmente" "Strongly Disagree" %}</label><br>
+                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Discordo parcialmente" "Partially Disagree" %}</label><br>
+                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}</label><br>
+                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="4" {% if f == 4 %}checked{% endif %}> {% lng "Concordo parcialmente" "Partially Agree" %}</label><br>
+                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="5" {% if f == 5 %}checked{% endif %}> {% lng "Concordo totalmente" "Strongly Agree" %}</label><br>
+                        {% endif %}
+                      {% endwith %}
+                    </td>
+                  {% endfor %}
+                {% endwith %}
+              {% endwith %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% comment %} 
+    {% if mostra_resultados %}
+    
+    
+      <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}</h5>
+      <table id="disfuncoes" class="table-hover table-condensed table-responsive">
+
+        {% if dinamica_conflitos|length > 1 %}
+          <thead>
+            <tr>
+              <th scope="col"><small>{% lng "Disfunção" "Dysfunction" %}</small></th>
+              <th scope="col">
+                <i class="fa fa-users"></i>
+                <small>{% lng "Grupo" "Group" %}</small>
+              </th>
+              {% for usuario, funcionalidade in dinamica_conflitos.items %}
+                <th  scope="col" colspan="2" class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
+                  {% if usuario.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
+                  <small>{{ usuario.first_name }}</small>
+                </th>
+              {% endfor %}
+            </tr>
+          </thead>
+        {% endif %}
+
+        <tbody>
+          {% for disfuncao in questoes_funcionalidade.disfuncoes %}
+            <tr>
+              {% if funcionalidade_grupo|length > 1 %}
+                <th scope="row">{{ forloop.counter }}: {{ disfuncao }}</th>
+                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary">0</span></td>
+              {% else %}
+                <th scope="row">{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {{ disfuncao }}</th>
+              {% endif %}
+              {% with key="_"|concat:forloop.counter0|stringformat:"s" %}
+              {% for usuario, funcionalidade in funcionalidade_grupo.items %}
+                <td class="r{{usuario.id}}{{ key }}"><span id="d{{usuario.id}}{{ key }}" class="badge badge-info">0</span></td>
+                <td class="r{{usuario.id}}{{ key }}"><span id="o{{usuario.id}}{{ key }}"></span></td>
+              {% endfor %}
+              {% endwith %}
+              </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+
+      <script>
+        function calc_grupo() {
+
+          var scores = [0, 0, 0, 0, 0];
+
+          var scores_usuarios = {};
+          var messages_usuarios = {};
+          var colors_usuarios = {};
+          {% for usuario, funcionalidade in funcionalidade_grupo.items %}
+            scores_usuarios["{{ usuario.id }}"] = [0, 0, 0, 0, 0];
+            messages_usuarios["{{ usuario.id }}"] = "";
+            colors_usuarios["{{ usuario.id }}"] = ["#ffffff"];
+          {% endfor %}
+
+          var questionMap = {
+            4: 0, 6: 0, 12: 0,
+            1: 1, 7: 1, 10: 1,
+            3: 2, 8: 2, 13: 2,
+            2: 3, 11: 3, 14: 3,
+            5: 4, 9: 4, 15: 4
+          };
+
+          $("input[type=radio]:checked").each(function() {
+            var q = $(this).attr("name").split('_')[1];
+            var v = parseInt($(this).val(), 10);
+            var user_id = $(this).data("user_id");
+            if (questionMap.hasOwnProperty(q)) {
+              scores_usuarios[user_id][questionMap[q]] += v;
+              scores[questionMap[q]] += v;
+            }
+          });
+
+          for (var key = 0; key < scores.length; key++) {
+            {% for usuario, funcionalidade in funcionalidade_grupo.items %}
+              if (scores_usuarios["{{ usuario.id }}"][key] > 2 && scores_usuarios["{{ usuario.id }}"][key] < 6) {
+                  messages_usuarios["{{ usuario.id }}"] = "disfunção precisa ser trabalhada";
+                  colors_usuarios["{{ usuario.id }}"] = "#ffcccc";
+              } else if (scores_usuarios["{{ usuario.id }}"][key] > 7) {
+                  messages_usuarios["{{ usuario.id }}"] = "provavelmente não é um problema";
+                  colors_usuarios["{{ usuario.id }}"] = "#ccffcc";
+              } else if (scores_usuarios["{{ usuario.id }}"][key] > 5 && scores_usuarios["{{ usuario.id }}"][key] < 8) {
+                  messages_usuarios["{{ usuario.id }}"] = "disfunção pode ser um problema";
+                  colors_usuarios["{{ usuario.id }}"] = "#ffffcc";
+              } else {
+                  messages_usuarios["{{ usuario.id }}"] = "";
+                  colors_usuarios["{{ usuario.id }}"] = "#ffffff";
+              }
+              $("#d{{ usuario.id }}_" + key).text(scores_usuarios["{{ usuario.id }}"][key]);
+              $("#o{{ usuario.id }}_" + key).text(messages_usuarios["{{ usuario.id }}"]);
+              $(".r{{ usuario.id }}_" + key).css("background-color", colors_usuarios["{{ usuario.id }}"]);
+            {% endfor %}
+          }
+
+          var text_grupo = "";
+          for (var key = 0; key < scores.length; key++) {
+            {% if funcionalidade_grupo|length > 1 %}
+              var max = 9 * {{ funcionalidade_grupo|length }};
+              var min = 3 * {{ funcionalidade_grupo|length }};
+              var res = ((scores[key] - min) / (max - min)) * 100;
+              text_grupo = res.toFixed(0) + "%";
+            {% endif %}
+            $("#g" + key).text(text_grupo);
+          }
+
+        };
+
+        calc_grupo();
+      </script>
+
+    {% else %}
+      
+      {% if AJAX %}
+        <script>
+          $(document).ready(function() {
+            $("input[type=radio]").change(function() {
+              $.ajax({
+                data: {
+                  "csrfmiddlewaretoken": "{{ csrf_token }}",
+                  "questao": $(this).attr("name"),
+                  "valor": $(this).val()
+                },
+                dataType: "JSON",
+                type: "POST",
+                success: function(data) {},
+                {% include "ajax_error_function.js" %}
+              });
+              {% if mostra_resultados %}calc_grupo();{% endif %}
+            });
+            {% if mostra_resultados %}calc_grupo();{% endif %}
+          });
+
+        </script>
+
+      {% else %}
+
+        {% if mostra_resultados %}
+          <script>
+            $(document).ready(function() {
+              $("input[type=radio]").change(function() {
+                calc_grupo();
+              });
+              calc_grupo();
+            });
+          </script>
+        {% endif %}
+
+{% endcomment %}
+
+        <br>
+        <button class="btn btn-primary mb-1 ml-2" type="submit">
+          {% lng "Enviar Respostas" "Submit Answers" %}
+        </button>
+
+{% comment %} 
+      {% endif %}
+
+    {% endif %}  {% endcomment %}
+
+  </form>
+
+{% endif %}

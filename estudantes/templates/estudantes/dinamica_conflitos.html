@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Maio de 2019
+{% endcomment %}
+
+{% load linguas %}
+
+{% block head %}
+  <style>
+    .explanatory-text {
+      max-width: 1050px;
+      margin: 10px 0px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  {% if questoes_dinamica.texto_estilo %}
+    <div class="explanatory-text">
+      {% lng questoes_dinamica.texto_estilo.pt questoes_dinamica.texto_estilo.en %}
+    </div>
+  {% endif %}
+
+  {% include "estudantes/includes/perguntas_dinamica_conflitos.html" %}
+
+{% endblock %}

@@ -26,6 +26,7 @@ urlpatterns = [
     path("estudante_feedback/<str:hashid>", views.estudante_feedback_hashid, name="estudante_feedback_hashid"),
     path("exames_pesos/", views.exames_pesos, name="exames_pesos"),
     path("funcionalidade_grupo/", views.funcionalidade_grupo, name="funcionalidade_grupo"),
+    path("dinamica_conflitos/", views.dinamica_conflitos, name="dinamica_conflitos"),
     path("informacoes_adicionais/", views.informacoes_adicionais, name="informacoes_adicionais"),
     path("minhas_bancas/", views.minhas_bancas, name="minhas_bancas"),
     path("pesos_rubricas/", views.pesos_rubricas, name="pesos_rubricas"),

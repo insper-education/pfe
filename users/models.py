@@ -93,6 +93,9 @@ class PFEUser(AbstractUser):
     funcionalidade_grupo = models.ForeignKey("estudantes.FuncionalidadeGrupo", null=True, blank=True, on_delete=models.SET_NULL,
                                help_text="Resultados da Funcionalidade de Grupo")
 
+    dinamica_conflitos = models.ForeignKey("estudantes.DinamicaConflitos", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Resultados da Dinâmica de Conflitos")
+
     class Meta:
         """Classe Meta."""
         verbose_name = "Usuário"

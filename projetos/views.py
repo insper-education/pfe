@@ -24,6 +24,8 @@ from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
+from estudantes.views import dinamica_conflitos
+
 from .messages import email, message_reembolso
 
 from .models import Projeto, Proposta, Configuracao, Observacao, TematicaEncontro
@@ -125,6 +127,18 @@ def projeto_infos(request, primarykey):
         if funcionalidade_grupo:
             context["questoes_funcionalidade"] = Estrutura.loads(nome="Questões de Funcionalidade")
             context["funcionalidade_grupo"] = funcionalidade_grupo
+
+
+        # Dinâmica de Conflitos do Grupo
+        dinamica_conflitos = {}
+        for alocacao in alocacoes:
+            dinamica_conflitos[alocacao.aluno.user] = alocacao.aluno.user.dinamica_conflitos
+        if projeto.orientador:
+            dinamica_conflitos[projeto.orientador.user] = projeto.orientador.user.dinamica_conflitos
+        if dinamica_conflitos:
+            context["questoes_dinamica_conflitos"] = Estrutura.loads(nome="Questões de Dinâmica de Conflitos")
+            context["dinamica_conflitos"] = dinamica_conflitos
+
 
     context["conexoes"] = Conexao.objects.filter(projeto=projeto)
     context["coorientadores"] = Coorientador.objects.filter(projeto=projeto)

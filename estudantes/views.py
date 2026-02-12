@@ -36,7 +36,7 @@ from administracao.models import Carta, TipoEvento, Estrutura
 from administracao.support import propostas_liberadas
 from administracao.support import get_limite_propostas, get_limite_propostas2, usuario_sem_acesso
 
-from estudantes.models import FuncionalidadeGrupo
+from estudantes.models import FuncionalidadeGrupo, DinamicaConflitos
 
 from operacional.models import Curso
 
@@ -440,11 +440,12 @@ def estilo_comunicacao(request):
     return render(request, "estudantes/estilo_comunicacao.html", context)
 
 
+
 @login_required
 def funcionalidade_grupo(request):
-    """Para passar links de alinhamentos gerais de início de semestre."""   
+    """Formulário para discutir funcionalidade de grupo dos estudantes."""
 
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.method == 'POST': # Ajax check
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == 'POST': # Ajax check
 
          # Trata uma questão por vez via Ajax
         if not request.user.funcionalidade_grupo:
@@ -486,7 +487,57 @@ def funcionalidade_grupo(request):
     }
 
     return render(request, "estudantes/funcionalidade_grupo.html", context)
+
+
+
+
+
+@login_required
+def dinamica_conflitos(request):
+    """Formulário para dinâmica de conflitos dos estudantes."""
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST": # Ajax check
+         # Trata uma questão por vez via Ajax
+        if not request.user.dinamica_conflitos:
+            request.user.dinamica_conflitos = DinamicaConflitos.objects.create()
+            request.user.save()
+        
+        questao = request.POST.get("questao", None)
+        if questao:
+            valor = request.POST.get("valor", None)
+            if valor:
+                setattr(request.user.dinamica_conflitos, questao, valor)
+                request.user.dinamica_conflitos.save()
+                return JsonResponse({"atualizado": True})
+
+        return JsonResponse({"atualizado": False})
     
+    elif request.method == "POST":  # Trata todas as questões de uma vez
+        if not request.user.dinamica_conflitos:
+            request.user.dinamica_conflitos = DinamicaConflitos.objects.create()
+            request.user.save()
+        for linha in Estrutura.loads(nome="Questões de Dinâmica de Conflitos")["questoes"]:
+            if request.user.tipo_de_usuario in linha["usuarios"]:
+                question_key = "question_{}".format(linha["numero"])
+                valor = request.POST.get(question_key, None)
+                if valor:
+                    setattr(request.user.dinamica_conflitos, question_key, valor)
+        request.user.dinamica_conflitos.save()
+        context = {
+            "area_principal": True,
+            "mensagem": {"pt": "Dados salvos com sucesso!", "en": "Data saved successfully!"},
+        }
+        return render(request, "generic_ml.html", context=context)
+
+    context = {
+        "titulo": {"pt": "Dinâmica de Conflitos", "en": "Conflict Dynamics"},
+        "questoes_dinamica": Estrutura.loads(nome="Questões de Dinâmica de Conflitos"),
+        "dinamica_conflitos": {request.user: request.user.dinamica_conflitos},
+    }
+
+    return render(request, "estudantes/dinamica_conflitos.html", context)
+
+
 
 @login_required
 def codigo_conduta(request):

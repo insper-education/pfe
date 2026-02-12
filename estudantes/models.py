@@ -172,6 +172,44 @@ class FuncionalidadeGrupo(models.Model):
         verbose_name_plural = "Funcionalidades de Grupo"
 
 
+class DinamicaConflitos(models.Model):
+    FAIXA_ESCOLHAS = [
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    ]
+
+    question_1 = models.IntegerField("question_1", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_2 = models.IntegerField("question_2", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_3 = models.IntegerField("question_3", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_4 = models.IntegerField("question_4", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_5 = models.IntegerField("question_5", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_6 = models.IntegerField("question_6", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_7 = models.IntegerField("question_7", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_8 = models.IntegerField("question_8", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_9 = models.IntegerField("question_9", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_10 = models.IntegerField("question_10", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_11 = models.IntegerField("question_11", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_12 = models.IntegerField("question_12", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_13 = models.IntegerField("question_13", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_14 = models.IntegerField("question_14", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_15 = models.IntegerField("question_15", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_16 = models.IntegerField("question_16", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_17 = models.IntegerField("question_17", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_18 = models.IntegerField("question_18", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_19 = models.IntegerField("question_19", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    question_20 = models.IntegerField("question_20", choices=FAIXA_ESCOLHAS, null=True, blank=True)
+    
+    def __str__(self):
+        return f"Dinâmica de Conflitos {self.id}"
+
+    class Meta:
+        verbose_name = "Dinâmica de Conflitos"
+        verbose_name_plural = "Dinâmicas de Conflitos"
+
+
 class FeedbackPares(models.Model):
     """Observações para Avaliações de Pares."""
 
