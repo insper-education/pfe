@@ -8,7 +8,7 @@
 {% load linguas %}
 {% load get_field %}
 
-{% if questoes_dinamica  %}
+{% if questoes_dinamica_conflitos  %}
 
   <style>
     table#disfuncoes td {padding: 2px 5px; text-align:center;}
@@ -25,7 +25,7 @@
           <th {% if mostra_resultados %}rowspan="2"{% endif %}>{% lng "Questão" "Question" %}</th>
           <th colspan="{{ dinamica_conflitos|length }}">{% lng "Resposta" "Answer" %}</th>
         </tr>
-        {% comment %} {% if mostra_resultados %}
+        {% if mostra_resultados %}
           <tr>
             {% for usuario, funcionalidade in dinamica_conflitos.items %}
               <th class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
@@ -34,10 +34,10 @@
               </th>
             {% endfor %}
           </tr>
-        {% endif %} {% endcomment %}
+        {% endif %}
       </thead>
       <tbody>
-        {% for linha in questoes_dinamica.questoes %}
+        {% for linha in questoes_dinamica_conflitos.questoes %}
           {% if ver or user.tipo_de_usuario in linha.usuarios %}
             <tr>
               {% with q=linha.numero %}
@@ -45,14 +45,22 @@
                 <td>{{ linha.questao }}</td>
                 {% with question_key="question_"|concat:q|stringformat:"s" %}
                   {% for usuario, respostas in dinamica_conflitos.items %}
-                    <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center white-space: nowrap;">
+                    <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="{% if ver %}text-align:center;{% else %}white-space: nowrap;{% endif %}">
                       {% with f=respostas|get_attr:question_key %}
                         {% if ver %}
-                          {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Discordo totalmente" "Strongly Disagree" %}{% endif %}
+                          {% comment %} {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Discordo totalmente" "Strongly Disagree" %}{% endif %}
                           {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Discordo parcialmente" "Partially Disagree" %}{% endif %}
                           {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}{% endif %}
                           {% if f == 4 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">{% lng "Concordo parcialmente" "Partially Agree" %}{% endif %}
                           {% if f == 5 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">{% lng "Concordo totalmente" "Strongly Agree" %}{% endif %}
+                           {% endcomment %}
+                          {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">1{% endif %}
+                          {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">2{% endif %}
+                          {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">3{% endif %}
+                          {% if f == 4 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">4{% endif %}
+                          {% if f == 5 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">5{% endif %}
+                          
+
                         {% else %}
                           <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Discordo totalmente" "Strongly Disagree" %}</label><br>
                           <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Discordo parcialmente" "Partially Disagree" %}</label><br>
@@ -71,10 +79,10 @@
       </tbody>
     </table>
 
-    {% comment %} 
+    
     {% if mostra_resultados %}
     
-    
+    {% comment %} 
       <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}</h5>
       <table id="disfuncoes" class="table-hover table-condensed table-responsive">
 
@@ -185,9 +193,10 @@
 
         calc_grupo();
       </script>
-
+{% endcomment %}
     {% else %}
       
+      {% comment %} Não sendo usado {% endcomment %}
       {% if AJAX %}
         <script>
           $(document).ready(function() {
@@ -212,6 +221,8 @@
 
       {% else %}
 
+        {% comment %}
+
         {% if mostra_resultados %}
           <script>
             $(document).ready(function() {
@@ -223,17 +234,17 @@
           </script>
         {% endif %}
 
-{% endcomment %}
+        {% endcomment %}
 
         <br>
         <button class="btn btn-primary mb-1 ml-2" type="submit">
           {% lng "Enviar Respostas" "Submit Answers" %}
         </button>
 
-{% comment %} 
+
       {% endif %}
 
-    {% endif %}  {% endcomment %}
+    {% endif %} 
 
   </form>
 

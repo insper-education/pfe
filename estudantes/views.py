@@ -531,7 +531,7 @@ def dinamica_conflitos(request):
 
     context = {
         "titulo": {"pt": "Dinâmica de Conflitos", "en": "Conflict Dynamics"},
-        "questoes_dinamica": Estrutura.loads(nome="Questões de Dinâmica de Conflitos"),
+        "questoes_dinamica_conflitos": Estrutura.loads(nome="Questões de Dinâmica de Conflitos"),
         "dinamica_conflitos": {request.user: request.user.dinamica_conflitos},
     }
 

@@ -1,0 +1,26 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 5 de Fevereiro de 2025
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% if questoes_dinamica_conflitos and dinamica_conflitos %}
+  <h4>
+    {% lng "Dinâmica de Conflitos" "Conflict Dynamics" %}
+    <span id="dinamica_conflitos_com" class="seta-baixo"></span>
+  </h4>
+
+  <div id="bloco_dinamica_conflitos" style="display: none;">
+    {% include "estudantes/includes/perguntas_dinamica_conflitos.html" with ver=True %}<br>
+  </div>
+  <script>
+    $("#dinamica_conflitos_com").on("click", function() {
+      $("#bloco_dinamica_conflitos").toggle(200);
+      $(this).toggleClass("seta-baixo seta-cima");
+    });
+  </script>
+
+{% endif %}
