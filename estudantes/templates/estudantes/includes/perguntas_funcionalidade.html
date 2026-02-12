@@ -48,13 +48,13 @@
                     <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
                       {% with f=funcionalidade|get_attr:question_key %}
                         {% if ver %}
-                          {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Baixa" "Low" %}{% endif %}
-                          {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Média" "Medium" %}{% endif %}
-                          {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Alta" "High" %}{% endif %}
+                          {% if f == 1 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Baixa" "Low" %}{% endif %}
+                          {% if f == 2 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Média" "Medium" %}{% endif %}
+                          {% if f == 3 %}<input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Alta" "High" %}{% endif %}
                         {% else %}
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
+                          <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Baixa" "Low" %}</label><br>
+                          <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Média" "Medium" %}</label><br>
+                          <label><input class="func_grupo" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Alta" "High" %}</label>
                         {% endif %}
                       {% endwith %}
                     </td>
@@ -132,7 +132,7 @@
             5: 4, 9: 4, 15: 4
           };
 
-          $("input[type=radio]:checked").each(function() {
+          $("input.func_grupo[type=radio]:checked").each(function() {
             var q = $(this).attr("name").split('_')[1];
             var v = parseInt($(this).val(), 10);
             var user_id = $(this).data("user_id");

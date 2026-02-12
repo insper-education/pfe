@@ -1,7 +1,7 @@
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
-  Data: 17 de Janeiro de 2025
+  Data: 11 de Fevereiro de 2026
 {% endcomment %}
 
 {% load static %}
@@ -11,8 +11,8 @@
 {% if questoes_dinamica_conflitos  %}
 
   <style>
-    table#disfuncoes td {padding: 2px 5px; text-align:center;}
-    table#disfuncoes th {padding: 1px 4px; font-weight: normal;}
+    table#escores td {padding: 2px 5px; text-align:center;}
+    table#escores th {padding: 1px 4px; font-weight: normal;}
     table#questoes th {padding: 1px 6px;}
   </style>
 
@@ -48,25 +48,25 @@
                     <td class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="{% if ver %}text-align:center;{% else %}white-space: nowrap;{% endif %}">
                       {% with f=respostas|get_attr:question_key %}
                         {% if ver %}
-                          {% comment %} {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Discordo totalmente" "Strongly Disagree" %}{% endif %}
-                          {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Discordo parcialmente" "Partially Disagree" %}{% endif %}
-                          {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}{% endif %}
-                          {% if f == 4 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">{% lng "Concordo parcialmente" "Partially Agree" %}{% endif %}
-                          {% if f == 5 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">{% lng "Concordo totalmente" "Strongly Agree" %}{% endif %}
+                          {% comment %} {% if f == 1 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">{% lng "Discordo totalmente" "Strongly Disagree" %}{% endif %}
+                          {% if f == 2 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">{% lng "Discordo parcialmente" "Partially Disagree" %}{% endif %}
+                          {% if f == 3 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">{% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}{% endif %}
+                          {% if f == 4 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">{% lng "Concordo parcialmente" "Partially Agree" %}{% endif %}
+                          {% if f == 5 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">{% lng "Concordo totalmente" "Strongly Agree" %}{% endif %}
                            {% endcomment %}
-                          {% if f == 1 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">1{% endif %}
-                          {% if f == 2 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">2{% endif %}
-                          {% if f == 3 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">3{% endif %}
-                          {% if f == 4 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">4{% endif %}
-                          {% if f == 5 %}<input data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">5{% endif %}
+                          {% if f == 1 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="1" checked style="display:none;">1{% endif %}
+                          {% if f == 2 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="2" checked style="display:none;">2{% endif %}
+                          {% if f == 3 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="3" checked style="display:none;">3{% endif %}
+                          {% if f == 4 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="4" checked style="display:none;">4{% endif %}
+                          {% if f == 5 %}<input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="{{ forloop.counter0 }}question_{{ q }}" value="5" checked style="display:none;">5{% endif %}
                           
 
                         {% else %}
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Discordo totalmente" "Strongly Disagree" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Discordo parcialmente" "Partially Disagree" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="4" {% if f == 4 %}checked{% endif %}> {% lng "Concordo parcialmente" "Partially Agree" %}</label><br>
-                          <label><input data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="5" {% if f == 5 %}checked{% endif %}> {% lng "Concordo totalmente" "Strongly Agree" %}</label><br>
+                          <label><input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="1" {% if f == 1 %}checked{% endif %}> {% lng "Discordo totalmente" "Strongly Disagree" %}</label><br>
+                          <label><input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="2" {% if f == 2 %}checked{% endif %}> {% lng "Discordo parcialmente" "Partially Disagree" %}</label><br>
+                          <label><input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="3" {% if f == 3 %}checked{% endif %}> {% lng "Nem concordo nem discordo" "Neither Agree nor Disagree" %}</label><br>
+                          <label><input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="4" {% if f == 4 %}checked{% endif %}> {% lng "Concordo parcialmente" "Partially Agree" %}</label><br>
+                          <label><input class="din_conf" data-user_id="{{usuario.id}}" type="radio" name="question_{{ q }}" value="5" {% if f == 5 %}checked{% endif %}> {% lng "Concordo totalmente" "Strongly Agree" %}</label><br>
                         {% endif %}
                       {% endwith %}
                     </td>
@@ -82,19 +82,19 @@
     
     {% if mostra_resultados %}
     
-    {% comment %} 
-      <h5>{% lng "Disfunções de Equipe" "Team Dysfunctions" %}</h5>
-      <table id="disfuncoes" class="table-hover table-condensed table-responsive">
+    
+      <h5>{% lng "Cálculo dos escores" "Score Calculation" %}</h5>
+      <table id="escores" class="table-hover table-condensed table-responsive">
 
         {% if dinamica_conflitos|length > 1 %}
           <thead>
             <tr>
-              <th scope="col"><small>{% lng "Disfunção" "Dysfunction" %}</small></th>
+              <th scope="col"><small>{% lng "Dimensão" "Dimension" %}</small></th>
               <th scope="col">
                 <i class="fa fa-users"></i>
                 <small>{% lng "Grupo" "Group" %}</small>
               </th>
-              {% for usuario, funcionalidade in dinamica_conflitos.items %}
+              {% for usuario, _ in dinamica_conflitos.items %}
                 <th  scope="col" colspan="2" class="{% if usuario.eh_prof_a %}text-info{% else %}text-primary{% endif %}" style="text-align:center">
                   {% if usuario.eh_prof_a %}<i class="fa fa-chalkboard-teacher"></i>{% else %}<i class="fa fa-user-graduate"></i>{% endif %}
                   <small>{{ usuario.first_name }}</small>
@@ -105,18 +105,18 @@
         {% endif %}
 
         <tbody>
-          {% for disfuncao in questoes_funcionalidade.disfuncoes %}
+          {% for conflito in questoes_dinamica_conflitos.dimensoes %}
             <tr>
-              {% if funcionalidade_grupo|length > 1 %}
-                <th scope="row">{{ forloop.counter }}: {{ disfuncao }}</th>
-                <td><span id="g{{ forloop.counter0 }}" class="badge badge-secondary">0</span></td>
+              {% if dinamica_conflitos|length > 1 %}
+                <th scope="row">{{ forloop.counter }}: {{ conflito }}</th>
+                <td><span id="cg{{ forloop.counter0 }}" class="badge badge-secondary">0</span></td>
               {% else %}
-                <th scope="row">{% lng "Disfunção" "Dysfunction" %} {{ forloop.counter }} - {{ disfuncao }}</th>
+                <th scope="row">{% lng "Dimensão" "Dimension" %} {{ forloop.counter }} - {{ conflito }}</th>
               {% endif %}
               {% with key="_"|concat:forloop.counter0|stringformat:"s" %}
-              {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-                <td class="r{{usuario.id}}{{ key }}"><span id="d{{usuario.id}}{{ key }}" class="badge badge-info">0</span></td>
-                <td class="r{{usuario.id}}{{ key }}"><span id="o{{usuario.id}}{{ key }}"></span></td>
+              {% for usuario, _ in dinamica_conflitos.items %}
+                <td class="cr{{usuario.id}}{{ key }}"><span id="cd{{usuario.id}}{{ key }}" class="badge badge-info">0</span></td>
+                <td class="cr{{usuario.id}}{{ key }}"><span id="co{{usuario.id}}{{ key }}"></span></td>
               {% endfor %}
               {% endwith %}
               </tr>
@@ -124,76 +124,120 @@
         </tbody>
       </table>
 
+      <div class="mt-1">
+        <b>Índice Geral de Dinâmica de Conflitos (IGDC)</b> = <span id="ligdc"><b><span id="igdc">XX</span></b> (<span id="cigdc"></span>)</span>
+      </div>
+      <br>
+
 
       <script>
         function calc_grupo() {
 
-          var scores = [0, 0, 0, 0, 0];
+          var scores_conflito = [0, 0, 0, 0, 0, 0, 0, 0];
+          var count_conflito = [0, 0, 0, 0, 0, 0, 0, 0];
 
-          var scores_usuarios = {};
-          var messages_usuarios = {};
-          var colors_usuarios = {};
-          {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-            scores_usuarios["{{ usuario.id }}"] = [0, 0, 0, 0, 0];
-            messages_usuarios["{{ usuario.id }}"] = "";
-            colors_usuarios["{{ usuario.id }}"] = ["#ffffff"];
+          var scores_conflito_usuarios = {};
+          var messages_conflito_usuarios = {};
+          var colors_conflito_usuarios = {};
+          {% for usuario, _ in dinamica_conflitos.items %}
+            scores_conflito_usuarios["{{ usuario.id }}"] = [0, 0, 0, 0, 0, 0, 0, 0];
+            messages_conflito_usuarios["{{ usuario.id }}"] = "";
+            colors_conflito_usuarios["{{ usuario.id }}"] = ["#ffffff"];
           {% endfor %}
 
-          var questionMap = {
-            4: 0, 6: 0, 12: 0,
-            1: 1, 7: 1, 10: 1,
-            3: 2, 8: 2, 13: 2,
-            2: 3, 11: 3, 14: 3,
-            5: 4, 9: 4, 15: 4
+          var questionMap_conflito = {
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0,
+            6: 1, 7: 1, 8: 1, 9: 1, 10: 1,
+            11: 2, 12: 2, 13: 2, 14: 2, 15: 2,
+            16: 3, 17: 4, 18: 5, 19: 6, 20: 7
           };
 
-          $("input[type=radio]:checked").each(function() {
+          $("input.din_conf[type=radio]:checked").each(function() {
             var q = $(this).attr("name").split('_')[1];
             var v = parseInt($(this).val(), 10);
             var user_id = $(this).data("user_id");
-            if (questionMap.hasOwnProperty(q)) {
-              scores_usuarios[user_id][questionMap[q]] += v;
-              scores[questionMap[q]] += v;
+            if (questionMap_conflito.hasOwnProperty(q)) {
+              scores_conflito_usuarios[user_id][questionMap_conflito[q]] += v;
+              scores_conflito[questionMap_conflito[q]] += v;
             }
           });
 
-          for (var key = 0; key < scores.length; key++) {
-            {% for usuario, funcionalidade in funcionalidade_grupo.items %}
-              if (scores_usuarios["{{ usuario.id }}"][key] > 2 && scores_usuarios["{{ usuario.id }}"][key] < 6) {
-                  messages_usuarios["{{ usuario.id }}"] = "disfunção precisa ser trabalhada";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffcccc";
-              } else if (scores_usuarios["{{ usuario.id }}"][key] > 7) {
-                  messages_usuarios["{{ usuario.id }}"] = "provavelmente não é um problema";
-                  colors_usuarios["{{ usuario.id }}"] = "#ccffcc";
-              } else if (scores_usuarios["{{ usuario.id }}"][key] > 5 && scores_usuarios["{{ usuario.id }}"][key] < 8) {
-                  messages_usuarios["{{ usuario.id }}"] = "disfunção pode ser um problema";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffffcc";
+          for (var key = 0; key < scores_conflito.length; key++) {
+            var contador = 0;
+            if (key < 4) { div = 5;}
+            else { div = 1; }
+            {% for usuario, _ in dinamica_conflitos.items %}
+              var conta = scores_conflito_usuarios["{{ usuario.id }}"][key] / div;
+              if ( conta < 1.0 ) {
+                  messages_conflito_usuarios["{{ usuario.id }}"] = "";
+                  colors_conflito_usuarios["{{ usuario.id }}"] = "#ffffff";
+              } else if ( conta <= 2.4 ) {
+                  messages_conflito_usuarios["{{ usuario.id }}"] = "baixo";
+                  colors_conflito_usuarios["{{ usuario.id }}"] = "#ffcccc";
+                  contador = 1;
+              } else if (conta < 3.4 ) {
+                  messages_conflito_usuarios["{{ usuario.id }}"] = "moderado";
+                  colors_conflito_usuarios["{{ usuario.id }}"] = "#ffffcc";
+                  contador = 1;
               } else {
-                  messages_usuarios["{{ usuario.id }}"] = "";
-                  colors_usuarios["{{ usuario.id }}"] = "#ffffff";
+                  messages_conflito_usuarios["{{ usuario.id }}"] = "alto";
+                  colors_conflito_usuarios["{{ usuario.id }}"] = "#ccffcc";
+                  contador = 1;
               }
-              $("#d{{ usuario.id }}_" + key).text(scores_usuarios["{{ usuario.id }}"][key]);
-              $("#o{{ usuario.id }}_" + key).text(messages_usuarios["{{ usuario.id }}"]);
-              $(".r{{ usuario.id }}_" + key).css("background-color", colors_usuarios["{{ usuario.id }}"]);
+              if(conta >= 0.9) {
+                $("#cd{{ usuario.id }}_" + key).text(conta.toFixed(1));
+              } else {
+                $("#cd{{ usuario.id }}_" + key).text("XX");
+              }
+              $("#co{{ usuario.id }}_" + key).text(messages_conflito_usuarios["{{ usuario.id }}"]);
+              $(".cr{{ usuario.id }}_" + key).css("background-color", colors_conflito_usuarios["{{ usuario.id }}"]);
             {% endfor %}
+            count_conflito[key] += contador;
           }
 
-          var text_grupo = "";
-          for (var key = 0; key < scores.length; key++) {
-            {% if funcionalidade_grupo|length > 1 %}
-              var max = 9 * {{ funcionalidade_grupo|length }};
-              var min = 3 * {{ funcionalidade_grupo|length }};
-              var res = ((scores[key] - min) / (max - min)) * 100;
-              text_grupo = res.toFixed(0) + "%";
-            {% endif %}
-            $("#g" + key).text(text_grupo);
+          var igdc = 0;
+          var count_igdc = 0;
+          for (var key = 0; key < scores_conflito.length; key++) {
+            if (key < 4) div = 5;
+            else div = 1;
+            if (count_conflito[key] > 0) {
+              text_grupo = (scores_conflito[key] / div) / count_conflito[key];
+              $("#cg" + key).text(text_grupo.toFixed(2));
+            } else {
+              $("#cg" + key).text("XXX");
+            }
+            div = 5;
+            if (key < 3 && scores_conflito[key] > 0) {
+              igdc += (scores_conflito[key] / div) / count_conflito[key];
+              count_igdc++;
+            }
+          }
+
+          if (count_igdc == 1) {
+            val_igdc = igdc / count_igdc;
+            $("#igdc").text(val_igdc.toFixed(2));
+            if(val_igdc < 1.0) {
+              $("#cigdc").text("");
+              $("#ligdc").css("background-color", "#ffffff");
+            } else if (val_igdc <= 2.4) {
+              $("#cigdc").text("dinâmica frágil");
+              $("#ligdc").css("background-color", "#ffcccc");
+            } else if (val_igdc < 3.4) {
+              $("#cigdc").text("dinâmica intermediária");
+              $("#ligdc").css("background-color", "#ffffcc");
+            } else {
+              $("#cigdc").text("dinâmica funcional");
+              $("#ligdc").css("background-color", "#ccffcc");
+            }
+          } else {
+            $("#igdc").text("XXX");
           }
 
         };
 
         calc_grupo();
       </script>
-{% endcomment %}
+
     {% else %}
       
       {% comment %} Não sendo usado {% endcomment %}
@@ -247,5 +291,607 @@
     {% endif %} 
 
   </form>
+
+<br><br>
+
+  <div>
+
+<h1>Guia de Análise das Dimensões de Conflito em Grupos</h1>
+
+<h2>1️⃣ Como calcular os escores</h2>
+
+<h3>Passo 1: Calcular a média por dimensão</h3>
+
+<h4>🟦 Dimensão 1 – Manejo do Conflito de Tarefa (D1)</h4>
+<p><strong>Itens:</strong> 1, 2, 3, 4, 5</p>
+<p><strong>Escore D1:</strong> média dos 5 itens</p>
+<p><strong>O que mede:</strong> Quão bem o grupo consegue usar divergências técnicas de forma construtiva.</p>
+
+<ul>
+<li><strong>D1 baixo (1,0 – 2,4):</strong>
+  <ul>
+    <li>Dificuldade em discutir ideias de forma objetiva</li>
+    <li>Discordâncias não se transformam em decisões</li>
+    <li>Fuga de discussões difíceis</li>
+    <li>Risco de decisões por inércia</li>
+  </ul>
+</li>
+
+<li><strong>D1 moderado (2,5 – 3,4):</strong>
+  <ul>
+    <li>Há discussão técnica, mas nem sempre focada</li>
+    <li>Nem sempre chega a boa síntese</li>
+    <li>Grupo funcional, porém vulnerável</li>
+  </ul>
+</li>
+
+<li><strong>D1 alto (3,5 – 5,0):</strong>
+  <ul>
+    <li>Divergências discutidas objetivamente</li>
+    <li>Usadas para melhorar soluções</li>
+    <li>Grupo mantém foco na tarefa</li>
+    <li>Consegue decidir mesmo com visões opostas</li>
+    <li><strong>Leitura:</strong> Excelente base para projetos complexos</li>
+  </ul>
+</li>
+</ul>
+
+<hr>
+
+<h4>🟩 Dimensão 2 – Manejo do Conflito de Processo (D2)</h4>
+<p><strong>Itens:</strong> 6, 7, 8, 9, 10</p>
+<p><strong>Escore D2:</strong> média dos 5 itens</p>
+<p><strong>O que mede:</strong> Capacidade do grupo de organizar, revisar e ajustar o “como” do trabalho.</p>
+
+<ul>
+<li><strong>D2 baixo (1,0 – 2,4):</strong>
+  <ul>
+    <li>Papéis pouco claros</li>
+    <li>Desequilíbrios de carga não discutidos</li>
+    <li>Processos não revisados</li>
+    <li>Risco de atrasos e injustiças percebidas</li>
+  </ul>
+</li>
+
+<li><strong>D2 moderado (2,5 – 3,4):</strong>
+  <ul>
+    <li>Há alguma organização</li>
+    <li>Nem sempre revisam quando o contexto muda</li>
+    <li>Grupo “se vira”, mas pode acumular tensões</li>
+  </ul>
+</li>
+
+<li><strong>D2 alto (3,5 – 5,0):</strong>
+  <ul>
+    <li>Papéis e responsabilidades claros</li>
+    <li>Ajustes de carga discutidos</li>
+    <li>Prazos e critérios bem definidos</li>
+    <li><strong>Leitura:</strong> Boa coordenação e adaptação ao longo do projeto</li>
+  </ul>
+</li>
+</ul>
+
+<hr>
+
+<h4>🟥 Dimensão 3 – Manejo do Conflito Relacional (D3)</h4>
+<p><strong>Itens:</strong> 11, 12, 13, 14, 15</p>
+<p><strong>Escore D3:</strong> média dos 5 itens</p>
+<p><strong>O que mede:</strong> Capacidade do grupo de conter e reparar tensões pessoais.</p>
+
+<ul>
+<li><strong>D3 baixo (1,0 – 2,4):</strong>
+  <ul>
+    <li>Desentendimentos viram questões pessoais</li>
+    <li>Ressentimento</li>
+    <li>Silêncio defensivo</li>
+    <li>Clima pesado</li>
+  </ul>
+</li>
+
+<li><strong>D3 moderado (2,5 – 3,4):</strong>
+  <ul>
+    <li>Clima geralmente ok</li>
+    <li>Alguns atritos mal resolvidos</li>
+    <li>Nem sempre há reparação explícita</li>
+  </ul>
+</li>
+
+<li><strong>D3 alto (3,5 – 5,0):</strong>
+  <ul>
+    <li>Respeito mesmo em discordância</li>
+    <li>Separação entre problema técnico e relação pessoal</li>
+    <li>Consegue conversar e seguir após conflitos</li>
+    <li><strong>Leitura:</strong> Base relacional forte</li>
+  </ul>
+</li>
+</ul>
+
+<hr>
+
+<h4>🟨 Dimensão 4 – Estilos Individuais de Conflito (D4)</h4>
+<p><strong>Itens:</strong> 16, 17, 18, 19, 20</p>
+
+<p><strong>Aqui não se mede qualidade, mas tendência comportamental.</strong></p>
+
+<ul>
+<li><strong>Evitação (Item 16)</strong> → Tendência a fugir de conflitos</li>
+<li><strong>Acomodação (Item 17)</strong> → Preserva harmonia cedendo</li>
+<li><strong>Competição (Item 18)</strong> → Energia, assertividade, liderança</li>
+<li><strong>Compromisso (Item 19)</strong> → Busca meio-termo</li>
+<li><strong>Colaboração (Item 20)</strong> → Busca soluções ganha-ganha</li>
+</ul>
+
+<p><strong>Importante:</strong></p>
+<ul>
+<li>D1, D2 e D3 medem qualidade do funcionamento (alto = melhor).</li>
+<li>D4 mede estilo (não é certo ou errado).</li>
+</ul>
+
+<hr>
+
+<h2>2️⃣ Índice Geral de Dinâmica de Conflitos (IGDC)</h2>
+
+<p><strong>Fórmula:</strong></p>
+<p><strong>IGDC = média de D1, D2 e D3</strong></p>
+
+<ul>
+<li><strong>1,0 – 2,4:</strong> Dinâmica frágil (alta necessidade de intervenção)</li>
+<li><strong>2,5 – 3,4:</strong> Dinâmica intermediária (há base, mas com riscos)</li>
+<li><strong>3,5 – 5,0:</strong> Dinâmica funcional (foco em refinamento)</li>
+</ul>
+
+<hr>
+
+<h2>3️⃣ Interpretação combinada das dimensões</h2>
+
+<h3>🧠 Perfil 1 – Tecnicamente intenso, socialmente estável</h3>
+<ul>
+<li>D1 alta</li>
+<li>D2 moderada/alta</li>
+<li>D3 alta</li>
+</ul>
+<p><strong>Mentoria:</strong> Refinar métodos de decisão e aprofundar técnicas avançadas.</p>
+
+<hr>
+
+<h3>🔧 Perfil 2 – Bom tecnicamente, bagunçado no processo</h3>
+<ul>
+<li>D1 alta</li>
+<li>D2 baixa</li>
+<li>D3 moderada/alta</li>
+</ul>
+<p><strong>Mentoria:</strong> Estruturar papéis, contratos de trabalho e técnicas de coordenação.</p>
+
+<hr>
+
+<h3>💣 Perfil 3 – Em crise relacional</h3>
+<ul>
+<li>D3 baixa (independente de D1 e D2)</li>
+</ul>
+<p><strong>Mentoria:</strong></p>
+<ul>
+<li>Acordos de convivência</li>
+<li>Escuta ativa</li>
+<li>Comunicação não violenta</li>
+<li>Depois trabalhar tarefa e processo</li>
+</ul>
+
+<hr>
+
+<h3>😶 Perfil 4 – Harmonioso, porém passivo</h3>
+<ul>
+<li>D1 baixa</li>
+<li>D2 moderada/alta</li>
+<li>D3 alta</li>
+<li>Estilos predominantes: evitação + acomodação</li>
+</ul>
+<p><strong>Mentoria:</strong> Estimular conflito de tarefa saudável e normalizar discordância produtiva.</p>
+
+<hr>
+
+<h3>🔀 Perfil 5 – Everything everywhere all at once</h3>
+<ul>
+<li>D1 baixa/moderada</li>
+<li>D2 baixa</li>
+<li>D3 baixa/moderada</li>
+</ul>
+<p><strong>Riscos:</strong></p>
+<ul>
+<li>Sobrecarga</li>
+<li>Atrasos</li>
+<li>Frustração operacional</li>
+<li>Discussões que não avançam</li>
+</ul>
+
+<p><strong>Mentoria:</strong></p>
+<ul>
+<li>Definir papéis</li>
+<li>Criar checkpoints</li>
+<li>Estabelecer rituais de acompanhamento</li>
+<li>Intervenção mais intensiva</li>
+</ul>
+
+<br><br>
+
+<h1>Resumo Conceitual por Dimensão</h1>
+
+<!-- ===================================================== -->
+<h2>🔷 Dimensão 1 — Conflito de Tarefa</h2>
+
+<p>
+O conflito de tarefa refere-se a <strong>diferenças de opinião entre membros do grupo sobre o conteúdo do trabalho</strong>, 
+incluindo ideias, soluções técnicas, abordagens e critérios de decisão (Jehn, 1995; Jehn, 1997).
+Essas divergências são de natureza <strong>cognitiva</strong> e estão centradas na tarefa, 
+não envolvendo, em princípio, componentes emocionais ou pessoais.
+</p>
+
+<p>
+A literatura indica que o conflito de tarefa <strong>não é inerentemente positivo nem negativo</strong>.
+Jehn (1995, 1997) demonstra que ele pode contribuir para melhor desempenho e aprendizagem 
+quando promove troca de perspectivas e questionamento crítico.
+Entretanto, a meta-análise de De Dreu e Weingart (2003) mostra que seus efeitos são 
+<strong>inconsistentes e dependem do contexto relacional do grupo</strong>.
+</p>
+
+<p>
+Um fator central é <strong>a forma como o grupo lida com as divergências</strong>.
+Simons e Peterson (2000) destacam que, na ausência de confiança e clareza relacional, 
+discordâncias técnicas podem ser interpretadas como ataques pessoais, 
+transformando conflito de tarefa em conflito interpessoal.
+</p>
+
+<p>
+De Dreu (2006) aponta ainda que tanto níveis muito baixos quanto excessivos de conflito de tarefa 
+podem ser prejudiciais, indicando a importância de 
+<strong>mecanismos de processamento, estruturação do debate e fechamento de decisões</strong>.
+</p>
+
+<p>
+Assim, o foco analítico desloca-se da simples existência de divergências para a 
+<strong>capacidade do grupo de discutir diferenças de forma objetiva, estruturada e orientada à decisão</strong>.
+</p>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>🔷 Dimensão 2 — Conflito de Processo</h2>
+
+<p>
+O conflito de processo diz respeito a <strong>desacordos sobre como o trabalho deve ser realizado</strong>, 
+incluindo definição de papéis, responsabilidades, divisão de tarefas, prazos e coordenação das atividades 
+(Jehn &amp; Mannix, 2001).
+</p>
+
+<p>
+Segundo Jehn e Mannix (2001), esse tipo de conflito tende a ser particularmente problemático 
+quando ocorre de forma persistente ou em fases avançadas do trabalho, 
+pois sinaliza <strong>indefinição de acordos e falhas de coordenação</strong>.
+</p>
+
+<p>
+De Dreu (2006) reforça que tanto a ausência quanto o excesso de discussão sobre processos 
+podem prejudicar o desempenho, sugerindo uma <strong>relação curvilínea entre conflito de processo e eficácia</strong>.
+</p>
+
+<p>
+Tekleab, Quigley e Tesluk (2009) mostram que grupos eficazes não são aqueles que evitam discutir processos, 
+mas os que conseguem <strong>renegociar acordos de forma construtiva</strong>, 
+especialmente diante de mudanças de contexto ou desequilíbrios na carga de trabalho.
+</p>
+
+<p>
+Quando esses ajustes não ocorrem, surgem percepções de injustiça e ressentimento, 
+que podem escalar para conflitos interpessoais.
+</p>
+
+<p>
+Dessa forma, o construto relevante não é a presença de discordâncias sobre o processo, 
+mas a <strong>capacidade do grupo de estabelecer, revisar e sustentar acordos operacionais claros e percebidos como justos</strong>.
+</p>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>🔷 Dimensão 3 — Conflito Interpessoal (Relacional)</h2>
+
+<p>
+O conflito interpessoal envolve <strong>tensões emocionais, antipatia, irritação e incompatibilidades pessoais</strong> 
+entre os membros do grupo (Jehn, 1995).
+Diferentemente das demais dimensões, apresenta associação consistente com resultados negativos.
+</p>
+
+<p>
+A meta-análise de De Dreu e Weingart (2003) demonstra que o conflito relacional está 
+<strong>negativamente relacionado ao desempenho, à satisfação e à coesão do grupo</strong>, 
+independentemente do nível de conflito de tarefa.
+</p>
+
+<p>
+Jehn (1995) já havia identificado que emoções negativas e animosidade tendem a contaminar o trabalho, 
+desviando a atenção da tarefa para autoproteção.
+</p>
+
+<p>
+Simons e Peterson (2000) destacam que conflitos interpessoais frequentemente emergem a partir de 
+<strong>atribuições equivocadas</strong>, nas quais discordâncias técnicas são interpretadas como ataques pessoais.
+Nesse contexto, a confiança intragrupal torna-se fator crítico.
+</p>
+
+<p>
+Edmondson (1999, 2018) introduz o conceito de <strong>segurança psicológica</strong> 
+como elemento central para contenção do conflito relacional.
+Em grupos com alta segurança psicológica, tensões podem surgir, 
+mas são tratadas de forma aberta e reparadora, sem gerar medo ou retaliação.
+</p>
+
+<p>
+Assim, essa dimensão focaliza a <strong>capacidade do grupo de manter relações respeitosas 
+e reparar atritos interpessoais quando ocorrem</strong>.
+</p>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>🔷 Dimensão 4 — Estilos Individuais de Lidar com Conflito</h2>
+
+<p>
+A Dimensão 4 baseia-se no modelo de <strong>dupla preocupação (dual concern)</strong>, 
+que entende o comportamento em situações de conflito como resultado do equilíbrio entre:
+</p>
+
+<ul>
+<li>Preocupação com os próprios interesses</li>
+<li>Preocupação com os interesses dos outros</li>
+</ul>
+
+<p>
+(Thomas &amp; Kilmann, 1974; Thomas, 1992)
+</p>
+
+<p>
+A partir desse modelo, são descritos diferentes estilos:
+</p>
+
+<ul>
+<li><strong>Evitação</strong></li>
+<li><strong>Acomodação</strong></li>
+<li><strong>Competição</strong></li>
+<li><strong>Compromisso</strong></li>
+<li><strong>Colaboração</strong></li>
+</ul>
+
+<p>
+Rahim (2002, 2011) enfatiza que esses estilos representam <strong>tendências comportamentais</strong>, 
+não traços fixos ou julgamentos normativos.
+</p>
+
+<p>
+A literatura é clara ao afirmar que <strong>nenhum estilo é intrinsecamente superior</strong>. 
+A efetividade depende da adequação ao contexto, à natureza do conflito e à fase do trabalho.
+</p>
+
+<p>
+O uso rígido ou predominante de um único estilo pode gerar disfunções, como:
+</p>
+
+<ul>
+<li>Conflitos latentes (evitação excessiva)</li>
+<li>Ressentimento (acomodação excessiva)</li>
+<li>Escalada relacional (competição excessiva)</li>
+</ul>
+
+<p>
+Dessa forma, essa dimensão não avalia a qualidade do funcionamento do grupo, 
+mas oferece uma <strong>lente explicativa sobre como os indivíduos tendem a reagir diante de conflitos</strong>, 
+permitindo compreender padrões coletivos e orientar intervenções de mentoria mais ajustadas.
+</p>
+
+
+<br><br>
+
+<h1>Referências</h1>
+
+<!-- ===================================================== -->
+<h2>Dimensão 1 — Conflito de Tarefa (Task Conflict)</h2>
+
+<p>
+Essas obras fundamentam a compreensão de que 
+<strong>divergências cognitivas são potencialmente funcionais</strong>, 
+desde que bem geridas.
+</p>
+
+<ul>
+  <li>
+    De Dreu, C. K. W., &amp; Weingart, L. R. (2003). 
+    <em>Task versus relationship conflict, team performance, and team member satisfaction: A meta-analysis.</em> 
+    Journal of Applied Psychology, 88(4), 741–749. 
+    <a href="https://doi.org/10.1037/0021-9010.88.4.741" target="_blank">
+      https://doi.org/10.1037/0021-9010.88.4.741
+    </a>
+  </li>
+
+  <li>
+    De Dreu, C. K. W. (2006). 
+    <em>When too little or too much hurts: Evidence for a curvilinear relationship between task conflict and innovation in teams.</em> 
+    Journal of Management, 32(1), 83–107. 
+    <a href="https://doi.org/10.1177/0149206305277795" target="_blank">
+      https://doi.org/10.1177/0149206305277795
+    </a>
+  </li>
+
+  <li>
+    Jehn, K. A. (1995). 
+    <em>A multimethod examination of the benefits and detriments of intragroup conflict.</em> 
+    Administrative Science Quarterly, 40(2), 256–282. 
+    <a href="https://doi.org/10.2307/2393638" target="_blank">
+      https://doi.org/10.2307/2393638
+    </a>
+  </li>
+
+  <li>
+    Jehn, K. A. (1997). 
+    <em>A qualitative analysis of conflict types and dimensions in organizational groups.</em> 
+    Administrative Science Quarterly, 42(3), 530–557. 
+    <a href="https://doi.org/10.2307/2393737" target="_blank">
+      https://doi.org/10.2307/2393737
+    </a>
+  </li>
+
+  <li>
+    Simons, T. L., &amp; Peterson, R. S. (2000). 
+    <em>Task conflict and relationship conflict in top management teams: The pivotal role of intragroup trust.</em> 
+    Academy of Management Journal, 43(1), 102–111. 
+    <a href="https://doi.org/10.2307/1556388" target="_blank">
+      https://doi.org/10.2307/1556388
+    </a>
+  </li>
+</ul>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>Dimensão 2 — Conflito de Processo (Process Conflict)</h2>
+
+<p>
+Essas referências sustentam a ideia de que o problema não é discutir papéis e processos, 
+mas a <strong>incapacidade de definir, revisar e renegociar acordos de trabalho</strong>.
+</p>
+
+<ul>
+  <li>
+    De Dreu, C. K. W. (2006). 
+    <em>When too little or too much hurts: Evidence for a curvilinear relationship between task conflict and innovation in teams.</em> 
+    Journal of Management, 32(1), 83–107. 
+    <a href="https://doi.org/10.1177/0149206305277795" target="_blank">
+      https://doi.org/10.1177/0149206305277795
+    </a>
+  </li>
+
+  <li>
+    Jehn, K. A., &amp; Mannix, E. A. (2001). 
+    <em>The dynamic nature of conflict: A longitudinal study of intragroup conflict and group performance.</em> 
+    Academy of Management Journal, 44(2), 238–251. 
+    <a href="https://doi.org/10.2307/3069453" target="_blank">
+      https://doi.org/10.2307/3069453
+    </a>
+  </li>
+
+  <li>
+    Tekleab, A. G., Quigley, N. R., &amp; Tesluk, P. E. (2009). 
+    <em>A longitudinal study of team conflict, conflict management, cohesion, and team effectiveness.</em> 
+    Journal of Applied Psychology, 94(1), 170–188. 
+    <a href="https://doi.org/10.1037/a0015373" target="_blank">
+      https://doi.org/10.1037/a0015373
+    </a>
+  </li>
+</ul>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>Dimensão 3 — Conflito Interpessoal (Relational Conflict)</h2>
+
+<p>
+Aqui estão as bases teóricas que mostram que a 
+<strong>dimensão relacional é consistentemente prejudicial</strong> 
+e que a variável crítica é a <strong>capacidade de contenção e reparação</strong>.
+</p>
+
+<ul>
+  <li>
+    De Dreu, C. K. W., &amp; Weingart, L. R. (2003). 
+    <em>Task versus relationship conflict, team performance, and team member satisfaction: A meta-analysis.</em> 
+    Journal of Applied Psychology, 88(4), 741–749. 
+    <a href="https://doi.org/10.1037/0021-9010.88.4.741" target="_blank">
+      https://doi.org/10.1037/0021-9010.88.4.741
+    </a>
+  </li>
+
+  <li>
+    Edmondson, A. (1999). 
+    <em>Psychological safety and learning behavior in work teams.</em> 
+    Administrative Science Quarterly, 44(2), 350–383. 
+    <a href="https://doi.org/10.2307/2666999" target="_blank">
+      https://doi.org/10.2307/2666999
+    </a>
+  </li>
+
+  <li>
+    Edmondson, A. C. (2018). 
+    <em>The fearless organization: Creating psychological safety in the workplace for learning, innovation, and growth.</em> 
+    Harvard Business School Press.
+  </li>
+
+  <li>
+    Jehn, K. A. (1995). 
+    <em>A multimethod examination of the benefits and detriments of intragroup conflict.</em> 
+    Administrative Science Quarterly, 40(2), 256–282. 
+    <a href="https://doi.org/10.2307/2393638" target="_blank">
+      https://doi.org/10.2307/2393638
+    </a>
+  </li>
+
+  <li>
+    Simons, T. L., &amp; Peterson, R. S. (2000). 
+    <em>Task conflict and relationship conflict in top management teams: The pivotal role of intragroup trust.</em> 
+    Academy of Management Journal, 43(1), 102–111. 
+    <a href="https://doi.org/10.2307/1556388" target="_blank">
+      https://doi.org/10.2307/1556388
+    </a>
+  </li>
+</ul>
+
+<hr>
+
+<!-- ===================================================== -->
+<h2>Dimensão 4 — Estilos Individuais de Lidar com Conflito</h2>
+
+<p>
+Essas referências fundamentam o modelo <strong>dual concern</strong> 
+e os estilos individuais de manejo de conflito, tratados aqui como 
+<strong>tendências comportamentais</strong>, e não como julgamento de qualidade.
+</p>
+
+<ul>
+  <li>
+    Rahim, M. A. (2002). 
+    <em>Toward a theory of managing organizational conflict.</em> 
+    The International Journal of Conflict Management, 13(3), 206–235. 
+    <a href="https://doi.org/10.1108/eb022874" target="_blank">
+      https://doi.org/10.1108/eb022874
+    </a>
+  </li>
+
+  <li>
+    Rahim, M. A. (2011). 
+    <em>Managing conflict in organizations</em> (4th ed.). Transaction Publishers.
+  </li>
+
+  <li>
+    Thomas, K. W. (1992). 
+    <em>Conflict and conflict management: Reflections and update.</em> 
+    Journal of Organizational Behavior, 13(3), 265–274. 
+    <a href="https://doi.org/10.1002/job.4030130307" target="_blank">
+      https://doi.org/10.1002/job.4030130307
+    </a>
+  </li>
+
+  <li>
+    Thomas, K. W., &amp; Kilmann, R. H. (1974). 
+    <em>Thomas-Kilmann Conflict Mode Instrument.</em> Xicom.
+  </li>
+</ul>
+
+
+
+
+
+
+
+
+</div>
+
+
+
 
 {% endif %}
