@@ -224,7 +224,7 @@ class ObservacaoAdmin(admin.ModelAdmin):
     list_display = ("momento", "exame", "avaliador", "projeto", "alocacao")
     ordering = ("momento",)
     list_filter = ("exame", )
-    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "alocacao__aluno__user__username"]
+    search_fields = ["projeto__titulo_final", "projeto__proposta__titulo", "alocacao__aluno__user__username", "avaliador__first_name", "avaliador__last_name",]
     actions = [dup_entrada]
 
 

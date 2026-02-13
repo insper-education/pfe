@@ -508,12 +508,19 @@ def banca_avaliar(request, slug, documento_id=None):
             julgamento_observacoes = None
             if ("observacoes_orientador" in request.POST and request.POST["observacoes_orientador"] != "") or \
                ("observacoes_estudantes" in request.POST and request.POST["observacoes_estudantes"] != "") or \
-               ("destaque" in request.POST):
+               ("destaque" in request.POST) or \
+               ("entender" in request.POST) or ("idear" in request.POST) or ("prototipar" in request.POST) or \
+               ("testar" in request.POST) or ("implementar" in request.POST):
                 julgamento_observacoes = Observacao.objects.create(projeto=projeto, exame=exame, avaliador=avaliador)
                 julgamento_observacoes.alocacao = banca.alocacao  # Caso Probation
                 julgamento_observacoes.observacoes_orientador = request.POST.get("observacoes_orientador")
                 julgamento_observacoes.observacoes_estudantes = request.POST.get("observacoes_estudantes")                
                 julgamento_observacoes.destaque = True if request.POST.get("destaque") == "true" else False
+                julgamento_observacoes.entender = int(request.POST.get("entender", 0))
+                julgamento_observacoes.idear = int(request.POST.get("idear", 0))
+                julgamento_observacoes.prototipar = int(request.POST.get("prototipar", 0))
+                julgamento_observacoes.testar = int(request.POST.get("testar", 0))
+                julgamento_observacoes.implementar = int(request.POST.get("implementar", 0))
                 julgamento_observacoes.save()
 
             if "arquivo" in request.FILES:
@@ -634,6 +641,12 @@ def banca_avaliar(request, slug, documento_id=None):
         if destaque is not None:
             destaque = True if destaque == "True" else False
 
+        entender = request.GET.get("entender", None)
+        idear = request.GET.get("idear", None)
+        prototipar = request.GET.get("prototipar", None)
+        testar = request.GET.get("testar", None)
+        implementar = request.GET.get("implementar", None)
+
         base_url = reverse("banca_avaliar", kwargs={"slug": slug})
         endpoints = [
             {"path": f"{base_url}?avaliador={{valor}}", "method": "GET", "description": "Seleciona o avaliador."},
@@ -642,6 +655,11 @@ def banca_avaliar(request, slug, documento_id=None):
             {"path": f"{base_url}?observacoes_estudantes={{texto}}", "method": "GET", "description": "Preenche as observações dos estudantes."},
             {"path": f"{base_url}?destaque={{valor}}", "method": "GET", "description": "Marca que o avaliador quer destacar o projeto."},
             {"path": f"{base_url}/{{slug}}/{{documento_id}}", "method": "GET", "description": "Baixa o documento de avaliação da banca."},
+            {"path": f"{base_url}?entender={{valor}}", "method": "GET", "description": "Preenche o nível de 'Entender'."},
+            {"path": f"{base_url}?idear={{valor}}", "method": "GET", "description": "Preenche o nível de 'Idear'."},
+            {"path": f"{base_url}?prototipar={{valor}}", "method": "GET", "description": "Preenche o nível de 'Prototipar'."},
+            {"path": f"{base_url}?testar={{valor}}", "method": "GET", "description": "Preenche o nível de 'Testar'."},
+            {"path": f"{base_url}?implementar={{valor}}", "method": "GET", "description": "Preenche o nível de 'Implementar'."},
         ]
 
         context = {
@@ -664,6 +682,11 @@ def banca_avaliar(request, slug, documento_id=None):
             "niveis_objetivos": niveis_objetivos,
             "destaque": destaque,
             "endpoints": json.dumps(endpoints),
+            "entender": entender,
+            "idear": idear,
+            "prototipar": prototipar,
+            "testar": testar,
+            "implementar": implementar,
         }
 
         if mensagem:

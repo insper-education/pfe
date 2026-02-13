@@ -141,7 +141,7 @@
       </div>
       
       {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
-        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px;">
+        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
           <label for="destaque">
             <b>{% lng "Projeto Destaque" "Highlight Project" %}:</b>&nbsp;
             <input type="radio" name="destaque" value="true" required {% if destaque == True %}checked{% endif %}>
@@ -162,8 +162,14 @@
             presenting competencies that indicate a level of excellence in execution.
           </span>
         </div>
-        <br>
+
+        <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+          {% include "professores/includes/design_signature.html" %}
+        </div>
+
+
       {% endif %}
+      
 
 
       {% if banca.startDate.date > today.date %}

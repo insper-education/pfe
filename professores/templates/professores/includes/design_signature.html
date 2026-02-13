@@ -1,0 +1,221 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 12 de Fevereiro de 2026
+{% endcomment %}
+
+{% load linguas %}
+
+<style>
+  .design-sig-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  
+  .design-sig-table th {
+    padding: 8px 12px;
+    text-align: left;
+    color: #475569;
+    font-weight: 500;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  
+  .design-sig-table td {
+    padding: 12px;
+  }
+  
+  .design-sig-table select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+  
+  .design-sig-table select:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  @media (max-width: 680px) {
+    .design-sig-table {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    
+    .design-sig-table thead {
+      display: contents;
+    }
+    
+    .design-sig-table tbody {
+      display: contents;
+    }
+    
+    .design-sig-table tr {
+      display: contents;
+    }
+    
+    .design-sig-table thead th {
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px 4px 0 0;
+      border-bottom: none;
+      font-weight: 600;
+      order: calc(var(--col) * 2);
+    }
+    
+    .design-sig-table tbody td {
+      padding: 2px 4px;
+      border: 1px solid #e2e8f0;
+      border-radius: 0 0 4px 4px;
+      border-top: none;
+      order: calc(var(--col) * 2 + 1);
+    }
+    
+    .design-sig-table thead th:nth-child(1) { --col: 0; }
+    .design-sig-table thead th:nth-child(2) { --col: 1; }
+    .design-sig-table thead th:nth-child(3) { --col: 2; }
+    .design-sig-table thead th:nth-child(4) { --col: 3; }
+    .design-sig-table thead th:nth-child(5) { --col: 4; }
+    
+    .design-sig-table tbody td:nth-child(1) { --col: 0; }
+    .design-sig-table tbody td:nth-child(2) { --col: 1; }
+    .design-sig-table tbody td:nth-child(3) { --col: 2; }
+    .design-sig-table tbody td:nth-child(4) { --col: 3; }
+    .design-sig-table tbody td:nth-child(5) { --col: 4; }
+    
+    .design-sig-table select {
+      width: 100%;
+    }
+  }
+
+</style>
+
+<div class="mb-2">
+  <b>Design Signature</b>
+</div>
+
+<div class="overflow-x-auto bg-white rounded-lg p-1">
+  <table class="design-sig-table">
+    <thead>
+      <tr>
+
+        <th>
+          <span lang="pt" title="Entender: Escopo do problema, análise de stakeholders, identificação de requisitos e coleta de informações. Engajamento alto inclui reformulação iterativa e desenvolvimento explícito de critérios.">Entender</span>
+          <span lang="en" title="Understand: Problem scoping, stakeholder analysis, requirements identification, and information gathering. High engagement includes iterative reframing and explicit criteria development.">Understand</span>
+        </th>
+
+        <th>
+          <span lang="pt" title="Idear: Gerar múltiplos conceitos de solução, explorar alternativas e considerar trade-offs. Engajamento alto inclui comparação sistemática de alternativas e justificativa dos conceitos selecionados.">Idear</span>
+          <span lang="en" title="Ideate: Generating multiple solution concepts, exploring alternatives, and considering trade-offs. High engagement includes systematic comparison of alternatives and justification of selected concepts.">Ideate</span>
+        </th>
+
+        <th>
+          <span lang="pt" title="Prototipar: Desenvolvimento de representações de soluções (esboços, CAD, simulações, construções físicas). Engajamento alto inclui refinamento iterativo e aumento de fidelidade ao longo do tempo.">Prototipar</span>
+          <span lang="en" title="Prototype: Developing representations of solutions (sketches, CAD, simulations, physical builds). High engagement includes iterative refinement and increasing fidelity over time.">Prototype</span>
+        </th>
+
+        <th>
+          <span lang="pt" title="Testar: Avaliação de soluções contra critérios por meio de experimentos, feedback de usuários ou medições de desempenho. Engajamento alto inclui testes estruturados e iteração baseada em evidências.">Testar</span>
+          <span lang="en" title="Test: Evaluating solutions against criteria through experiments, user feedback, or performance measurements. High engagement includes structured testing and evidence-based iteration.">Test</span>
+        </th>
+
+        <th>
+          <span lang="pt" title="Implementar: Integração, validação em contexto, documentação e preparação para entrega ou implantação. Engajamento alto inclui alinhamento com necessidades dos stakeholders e restrições de design.">Implementar</span>
+          <span lang="en"title="Implement: Integration, validation in context, documentation, and preparation for delivery or deployment. High engagement includes alignment with stakeholder needs and design constraints.">Implement</span>
+        </th>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr id="signatureRow"></tr>
+    </tbody>
+  </table>
+</div>
+
+  <p class="text-xs text-slate-600 mb-2 mt-1">
+    {% lng "Escolha o nível que melhor descreve a atividade da equipe em cada Fase de Design." "Choose the level that best describes the team’s activity in each Design Phase." %}
+  </p>
+
+  <div lang="pt">
+    <ul class="text-xs text-slate-600 grid gap-1 list-none">
+      <li><strong>Nenhuma</strong> — Sem atividade nessa área.</li>
+      <li><strong>Baixa</strong> — Atividade mínima ou informal (discussão breve, ideia única, verificação rápida).</li>
+      <li><strong>Média</strong> — Atividade estruturada com evidências (pesquisa documentada, múltiplos conceitos, protótipo funcional, testes definidos).</li>
+      <li><strong>Alta</strong> — Trabalho profundo, iterativo e baseado em evidências (refinamento, comparação sistemática, testes repetidos, feedback de stakeholders).</li>
+    </ul>
+  </div>
+
+  <div lang="en">
+    <ul class="text-xs text-slate-600 grid gap-1 list-none">
+      <li><strong>None</strong> — No activity in this area.</li>
+      <li><strong>Low</strong> — Minimal or informal activity (brief discussion, single idea, quick check).</li>
+      <li><strong>Medium</strong> — Structured activity with evidence (documented research, multiple concepts, working prototype, defined testing).</li>
+      <li><strong>High</strong> — Deep, iterative, evidence-based work (refinement, systematic comparison, repeated tests, stakeholder feedback).</li>
+    </ul>
+  </div>
+
+  <p class="text-xs text-slate-500 mt-3">
+    {% lng "Foque no processo, não no produto final. Variação entre as colunas é esperada." "Focus on the process not the final product. Variation across columns is expected." %}
+  </p>
+
+<script>
+  const LANG_CONFIG = {
+    pt: {
+      options: ['Nenhuma', 'Baixa', 'Média', 'Alta'],
+    },
+    en: {
+      options: ['None', 'Low', 'Medium', 'High'],
+    }
+  };
+
+  const spaces = ['entender', 'idear', 'prototipar', 'testar', 'implementar'];
+
+  function getConfig() {
+    const lang = localStorage.getItem("lingua") === "pt" ? "pt" : "en";
+    return LANG_CONFIG[lang];
+  }
+
+  function makeSelect(name, options) {
+    const sel = document.createElement("select");
+    sel.name = name;
+    
+    // Pega o valor do parâmetro GET
+    const urlParams = new URLSearchParams(window.location.search);
+    const preSelectedValue = urlParams.get(name);
+    
+    options.forEach((opt, index) => {
+      const option = new Option(opt, index);
+      // Se o valor do parâmetro GET corresponde ao índice, marca como selecionado
+      if (preSelectedValue !== null && parseInt(preSelectedValue) === index) {
+        option.selected = true;
+      }
+      sel.add(option);
+    });
+
+    return sel;
+  }
+
+  function monta_linha() {
+    const config = getConfig();
+    const cells = spaces.map((space, index) => {
+      const td = document.createElement("td");
+      td.appendChild(makeSelect(space, config.options));
+      return td;
+    });
+    document.getElementById("signatureRow").replaceChildren(...cells);
+  }
+  
+  document.addEventListener("languageChanged", monta_linha);
+
+  function carrega_pagina() {     
+    monta_linha();
+  }
+
+  window.onload = carrega_pagina
+
+</script>

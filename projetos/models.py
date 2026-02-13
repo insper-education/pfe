@@ -2024,6 +2024,14 @@ class Observacao(models.Model):
     destaque = models.BooleanField("Destaque", default=False,
                                    help_text="Caso o resultado da avaliação demonstre destaque")
 
+    # Design Signature
+
+    entender = models.PositiveSmallIntegerField("entender", default=0)
+    idear = models.PositiveSmallIntegerField("idear", default=0)
+    prototipar = models.PositiveSmallIntegerField("prototipar", default=0)
+    testar = models.PositiveSmallIntegerField("testar", default=0)
+    implementar = models.PositiveSmallIntegerField("implementar", default=0)
+
     def __str__(self):
         return "Obs. tipo: " + str(self.exame) + " = " + str(self.observacoes_orientador)[:6] + "..."
 
