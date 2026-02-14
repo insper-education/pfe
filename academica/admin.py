@@ -22,6 +22,7 @@ def dup_composicao(modeladmin: admin_opt.ModelAdmin, request, queryset):
     for obj in queryset:
         from_id = obj.id
         obj.id = None
+        obj.data_final = None
         obj.save()
         message = "duplicando de {} para {}".format(from_id, obj.id)
         modeladmin.log_addition(request=request, object=obj, message=message)
@@ -38,7 +39,7 @@ class ExameAdmin(admin.ModelAdmin):
 class ComposicaoAdmin(admin.ModelAdmin):
     """Composicao."""
     list_display = ("exame", "tipo_documento", "evento", "entregavel", "data_inicial", "data_final")
-    list_filter = ("exame", "tipo_documento", "evento")
+    list_filter = ("data_final", "exame", "tipo_documento", "evento")
     search_fields = ["exame__titulo",]
     actions = [dup_composicao]
 
@@ -46,7 +47,7 @@ class ComposicaoAdmin(admin.ModelAdmin):
 class PesoAdmin(admin.ModelAdmin):
     """Peso."""
     list_display = ("composicao", "objetivo", "peso")
-    list_filter = ("composicao", "objetivo")
+    list_filter = ("objetivo",)
     search_fields = ["composicao__exame__titulo",]
     actions = [dup_peso]
 
