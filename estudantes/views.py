@@ -1002,7 +1002,7 @@ def exames_pesos(request):
     for ano in range(2019, p_ano+1):
         s_final = 2 if ano <= configuracao.ano else 1
         for semestre in range(1, s_final+1):
-            semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all(), ano, semestre)])
+            semestres.append([str(ano), str(semestre), filtra_composicoes(Composicao.objects.all().order_by("exame__ordem"), ano, semestre)])
 
     # Filtrando objetivos por sigla (sem duplicidade)
     objetivos = {obj.sigla: obj for obj in ObjetivosDeAprendizagem.objects.all()}.values()
