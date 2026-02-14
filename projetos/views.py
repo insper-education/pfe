@@ -804,7 +804,7 @@ def meuprojeto(request, primarykey=None):
         context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"], projeto__id=primarykey)
         context["associados"] = Associado.objects.filter(estudante=context["aluno"], projeto__id=primarykey).last()
     else:
-        context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"]).order_by("id")
+        context["alocados"] = Alocacao.objects.filter(aluno=context["aluno"]).order_by("-projeto__ano", "-projeto__semestre")
         context["associados"] = Associado.objects.filter(estudante=context["aluno"]).order_by("id")
 
     if context["alocados"].count() > 1 or context["associados"].count() > 1:
