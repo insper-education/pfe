@@ -26,9 +26,9 @@
             <ul>
             {% for composicao in composicoes %}
               <li><span style="display: inline-block; width: 30em;">{{composicao.exame}}
-                ({% lng_d composicao.data_inicial " a" " to" %}
+                ({% lng_d composicao.data_inicial " até" " to" %}
                 {% if composicao.data_final%}
-                  {% lng_d composicao.data_final %}{% else %}{% lng "atualmente" "currently" %}{% endif %}):</span>
+                  {% lng_d composicao.data_final %}{% else %}{% lng "o momento" "currently" %}{% endif %}):</span>
                 
                 <span style="display: inline-block; width: 34em;">
                   <b id="m{{ano}}{{semestre}}{{forloop.counter0}}" style="display: inline-block; width: 4em; text-align:right;"></b>

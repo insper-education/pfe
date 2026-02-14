@@ -4,6 +4,7 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 
 from .models import *
 
+from projetos.support_admin import dup_entrada
 
 def dup_peso(modeladmin: admin_opt.ModelAdmin, request, queryset):
     """Função abaixo permite duplicar entradas no banco de dados."""
@@ -34,6 +35,7 @@ dup_composicao.short_description = "Duplicar Entrada(s)"
 class ExameAdmin(admin.ModelAdmin):
     """Exame."""
     list_display = ("ordem", "titulo", "titulo_en", "sigla", "grupo", "banca", "final", "periodo_para_rubricas")
+    actions = [dup_entrada]
 
 @admin.register(Composicao)
 class ComposicaoAdmin(admin.ModelAdmin):
