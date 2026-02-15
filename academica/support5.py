@@ -13,6 +13,9 @@ logger = logging.getLogger("django")
 
 def filtra_composicoes(composicoes, ano, semestre):
     """Filtra composições."""
+
+    composicoes = composicoes.order_by("exame__ordem")
+
     composicoes = composicoes.exclude(data_final__year__lt=ano)
     composicoes = composicoes.exclude(data_inicial__year__gt=ano)
     

@@ -90,10 +90,10 @@
             {% with dias_inic=item.evento.data_inicio_aval|dif_dias_hoje dias_ate=item.evento.data_aval|dif_dias_hoje dias=-1 %} {% comment %} Eventos são mostrados duas semanas antes do prazo {% endcomment %}
               <div class="pintern exame{{item.composicao.exame.id}}" {% if not forloop.first %}style="margin-top: 8px;"{% endif %}>
                 <span class="nome_entrega" {% if dias_inic > dias %}style="color:lightgrey;"{% endif %}>
-                  {% if item.composicao.tipo_documento %}
-                    <b>{{item.composicao.tipo_documento.nome}}</b> 
+                  {% if item.composicao.exame %}
+                    <b>{% lng item.composicao.exame.titulo item.composicao.exame.titulo_en %}</b>
                   {% else %}
-                    <b>{{item.composicao.exame.titulo}}</b>
+                    <b>{% lng item.composicao.tipo_documento.nome item.composicao.tipo_documento.nome_en %}</b>
                   {% endif %}      
                   {% if item.evento.endDate %}            
                     {% lng "[prazo " "[deadline " %}
