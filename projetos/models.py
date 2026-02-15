@@ -888,12 +888,17 @@ class Banca(models.Model):
     composicao = models.ForeignKey("academica.Composicao", null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text="tipo de composição para exame de avaliação da banca")
 
+    tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
+                                   help_text="Tipo de evento para a banca")
+
     data_marcacao = models.DateField(default=datetime.date.today, blank=True,
                                      help_text="Data em que a banca foi marcada")
     
     def get_sigla(self):
         """Retorna a sigla do tipo de banca."""
-        return self.composicao.exame.sigla
+        if self.tipo_evento:
+            return self.tipo_evento.sigla
+        return None
 
     def __str__(self):
         """Retorno padrão textual."""
@@ -947,6 +952,8 @@ class Banca(models.Model):
     
     def get_sigla(self):
         """Retorna a sigla do tipo de banca."""
+        if self.tipo_evento:
+            return self.tipo_evento.sigla
         if self.composicao and self.composicao.exame:
             return self.composicao.exame.sigla
         return None

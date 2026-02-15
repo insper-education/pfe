@@ -799,78 +799,70 @@ def bancas_tabela_alocacao_completa(request):
     return render(request, "professores/bancas_tabela_alocacao_completa.html", context)
 
 
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def bancas_criar(request, data=None):
-    """Cria uma banca de avaliação para o projeto."""
-
+def _get_bancas_context(request, banca=None, data=None):
+    """Helper function to build common context for bancas views."""
     configuracao = get_object_or_404(Configuracao)
-
-    if  request.headers.get("X-Requested-With") == "XMLHttpRequest"  and request.method == "POST":
-
-        atualizado = True
-        mensagem, banca = editar_banca(None, request)
-        if mensagem is None:
-            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST)) # Atualizada
-        else:
-            atualizado = False
-
-        context = {
-            "atualizado": atualizado,
-            "mensagem": mensagem,
-        }
-        return JsonResponse(context)
-
-    # Originalmente estava: .exclude(orientador=None)
-    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
-    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre).order_by("aluno__user__first_name", "aluno__user__last_name")    
+    projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre).exclude(orientador=None)
+    alocacoes = Alocacao.objects.filter(projeto__ano=configuracao.ano, projeto__semestre=configuracao.semestre)
+    alocacoes = alocacoes.order_by("aluno__user__first_name", "aluno__user__last_name")
+    
     professores, falconis = coleta_membros_banca()
-
-    # Coletando bancas agendadas a partir de hoje
-    hoje = datetime.date.today()
-    bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
-    projetos_agendados = list(bancas_agendadas.values_list("projeto", flat=True))
-
     eventos = Evento.get_eventos(configuracao=configuracao)
-    tipos_banca = Composicao.get_composicoes(configuracao.ano, configuracao.semestre).filter(exame__banca=True).order_by("exame__id")  # Ordena por ID para manter a ordem de BI, BF, F, P
 
-    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI")
-    bancas_finais = eventos.filter(tipo_evento__sigla="BF")
-    bancas_probation = eventos.filter(tipo_evento__sigla="P")
-    bancas_falconi = eventos.filter(tipo_evento__sigla="F")
+    bancas = {
+        "BI":  eventos.filter(tipo_evento__sigla="BI").order_by("startDate"),
+        "BF":  eventos.filter(tipo_evento__sigla="BF").order_by("startDate"),
+    }
+
+    if request.user.eh_admin:
+         bancas["P"] = eventos.filter(tipo_evento__sigla="P").order_by("startDate")
+         bancas["F"] = eventos.filter(tipo_evento__sigla="F").order_by("startDate")
 
     context = {
         "projetos": projetos,
         "alocacoes": alocacoes,
         "professores": professores,
-        "Banca": Banca,
-        "tipos_banca": tipos_banca,
         "falconis": falconis,
-        "projetos_agendados": projetos_agendados,
-        "bancas_intermediarias": bancas_intermediarias,
-        "bancas_finais": bancas_finais,
-        "bancas_probation": bancas_probation,
-        "bancas_falconi": bancas_falconi,
+        "bancas": bancas,
         "url": request.get_full_path(),
         "root_page_url": request.session.get("root_page_url", '/'),
+        "Banca": Banca,
     }
 
+    if banca:
+        context["banca"] = banca
+    
+    hoje = datetime.date.today()
+    bancas_agendadas = Banca.objects.filter(startDate__gt=hoje).order_by("startDate")
+    context["projetos_agendados"] = list(bancas_agendadas.values_list("projeto", flat=True))
+
+    # Handle date parameter for tipo_banca detection
     if data:
-        context["data"] = data[:10]  # soh a data, tirando a hora se for o caso
+        context["data"] = data[:10]
         datar = datetime.datetime.strptime(context["data"], "%Y-%m-%d").date()
-        if bancas_finais and bancas_finais.first().startDate and bancas_finais.last().endDate:
-            if datar >= bancas_finais.first().startDate and datar <= bancas_finais.last().endDate:
-                context["tipob"] = "BF"
-        if bancas_intermediarias and bancas_intermediarias.first().startDate and bancas_intermediarias.last().endDate:
-            if datar >= bancas_intermediarias.first().startDate and datar <= bancas_intermediarias.last().endDate:
-                context["tipob"] = "BI"
-        if bancas_falconi and bancas_falconi.first().startDate and bancas_falconi.last().endDate:
-            if datar >= bancas_falconi.first().startDate and datar <= bancas_falconi.last().endDate:
-                context["tipob"] = "F"
-        if bancas_probation and bancas_probation.first().startDate and bancas_probation.last().endDate:
-            if datar >= bancas_probation.first().startDate and datar <= bancas_probation.last().endDate:
-                context["tipob"] = "P"
         
+        for tipo, bancas_obj in bancas.items():
+            if bancas_obj.exists():
+                primeiro, ultimo = bancas_obj.first(), bancas_obj.last()
+                if primeiro.startDate and ultimo.endDate and primeiro.startDate <= datar <= ultimo.endDate:
+                    context["tipob"] = tipo
+                    break
+
+    return context
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def bancas_criar(request, data=None):
+    """Cria uma banca de avaliação para o projeto."""
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
+        mensagem, banca = editar_banca(None, request)
+        atualizado = mensagem is None
+        if atualizado:
+            mensagem_edicao_banca(banca, enviar=("enviar_mensagem" in request.POST))
+        return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
+
+    context = _get_bancas_context(request, data=data)
     return render(request, "professores/bancas_view.html", context)
 
 
@@ -878,8 +870,6 @@ def bancas_criar(request, data=None):
 @permission_required("users.altera_professor", raise_exception=True)
 def bancas_editar(request, primarykey=None):
     """Edita uma banca de avaliação para o projeto."""
-    configuracao = get_object_or_404(Configuracao)
-
     if primarykey is None:
         return HttpResponseNotFound("<h1>Erro!</h1>")
 
@@ -888,54 +878,23 @@ def bancas_editar(request, primarykey=None):
     if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method == "POST":
         atualizado = True
         mensagem = ""
+        
         if "atualizar" in request.POST:
             mensagem, _ = editar_banca(banca, request)
             if mensagem is None:
-                mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST)) # Atualizada
+                mensagem_edicao_banca(banca, True, enviar=("enviar_mensagem" in request.POST))
             else:
                 atualizado = False
         elif "excluir" in request.POST:
-            mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST)) # Excluída
+            mensagem_edicao_banca(banca, True, True, enviar=("enviar_mensagem" in request.POST))
             if "projeto" in request.POST:
                 banca.delete()
         else:
             return HttpResponse("Atualização não realizada.", status=401)
 
-        context = {
-                "atualizado": atualizado,
-                "mensagem": mensagem,
-            }
-        return JsonResponse(context)
+        return JsonResponse({"atualizado": atualizado, "mensagem": mensagem})
     
-    ano = configuracao.ano
-    semestre = configuracao.semestre
-    projetos = Projeto.objects.filter(ano=ano, semestre=semestre).exclude(orientador=None)
-    alocacoes = Alocacao.objects.filter(projeto__ano=ano, projeto__semestre=semestre)
-    professores, falconis = coleta_membros_banca()
-
-    eventos = Evento.get_eventos(configuracao=configuracao)
-    tipos_banca = Composicao.get_composicoes(ano, semestre).filter(exame__banca=True).order_by("exame__id")  # Ordena por ID para manter a ordem de BI, BF, F, P
-
-    bancas_intermediarias = eventos.filter(tipo_evento__sigla="BI").order_by("startDate")
-    bancas_finais = eventos.filter(tipo_evento__sigla="BF").order_by("startDate")
-    bancas_probation = eventos.filter(tipo_evento__sigla="P").order_by("startDate")
-    bancas_falconi = eventos.filter(tipo_evento__sigla="F").order_by("startDate")
-
-    context = {
-        "projetos": projetos,  # Creio que não seja necessário
-        "alocacoes": alocacoes,   # Creio que não seja necessário
-        "professores": professores,
-        "banca": banca,
-        "Banca": Banca,
-        "tipos_banca": tipos_banca,
-        "falconis": falconis,
-        "bancas_intermediarias": bancas_intermediarias,
-        "bancas_finais": bancas_finais,
-        "bancas_probation": bancas_probation,
-        "bancas_falconi": bancas_falconi,
-        "url": request.get_full_path(),
-        "root_page_url": request.session.get("root_page_url", '/'),
-    }
+    context = _get_bancas_context(request, banca=banca)
     return render(request, "professores/bancas_view.html", context)
 
 

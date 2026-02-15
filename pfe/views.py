@@ -117,9 +117,34 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
+from projetos.models import Banca
+from administracao.models import TipoEvento
+
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+
+    bi = TipoEvento.objects.get(sigla="BI")
+    bf = TipoEvento.objects.get(sigla="BF")
+    f = TipoEvento.objects.get(sigla="F")
+    p = TipoEvento.objects.get(sigla="P")
+
+    bancas = Banca.objects.all()
+    for banca in bancas:
+        if banca.composicao.exame.sigla == "BI":
+            banca.tipo_evento = bi
+            banca.save()
+        elif banca.composicao.exame.sigla == "BF":
+            banca.tipo_evento = bf
+            banca.save()
+        elif banca.composicao.exame.sigla == "P":
+            banca.tipo_evento = p
+            banca.save()
+        elif banca.composicao.exame.sigla == "F":
+            banca.tipo_evento = f
+            banca.save()
+
+    message = "Feito"
     return HttpResponse(message)

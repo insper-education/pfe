@@ -224,17 +224,20 @@
       <span style="display: inline-block; margin-bottom: 8px;">
         <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
       </span>
-      {% for tipo in tipos_banca %}
+      {% for tipo in bancas.values %}
+        {% with tipo_evento=tipo.last.tipo_evento %}
         <div style="margin-left: 0.3em; margin-bottom: 0.3em;" class="radio">
-          <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo.exame.sigla}}" type="radio" name="tipo" value="{{tipo.exame.sigla}}"
+          <label for="tipo{{tipo.exame.sigla}}"><input class="tipo_banca" id="tipo{{tipo_evento.sigla}}" type="radio" name="tipo" value="{{tipo_evento.sigla}}"
            {% if banca and banca.projeto.orientador.user != request.user and not request.user.eh_admin %}disabled{% endif %}
-           {% if banca.composicao.exame.sigla == tipo.exame.sigla or tipo.exame.sigla == tipob %}checked{% endif %} required>
-            {% lng tipo.exame.titulo tipo.exame.titulo_en %}
+           {% if banca.tipo_evento == tipo_evento or tipo_evento.sigla == tipob %}checked{% endif %} required>
+            {% lng tipo_evento.nome tipo_evento.nome_en %}
             {% lng "(duração padrão" "(standard duration" %}:
-            {{tipo.duracao_banca}} min)</label>
+            {{tipo_evento.duracao}} min)</label>
         </div>
+        {% endwith %}
       {% endfor %}
     </div>
+
 
     <script>
     var minutos = 0
@@ -243,34 +246,34 @@
             var tipo = $(this).val();
             if(tipo == "F") {  // Banca Falconi
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_falconi.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_falconi.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas.F.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas.F.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas.F.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas.F.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=30;
             } else if(tipo == "P") {  // Banca Probation
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_probation.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_probation.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas.P.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas.P.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas.P.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas.P.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=60;
             } else if(tipo == "BI") {  // Banca Intermediária
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_intermediarias.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_intermediarias.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas.BI.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas.BI.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas.BI.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas.BI.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=120;
             } else {  // Banca Final
               {% if not user.eh_admin %} // Coordenador pode alocar fora dos horários
-                document.getElementById("inicio").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("inicio").max = "{{bancas_finais.last.endDate|date:'Y-m-d'}}T23:59:59";
-                document.getElementById("fim").min = "{{bancas_finais.first.startDate|date:'Y-m-d'}}T00:00:00";
-                document.getElementById("fim").max = "{{bancas_finais.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("inicio").min = "{{bancas.BF.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("inicio").max = "{{bancas.BF.last.endDate|date:'Y-m-d'}}T23:59:59";
+                document.getElementById("fim").min = "{{bancas.BF.first.startDate|date:'Y-m-d'}}T00:00:00";
+                document.getElementById("fim").max = "{{bancas.BF.last.endDate|date:'Y-m-d'}}T23:59:59";
               {% endif %}
               minutos=120;
             }
@@ -666,7 +669,7 @@
 
   $(document).ready(function () {
     {% if banca %}
-      botao_anterior = {% if banca.composicao.exame.sigla == "F" %}"BI"{% else %}"F"{% endif %};
+      botao_anterior = {% if banca.tipo_evento.sigla == "F" %}"BI"{% else %}"F"{% endif %};
     {% endif %}
     carrega_modal();
     $("#projeto").change(function(){

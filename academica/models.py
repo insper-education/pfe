@@ -95,9 +95,6 @@ class Composicao(models.Model):
     orientacoes_en = models.TextField(max_length=4096, null=True, blank=True,
                                       help_text="orientações para a avaliação em inglês")
 
-    duracao_banca = models.PositiveSmallIntegerField("Duração da Banca", default=0,
-                                                     help_text="Duração da Banca em minutos (se for uma banca)")
-
 
     def __str__(self):
         texto = str(self.exame) + "  [ "

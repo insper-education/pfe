@@ -115,6 +115,9 @@ class TipoEvento(models.Model):
     
     sublinhado = models.BooleanField("Sublinhado", default=False,
                                     help_text="Sublinhado no calendário")
+    
+    duracao = models.PositiveSmallIntegerField("Duração padrão", default=0,
+                                                help_text="Duração padrão em minutos")
 
     def __str__(self):
         return self.nome

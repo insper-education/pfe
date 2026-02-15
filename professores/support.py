@@ -17,6 +17,8 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
+from administracao.models import TipoEvento
+
 from .support2 import calcula_media_notas_bancas, calcula_notas_bancas
 
 from academica.models import Exame, Composicao
@@ -70,6 +72,9 @@ def calcula_interseccao_bancas(banca, startDate, endDate):
 def editar_banca(banca, request):
     """Edita os valores de uma banca por um request Http."""
 
+    if "tipo" not in request.POST or request.POST["tipo"] == "":
+        return "Tipo de banca não informado!", None
+    
     if not request.user.eh_admin:  # Caso não Administrador
         # Verifica se a banca não intersecta com outras bancas
         if "inicio" in request.POST and "fim" in request.POST:
@@ -83,22 +88,29 @@ def editar_banca(banca, request):
     if banca is None:
         banca = Banca()
 
-    if "tipo" in request.POST and request.POST["tipo"] != "":
-        exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
-        composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-        banca.composicao = composicao
-    else:
-        return "Tipo de banca não informado!", None
+    ### OBSOLETO
+    exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
+    composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    banca.composicao = composicao
+    ### NOVO
+    try:
+        banca.tipo_evento = get_object_or_404(TipoEvento, sigla=request.POST["tipo"])
+    except Http404:
+        return "Tipo de evento não encontrado!", None
+    ########
     
-    if not exame.banca:
-        return "Exame não é do tipo Banca!", None
+    
+    # if not banca.tipo_evento.banca:
+    #     return "Tipo de evento não é do tipo Banca!", None
 
-    if exame.grupo:
+    
+    if "projeto" in request.POST and request.POST["projeto"] != "":
         try:
             banca.projeto = Projeto.objects.get(id=request.POST.get("projeto"))
         except Projeto.DoesNotExist:
             return "Projeto não encontrado!", None
-    else:  # Banca Probation
+    
+    if "alocacao" in request.POST and request.POST["alocacao"] != "":
         try:
             banca.alocacao = Alocacao.objects.get(id=request.POST.get("alocacao"))
         except Alocacao.DoesNotExist:
