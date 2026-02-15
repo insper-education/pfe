@@ -865,7 +865,7 @@ def minhas_bancas(request):
             }
             return render(request, "generic_ml.html", context=context)
         
-        # Banca do projeto (grupo, não probation)
+        # Banca do projeto (grupo)
         bancag = Banca.objects.filter(projeto=alocacao.projeto).order_by("-startDate")
 
         # Banca de estudante (individual, probation)

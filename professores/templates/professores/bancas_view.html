@@ -126,15 +126,7 @@
               data-estudante_link="{% if alocacao.aluno %}{% url 'estudante_detail' alocacao.aluno.id %}{% endif %}"
               {% if alocacao.id == banca.alocacao.id %} selected {% endif %}
               data-subtext="[{{alocacao.projeto.organizacao}}] {{alocacao.projeto.get_titulo}}"
-              {% comment %} {% if alocacao.id in projetos_agendados %}data-mensagem="Banca já agendada:
-              {% with banca_agendada=projeto.banca_set.all.0 %}
-                {{banca_agendada.startDate|date:'d/m/Y'}} das {{banca_agendada.startDate|date:'H:i'}} às {{banca_agendada.endDate|date:'H:i'}}
-              {% endwith %}
-              "{% endif %} {% endcomment %}
               >
-                {% comment %} {{projeto.ano}}.{{projeto.semestre}} {% endcomment %}
-                {% comment %} ({{projeto.organizacao}}) {{projeto.get_titulo}} {% endcomment %}
-                {% comment %} {% include "tipo_projeto.html" %} {% endcomment %}
                 {{alocacao.aluno.user.get_full_name}}
               </option>
             {% endif %}

@@ -49,7 +49,16 @@ def retorna_bancas(request):
             title = f"Estudante: {estudante} - {projeto.get_titulo_org()}"
         if banca.location:
             title += f"\n<br>Local: {banca.location}"
-        title += "\n<br>Banca:"
+        title += "\n<br><u>Banca "
+        if banca.tipo_evento.sigla == "BI":
+            title += "Intermediária"
+        elif banca.tipo_evento.sigla == "BF":
+            title += "Final"
+        elif banca.tipo_evento.sigla == "P":
+            title += "Probratória"
+        elif banca.tipo_evento.sigla == "F":
+            title += "Falconi"
+        title += "</u>"
         for membro in membros:
             title += f"\n<br>&bull; {membro.get_full_name()}"
             if projeto.orientador and projeto.orientador.user == membro:
