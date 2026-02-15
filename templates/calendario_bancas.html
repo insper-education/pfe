@@ -317,7 +317,7 @@
 
     {% comment %} Passando por todos os tipos de bancas {% endcomment %}
     {% for tb in tipos_bancas %}
-      toggleEventsByClass("#leg_{{tb.className}}", "{{tb.className}}");
+      toggleEventsByClass("#leg_b_{{tb.sigla}}", "b_{{tb.sigla}}"); {% comment %} toggleEventsByClass("#leg_{{tb.className}}", "{{tb.className}}"); {% endcomment %}
     {% endfor %}
 
   }

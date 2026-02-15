@@ -43,7 +43,7 @@
 
       <table id="BancasTable" class="table table-borderless table-sm arredondado mb-1"><tbody>
         {% for banca in bancas %} 
-          <tr class="item {{banca.composicao.exame.className}}">
+          <tr class="item b_{{banca.sigla}}">{% comment %} className {% endcomment %}
             <td>
 
               {% if banca.startDate %}
@@ -75,8 +75,8 @@
 
               <div>
                 <b>{% lng "Tipo:" "Type:" %}</b>
-                {% if banca.composicao is not None %}
-                  {{ banca.composicao.exame }}
+                {% if banca.tipo_evento is not None %}
+                  {{ banca.tipo_evento.nome }}
                 {% else %}
                   {% lng "Não definido" "Not defined" %}
                 {% endif %}

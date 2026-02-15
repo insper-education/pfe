@@ -28,7 +28,7 @@ from users.support import get_edicoes
 
 def get_banca_incompleta(projeto, sigla, avaliadores):
     """Verifica se todas as avaliações da banca estão completas."""
-    banca = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla).last()
+    banca = Banca.objects.filter(projeto=projeto, tipo_evento__sigla=sigla).last()
     now = datetime.datetime.now()
     banca_incompleta = 0  # 0 se não há banca
     if banca:
@@ -40,7 +40,7 @@ def get_banca_incompleta(projeto, sigla, avaliadores):
             if banca.membro3 and banca.membro3 not in avaliadores:
                 banca_incompleta = 1
 
-            if banca.composicao.exame.sigla in ["BF", "BI"]:
+            if banca.sigla in ["BF", "BI"]:
                 if banca.projeto.orientador and banca.projeto.orientador.user not in avaliadores:
                     banca_incompleta = 1
 

@@ -89,9 +89,9 @@ def editar_banca(banca, request):
         banca = Banca()
 
     ### OBSOLETO
-    exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
-    composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
-    banca.composicao = composicao
+    # exame = get_object_or_404(Exame, sigla=request.POST["tipo"])
+    # composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    # banca.composicao = composicao
     ### NOVO
     try:
         banca.tipo_evento = get_object_or_404(TipoEvento, sigla=request.POST["tipo"])
@@ -152,7 +152,7 @@ def editar_banca(banca, request):
 def coleta_membros_banca(banca=None):
     # Se banca informada, retorna todas as pessoas para a Banca e os membros da banca
     # senão retorna todos os professores e todos os falconis
-    sigla = banca.composicao.exame.sigla if banca else None
+    sigla = banca.sigla if banca else None
     id_membros = []
 
     if (banca is None) or sigla in ["BF", "BI", "P"]:  # Banca Final, Intermediária e Probation
@@ -469,7 +469,7 @@ def check_bancas_index(projetos, ano, semestre, PRAZO):
             if not evento:
                 continue
 
-            banca = Banca.objects.filter(projeto=projeto, composicao__exame__sigla=sigla_b).first()
+            banca = Banca.objects.filter(projeto=projeto, tipo_evento__sigla=sigla_b).first()
             if banca:
                 atraso_local = (banca.data_marcacao - evento.startDate).days + (PRAZO // 2)
             else:
@@ -548,13 +548,13 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     atraso = 0
     prazo = None
     
-    bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla__in=("BI", "BF")).\
+    bancas_0_1 = Banca.objects.filter(projeto__ano=ano, projeto__semestre=semestre, tipo_evento__sigla__in=("BI", "BF")).\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user) | Q(projeto__orientador=user.professor)) # Interm ou Final
     
-    bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, composicao__exame__sigla="F").\
+    bancas_2 = Banca.objects.filter( projeto__ano=ano, projeto__semestre=semestre, tipo_evento__sigla="F").\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Falconi
 
-    bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, composicao__exame__sigla="P").\
+    bancas_3 = Banca.objects.filter(alocacao__projeto__ano=ano, alocacao__projeto__semestre=semestre, tipo_evento__sigla="P").\
         filter(Q(membro1=user) | Q(membro2=user) | Q(membro3=user)) # Probation
     
     bancas = bancas_0_1 | bancas_2 | bancas_3
@@ -563,9 +563,9 @@ def check_avaliar_bancas(user, ano, semestre, PRAZO):
     for banca in bancas:
 
         if banca.alocacao:
-            avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame__sigla=banca.composicao.exame.sigla, avaliador=user)
+            avaliacoes = Avaliacao2.objects.filter(alocacao=banca.alocacao, exame__sigla=banca.sigla, avaliador=user)
         else:
-            avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame__sigla=banca.composicao.exame.sigla, avaliador=user)
+            avaliacoes = Avaliacao2.objects.filter(projeto=banca.projeto, exame__sigla=banca.sigla, avaliador=user)
         
         if not avaliacoes.exists():
             diff_data = (datetime.date.today() - banca.startDate.date()).days
@@ -607,7 +607,7 @@ def ver_pendencias_professor(user, ano, semestre):
 
 def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False):
 
-    subject = "Capstone | Banca - " + banca.composicao.exame.titulo + " "
+    subject = "Capstone | Banca - " + banca.tipo_evento.nome + " "
     if excluida:
         subject += " - Cancelada"
     else:
@@ -660,8 +660,8 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
 
 # Mensagem preparada para o orientador/coordenador
 def mensagem_orientador(banca, geral=False):
-    objetivos = ObjetivosDeAprendizagem.objects.all()  
-    exame = banca.composicao.exame
+    objetivos = ObjetivosDeAprendizagem.objects.all()
+    exame = get_object_or_404(Exame, sigla=banca.sigla)
     projeto = banca.get_projeto()
 
     # Buscando Avaliadores e Avaliações

@@ -43,7 +43,7 @@
       {% for banca in bancas %}
         <li>
           <a href="{% url 'banca_ver' banca.id %}">
-            {{banca.composicao.exame}}{% if banca.startDate %},
+            {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}{% if banca.startDate %},
               {% include "data_ml.html" with date=banca.startDate.date %}
             {% endif %}-
           </a>

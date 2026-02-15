@@ -216,7 +216,7 @@ class Projeto(models.Model):
         return Coorientador.objects.filter(projeto=self).values_list("usuario", flat=True)
     
     def get_banca_final(self):
-        banca = Banca.objects.filter(projeto=self, composicao__exame__titulo="Banca Final").last()
+        banca = Banca.objects.filter(projeto=self, tipo_evento__sigla="BF").last()
         return banca
     
     def get_documentos(self):  # Alguns documentos de interesse dos alunos
@@ -884,25 +884,29 @@ class Banca(models.Model):
 
     link = models.CharField(max_length=512, blank=True,
                             help_text="Link para transmissão pela internet se houver")
-    
-    composicao = models.ForeignKey("academica.Composicao", null=True, blank=True, on_delete=models.SET_NULL,
-                                   help_text="tipo de composição para exame de avaliação da banca")
 
     tipo_evento = models.ForeignKey("administracao.TipoEvento", null=True, blank=True, on_delete=models.SET_NULL,
                                    help_text="Tipo de evento para a banca")
 
     data_marcacao = models.DateField(default=datetime.date.today, blank=True,
                                      help_text="Data em que a banca foi marcada")
-    
+    class Meta:
+        ordering = ["startDate"]
+
     def get_sigla(self):
         """Retorna a sigla do tipo de banca."""
         if self.tipo_evento:
             return self.tipo_evento.sigla
         return None
 
+    @property
+    def sigla(self):
+        """Retorna a sigla do tipo de banca."""
+        return self.get_sigla()
+
     def __str__(self):
         """Retorno padrão textual."""
-        texto = "Banca " + self.composicao.exame.titulo + ": "
+        texto = "Banca " + self.get_tipo() + ": "
         if self.alocacao:
             texto += "(" + self.alocacao.aluno.user.get_full_name() + ") "
         texto +=  "[" + self.get_projeto().organizacao.sigla + "] " + self.get_projeto().get_titulo()
@@ -917,7 +921,7 @@ class Banca(models.Model):
             ano = self.startDate.strftime("%y")
             mes = int(self.startDate.strftime("%m"))
             semestre = "2" if mes > 7 else "1"
-            self.slug = slugify(ano+semestre+str(self.composicao.exame.sigla)+senha)
+            self.slug = slugify(ano+semestre+str(self.tipo_evento.sigla)+senha)
 
         super(Banca, self).save(*args, **kwargs)
 
@@ -934,28 +938,24 @@ class Banca(models.Model):
     def membros(self):
         """Retorna os membros da banca."""
         selecao = []
-        if self.composicao and self.composicao.exame and self.composicao.exame.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
+        if self.tipo_evento and self.tipo_evento.sigla in ["BI", "BF"]: # Banca Final ou Intermediária também precisam da avaliação do orientador
             if self.projeto.orientador:
                 selecao += [self.projeto.orientador.user]
         selecao += self.membros_partic()
         return selecao
-    
-
-    class Meta:
-        ordering = ["startDate"]
 
     def get_tipo(self):
         """Retorna o tipo da banca."""
-        if self.composicao and self.composicao.exame:
-            return self.composicao.exame
+        if self.tipo_evento:
+            return self.tipo_evento.nome
         return None
     
     def get_sigla(self):
         """Retorna a sigla do tipo de banca."""
         if self.tipo_evento:
             return self.tipo_evento.sigla
-        if self.composicao and self.composicao.exame:
-            return self.composicao.exame.sigla
+        if self.tipo_evento:
+            return self.tipo_evento.sigla
         return None
     
     @property
@@ -967,14 +967,14 @@ class Banca(models.Model):
     def get_observacoes_estudantes(self):
         """Retorna as observações dos estudantes."""
         if self.alocacao:  # Não estão sendo preenchidas as observações para estudantes de bancas de probation
-            return Observacao.objects.filter(alocacao=self.alocacao, observacoes_estudantes__isnull=False, exame=self.composicao.exame)
-        return Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame=self.composicao.exame)
+            return Observacao.objects.filter(alocacao=self.alocacao, observacoes_estudantes__isnull=False, exame__sigla=self.tipo_evento.sigla)
+        return Observacao.objects.filter(projeto=self.projeto, observacoes_estudantes__isnull=False, exame__sigla=self.tipo_evento.sigla)
     
     def get_anotacoes_estudantes(self, avaliador):
         """Retorna as anotações dos estudantes."""
-        if self.composicao.exame.sigla == "BI":
+        if self.tipo_evento.sigla == "BI":
             return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMBI", usuario=avaliador).order_by("data")
-        elif self.composicao.exame.sigla == "BF":
+        elif self.tipo_evento.sigla == "BF":
             return Documento.objects.filter(projeto=self.projeto, tipo_documento__sigla="RAMBF", usuario=avaliador).order_by("data")
         return Documento.objects.none()
     
@@ -993,12 +993,12 @@ class Banca(models.Model):
     def get_avaliacoes_bancas(self):
         """Retorna as avaliações da banca (com algumas condições)."""
         prazo_horas = 24  # prazo para publicar as notas depois que todos avaliaram
-        if self.composicao.exame.sigla == "F":
+        if self.tipo_evento.sigla == "F":
             prazo_horas = 24*14
-        elif self.composicao.exame.sigla == "P":
+        elif self.tipo_evento.sigla == "P":
             prazo_horas = 48
         
-        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame=self.composicao.exame)
+        avaliacoes = Avaliacao2.objects.filter(projeto=self.projeto, exame__sigla=self.tipo_evento.sigla)
 
         now = datetime.datetime.now()
         checa_banca = True
@@ -1045,23 +1045,19 @@ class Banca(models.Model):
         return avaliacao
     
     def get_cor(self):
-        return f"#{self.composicao.exame.cor}"
+        return f"#{self.tipo_evento.cor}"
 
     def get_avaliadores(self, avaliadores={}):
         objetivos = ObjetivosDeAprendizagem.objects.all()
         projeto = self.get_projeto()
-        try:
-            exame = self.composicao.exame
-        except:
-            raise ValidationError("<h1>Erro ao identificar Composição e Exame!</h1>")
+        sigla=self.tipo_evento.sigla
 
-            
         for objetivo in objetivos:
         
             if self.alocacao:  # Probation
-                avaliacoes = Avaliacao2.objects.filter(alocacao=self.alocacao, objetivo=objetivo, exame=exame).order_by("avaliador", "-momento")
+                avaliacoes = Avaliacao2.objects.filter(alocacao=self.alocacao, objetivo=objetivo, exame__sigla=sigla).order_by("avaliador", "-momento")
             else:
-                avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame=exame).order_by("avaliador", "-momento")
+                avaliacoes = Avaliacao2.objects.filter(projeto=projeto, objetivo=objetivo, exame__sigla=sigla).order_by("avaliador", "-momento")
 
             for banca in avaliacoes:
                 if banca.avaliador not in avaliadores:
@@ -1071,9 +1067,9 @@ class Banca(models.Model):
                     avaliadores[banca.avaliador]["momento"] = banca.momento
         
         if self.alocacao:
-            observacoes = Observacao.objects.filter(alocacao=self.alocacao, exame=exame).order_by("avaliador", "-momento")
+            observacoes = Observacao.objects.filter(alocacao=self.alocacao, exame__sigla=sigla).order_by("avaliador", "-momento")
         else:
-            observacoes = Observacao.objects.filter(projeto=projeto, exame=exame).order_by("avaliador", "-momento")
+            observacoes = Observacao.objects.filter(projeto=projeto, exame__sigla=sigla).order_by("avaliador", "-momento")
 
         for observacao in observacoes:
             if observacao.avaliador not in avaliadores:
@@ -1106,14 +1102,14 @@ class Banca(models.Model):
         """Retorna as bancas que o membro participa (ou é orientador)."""
         bancas = (Banca.objects.filter(membro1=membro) |
                   Banca.objects.filter(membro2=membro) |
-                  Banca.objects.filter(membro3=membro)).filter(composicao__exame__sigla__in=siglas)
+                  Banca.objects.filter(membro3=membro)).filter(tipo_evento__sigla__in=siglas)
 
         if membro.eh_prof_a:
             # Orientador é automaticamente membro de banca final e intermediária
             if "BI" in siglas:
-                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla="BI")
+                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, tipo_evento__sigla="BI")
             if "BF" in siglas:
-                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, composicao__exame__sigla="BF")
+                bancas = bancas | Banca.objects.filter(projeto__orientador=membro.professor, tipo_evento__sigla="BF")
 
         return bancas
 
@@ -1124,19 +1120,19 @@ class Banca(models.Model):
             if self.projeto and self.projeto.ano >= 2025:
                 sb, tb = "", False
                 if self:
-                    observacoes = Observacao.objects.filter(projeto=self.projeto, exame__sigla=self.composicao.exame.sigla)
+                    observacoes = Observacao.objects.filter(projeto=self.projeto, exame__sigla=self.tipo_evento.sigla)
                     tb = len(self.membros()) != len(observacoes)
                     sb = " ".join(["&#x1F44D;" if o.destaque else "&#x1F44E;" for o in observacoes])
                 return {"destaque_texto": sb, "destaque_incompleta": tb}
 
             elif self.projeto and self.projeto.ano >= 2023:
-                if self.composicao.exame.sigla == "BI":
+                if self.tipo_evento.sigla == "BI":
                     return {"destaque_texto": "media BI e RIG >= 8"}
                 else:
                     return {"destaque_texto": "media BF e RFG >= 8"}
 
             else:
-                if self.composicao.exame.sigla == "BI":
+                if self.tipo_evento.sigla == "BI":
                     return {"destaque_texto": "media BI e RIG >= 7"}
                 else:
                     return {"destaque_texto": "media BF e RFG >= 7"}
@@ -2128,13 +2124,13 @@ class Certificado(models.Model):
         """Retorna banca relacionada ao certificado."""
         if self.projeto:
             if self.tipo_certificado.titulo == "Membro de Banca Intermediária": 
-                return Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla="BI").last()  # (1, "Intermediária"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_evento__sigla="BI").last()  # (1, "Intermediária"),
             if self.tipo_certificado.titulo == "Membro de Banca Final":
-                return Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla="BF").last()  # (0, "Final"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_evento__sigla="BF").last()  # (0, "Final"),
             if self.tipo_certificado.titulo == "Membro da Banca Falconi":
-                return Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla="F").last()  # (2, "Certificação Falconi"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_evento__sigla="F").last()  # (2, "Certificação Falconi"),
             if self.tipo_certificado.titulo == "Membro de Banca de Probation":
-                return Banca.objects.filter(projeto=self.projeto, composicao__exame__sigla="P").last()  # (3, "Probation"),
+                return Banca.objects.filter(projeto=self.projeto, tipo_evento__sigla="P").last()  # (3, "Probation"),
         return None
     
     def get_projeto(self):

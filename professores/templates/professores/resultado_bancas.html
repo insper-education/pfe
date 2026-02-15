@@ -26,14 +26,14 @@
   <div id="atualizar">
     {% for banca in bancas %}
       {% with lprojeto=banca.get_projeto %}
-        {% if not projeto %}  {% comment %} Para avaliar bancas que tem muitas bancas, não mude para projeto {% endcomment %}
-          {% ifchanged banca.composicao.exame %}
+        {% if not projeto %}
+          {% ifchanged banca.sigla %}
             {% if not forloop.first %}
               </div>
             {% endif %}
             <div style="background-color: {{banca.get_cor}}26; padding: 4px 10px; margin-bottom: 1em; width: 820px; max-width: 100%; border: 1px solid {{banca.get_cor}};">
               <div style="line-height: 1; font-size: 1.25rem; padding: 4px; font-weight: bold; margin-bottom: 0.5em; border-bottom: 1px solid #ccc;">
-                {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
+                {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
                 <i class="bancas" style="float:right;"><span class="seta seta-cima"></span></i>
               </div>
           {% endifchanged %}

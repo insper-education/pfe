@@ -44,7 +44,7 @@ def exibe_notas_banca(banca):
     """Verifica se nota pode ser exibida para estudantes."""
     try:
         projeto = banca.get_projeto()
-        exibe = ExibeNota.objects.get(exame=banca.composicao.exame, ano=projeto.ano, semestre=projeto.semestre)
+        exibe = ExibeNota.objects.get(exame__sigla=banca.sigla, ano=projeto.ano, semestre=projeto.semestre)
     except Exception as e:
         return True
     return exibe.exibe

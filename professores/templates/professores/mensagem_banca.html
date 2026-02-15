@@ -20,7 +20,7 @@ Relatório: {{request.scheme}}://{{ request.get_host }}{% url "banca_avaliar" ba
 Site: {{request.scheme}}://{{request.get_host}}{{site}}%0D%0A
 {% endif %}{% endwith %}
 %0D%0A
-Banca:%20{{ banca.composicao.exame.titulo }}%0D%0A
+Banca:%20{{ banca.tipo_evento.nome }}%0D%0A
 Horário:%20{{banca.startDate.date}}%20({{banca.startDate|date:'l'}})%20das%20{{banca.startDate.time}}%20às%20{{banca.endDate.time}}%0D%0A
 {% if banca.location %}Local:%20{{banca.location|parse_quote}}%0D%0A{% endif %}
 {% if banca.link %}Vídeo-conferência:%20{{banca.link|parse_quote}}%0D%0A{% endif %}

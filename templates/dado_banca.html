@@ -16,7 +16,7 @@
   <div style="line-height: 1; font-size: 1.15rem;">
     <div>
       <a style="margin-right: 1em;" href="{% url 'banca_ver' banca.id %}">
-        {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
+        {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
         {% lng "agendada para" "scheduled for" %}
         {{banca.startDate|date:"d/m/y"}}
       </a>
@@ -81,7 +81,7 @@
                 <li>
                   <span style="font-weight: 500;">{{objetivo.titulo}}</span>: 
                   <span data-toggle="tooltip" data-html="true" animation="true" title=
-                  {% if banca.composicao.exame.sigla == "BI" %} 
+                  {% if banca.sigla == "BI" %} 
                     "{{objetivos|get_rubrica:objetivo.id|get_texto_intermediaria_nota:conceito.nota}}"
                   {% else %}
                     "{{objetivos|get_rubrica:objetivo.id|get_texto_final_nota:conceito.nota}}"
@@ -142,7 +142,7 @@
     <tr style="background-color: {{banca.get_cor}}; color: darkslategrey"><td>
       <b>
         {% lng "Média das Avaliações da Banca" "Average of the Examining Board" %}
-        {{banca.composicao.exame}}:
+        {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}:
         <ul id="banca{{banca.id}}_med_aval" style="list-style-type: '&#x21A3; ';"></ul>
       </b>
       <span id="banca{{banca.id}}"></span>
@@ -154,7 +154,7 @@
         $("#banca{{banca.id}}").html(banca.media_calculada());
       </script>
 
-      {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
+      {% if banca.sigla == "BI" or banca.sigla == "BF" %}
         {% with recomendacao=banca.get_recomendacao_destaque %}
           {% if recomendacao %}
             <span style="white-space: nowrap;">

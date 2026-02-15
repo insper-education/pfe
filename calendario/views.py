@@ -85,7 +85,7 @@ def export_calendar(request, event_id):
     ical_event["uid"] = "Banca{0}{1}{2}".format(
         banca.startDate.strftime("%Y%m%d%H%M%S"),
         banca.get_projeto().pk,
-        banca.composicao.exame.sigla)
+        banca.sigla)
     ical_event.add("summary", "Banca {0}".format(banca.get_projeto()))
     ical_event.add("dtstart", banca.startDate)
     ical_event.add("dtend", banca.endDate)

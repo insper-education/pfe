@@ -669,7 +669,7 @@
 
   $(document).ready(function () {
     {% if banca %}
-      botao_anterior = {% if banca.tipo_evento.sigla == "F" %}"BI"{% else %}"F"{% endif %};
+      botao_anterior = {% if banca.sigla == "F" %}"BI"{% else %}"F"{% endif %};
     {% endif %}
     carrega_modal();
     $("#projeto").change(function(){

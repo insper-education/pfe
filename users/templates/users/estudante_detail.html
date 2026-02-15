@@ -555,7 +555,7 @@
                         {{ banca.startDate|date:"H:i" }}
                       </div>
                     </div>
-                    <div class="banca-tipo" title="{{ banca.composicao.exame }}">{{ banca.composicao.exame }}</div>
+                    <div class="banca-tipo" title="{{ banca.tipo_evento.nome }}">{% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}</div>
                     <span class="badge badge-info badge-mini">
                       {% lng "Ver" "View" %}
                     </span>

@@ -22,7 +22,7 @@
         {% endif %}
         <div>
           <b>{% lng "Tipo:" "Type:" %}</b> 
-          {% lng banca.composicao.exame.titulo banca.composicao.exame.titulo_en %}
+          {% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}
         </div>
         
         {% include "cabecalho_projeto.html" with projeto=banca.get_projeto com_email=True com_semestre=True %}

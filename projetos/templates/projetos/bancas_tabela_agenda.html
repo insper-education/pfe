@@ -42,7 +42,7 @@
       {% for banca in bancas %}
         {% with projeto=banca.get_projeto %}
           <tr class="item" data-user="{{banca.get_sigla}}">
-            <td>{{banca.composicao.exame}}</td>
+            <td>{% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}</td>
             {% comment %} <td>{{banca.startDate|date:"d/m/Y"}}</td> {% endcomment %}
             <td><span class="texto-longo">{% lng "De" "From" %}:{{banca.startDate}}<br>{% lng "A" "To" %}: {{banca.endDate}}</span>
                 <span class="texto-curto">{% lng "De" "From" %}: {{banca.startDate|date:"d/m/y H:i"}}<br>{% lng "A" "To" %}: {{banca.endDate|date:"d/m/y H:i"}}</span></td>

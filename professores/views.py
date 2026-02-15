@@ -290,7 +290,7 @@ def avaliar_bancas(request, prof_id=None):
         else:
             professor = request.user.professor
 
-        bancas = Banca.get_bancas_com_membro(professor.user).order_by("composicao__exame__id")
+        bancas = Banca.get_bancas_com_membro(professor.user).order_by("tipo_evento__sigla", "startDate")
 
         # Filtra por edição se necessário
         if edicao != "todas":
@@ -321,14 +321,14 @@ def banca(request, slug):
     """Somente ve a banca, sem edição."""
     banca = get_object_or_404(Banca, slug=slug)
 
-    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
+    if banca.sigla == "BI":  # (1, "intermediaria"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
+    elif banca.sigla == "BF":  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
+    elif banca.sigla == "F":  # (2, "falconi"),
         # Reaproveita o tipo de documento da banca final
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
+    elif banca.sigla == "P":  # (3, "probation"),
         # Reaproveita o tipo de documento da banca final
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:
@@ -460,14 +460,15 @@ def banca_avaliar(request, slug, documento_id=None):
             return HttpResponseNotFound("<h1>Link expirado!<br> Documentos só podem ser visualizados até " + str(2 * configuracao.prazo_avaliar_banca) + " dias após a data da banca!</h1>")
         return le_arquivo(request, local_path, path, bypass_confidencial=True)
 
-    objetivos = banca.composicao.pesos.all()
-    pesos = Peso.objects.filter(composicao=banca.composicao)
+    exame = get_object_or_404(Exame, sigla=banca.sigla)
+    composicao = Composicao.objects.filter(exame=exame, data_inicial__lte=banca.startDate).order_by("-data_inicial").first()
+    objetivos = composicao.pesos.all()
+    pesos = Peso.objects.filter(composicao=composicao)
     
     if request.method == "POST":
         if "avaliador" in request.POST:
 
             avaliador = get_object_or_404(PFEUser, pk=int(request.POST["avaliador"]))
-            exame = banca.composicao.exame
 
             # Identifica que uma avaliação/observação já foi realizada anteriormente
             avaliacoes_anteriores = Avaliacao2.objects.filter(projeto=projeto, avaliador=avaliador, exame=exame)
@@ -524,22 +525,22 @@ def banca_avaliar(request, slug, documento_id=None):
                 julgamento_observacoes.save()
 
             if "arquivo" in request.FILES:
-                if banca.composicao.exame.sigla == "BI":
+                if exame.sigla == "BI":
                     doc__sigla="RAMBI"
-                else:  #elif banca.composicao.exame.sigla == "BF":
+                else:  #elif exame.sigla == "BF":
                     doc__sigla="RAMBF"
                 # Envia documento com anotações para os envolvidos intantanemente
                 documento = cria_material_documento(request, "arquivo", sigla=doc__sigla, confidencial=True,
                                                     projeto=projeto, usuario=avaliador,
-                                                    prefix="rev_"+str(avaliador.first_name)+"_"+str(banca.composicao.exame.sigla)+"_")
+                                                    prefix="rev_"+str(avaliador.first_name)+"_"+str(exame.sigla)+"_")
                 if documento:
-                    documento.anotacao = banca.composicao.exame.titulo
+                    documento.anotacao = exame.titulo
                     documento.save()
-                    subject = "Capstone | Documento com anotações - " + banca.composicao.exame.titulo + " "
+                    subject = "Capstone | Documento com anotações - " + exame.titulo + " "
                     subject += projeto.get_titulo_org()
                     mensagem_anot = "Anotações em Relatório de Banca<br>\n<br>\n"
                     mensagem_anot += "Anotações realizadas por: " + avaliador.get_full_name() + "<br>\n"
-                    mensagem_anot += "Banca: " + banca.composicao.exame.titulo + "<br>\n"
+                    mensagem_anot += "Banca: " + exame.titulo + "<br>\n"
                     mensagem_anot += "Projeto: " + projeto.get_titulo_org() + "<br>\n"
                     mensagem_anot += "Data: " + str(datetime.datetime.now()) + "<br>\n<br>\n<br>\n"
                     mensagem_anot += "Documento com Anotações: "
@@ -551,8 +552,8 @@ def banca_avaliar(request, slug, documento_id=None):
                     #recipient_list.append(configuracao.coordenacao.user.email)
                     email(subject, recipient_list, mensagem_anot)
 
-            subject = "Capstone | Avaliação de Banca - " + banca.composicao.exame.titulo + " "
-            if banca.composicao.exame.sigla == "P":
+            subject = "Capstone | Avaliação de Banca - " + exame.titulo + " "
+            if exame.sigla == "P":
                 subject += banca.alocacao.aluno.user.get_full_name() + " "
             subject += projeto.get_titulo_org()
 
@@ -574,7 +575,7 @@ def banca_avaliar(request, slug, documento_id=None):
             # Envio de mensagem para Orientador / Coordenação
             message = mensagem_orientador(banca)
             
-            if banca.composicao.exame.sigla in ["BI", "BF"]:  # Intermediária e Final
+            if exame.sigla in ["BI", "BF"]:  # Intermediária e Final
                 recipient_list = [projeto.orientador.user.email, ]
             else:  # Falconi ou Probation
                 recipient_list = [configuracao.coordenacao.user.email, ]
@@ -598,7 +599,6 @@ def banca_avaliar(request, slug, documento_id=None):
     else:
 
         pessoas, membros = coleta_membros_banca(banca)
-        composicao = banca.composicao
 
         # Identificando quem seria o avaliador
         avaliador_id = request.GET.get("avaliador")
@@ -626,13 +626,13 @@ def banca_avaliar(request, slug, documento_id=None):
             "P": TipoDocumento.objects.filter(nome__in=["Parecer para Probation", "Apresentação da Banca Final", "Relatório Final de Grupo"]),
         }
 
-        tipo_documento = map_tipo_documento.get(banca.composicao.exame.sigla)
+        tipo_documento = map_tipo_documento.get(exame.sigla)
 
         documentos = None
         if tipo_documento:
             documentos = Documento.objects.filter(tipo_documento__in=tipo_documento, projeto=projeto).order_by("tipo_documento", "-data")
 
-        if banca.composicao.exame.sigla == "P":  # Probation
+        if exame.sigla == "P":  # Probation
             documentos = documentos | Documento.objects.filter(tipo_documento__sigla="RII", usuario=banca.alocacao.aluno.user) | Documento.objects.filter(tipo_documento__sigla="RIF", usuario=banca.alocacao.aluno.user)
             
         niveis_objetivos = Estrutura.loads(nome="Níveis de Objetivos")
@@ -678,7 +678,7 @@ def banca_avaliar(request, slug, documento_id=None):
             "observacoes_orientador": unquote(request.GET.get("observacoes_orientador", '')),
             "observacoes_estudantes": unquote(request.GET.get("observacoes_estudantes", '')),
             "today": datetime.datetime.now(),
-            "periodo_para_rubricas": banca.composicao.exame.periodo_para_rubricas,
+            "periodo_para_rubricas": exame.periodo_para_rubricas,
             "niveis_objetivos": niveis_objetivos,
             "destaque": destaque,
             "endpoints": json.dumps(endpoints),
@@ -700,14 +700,16 @@ def banca_avaliar(request, slug, documento_id=None):
 def banca_ver(request, primarykey):
     """Retorna banca pedida."""
     banca = get_object_or_404(Banca, id=primarykey)
-    if banca.composicao.exame.sigla == "BI":  # (1, "intermediaria"),
+
+
+    if banca.sigla == "BI":  # (1, "intermediaria"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Intermediária") | TipoDocumento.objects.filter(nome="Relatório Intermediário de Grupo")
-    elif banca.composicao.exame.sigla == "BF":  # (0, "final"),
+    elif banca.sigla == "BF":  # (0, "final"),
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "F":  # (2, "falconi"),
+    elif banca.sigla == "F":  # (2, "falconi"),
         # Repetindo banca final para falconi
         tipo_documento = TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
-    elif banca.composicao.exame.sigla == "P":  # (3, "probation"),
+    elif banca.sigla == "P":  # (3, "probation"),
         # Repetindo banca final para probation
         tipo_documento = TipoDocumento.objects.filter(nome="Relatório para Probation") | TipoDocumento.objects.filter(nome="Apresentação da Banca Final") | TipoDocumento.objects.filter(nome="Relatório Final de Grupo")
     else:

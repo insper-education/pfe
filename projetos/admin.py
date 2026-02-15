@@ -96,8 +96,8 @@ class ReembolsoAdmin(admin.ModelAdmin):
 class BancaAdmin(admin.ModelAdmin):
     """Definição do que aparece no sistema de administração do Django."""
 
-    list_display = ("composicao", "projeto", "get_orientador", "get_organizacao", "startDate", "slug",)
-    list_filter = ("composicao__exame", "projeto__ano", "projeto__semestre",)
+    list_display = ("tipo_evento", "projeto", "get_orientador", "get_organizacao", "startDate", "slug",)
+    list_filter = ("tipo_evento", "projeto__ano", "projeto__semestre",)
     search_fields = ["projeto__titulo_final", "projeto__proposta__organizacao__sigla", 
                      "projeto__orientador__user__first_name", "projeto__orientador__user__last_name",
                      "membro1__first_name", "membro1__last_name",

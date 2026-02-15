@@ -55,9 +55,9 @@ def retorna_bancas(request):
             if projeto.orientador and projeto.orientador.user == membro:
                 title += " (O)"
 
-        if banca.composicao and banca.composicao.exame:
-            cor = banca.composicao.exame.cor
-            className = banca.composicao.exame.className
+        if banca.tipo_evento and banca.tipo_evento.cor:
+            cor = banca.tipo_evento.cor
+            className = f"b_{banca.sigla}"
         else:
             cor = "808080"
             className = ""
@@ -206,7 +206,7 @@ def verifica_membro_banca(request):
         lista_bancas.append({
             "id": banca.id,
             "data": data,
-            "tipo": banca.composicao.exame.titulo if banca.composicao and banca.composicao.exame else "",
+            "tipo": banca.tipo_evento.nome if banca.tipo_evento else "",
             "projeto": projeto_titulo,
             "aluno_nome": aluno_nome,
             "aluno_email": aluno_email,

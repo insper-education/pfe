@@ -50,9 +50,6 @@ class Exame(models.Model):
     cor = models.TextField("Cor", max_length=6, null=True, blank=True, default="777777",
                            help_text="Cor do Exame em hexadecimal")
     
-    className = models.TextField("Class Name", max_length=64, null=True, blank=True,
-                                 help_text="Classe CSS para o Exame, usada para customização visual")
-    
     def __str__(self):
         return str(self.titulo) 
     

@@ -33,9 +33,9 @@
 
       {% include "cabecalho_projeto.html" with projeto=projeto com_grupo=True %}
 
-      {% if banca.composicao.exame is not None %}
+      {% if banca.tipo_evento is not None %}
         <b>{% lng "Tipo de Banca" "Presentation" %}:</b>
-        {{ banca.composicao.exame }}
+        {{ banca.tipo_evento.nome }}
         <br>
       {% endif %}
 
@@ -107,7 +107,7 @@
       {% include "tabela_avaliacao_objetivos.html" with editor=True %}
       {% include "atualiza_objetivos.html" %}
 
-      {% if banca.composicao.exame.sigla != "P" and banca.composicao.exame.sigla != "F" %}{% comment %} Não é probation {% endcomment %}
+      {% if banca.sigla != "P" and banca.sigla != "F" %}{% comment %} Não é probation {% endcomment %}
         {% comment %} Observações somente para leitura dos estudantes {% endcomment %}
         <div class="mb-3">
           <label for="observacoes_estudantes"><b data-toggle="tooltip" data-html="true" animation="true"
@@ -140,7 +140,7 @@
         <textarea id="observacoes_orientador" name="observacoes_orientador" rows="8" cols="100" maxlength="2048">{{observacoes_orientador}}</textarea>
       </div>
       
-      {% if banca.composicao.exame.sigla == "BI" or banca.composicao.exame.sigla == "BF" %}
+      {% if banca.sigla == "BI" or banca.sigla == "BF" %}
         <div style="border: 2px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
           <label for="destaque">
             <b>{% lng "Projeto Destaque" "Highlight Project" %}:</b>&nbsp;

@@ -87,9 +87,9 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
             banca = None
             if exame.banca:
                 if exame.grupo:  # Grupo - Intermediária/Final
-                    banca = Banca.objects.filter(projeto=alocacao.projeto, composicao__exame__sigla=exame.sigla).last()
+                    banca = Banca.objects.filter(projeto=alocacao.projeto, tipo_evento__sigla=exame.sigla).last()
                 else:  # Individual - Probation
-                    banca = Banca.objects.filter(alocacao=alocacao, composicao__exame__sigla=exame.sigla).last()
+                    banca = Banca.objects.filter(alocacao=alocacao, tipo_evento__sigla=exame.sigla).last()
             try:
                 if exame.grupo:  # GRUPO
                     paval = Avaliacao2.objects.filter(projeto=alocacao.projeto, exame=exame)
@@ -126,12 +126,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
                             "exame": exame,
-                            # "sigla": exame.sigla,
                             "nota": banca_info["media"],
                             "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                            # "nome": exame.titulo,
-                            # "nome_en": exame.titulo_en,
-                            # "banca": True,
                             "objetivos": banca_info["objetivos"],
                             "bloqueado": not valido
                         })
@@ -141,12 +137,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                             if pnp:  # Se não houver avaliação, não adiciona nota
                                 notas.append({
                                     "exame": exame,
-                                    # "sigla": exame.sigla,
                                     "nota": float(pnp.nota) if pnp.nota else None,
                                     "peso": 0,
-                                    # "nome": exame.titulo,
-                                    # "nome_en": exame.titulo_en,
-                                    # "banca": True,
                                     "objetivos": None,
                                     "bloqueado": False
                                 })
@@ -159,12 +151,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         banca_info = get_banca_estudante(paval, ano=ano_proj, semestre=semestre_proj)
                         notas.append({
                             "exame": exame,
-                            # "sigla": exame.sigla,
                             "nota": banca_info["media"],
                             "peso": banca_info["peso"]/100 if banca_info["peso"] else 0,
-                            # "nome": exame.titulo,
-                            # "nome_en": exame.titulo_en,
-                            # "banca": False,
                             "objetivos": banca_info["objetivos"],
                             "bloqueado": False
                         })
@@ -172,12 +160,8 @@ def get_notas_estudante(estudante, request=None, ano=None, semestre=None, checa_
                         pnp = paval.order_by("momento").last()
                         notas.append({
                             "exame": exame,
-                            # "sigla": exame.sigla,
                             "nota": float(pnp.nota) if pnp.nota else None,
                             "peso": pnp.peso/100 if pnp.peso else 0,
-                            # "nome": exame.titulo,
-                            # "nome_en": exame.titulo_en,
-                            # "banca": False,
                             "objetivos": None,
                             "bloqueado": False
                         })
