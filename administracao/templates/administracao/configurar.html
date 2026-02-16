@@ -9,101 +9,359 @@
 {% load get_field %}
 {% load linguas %}
 
+{% block head %}
+<style>
+  .config-page {
+    max-width: 1080px;
+    margin: 1.75rem auto;
+    padding: 0 1rem 2rem;
+  }
+
+  .config-hero {
+    background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2);
+    margin-bottom: 1rem;
+  }
+
+  .config-hero h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .config-hero .hero-subtitle {
+    margin-top: 0.35rem;
+    opacity: 0.95;
+    font-size: 0.92rem;
+  }
+
+  .config-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .config-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+  }
+
+  .config-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid #eef2f7;
+    background: #f8fafc;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .config-card-body {
+    padding: 1rem 1.15rem 1.2rem;
+  }
+
+  .config-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .field {
+    margin-bottom: 0.9rem;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field label {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.92rem;
+  }
+
+  .form-control-modern,
+  .config-page select,
+  .config-page input[type="text"],
+  .config-page input[type="number"] {
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    color: #111827;
+    padding: 0.45rem 0.75rem;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+
+  .config-page select:focus,
+  .config-page input[type="text"]:focus,
+  .config-page input[type="number"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  .inline-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 180px));
+    gap: 0.85rem;
+    align-items: end;
+  }
+
+  .help {
+    margin-top: 0.35rem;
+    color: #6b7280;
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  .top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .btn-copy-calendar {
+    background: #0ea5e9;
+    border-color: #0284c7;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.42rem 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .btn-copy-calendar:hover {
+    color: #fff;
+    filter: brightness(0.96);
+    text-decoration: none;
+  }
+
+  .signature-box {
+    border: 1px dashed #9ca3af;
+    border-radius: 10px;
+    padding: 0.55rem;
+    display: inline-block;
+    background: #fff;
+  }
+
+  .signature-preview {
+    max-width: 320px;
+    height: auto;
+    display: block;
+  }
+
+  .signature-link {
+    word-break: break-all;
+    font-size: 0.83rem;
+  }
+
+  .form-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .config-grid-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .inline-fields {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .inline-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 
-  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="config-page">
+  <div class="config-hero">
+    <h1>⚙️ {% lng "Configurações do Sistema" "System Settings" %}</h1>
+    <div class="hero-subtitle">
+      <strong>{% lng "Data e Hora do Sistema:" "System Date and Time:" %}</strong>
+      {% now "j F Y H:i" %}
+    </div>
+  </div>
 
-    <b>{% lng "Data e Hora do Sistema:" "System Date and Time:" %}</b>
-    {% now "j F Y H:i" %}
-    <br><br>
+  <form class="config-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <section class="config-card">
+      <div class="config-card-header">📅 {% lng "Calendário e Período" "Calendar and Period" %}</div>
 
-    {% lng "Copia calendário:" "Copy calendar:" %}
-    <a class="btn btn-info mb-1" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja duplicar todos os eventos de um semestre para o outro?')" >{{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}</a>
-    <br><br>
+      <div class="config-card-body config-grid-2">
 
-    {% lng "Período Liberado:" "Released Period:" %}
-    &nbsp;&nbsp;&nbsp;
-    &nbsp;&nbsp;&nbsp;<label for="periodo_ano">ano:</label> <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
-    &nbsp;&nbsp;&nbsp;<label for="periodo_semestre">semestre:</label> <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
-    <small>
-      {% lng "<br>(Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas)<br>(Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto)<br>" "<br>(Only change when the semester officially changes, usually change a little before the start of classes)<br>(Students will be able to see the projects they have been allocated to from the released date and project)<br>" %}
-    </small>
-    <br><br><hr><br>
-    <label for="prazo_avaliar">
-      {% lng "Prazo máximo para orientadores avaliarem entregas:" "Maximum deadline for advisors to evaluate deliveries:" %}
-    </label> <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/> dias<br>
-    <label for="prazo_avaliar_banca">
-      {% lng "Prazo máximo para avaliadores preencherem a avaliação de banca:" "Maximum deadline for evaluators to fill out the evaluation of the examination board:" %}
-    </label> <input id="prazo_avaliar_banca" name="prazo_avaliar_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar_banca}}"/> dias<br>
-    {% lng "Os relatório ficarão disponíveis até o prazo definido, após o prazo, o sistema não permitirá mais a visualização do relatório de banca." "The reports will be available until the deadline defined, after the deadline, the system will no longer allow the visualization of the report to the examination board." %}
-    
-    <br><hr><br>
+        <div class="field">
+          <label>{% lng "Período Liberado" "Released Period" %}</label>
+          <div class="inline-fields">
+            <div>
+              <label for="periodo_ano">{% lng "Ano" "Year" %}</label>
+              <input id="periodo_ano" name="periodo_ano" type="number" min="2018" max="9999" step="1" value="{{configuracao.ano}}"/>
+            </div>
+            <div>
+              <label for="periodo_semestre">{% lng "Semestre" "Semester" %}</label>
+              <input id="periodo_semestre" name="periodo_semestre" type="number" min="1" max="2" step="1" value="{{configuracao.semestre}}"/>
+            </div>
+          </div>
+        </div>
 
-    <label for="coordenacao">
-      {% lng "Coordenador Capstone:" "Capstone Coordinator:" %}
-    </label>
-    <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do Capstone" required>
-      {% for administrador in administradores %}
-        <option value="{{administrador.id}}" 
-          data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"
-          data-image="{% if administrador.assinatura %}{{administrador.assinatura.url}}{% endif %}"
-          {% if administrador.id == configuracao.coordenacao.id %}selected{% endif %}>
-          {{administrador.user.get_full_name}}
-        </option> 
-      {% endfor %}
-    </select>
-    <br>
+        <div class="field">
+          <label>{% lng "Copia calendário" "Copy calendar" %}</label>
+          <div class="top-actions">
+            <a class="btn-copy-calendar" href="{% url 'copia_calendario' %}" onClick="return confirm('Tem certeza que deseja duplicar todos os eventos de um semestre para o outro?')">
+              {{configuracao.periodo}} =&gt; {{configuracao.proximo_periodo}}
+            </a>
+          </div>
+        </div>
 
-    <label for="nome_para_certificados">
-      {% lng "Nome para certificados:" "Name for certificates:" %}
-    </label>
-    <input id="nome_para_certificados" name="nome_para_certificados" type="text" size="36" maxlength="{% max_length administrador "nome_para_certificados" %}"
-    {% if configuracao.coordenacao.nome_para_certificados %}value="{{configuracao.coordenacao.nome_para_certificados}}"{% endif %}/><br>
-    <label for="assinatura">
-      {% lng "Assinatura (proporção ~250x70):" "Signature (proportion ~250x70):" %}
-    </label>
-    {% include "selecionar_arquivo.html" with arquivo_nome="assinatura" arquivo_accept="image/*" %}
-    
-    <br><a id="link_assinatura" href="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
-      <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}</span><br>
-      <div style="border: 1px solid #000; border-style: dotted; padding: 8px; width:fit-content;">
-        <img id="signature" class="signature" alt="Imagem da Assinatura"
-            src="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}"></div>
-    </a>
+      </div>
 
-    <script>
-      function atualiza_coordenacao() {
-          var nome_para_certificados = $(this).find(":selected").data("nome_para_certificados");
-          var image = $(this).find(":selected").data("image");
-          $("#nome_para_certificados").val(nome_para_certificados);
-          $("#signature").attr("src", "{{request.scheme}}://{{request.get_host}}"+image);
-          $("#texto_link_assinatura").html("{{request.scheme}}://{{request.get_host}}"+image);
-          $("#link_assinatura").attr("href", "{{request.scheme}}://{{request.get_host}}"+image);
-      }
-      $(document).ready($("#coordenacao").change(atualiza_coordenacao));
-    </script>
-    
-    <br><hr><br>
+      <div class="help p-3">
+        {% lng "Somente troque quando o semestre mudar oficialmente, em geral trocar um pouco antes do começo das aulas. Estudantes conseguirão ver os projetos em que foram alocados a partir da data liberada e do projeto." "Only change when the semester officially changes, usually a little before the start of classes. Students will be able to see the projects they have been allocated to from the released date and project." %}
+      </div>
 
-    <label for="operacao">
-      {% lng "Responsável Operação Capstone:" "Capstone Operation Responsible:" %}
-    </label>
-    <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
-      {% for oper in operacionalizadores %}
-        <option value="{{oper.id}}" 
-          {% if oper.id == configuracao.operacao.id %}selected{% endif %}>
-          {{oper.get_full_name}}
-        </option> 
-      {% endfor %}
-    </select>
-    <br>
-    <small>{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</small>
-    <br>
+    </section>
 
-    <br><br>
-    <button class="btn btn-primary mb-1" type="submit">
-      {% lng "Confirmar" "Confirm" %}
-    </button>
+    <section class="config-card">
+      <div class="config-card-header">⏱️ {% lng "Prazos de Avaliação" "Evaluation Deadlines" %}</div>
+      <div class="config-card-body config-grid-2">
+        <div class="field">
+          <label for="prazo_avaliar">
+            {% lng "Prazo máximo para orientadores avaliarem entregas" "Maximum deadline for advisors to evaluate deliveries" %}
+          </label>
+          <input id="prazo_avaliar" name="prazo_avaliar" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar}}"/>
+          <div class="help">{% lng "Em dias." "In days." %}</div>
+        </div>
+
+        <div class="field">
+          <label for="prazo_avaliar_banca">
+            {% lng "Prazo máximo para avaliadores preencherem a avaliação de banca" "Maximum deadline for evaluators to fill out the examination board evaluation" %}
+          </label>
+          <input id="prazo_avaliar_banca" name="prazo_avaliar_banca" style="text-align:right;" type="number" min="0" max="9999" step="1" value="{{configuracao.prazo_avaliar_banca}}"/>
+          <div class="help">{% lng "Em dias." "In days." %}</div>
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+          <div class="help">
+            {% lng "Os relatório ficarão disponíveis até o prazo definido, após o prazo, o sistema não permitirá mais a visualização do relatório de banca." "The reports will be available until the deadline defined, after the deadline, the system will no longer allow viewing of the board report." %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="config-card">
+      <div class="config-card-header">👤 {% lng "Coordenação" "Coordination" %}</div>
+      <div class="config-card-body">
+        <div class="field">
+          <label for="coordenacao">{% lng "Coordenador Capstone" "Capstone Coordinator" %}</label>
+          <select name="coordenacao" id="coordenacao" title="Selecione o coordenador do Capstone" required>
+            {% for administrador in administradores %}
+              <option value="{{administrador.id}}"
+                data-nome_para_certificados="{% if administrador.nome_para_certificados %}{{administrador.nome_para_certificados}}{% endif %}"
+                data-image="{% if administrador.assinatura %}{{administrador.assinatura.url}}{% endif %}"
+                {% if administrador.id == configuracao.coordenacao.id %}selected{% endif %}>
+                {{administrador.user.get_full_name}}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="nome_para_certificados">{% lng "Nome para certificados" "Name for certificates" %}</label>
+          <input id="nome_para_certificados" name="nome_para_certificados" type="text" maxlength="{% max_length administrador "nome_para_certificados" %}" {% if configuracao.coordenacao.nome_para_certificados %}value="{{configuracao.coordenacao.nome_para_certificados}}"{% endif %}/>
+        </div>
+
+        <div class="field">
+          <label for="assinatura">{% lng "Assinatura (proporção ~250x70)" "Signature (proportion ~250x70)" %}</label>
+          {% include "selecionar_arquivo.html" with arquivo_nome="assinatura" arquivo_accept="image/*" %}
+        </div>
+
+        <div class="field">
+          <div class="signature-box mt-1">
+            <img id="signature" class="signature signature-preview" alt="Imagem da Assinatura" src="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
+          </div>
+          <div>
+            <a id="link_assinatura" class="signature-link" href="{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}">
+              <span id="texto_link_assinatura" class="full-text">{{request.scheme}}://{{request.get_host}}{{configuracao.coordenacao.assinatura.url}}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="config-card">
+      <div class="config-card-header">👥 {% lng "Equipe de Apoio" "Support Team" %}</div>
+      <div class="config-card-body config-grid-2">
+        <div class="field">
+          <label for="operacao">{% lng "Responsável Operação Capstone" "Capstone Operation Responsible" %}</label>
+          <select name="operacao" id="operacao" title="Selecione operacional do Capstone" required>
+            {% for oper in operacionalizadores %}
+              <option value="{{oper.id}}" {% if oper.id == configuracao.operacao.id %}selected{% endif %}>
+                {{oper.get_full_name}}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="help">{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</div>
+        </div>
+
+        <div class="field">
+          <label for="tecnico">{% lng "Responsável Técnico Capstone" "Capstone Technical Responsible" %}</label>
+          <select name="tecnico" id="tecnico" title="Selecione técnico do Capstone" required>
+            {% for oper in operacionalizadores %}
+              <option value="{{oper.id}}" {% if oper.id == configuracao.tecnico.id %}selected{% endif %}>
+                {{oper.get_full_name}}
+              </option>
+            {% endfor %}
+          </select>
+          <div class="help">{% lng "Operação pode ser um administrador ou funcionário do Insper." "Operation can be an administrator or employee of Insper." %}</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="form-footer">
+      <button class="btn btn-primary mb-1" type="submit">
+        {% lng "Confirmar" "Confirm" %}
+      </button>
+    </div>
   </form>
+</div>
+
+<script>
+  function atualiza_coordenacao() {
+      var nome_para_certificados = $(this).find(":selected").data("nome_para_certificados") || "";
+      var image = $(this).find(":selected").data("image") || "";
+      var fullImage = "{{request.scheme}}://{{request.get_host}}" + image;
+
+      $("#nome_para_certificados").val(nome_para_certificados);
+      if (image) {
+        $("#signature").attr("src", fullImage);
+        $("#texto_link_assinatura").html(fullImage);
+        $("#link_assinatura").attr("href", fullImage);
+      }
+  }
+  $(document).ready(function() {
+    $("#coordenacao").change(atualiza_coordenacao);
+  });
+</script>
 
 {% endblock %}
