@@ -435,19 +435,19 @@ def gerir_pedidos(request):
         #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
         # for alocacao in Alocacao.objects.filter(projeto=projeto):
         #     email_recipients.append(alocacao.aluno.user.email)
-        email_message = f""""
+        email_message = f"""
             {pedido.solicitante.get_full_name()},<br><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;Seu pedido foi {pedido.status}.<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Seu pedido foi <b>{pedido.status}</b>.<br><br>
         """
         if resposta:
             email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;Resposta:<br>{resposta}<br><br>"
-        email_message = f""""
+        email_message += f"""
             &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {pedido.tipo.capitalize()}<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {pedido.projeto.proposta.titulo}<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
         """
         for alocacao in Alocacao.objects.filter(projeto=pedido.projeto):
-            email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+            email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
         email_message += f"""
             <br>
             &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>

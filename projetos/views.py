@@ -956,7 +956,7 @@ def pedir_recursos(request, primarykey=None):
                 &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
             """
             for alocacao in Alocacao.objects.filter(projeto=projeto):
-                email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+                email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
             email_message += f"""
                 <br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
