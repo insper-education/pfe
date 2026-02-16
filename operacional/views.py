@@ -431,10 +431,10 @@ def gerir_pedidos(request):
 
         email_subject = f"Resposta de Pedido de Recurso: {pedido.tipo.capitalize()} - Projeto {pedido.projeto.proposta.titulo}"
         email_recipients = [request.user.email]
-        # email_recipients += [configuracao.coordenacao.user.email]
-        #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
-        # for alocacao in Alocacao.objects.filter(projeto=projeto):
-        #     email_recipients.append(alocacao.aluno.user.email)
+        email_recipients += [configuracao.coordenacao.user.email]
+        email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
+        for alocacao in Alocacao.objects.filter(projeto=projeto):
+            email_recipients.append(alocacao.aluno.user.email)
         email_message = f"""
             {pedido.solicitante.get_full_name()},<br><br>
             &nbsp;&nbsp;&nbsp;&nbsp;Seu pedido foi <b>{pedido.status}</b>.<br><br>

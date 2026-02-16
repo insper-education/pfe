@@ -944,10 +944,10 @@ def pedir_recursos(request, primarykey=None):
 
             email_subject = f"Pedido de Recurso: {tipo.capitalize()} - Projeto {projeto.proposta.titulo}"
             email_recipients = [request.user.email]
-            # email_recipients += [configuracao.coordenacao.user.email]
-            #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
-            # for alocacao in Alocacao.objects.filter(projeto=projeto):
-            #     email_recipients.append(alocacao.aluno.user.email)
+            email_recipients += [configuracao.coordenacao.user.email]
+            email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
+            for alocacao in Alocacao.objects.filter(projeto=projeto):
+                email_recipients.append(alocacao.aluno.user.email)
             email_message = f"""
                 Orientador{"a" if projeto.orientador.user.genero == 'F' else ""} {projeto.orientador.user.get_full_name() if projeto.orientador else ""},<br><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
