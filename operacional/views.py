@@ -437,23 +437,24 @@ def gerir_pedidos(request):
         #     email_recipients.append(alocacao.aluno.user.email)
         email_message = f""""
             {pedido.solicitante.get_full_name()},<br><br>
-            Seu pedido foi {pedido.status}.<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Seu pedido foi {pedido.status}.<br><br>
         """
         if resposta:
-            email_message += f"Resposta:<br>{resposta}<br><br>"
+            email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;Resposta:<br>{resposta}<br><br>"
         email_message = f""""
-            Tipo: {pedido.tipo.capitalize()}<br>
-            Projeto: {pedido.projeto.proposta.titulo}<br>
-            Estudantes:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {pedido.tipo.capitalize()}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {pedido.projeto.proposta.titulo}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
         """
         for alocacao in Alocacao.objects.filter(projeto=pedido.projeto):
-            email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+            email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
         email_message += f"""
             <br>
-            Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
-            Detalhes do pedido:<br>
-            {json.dumps(pedido.dados, indent=2)}
-            Observações adicionais:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
+            {pedido.get_detalhes_completos()}
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
             {pedido.observacoes if pedido.observacoes else "Nenhuma"}
         """
 

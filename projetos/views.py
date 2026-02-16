@@ -934,7 +934,7 @@ def pedir_recursos(request, primarykey=None):
 
         if tipo:
             observacoes = request.POST.get("observacoes", "")
-            Pedido.objects.create(
+            pedido = Pedido.objects.create(
                 projeto=projeto,
                 solicitante=request.user,
                 tipo=tipo,
@@ -948,21 +948,22 @@ def pedir_recursos(request, primarykey=None):
             #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
             # for alocacao in Alocacao.objects.filter(projeto=projeto):
             #     email_recipients.append(alocacao.aluno.user.email)
-            email_message = f""""
-                Orientador,<br><br>
-                Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
-                Tipo: {tipo.capitalize()}<br>
-                Projeto: {projeto.proposta.titulo}<br>
-                Estudantes:<br>
+            email_message = f"""
+                Orientador{"a" if projeto.orientador.user.genero == 'F' else ""} {projeto.orientador.user.get_full_name() if projeto.orientador else ""},<br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {tipo.capitalize()}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.proposta.titulo}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
             """
             for alocacao in Alocacao.objects.filter(projeto=projeto):
-                email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+                email_message += f"&nbsp;&nbsp;&nbsp;&nbsp;&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
             email_message += f"""
                 <br>
-                Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
-                Detalhes do pedido:<br>
-                {json.dumps(dados, indent=2)}
-                Observações adicionais:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
+                {pedido.get_detalhes_completos()}
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
                 {observacoes if observacoes else "Nenhuma"}
             """
 

@@ -1514,38 +1514,3 @@ def executa_backup(request):
     }   
 
     return render(request, "generic_ml.html", context=context)
-
-@login_required
-@permission_required("users.altera_professor", login_url="/")
-def gerir_pedidos(request):
-    """Gere pedidos de recursos."""
-    if request.method == "POST":
-        pedido_id = request.POST.get("pedido_id")
-        acao = request.POST.get("acao")
-        resposta = request.POST.get("resposta", "")
-
-        pedido = get_object_or_404(Pedido, id=pedido_id)
-
-        if acao == "aprovar":
-            pedido.status = "aprovado"
-        elif acao == "reprovar":
-            pedido.status = "reprovado"
-            
-        pedido.resposta = resposta
-        pedido.data_resposta = datetime.datetime.now()
-        pedido.save()
-        
-        return redirect("gerir_pedidos")
-    
-    pedidos = Pedido.objects.all().order_by("-data_solicitacao")
-    
-    # Organiza os pedidos para facilitar a visualização
-    pedidos_pendentes = pedidos.filter(status="pendente")
-    pedidos_processados = pedidos.exclude(status="pendente")
-    
-    context = {
-        "pedidos_pendentes": pedidos_pendentes,
-        "pedidos_processados": pedidos_processados,
-    }
-    
-    return render(request, "administracao/gerir_pedidos.html", context)
