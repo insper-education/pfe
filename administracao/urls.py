@@ -45,6 +45,7 @@ urlpatterns = [
     path("servico/", views.servico, name="servico"),
     path("tarefas_agendadas/", views.tarefas_agendadas, name="tarefas_agendadas"),
     path("versoes_sistema/", views.versoes_sistema, name="versoes_sistema"),
+    path("gerir_pedidos/", views.gerir_pedidos, name="gerir_pedidos"),
 
     path("ajax/definir_orientador/", views.definir_orientador, name="definir_orientador"),
     path("ajax/excluir_disciplina", views.excluir_disciplina, name="excluir_disciplina"),

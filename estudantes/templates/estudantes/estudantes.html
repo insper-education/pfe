@@ -119,6 +119,15 @@
       {% lng "Registro de Reuniões" "Meeting Records" %}
     </a>
   </div>
+
+  <div class="item_lista"><span class="circulo">&#9899;</span>
+    <a {% if not projeto and not associado and user.eh_estud %} class="disabled" onclick="showMessage('projeto')" {% else %} href="{% url 'pedir_recursos' %}" {% endif %} >
+      {% lng "Pedir Recursos" "Request Resources" %}
+    </a>
+  </div>
+
+
+
 </div>
 
 

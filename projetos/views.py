@@ -25,6 +25,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
 from estudantes.views import dinamica_conflitos
+from users.templatetags import alocacao
 
 from .messages import email, message_reembolso
 
@@ -33,7 +34,7 @@ from .models import Coorientador, Avaliacao2, ObjetivosDeAprendizagem
 from .models import Feedback, Acompanhamento, Anotacao, Organizacao
 from .models import Documento, FeedbackEstudante
 from .models import Banco, Reembolso, Aviso, Conexao
-from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante
+from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante, Pedido
 
 from .support import simple_upload
 from .support2 import get_areas_propostas, get_areas_estudantes, recupera_envolvidos, anota_participacao
@@ -838,12 +839,156 @@ def gestao_projeto(request, primarykey=None):
             context["projeto"] = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
         else:
             context["projeto"] = Projeto.objects.filter(orientador=request.user.professor).last()
-    elif request.user.eh_aluno:  # Caso seja estudante
+    elif request.user.eh_estud:  # Caso seja estudante
         context["projeto"] = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
     else:
         return HttpResponse("Acesso negado.", status=401)
 
     return render(request, "projetos/gestao_projeto.html", context=context)
+
+
+
+
+@login_required
+@transaction.atomic
+def pedir_recursos(request, primarykey=None):
+    """Mostra o projeto do próprio estudante, se for estudante."""
+    configuracao = get_object_or_404(Configuracao)
+    
+    projeto = None
+    
+    # Caso seja Professor ou Administrador
+    if request.user.eh_prof_a:
+        # Pegando um estudante de um projeto quando orientador
+        if primarykey:
+            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+        else:
+            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+    elif request.user.eh_estud:  # Caso seja estudante
+        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
+    
+    if not projeto:
+        return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
+
+    if request.method == "POST":
+        tipo = request.POST.get("tipo_recurso")
+        dados = {}
+        
+        if tipo == "github":
+            dados["repo_nome"] = request.POST.get("repo_nome")
+            dados["repo_descricao"] = request.POST.get("repo_descricao")
+
+            github_users = {}
+            for key, value in request.POST.items():
+                if key.startswith('github_user_') and value:
+                    user_id = int(key.replace('github_user_', ''))
+                    github_users[user_id] = value
+                    user = get_object_or_404(PFEUser, id=user_id)
+                    user.conta_github = value
+                    user.save()
+            if github_users:
+                dados["github_users"] = github_users
+
+            if "repo_publico" in request.POST:
+                dados["repo_publico"] = True
+                dados["repo_publico_justificativa"] = request.POST.get("repo_publico_justificativa")
+            else:
+                dados["repo_publico"] = False
+                
+        elif tipo == "nuvem":
+            dados["nuvem_servicos"] = request.POST.get("nuvem_servicos")
+            dados["nuvem_finalidade"] = request.POST.get("nuvem_finalidade")
+            dados["nuvem_justificativa"] = request.POST.get("nuvem_justificativa")
+            
+        elif tipo == "overleaf":
+            dados["overleaf_nome"] = request.POST.get("overleaf_nome")
+            dados["overleaf_descricao"] = request.POST.get("overleaf_descricao")
+            
+        elif tipo == "equipamento":
+            dados["equip_tipo"] = request.POST.get("equip_tipo")
+            dados["equip_detalhes"] = request.POST.get("equip_detalhes")
+            dados["equip_finalidade"] = request.POST.get("equip_finalidade")
+            
+        elif tipo == "compra":
+            dados["compra_item"] = request.POST.get("compra_item")
+            dados["compra_quantidade"] = request.POST.get("compra_quantidade")
+            dados["compra_justificativa"] = request.POST.get("compra_justificativa")
+            
+            # Cotações
+            links = request.POST.getlist("cotacao_link[]")
+            forns = request.POST.getlist("cotacao_fornecedor[]")
+            precos = request.POST.getlist("cotacao_preco[]")
+            cotacoes = []
+            for i in range(len(links)):
+                cotacoes.append({
+                    "link": links[i],
+                    "fornecedor": forns[i] if i < len(forns) else "",
+                    "preco": precos[i] if i < len(precos) else "",
+                })
+            dados["cotacoes"] = cotacoes
+            
+        elif tipo == "reuniao":
+            dados["reuniao_motivo"] = request.POST.get("reuniao_motivo")
+            dados["reuniao_descricao"] = request.POST.get("reuniao_descricao")
+            dados["reuniao_horarios"] = request.POST.get("reuniao_horarios")
+
+        if tipo:
+            observacoes = request.POST.get("observacoes", "")
+            Pedido.objects.create(
+                projeto=projeto,
+                solicitante=request.user,
+                tipo=tipo,
+                dados=json.dumps(dados),
+                observacoes=observacoes,
+            )
+
+            email_subject = f"Pedido de Recurso: {tipo.capitalize()} - Projeto {projeto.proposta.titulo}"
+            email_recipients = [request.user.email]
+            # email_recipients += [configuracao.coordenacao.user.email]
+            #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
+            # for alocacao in Alocacao.objects.filter(projeto=projeto):
+            #     email_recipients.append(alocacao.aluno.user.email)
+            email_message = f""""
+                Orientador,<br><br>
+                Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
+                Tipo: {tipo.capitalize()}<br>
+                Projeto: {projeto.proposta.titulo}<br>
+                Estudantes:<br>
+            """
+            for alocacao in Alocacao.objects.filter(projeto=projeto):
+                email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+            email_message += f"""
+                <br>
+                Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
+                Detalhes do pedido:<br>
+                {json.dumps(dados, indent=2)}
+                Observações adicionais:<br>
+                {observacoes if observacoes else "Nenhuma"}
+            """
+
+            email(email_subject, email_recipients, email_message)
+
+            return redirect("pedir_recursos")
+
+    # Recupera pedidos anteriores
+    pedidos = Pedido.objects.filter(projeto=projeto).order_by("-data_solicitacao")
+
+    context = {
+        "titulo": {"pt": "Pedir Recursos", "en": "Request Resources"},
+        "configuracao": configuracao,
+        "Projeto": Projeto,
+        "projeto": projeto,
+        "pedidos": pedidos,
+    }
+
+    # Caso seja Professor ou Administrador
+    if request.user.eh_prof_a:
+        context["mensagem_aviso"] = {
+            "pt": "Mostrando como é a tela, usando qualquer estudante de exemplo.",
+            "en": "Showing how the screen looks, using any example student.",
+        }
+
+    return render(request, "projetos/pedir_recursos.html", context=context)
 
 
 

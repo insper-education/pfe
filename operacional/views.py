@@ -9,6 +9,7 @@ Data: 29 de Dezembro de 2020
 import datetime
 import dateutil.parser
 import logging
+import json
 
 from urllib.parse import urlencode
 
@@ -23,23 +24,23 @@ from django.urls import reverse
 
 from .support import trata_aviso
 
+from academica.models import Composicao
+from academica.support5 import filtra_composicoes
+
 from administracao.models import TipoCertificado, TipoEvento
 
 from documentos.models import TipoDocumento
 
-from projetos.support import get_upload_path, simple_upload
-
-from projetos.models import Aviso, Certificado, Evento, Configuracao
+from projetos.models import Aviso, Certificado, Evento, Configuracao, Pedido
 from projetos.models import Projeto, Banca, Conexao
-
-from users.models import PFEUser, Aluno, Professor, Parceiro
-from users.support import get_edicoes
-
+from projetos.messages import email
 from projetos.tipos import TIPO_EVENTO
+from projetos.support import get_upload_path, simple_upload
 from projetos.support5 import envia_mensagens_avisos
 
-from academica.models import Composicao
-from academica.support5 import filtra_composicoes
+from users.models import PFEUser, Aluno, Professor, Parceiro, Alocacao
+from users.support import get_edicoes
+
 
 logger = logging.getLogger("django")  # Get an instance of a logger
 
@@ -405,3 +406,73 @@ def plano_aulas(request):
         "edicoes": get_edicoes(Projeto)[0],
     }
     return render(request, "operacional/plano_aulas.html", context=context)
+
+
+@login_required
+@permission_required("users.altera_professor", raise_exception=True)
+def gerir_pedidos(request):
+    """Gerencia pedidos feitos por estudantes, como pedidos de prorrogação, etc."""
+    
+    if request.method == "POST":
+        pedido_id = request.POST.get("pedido_id")
+        acao = request.POST.get("acao")
+        resposta = request.POST.get("resposta", "")
+
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+
+        if acao == "aprovar":
+            pedido.status = "aprovado"
+        elif acao == "reprovar":
+            pedido.status = "reprovado"
+        
+        pedido.resposta = resposta
+        pedido.data_resposta = datetime.datetime.now()
+        pedido.save()
+
+        email_subject = f"Resposta de Pedido de Recurso: {pedido.tipo.capitalize()} - Projeto {pedido.projeto.proposta.titulo}"
+        email_recipients = [request.user.email]
+        # email_recipients += [configuracao.coordenacao.user.email]
+        #email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
+        # for alocacao in Alocacao.objects.filter(projeto=projeto):
+        #     email_recipients.append(alocacao.aluno.user.email)
+        email_message = f""""
+            {pedido.solicitante.get_full_name()},<br><br>
+            Seu pedido foi {pedido.status}.<br><br>
+        """
+        if resposta:
+            email_message += f"Resposta:<br>{resposta}<br><br>"
+        email_message = f""""
+            Tipo: {pedido.tipo.capitalize()}<br>
+            Projeto: {pedido.projeto.proposta.titulo}<br>
+            Estudantes:<br>
+        """
+        for alocacao in Alocacao.objects.filter(projeto=pedido.projeto):
+            email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
+        email_message += f"""
+            <br>
+            Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
+            Detalhes do pedido:<br>
+            {json.dumps(pedido.dados, indent=2)}
+            Observações adicionais:<br>
+            {pedido.observacoes if pedido.observacoes else "Nenhuma"}
+        """
+
+        email(email_subject, email_recipients, email_message)
+
+        
+        return redirect("gerir_pedidos")
+
+    pedidos = Pedido.objects.all().order_by("status", "-data_solicitacao")
+    
+    # Organiza os pedidos para facilitar a visualização
+    pedidos_pendentes = pedidos.filter(status="pendente")
+    pedidos_processados = pedidos.exclude(status="pendente")
+
+    context = {
+        "titulo": { "pt": "Gerenciar Pedidos", "en": "Manage Requests" },
+        "pedidos_pendentes": pedidos_pendentes,
+        "pedidos_processados": pedidos_processados,
+    }
+    return render(request, "operacional/gerir_pedidos.html", context=context)
+
+

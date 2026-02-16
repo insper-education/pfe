@@ -1,0 +1,962 @@
+{% extends "base.html" %}
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 15 de Fevereiro de 2026
+{% endcomment %}
+
+{% load static %}
+{% load linguas %}
+
+{% block head %}
+
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+
+<style>
+  :root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f8fafc;
+    --sidebar-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e2e8f0;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --transition-speed: 0.2s;
+  }
+
+  body {
+    background-color: var(--bg-color);
+  }
+
+  .app-container {
+    display: flex;
+    min-height: 85vh;
+    max-width: 1400px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    margin-bottom: 2rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .project-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f1f5f9;
+    border-radius: 6px;
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: #f8fafc;
+    color: var(--primary-color);
+  }
+
+  .nav-item.selected-nav {
+    background: #eef2ff;
+    color: var(--primary-color);
+    border-color: #c7d2fe;
+  }
+
+  .nav-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+  }
+
+  .history-btn {
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    border-radius: 0;
+  }
+
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 85vh; /* Match container height for scrolling */
+  }
+
+  .content-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    background: #fff;
+    /* position: sticky; */
+    top: 0;
+    /* z-index: 10; */
+  }
+
+  .content-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    font-weight: 600;
+  }
+
+  .content-body {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 4rem;
+  }
+
+  .tab-pane {
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .tab-pane.visible-tab {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Forms */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-main);
+    font-size: 0.95rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all var(--transition-speed);
+    box-sizing: border-box;
+    background: #fff;
+    color: var(--text-main);
+    font-family: inherit;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  
+  textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-control::placeholder {
+    color: #94a3b8;
+  }
+
+  .form-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+  }
+  
+  .required-asterisk {
+    color: #ef4444;
+    margin-left: 2px;
+  }
+
+  .btn-submit {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-speed);
+    width: 100%;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-submit:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+  }
+
+  /* UI Components */
+  .member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+  }
+  
+  .member-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+  }
+  
+  .btn-icon {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+  }
+  
+  .btn-icon:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: #fef2f2;
+  }
+  
+  .btn-secondary {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+  }
+  
+  .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: var(--primary-color);
+  }
+
+  /* History Specifics */
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .history-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: #fff;
+    transition: var(--transition-speed);
+    overflow: hidden;
+  }
+  
+  .history-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .history-header {
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    cursor: pointer;
+  }
+  
+  .history-header:hover {
+    background: #f8fafc;
+  }
+
+  .history-icon-type {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .history-icon-circle {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+  
+  .history-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .history-title {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 1rem;
+  }
+  
+  .history-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .history-status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-pendente { background: #e0f2fe; color: #0284c7; }
+  .status-aprovado { background: #dcfce7; color: #16a34a; }
+  .status-reprovado { background: #fee2e2; color: #dc2626; }
+  
+  .history-content {
+    border-top: 1px solid var(--border-color);
+    background: #f8fafc;
+    padding: 1.25rem;
+    display: none;
+  }
+  
+  .history-content.open {
+    display: block;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .app-container {
+      flex-direction: column;
+      margin: 0;
+      border-radius: 0;
+      height: auto;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 1rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+      gap: 1rem;
+    }
+    .sidebar-header {
+      margin-bottom: 0;
+      margin-right: 1rem;
+      min-width: max-content;
+    }
+    .nav-menu {
+      flex-direction: row;
+      flex: 1;
+      overflow-x: auto;
+      padding-bottom: 0px;
+    }
+    .nav-item {
+      white-space: nowrap;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+    .history-btn {
+      margin-top: 0;
+      border-top: 0;
+      padding-top: 0.5rem;
+      margin-left: auto;
+    }
+    .main-content {
+      height: auto;
+      overflow-y: visible;
+    }
+    .content-body {
+      padding: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <div class="div_arredondado_100 mt-2">
+    {% if projeto.ano > configuracao.ano or projeto.ano == configuracao.ano and projeto.semestre > configuracao.semestre %}
+      {% lng "Projetos" "Projects" %}
+      {{projeto.ano}}.{{projeto.semestre}}
+      {% lng "em fase de alocação." "in the allocation phase." %}
+      <br>
+    {% else %}
+      <div class="mb-3">
+        {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+          <h4>[{{projeto.organizacao}}]
+            {{projeto.titulo_final}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
+          <small>&nbsp;&nbsp;&nbsp;&nbsp;<b>
+            {% lng "Título original da proposta" "Original title of the proposal" %}
+          </b>: {{projeto.proposta.titulo}}</small><br>
+        {% else %}
+          <h4>[{{projeto.organizacao}}] {{projeto.get_titulo}} ({{projeto.ano}}.{{projeto.semestre}})</h4>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">⚡️ {% lng "Recursos" "Resources" %}</div>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-item selected-nav" onclick="switchTab('github', this)">
+        <span class="nav-icon">🗂️</span><span>{% lng "Repositório" "Repository" %} (GitHub)</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('nuvem', this)">
+        <span class="nav-icon">☁️</span><span>{% lng "Nuvem" "Cloud" %} (AWS)</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('overleaf', this)">
+        <span class="nav-icon">📝</span><span>LaTeX (Overleaf)</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('equipamento', this)">
+        <span class="nav-icon">🧰</span><span>{% lng "Equipamentos" "Equipment" %}</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('compra', this)">
+        <span class="nav-icon">🛒</span><span>{% lng "Compras" "Purchases" %}</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('reuniao', this)">
+        <span class="nav-icon">📅</span><span>{% lng "Reunião" "Meeting" %}</span>
+      </div>
+      
+      <div class="nav-item history-btn" onclick="switchTab('historico', this)">
+        <span class="nav-icon">📋</span>
+        <span>{% lng "Meus Pedidos" "My Requests" %}</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    
+    <!-- GitHub Section -->
+    <div id="github" class="tab-pane visible-tab">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Repositório GitHub" "GitHub Repository" %}</h2>
+        <p class="form-text">{% lng "Criação de um repositório GitHub para o projeto na organização do Capstone Insper" "Creation of a GitHub repository for the project in the Capstone Insper organization" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="github">
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Nome do Repositório" "Repository Name" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="repo_nome" class="form-control" placeholder="meu-projeto-capstone" required>
+            <div class="form-text">{% lng "Use apenas letras minúsculas, números e hífens" "Use only lowercase letters, numbers and hyphens" %}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Descrição" "Description" %}</label>
+            <textarea name="repo_descricao" class="form-control" placeholder="Descreva brevemente o propósito"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Membros do Grupo (GitHub Usernames)" "Group Members (GitHub Usernames)" %} <span class="required-asterisk">*</span></label>
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">
+              
+              {% if projeto.orientador %}
+                <div style="padding: 0.5rem 0.75rem; display: flex; flex-flow: row wrap; gap: 0.5rem; align-items: center; border-bottom: 1px solid var(--border-color); background-color: #f8fafc;">
+                  <div style="flex: 1; min-width: 180px;">
+                    <div style="font-weight: 500; font-size: 0.9rem; color: var(--text-main);">{{projeto.orientador.user.get_full_name}}<span class="required-asterisk">*</span></div>
+                    <div style="font-size: 0.75rem; color: var(--primary-color); font-weight: 500;">{% lng "Orientador" "Advisor" %}</div>
+                  </div>
+                  <div style="flex: 0 1 200px; min-width: 180px;">
+                      <input type="text" name="github_user_{{projeto.orientador.user.id}}" class="form-control" placeholder="GitHub Username" required style="background: #fff; padding: 0.35rem 0.5rem; font-size: 0.9rem;" value="{% if projeto.orientador.user.conta_github %}{{projeto.orientador.user.conta_github}}{% endif %}">
+                  </div>
+                </div>
+              {% endif %}
+
+              {% for coorientador in projeto.coorientador_set.all %}
+                <div style="padding: 0.5rem 0.75rem; display: flex; flex-flow: row wrap; gap: 0.5rem; align-items: center; border-bottom: 1px solid var(--border-color); background-color: #f8fafc;">
+                  <div style="flex: 1; min-width: 180px;">
+                    <div style="font-weight: 500; font-size: 0.9rem; color: var(--text-main);">{{coorientador.usuario.get_full_name}}</div>
+                    <div style="font-size: 0.75rem; color: var(--primary-color); font-weight: 500;">{% lng "Coorientador" "Co-advisor" %}</div>
+                  </div>
+                  <div style="flex: 0 1 200px; min-width: 180px;">
+                      <input type="text" name="github_user_{{coorientador.usuario.id}}" class="form-control" placeholder="GitHub Username" style="background: #fff; padding: 0.35rem 0.5rem; font-size: 0.9rem;" value="{% if coorientador.usuario.conta_github %}{{coorientador.usuario.conta_github}}{% endif %}">
+                  </div>
+                </div>
+              {% endfor %}
+
+
+              {% for alocacao in projeto.alocacao_set.all %}
+              <div style="padding: 0.5rem 0.75rem; display: flex; flex-flow: row wrap; gap: 0.5rem; align-items: center; {% if not forloop.last %}border-bottom: 1px solid var(--border-color);{% endif %}">
+                 <div style="flex: 1; min-width: 180px;">
+                   <div style="font-weight: 500; font-size: 0.9rem; color: var(--text-main);">{{alocacao.aluno.user.get_full_name}}{% if not alocacao.aluno.externo %}<span class="required-asterisk">*</span>{% endif %}</div>
+                 </div>
+                 <div style="flex: 0 1 200px; min-width: 180px;">
+                    <input type="text" name="github_user_{{alocacao.aluno.user.id}}" class="form-control" placeholder="GitHub Username" {% if not alocacao.aluno.externo %}required{% endif %} style="padding: 0.35rem 0.5rem; font-size: 0.9rem;" value="{% if alocacao.aluno.user.conta_github %}{{alocacao.aluno.user.conta_github}}{% endif %}">
+                 </div>
+              </div>
+              {% endfor %}
+
+            </div>
+            <div class="form-text">{% lng "Insira os usernames do GitHub para dar permissão ao repositório." "Enter GitHub usernames to grant repository permissions." %}</div>
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; align-items: start; gap: 12px; cursor: pointer; background: #f8fafc; padding: 12px; border-radius: 8px;">
+              <input type="checkbox" name="repo_publico" id="repo_publico" onchange="toggleJustificativaPublico()" style="margin-top: 4px;">
+              <div>
+                <span style="font-weight: 500; display: block;">{% lng "Repositório Público" "Public Repository" %}</span>
+                <span class="form-text" style="display: block; margin-top: 2px;">{% lng "Marque apenas se necessário. Padrão é privado." "Check only if necessary. Default is private." %}</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="form-group" id="justificativa-publico" style="display: none;">
+            <label class="form-label">{% lng "Justificativa para ser público" "Justification for public" %} <span class="required-asterisk">*</span></label>
+            <textarea name="repo_publico_justificativa" class="form-control" placeholder="Explique por que o repositório precisa ser público, e se tem as autorizações necessárias..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Observações" "Notes" %}</label>
+            <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Outras informações sobre o projeto..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Nuvem Section -->
+    <div id="nuvem" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Recursos em Nuvem" "Cloud Resources" %}</h2>
+        <p class="form-text">{% lng "Criação de conta na AWS para uso dos serviços de nuvem" "AWS account creation for cloud services usage" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="nuvem">
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Serviços Necessários" "Services Needed" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="nuvem_servicos" class="form-control" placeholder="Ex: EC2, S3, RDS..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Finalidade" "Purpose" %} <span class="required-asterisk">*</span></label>
+            <textarea name="nuvem_finalidade" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Justificativa Técnica" "Technical Justification" %} <span class="required-asterisk">*</span></label>
+            <textarea name="nuvem_justificativa" class="form-control" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Observações" "Notes" %}</label>
+            <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Overleaf Section -->
+    <div id="overleaf" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Documento Overleaf" "Overleaf Document" %}</h2>
+        <p class="form-text">{% lng "Compartilhamento de projetos LaTeX" "LaTeX projects sharing" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="overleaf">
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Nome do Documento" "Document Name" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="overleaf_nome" class="form-control" placeholder="Relatório Final" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Descrição" "Description" %}</label>
+            <textarea name="overleaf_descricao" class="form-control"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Observações" "Notes" %}</label>
+            <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Equipamento Section -->
+    <div id="equipamento" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Empréstimo de Equipamentos" "Equipment Loan" %}</h2>
+        <p class="form-text">{% lng "Solicite equipamentos do laboratório" "Request lab equipment" %}</p>
+      </div>
+      <div class="content-body">
+         <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="equipamento">
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Tipo de Equipamento" "Equipment Type" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="equip_tipo" class="form-control" placeholder="Ex: Computador, Multímetro, Câmera..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Especificações / Detalhes" "Specifications / Details" %} <span class="required-asterisk">*</span></label>
+            <textarea name="equip_detalhes" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Finalidade" "Purpose" %} <span class="required-asterisk">*</span></label>
+            <textarea name="equip_finalidade" class="form-control" required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Compras Section -->
+    <div id="compra" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Compra de Materiais" "Material Purchase" %}</h2>
+        <p class="form-text">{% lng "Solicitação de compra de itens" "Request to purchase items" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="compra">
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Nome do Item" "Item Name" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="compra_item" class="form-control" placeholder="Ex: Sensor DHT22" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Quantidade" "Quantity" %} <span class="required-asterisk">*</span></label>
+            <input type="number" name="compra_quantidade" class="form-control" min="1" value="1" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Justificativa" "Justification" %} <span class="required-asterisk">*</span></label>
+            <textarea name="compra_justificativa" class="form-control" required></textarea>
+          </div>
+
+          <div id="cotacoes-container">
+            <div style="background: #f1f5f9; height: 1px; margin: 2rem 0;"></div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+               <h3 style="margin:0; font-size:1.1rem;">{% lng "Cotações / Opções de Compra" "Quotes / Buying Options" %}</h3>
+               <button type="button" class="btn-secondary" onclick="addCotacao()">
+                 <span>+</span> {% lng "Adicionar Cotação" "Add Quote" %}
+               </button>
+            </div>
+            
+            <div class="cotacao-group" style="background:#f8fafc; padding:1.5rem; border:1px solid var(--border-color); border-radius:8px; margin-bottom:1rem;">
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">{% lng "Link do Produto" "Product Link" %} <span class="required-asterisk">*</span></label>
+                <input type="text" name="cotacao_link[]" class="form-control" placeholder="https://..." required>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                <div>
+                   <label class="form-label">{% lng "Fornecedor" "Supplier" %} <span class="required-asterisk">*</span></label>
+                   <input type="text" name="cotacao_fornecedor[]" class="form-control" required>
+                </div>
+                <div>
+                   <label class="form-label">{% lng "Preço Unitário (R$)" "Unit Price (R$)" %} <span class="required-asterisk">*</span></label>
+                   <input type="number" step="0.01" name="cotacao_preco[]" class="form-control" placeholder="0.00" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação de Compra" "Submit Purchase Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Reunião Section -->
+    <div id="reuniao" class="tab-pane">
+       <div class="content-header">
+        <h2 class="content-title">{% lng "Agendar Reunião" "Schedule Meeting" %}</h2>
+        <p class="form-text">{% lng "Solicite um horário com a coordenação ou professores de suporte a equipes" "Request a time with coordination or support professors for teams" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="reuniao">
+          
+          <div class="form-group">
+            <label class="form-label">{% lng "Motivo/Assunto" "Reason/Subject" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="reuniao_motivo" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Descrição Detalhada" "Detailed Description" %} <span class="required-asterisk">*</span></label>
+            <textarea name="reuniao_descricao" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Sugestões de Horário" "Suggested Times" %} <span class="required-asterisk">*</span></label>
+            <textarea name="reuniao_horarios" class="form-control" placeholder="Ex: Segunda 14h, Terça 10h..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Historico Section -->
+    <div id="historico" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Histórico de Solicitações" "Request History" %}</h2>
+      </div>
+      <div class="content-body" style="max-width: 900px;">
+        {% if pedidos %}
+          <div class="history-list">
+          {% for pedido in pedidos %}
+            <div class="history-card">
+              <div class="history-header" onclick="toggleDetalhes({{ pedido.id }})">
+                <div class="history-icon-type">
+                  <div class="history-icon-circle">
+                    {{ pedido.get_icone }}
+                  </div>
+                  <div class="history-meta">
+                    <span class="history-title">{{ pedido.get_tipo_display }}</span>
+                    <span class="history-date">{{ pedido.data_solicitacao|date:"d/m/Y H:i" }}</span>
+                  </div>
+                </div>
+                
+                <span class="history-status-badge status-{{ pedido.status }}">
+                  {{ pedido.get_status_display }}
+                </span>
+              </div>
+              
+              <div id="detalhes-{{ pedido.id }}" class="history-content">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                  <div>
+                    <strong style="color:var(--text-muted); font-size:0.85rem; display:block;">{% lng "Solicitante" "Requestor" %}</strong>
+                    <span>{{ pedido.solicitante.get_full_name }}</span>
+                  </div>
+                  {% if pedido.data_resposta %}
+                  <div>
+                    <strong style="color:var(--text-muted); font-size:0.85rem; display:block;">{% lng "Respondido em" "Answered on" %}</strong>
+                    <span>{{ pedido.data_resposta|date:"d/m/Y" }}</span>
+                  </div>
+                  {% endif %}
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                   <strong style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom: 0.25rem;">{% lng "Detalhes" "Details" %}</strong>
+                   <div style="background: #fff; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                     {{ pedido.get_detalhes_completos|safe }}
+                   </div>
+                </div>
+
+                {% if pedido.resposta %}
+                  <div style="background: #fff7ed; border: 1px solid #fed7aa; padding: 1rem; border-radius: 6px; color: #9a3412;">
+                    <strong>{% lng "Resposta" "Response" %}:</strong><br>
+                    {{ pedido.resposta|linebreaks }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        {% else %}
+           <div class="empty-state" style="text-align: center; padding: 4rem 1rem;">
+              <span class="empty-icon" style="font-size: 4rem; display: block; margin-bottom: 1rem; opacity: 0.3;">📭</span>
+              <h3 style="margin: 0; color: var(--text-main);">{% lng "Nenhum pedido encontrado" "No requests found" %}</h3>
+              <p style="color: var(--text-muted);">{% lng "Seus pedidos de recursos aparecerão aqui." "Your resource requests will appear here." %}</p>
+           </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function switchTab(tabId, element) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-pane').forEach(tab => {
+      tab.classList.remove('visible-tab');
+    });
+    
+    // Deactivate all nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('selected-nav');
+    });
+
+    // Show selected tab
+    document.getElementById(tabId).classList.add('visible-tab');
+    
+    // Activate clicked nav item
+    if(element) element.classList.add('selected-nav');
+    
+    // Scroll to top of content
+    document.querySelector('.main-content').scrollTop = 0;
+  }
+
+  function toggleJustificativaPublico() {
+    const checkbox = document.getElementById('repo_publico');
+    const container = document.getElementById('justificativa-publico');
+    const textarea = container.querySelector('textarea');
+    
+    if (checkbox.checked) {
+      container.style.display = 'block';
+      textarea.setAttribute('required', 'required');
+    } else {
+      container.style.display = 'none';
+      textarea.removeAttribute('required');
+    }
+  }
+
+  function addMembro(containerId) {
+     const container = document.getElementById(containerId);
+     const div = document.createElement('div');
+     div.className = 'member-row';
+     /* Refactored member row to match the new style */
+     div.style = 'padding: 1rem; display: flex; flex-flow: row wrap; gap: 1rem; align-items: center; border-bottom: 1px solid var(--border-color);';
+     div.innerHTML = `
+        <div style="flex: 1; min-width: 200px;">
+           <div style="font-weight: 500; color: var(--text-main);">Membro Adicional</div>
+        </div>
+        <div style="flex: 0 1 250px; min-width: 200px; display: flex; gap: 0.5rem;">
+           <input type="text" name="github_membro[]" class="form-control" placeholder="GitHub Username" required>
+           <button type="button" class="btn-icon" style="width: 42px; height: 42px;" onclick="this.parentElement.parentElement.remove()">✕</button>
+        </div>
+     `;
+     container.appendChild(div);
+  }
+
+  function addMembroOverleaf() {
+     const container = document.getElementById('overleaf-membros');
+     const div = document.createElement('div');
+     div.className = 'member-row';
+     div.innerHTML = `
+       <input type="email" name="overleaf_membro[]" class="form-control" placeholder="email@exemplo.com" required>
+       <button type="button" class="btn-icon" onclick="this.parentElement.remove()">✕</button>
+     `;
+     container.appendChild(div);
+  }
+  
+  function addCotacao() {
+     const container = document.getElementById('cotacoes-container');
+     const div = document.createElement('div');
+     div.className = 'cotacao-group';
+     div.style = 'background:#f8fafc; padding:1.5rem; border:1px solid var(--border-color); border-radius:8px; margin-bottom:1rem; position:relative;';
+     div.innerHTML = `
+        <button type="button" class="btn-icon" style="position:absolute; top:10px; right:10px; width:32px; height:32px;" onclick="this.parentElement.remove()">✕</button>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label">Link do Produto <span class="required-asterisk">*</span></label>
+          <input type="text" name="cotacao_link[]" class="form-control" placeholder="https://..." required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+          <div>
+             <label class="form-label">Fornecedor <span class="required-asterisk">*</span></label>
+             <input type="text" name="cotacao_fornecedor[]" class="form-control" required>
+          </div>
+          <div>
+             <label class="form-label">Preço (R$) <span class="required-asterisk">*</span></label>
+             <input type="number" step="0.01" name="cotacao_preco[]" class="form-control" placeholder="0.00" required>
+          </div>
+        </div>
+     `;
+     container.appendChild(div);
+  }
+  
+  function toggleDetalhes(id) {
+    const detalhes = document.getElementById('detalhes-' + id);
+    if (detalhes.classList.contains('open')) {
+      detalhes.classList.remove('open');
+    } else {
+      detalhes.classList.add('open');
+    }
+  }
+</script>
+{% endblock %}

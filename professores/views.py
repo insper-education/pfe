@@ -563,6 +563,7 @@ def banca_avaliar(request, slug, documento_id=None):
                 "avaliador": avaliador,
                 "realizada": realizada,
                 "banca": banca,
+                "periodo_para_rubricas": exame.periodo_para_rubricas,
                 "julgamento": julgamento,
                 "julgamento_observacoes": julgamento_observacoes,
                 "destaque": True if request.POST.get("destaque") == "true" else False,

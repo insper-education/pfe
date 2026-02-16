@@ -348,3 +348,5 @@ class CerimoniaAdmin(admin.ModelAdmin):
 
 
 admin.site.register(TematicaEncontro)
+
+admin.site.register(Pedido)

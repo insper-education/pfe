@@ -2304,3 +2304,108 @@ class Desconto(models.Model):
     class Meta:
         verbose_name = "Desconto"
         verbose_name_plural = "Descontos"
+
+
+class Pedido(models.Model):
+    """Pedidos de recursos para os projetos."""
+    projeto = models.ForeignKey("projetos.Projeto", on_delete=models.SET_NULL, null=True, blank=True)
+    solicitante = models.ForeignKey("users.PFEUser", on_delete=models.SET_NULL, null=True, blank=True)
+    data_solicitacao = models.DateTimeField(default=datetime.datetime.now)
+    
+    TIPO_PEDIDO = (
+        ("github", "GitHub"),
+        ("nuvem", "Nuvem"),
+        ("overleaf", "Overleaf"),
+        ("equipamento", "Equipamento"),
+        ("compra", "Compra"),
+        ("reuniao", "Reunião"),
+    )
+    tipo = models.CharField(max_length=20, choices=TIPO_PEDIDO)
+    
+    # Armazena os detalhes específicos em JSON
+    dados = models.TextField("Dados", default="{}", help_text="Detalhes do pedido em formato JSON")
+    
+    STATUS_PEDIDO = (
+        ("pendente", "Pendente"),
+        ("aprovado", "Aprovado"),
+        ("reprovado", "Reprovado"),
+    )
+    status = models.CharField(max_length=20, choices=STATUS_PEDIDO, default='pendente')
+    
+    observacoes = models.TextField("Observações", max_length=3000, null=True, blank=True)
+    
+    resposta = models.TextField("Resposta da Coordenação/Equipe", max_length=3000, null=True, blank=True)
+    data_resposta = models.DateTimeField("Data da Resposta", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Pedido de Recurso"
+        verbose_name_plural = "Pedidos de Recursos"
+        ordering = ['-data_solicitacao']
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} - {self.projeto}"
+
+    @property
+    def dados_dict(self):
+        try:
+            return json.loads(self.dados)
+        except:
+            return {}
+
+    def get_icone(self):
+        icones = {
+            "github": '💻',
+            "nuvem": '☁️',
+            "overleaf": '📝',
+            "equipamento": '🖥️',
+            "compra": '🛒',
+            "reuniao": '📅',
+        }
+        return icones.get(self.tipo, '❓')
+
+    def get_detalhes_completos(self):
+
+        d = self.dados_dict
+        html = "<ul style='padding-left: 20px; margin: 0;'>"
+        
+        if self.tipo == "github":
+            html += f"<li><b>Repositório:</b> {d.get('repo_nome', '')}</li>"
+            pub = d.get('repo_publico')
+            if pub:
+                html += f"<li><b>Público:</b> Sim (Justificativa: {d.get('repo_publico_justificativa', 'N/A')})</li>"
+            github_users = d.get('github_users', {})
+            if github_users:
+                html += f"<li><b>Membros:</b> {', '.join(github_users.values())}</li>"
+
+        elif self.tipo == "nuvem":
+            html += f"<li><b>Serviços:</b> {d.get('nuvem_servicos', '')}</li>"
+            html += f"<li><b>Finalidade:</b> {d.get('nuvem_finalidade', '')}"
+            html += f"<li><b>Justificativa:</b> {d.get('nuvem_justificativa', '')}</li>"
+            
+        elif self.tipo == "overleaf":
+            html += f"<li><b>Nome:</b> {d.get('overleaf_nome', '')}</li>"
+            html += f"<li><b>Descrição:</b> {d.get('overleaf_descricao', '')}</li>"
+            
+        elif self.tipo == "equipamento":
+            html += f"<li><b>Tipo:</b> {d.get('equip_tipo', '')}</li>"
+            html += f"<li><b>Detalhes:</b> {d.get('equip_detalhes', '')}</li>"
+            html += f"<li><b>Finalidade:</b> {d.get('equip_finalidade', '')}</li>"
+            
+        elif self.tipo == "compra":
+            html += f"<li><b>Item:</b> {d.get('compra_item', '')} (Qtd: {d.get('compra_quantidade', 1)})</li>"
+            html += f"<li><b>Justificativa:</b> {d.get('compra_justificativa', '')}</li>"
+            cotacoes = d.get('cotacoes', [])
+            if cotacoes:
+                html += "<li><b>Cotações:</b><ul>"
+                for cotacao in cotacoes:
+                    html += f"<li>{cotacao.get('fornecedor', 'Fornecedor Desconecido')} - R$ {cotacao.get('preco', 'Preço Desconecido')} - <a href='{cotacao.get('link', '#')}' target='_blank'>{cotacao.get('link', '#')}</a></li>"
+                html += "</ul></li>"
+            
+        elif self.tipo == "reuniao":
+            html += f"<li><b>Motivo:</b> {d.get('reuniao_motivo', '')}</li>"
+            html += f"<li><b>Descrição:</b> {d.get('reuniao_descricao', '')}</li>"
+            html += f"<li><b>Horários:</b> {d.get('reuniao_horarios', '')}</li>"
+
+        html += f"<li><b>Observações:</b> {self.observacoes or 'Nenhuma'}</li>"            
+        html += "</ul>"
+        return html

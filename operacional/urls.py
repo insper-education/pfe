@@ -22,4 +22,5 @@ urlpatterns = [
     path("emails_semestre/", views.emails_semestre, name="emails_semestre"),
     path("emails_projetos/", views.emails_projetos, name="emails_projetos"),
     path("plano_aulas/", views.plano_aulas,name="plano_aulas"),
+    path("gerir_pedidos/", views.gerir_pedidos, name="gerir_pedidos"),
 ]
