@@ -7,6 +7,8 @@
 
 
 {% load coeficiente_rendimento %}
+{% load linguas %}
+{% load static %}
 
 {% block head %}
   {% include "tabelas_includes.html" %}
@@ -36,7 +38,50 @@
         {% endwith %}
       {% endfor %}     
     {% include "tabelas_bottom.html" %}
+  
+    {% if projetos.count > 0 %}
+      <div class="mt-2">
+        <h5>{% lng "Quantidade de projetos" "Number of projects" %}</h5>
+        <div class="table-responsive">
+          <table id="NumeroProjetosTable" class="table-bordered table-sm">
+            <thead class="table-info">
+              <tr>
+                  <th class="text-center" style="border-right: solid 3px;">{% lng "Período" "Semester" %}</th>
+                  <th class="text-center" style="border-left: solid 3px;">{% lng "Projetos" "Projects" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% regroup projetos by get_edicao as projetos_por_semestre %}
+              {% for grupo in projetos_por_semestre %}
+                <tr class="item">
+                  <td class="text-center" style="border-right: solid 3px;">
+                    {{ grupo.grouper }}
+                  </td>
+                  <td class="text-center">
+                    {{ grupo.list|length }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              {% if ano == 0 or semestre == 0 %}
+                <tr class="item">
+                  <td class="text-center" style="border-right: solid 3px; border-top: double;">
+                    {% lng "Totais" "Totals" %}
+                  </td>
+                  <td class="text-center" style="border-top: double;">
+                    {{projetos.count}}
+                  </td>
+                </tr>
+              {% endif %}
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+
   </div>
+  
   <script>
     function carrega_site() {
       {% include "edicao_puxar_local_ou_versao.js" %}

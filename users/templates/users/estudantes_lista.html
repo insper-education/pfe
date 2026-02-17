@@ -98,85 +98,81 @@
     </div>
     <br>
 
-
-    {{curso}}
     {% if totais.total > 0 %}
-      <br><br>
-      <h5>
-        {% lng "Quantidade de estudantes alocados em projetos por curso" "Number of students allocated in projects by course" %}
-      </h5>
-      <div class="table-responsive">
-      <table id="AlunosTable" class="table-bordered table-sm">
-        <thead class="table-info">
-          <tr>
-              <th class="text-center" style="border-right: solid 3px;">
-                {% lng "Período" "Semester" %}
-              </th>
-              {% for curso in cursos %}
-                <th class="text-center">{{curso.sigla}}</th>
-              {% endfor %}
-              {% if curso_sel == 'T' %}
-                <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
-              {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for ano,tabela_ano in tabela_alunos.items %}
-            {% for semestre,tabela_semetre in tabela_ano.items %}
-              <tr class="item">
-                  <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+      <div class="mt-2">
+        <h5>
+          {% lng "Quantidade de estudantes alocados em projetos por curso" "Number of students allocated in projects by course" %}
+        </h5>
+        <div class="table-responsive">
+          <table id="AlunosTable" class="table-bordered table-sm">
+            <thead class="table-info">
+              <tr>
+                  <th class="text-center" style="border-right: solid 3px;">
+                    {% lng "Período" "Semester" %}
+                  </th>
                   {% for curso in cursos %}
-                    <td class="text-center">
-                      {% with qtd=tabela_semetre|dict_key:curso.sigla %}
-                        {% if qtd %}{{qtd}}{% else %}0{% endif %}
-                      {% endwith %}
-                    </td>
+                    <th class="text-center">{{curso.sigla}}</th>
                   {% endfor %}
                   {% if curso_sel == 'T' %}
-                    <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+                    <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
                   {% endif %}
               </tr>
-            {% endfor %}
-          {% endfor %}
-          {% if ano == 0 or semestre == 0 %}
-            <tr class="item">
-              <td class="text-center" style="border-right: solid 3px; border-top: double;">
-                {% lng "Totais" "Totals" %}
-              </td>
-                {% for curso in cursos %}
-                  <td class="text-center" style="border-top: double;">
-                    {% with qtd=totais|dict_key:curso.sigla %}
-                      {% if qtd %}{{qtd}}{% else %}0{% endif %}
-                    {% endwith %}
-                  </td>
+            </thead>
+            <tbody>
+              {% for ano,tabela_ano in tabela_alunos.items %}
+                {% for semestre,tabela_semetre in tabela_ano.items %}
+                  <tr class="item">
+                      <td class="text-center" style="border-right: solid 3px;"> {{ano}}.{{semestre}} </td>
+                      {% for curso in cursos %}
+                        <td class="text-center">
+                          {% with qtd=tabela_semetre|dict_key:curso.sigla %}
+                            {% if qtd %}{{qtd}}{% else %}0{% endif %}
+                          {% endwith %}
+                        </td>
+                      {% endfor %}
+                      {% if curso_sel == 'T' %}
+                        <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
+                      {% endif %}
+                  </tr>
                 {% endfor %}
-              {% if curso_sel == 'T' %}
-                <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+              {% endfor %}
+              {% if ano == 0 or semestre == 0 %}
+                <tr class="item">
+                  <td class="text-center" style="border-right: solid 3px; border-top: double;">
+                    {% lng "Totais" "Totals" %}
+                  </td>
+                    {% for curso in cursos %}
+                      <td class="text-center" style="border-top: double;">
+                        {% with qtd=totais|dict_key:curso.sigla %}
+                          {% if qtd %}{{qtd}}{% else %}0{% endif %}
+                        {% endwith %}
+                      </td>
+                    {% endfor %}
+                  {% if curso_sel == 'T' %}
+                    <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
+                  {% endif %}
+                </tr>
               {% endif %}
-            </tr>
+            </tbody>
+          </table>
+          {% if ano == 0 or semestre == 0 %}
+            <small>
+              {% lng "Estudantes reprovados e do Capstone avançado contam mais de uma vez" "Failed students and Advanced Capstone students count more than once" %}
+            </small>
           {% endif %}
-        </tbody>
-      </table>
-      {% if ano == 0 or semestre == 0 %}
-        <small>
-          {% lng "Estudantes reprovados e do Capstone avançado contam mais de uma vez" "Failed students and Advanced Capstone students count more than once" %}
-        </small>
-      {% endif %}
+        </div>
       </div>
-      <br>
     {% endif %}
-    <br><br>
-
-    <div class="container">
+    
+    <div class="container mt-3">
       <div class="row justify-content-start">
         <div class="col-lg-6 mb-5"><canvas id="chart-programas" style="height: 300px;"></canvas></div>
         <div class="col-lg-6 mb-5"><canvas id="chart-generos" style="height: 300px;"></canvas></div>
       </div>
     </div>
-    <br><br>
-
+    
     {% if ano == 0 or semestre == 0 %}
-    <div class="container">
+    <div class="container mt-3">
       <div class="row justify-content-start">
         <div class="col-lg-10 mb-5"><canvas id="total-estudantes" style="height: 300px;"></canvas></div>
       </div>

@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-  
+
   {% include "edicoes.html" %}
 
   <div id="atualizar">
@@ -45,37 +45,89 @@
     {% if administracao %}
       {% comment %} Tabela com informações consolidadas da entregas de relatos quinzenais {% endcomment %}
       <br>
-      <b>{% lng "Estatísticas" "Statistics" %}</b>:<br>
+      <b>{% lng "Panorama de Entregas" "Follow-up Overview" %}</b><br>
       <table class="tabela-padrao table-bordered table-sm ">
         <thead>
           <tr>
             <th>{% lng "Período" "Period" %}</th>
-            <th>{% lng "Entregue" "Delivered" %}</th>
-            <th>{% lng "Ausente" "Absent" %}</th>
+            <th colspan="2">{% lng "Entregue" "Delivered" %}</th>
+            <th colspan="2">{% lng "Ausente" "Absent" %}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>{% lng "Intermediário" "Intermediate" %}</td>
-            <td id="sim_i" style="text-align: right;"></td>
-            <td id="nao_i" style="text-align: right;"></td>
+            <td id="sim_i_n" style="text-align: right;"></td>
+            <td id="sim_i_p" style="text-align: right;"></td>
+            <td id="nao_i_n" style="text-align: right;"></td>
+            <td id="nao_i_p" style="text-align: right;"></td>
           </tr>
           <tr>
             <td>{% lng "Final" "Final" %}</td>
-            <td id="sim_f" style="text-align: right;"></td>
-            <td id="nao_f" style="text-align: right;"></td>
+            <td id="sim_f_n" style="text-align: right;"></td>
+            <td id="sim_f_p" style="text-align: right;"></td>
+            <td id="nao_f_n" style="text-align: right;"></td>
+            <td id="nao_f_p" style="text-align: right;"></td>
           </tr>
-      </tbody></table>
+        </tbody>
+        <tfoot>
+          <tr style="font-weight: 700; background: #f8fafc;">
+            <td style="text-align: right;">{% lng "Média" "Average" %}</td>
+            <td id="med_sim_n" style="text-align: right;">-</td>
+            <td id="med_sim_p" style="text-align: right;">-</td>
+            <td id="med_nao_n" style="text-align: right;">-</td>
+            <td id="med_nao_p" style="text-align: right;">-</td>
+          </tr>
+        </tfoot>
+      </table>
 
       <script>
         function conta() {
+          var somaSim = 0;
+          var somaNao = 0;
+          var percSomaSim = 0;
+          var percSomaNao = 0;
+          var periodosValidos = 0;
+
           {% for tipo in "if" %}
-            sim = document.querySelectorAll(".aval_entreg_{{tipo}}").length;
-            nao = document.querySelectorAll(".aval_nentreg_{{tipo}}").length;
-            total = sim + nao;
-            document.getElementById("sim_{{tipo}}").innerText = sim + " (" + (100*sim/total).toFixed(1) + "%)";
-            document.getElementById("nao_{{tipo}}").innerText = nao + " (" + (100*nao/total).toFixed(1) + "%)";
+            {
+              var sim = document.querySelectorAll(".aval_entreg_{{tipo}}").length;
+              var nao = document.querySelectorAll(".aval_nentreg_{{tipo}}").length;
+              var total = sim + nao;
+
+              if (total > 0) {
+                var percSim = (100 * sim / total);
+                var percNao = (100 * nao / total);
+                document.getElementById("sim_{{tipo}}_n").innerText = sim;;
+                document.getElementById("sim_{{tipo}}_p").innerText = percSim.toFixed(1) + "%";
+                document.getElementById("nao_{{tipo}}_n").innerText = nao;
+                document.getElementById("nao_{{tipo}}_p").innerText = percNao.toFixed(1) + "%";
+
+                percSomaSim += percSim;
+                percSomaNao += percNao;
+                somaSim += sim;
+                somaNao += nao;
+                periodosValidos++;
+              } else {
+                document.getElementById("sim_{{tipo}}_n").innerText = "-";
+                document.getElementById("sim_{{tipo}}_p").innerText = "-";
+                document.getElementById("nao_{{tipo}}_n").innerText = "-";
+                document.getElementById("nao_{{tipo}}_p").innerText = "-";
+              }
+            }
           {% endfor %}
+
+          if (periodosValidos > 0) {
+            document.getElementById("med_sim_n").innerText = (somaSim / periodosValidos).toFixed(1);
+            document.getElementById("med_sim_p").innerText = (percSomaSim / periodosValidos).toFixed(1) + "%";
+            document.getElementById("med_nao_n").innerText = (somaNao / periodosValidos).toFixed(1);
+            document.getElementById("med_nao_p").innerText = (percSomaNao / periodosValidos).toFixed(1) + "%";
+          } else {
+            document.getElementById("med_sim_n").innerText = "-";
+            document.getElementById("med_sim_p").innerText = "-";
+            document.getElementById("med_nao_n").innerText = "-";
+            document.getElementById("med_nao_p").innerText = "-";
+          }
         }
       </script>
 

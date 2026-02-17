@@ -110,6 +110,7 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
             projetos = projetos.filter(orientador=request.user.professor)
 
         edicao = request.POST.get("edicao")
+        print("Edição selecionada:", edicao)
         if edicao and edicao != "todas":
             ano, semestre = edicao.split('.')
             projetos = projetos.filter(ano=ano, semestre=semestre)
@@ -119,9 +120,8 @@ def avaliacoes_pares(request, prof_id=None, proj_id=None):
         context["projetos"] = projetos
 
     else:
-        configuracao = get_object_or_404(Configuracao)
-        context["edicoes"] = get_edicoes(Pares)[0]
-        context["selecionada_edicao"] = f"{configuracao.ano}.{configuracao.semestre}"
+        context["edicoes"], ano, semestre = get_edicoes(Pares)
+        context["selecionada_edicao"] = f"{ano}.{semestre}"
     
     context["administracao"] = request.user.eh_admin
 
@@ -2147,12 +2147,12 @@ def relatos_quinzenais(request, todos=None):
         }
 
     else:
-        configuracao = get_object_or_404(Configuracao)
+        edicoes, ano, semestre = get_edicoes(Pares)
         context = {
                 "titulo": {"pt": "Relatos Quinzenais", "en": "Biweekly Reports"},
                 "administracao": True,
-                "edicoes": get_edicoes(Relato)[0],
-                "selecionada_edicao": f"{configuracao.ano}.{configuracao.semestre}",
+                "edicoes": edicoes,
+                "selecionada_edicao": f"{ano}.{semestre}",
             }
 
     return render(request, "professores/relatos_quinzenais.html", context=context)

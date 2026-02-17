@@ -46,6 +46,9 @@ def has_relatos(projeto):
 def get_relatos_edicao(edicao):
     """Retorna os relatos quinzenais do semestre."""
     
+    if not edicao:
+        return []
+
     if edicao != "todas":
         ano, semestre = map(int, edicao.split('.'))    
         eventos = Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre)
