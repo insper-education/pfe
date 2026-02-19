@@ -864,13 +864,34 @@ def pedir_recursos(request, primarykey=None):
             projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
         else:
             projeto = Projeto.objects.filter(orientador=request.user.professor).last()
+        if not projeto:
+            # Criando projeto vazio para mostrar a tela, caso não tenha nenhum projeto com orientador
+            projeto = Projeto(
+                proposta=Proposta(titulo="Projeto Exemplo", organizacao=Organizacao(nome="Organização Exemplo"), ano=configuracao.ano, semestre=configuracao.semestre),
+                ano=configuracao.ano, semestre=configuracao.semestre
+            )
     elif request.user.eh_estud:  # Caso seja estudante
         projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
+        if not projeto:
+            return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
+    else:
+        return HttpResponse("Acesso negado.", status=401)
     
-    if not projeto:
-        return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
+    
 
     if request.method == "POST":
+
+        # Check if projeto is valid before creating Pedido
+        if projeto.pk is None:
+            context = {
+                "mensagem": {
+                    "pt": "Projeto inválido ou não encontrado.",
+                    "en": "Invalid or no project found."
+                }
+            }
+            return render(request, "generic_ml.html", context=context)
+        
+
         tipo = request.POST.get("tipo_recurso")
         dados = {}
         

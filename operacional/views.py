@@ -414,6 +414,7 @@ def gerir_pedidos(request):
     """Gerencia pedidos feitos por estudantes, como pedidos de prorrogação, etc."""
     
     if request.method == "POST":
+        configuracao = get_object_or_404(Configuracao)
         pedido_id = request.POST.get("pedido_id")
         acao = request.POST.get("acao")
         resposta = request.POST.get("resposta", "")
