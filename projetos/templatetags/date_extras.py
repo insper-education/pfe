@@ -47,6 +47,23 @@ def diff_days(value, data):
     return 0  # Se a data for nula, retorna 0
 
 @register.filter
+def diff_minutes(value, data):
+    """Calcula a diferença entre duas datas em minutos."""
+    if value and data:
+        valor_referencia = value
+        if isinstance(valor_referencia, datetime.date) and not isinstance(valor_referencia, datetime.datetime):
+            valor_referencia = datetime.datetime.combine(valor_referencia, datetime.time.min)
+
+        valor_data = data
+        if isinstance(valor_data, datetime.date) and not isinstance(valor_data, datetime.datetime):
+            valor_data = datetime.datetime.combine(valor_data + datetime.timedelta(days=1), datetime.time.min)
+
+        diferenca = (valor_referencia - valor_data).total_seconds() / 60
+        return int(diferenca)
+    return 0  # Se a data for nula, retorna 0
+
+
+@register.filter
 def dif_agora(value):
     """Calcula a diferença de um momento com agora em segundos."""
     if value:

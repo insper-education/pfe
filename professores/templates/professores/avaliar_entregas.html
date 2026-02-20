@@ -25,6 +25,26 @@
     }
     .nome_est {margin-left: 0.4em;}
     .linha {margin: 4px 0px 2px 0px;}
+    .delta-tempo-coleta {display: none;}
+    .resumo-tabela {
+      width: 100%;
+      margin-top: 8px;
+      border-collapse: collapse;
+      font-size: 0.95em;
+    }
+    .resumo-tabela th,
+    .resumo-tabela td {
+      border: 1px solid #ddd;
+      padding: 4px 8px;
+    }
+    .resumo-tabela th {
+      background: #f8f9fa;
+    }
+    .resumo-tabela td.valor {
+      text-align: right;
+      width: 120px;
+      font-weight: bold;
+    }
   </style>
   {% include "style_display_avaliacoes.html" %}
 {% endblock %}
@@ -34,6 +54,7 @@
   {% include "edicoes.html" with com_entregas=tipos_entregas %}
 
   <div id="atualizar">
+
     {% if not edicoes %}
       {% for projeto, entregas in avaliacoes %}
         {% if projeto.tem_relatos %}
@@ -131,9 +152,12 @@
                             <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                           </a>
                         {% endif %}
-                        {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
-                          {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
-                        </span>{% endif %}
+                        {% with delta_tempo=documento.data|diff_minutes:item.evento.endDate %}
+                          <span class="delta-tempo-coleta" data-delta="{{delta_tempo}}"></span>
+                          {% if delta_tempo > 0 %}<span style="color: red;">
+                            {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
+                          </span>{% endif %}
+                        {% endwith %}
                         {% if forloop.first%}</b>{% endif %}  
                       </li>
                       {% if item.avaliacoes and item.avaliacoes.first%}
@@ -190,9 +214,12 @@
                               <span class="texto-curto">{{ documento.data|date:"d/m/y H:i" }}</span>
                             </a>
                           {% endif %}
-                          {% if documento.data|diff_days:item.evento.endDate > 0 %}<span style="color: red;">
-                            {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
-                          </span>{% endif %}
+                          {% with delta_tempo=documento.data|diff_minutes:item.evento.endDate %}
+                            <span class="delta-tempo-coleta" data-delta="{{delta_tempo}}"></span>
+                            {% if delta_tempo > 0 %}<span style="color: red;">
+                              {% lng "[FORA DO PRAZO]" "[OVERDUE]" %}
+                            </span>{% endif %}
+                          {% endwith %}
                           {% if forloop.first%}</b>{% endif %}  
                         </li>
                         {% if values.avaliacoes and values.avaliacoes.first%}
@@ -235,10 +262,167 @@
       {% endfor %}
     {% endif %}
 
-    {% if edicao == "nenhuma" %}
+    {% if user.eh_admin %}
+
+      <div id="resumo_prazos" class="div_arredondado" style="margin-bottom: 12px; margin-top: 24px;">
+        <strong>{% lng "Resumo de submissões" "Submission summary" %}:</strong>
+        <table class="resumo-tabela">
+          <tbody>
+            <tr>
+              <td>{% lng "Total de arquivos analisados" "Total submitted files" %}</td>
+              <td class="valor" id="resumo_total">-</td>
+              <td>{% lng "No prazo" "On time" %}</td>
+              <td class="valor" id="resumo_no_prazo">-</td>
+            </tr>
+            <tr>
+              <td>{% lng "Atrasados" "Late" %}</td>
+              <td class="valor" id="resumo_atrasadas">-</td>
+              <td>{% lng "No limite" "On deadline" %} (0 min)</td>
+              <td class="valor" id="resumo_no_limite">-</td>
+            </tr>
+            <tr>
+              <td>{% lng "Média de antecedência" "Average lead time" %} (min)</td>
+              <td class="valor" id="resumo_media_antecedencia">-</td>
+              <td>{% lng "Menor antecedência" "Minimum lead time" %} (min)</td>
+              <td class="valor" id="resumo_menor_antecedencia">-</td>
+            </tr>
+            <tr>
+              <td>{% lng "Maior antecedência" "Maximum lead time" %} (min)</td>
+              <td class="valor" id="resumo_maior_antecedencia">-</td>
+              <td>{% lng "Maior atraso" "Maximum delay" %} (min)</td>
+              <td class="valor" id="resumo_maior_atraso">-</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 6px;">
+          <strong>{% lng "Distribuição dos deltas (min)" "Delta distribution (min)" %}:</strong>
+          <table class="resumo-tabela" id="resumo_distribuicao_tabela">
+            <thead>
+              <tr>
+                <th>{% lng "Faixa" "Range" %}</th>
+                <th>{% lng "Antecedência" "Lead time" %}</th>
+                <th>{% lng "Atraso" "Delay" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" style="text-align:center;">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <script>
-        $("#container_edicao").hide();
+        function formataNumeroResumo(valor) {
+          if (valor === null || valor === undefined || isNaN(valor)) {
+            return "-";
+          }
+          if (Number.isInteger(valor)) {
+            return valor;
+          }
+          return valor.toFixed(1);
+        }
+
+        function atualizarResumoPrazos() {
+          var limitesDistribuicaoMin = [5, 15, 30, 60, 120, 360, 720, 1440];
+
+          function criaFaixas(limites) {
+            var faixas = [];
+            var limiteAnterior = 0;
+
+            limites.forEach(function(limite) {
+              faixas.push({
+                min: limiteAnterior,
+                max: limite,
+                legenda: limiteAnterior + 1 + " a " + limite + " min",
+              });
+              limiteAnterior = limite;
+            });
+
+            faixas.push({
+              min: limiteAnterior,
+              max: Number.POSITIVE_INFINITY,
+              legenda: "> " + limiteAnterior + " min"
+            });
+
+            return faixas;
+          }
+
+          function contaPorFaixas(valores, faixasBase) {
+            return faixasBase.map(function(faixa) {
+              var quantidade = valores.filter(function(valor) {
+                return valor > faixa.min && valor <= faixa.max;
+              }).length;
+              return {
+                legenda: faixa.legenda,
+                quantidade: quantidade
+              };
+            });
+          }
+
+          var deltas = $(".delta-tempo-coleta").map(function() {
+            return parseInt($(this).data("delta"), 10);
+          }).get().filter(function(valor) {
+            return !isNaN(valor);
+          });
+
+          var total = deltas.length;
+          if (!total) {
+            $("#resumo_prazos").hide();
+            return;
+          }
+
+          var atrasadas = deltas.filter(function(valor) { return valor > 0; });
+          var noPrazo = deltas.filter(function(valor) { return valor <= 0; });
+          var antecedencias = noPrazo.map(function(valor) { return -valor; });
+
+          var mediaAntecedencia = null;
+          var menorAntecedencia = null;
+          var maiorAntecedencia = null;
+          var maiorAtraso = null;
+          var atrasosMin = atrasadas;
+          var antecedenciasMin = antecedencias.filter(function(valor) { return valor > 0; });
+          var faixasBase = criaFaixas(limitesDistribuicaoMin);
+          var distribuicaoAntecedencia = contaPorFaixas(antecedenciasMin, faixasBase);
+          var distribuicaoAtraso = contaPorFaixas(atrasosMin, faixasBase);
+          var noLimite = deltas.filter(function(valor) { return valor === 0; }).length;
+
+          if (antecedencias.length) {
+            mediaAntecedencia = antecedencias.reduce(function(soma, valor) { return soma + valor; }, 0) / antecedencias.length;
+            menorAntecedencia = Math.min.apply(null, antecedencias);
+            maiorAntecedencia = Math.max.apply(null, antecedencias);
+          }
+
+          if (atrasadas.length) {
+            maiorAtraso = Math.max.apply(null, atrasadas);
+          }
+
+          $("#resumo_total").text(total);
+          $("#resumo_no_prazo").text(noPrazo.length);
+          $("#resumo_atrasadas").text(atrasadas.length);
+          $("#resumo_media_antecedencia").text(formataNumeroResumo(mediaAntecedencia));
+          $("#resumo_menor_antecedencia").text(formataNumeroResumo(menorAntecedencia));
+          $("#resumo_maior_antecedencia").text(formataNumeroResumo(maiorAntecedencia));
+          $("#resumo_maior_atraso").text(formataNumeroResumo(maiorAtraso));
+          $("#resumo_no_limite").text(noLimite);
+
+          var linhasDistribuicao = "";
+          for (var indice = 0; indice < faixasBase.length; indice += 1) {
+            linhasDistribuicao += "<tr>" +
+              "<td>" + faixasBase[indice].legenda + "</td>" +
+              "<td class='valor'>" + distribuicaoAntecedencia[indice].quantidade + "</td>" +
+              "<td class='valor'>" + distribuicaoAtraso[indice].quantidade + "</td>" +
+            "</tr>";
+          }
+          $("#resumo_distribuicao_tabela tbody").html(linhasDistribuicao);
+          $("#resumo_prazos").show();
+        }
+
+        atualizarResumoPrazos();
+
       </script>
+
     {% endif %}
 
   </div> 
