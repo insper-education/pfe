@@ -2315,6 +2315,7 @@ class Pedido(models.Model):
     TIPO_PEDIDO = (
         ("github", "GitHub"),
         ("nuvem", "Nuvem"),
+        ("llm", "Chave API LLM"),
         ("overleaf", "Overleaf"),
         ("equipamento", "Equipamento"),
         ("compra", "Compra"),
@@ -2359,6 +2360,7 @@ class Pedido(models.Model):
         icones = {
             "github": '💻',
             "nuvem": '☁️',
+            "llm": '🤖',
             "overleaf": '📝',
             "equipamento": '🖥️',
             "compra": '🛒',
@@ -2384,6 +2386,10 @@ class Pedido(models.Model):
             html += f"<li><b>Serviços:</b> {d.get('nuvem_servicos', '')}</li>"
             html += f"<li><b>Finalidade:</b> {d.get('nuvem_finalidade', '')}"
             html += f"<li><b>Justificativa:</b> {d.get('nuvem_justificativa', '')}</li>"
+
+        elif self.tipo == "llm":
+            html += f"<li><b>Estimativa de consumo:</b> {d.get('llm_estimativa', '')}</li>"
+            html += f"<li><b>Justificativa técnica:</b> {d.get('llm_justificativa', '')}</li>"
             
         elif self.tipo == "overleaf":
             html += f"<li><b>Nome:</b> {d.get('overleaf_nome', '')}</li>"

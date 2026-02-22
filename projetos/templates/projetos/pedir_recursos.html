@@ -435,6 +435,52 @@
       padding: 1rem;
     }
   }
+
+  @media (max-width: 640px) {
+    .sidebar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+      padding: 0.875rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin: 4px;
+      max-width: 98%;
+    }
+
+    .sidebar-header {
+      margin-right: 0;
+      width: 100%;
+    }
+
+    .nav-menu {
+      flex-direction: column;
+      overflow-x: visible;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .nav-item {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.05rem;
+      border-radius: 6px;
+      white-space: normal;
+      line-height: 1.1;
+    }
+
+    .history-btn {
+      margin-left: 0;
+      margin-top: 0.5rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+    }
+
+    .nav-icon {
+      width: 22px;
+      flex-shrink: 0;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -475,6 +521,9 @@
       </div>
       <div class="nav-item" onclick="switchTab('nuvem', this)">
         <span class="nav-icon">☁️</span><span>{% lng "Nuvem" "Cloud" %} (AWS)</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('llm', this)">
+        <span class="nav-icon">🤖</span><span>{% lng "Chaves API" "API Keys" %} (LLM)</span>
       </div>
       <div class="nav-item" onclick="switchTab('overleaf', this)">
         <span class="nav-icon">📝</span><span>LaTeX (Overleaf)</span>
@@ -618,6 +667,39 @@
             <textarea name="nuvem_justificativa" class="form-control" required></textarea>
           </div>
           
+          <div class="form-group">
+            <label class="form-label">{% lng "Observações" "Notes" %}</label>
+            <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- LLM Section -->
+    <div id="llm" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Chaves API para LLMs" "LLM API Keys" %}</h2>
+        <p class="form-text">{% lng "Solicite acesso a APIs de modelos de linguagem como ChatGPT, Claude, Gemini, entre outros" "Request API access to language models like ChatGPT, Claude, Gemini, among others" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="llm">
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Estimativa de consumo" "Estimated usage" %}</label>
+            <textarea name="llm_estimativa" class="form-control" placeholder="Ex: número de chamadas por semana, tamanho médio de contexto, orçamento esperado..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Justificativa técnica" "Technical justification" %} <span class="required-asterisk">*</span></label>
+            <textarea name="llm_justificativa" class="form-control" required></textarea>
+          </div>
+
           <div class="form-group">
             <label class="form-label">{% lng "Observações" "Notes" %}</label>
             <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>

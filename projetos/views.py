@@ -953,6 +953,10 @@ def pedir_recursos(request, primarykey=None):
             dados["reuniao_descricao"] = request.POST.get("reuniao_descricao")
             dados["reuniao_horarios"] = request.POST.get("reuniao_horarios")
 
+        elif tipo == "llm":
+            dados["llm_estimativa"] = request.POST.get("llm_estimativa")
+            dados["llm_justificativa"] = request.POST.get("llm_justificativa")
+
         if tipo:
             observacoes = request.POST.get("observacoes", "")
             pedido = Pedido.objects.create(
@@ -1011,7 +1015,6 @@ def pedir_recursos(request, primarykey=None):
         }
 
     return render(request, "projetos/pedir_recursos.html", context=context)
-
 
 
 

@@ -71,9 +71,59 @@
   .btn-approve:hover { background: #059669; }
   .btn-reject { background: #ef4444; color: white; }
   .btn-reject:hover { background: #dc2626; }
+
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .pedido-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .acao-botoes {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .troca-decisao {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .troca-decisao textarea {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  @media (max-width: 900px) {
+    .page-container {
+      padding: 1rem;
+    }
+
+    .pedido-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      width: 100%;
+    }
+
+    .troca-decisao textarea {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
 </style>
 
-<div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+<div class="page-container">
   <h1 style="margin-bottom: 0.5rem;">{% lng "Gestão de Pedidos de Recursos" "Resource Request Management" %}</h1>
   <p class="text-muted">{% lng "Gerencie as solicitações feitas pelos grupos de projeto." "Manage requests made by project groups." %}</p>
 
@@ -104,7 +154,7 @@
             {% csrf_token %}
             <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem;">
+            <div class="pedido-grid" style="margin-bottom: 1.5rem;">
                <div>
                  <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
                  <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
@@ -125,7 +175,7 @@
                    <textarea name="resposta" class="form-control" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
                  </div>
                  
-                 <div style="display: flex; gap: 0.5rem;">
+                 <div class="acao-botoes">
                    <button type="submit" name="acao" value="aprovar" class="btn-action btn-approve">
                      {% lng "Aprovar" "Approve" %}
                    </button>
@@ -167,7 +217,7 @@
         </div>
         
         <div id="card-{{ pedido.id }}" class="card-content">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div class="pedido-grid">
              <div>
                <h4 style="margin-top: 0; color: #475569;">{% lng "Detalhes do Pedido" "Request Details" %}</h4>
                <div style="background: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
@@ -192,7 +242,7 @@
                  {% csrf_token %}
                  <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
                  <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem;">{% lng "Mudar decisão:" "Change decision:" %}</div>
-                 <div style="display: flex; gap: 1rem;align-items: center;">
+                  <div class="troca-decisao">
                     <textarea name="resposta" class="form-control" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem;" placeholder="Nova resposta..."></textarea>
                     
                     {% if pedido.status != 'aprovado' %}
