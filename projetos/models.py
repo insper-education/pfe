@@ -2336,6 +2336,9 @@ class Pedido(models.Model):
     
     resposta = models.TextField("Resposta da Coordenação/Equipe", max_length=3000, null=True, blank=True)
     data_resposta = models.DateTimeField("Data da Resposta", null=True, blank=True)
+    respondente = models.ForeignKey("users.PFEUser", null=True, blank=True, on_delete=models.SET_NULL,
+                                    related_name="pedido_respondente",
+                                    help_text="pessoa que respondeu o pedido")
 
     class Meta:
         verbose_name = "Pedido de Recurso"

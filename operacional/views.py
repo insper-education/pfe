@@ -428,13 +428,14 @@ def gerir_pedidos(request):
         
         pedido.resposta = resposta
         pedido.data_resposta = datetime.datetime.now()
+        pedido.respondente = request.user
         pedido.save()
 
         email_subject = f"Resposta de Pedido de Recurso: {pedido.tipo.capitalize()} - Projeto {pedido.projeto.proposta.titulo}"
         email_recipients = [request.user.email]
         email_recipients += [configuracao.coordenacao.user.email]
-        email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
-        for alocacao in Alocacao.objects.filter(projeto=projeto):
+        email_recipients += [pedido.projeto.orientador.user.email] if pedido.projeto.orientador else []
+        for alocacao in Alocacao.objects.filter(projeto=pedido.projeto):
             email_recipients.append(alocacao.aluno.user.email)
         email_message = f"""
             {pedido.solicitante.get_full_name()},<br><br>

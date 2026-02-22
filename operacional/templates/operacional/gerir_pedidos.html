@@ -88,7 +88,11 @@
             <div>
               <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
               <div style="color: #64748b; font-size: 0.85rem;">
-                 {{ pedido.projeto }} • {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                {{ pedido.projeto }}<br>
+                 {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                 {% if pedido.data_resposta %}
+                   <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
+                 {% endif %}
               </div>
             </div>
           </div>
@@ -151,7 +155,11 @@
             <div>
               <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
               <div style="color: #64748b; font-size: 0.85rem;">
-                 {{ pedido.projeto }} • {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                 {{ pedido.projeto }}<br>
+                 {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                 {% if pedido.data_resposta %}
+                   <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
+                 {% endif %}
               </div>
             </div>
           </div>
