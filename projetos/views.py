@@ -979,17 +979,21 @@ def pedir_recursos(request, primarykey=None):
                 &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {tipo.capitalize()}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.proposta.titulo}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
+                <div style="margin-left: 20px;">
             """
             for alocacao in Alocacao.objects.filter(projeto=projeto):
                 email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
             email_message += f"""
-                <br>
+                </div><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
+                <div style="margin-left: 20px;">
                 {pedido.get_detalhes_completos()}
-                <br>
+                </div><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
+                <div style="margin-left: 20px;">
                 {observacoes if observacoes else "Nenhuma"}
+                </div>
             """
 
             email(email_subject, email_recipients, email_message)
