@@ -199,7 +199,7 @@ def estudantes_lista(request):
             
             tabela_alunos[ano] = {semestre: {}}
 
-            for curso in Curso.objects.all().order_by("id"):
+            for curso in Curso.objects.all():
                 count_estud = alunos_semestre.filter(curso2__sigla=curso.sigla, externo__isnull=True).count()
                 if count_estud > 0:
                     if curso not in cursos:
@@ -255,7 +255,7 @@ def estudantes_lista(request):
                     tabela_alunos[ano_tmp][semestre_tmp] = {}
 
                 tabela_alunos[ano_tmp][semestre_tmp]["total"] = 0
-                for curso in Curso.objects.all().order_by("id"):
+                for curso in Curso.objects.all():
                     count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla, externo__isnull=True).count()  # Da instituição
                     if count_estud > 0:
                         if curso not in cursos:
@@ -296,6 +296,8 @@ def estudantes_lista(request):
         count_estud = alunos_list.filter(externo__isnull=False).count()
         if count_estud > 0:
             num_estudantes[externo] = count_estud
+
+        cursos = sorted(cursos, key=lambda c: (c.curso_do_insper, c.id))  # Ordena cursos do Insper primeiro e depois por id
 
         num_alunos = {  # Estudantes por genero
             'M': alunos_list.filter(user__genero='M').count(),
