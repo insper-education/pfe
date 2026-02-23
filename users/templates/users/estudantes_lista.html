@@ -113,7 +113,7 @@
                   {% for curso in cursos %}
                     <th class="text-center">{{curso.sigla}}</th>
                   {% endfor %}
-                  {% if curso_sel == 'T' %}
+                  {% if curso_sel == 'T' or curso_sel == 'TE' %}
                     <th class="text-center" style="border-left: solid 3px;">TOTAL</th>
                   {% endif %}
               </tr>
@@ -130,7 +130,7 @@
                           {% endwith %}
                         </td>
                       {% endfor %}
-                      {% if curso_sel == 'T' %}
+                      {% if curso_sel == 'T' or curso_sel == 'TE' %}
                         <td class="text-center" style="border-left: solid 3px;"><b> {{tabela_semetre.total}} </b></td>
                       {% endif %}
                   </tr>
@@ -148,7 +148,7 @@
                         {% endwith %}
                       </td>
                     {% endfor %}
-                  {% if curso_sel == 'T' %}
+                  {% if curso_sel == 'T' or curso_sel == 'TE' %}
                     <td class="text-center" style="border-left: solid 3px; border-top: double;"><b> {{totais.total}} </b></td>
                   {% endif %}
                 </tr>

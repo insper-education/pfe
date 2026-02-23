@@ -161,6 +161,8 @@ def estudantes_lista(request):
     cursos_insper = Curso.objects.filter(curso_do_insper=True).order_by("id")
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
+    externo = Curso(sigla="Externo", sigla_curta="EXT", nome="Externo", nome_en="External", id=999)
+
     if request.method == "POST":
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
@@ -180,7 +182,7 @@ def estudantes_lista(request):
         curso_sel = request.POST.get("curso")
         if curso_sel:
             if curso_sel == "T":  # Todos os estudantes (sem externos)
-                alunos = alunos.filter(curso2__in=cursos_insper)
+                alunos = alunos.filter(curso2__in=cursos_insper, externo__isnull=True)
             elif curso_sel != "TE":  # Todos os estudantes (com externos)
                 alunos = alunos.filter(curso2__sigla_curta=curso_sel)
         
@@ -198,13 +200,20 @@ def estudantes_lista(request):
             tabela_alunos[ano] = {semestre: {}}
 
             for curso in Curso.objects.all().order_by("id"):
-                count_estud = alunos_semestre.filter(curso2__sigla=curso.sigla).count()
+                count_estud = alunos_semestre.filter(curso2__sigla=curso.sigla, externo__isnull=True).count()
                 if count_estud > 0:
                     if curso not in cursos:
                         cursos.append(curso)
                     tabela_alunos[ano][semestre][curso.sigla] = count_estud
                     totais[curso.sigla] = count_estud
                     totais["total"] += count_estud
+            count_estud = alunos_semestre.filter(externo__isnull=False).count()
+            if count_estud > 0:
+                if externo not in cursos:
+                    cursos.append(externo)
+                tabela_alunos[ano][semestre][externo.sigla] = count_estud
+                totais[externo.sigla] = count_estud
+                totais["total"] += count_estud
 
             tabela_alunos[ano][semestre]["total"] = alunos_semestre.count()
             
@@ -247,7 +256,7 @@ def estudantes_lista(request):
 
                 tabela_alunos[ano_tmp][semestre_tmp]["total"] = 0
                 for curso in Curso.objects.all().order_by("id"):
-                    count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla).count()
+                    count_estud = alunos_semestre.filter(curso2__sigla__exact=curso.sigla, externo__isnull=True).count()  # Da instituição
                     if count_estud > 0:
                         if curso not in cursos:
                             cursos.append(curso)
@@ -259,6 +268,18 @@ def estudantes_lista(request):
                         tabela_alunos[ano_tmp][semestre_tmp]["total"] += count_estud
                         totais["total"] += count_estud
 
+                count_estud = alunos_semestre.filter(externo__isnull=False).count()  # Externos
+                if count_estud > 0:
+                    if externo not in cursos:
+                        cursos.append(externo)
+                    tabela_alunos[ano_tmp][semestre_tmp][externo.sigla] = count_estud
+                    if externo.sigla in totais:
+                        totais[externo.sigla] += count_estud
+                    else:
+                        totais[externo.sigla] = count_estud
+                    tabela_alunos[ano_tmp][semestre_tmp]["total"] += count_estud
+                    totais["total"] += count_estud
+
                 if semestre_tmp == 1:
                     semestre_tmp = 2
                 else:
@@ -269,9 +290,12 @@ def estudantes_lista(request):
         total_estudantes = alunos_list.count()
         num_estudantes = {}
         for curso in Curso.objects.all().order_by("id"):
-            count_estud = alunos_list.filter(curso2__sigla=curso.sigla).count()
+            count_estud = alunos_list.filter(curso2__sigla=curso.sigla, externo__isnull=True).count()
             if count_estud > 0:
                 num_estudantes[curso] = count_estud
+        count_estud = alunos_list.filter(externo__isnull=False).count()
+        if count_estud > 0:
+            num_estudantes[externo] = count_estud
 
         num_alunos = {  # Estudantes por genero
             'M': alunos_list.filter(user__genero='M').count(),
