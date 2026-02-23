@@ -2147,7 +2147,7 @@ def relatos_quinzenais(request, todos=None):
         }
 
     else:
-        edicoes, ano, semestre = get_edicoes(Pares)
+        edicoes, ano, semestre = get_edicoes(Projeto)
         context = {
                 "titulo": {"pt": "Relatos Quinzenais", "en": "Biweekly Reports"},
                 "administracao": True,
