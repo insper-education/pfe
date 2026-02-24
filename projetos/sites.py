@@ -96,10 +96,7 @@ def upload_site_e_pastas(request, projeto_id):
             projeto.save()
 
         if "Salvar" in request.POST:
-            if "pastas_do_projeto" in request.POST:
-                pastas_do_projeto = request.POST.get("pastas_do_projeto", None)
-                projeto.pastas_do_projeto = pastas_do_projeto
-                projeto.save()
+            # Site externo
             if "site" in request.POST:
                 site = request.POST.get("site", "").strip()
                 if site:
@@ -109,6 +106,42 @@ def upload_site_e_pastas(request, projeto_id):
                         projeto.site = "http://" + site
                 else:
                     projeto.site = None
+            
+            # URL do LaTeX
+            if "url_latex" in request.POST:
+                url_latex = request.POST.get("url_latex", "").strip()
+                projeto.url_latex = url_latex if url_latex else None
+            
+            # URL do Time no Github
+            if "url_time_github" in request.POST:
+                url_time_github = request.POST.get("url_time_github", "").strip()
+                projeto.url_time_github = url_time_github if url_time_github else None
+            
+            # Conta AWS
+            if "conta_aws" in request.POST:
+                conta_aws = request.POST.get("conta_aws", "").strip()
+                projeto.conta_aws = conta_aws if conta_aws else None
+            
+            # Chave LLM
+            if "apontamento_llm" in request.POST:
+                apontamento_llm = request.POST.get("apontamento_llm", "").strip()
+                projeto.apontamento_llm = apontamento_llm if apontamento_llm else None
+            
+            # Lista de Equipamentos
+            if "lista_equipamentos" in request.POST:
+                lista_equipamentos = request.POST.get("lista_equipamentos", "").strip()
+                projeto.lista_equipamentos = lista_equipamentos if lista_equipamentos else None
+            
+            # Lista de Compras
+            if "lista_compras" in request.POST:
+                lista_compras = request.POST.get("lista_compras", "").strip()
+                projeto.lista_compras = lista_compras if lista_compras else None
+            
+            # Outras Pastas do Projeto
+            if "pastas_do_projeto" in request.POST:
+                pastas_do_projeto = request.POST.get("pastas_do_projeto", "").strip()
+                projeto.pastas_do_projeto = pastas_do_projeto if pastas_do_projeto else None
+            
             projeto.save()
     
     if request.user.eh_estud:

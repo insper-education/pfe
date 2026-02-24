@@ -420,11 +420,53 @@ def gerir_pedidos(request):
         resposta = request.POST.get("resposta", "")
 
         pedido = get_object_or_404(Pedido, id=pedido_id)
+        anotacao = ""
 
         if acao == "aprovar":
             pedido.status = "aprovado"
         elif acao == "reprovar":
             pedido.status = "reprovado"
+
+        # Atualizar campos específicos do projeto quando aprovado
+        projeto = pedido.projeto
+        if projeto:
+            if pedido.tipo == "github":
+                url_time_github = request.POST.get("url_time_github", "").strip()
+                if url_time_github:
+                    projeto.url_time_github = url_time_github
+                    anotacao += "URL do GitHub: " + url_time_github + "<br>"
+                    
+            elif pedido.tipo == "overleaf":
+                url_latex = request.POST.get("url_latex", "").strip()
+                if url_latex:
+                    projeto.url_latex = url_latex
+                    anotacao += "URL do Overleaf: " + url_latex + "<br>"
+
+            elif pedido.tipo == "nuvem":
+                conta_aws = request.POST.get("conta_aws", "").strip()
+                if conta_aws:
+                    projeto.conta_aws = conta_aws
+                    anotacao += "Conta AWS: " + conta_aws + "<br>"
+                    
+            elif pedido.tipo == "llm":
+                apontamento_llm = request.POST.get("apontamento_llm", "").strip()
+                if apontamento_llm:
+                    projeto.apontamento_llm = apontamento_llm
+                    anotacao += "Apontamento LLM: " + apontamento_llm + "<br>"
+                    
+            elif pedido.tipo == "equipamento":
+                lista_equipamentos = request.POST.get("lista_equipamentos", "").strip()
+                if lista_equipamentos:
+                    projeto.lista_equipamentos = lista_equipamentos
+                    anotacao += "Lista de Equipamentos: " + lista_equipamentos + "<br>"
+                        
+            elif pedido.tipo == "compra":
+                lista_compras = request.POST.get("lista_compras", "").strip()
+                if lista_compras:
+                    projeto.lista_compras = lista_compras
+                    anotacao += "Lista de Compras: " + lista_compras + "<br>"
+            
+            projeto.save()
         
         pedido.resposta = resposta
         pedido.data_resposta = datetime.datetime.now()
@@ -457,6 +499,10 @@ def gerir_pedidos(request):
             <div style="margin-left: 20px;">
             {pedido.get_detalhes_completos()}
             </div><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;Anotação:<br>
+            <div style="margin-left: 20px;">
+            {anotacao if anotacao else "Nenhuma"}
+            </div><br>
             &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
             <div style="margin-left: 20px;">
             {pedido.observacoes if pedido.observacoes else "Nenhuma"}
@@ -480,5 +526,3 @@ def gerir_pedidos(request):
         "pedidos_processados": pedidos_processados,
     }
     return render(request, "operacional/gerir_pedidos.html", context=context)
-
-

@@ -104,9 +104,6 @@ class Projeto(models.Model):
     
     palavras_chave = models.CharField("Palavras-chave", max_length=1000, null=True, blank=True,
                                  help_text="Palavras-chave para os documentos do projeto")
-    
-    pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
-                                help_text="Links para repositórios com dados/códigos dos projeto (para orientador acessar)")
 
     avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
                                  help_text="projeto original em caso de avançado")
@@ -129,12 +126,39 @@ class Projeto(models.Model):
     time_misto = models.BooleanField("Time Misto", default=False,
                                      help_text="Caso o projeto conte com membros externos a instituição")
 
-    site = models.CharField("site", max_length=300, null=True, blank=True,
-                           help_text="site do projeto desenvolvido pelos estudantes")
     
     atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
                                                   help_text="Data da última atualização dos dados do projeto pelos estudantes")
+
+
+    # Parte dos documentos da pasta de projeto ------------------------------------ #
     
+    site = models.CharField("site", max_length=300, null=True, blank=True,
+                           help_text="site do projeto desenvolvido pelos estudantes")
+    
+    pastas_do_projeto = models.TextField("Pastas do Projeto", max_length=2000, null=True, blank=True,
+                                help_text="Outras informações armazenadas externamente relavantes para o projeto")
+    
+    url_latex = models.URLField("URL do LaTeX", max_length=300, null=True, blank=True,
+                                help_text="URL do projeto no overleaf ou outro editor de LaTeX online")
+    
+    url_time_github = models.URLField("URL do Time no Github", max_length=300, null=True, blank=True,
+                                help_text="URL do time do projeto no Github")
+    
+    conta_aws = models.CharField("Conta AWS", max_length=300, null=True, blank=True,
+                                help_text="Informações de conta AWS para o projeto")
+    
+    apontamento_llm = models.CharField("Chave LLM", max_length=600, null=True, blank=True,
+                                help_text="Chave de acesso a LLM para o projeto")
+
+    lista_equipamentos = models.TextField("Lista de Equipamentos", max_length=2000, null=True, blank=True,
+                                help_text="Lista de equipamentos emprestados da instituição utilizados no projeto")
+    
+    lista_compras = models.TextField("Lista de Compras", max_length=2000, null=True, blank=True,
+                                help_text="Lista de compras encaminhadas e realizadas para o projeto")
+
+    # -------------------------- Fim da Pasta de Projeto -------------------------- #
+
     class Meta:
         ordering = [ "ano", "semestre", "proposta__organizacao" ]  # Não mudar a ordem
         permissions = (("altera_empresa", "Empresa altera valores"),
@@ -155,6 +179,12 @@ class Projeto(models.Model):
             return str(self.ano)+"."+str(self.semestre)
         return "SEM PERÍODO DEFINIDO"
     
+    def get_pasta(self):
+        """Retorna se há algo nos documentos da pasta de projeto."""
+        campos = ['site', 'pastas_do_projeto', 'url_latex', 'url_time_github',
+                'conta_aws', 'apontamento_llm', 'lista_equipamentos', 'lista_compras']
+        return any(getattr(self, campo) for campo in campos)
+
     def get_titulo(self):
         """Caso tenha titulo atualizado, retorna esse, senão retorna o original e único."""
         if self.titulo_final:

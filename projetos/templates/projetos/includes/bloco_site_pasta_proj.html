@@ -10,67 +10,227 @@
 
 <div>
   <form {% if projeto %}action="{% url 'upload_site_e_pastas' projeto.id %}"{% endif %} method="post" enctype="multipart/form-data">
-  {% csrf_token %}
+    {% csrf_token %}
 
-    <label for="site"><b>
-      {% lng "Site do projeto (opcional)" "Project site (optional)" %}
-    </b></label>
-    {% with site=projeto.get_site %}
-    <div class="row">
-      <div class="col-md-6">
-        {% if site %}
-          <i>{% lng "site estático:" "static site:" %}</i>
-          <a style="background-color: #FFFFFF; padding: 4px;"
-             href="{{site}}" target="_blank">{{request.scheme}}://{{request.get_host}}{{site}}</a>
-          <br>
-        {% else %}
-          <input type="text" size="73" maxlength="{% max_length Projeto "site" %}" 
-                 {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
-                 style="max-width: 95%;" id="site" name="site" {% if projeto.site %}
-                 value="{{projeto.site}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
-          <div style="font-size: 12px; line-height:1.0;">site do projeto em repositório externo</div>
-          <br>
-        {% endif %}
-      </div>
-      <div class="col-md-6">
-        <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
-        <input class="btn btn-info btn-sm" type="submit" id="Carregar" name="Carregar" value="Carregar" disabled>
-        {% if projeto %}
-          <script>
-            document.getElementById("zipsite").addEventListener("change", function() {
-              if (this.value) {
-                  document.getElementById("Carregar").disabled = false;
-              } else {
-                  document.getElementById("Carregar").disabled = true;
-              }
-            });
-          </script>
-        {% endif %}
-        {% if site %}
-          <input class="btn btn-danger btn-sm" type="submit" name="Remover" value="Remover" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
-        {% endif %}
-        <br>
-        <div style="font-size: 12px; line-height:1.0;">
-          {% lng "carrega um arquivo .zip com um site estático para o projeto" "uploads a .zip file with a static site for the project" %}
+    <h4 class="mb-2">{% lng "Pastas do projeto (campos opcionais)" "Project folder (optional fields)" %}</h4>
+    <p class="text-muted small mb-2">
+      {% lng "Links para repositórios com dados/documentos/sites/códigos dos projeto" "Links to repositories with project data/documents/sites/codes" %}
+    </p>
+
+    {# Site do Projeto #}
+    <div class="form-group mb-3">
+      <label for="site">
+        {% lng "Site do projeto" "Project site" %}
+      </label>
+      {% with site=projeto.get_site %}
+        <div class="row">
+          <div class="col-md-6">
+            {% if site %}
+              <div class="alert alert-info py-2 px-3">
+                <i>{% lng "site estático:" "static site:" %}</i>
+                <a href="{{site}}" target="_blank" rel="noopener noreferrer" class="alert-link">
+                  {{request.scheme}}://{{request.get_host}}{{site}}
+                </a>
+              </div>
+            {% else %}
+              <input type="url" 
+                     class="form-control form-control-sm" 
+                     id="site" 
+                     name="site" 
+                     maxlength="{% max_length Projeto 'site' %}"
+                     {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+                     {% if projeto.site %}value="{{projeto.site}}"{% endif %}
+                     placeholder="https://www.insper.edu.br/"
+                     aria-describedby="site-help">
+              <small id="site-help" class="form-text text-muted">
+                {% lng "site do projeto em repositório externo" "project site in external repository" %}
+              </small>
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+
+            <div class="custom-file mb-2">
+              <input type="file" id="zipsite" name="zipsite" accept=".zip" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+    
+              <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-info" 
+                        type="submit" 
+                        id="Carregar" 
+                        name="Carregar" 
+                        disabled>
+                  {% lng "Carregar" "Upload" %}
+                </button>
+                {% if site %}
+                  <button class="btn btn-danger" 
+                          type="submit" 
+                          name="Remover"
+                          {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+                    {% lng "Remover" "Remove" %}
+                  </button>
+                {% endif %}
+              </div>
+              <small id="zipsite-help" class="form-text text-muted d-block mt-2">
+                {% lng "carrega um arquivo .zip com um site estático para o projeto" "uploads a .zip file with a static site for the project" %}
+              </small>
+
+            </div>
+
+            {% if projeto %}
+              <script>
+                document.getElementById("zipsite").addEventListener("change", function() {
+                  const carregarBtn = document.getElementById("Carregar");
+                  const label = this.nextElementSibling;
+                  
+                  if (this.files.length > 0) {
+                    carregarBtn.disabled = false;
+                    label.textContent = this.files[0].name;
+                  } else {
+                    carregarBtn.disabled = true;
+                    label.textContent = "{% lng 'Escolher arquivo .zip' 'Choose .zip file' %}";
+                  }
+                });
+              </script>
+            {% endif %}
+          </div>
         </div>
-        <br>
-      </div>
-    </div>
-    {% endwith %}
-
-    <label for="pastas_do_projeto"><b>
-      {% lng "Pastas do projeto (opcional)" "Project folders (optional)" %}
-    </b></label><br>
-    <textarea id="pastas_do_projeto" name="pastas_do_projeto" rows="6" maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
-    {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
-    >{% if projeto.pastas_do_projeto %}{{projeto.pastas_do_projeto}}{% endif %}</textarea>
-    <div style="font-size: 12px; line-height:1.0;">
-      {% lng "Links para repositórios com dados/códigos dos projeto (para orientador acessar / mantenha privado se não tiver autorização da organização parceira para deixar público)" "Links to repositories with project data/code (for advisor access / keep private if you do not have authorization from the partner organization to make it public)" %}
+      {% endwith %}
     </div>
 
+    {# URL do LaTeX #}
+    <div class="form-group mb-3">
+      <label for="url_latex">
+        {% lng "URL do LaTeX" "LaTeX URL" %}
+      </label>
+      <input type="url" 
+             class="form-control form-control-sm" 
+             id="url_latex" 
+             name="url_latex" 
+             maxlength="{% max_length Projeto 'url_latex' %}"
+             {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+             {% if projeto.url_latex %}value="{{projeto.url_latex}}"{% endif %}
+             placeholder="https://www.overleaf.com/"
+             aria-describedby="url-latex-help">
+      <small id="url-latex-help" class="form-text text-muted">
+        {% lng "URL do projeto em editor de LaTeX online" "URL of the project in online LaTeX editor" %}
+      </small>
+    </div>
+
+    {# URL do Time no Github #}
+    <div class="form-group mb-3">
+      <label for="url_time_github">
+        {% lng "URL do Time no Github" "Team URL on Github" %}
+      </label>
+      <input type="url" 
+             class="form-control form-control-sm" 
+             id="url_time_github" 
+             name="url_time_github" 
+             maxlength="{% max_length Projeto 'url_time_github' %}"
+             {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+             {% if projeto.url_time_github %}value="{{projeto.url_time_github}}"{% endif %}
+             placeholder="https://github.com/"
+             aria-describedby="url-github-help">
+      <small id="url-github-help" class="form-text text-muted">
+        {% lng "URL do time do projeto no Github" "URL of the project team on Github" %}
+      </small>
+    </div>
+
+    {# Conta AWS #}
+    <div class="form-group mb-3">
+      <label for="conta_aws">
+        {% lng "Conta AWS" "AWS Account" %}
+      </label>
+      <input type="text" 
+             class="form-control form-control-sm" 
+             id="conta_aws" 
+             name="conta_aws" 
+             maxlength="{% max_length Projeto 'conta_aws' %}"
+             {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+             {% if projeto.conta_aws %}value="{{projeto.conta_aws}}"{% endif %}
+             placeholder="Informações de conta AWS para o projeto"
+             aria-describedby="conta-aws-help">
+      <small id="conta-aws-help" class="form-text text-muted">
+        {% lng "Informações de conta AWS para o projeto" "AWS account information for the project" %}
+      </small>
+    </div>
+
+    {# Chave LLM #}
+    <div class="form-group mb-3">
+      <label for="apontamento_llm">
+        {% lng "Chave de acesso a LLM" "LLM access key" %}
+      </label>
+      <input type="text" 
+             class="form-control form-control-sm" 
+             id="apontamento_llm" 
+             name="apontamento_llm" 
+             maxlength="{% max_length Projeto 'apontamento_llm' %}"
+             {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+             {% if projeto.apontamento_llm %}value="{{projeto.apontamento_llm}}"{% endif %}
+             placeholder="Informações de acesso a LLM para o projeto"
+             aria-describedby="apontamento-llm-help">
+      <small id="apontamento-llm-help" class="form-text text-muted">
+        {% lng "Informações de acesso a LLM para o projeto" "LLM access information for the project" %}
+      </small>
+    </div>
+
+    {# Lista de Equipamentos #}
+    <div class="form-group mb-3">
+      <label for="lista_equipamentos">
+        {% lng "Lista de equipamentos" "Equipment list" %}
+      </label>
+      <textarea class="form-control form-control-sm" 
+                id="lista_equipamentos" 
+                name="lista_equipamentos" 
+                rows="4" 
+                maxlength="{% max_length Projeto 'lista_equipamentos' %}"
+                {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+                aria-describedby="lista-equipamentos-help">{% if projeto.lista_equipamentos %}{{projeto.lista_equipamentos}}{% endif %}</textarea>
+      <small id="lista-equipamentos-help" class="form-text text-muted">
+        {% lng "Lista de equipamentos emprestados da instituição utilizados no projeto" "List of equipment borrowed from the institution used in the project" %}
+      </small>
+    </div>
+
+    {# Lista de Compras #}
+    <div class="form-group mb-3">
+      <label for="lista_compras">
+        {% lng "Lista de compras" "Purchase list" %}
+      </label>
+      <textarea class="form-control form-control-sm" 
+                id="lista_compras" 
+                name="lista_compras" 
+                rows="4" 
+                maxlength="{% max_length Projeto 'lista_compras' %}"
+                {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+                aria-describedby="lista-compras-help">{% if projeto.lista_compras %}{{projeto.lista_compras}}{% endif %}</textarea>
+      <small id="lista-compras-help" class="form-text text-muted">
+        {% lng "Lista de compras encaminhadas e realizadas para o projeto" "List of purchases made and planned for the project" %}
+      </small>
+    </div>
+
+    {# Outras Pastas #}
+    <div class="form-group mb-3">
+      <label for="pastas_do_projeto">
+        {% lng "Outras pastas do projeto" "Other project folders" %}
+      </label>
+      <textarea class="form-control form-control-sm" 
+                id="pastas_do_projeto" 
+                name="pastas_do_projeto" 
+                rows="4" 
+                maxlength="{% max_length Projeto 'pastas_do_projeto' %}"
+                {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}
+                aria-describedby="pastas-projeto-help">{% if projeto.pastas_do_projeto %}{{projeto.pastas_do_projeto}}{% endif %}</textarea>
+      <small id="pastas-projeto-help" class="form-text text-muted">
+        {% lng "Links para outras pastas e documentos relevantes do projeto" "Links to other relevant project folders and documents" %}
+      </small>
+    </div>
+
+    {# Botão Salvar #}
     <div class="text-right mt-2">
-      <button class="btn btn-primary btn-sm" type="submit" name="Salvar" {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
-        {% lng "Salvar" "Save" %}
+      <button class="btn btn-primary btn-sm" 
+              type="submit" 
+              name="Salvar" 
+              {% if not alocacao and projeto.orientador.user != user and not user.eh_admin %}disabled{% endif %}>
+        <i class="fas fa-save mr-1"></i>
+        {% lng "Salvar Pasta do Projeto" "Save Project Folder" %}
       </button>
     </div>
   </form>

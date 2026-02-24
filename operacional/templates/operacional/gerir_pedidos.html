@@ -138,7 +138,7 @@
             <div>
               <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
               <div style="color: #64748b; font-size: 0.85rem;">
-                {{ pedido.projeto }}<br>
+                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo}}</a><br>
                  {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
                  {% if pedido.data_resposta %}
                    <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
@@ -170,9 +170,88 @@
                <div>
                  <h4 style="margin-top: 0; color: #475569;">{% lng "Ação da Coordenação" "Coordination Action" %}</h4>
                  
+                 {# Campos específicos por tipo de pedido #}
+                 {% if pedido.tipo == 'github' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do Time no Github" "Team URL on Github" %}</label>
+                     <input type="url" 
+                            name="url_time_github" 
+                            class="form-control form-control-sm" 
+                            placeholder="https://github.com/orgs/capstone-insper/teams/..."
+                            {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
+                            style="border-radius: 6px;">
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "URL do time/repositório do projeto no Github" "Project team/repository URL on Github" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == 'overleaf' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "URL do LaTeX" "LaTeX URL" %}</label>
+                     <input type="url" 
+                            name="url_latex" 
+                            class="form-control form-control-sm" 
+                            placeholder="https://www.overleaf.com/..."
+                            {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
+                            style="border-radius: 6px;">
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "URL do projeto em editor de LaTeX online" "Project URL in online LaTeX editor" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == 'nuvem' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Informações de Conta AWS" "AWS Account Information" %}</label>
+                     <input type="text" 
+                            name="conta_aws" 
+                            class="form-control form-control-sm" 
+                            placeholder="Informações de conta AWS para o projeto"
+                            {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
+                            style="border-radius: 6px;">
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "Credenciais e informações de acesso à AWS" "AWS access credentials and information" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == 'llm' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Chave de Acesso LLM" "LLM Access Key" %}</label>
+                     <input type="text" 
+                            name="apontamento_llm" 
+                            class="form-control form-control-sm" 
+                            placeholder="Chave API e informações de acesso"
+                            {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
+                            style="border-radius: 6px;">
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "Chave de API e informações de acesso ao LLM" "LLM API key and access information" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == 'equipamento' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes do Equipamento Aprovado" "Approved Equipment Details" %}</label>
+                     <textarea name="lista_equipamentos" 
+                               class="form-control form-control-sm" 
+                               rows="3" 
+                               placeholder="Liste os equipamentos aprovados com detalhes..."
+                               style="border-radius: 6px;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "Equipamentos emprestados e suas condições" "Borrowed equipment and its conditions" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == 'compra' %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes da Compra Aprovada" "Approved Purchase Details" %}</label>
+                     <textarea name="lista_compras" 
+                               class="form-control form-control-sm" 
+                               rows="3" 
+                               placeholder="Detalhes da compra aprovada, valores, fornecedor..."
+                               style="border-radius: 6px;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "Detalhes da compra realizada ou autorizada" "Details of purchase made or authorized" %}
+                     </small>
+                   </div>
+                 {% endif %}
+                 
                  <div class="form-group" style="margin-bottom: 1rem;">
-                   <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">{% lng "Resposta / Justificativa" "Response / Justification" %}</label>
-                   <textarea name="resposta" class="form-control" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
+                   <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Resposta / Justificativa" "Response / Justification" %}</label>
+                   <textarea name="resposta" class="form-control form-control-sm" rows="3" style="width: 100%; border-radius: 6px; padding: 0.5rem;" placeholder="Opcionalmente, insira uma resposta..."></textarea>
                  </div>
                  
                  <div class="acao-botoes">
@@ -205,11 +284,11 @@
             <div>
               <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
               <div style="color: #64748b; font-size: 0.85rem;">
-                 {{ pedido.projeto }}<br>
-                 {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
-                 {% if pedido.data_resposta %}
-                   <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
-                 {% endif %}
+                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo}}</a><br>
+                {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
+                {% if pedido.data_resposta %}
+                  <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
+                {% endif %}
               </div>
             </div>
           </div>
@@ -242,8 +321,64 @@
                  {% csrf_token %}
                  <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
                  <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem;">{% lng "Mudar decisão:" "Change decision:" %}</div>
-                  <div class="troca-decisao">
-                    <textarea name="resposta" class="form-control" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem;" placeholder="Nova resposta..."></textarea>
+                 
+                 {# Campos específicos por tipo de pedido #}
+                 {% if pedido.tipo == 'github' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <input type="url" 
+                            name="url_time_github" 
+                            class="form-control form-control-sm" 
+                            placeholder="URL do Time no Github"
+                            {% if pedido.projeto.url_time_github %}value="{{pedido.projeto.url_time_github}}"{% endif %}
+                            style="border-radius: 6px; font-size: 0.85rem;">
+                   </div>
+                 {% elif pedido.tipo == 'overleaf' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <input type="url" 
+                            name="url_latex" 
+                            class="form-control form-control-sm" 
+                            placeholder="URL do LaTeX"
+                            {% if pedido.projeto.url_latex %}value="{{pedido.projeto.url_latex}}"{% endif %}
+                            style="border-radius: 6px; font-size: 0.85rem;">
+                   </div>
+                 {% elif pedido.tipo == 'nuvem' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <input type="text" 
+                            name="conta_aws" 
+                            class="form-control form-control-sm" 
+                            placeholder="Informações de Conta AWS"
+                            {% if pedido.projeto.conta_aws %}value="{{pedido.projeto.conta_aws}}"{% endif %}
+                            style="border-radius: 6px; font-size: 0.85rem;">
+                   </div>
+                 {% elif pedido.tipo == 'llm' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <input type="text" 
+                            name="apontamento_llm" 
+                            class="form-control form-control-sm" 
+                            placeholder="Chave de Acesso LLM"
+                            {% if pedido.projeto.apontamento_llm %}value="{{pedido.projeto.apontamento_llm}}"{% endif %}
+                            style="border-radius: 6px; font-size: 0.85rem;">
+                   </div>
+                 {% elif pedido.tipo == 'equipamento' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <textarea name="lista_equipamentos" 
+                               class="form-control form-control-sm" 
+                               rows="2" 
+                               placeholder="Detalhes do equipamento"
+                               style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_equipamentos %}{{pedido.projeto.lista_equipamentos}}{% endif %}</textarea>
+                   </div>
+                 {% elif pedido.tipo == 'compra' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <textarea name="lista_compras" 
+                               class="form-control form-control-sm" 
+                               rows="2" 
+                               placeholder="Detalhes da compra"
+                               style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
+                   </div>
+                 {% endif %}
+                 
+                 <div class="troca-decisao">
+                    <textarea name="resposta" class="form-control form-control-sm" rows="1" style="flex:1; border-radius: 6px; padding: 0.5rem; font-size: 0.85rem;" placeholder="Nova resposta..."></textarea>
                     
                     {% if pedido.status != 'aprovado' %}
                     <button type="submit" name="acao" value="aprovar" class="btn-action btn-approve" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">

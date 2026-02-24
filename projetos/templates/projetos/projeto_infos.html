@@ -696,7 +696,9 @@
       </div>
     {% endif %}
     
-    {% if projeto.get_site or projeto.pastas_do_projeto %}
+    {% if projeto.get_pasta %}
+      <hr>
+      <h4>{% lng "Pasta do Projeto" "Project Folder" %}:</h4>
       <div class="mt-3">
         {% include "professores/includes/ver_site.html" %}
         {% include "professores/includes/ver_pastas_projeto.html" %}

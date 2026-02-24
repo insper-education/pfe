@@ -117,12 +117,32 @@ def custom_400(request, exception):
     return HttpResponse(mensagem)
 
 
-from projetos.models import Banca
-from administracao.models import TipoEvento
+from projetos.models import Projeto
+import re
 
 @login_required
 @permission_required("users.view_administrador", raise_exception=True)
 def migracao(request):
     """temporário."""
     message = "Nada Feito"
+
+    projetos = Projeto.objects.filter(ano__isnull=False)
+
+    for projeto in projetos:
+        if projeto.pastas_do_projeto:
+            pastas_do_projeto = re.split(r'[ ,;\n\t]+', projeto.pastas_do_projeto)
+            repositorios = []
+            for pasta in pastas_do_projeto:
+                pasta = pasta.strip()
+                if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15] or "github.com/" == pasta[:11] or "www.github.com/" == pasta[:15]:
+                    if pasta[-1] == '/':
+                        pasta = pasta[:-1]
+                    repositorios.append(pasta)
+            if repositorios:
+                projeto.url_time_github = "\n".join(repositorios)
+                projeto.save()
+                message += f"Projeto {projeto.id} atualizado com {len(repositorios)} repositórios.<br>"
+
+
+    
     return HttpResponse(message)

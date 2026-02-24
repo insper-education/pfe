@@ -7,9 +7,87 @@
 {% load linguas %}
 {% load bleach %}
 
+{# Site do Projeto #}
+{% if projeto.site %}
+  <div class="mt-2">
+    <b>{% lng "Site do projeto" "Project site" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#127760;&nbsp;</div>
+      <div><a href="{{projeto.site}}" target="_blank" rel="noopener noreferrer">{{projeto.site}}</a></div>
+    </div>
+  </div>
+{% endif %}
+
+{# URL do LaTeX #}
+{% if projeto.url_latex %}
+  <div class="mt-2">
+    <b>{% lng "URL do LaTeX" "LaTeX URL" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#128221;&nbsp;</div>
+      <div><a href="{{projeto.url_latex}}" target="_blank" rel="noopener noreferrer">{{projeto.url_latex}}</a></div>
+    </div>
+  </div>
+{% endif %}
+
+{# URL do Time no Github #}
+{% if projeto.url_time_github %}
+  <div class="mt-2">
+    <b>{% lng "URL do Time no Github" "Team URL on Github" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#128187;&nbsp;</div>
+      <div><a href="{{projeto.url_time_github}}" target="_blank" rel="noopener noreferrer">{{projeto.url_time_github}}</a></div>
+    </div>
+  </div>
+{% endif %}
+
+{# Conta AWS #}
+{% if projeto.conta_aws %}
+  <div class="mt-2">
+    <b>{% lng "Conta AWS" "AWS Account" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#9729;&nbsp;</div>
+      <div>{{projeto.conta_aws|linebreaks}}</div>
+    </div>
+  </div>
+{% endif %}
+
+{# Chave LLM #}
+{% if projeto.apontamento_llm %}
+  <div class="mt-2">
+    <b>{% lng "Apontamento para acesso a LLM" "LLM Access Information" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#128273;&nbsp;</div>
+      <div>{{projeto.apontamento_llm|linebreaks}}</div>
+    </div>
+  </div>
+{% endif %}
+
+{# Lista de Equipamentos #}
+{% if projeto.lista_equipamentos %}
+  <div class="mt-2">
+    <b>{% lng "Lista de equipamentos" "Equipment list" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#128736;&nbsp;</div>
+      <div>{{projeto.lista_equipamentos|linebreaks}}</div>
+    </div>
+  </div>
+{% endif %}
+
+{# Lista de Compras #}
+{% if projeto.lista_compras %}
+  <div class="mt-2">
+    <b>{% lng "Lista de compras" "Purchase list" %}:</b>
+    <div style="display: flex; align-items: flex-start; padding-left: 18px;">
+      <div>&#128179;&nbsp;</div>
+      <div>{{projeto.lista_compras|linebreaks}}</div>
+    </div>
+  </div>
+{% endif %}
+
+{# Outras Pastas do Projeto #}
 {% if projeto.pastas_do_projeto %}
-  <div class="mt-1">
-    <b>{% lng "Pastas do projeto" "Project repositories" %}:</b>
+  <div class="mt-2">
+    <b>{% lng "Outras pastas do projeto" "Other project folders" %}:</b>
     <div style="display: flex; align-items: flex-start; padding-left: 18px;">
       <div>&#128193;&nbsp;</div>
       <div>{{projeto.pastas_do_projeto|linebreaks|bleach_urlize|safe}}</div>

@@ -12,6 +12,7 @@ import dateutil.parser
 import string
 import random
 import logging
+import requests
 
 from git import Repo
 
@@ -354,26 +355,60 @@ def envia_senha_mensagem(user):
 def puxa_github(projeto):
     """Detecta repositorios github no projeto."""    
 
-    if not projeto.pastas_do_projeto:
+    if projeto.url_time_github:
+        repositorios = re.split(r'[ ,;\n\t]+', projeto.url_time_github)
+        repositorios = [p.strip() for p in repositorios if p.strip()]
+        return repositorios
+    return []
+
+
+def is_github_team_url(url):
+    """Verifica se a URL é um Team do GitHub."""
+    return bool(re.match(r'https://github\.com/orgs/([^/]+)/teams/([^/]+)', url))
+
+
+def get_team_repositories(team_url, token):
+    """Obtém todos os repositórios de um Team do GitHub usando a API."""
+    match = re.match(r'https://github\.com/orgs/([^/]+)/teams/([^/]+)', team_url)
+    if not match:
         return []
-
-    pastas_do_projeto = re.split(r'[ ,;\n\t]+', projeto.pastas_do_projeto)
-
-    repositorios = []
-    for pasta in pastas_do_projeto:
-        pasta = pasta.strip()
-        if "https://github.com/" == pasta[:19] or "git@github.com:" == pasta[:15]:
-            if pasta[-1] == '/':
-                pasta = pasta[:-1]
-            repositorios.append(pasta)
-    return repositorios
-
+    
+    org = match.group(1)
+    team_slug = match.group(2)
+    
+    headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
+    url = f'https://api.github.com/orgs/{org}/teams/{team_slug}/repos'
+    
+    repos = []
+    page = 1
+    
+    try:
+        while True:
+            response = requests.get(url, headers=headers, params={'page': page, 'per_page': 100}, timeout=10)
+            
+            if response.status_code != 200:
+                logger.warning(f"Erro ao buscar repositórios do team {team_slug}: {response.status_code}")
+                break
+            
+            data = response.json()
+            if not data:
+                break
+            
+            for repo in data:
+                repos.append(repo['clone_url'])
+            
+            page += 1
+    
+    except Exception as e:
+        logger.error(f"Erro ao obter repositórios do team {team_slug}: {e}")
+    
+    return repos
 
 def backup_github(projeto):
-    """Faz backup dos repositórios github no projeto."""
+    """Faz backup dos repositórios github no projeto, incluindo repositórios de Teams."""
 
-    repositorios = puxa_github(projeto)
-    if not repositorios:
+    repositorios_input = puxa_github(projeto)
+    if not repositorios_input:
         return
 
     path = get_upload_path(projeto, "")
@@ -382,7 +417,21 @@ def backup_github(projeto):
         os.makedirs(full_path)
 
     token = settings.GITHUB_TOKEN
-    for repo_url in repositorios:
+    all_repos = []
+    
+    # Processar cada entrada: pode ser um repositório direto ou um Team
+    for item_url in repositorios_input:
+        if is_github_team_url(item_url):
+            # É um Team, obter todos os repositórios do Team
+            team_repos = get_team_repositories(item_url, token)
+            all_repos.extend(team_repos)
+            logger.info(f"Encontrados {len(team_repos)} repositórios do team: {item_url}")
+        else:
+            # É um repositório direto
+            all_repos.append(item_url)
+    
+    # Fazer backup de todos os repositórios encontrados
+    for repo_url in all_repos:
         repo_name = repo_url.split('/')[-1].replace('.git', '')
         repo_dir = os.path.join(full_path, repo_name)
 
@@ -394,9 +443,10 @@ def backup_github(projeto):
                 repo = Repo(repo_dir)
                 repo.remotes.origin.set_url(repo_url_with_token)
                 repo.remotes.origin.pull()
+                logger.info(f"Atualizado repositório: {repo_name}")
             else:
                 # Cloning repository
                 Repo.clone_from(repo_url_with_token, repo_dir)
+                logger.info(f"Clonado novo repositório: {repo_name}")
         except Exception as e:
-            # Erro ao clonar repositório
-            pass
+            logger.error(f"Erro ao fazer backup do repositório {repo_name}: {e}")
