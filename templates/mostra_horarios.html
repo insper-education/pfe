@@ -199,8 +199,8 @@
   {% endif %}
 
   {% if request.user.eh_estud %}
-    <b>{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
-    <span id="horas_alocadas">
+    <b style="font-size: 1.05em;">{% lng "Suas horas alocadas" "Your allocated hours" %}:</b>
+    <span id="horas_alocadas" style="margin-left: 8px;font-size: 1.05em;">
       <span id="horas_alocadas_diurno">0</span>
       {% lng "horas periodo diurno (total = " "hours daytime period (total = " %}
       <span id="horas_alocadas_total">0</span>
@@ -211,8 +211,8 @@
   
 
   <b>{% lng "Horas todos juntos" "Hours all together" %}:</b>
-  <span id="horas_juntos">
-    <span id="horas_juntos_total">0</span>
+  <span id="horas_juntos" style="margin-left: 8px; font-size: 1.05em;">
+    <span id="horas_juntos_total" >0</span>
     {% lng " horas" " hours" %}<br>
   </span>		
 
@@ -220,14 +220,16 @@
 
     function set_horas(horas_comerciais, horas_outras) {
       {% if request.user.eh_estud %}
-        horas_alocadas_diurno = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas_diurno");
-        horas_alocadas_total = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas_total");
+        let container = document.getElementById("horarios_proj_{{projeto.id}}");
+        if (!container) return;
+        horas_alocadas_diurno = container.querySelector("#horas_alocadas_diurno");
+        horas_alocadas_total = container.querySelector("#horas_alocadas_total");
          if(!horas_alocadas_diurno || !horas_alocadas_total) {
            return;
          }
         horas_alocadas_diurno.innerText = horas_comerciais*2;
         horas_alocadas_total.innerText = (horas_comerciais+horas_outras)*2;
-        horas_alocadas = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_alocadas");
+        horas_alocadas = container.querySelector("#horas_alocadas");
         if(!horas_alocadas) {
           return;
         }
@@ -240,7 +242,9 @@
     }
 
     function allElementsHaveHighlight(className) {
-      const elements = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.${className}`);
+      let container = document.getElementById("horarios_proj_{{projeto.id}}");
+      if (!container) return false;
+      let elements = container.querySelectorAll(`.${className}`);
       for (let element of elements) {
         if (!element.classList.contains("highlight")) {
           return false;
@@ -250,17 +254,19 @@
     }
 
     function confere_juntos() {
+      let container = document.getElementById("horarios_proj_{{projeto.id}}");
+      if (!container) return;
       contador = 0;
       for (let i = 0; i < 5; i++) {  // Dias da semana (seg, ter, qua, qui, sex)
         for (let j = 0; j < {{horarios|length}}; j++) {
           if(allElementsHaveHighlight(`h_${i}_${j}`)) {
-            const allHighlighted = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.h_${i}_${j}`);
+            let allHighlighted = container.querySelectorAll(`.h_${i}_${j}`);
             for (let element of allHighlighted) {
               element.classList.add("borderhighlight");
             }
             contador++;
           } else {
-            const allHighlighted = document.getElementById("horarios_proj_{{projeto.id}}").querySelectorAll(`.h_${i}_${j}`);
+            let allHighlighted = container.querySelectorAll(`.h_${i}_${j}`);
             for (let element of allHighlighted) {
               if (element.classList) {
                 element.classList.remove("borderhighlight");
@@ -271,12 +277,12 @@
       }
       {% if alocacoes %}
         contador--; // descontando aula regular
-        horas_juntos_total = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_juntos_total");
+        horas_juntos_total = container.querySelector("#horas_juntos_total");
         if(!horas_juntos_total) {
           return;
         }
         horas_juntos_total.innerText = contador*2;
-        horas_juntos = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#horas_juntos");
+        horas_juntos = container.querySelector("#horas_juntos");
         if(!horas_juntos) {
           return;
         }
@@ -290,9 +296,12 @@
 
     {% if request.user.eh_estud %}
       document.addEventListener("DOMContentLoaded", (event) => {
+        let container = document.getElementById("horarios_proj_{{projeto.id}}");
+        if (!container) return;
         let isMouseDown = false;
 
-        const table = document.getElementById("horarios_proj_{{projeto.id}}").querySelector("table");
+        const table = container.querySelector("table");
+        if (!table) return;
         table.addEventListener("mousedown", (e) => {
           if (e.target.classList.contains("meu")) {
             isMouseDown = true;
@@ -315,7 +324,7 @@
           var horas_outras = 0;
           for (let i = 0; i < 5; i++) {
             for (let j = 0; j < {{horarios|length}}; j++) {
-              const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${i}_${j}`);
+              let element = container.querySelector(`#h_${i}_${j}`);
               if (element && element.classList.contains("highlight")) {
                 horarios.push( [i,j] );
                 if (
@@ -374,7 +383,7 @@
             } else {
               horas_outras++;
             }
-            const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${dia}_${horario}`);
+            let element = document.getElementById("horarios_proj_{{projeto.id}}")?.querySelector(`#h_${dia}_${horario}`);
             if (element) {
               element.classList.add("highlight");
             }
@@ -384,11 +393,14 @@
         {% else %}
           horarios = {{ alocacao.horarios|safe }};
           alocacao = {{ alocacao.id }};
-          for (let i = 0; i < horarios.length; i++) {
-            const [dia, horario] = horarios[i];
-            const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${dia}_${horario}_${alocacao}`);
-            if (element) {
-              element.classList.add("highlight");
+          var initContainer = document.getElementById("horarios_proj_{{projeto.id}}");
+          if (initContainer) {
+            for (let i = 0; i < horarios.length; i++) {
+              const [dia, horario] = horarios[i];
+              let element = initContainer.querySelector(`#h_${dia}_${horario}_${alocacao}`);
+              if (element) {
+                element.classList.add("highlight");
+            }
             }
           }
         {% endif %}
@@ -412,6 +424,9 @@
           "csrfmiddlewaretoken": "{{ csrf_token }}"
         },
         success: function (data) {
+          let refContainer = document.getElementById("horarios_proj_{{projeto.id}}");
+          if (!refContainer) return;
+
           for( id in data.todos_horarios ) {
             horarios = data.todos_horarios[id];
             if(horarios) {
@@ -434,18 +449,22 @@
                     horas_outras++;
                   }
                 }
-                document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
 
-                if(horas_comerciais*2 < 22) {
-                  document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).style.color = "red";
-                } else {
-                  document.getElementById("horarios_proj_{{projeto.id}}").querySelector("#a"+id).style.color = "green";
+                let aElement = refContainer.querySelector("#a"+id);
+                if(aElement) {
+                  aElement.innerText = (horas_comerciais*2) + "/" + ((horas_comerciais+horas_outras)*2);
+
+                  if(horas_comerciais*2 < 22) {
+                    aElement.style.color = "red";
+                  } else {
+                    aElement.style.color = "green";
+                  }
                 }
               {% endif %}
 
               for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < {{horarios|length}}; j++) {
-                  const element = document.getElementById("horarios_proj_{{projeto.id}}").querySelector(`#h_${i}_${j}_${id}`);
+                  const element = refContainer.querySelector(`#h_${i}_${j}_${id}`);
                   if (element) {
                     if (isInHorarios(horarios, [i, j])) {
                       element.classList.add("highlight");
