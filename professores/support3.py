@@ -7,6 +7,7 @@ Data: 23 de Janeiro de 2025
 """
 
 import datetime
+import json
 
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -309,3 +310,196 @@ def puxa_bancas(edicao):
         "edicao": edicao,
     }
     return context
+
+
+def calculate_allocation_statistics(projetos, horarios_struct):
+    """
+    Calcula estatísticas consolidadas de alocação de horários dos estudantes.
+    
+    Args:
+        projetos: QuerySet de Projeto
+        horarios_struct: Lista de tuplas (inicio, fim, dark) de Estrutura.loads("Horarios Semanais")
+        
+    Returns:
+        dict com:
+        - alunos: lista de dicts com info por aluno
+        - projetos: lista de dicts com info consolidada por projeto
+        - histogram_alunos: distribuição de horas dos alunos
+        - histogram_projetos: distribuição de horas juntos dos projetos
+    """
+    alunos_stats = []
+    projetos_stats = []
+    
+    # Criar mapa de índices diurnos (dark=False)
+    indices_diurnos = set()
+    for idx, (inicio, fim, dark) in enumerate(horarios_struct):
+        if not dark:
+            indices_diurnos.add(idx)
+    
+    # Histogramas
+    horas_alunos = []  # Para calcular distribuição depois
+    horas_projetos = []  # Para calcular distribuição depois
+    
+    for projeto in projetos:
+        alocacoes = Alocacao.objects.filter(projeto=projeto).order_by(
+            'aluno__user__first_name', 'aluno__user__last_name'
+        )
+        
+        num_alunos = alocacoes.count()
+        
+        # Calcular horas juntos (todos trabalham simultaneamente)
+        horas_juntos_count = 0
+        if alocacoes.exists() and alocacoes.count() > 0:
+            # Para cada slot horário, verificar se TODOS têm alocado
+            for dia in range(5):  # Segunda a sexta
+                for hora in range(len(horarios_struct)):
+                    todos_tem = True
+                    
+                    for alocacao in alocacoes:
+                        if not alocacao.horarios:
+                            todos_tem = False
+                            break
+                        
+                        try:
+                            horarios_json = json.loads(alocacao.horarios)
+                            if [dia, hora] not in horarios_json:
+                                todos_tem = False
+                                break
+                        except (json.JSONDecodeError, TypeError):
+                            todos_tem = False
+                            break
+                    
+                    if todos_tem:
+                        horas_juntos_count += 1
+        
+        # Converter blocos para horas (2 horas por bloco)
+        horas_juntos = horas_juntos_count * 2
+        horas_projetos.append(horas_juntos)
+        
+        # Processar cada aluno
+        for alocacao in alocacoes:
+            horas_diurno = 0
+            horas_total = 0
+            status = "não_preenchido"
+            
+            if alocacao.horarios:
+                try:
+                    horarios_json = json.loads(alocacao.horarios)
+                    horarios_blocos_diurnos = 0
+                    horarios_blocos_totais = 0
+                    
+                    for dia, hora in horarios_json:
+                        horarios_blocos_totais += 1
+                        if hora in indices_diurnos:
+                            horarios_blocos_diurnos += 1
+                    
+                    # Converter blocos para horas (2h por bloco)
+                    horas_diurno = horarios_blocos_diurnos * 2
+                    horas_total = horarios_blocos_totais * 2
+                    horas_alunos.append(horas_diurno)
+                    
+                    # Determinar status
+                    if horas_diurno < 22:
+                        status = "abaixo_minimo"
+                    else:
+                        status = "compliant"
+                        
+                except (json.JSONDecodeError, TypeError):
+                    status = "não_preenchido"
+            
+            alunos_stats.append({
+                'projeto': projeto,
+                'aluno': alocacao.aluno,
+                'email': alocacao.aluno.user.email,
+                'externo': alocacao.aluno.externo,
+                'orientador': projeto.orientador,
+                'status': status,
+                'horas_diurno': horas_diurno,
+                'horas_total': horas_total,
+            })
+        
+        projetos_stats.append({
+            'projeto': projeto,
+            'num_alunos': num_alunos,
+            'horas_juntos': horas_juntos,
+        })
+    
+    # Criar histogramas
+    # Histograma de alunos (faixas de horas diurno)
+    histogram_alunos = {
+        '0h': {'count': 0, 'alunos': []},
+        '0-4h': {'count': 0, 'alunos': []},
+        '4-8h': {'count': 0, 'alunos': []},
+        '8-12h': {'count': 0, 'alunos': []},
+        '12-16h': {'count': 0, 'alunos': []},
+        '16-20h': {'count': 0, 'alunos': []},
+        '20-22h': {'count': 0, 'alunos': []},
+        '22h+': {'count': 0, 'alunos': []},
+    }
+    
+    # Preencher histograma de alunos com detalhes
+    for aluno_stat in alunos_stats:
+        h = aluno_stat['horas_diurno']
+        nome = aluno_stat['aluno'].user.get_full_name()
+        
+        if 0 == h:
+            histogram_alunos['0h']['count'] += 1
+            histogram_alunos['0h']['alunos'].append(nome)
+        if 0 < h < 4:
+            histogram_alunos['0-4h']['count'] += 1
+            histogram_alunos['0-4h']['alunos'].append(nome)
+        elif 4 <= h < 8:
+            histogram_alunos['4-8h']['count'] += 1
+            histogram_alunos['4-8h']['alunos'].append(nome)
+        elif 8 <= h < 12:
+            histogram_alunos['8-12h']['count'] += 1
+            histogram_alunos['8-12h']['alunos'].append(nome)
+        elif 12 <= h < 16:
+            histogram_alunos['12-16h']['count'] += 1
+            histogram_alunos['12-16h']['alunos'].append(nome)
+        elif 16 <= h < 20:
+            histogram_alunos['16-20h']['count'] += 1
+            histogram_alunos['16-20h']['alunos'].append(nome)
+        elif 20 <= h < 22:
+            histogram_alunos['20-22h']['count'] += 1
+            histogram_alunos['20-22h']['alunos'].append(nome)
+        elif h >= 22:
+            histogram_alunos['22h+']['count'] += 1
+            histogram_alunos['22h+']['alunos'].append(nome)
+    
+    # Histograma de projetos (faixas de horas juntos)
+    histogram_projetos = {
+        '0-2h': {'count': 0, 'projetos': []},
+        '2-4h': {'count': 0, 'projetos': []},
+        '4-6h': {'count': 0, 'projetos': []},
+        '6-8h': {'count': 0, 'projetos': []},
+        '8h+': {'count': 0, 'projetos': []},
+    }
+
+    for proj_stat in projetos_stats:
+        h = proj_stat['horas_juntos']
+        nome = proj_stat['projeto'].get_titulo_org()
+
+        if 0 <= h < 2:
+            histogram_projetos['0-2h']['count'] += 1
+            histogram_projetos['0-2h']['projetos'].append(nome)
+        elif 2 <= h < 4:
+            histogram_projetos['2-4h']['count'] += 1
+            histogram_projetos['2-4h']['projetos'].append(nome)
+        elif 4 <= h < 6:
+            histogram_projetos['4-6h']['count'] += 1
+            histogram_projetos['4-6h']['projetos'].append(nome)
+        elif 6 <= h < 8:
+            histogram_projetos['6-8h']['count'] += 1
+            histogram_projetos['6-8h']['projetos'].append(nome)
+        elif h >= 8:
+            histogram_projetos['8h+']['count'] += 1
+            histogram_projetos['8h+']['projetos'].append(nome)
+    
+    return {
+        'alunos': alunos_stats,
+        'projetos': projetos_stats,
+        'histogram_alunos': histogram_alunos,
+        'histogram_projetos': histogram_projetos,
+    }
+

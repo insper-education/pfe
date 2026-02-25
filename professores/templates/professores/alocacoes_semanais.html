@@ -41,14 +41,92 @@
       {% endfor %}
     {% endif %}
 
-    {% comment %} 
-    {% if edicao and administracao %}
-      <!-- Tabela com informações consolidadas da entregas de relatos quinzenais -->
-      <br>
-      <b>{% lng "Estatísticas" "Statistics" %}</b>:<br>
-      <table class="tabela-padrao table-bordered table-sm "></table>
-    {% endif %}
-    {% endcomment %}
+    
+    {% if edicao and administracao and stats_projetos %}
+      <div class="mt-3" style="border: 1px solid #000000; background-color: #f3f4f6; padding: 12px; border-radius: 4px;">
+      
+        <div class="mb-2">
+          <b>{% lng "Estatísticas de Alocação" "Allocation Statistics" %}</b>
+        </div>
+
+        <!-- Alunos que não preencheram -->
+        <strong>{% lng "Estudantes que ainda não preencheram sua alocação:" "Students who have not yet filled in their allocation:" %}</strong>
+        <div class="table-responsive mb-4" style="font-size: 0.85rem;">
+          <table class="tabela-padrao table-sm table-hover">
+            <thead>
+              <tr>
+                <th>{% lng "Aluno" "Student" %}</th>
+                <th>{% lng "Email" "Email" %}</th>
+                <th>{% lng "Externo" "External" %}</th>
+                <th>{% lng "Projeto" "Project" %}</th>
+                <th>{% lng "Orientador" "Advisor" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for aluno_stat in stats_alunos %}
+                {% if aluno_stat.status == "não_preenchido" %}
+                  <tr>
+                    <td>{{ aluno_stat.aluno.user.get_full_name }}</td>
+                    <td><a href="mailto:{{ aluno_stat.email }}">{{ aluno_stat.email }}</a></td>
+                    <td>{% if aluno_stat.externo %}<span class="badge badge-info">{{ aluno_stat.externo }}</span>{% endif %}</td>
+                    <td>{{ aluno_stat.projeto.get_titulo_org }}</td>
+                    <td>{{ aluno_stat.orientador.user.get_full_name }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}          
+            </tbody>
+          </table>
+        </div>
+
+        
+        <!-- Histograma de Horas dos Estudantes -->
+        <div class="mt-4">
+          <b>{% lng "Distribuição de Horas de Dedicação Individual" "Distribution of Individual Dedication Hours" %}</b>
+          <div class="table-responsive">
+            <table class="tabela-padrao table-sm table-hover" style="max-width: 500px;">
+              <thead>
+                <tr>
+                  <th>{% lng "Faixa de Horas" "Hour Range" %}</th>
+                  <th class="text-center">{% lng "Quantidade" "Count" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for faixa, item in histogram_alunos.items %}
+                  <tr style="cursor: help;" title="{% for nome in item.alunos %}{{ nome }}&#10;{% endfor %}">
+                    <td>{{ faixa }}</td>
+                    <td class="text-center"><strong>{{ item.count }}</strong></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Histograma de Horas Juntos dos Projetos -->
+        <div class="mt-4">
+          <b>{% lng "Distribuição de Horas de Trabalho em Grupo" "Distribution of Group Work Hours" %}</b>
+          <div class="table-responsive">
+            <table class="tabela-padrao table-sm table-hover" style="max-width: 500px;">
+              <thead>
+                <tr>
+                  <th>{% lng "Faixa de Horas Juntos" "Group Hours Range" %}</th>
+                  <th class="text-center">{% lng "Quantidade de Projetos" "Number of Projects" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for faixa, item in histogram_projetos.items %}
+                  <tr style="cursor: help;" title="{% for nome in item.projetos %}{{ nome }}&#10;{% endfor %}">
+                    <td>{{ faixa }}</td>
+                    <td class="text-center"><strong>{{ item.count }}</strong></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+    
+    </div>
 
   </div> 
 

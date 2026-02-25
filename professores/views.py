@@ -29,7 +29,7 @@ from .support import coleta_membros_banca, editar_banca, mensagem_orientador
 from .support import recupera_orientadores_por_semestre, get_edicoes_orientador
 from .support import recupera_coorientadores_por_semestre
 from .support import move_avaliacoes, ver_pendencias_professor, mensagem_edicao_banca
-from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas
+from .support3 import resultado_projetos_intern, puxa_encontros, puxa_bancas, calculate_allocation_statistics
 
 from academica.models import Exame, Composicao, Peso
 from academica.support import filtra_entregas
@@ -64,6 +64,7 @@ from .forms import DinamicasForm, EncontroFeedbackForm
 
 # Get an instance of a logger
 logger = logging.getLogger("django")
+
 
 
 @login_required
@@ -2078,7 +2079,7 @@ def alocacoes_semanais(request, todos=None):
         n_todos = True
         if todos == "todos":
             n_todos = False
-        elif todos is not None:
+        elif todos is not None:  # Filtra por professor específico no campo "todos"
             professor = get_object_or_404(Professor, pk=todos)
             projetos = projetos.filter(orientador=professor)
         else:
@@ -2089,12 +2090,19 @@ def alocacoes_semanais(request, todos=None):
             ano, semestre = map(int, edicao.split('.'))
             projetos = projetos.filter(ano=ano, semestre=semestre)
         
+        horarios_struct = Estrutura.loads(nome="Horarios Semanais")
+        stats = calculate_allocation_statistics(projetos, horarios_struct)
+        
         context = {
             "administracao": request.user.eh_admin,
             "projetos": projetos,
             "edicao": edicao,
-            "horarios": Estrutura.loads(nome="Horarios Semanais"),
+            "horarios": horarios_struct,
             "n_todos": n_todos,
+            "stats_alunos": stats.get('alunos', []),
+            "stats_projetos": stats.get('projetos', []),
+            "histogram_alunos": stats.get('histogram_alunos', {}),
+            "histogram_projetos": stats.get('histogram_projetos', {}),
         }
 
     else:
