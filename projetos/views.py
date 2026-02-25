@@ -976,7 +976,7 @@ def pedir_recursos(request, primarykey=None):
             email_message = f"""
                 Orientador{"a" if projeto.orientador.user.genero == 'F' else ""} {projeto.orientador.user.get_full_name() if projeto.orientador else ""},<br><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Por favor, responda esse e-mail autorizando o pedido de recurso.<br><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {tipo.capitalize()}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Tipo de Recurso: <b>{tipo.capitalize()}</b><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {projeto.proposta.titulo}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
                 <div style="margin-left: 20px;">
@@ -989,10 +989,6 @@ def pedir_recursos(request, primarykey=None):
                 &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
                 <div style="margin-left: 20px;">
                 {pedido.get_detalhes_completos()}
-                </div><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
-                <div style="margin-left: 20px;">
-                {observacoes if observacoes else "Nenhuma"}
                 </div>
             """
 

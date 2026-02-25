@@ -2404,7 +2404,7 @@ class Pedido(models.Model):
         html = "<ul style='padding-left: 20px; margin: 0;'>"
         
         if self.tipo == "github":
-            html += f"<li><b>Repositório:</b> {d.get('repo_nome', '')}</li>"
+            html += f"<li>Repositório: {d.get('repo_nome', '')}</li>"
             pub = d.get('repo_publico')
             if pub:
                 html += f"<li><b>Público:</b> Sim (Justificativa: {d.get('repo_publico_justificativa', 'N/A')})</li>"
@@ -2413,38 +2413,38 @@ class Pedido(models.Model):
                 html += f"<li><b>Membros:</b> {', '.join(github_users.values())}</li>"
 
         elif self.tipo == "nuvem":
-            html += f"<li><b>Serviços:</b> {d.get('nuvem_servicos', '')}</li>"
-            html += f"<li><b>Finalidade:</b> {d.get('nuvem_finalidade', '')}"
-            html += f"<li><b>Justificativa:</b> {d.get('nuvem_justificativa', '')}</li>"
+            html += f"<li>Serviços: {d.get('nuvem_servicos', '')}</li>"
+            html += f"<li>Finalidade: {d.get('nuvem_finalidade', '')}"
+            html += f"<li>Justificativa: {d.get('nuvem_justificativa', '')}</li>"
 
         elif self.tipo == "llm":
-            html += f"<li><b>Estimativa de consumo:</b> {d.get('llm_estimativa', '')}</li>"
-            html += f"<li><b>Justificativa técnica:</b> {d.get('llm_justificativa', '')}</li>"
+            html += f"<li>Estimativa de consumo: {d.get('llm_estimativa', '')}</li>"
+            html += f"<li>Justificativa técnica: {d.get('llm_justificativa', '')}</li>"
             
         elif self.tipo == "overleaf":
-            html += f"<li><b>Nome:</b> {d.get('overleaf_nome', '')}</li>"
-            html += f"<li><b>Descrição:</b> {d.get('overleaf_descricao', '')}</li>"
+            html += f"<li>Nome: {d.get('overleaf_nome', '')}</li>"
+            html += f"<li>Descrição: {d.get('overleaf_descricao', '')}</li>"
             
         elif self.tipo == "equipamento":
-            html += f"<li><b>Tipo:</b> {d.get('equip_tipo', '')}</li>"
-            html += f"<li><b>Detalhes:</b> {d.get('equip_detalhes', '')}</li>"
-            html += f"<li><b>Finalidade:</b> {d.get('equip_finalidade', '')}</li>"
+            html += f"<li>Tipo: {d.get('equip_tipo', '')}</li>"
+            html += f"<li>Detalhes: {d.get('equip_detalhes', '')}</li>"
+            html += f"<li>Finalidade: {d.get('equip_finalidade', '')}</li>"
             
         elif self.tipo == "compra":
-            html += f"<li><b>Item:</b> {d.get('compra_item', '')} (Qtd: {d.get('compra_quantidade', 1)})</li>"
-            html += f"<li><b>Justificativa:</b> {d.get('compra_justificativa', '')}</li>"
+            html += f"<li>Item: {d.get('compra_item', '')} (Qtd: {d.get('compra_quantidade', 1)})</li>"
+            html += f"<li>Justificativa: {d.get('compra_justificativa', '')}</li>"
             cotacoes = d.get('cotacoes', [])
             if cotacoes:
-                html += "<li><b>Cotações:</b><ul>"
+                html += "<li>Cotações:<ul>"
                 for cotacao in cotacoes:
                     html += f"<li>{cotacao.get('fornecedor', 'Fornecedor Desconecido')} - R$ {cotacao.get('preco', 'Preço Desconecido')} - <a href='{cotacao.get('link', '#')}' target='_blank'>{cotacao.get('link', '#')}</a></li>"
                 html += "</ul></li>"
             
         elif self.tipo == "reuniao":
-            html += f"<li><b>Motivo:</b> {d.get('reuniao_motivo', '')}</li>"
-            html += f"<li><b>Descrição:</b> {d.get('reuniao_descricao', '')}</li>"
-            html += f"<li><b>Horários:</b> {d.get('reuniao_horarios', '')}</li>"
+            html += f"<li>Motivo: {d.get('reuniao_motivo', '')}</li>"
+            html += f"<li>Descrição: {d.get('reuniao_descricao', '')}</li>"
+            html += f"<li>Horários: {d.get('reuniao_horarios', '')}</li>"
 
-        html += f"<li><b>Observações:</b> {self.observacoes or 'Nenhuma'}</li>"            
+        html += f"<li>Observações: {self.observacoes or 'Nenhuma'}</li>"            
         html += "</ul>"
         return html
