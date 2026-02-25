@@ -903,10 +903,20 @@ def pedir_recursos(request, primarykey=None):
             for key, value in request.POST.items():
                 if key.startswith('github_user_') and value:
                     user_id = int(key.replace('github_user_', ''))
-                    github_users[user_id] = value
+                    github_users[str(user_id)] = value
                     user = get_object_or_404(PFEUser, id=user_id)
                     user.conta_github = value
                     user.save()
+
+            extras_nomes = request.POST.getlist("github_membro_nome[]")
+            extras_users = request.POST.getlist("github_membro_user[]")
+            for idx, user in enumerate(extras_users):
+                nome = extras_nomes[idx] if idx < len(extras_nomes) else ""
+                user = (user or "").strip()
+                nome = (nome or "").strip()
+                if user:
+                    github_users[nome] = user
+
             if github_users:
                 dados["github_users"] = github_users
 

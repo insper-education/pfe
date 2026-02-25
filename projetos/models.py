@@ -31,6 +31,8 @@ from .tipos import TIPO_EVENTO
 
 from academica.support_notas import converte_letra
 
+from users.models import PFEUser
+
 
 class Organizacao(models.Model):
     """Dados das organizações que propõe projetos."""
@@ -2410,7 +2412,14 @@ class Pedido(models.Model):
                 html += f"<li><b>Público:</b> Sim (Justificativa: {d.get('repo_publico_justificativa', 'N/A')})</li>"
             github_users = d.get('github_users', {})
             if github_users:
-                html += f"<li><b>Membros:</b> {', '.join(github_users.values())}</li>"
+                html += f"<li>Membros:<ul>"
+                for k, v in github_users.items():
+                    try:
+                        nome = PFEUser.objects.get(id=int(k)).get_full_name()
+                    except:
+                        nome = k
+                    html += f"<li style='margin-left: 20px;'>{nome} ({v})</li>"
+                html += "</ul></li>"
 
         elif self.tipo == "nuvem":
             html += f"<li>Serviços: {d.get('nuvem_servicos', '')}</li>"
