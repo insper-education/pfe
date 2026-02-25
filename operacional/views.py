@@ -489,11 +489,12 @@ def gerir_pedidos(request):
             &nbsp;&nbsp;&nbsp;&nbsp;Tipo: {pedido.tipo.capitalize()}<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Projeto: {pedido.projeto.proposta.titulo}<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Estudantes:<br>
+            <div style="margin-left: 20px;">
         """
         for alocacao in Alocacao.objects.filter(projeto=pedido.projeto):
             email_message += f"&bull; {alocacao.aluno.user.get_full_name()} &lt;{alocacao.aluno.user.email}&gt;<br>"
         email_message += f"""
-            <br>
+            </div><br>
             &nbsp;&nbsp;&nbsp;&nbsp;Solicitante: {request.user.get_full_name()} &lt;{request.user.email}&gt;<br><br>
             &nbsp;&nbsp;&nbsp;&nbsp;Detalhes do pedido:<br>
             <div style="margin-left: 20px;">
@@ -502,10 +503,6 @@ def gerir_pedidos(request):
             &nbsp;&nbsp;&nbsp;&nbsp;Anotação:<br>
             <div style="margin-left: 20px;">
             {anotacao if anotacao else "Nenhuma"}
-            </div><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;Observações adicionais:<br>
-            <div style="margin-left: 20px;">
-            {pedido.observacoes if pedido.observacoes else "Nenhuma"}
             </div>
         """
 
