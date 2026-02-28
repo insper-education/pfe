@@ -16,7 +16,7 @@ import csv
 import hmac
 import hashlib
 import base64
-import time
+#import time
 import uuid
 import io
 import qrcode
@@ -34,7 +34,7 @@ from django.urls import reverse_lazy
 from django.utils import html
 from django.views import generic
 
-import coordenacao
+#import coordenacao
 
 
 from .forms import PFEUserCreationForm
@@ -49,7 +49,7 @@ from academica.support5 import filtra_composicoes
 from administracao.models import Carta, Estrutura
 from administracao.support import get_limite_propostas, usuario_sem_acesso
 
-from estudantes.models import EstiloComunicacao
+#from estudantes.models import EstiloComunicacao
 
 from operacional.models import Curso
 

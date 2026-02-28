@@ -20,6 +20,11 @@
         <td><a class="pdf_link"
           href="{% url 'relatorio' dado 'PDF'%}?edicao={{edicoes|last}}"
           data-href="{% url 'relatorio' dado 'PDF'%}">PDF</a></td>
+        {% if dado == 'projetos' %}
+        <td><a class="xlsx_link"
+          href="{% url 'relatorio' dado 'XLSX'%}?edicao={{edicoes|last}}"
+          data-href="{% url 'relatorio' dado 'XLSX'%}">Excel</a></td>
+        {% endif %}
       </tr>
     {% endfor %}
   </table>
@@ -28,7 +33,7 @@
 
     function atualiza_links() {
       var selectedValue = $(this).val();
-      var links = $(".html_link, .pdf_link");
+      var links = $(".html_link, .pdf_link, .xlsx_link");
       for (var i = 0; i < links.length; i++) {
           var link = $(links[i]);
           var href = link.data("href");

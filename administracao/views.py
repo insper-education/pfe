@@ -44,6 +44,7 @@ from .support import registra_organizacao, registro_usuario
 from .support import usuario_sem_acesso, envia_senha_mensagem
 from .support import puxa_github, backup_github
 from .support2 import get_resource, get_queryset
+from .support_excel import export_relatorio_projetos_xlsx
 
 from academica.models import CodigoConduta
 
@@ -1302,6 +1303,17 @@ def relatorio(request, modelo, formato):
     if formato in ("pdf", "PDF"):
         pdf = render_to_pdf(arquivo, context)
         return HttpResponse(pdf.getvalue(), content_type="application/pdf")
+
+    if formato in ("xlsx", "XLSX"):
+        # Exportação especial para projetos em Excel
+        if modelo == "projetos":
+            arquivo_excel = export_relatorio_projetos_xlsx(context.get("projetos", []), edicao)
+            response = HttpResponse(
+                arquivo_excel.getvalue(),
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            response['Content-Disposition'] = 'attachment; filename="relatorio_projetos.xlsx"'
+            return response
 
     return HttpResponse("Algum erro não identificado.", status=401)
 
