@@ -38,25 +38,42 @@
       {% endifchanged %}
       <tr class="{{projeto.periodo.pt}} {% if projeto.periodo.pt == "Anteriores" %}hidden_tr{% endif %}"><td>
         {% for documento in projeto|get_planos_de_orientacao %}
-          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:green"{% endif %}
-            data-toggle="tooltip" data-html="true" animation="true" title="Entregue"
+          <a href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
+             title="Abrir arquivo enviado" aria-label="Abrir arquivo enviado">
+            <i class="fas fa-file-alt"></i>
+          </a>
+          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:green; cursor:pointer;"{% endif %}
+            data-toggle="tooltip" data-html="true" animation="true" title="Entregue em {{documento.data|date:'d/m/Y H:i'}}. Clique para trocar arquivo."
             {% if projeto.periodo.pt == "Anteriores" %}
               href="{{request.scheme}}://{{request.get_host}}{{documento.documento.url}}" target="_blank" rel="noopener noreferrer"
             {% else %}
               class="open-modal"
+              aria-label="Clique para trocar arquivo"
               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' documento.id %}"
             {% endif %}
-            ><b><i class="fas fa-file-alt"></i>
+            ><b>
+              {% if projeto.periodo.pt != "Anteriores" %}
+                <span class="badge badge-success ml-1" style="font-size:0.75rem; vertical-align:middle;">
+                  <i class="fas fa-exchange-alt"></i>
+                  {% lng "Trocar arquivo" "Replace file" %}
+                </span>
+              {% endif %}
         {% empty %}
-          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:red"{% endif %}
-            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue"
+          <a {% if projeto.periodo.pt == "Anteriores" %}style="color:grey"{% else %}style="color:red; cursor:pointer;"{% endif %}
+            data-toggle="tooltip" data-html="true" animation="true" title="Não entregue. Clique para subir arquivo."
             {% if projeto.periodo.pt != "Anteriores" %}
               class="open-modal"
+              aria-label="Clique para subir arquivo"
               data-url="{% url 'adiciona_documento' projeto.organizacao.id projeto.id 'PO' %}"
             {% endif %}
-            ><b><i class="far fa-file"></i>
+            ><b><i class="far fa-file"></i>{% if projeto.periodo.pt != "Anteriores" %}
+              <span class="badge badge-danger ml-1" style="font-size:0.75rem; vertical-align:middle;">
+                <i class="fas fa-upload"></i>
+                {% lng "Subir arquivo" "Upload file" %}
+              </span>
+            {% endif %}
         {% endfor %}</b>
-        {{projeto.ano}}.{{projeto.semestre}} [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+        {{projeto.get_titulo_org_periodo}}
         </a>
       </td></tr>
     {% empty %}
