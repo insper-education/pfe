@@ -1,41 +1,61 @@
+{% extends "base.html" %}
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 5 de Dezembro de 2024
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
     
 {% load static %}
 {% load bleach %}
 
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait;
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
-    
-  <h3>Propostas Disponíveis</h3>
+
+  <div class="relatorio-header">
+    <h1>Propostas Disponíveis</h1>
+  </div>
 
   {% for proposta in propostas %} 
 
-    <p style="page-break-before: always"></p>
+    <div class="relatorio-card">
+      
+      <div class="relatorio-card-header">
+        <h3>{{ proposta.titulo }}</h3>
+        <p class="subtitulo">{{ proposta.organizacao.nome }}</p>
+      </div>
 
-      {% with completo=False %}
-        {% include "proposta.html" %}
-      {% endwith %}
+      <div class="relatorio-card-content">
 
-      {% with completo=False %}
-        {% include "organizacao.html" %}
-      {% endwith %}
+        <div class="secao">
+          <div class="secao-titulo">📋 Descrição</div>
+          <div class="secao-conteudo">
+            {% with completo=False %}
+              {% include "proposta.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-    <hr class="striped-border">
+        <div class="secao">
+          <div class="secao-titulo">🏢 Organização</div>
+          <div class="secao-conteudo">
+            {% with completo=False %}
+              {% include "organizacao.html" %}
+            {% endwith %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
 
   {% empty %}
-    <p>Não existem propostas disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem propostas disponíveis.
+    </div>
   {% endfor %}
 
 {% endblock %}

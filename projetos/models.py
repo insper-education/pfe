@@ -31,7 +31,7 @@ from .tipos import TIPO_EVENTO
 
 from academica.support_notas import converte_letra
 
-from users.models import PFEUser
+from users.models import PFEUser, Alocacao, Associado
 
 
 class Organizacao(models.Model):
@@ -95,8 +95,32 @@ class Organizacao(models.Model):
 class Projeto(models.Model):
     """Dados dos projetos."""
     
+    proposta = models.ForeignKey("Proposta", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="Proposta original do projeto")
+    
     titulo_final = models.CharField("Título Final", max_length=160, null=True,
                                     blank=True, help_text="Título Final do projeto")
+
+    ano = models.PositiveIntegerField("Ano", validators=[MinValueValidator(2018), MaxValueValidator(3018)],
+                                      help_text="Ano que o projeto começa")
+
+    semestre = models.PositiveIntegerField("Semestre", validators=[MinValueValidator(1), MaxValueValidator(2)],
+                                           help_text="Semestre que o projeto começa")
+
+    orientador = models.ForeignKey("users.Professor", null=True, blank=True,
+                                   on_delete=models.SET_NULL, related_name="professor_orientador",
+                                   help_text="professor orientador do projeto")
+
+    avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
+                                 help_text="projeto original em caso de avançado")
+
+    time_misto = models.BooleanField("Time Misto", default=False,
+                                     help_text="Caso o projeto conte com membros externos a instituição")
+
+
+    # -- Preenchidos pelos estudantes durante o desenvolvimento do projeto -- #
+    atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
+                                                  help_text="Data da última atualização dos dados do projeto pelos estudantes")
 
     resumo = models.TextField("Resumo", max_length=6000, null=True, blank=True,
                                  help_text="Resumo final para o projeto criado pelos estudantes")
@@ -106,32 +130,7 @@ class Projeto(models.Model):
     
     palavras_chave = models.CharField("Palavras-chave", max_length=1000, null=True, blank=True,
                                  help_text="Palavras-chave para os documentos do projeto")
-
-    avancado = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL,
-                                 help_text="projeto original em caso de avançado")
-
-    ano = models.PositiveIntegerField("Ano",
-                                      validators=[MinValueValidator(2018), MaxValueValidator(3018)],
-                                      help_text="Ano que o projeto começa")
-
-    semestre = models.PositiveIntegerField("Semestre",
-                                           validators=[MinValueValidator(1), MaxValueValidator(2)],
-                                           help_text="Semestre que o projeto começa")
-
-    orientador = models.ForeignKey("users.Professor", null=True, blank=True,
-                                   on_delete=models.SET_NULL, related_name="professor_orientador",
-                                   help_text="professor orientador do projeto")
-
-    proposta = models.ForeignKey("Proposta", null=True, blank=True, on_delete=models.SET_NULL,
-                                 help_text="Proposta original do projeto")
-
-    time_misto = models.BooleanField("Time Misto", default=False,
-                                     help_text="Caso o projeto conte com membros externos a instituição")
-
-    
-    atualizacao_estudantes = models.DateTimeField("Atualização Estudantes", null=True, blank=True,
-                                                  help_text="Data da última atualização dos dados do projeto pelos estudantes")
-
+    # ------------------------------------------------------------------------- #
 
     # Parte dos documentos da pasta de projeto ------------------------------------ #
     
@@ -254,6 +253,13 @@ class Projeto(models.Model):
     def get_documentos(self):  # Alguns documentos de interesse dos alunos
         tipos_documentos_siglas = ["APE", "COP", "CC", "COE", "RFA", "RFR", "RFG", "RIG", "RPR", "RPU", "VP", "RAO", "RAMBI", "RAMBF"]
         return Documento.objects.filter(projeto=self, tipo_documento__sigla__in=tipos_documentos_siglas).order_by("tipo_documento", "-data")
+
+    def get_alocacoes(self, externos=True):
+        """Retorna todas as alocações do projeto."""
+        if externos:
+            return Alocacao.objects.filter(projeto=self)
+        return Alocacao.objects.filter(projeto=self, aluno__externo__isnull=True)
+        
     
 class PropostaContato(models.Model):
     """Relacionamento entre Proposta e Contato."""

@@ -3,48 +3,84 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 18 de Junho de 2019
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
+{% load static %}
+
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <h3>Estudantes - {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+  <div class="relatorio-header">
+    <h1>Estudantes</h1>
+    <div class="periodo">Período: {{configuracao.ano}}.{{configuracao.semestre}}</div>
+  </div>
 
-  {% for aluno in alunos %} 
-    <p style="page-break-before: always"></p>
+  {% for aluno in alunos %}
+    <div class="relatorio-card">
+      
+      <div class="relatorio-card-header">
+        <h3>{{aluno.user.get_full_name}}</h3>
+        <p class="subtitulo">
+          {{aluno.curso2}} {% if aluno.externo %}<span class="badge badge-purpura">[{{aluno.externo}}]</span>{% endif %}
+        </p>
+      </div>
 
-    <h3>Aluno: {{aluno.user.get_full_name}}</h3>
-    <strong>Curso:</strong> {{aluno.curso2}} <br>
-    <strong>CR:</strong> {{aluno.cr}} <br>
-    {% if aluno.externo %}<span style="color:red">[{{aluno.externo}}]</span><br>{% endif %}
+      <div class="relatorio-card-content">
+        
+        <!-- CR -->
+        <div class="secao">
+          <div class="secao-titulo">📚 Coeficiente de Rendimento</div>
+          <div class="secao-conteudo">
+            <div class="info-box">
+              <div class="info-grid">
+                <div class="info-label">CR:</div>
+                <div class="info-valor"><strong>{{aluno.cr}}</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True %}
-      <strong>Áreas de interesse selecionadas:</strong>
-      {% include "areas.html" %}
-    {% endwith %}
+        <!-- Áreas de Interesse -->
+        {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True %}
+          {% if areas_de_interesse_selecionadas %}
+          <div class="secao">
+            <div class="secao-titulo">💡 Áreas de Interesse</div>
+            <div class="secao-conteudo">
+              {% include "areas.html" %}
+            </div>
+          </div>
+          {% endif %}
+        {% endwith %}
 
-      <br>
-      <strong>Projetos Selecionados</strong>
-      {% for opcao in aluno.opcao_set.all %}
-        {% if opcao.projeto.ano == opcao.aluno.ano and opcao.projeto.semestre == opcao.aluno.semestre %}
-            <a href="{% url 'projeto_infos' opcao.projeto.id %}">
-                <p style="margin-top: 0px; margin-bottom: 0px;"><b>{{opcao.prioridade}}</b> - 
-                    {{opcao.projeto.organizacao.nome}}, {{opcao.projeto.get_titulo}} 
-                </p>
-            </a>
-        {% endif %}            
-      {% endfor %}
-      <hr class="striped-border">
+        <!-- Projetos Selecionados -->
+        <div class="secao">
+          <div class="secao-titulo">📌 Projetos Selecionados</div>
+          <div class="secao-conteudo">
+            <div class="link-lista">
+              {% for opcao in aluno.opcao_set.all %}
+                {% if opcao.projeto.ano == opcao.aluno.ano and opcao.projeto.semestre == opcao.aluno.semestre %}
+                  <div class="link-botao">
+                    <span class="badge">{{opcao.prioridade}}</span>
+                    <span>{{opcao.projeto.organizacao.nome}} — {{opcao.projeto.get_titulo}}</span>
+                  </div>
+                {% endif %}            
+              {% empty %}
+                <p style="font-size: 0.9em; color: #999;">Nenhum projeto selecionado</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   {% empty %}
-    <p>Não existem projetos disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem estudantes disponíveis.
+    </div>
   {% endfor %}
 
 {% endblock %}

@@ -3,54 +3,96 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 17 de Dezembro de 2019
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
+{% load static %}
+
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <h3>Feedbacks</h3>
+  <div class="relatorio-header">
+    <h1>Feedbacks</h1>
+  </div>
 
-  {% for feedback in feedbacks %} 
-    <p style="page-break-before: always"></p>
-    <strong>Data:</strong> {{ feedback.data }}<br>
-    <strong>Nome:</strong> {{ feedback.nome }}<br>
-    <strong>e-mail:</strong> {{ feedback.email }}<br>
-    <strong>Organização:</strong> {{ feedback.empresa }}<br>
-    
-    <p><strong>O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso?
-      Se NÃO, consegue identificar os motivos? Por exemplo: demora em fechar o escopo, estudantes
-      pouco engajados, estudantes com dúvidas básicas em determinado assunto, equipe não entrosada, ...</strong></p>
-    {{ feedback.tecnico|linebreaks }}
+  {% for feedback in feedbacks %}
+    <div class="relatorio-card">
+      
+      <div class="relatorio-card-header">
+        <h2>{{ feedback.nome }}</h2>
+        <div class="relatorio-card-subtitulo">{{ feedback.empresa }} - {{ feedback.data }}</div>
+      </div>
 
-    <p><strong>Parte do esperado com essa atividade era que os estudantes entendessem melhor qual era o desafio
-    proposto e discutissem com vocês como prototipar e implementar o acordado. Os estudantes foram
-    ativos em se comunicar, entendendo o desejo de vocês (e de seus usuários finais se for o
-    caso) e discutir possíveis soluções? Você pode comentar brevemente como foram essas interações?
-    </strong></p>
-    {{ feedback.comunicacao|linebreaks }}
+      <div class="relatorio-card-content">
+        
+        <!-- Informações Básicas -->
+        <div class="info-box">
+          <h3 class="info-box-titulo">ℹ️ Informações</h3>
+          <div class="info-grid">
+            <div class="info-label">Nome:</div>
+            <div class="info-valor">{{ feedback.nome }}</div>
+            <div class="info-label">E-mail:</div>
+            <div class="info-valor">{{ feedback.email }}</div>
+            <div class="info-label">Organização:</div>
+            <div class="info-valor">{{ feedback.empresa }}</div>
+            <div class="info-label">Data:</div>
+            <div class="info-valor">{{ feedback.data }}</div>
+          </div>
+        </div>
 
-    <p><strong>A equipe de estudantes alocada para o seu projeto estava devidamente organizada? Por exemplo:
-    os estudantes foram pontuais nos encontros, se portaram de forma adequada, todos se dedicaram
-    de acordo, apresentaram uma proposta de condução do projeto adequada?
-    </strong></p>
-    {{ feedback.organizacao|linebreaks }}
+        <!-- Pergunta 1: Andamento do Projeto -->
+        <div class="secao">
+          <div class="secao-titulo">📋 Andamento do Projeto</div>
+          <div class="secao-conteudo">
+            <p style="font-size: 0.9rem; font-style: italic; color: #666; margin-bottom: 0.5rem;">
+              O projeto avançou conforme o esperado? Se SIM, você sabe qual foi a fórmula do sucesso? Se NÃO, consegue identificar os motivos?
+            </p>
+            {{ feedback.tecnico|linebreaks }}
+          </div>
+        </div>
 
-    <p><strong>Tem outras observações que gostaria de compartilhar conosco? Por exemplo o processo de
-    interação com o Insper, ou algo que o Insper devia ter previsto nesta proposta de parceria?
-    </strong></p>
-    {{ feedback.outros|linebreaks }}
+        <!-- Pergunta 2: Comunicação -->
+        <div class="secao">
+          <div class="secao-titulo">🗣️ Comunicação e Engajamento</div>
+          <div class="secao-conteudo">
+            <p style="font-size: 0.9rem; font-style: italic; color: #666; margin-bottom: 0.5rem;">
+              Os estudantes foram ativos em se comunicar, entendendo o desejo de vocês e discutindo possíveis soluções?
+            </p>
+            {{ feedback.comunicacao|linebreaks }}
+          </div>
+        </div>
 
-    <hr class="striped-border">
+        <!-- Pergunta 3: Organização -->
+        <div class="secao">
+          <div class="secao-titulo">🏖️ Organização da Equipe</div>
+          <div class="secao-conteudo">
+            <p style="font-size: 0.9rem; font-style: italic; color: #666; margin-bottom: 0.5rem;">
+              A equipe estava devidamente organizada? Pontuais, dedicados e com proposta adequada?
+            </p>
+            {{ feedback.organizacao|linebreaks }}
+          </div>
+        </div>
+
+        <!-- Pergunta 4: Observações -->
+        <div class="secao">
+          <div class="secao-titulo">💡 Outras Observações</div>
+          <div class="secao-conteudo">
+            <p style="font-size: 0.9rem; font-style: italic; color: #666; margin-bottom: 0.5rem;">
+              Tem outras observações sobre o processo ou a parceria?
+            </p>
+            {{ feedback.outros|linebreaks }}
+          </div>
+        </div>
+
+      </div>
+    </div>
   {% empty %}
-    <p>Não existem feedbacks disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem feedbacks disponíveis.
+    </div>
   {% endfor %}
 
 {% endblock %}

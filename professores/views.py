@@ -52,7 +52,7 @@ from projetos.models import Coorientador, ObjetivosDeAprendizagem, Avaliacao2, O
 from projetos.models import Banca, Evento, Encontro, Documento, TematicaEncontro
 from projetos.models import Projeto, Configuracao
 from projetos.support4 import get_objetivos_atuais
-from projetos.support2 import get_alocacoes, get_pares_colegas, recupera_envolvidos, anota_participacao
+from projetos.support2 import get_pares_colegas, recupera_envolvidos, anota_participacao
 from projetos.messages import email, render_message, htmlizar, message_agendamento_dinamica, prepara_mensagem_email
 from projetos.arquivos import le_arquivo
 
@@ -2144,7 +2144,7 @@ def relatos_quinzenais(request, todos=None):
         
         alocacoes = []
         for projeto in projetos:
-            alocacoes.append(get_alocacoes(projeto))
+            alocacoes.append(projeto.get_alocacoes(externos=False))  # Só alocações de alunos internos, pois são os que entregam relatos quinzenais
         
         proj_aloc = zip(projetos, alocacoes)
 

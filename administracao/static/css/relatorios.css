@@ -1,0 +1,629 @@
+/**
+ * Estilos Genéricos para Relatórios
+ * Padroniza formatação de todos os relatórios do sistema PFE
+ * Autor: Luciano Pereira Soares
+ * Data: 28 de Fevereiro de 2026
+ */
+
+/* ========================================
+   CONFIGURAÇÃO DE PÁGINA E IMPRESSÃO
+   ======================================== */
+
+@page {
+  size: a4 portrait;
+  margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* ========================================
+   CABEÇALHOS E TÍTULOS
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  color: #0066cc;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+h4 {
+  font-size: 1rem;
+  margin-top: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+
+/* ========================================
+   CABEÇALHO DO RELATÓRIO
+   ======================================== */
+
+.relatorio-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #0066cc;
+}
+
+.relatorio-header h1 {
+  color: #0066cc;
+  margin: 0 0 0.5rem 0;
+}
+
+.relatorio-header .periodo {
+  color: #666;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+/* ========================================
+   CARDS / ITENS DO RELATÓRIO
+   ======================================== */
+
+.relatorio-card {
+  page-break-before: always;
+  margin-bottom: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.relatorio-card:first-child {
+  page-break-before: auto;
+}
+
+/* Cabeçalho do Card */
+.relatorio-card-header {
+  background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+  color: white;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.relatorio-card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+  color: white;
+}
+
+.relatorio-card-periodo {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.relatorio-card-subtitulo {
+  font-size: 0.9rem;
+  opacity: 0.95;
+  margin: 0.5rem 0 0 1rem;
+  font-style: italic;
+  color: white;
+}
+
+/* Conteúdo do Card */
+.relatorio-card-content {
+  padding: 1.5rem;
+}
+
+/* ========================================
+   SEÇÕES DE CONTEÚDO
+   ======================================== */
+
+.secao {
+  margin-bottom: 1.5rem;
+}
+
+.secao-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0066cc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.secao-conteudo {
+  color: #555;
+  text-align: justify;
+  padding-left: 0.5rem;
+}
+
+.secao-conteudo p {
+  margin: 0.5rem 0;
+}
+
+/* Seção com Fundo Colorido (Organização) */
+.secao-organizacao {
+  background: #f0f4f8;
+  border-left: 4px solid #0066cc;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0 1rem 0;
+  border-radius: 4px;
+}
+
+.secao-organizacao-titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: #0066cc;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.secao-organizacao-subtitulo {
+  font-size: 0.8rem;
+  color: #475569;
+  margin: 0.25rem 0 0 1.75rem;
+}
+
+/* Seção com Fundo Colorido (Estudantes/Conteúdo) */
+.secao-estudantes {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0 1rem 0;
+  border-radius: 4px;
+}
+
+.secao-estudantes-titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.secao-estudantes-subtitulo {
+  font-size: 0.8rem;
+  color: #475569;
+  margin: 0.25rem 0 0 1.75rem;
+}
+
+/* ========================================
+   CAIXAS DE INFORMAÇÃO
+   ======================================== */
+
+.info-box {
+  background: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  padding: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  border-radius: 4px;
+  position: relative;
+}
+
+.info-box-titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0066cc;
+  margin: 0 0 0.8rem 0;
+}
+
+.info-box-logo {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  max-height: 60px;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.info-valor {
+  color: #444;
+}
+
+.info-valor a {
+  color: #0066cc;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.info-valor a:hover {
+  text-decoration: underline;
+}
+
+/* ========================================
+   ORIENTADORES E CONTATOS
+   ======================================== */
+
+.contato-info {
+  background: #e8f4f8;
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.contato-label {
+  font-weight: 600;
+  color: #0066cc;
+}
+
+.contato-info.roxo {
+  background: #f0e8f8;
+}
+
+.contato-info.roxo .contato-label {
+  color: #7c3aed;
+}
+
+/* ========================================
+   BADGES E TAGS
+   ======================================== */
+
+.badge-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  background: #e8f4f8;
+  color: #0066cc;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badge-purpura {
+  background: linear-gradient(135deg, #636DD1 0%, #524ba8 100%);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(99, 109, 209, 0.2);
+}
+
+/* ========================================
+   CAIXAS DE PERFIL E SELEÇÃO
+   ======================================== */
+
+.perfil-box {
+  background: #f0e8f8;
+  border-left: 4px solid #7c3aed;
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.perfil-titulo {
+  font-weight: 600;
+  color: #7c3aed;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.perfil-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.perfil-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.perfil-numero {
+  background: #7c3aed;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.perfil-descricao {
+  color: #555;
+}
+
+/* ========================================
+   LINKS E BOTÕES
+   ======================================== */
+
+.link-lista {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.link-botao {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #0066cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.link-botao:hover {
+  background: #004999;
+  color: white;
+}
+
+.link-botao::before {
+  content: "🔗 ";
+  margin-right: 0.3rem;
+}
+
+/* ========================================
+   DIVISORES
+   ======================================== */
+
+hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+.striped-border {
+  margin: 2rem 0;
+  border: none;
+  border-top: 2px dashed #d0d0d0;
+}
+
+.divisor-simples {
+  margin: 1rem 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* ========================================
+   MENAGEM VAZIA
+   ======================================== */
+
+.mensagem-vazia {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+  font-size: 1.2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+/* ========================================
+   TABELAS
+   ======================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+table thead {
+  background: #f0f4f8;
+}
+
+table th {
+  padding: 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: #0066cc;
+  border-bottom: 2px solid #0066cc;
+}
+
+table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table tr:hover {
+  background: #f9f9f9;
+}
+
+/* ========================================
+   LISTAS
+   ======================================== */
+
+ul, ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin: 0.3rem 0;
+}
+
+/* ========================================
+   TEXTO E FORMATAÇÃO
+   ======================================== */
+
+strong {
+  font-weight: 600;
+  color: #333;
+}
+
+em, i {
+  font-style: italic;
+  color: #666;
+}
+
+code {
+  background: #f5f5f5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+p {
+  margin: 0.8rem 0;
+}
+
+/* ========================================
+   IMPRESSÃO / PRINT
+   ======================================== */
+
+@media print {
+  body {
+    font-size: 11pt;
+  }
+
+  .relatorio-card {
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .relatorio-card-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .secao-organizacao {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .secao-estudantes {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .info-box {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .contato-info {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .badge-purpura {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .perfil-box {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .perfil-numero {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .link-botao {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  table thead {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  table th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .relatorio-card-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .badge-lista {
+    flex-direction: column;
+  }
+
+  .link-lista {
+    flex-direction: column;
+  }
+
+  .link-botao {
+    width: 100%;
+    text-align: center;
+  }
+}

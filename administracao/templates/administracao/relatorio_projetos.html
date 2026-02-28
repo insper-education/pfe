@@ -3,52 +3,333 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 18 de Junho de 2019
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
 {% load static %}
 {% load addhttp %}
 
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <h3>Projetos Disponíveis {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+  <div class="relatorio-header">
+    <h1>Projetos Capstone</h1>
+    <div class="periodo">Período: {{edicao}}</div>
+  </div>
 
-  {% for projeto in projetos %} 
+  {% for projeto in projetos %}
 
-    <p style="page-break-before: always"></p>
+    <div class="relatorio-card">
+      
+      <!-- Cabeçalho do Projeto -->
+      <div class="relatorio-card-header">
+        <div class="relatorio-card-periodo">
+          {{projeto.ano}}.{{projeto.semestre}}
+          {% if projeto.proposta.intercambio %}
+            <br><small style="font-size: 0.75rem;">Intercâmbio</small>
+          {% elif projeto.proposta.empreendendo %}
+            <br><small style="font-size: 0.75rem;">Empreendendo</small>
+          {% elif projeto.proposta.internacional %}
+            <br><small style="font-size: 0.75rem;">Internacional</small>
+          {% endif %}
+        </div>
+        {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
+          <h2>{{projeto.titulo_final}}</h2>
+          <div class="relatorio-card-subtitulo">Título original: {{projeto.proposta.titulo}}</div>
+        {% else %}
+          <h2>{{projeto.get_titulo}}</h2>
+        {% endif %}
+        {% if projeto.time_misto %}
+          <div class="relatorio-card-subtitulo">
+            <span style="background: rgba(255,255,255,0.2); padding: 0.2rem 0.6rem; border-radius: 12px;">
+              👥 Time Misto (com membros externos)
+            </span>
+          </div>
+        {% endif %}
+      </div>
 
-    {% if projeto.titulo_final and projeto.titulo_final != projeto.proposta.titulo %}
-      <style>
-          h4 {display: inline;}
-      </style>
-      <h4>Título: {{projeto.titulo_final}}</h4>
-      <small> <br>&nbsp;&nbsp;&nbsp;&nbsp;Título original da proposta: {{projeto.proposta.titulo}}</small><br>
-    {% else %}
-      <h4>Título: {{projeto.get_titulo}}</h4><br>
-    {% endif %}
+      <!-- Conteúdo do Projeto -->
+      <div class="relatorio-card-content">
+        
+        <!-- Estudantes -->
+        <div class="perfil-box">
+          <div class="perfil-titulo">👨‍🎓 Estudantes Participantes</div>
+          <div class="perfil-lista">
+            {% for alocacao in projeto.get_alocacoes %}
+              <div class="perfil-item">
+                <span class="perfil-numero">{{ forloop.counter }}</span>
+                <span>{{ alocacao.aluno.user.get_full_name }}</span>
+                {% if alocacao.aluno.curso2 %}
+                  <span class="perfil-descricao">({{ alocacao.aluno.curso2 }})</span>
+                {% endif %}
+              </div>
+            {% empty %}
+              <div style="color: #999; font-style: italic;">Nenhum estudante alocado</div>
+            {% endfor %}
+          </div>
+        </div>
 
-    <strong>Descrição da Proposta:</strong> {{ projeto.proposta.descricao|linebreaks }}
-    <strong>Expectativas de resultados/entregas :</strong> {{ projeto.proposta.expectativas|linebreaks }}
-    <strong>Recursos a serem disponibilizados aos Estudantes :</strong> {{ projeto.proposta.recursos|linebreaks }}<br>
-    <strong>Outras observações :</strong> {{ projeto.proposta.observacoes|linebreaks }}<br>
 
-    <hr>
+        <!-- Orientador -->
+        {% if projeto.orientador %}
+        <div class="contato-info">
+          <span class="contato-label">
+            {% if projeto.proposta.intercambio %}
+              👨‍🏫 Professor Responsável:
+            {% else %}
+              👨‍🏫 Orientador:
+            {% endif %}
+          </span>
+          {{ projeto.orientador.user.get_full_name|default:projeto.orientador.user.username }}
+        </div>
+        {% endif %}
 
-    <h5>Organização: {{ projeto.organizacao.nome }}</h5>
-    <strong>endereço:</strong> {{ projeto.organizacao.endereco|linebreaks }}
-    <strong>website:</strong> <a href="{{ projeto.organizacao.website|add_http }}"> {{ projeto.organizacao.website }} </a>        
-    <hr class="striped-border">
+        <!-- Coorientadores -->
+        {% if projeto.coorientador_set.all %}
+        <div class="contato-info roxo" style="margin-top: 0.5rem;">
+          <span class="contato-label">
+            👥 Coorientador{% if projeto.coorientador_set.all.count > 1 %}es{% endif %}:
+          </span>
+          {% for coorientador in projeto.coorientador_set.all %}
+            {{ coorientador.usuario.get_full_name|default:coorientador.usuario.username }}{% if coorientador.observacao %} ({{ coorientador.observacao }}){% endif %}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+
+        
+        <!-- ====== SEÇÃO DE CONTEÚDO DOS ESTUDANTES ====== -->
+        {% if projeto.resumo or projeto.abstract or projeto.palavras_chave %}
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e5e7eb;">
+        <div class="secao-estudantes">
+          <div class="secao-estudantes-titulo">
+            <span>✍️ Conteúdo dos Estudantes</span>
+          </div>
+          <div class="secao-estudantes-subtitulo">
+            Elaborado pela equipe durante o desenvolvimento
+          </div>
+        </div>
+
+          <!-- Resumo (escrito por estudantes) -->
+          {% if projeto.resumo %}
+          <div class="secao">
+            <div class="secao-titulo">📝 Resumo do Projeto</div>
+            <div class="secao-conteudo">{{ projeto.resumo|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Abstract (escrito por estudantes) -->
+          {% if projeto.abstract %}
+          <div class="secao">
+            <div class="secao-titulo">📝 Abstract</div>
+            <div class="secao-conteudo">{{ projeto.abstract|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Palavras-chave (escritas por estudantes) -->
+          {% if projeto.palavras_chave %}
+          <div class="secao">
+            <div class="secao-titulo">🏷️ Palavras-chave</div>
+            <div class="badge-lista">
+              {% for palavra in projeto.palavras_chave.split %}
+                <span class="badge">{{ palavra }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          
+          <!-- Links do Projeto -->
+          {% if projeto.site or projeto.url_latex or projeto.url_time_github %}
+          <div class="link-lista">
+            {% if projeto.site %}
+              <div>Site do Projeto: <a href="{{ projeto.site }}" target="_blank" class="link-botao">{{ projeto.site }}</a><br></div>
+            {% endif %}
+            {% if projeto.url_latex %}
+              <div>LaTeX/Overleaf: <a href="{{ projeto.url_latex }}" target="_blank" class="link-botao">{{ projeto.url_latex }}</a><br></div>
+            {% endif %}
+            {% if projeto.url_time_github %}
+              <div>GitHub: <a href="{{ projeto.url_time_github }}" target="_blank" class="link-botao">{{ projeto.url_time_github }}</a><br></div>
+            {% endif %}
+          </div>
+          {% endif %}
+          
+        {% endif %}
+
+
+        <!-- ====== SEÇÃO DE CONTEÚDO DAS ORGANIZAÇÕES ====== -->
+        {% if projeto.proposta %}
+
+          <!-- Seção Organização -->
+          <div class="secao-organizacao">
+            <div class="secao-organizacao-titulo">
+              <span>🏢 Informações da Proposta</span>
+            </div>
+            <div class="secao-organizacao-subtitulo">
+              Conteúdo fornecido pela organização parceira
+            </div>
+          </div>
+          
+          <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e5e7eb;">
+
+          <!-- Descrição -->
+          {% if projeto.proposta.descricao %}
+          <div class="secao">
+            <div class="secao-titulo">📋 Descrição da Proposta</div>
+            <div class="secao-conteudo">{{ projeto.proposta.descricao|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Expectativas -->
+          {% if projeto.proposta.expectativas %}
+          <div class="secao">
+            <div class="secao-titulo">🎯 Expectativas de Resultados/Entregas</div>
+            <div class="secao-conteudo">{{ projeto.proposta.expectativas|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Interesse da Organização -->
+          {% if projeto.proposta.aprimorar or projeto.proposta.realizar or projeto.proposta.iniciar or projeto.proposta.identificar or projeto.proposta.mentorar %}
+          <div class="secao">
+            <div class="secao-titulo">🎯 Principal Interesse da Organização</div>
+            <div class="secao-conteudo">
+              <ul style="margin: 0; padding-left: 1.5rem;">
+                {% if projeto.proposta.aprimorar %}
+                  <li>Aprimorar o entendimento de uma tecnologia/solução com foco no médio prazo</li>
+                {% endif %}
+                {% if projeto.proposta.realizar %}
+                  <li>Realizar uma prova de conceito, podendo finalizar o desenvolvimento internamente</li>
+                {% endif %}
+                {% if projeto.proposta.iniciar %}
+                  <li>Iniciar o desenvolvimento de um projeto que será continuado internamente</li>
+                {% endif %}
+                {% if projeto.proposta.identificar %}
+                  <li>Identificar talentos, com intenção de contratá-los</li>
+                {% endif %}
+                {% if projeto.proposta.mentorar %}
+                  <li>Mentorar estudantes para que empreendam com produto/tecnologia da empresa</li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Recursos -->
+          {% if projeto.proposta.recursos %}
+          <div class="secao">
+            <div class="secao-titulo">🛠️ Recursos Disponibilizados aos Estudantes</div>
+            <div class="secao-conteudo">{{ projeto.proposta.recursos|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Observações -->
+          {% if projeto.proposta.observacoes %}
+          <div class="secao">
+            <div class="secao-titulo">💡 Outras Observações</div>
+            <div class="secao-conteudo">{{ projeto.proposta.observacoes|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Departamento -->
+          {% if projeto.proposta.departamento %}
+          <div class="secao">
+            <div class="secao-titulo">🏛️ Departamento na Organização</div>
+            <div class="secao-conteudo">{{ projeto.proposta.departamento|linebreaks }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Anexo -->
+          {% if projeto.proposta.anexo %}
+          <div class="secao">
+            <div class="secao-titulo">📎 Anexo da Proposta</div>
+            <div class="secao-conteudo">
+              <a href="{{ projeto.proposta.anexo.url }}" target="_blank" style="color: #0066cc; font-weight: 600;">
+                {{ projeto.proposta.anexo.name|slice:"20:" }}
+              </a>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Áreas de Interesse -->
+          {% if projeto.proposta.areadeinteresse_set.all %}
+          <div class="secao">
+            <div class="secao-titulo">💡 Áreas de Interesse</div>
+            <div class="badge-lista">
+              {% for area_interesse in projeto.proposta.areadeinteresse_set.all %}
+                {% if area_interesse.area %}
+                  <span class="badge-purpura">{{ area_interesse.area.titulo }}</span>
+                {% elif area_interesse.outras %}
+                  <span class="badge-purpura">{{ area_interesse.outras }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+        {% endif %}
+        
+
+
+        <!-- Organização -->
+        <div class="info-box">
+          {% if projeto.organizacao.logotipo %}
+            <img src="{{ projeto.organizacao.logotipo.url }}" alt="{{ projeto.organizacao.sigla }}" class="info-box-logo">
+          {% endif %}
+          <h3 class="info-box-titulo">🏢 {{ projeto.organizacao.nome }}</h3>
+          <div class="info-grid">
+            {% if projeto.organizacao.endereco %}
+              <div class="info-label">Endereço:</div>
+              <div class="info-valor">{{ projeto.organizacao.endereco|linebreaks }}</div>
+            {% endif %}
+            {% if projeto.organizacao.website %}
+              <div class="info-label">Website:</div>
+              <div class="info-valor">
+                <a href="{{ projeto.organizacao.website|add_http }}" target="_blank">
+                  {{ projeto.organizacao.website }}
+                </a>
+              </div>
+            {% endif %}
+            {% if projeto.organizacao.informacoes %}
+              <div class="info-label">Informações:</div>
+              <div class="info-valor">{{ projeto.organizacao.informacoes|linebreaks }}</div>
+            {% endif %}
+          </div>
+          
+          <!-- Colaboração/Parceria -->
+          {% if projeto.proposta.colaboracao %}
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px dashed #d0d0d0; position: relative;">
+            {% if projeto.proposta.colaboracao.logotipo %}
+              <img src="{{ projeto.proposta.colaboracao.logotipo.url }}" alt="{{ projeto.proposta.colaboracao.sigla }}" style="position: absolute; top: 1rem; right: 0; max-height: 50px; max-width: 100px; object-fit: contain;">
+            {% endif %}
+            <h4 style="font-size: 1rem; color: #7c3aed; margin-bottom: 0.5rem;">
+              🤝 Organização Colaboradora
+            </h4>
+            <div class="info-grid">
+              <div class="info-label">Nome:</div>
+              <div class="info-valor">{{ projeto.proposta.colaboracao.nome }}</div>
+              {% if projeto.proposta.colaboracao.website %}
+                <div class="info-label">Website:</div>
+                <div class="info-valor">
+                  <a href="{{ projeto.proposta.colaboracao.website|add_http }}" target="_blank">
+                    {{ projeto.proposta.colaboracao.website }}
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
 
   {% empty %}
-    <p>Não existem projetos disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem projetos disponíveis para este período.
+    </div>
   {% endfor %}
 
 {% endblock %}

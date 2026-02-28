@@ -1222,6 +1222,8 @@ def relatorio(request, modelo, formato):
     else:
         edicao = None
 
+    context["edicao"] = edicao
+
     if modelo == "propostas":
         if edicao:
             context["propostas"] = Proposta.objects.filter(ano=ano, semestre=semestre, disponivel=True)

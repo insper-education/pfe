@@ -3,30 +3,44 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 9 de Fevereiro de 2025
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
 {% load static %}
 {% load addhttp %}
 
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <h3>Códigos de Conduta de Projetos {{configuracao.ano}}.{{configuracao.semestre}}</h3>
+  <div class="relatorio-header">
+    <h1>Códigos de Conduta de Projetos</h1>
+    <div class="periodo">Período: {{configuracao.ano}}.{{configuracao.semestre}}</div>
+  </div>
 
-  {% for respostas_conduta in respostas_condutas %} 
-    <p style="page-break-before: always"></p>
-    <h4>Projeto: {{respostas_conduta.projeto}}</h4><br>
-    {% include "estudantes/includes/tabela_conduta.html" with ver=True %}<br>
+  {% for respostas_conduta in respostas_condutas %}
+    <div class="relatorio-card">
+      
+      <div class="relatorio-card-header">
+        <h2>{{ respostas_conduta.projeto }}</h2>
+      </div>
+
+      <div class="relatorio-card-content">
+        
+        <!-- Tabela de Condutas -->
+        <div class="secao">
+          <div class="secao-titulo">📋 Respostas de Conduta</div>
+          {% include "estudantes/includes/tabela_conduta.html" with ver=True %}
+        </div>
+
+      </div>
+    </div>
   {% empty %}
-    <p>Não existem projetos disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem projetos disponíveis.
+    </div>
   {% endfor %}
 
 {% endblock %}

@@ -3,43 +3,29 @@
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 12 de Outubro de 2024
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
+{% load static %}
+
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-    .nome_item {
-      font-size: 0.8em; 
-    }
-    .caixa {
-      padding: 0px;
-      margin: 0px 0px 0px 6px;
-    }
-    hr {
-      margin: 2px 0px 4px 0px;
-      background-color: #CCC;
-    }
-    .pergunta {
-      font-size: 0.8em; 
-      margin: 0px;
-      padding: 0px;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <h3>Avaliações de Pares</h3>
+  <div class="relatorio-header">
+    <h1>Avaliações de Pares</h1>
+  </div>
 
   {% with com_projeto=True %}
   {% for projeto, colegas in proj_pares %}
     {% include "ver_pares.html" %}
     <hr class="striped-border">
   {% empty %}
-    <p>Não existem avaliações de pares disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem avaliações de pares disponíveis.
+    </div>
   {% endfor %}
   {% endwith %}
 

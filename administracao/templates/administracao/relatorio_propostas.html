@@ -1,7 +1,9 @@
+{% extends "base.html" %}
 {% comment %}
   Desenvolvido para o Projeto Final de Engenharia
   Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
   Data: 3 de Junho de 2021
+  Atualizado: 28 de Fevereiro de 2026
 {% endcomment %}
 
 {% load static %}
@@ -10,81 +12,129 @@
 {% load linguas %}
 
 {% block head %}
-  <style>
-    @page {
-      size: a4 portrait; /*landscape*/
-      margin: 1.5cm  1.5cm  1.5cm  1.5cm; /* top  right bottom left */
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
 {% endblock %}
 
 {% block content %}
-    
-  <h3>Propostas Disponíveis</h3>
+
+  <div class="relatorio-header">
+    <h1>Propostas Disponíveis</h1>
+  </div>
 
   {% for proposta in propostas %} 
 
-    <p style="page-break-before: always"></p>
+    <div class="relatorio-card">
+      
+      <div class="relatorio-card-header">
+        <h3>{{ proposta.titulo }}</h3>
+        <p class="subtitulo">{{ proposta.organizacao.nome }}</p>
+      </div>
 
-      {% with completo=True %}
-        {% include "proposta.html" %}
-      {% endwith %}
+      <div class="relatorio-card-content">
 
-      {% with completo=True %}
-        {% include "organizacao.html" %}
-      {% endwith %}
+        <div class="secao">
+          <div class="secao-titulo">📋 {% lng "Descrição da Proposta" "Proposal Description" %}</div>
+          <div class="secao-conteudo">
+            {% with completo=True %}
+              {% include "proposta.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-      <strong>{% lng "Submetido por" "Submitted by" %}:</strong><br>
-      {{proposta.nome}}<br><br>
+        <div class="secao">
+          <div class="secao-titulo">🏢 {% lng "Organização" "Organization" %}</div>
+          <div class="secao-conteudo">
+            {% with completo=True %}
+              {% include "organizacao.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-      {% with c_t=proposta|contatos_tec %}
-        {% if proposta.contatos_tecnicos or c_t %}
-          <strong>{% lng "Contatos Técnicos" "Technical Contacts" %}</strong><br>
-          {% if proposta.contatos_tecnicos %}
-            {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
-            <br>
+        <div class="secao">
+          <div class="secao-titulo">👤 {% lng "Submetido por" "Submitted by" %}</div>
+          <div class="secao-conteudo">
+            <div class="info-box">
+              <div class="info-label">{% lng "Responsável" "Contact" %}:</div>
+              <div class="info-valor">{{proposta.nome}}</div>
+            </div>
+          </div>
+        </div>
+
+        {% with c_t=proposta|contatos_tec %}
+          {% if proposta.contatos_tecnicos or c_t %}
+            <div class="secao">
+              <div class="secao-titulo">🔧 {% lng "Contatos Técnicos" "Technical Contacts" %}</div>
+              <div class="secao-conteudo">
+                <div class="contato-info">
+                  {% if proposta.contatos_tecnicos %}
+                    {{proposta.contatos_tecnicos|linebreaks|bleach_urlize|safe}}
+                  {% endif %}
+                  {% if c_t %}
+                    {% for contato in c_t %}
+                      <div class="contato-label">{{ contato }}</div>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           {% endif %}
-          {% if c_t %}
-            {% for contato in c_t %}
-              {{contato}}<br>
-            {% endfor %}
+        {% endwith %}
+
+        {% with c_a=proposta|contatos_adm %}
+          {% if proposta.contatos_administrativos or c_a %}
+            <div class="secao">
+              <div class="secao-titulo">💼 {% lng "Contatos Administrativos" "Administrative Contacts" %}</div>
+              <div class="secao-conteudo">
+                <div class="contato-info">
+                  {% if proposta.contatos_administrativos %}
+                    {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
+                  {% endif %}
+                  {% if c_a %}
+                    {% for contato in c_a %}
+                      <div class="contato-label">{{ contato }}</div>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           {% endif %}
-          <br>
-        {% endif %}
-      {% endwith %}
+        {% endwith %}
 
-      {% with c_a=proposta|contatos_adm %}
-        {% if proposta.contatos_administrativos or c_a %}
-          <strong>{% lng "Contatos Administrativos" "Administrative Contacts" %}</strong><br>
-          {% if proposta.contatos_administrativos %}
-            {{proposta.contatos_administrativos|linebreaks|bleach_urlize|safe}}
-            <br>
-          {% endif %}
-          {% if c_a %}
-            {% for contato in c_a %}
-              {{contato}}<br>
-            {% endfor %}
-          {% endif %}
-          <br>
-        {% endif %}
-      {% endwith %}
+        <div class="secao">
+          <div class="secao-titulo">💡 {% lng "Áreas de Interesse" "Areas of Interest" %}</div>
+          <div class="secao-conteudo">
+            {% with areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all vencido=True com_borda=True %}
+              {% include "areas.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-      {% with areas_de_interesse_selecionadas=proposta.areadeinteresse_set.all vencido=True com_borda=True %}
-        {% include "areas.html" %}
-      {% endwith %}
+        <div class="secao">
+          <div class="secao-titulo">⭐ {% lng "Recomendações" "Recommendations" %}</div>
+          <div class="secao-conteudo">
+            {% with editavel=False %}
+              {% include "recomendadas.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-      {% with editavel=False %}
-        {% include "recomendadas.html" %}
-      {% endwith %}
+        <div class="secao">
+          <div class="secao-titulo">👥 {% lng "Perfil de Estudantes" "Student Profile" %}</div>
+          <div class="secao-conteudo">
+            {% with editavel=False %}
+              {% include "perfil_estudantes.html" %}
+            {% endwith %}
+          </div>
+        </div>
 
-      {% with editavel=False %}
-        {% include "perfil_estudantes.html" %}
-      {% endwith %}
+      </div>
 
-    <hr class="striped-border">
+    </div>
 
   {% empty %}
-    <p>Não existem propostas disponíveis.</p>
+    <div class="mensagem-vazia">
+      ⚠️ Não existem propostas disponíveis.
+    </div>
   {% endfor %}
 
 {% endblock %}

@@ -48,13 +48,6 @@ def get_areas_propostas(propostas):
 
     return areaspfe, outras
 
-def get_alocacoes(projeto):
-    """Retorna todas as alocações do projeto."""
-    if projeto.time_misto:
-        # Em caso de time misto, estudantes de fora da instituição não são listados
-        cursos_do_insper = Curso.objects.filter(curso_do_insper=True)
-        return Alocacao.objects.filter(projeto=projeto, aluno__curso2__in=cursos_do_insper)
-    return Alocacao.objects.filter(projeto=projeto)
 
 def get_pares_colegas(projeto, tipo=0):
     alocacoes = Alocacao.objects.filter(projeto=projeto)
