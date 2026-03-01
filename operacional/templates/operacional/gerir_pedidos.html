@@ -138,7 +138,7 @@
             <div>
               <div style="font-weight: 600; color: #1e293b;">{{ pedido.get_tipo_display }}</div>
               <div style="color: #64748b; font-size: 0.85rem;">
-                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo}}</a><br>
+                <a href="{% url 'projeto_infos' pedido.projeto.id %}"> {{pedido.projeto.get_titulo_org}}</a><br>
                  {% lng "Solicitado por:" "Requested by:" %} {{ pedido.solicitante.get_full_name }} • {{ pedido.data_solicitacao|date:"d/m/Y H:i" }}
                  {% if pedido.data_resposta %}
                    <br>{% lng "Respondido por:" "Responded by:" %} {{ pedido.respondente.get_full_name }} • {{ pedido.data_resposta|date:"d/m/Y H:i" }}
@@ -235,7 +235,7 @@
                        {% lng "Equipamentos emprestados e suas condições" "Borrowed equipment and its conditions" %}
                      </small>
                    </div>
-                 {% elif pedido.tipo == 'compra' %}
+                 {% elif pedido.tipo == "compra" %}
                    <div class="form-group" style="margin-bottom: 0.75rem;">
                      <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Detalhes da Compra Aprovada" "Approved Purchase Details" %}</label>
                      <textarea name="lista_compras" 
@@ -245,6 +245,18 @@
                                style="border-radius: 6px;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
                      <small class="text-muted" style="font-size: 0.8rem;">
                        {% lng "Detalhes da compra realizada ou autorizada" "Details of purchase made or authorized" %}
+                     </small>
+                   </div>
+                 {% elif pedido.tipo == "rede" %}
+                   <div class="form-group" style="margin-bottom: 0.75rem;">
+                     <label style="display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.9rem;">{% lng "Encaminhamento de Rede" "Network Handling" %}</label>
+                     <textarea name="apontamento_rede" 
+                               class="form-control form-control-sm" 
+                               rows="3" 
+                               placeholder="Ex: Porta 443 liberada para IP 200.10.1.15, válido até 30/03"
+                               style="border-radius: 6px;"></textarea>
+                     <small class="text-muted" style="font-size: 0.8rem;">
+                       {% lng "Informe o que foi liberado/bloqueado e qualquer restrição aplicada" "Describe what was allowed/blocked and any applied restrictions" %}
                      </small>
                    </div>
                  {% endif %}
@@ -374,6 +386,14 @@
                                rows="2" 
                                placeholder="Detalhes da compra"
                                style="border-radius: 6px; font-size: 0.85rem;">{% if pedido.projeto.lista_compras %}{{pedido.projeto.lista_compras}}{% endif %}</textarea>
+                   </div>
+                 {% elif pedido.tipo == 'rede' %}
+                   <div class="form-group" style="margin-bottom: 0.5rem;">
+                     <textarea name="apontamento_rede" 
+                               class="form-control form-control-sm" 
+                               rows="2" 
+                               placeholder="Apontamento de rede (liberações/restrições)"
+                               style="border-radius: 6px; font-size: 0.85rem;"></textarea>
                    </div>
                  {% endif %}
                  

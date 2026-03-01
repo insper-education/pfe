@@ -876,8 +876,6 @@ def pedir_recursos(request, primarykey=None):
             return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
     else:
         return HttpResponse("Acesso negado.", status=401)
-    
-    
 
     if request.method == "POST":
 
@@ -930,7 +928,11 @@ def pedir_recursos(request, primarykey=None):
             dados["nuvem_servicos"] = request.POST.get("nuvem_servicos")
             dados["nuvem_finalidade"] = request.POST.get("nuvem_finalidade")
             dados["nuvem_justificativa"] = request.POST.get("nuvem_justificativa")
-            
+
+        elif tipo == "rede":
+            dados["rede_tipo"] = request.POST.get("rede_tipo")
+            dados["rede_justificativa"] = request.POST.get("rede_justificativa")
+
         elif tipo == "overleaf":
             dados["overleaf_nome"] = request.POST.get("overleaf_nome")
             dados["overleaf_descricao"] = request.POST.get("overleaf_descricao")
@@ -1015,6 +1017,7 @@ def pedir_recursos(request, primarykey=None):
         "Projeto": Projeto,
         "projeto": projeto,
         "pedidos": pedidos,
+        "tipos_pedido_menu": Pedido.get_tipos_menu(),
     }
 
     # Caso seja Professor ou Administrador

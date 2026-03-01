@@ -2353,12 +2353,35 @@ class Pedido(models.Model):
     TIPO_PEDIDO = (
         ("github", "GitHub"),
         ("nuvem", "Nuvem"),
+        ("rede", "Rede"),
         ("llm", "Chave API LLM"),
         ("overleaf", "Overleaf"),
         ("equipamento", "Equipamento"),
         ("compra", "Compra"),
         ("reuniao", "Reunião"),
     )
+
+    TIPO_PEDIDO_ICONES = {
+        "github": "🗂️",
+        "nuvem": "☁️",
+        "rede": "🌐",
+        "llm": "🤖",
+        "overleaf": "📝",
+        "equipamento": "🧰",
+        "compra": "🛒",
+        "reuniao": "📅",
+    }
+
+    TIPO_PEDIDO_MENU = {
+        "github": {"pt": "Repositório (GitHub)", "en": "Repository (GitHub)"},
+        "nuvem": {"pt": "Nuvem (AWS)", "en": "Cloud (AWS)"},
+        "rede": {"pt": "Rede", "en": "Network"},
+        "llm": {"pt": "Chaves API (LLM)", "en": "API Keys (LLM)"},
+        "overleaf": {"pt": "LaTeX (Overleaf)", "en": "LaTeX (Overleaf)"},
+        "equipamento": {"pt": "Equipamentos", "en": "Equipment"},
+        "compra": {"pt": "Compras", "en": "Purchases"},
+        "reuniao": {"pt": "Reunião", "en": "Meeting"},
+    }
     tipo = models.CharField(max_length=20, choices=TIPO_PEDIDO)
     
     # Armazena os detalhes específicos em JSON
@@ -2394,17 +2417,23 @@ class Pedido(models.Model):
         except:
             return {}
 
+    @classmethod
+    def get_tipos_menu(cls):
+        """Retorna tipos de pedido para montar o menu da tela de recursos."""
+        menu = []
+        labels = dict(cls.TIPO_PEDIDO)
+        for codigo, nome in cls.TIPO_PEDIDO:
+            menu_label = cls.TIPO_PEDIDO_MENU.get(codigo, {})
+            menu.append({
+                "codigo": codigo,
+                "icone": cls.TIPO_PEDIDO_ICONES.get(codigo, "❓"),
+                "nome_pt": menu_label.get("pt", nome),
+                "nome_en": menu_label.get("en", labels.get(codigo, nome)),
+            })
+        return menu
+
     def get_icone(self):
-        icones = {
-            "github": '💻',
-            "nuvem": '☁️',
-            "llm": '🤖',
-            "overleaf": '📝',
-            "equipamento": '🖥️',
-            "compra": '🛒',
-            "reuniao": '📅',
-        }
-        return icones.get(self.tipo, '❓')
+        return self.TIPO_PEDIDO_ICONES.get(self.tipo, '❓')
 
     def get_detalhes_completos(self):
 
@@ -2431,6 +2460,10 @@ class Pedido(models.Model):
             html += f"<li>Serviços: {d.get('nuvem_servicos', '')}</li>"
             html += f"<li>Finalidade: {d.get('nuvem_finalidade', '')}"
             html += f"<li>Justificativa: {d.get('nuvem_justificativa', '')}</li>"
+
+        elif self.tipo == "rede":
+            html += f"<li>Tipo de solicitação: {d.get('rede_tipo', '')}</li>"
+            html += f"<li>Justificativa técnica: {d.get('rede_justificativa', '')}</li>"
 
         elif self.tipo == "llm":
             html += f"<li>Estimativa de consumo: {d.get('llm_estimativa', '')}</li>"

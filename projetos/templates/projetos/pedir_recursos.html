@@ -84,7 +84,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    padding: 2px;
     border-radius: 8px;
     color: var(--text-muted);
     font-weight: 500;
@@ -516,27 +516,11 @@
     </div>
 
     <nav class="nav-menu">
-      <div class="nav-item selected-nav" onclick="switchTab('github', this)">
-        <span class="nav-icon">🗂️</span><span>{% lng "Repositório" "Repository" %} (GitHub)</span>
+      {% for tipo_menu in tipos_pedido_menu %}
+      <div class="nav-item {% if tipo_menu.codigo == 'github' %}selected-nav{% endif %}" onclick="switchTab('{{tipo_menu.codigo}}', this)">
+        <span class="nav-icon">{{tipo_menu.icone}}</span><span>{% lng tipo_menu.nome_pt tipo_menu.nome_en %}</span>
       </div>
-      <div class="nav-item" onclick="switchTab('nuvem', this)">
-        <span class="nav-icon">☁️</span><span>{% lng "Nuvem" "Cloud" %} (AWS)</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('llm', this)">
-        <span class="nav-icon">🤖</span><span>{% lng "Chaves API" "API Keys" %} (LLM)</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('overleaf', this)">
-        <span class="nav-icon">📝</span><span>LaTeX (Overleaf)</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('equipamento', this)">
-        <span class="nav-icon">🧰</span><span>{% lng "Equipamentos" "Equipment" %}</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('compra', this)">
-        <span class="nav-icon">🛒</span><span>{% lng "Compras" "Purchases" %}</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('reuniao', this)">
-        <span class="nav-icon">📅</span><span>{% lng "Reunião" "Meeting" %}</span>
-      </div>
+      {% endfor %}
       
       <div class="nav-item history-btn" onclick="switchTab('historico', this)">
         <span class="nav-icon">📋</span>
@@ -704,6 +688,39 @@
           <div class="form-group">
             <label class="form-label">{% lng "Justificativa técnica" "Technical justification" %} <span class="required-asterisk">*</span></label>
             <textarea name="llm_justificativa" class="form-control" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Observações" "Notes" %}</label>
+            <textarea name="observacoes" class="form-control" style="min-height: 80px;" placeholder="Informações adicionais..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            {% lng "Enviar Solicitação" "Submit Request" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Rede Section -->
+    <div id="rede" class="tab-pane">
+      <div class="content-header">
+        <h2 class="content-title">{% lng "Recursos de Rede" "Network Resources" %}</h2>
+        <p class="form-text">{% lng "Solicite liberações de rede, como portas, IPs e regras específicas" "Request network permissions such as ports, IPs and specific rules" %}</p>
+      </div>
+      <div class="content-body">
+        <form method="post" action="{% url 'pedir_recursos' %}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo_recurso" value="rede">
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Tipo da Solicitação" "Request Type" %} <span class="required-asterisk">*</span></label>
+            <input type="text" name="rede_tipo" class="form-control" placeholder="Ex: Liberar porta, Desbloquear IP" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{% lng "Justificativa Técnica" "Technical Justification" %} <span class="required-asterisk">*</span></label>
+            <textarea name="rede_justificativa" class="form-control" required></textarea>
           </div>
 
           <div class="form-group">

@@ -465,6 +465,11 @@ def gerir_pedidos(request):
                 if lista_compras:
                     projeto.lista_compras = lista_compras
                     anotacao += "Lista de Compras: " + lista_compras + "<br>"
+
+            elif pedido.tipo == "rede":
+                apontamento_rede = request.POST.get("apontamento_rede", "").strip()
+                if apontamento_rede:
+                    anotacao += "Apontamento de Rede: " + apontamento_rede + "<br>"
             
             projeto.save()
         
