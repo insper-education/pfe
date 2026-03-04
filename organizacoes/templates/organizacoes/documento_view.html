@@ -163,10 +163,19 @@
         <script>
           function updateDateTime() {
             const now = new Date();
-            document.querySelector('#datetime').textContent = now.toLocaleString('pt-BR');
+            const dateTimeElement = document.querySelector('#datetime');
+            if (!dateTimeElement) {
+              return false;
+            }
+            dateTimeElement.textContent = now.toLocaleString('pt-BR');
+            return true;
           }
           updateDateTime();
-          setInterval(updateDateTime, 1000);
+          const updateDateTimeInterval = setInterval(function() {
+            if (!updateDateTime()) {
+              clearInterval(updateDateTimeInterval);
+            }
+          }, 1000);
         </script>
       {% elif data %}
         <label for="data" class="col1 col-form-label">{% lng "Data" "Date" %}</label>
@@ -301,60 +310,128 @@
 </form>
 
 <script>
+  function arquivoSelecionadoValido(arquivoInput, callback) {
+    if (!arquivoInput || !arquivoInput.files || arquivoInput.files.length === 0) {
+      callback(true);
+      return;
+    }
+
+    var arquivo = arquivoInput.files[0];
+    var reader = new FileReader();
+    var finalizado = false;
+
+    function concluir(valido) {
+      if (finalizado) {
+        return;
+      }
+      finalizado = true;
+      callback(valido);
+    }
+
+    reader.onload = function() { concluir(true); };
+    reader.onerror = function() { concluir(false); };
+
+    try {
+      reader.readAsArrayBuffer(arquivo.slice(0, 1));
+    } catch (error) {
+      concluir(false);
+    }
+  }
+
+  function enviarFormularioDocumento(formElement) {
+    $("#carregando_arquivo").show();
+
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": "{{csrf_token}}" }
+    });
+
+    var form = $("form#meuForm").closest("form");
+    var data = new FormData(form[0]);
+
+    $.ajax({
+      type: "POST",
+      {% if adiciona == "adiciona_documento" %}
+        {% if documento_id %}
+          url: "{% url adiciona organizacao.id projeto.id tipo.sigla documento_id %}",
+        {% elif tipo %}
+          url: "{% url adiciona organizacao.id projeto.id tipo.sigla %}",
+        {% elif projeto %}
+          url: "{% url adiciona organizacao.id projeto.id %}",
+        {% elif organizacao %}
+          url: "{% url adiciona organizacao.id %}",
+        {% else %}
+          url: "{% url adiciona %}",
+        {% endif %}
+      {% elif adiciona == "edita_documento" %}  
+        url: "{% url adiciona documento_id %}",
+      {% elif adiciona == "adiciona_documento_tipo" %}  
+        url: "{% url adiciona tipo.sigla %}",
+      {% elif adiciona == "adiciona_documento_estudante" %}
+        url: "{% url adiciona tipo.sigla %}",
+      {% endif %}
+      data: data,
+      processData: false,
+      contentType: false,
+      success: function(response){
+        $("#carregando_arquivo").hide();
+        $("#popup").modal("hide");
+        location.reload();
+      },
+      error: function (request, status, error) {
+        $("#carregando_arquivo").hide();
+
+        if (request && request.status === 0) {
+          var arquivoInput = document.getElementById("arquivo");
+          if (arquivoInput) {
+            arquivoInput.value = "";
+          }
+          if (!formElement.checkValidity()) {
+            formElement.reportValidity();
+            return;
+          }
+        }
+
+        $("#popup").modal("hide");
+        {% if user.tipo_de_usuario.eh_admin %} 
+          alert(request.responseText);
+          jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
+          console.log("error"+request.responseText);
+        {% else %}
+          jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
+        {% endif %}
+      }
+    });
+  }
   
   $("form#meuForm").submit(function(e){
       e.preventDefault();
-      
-      $("#carregando_arquivo").show();
 
-      $.ajaxSetup({
-        headers: { "X-CSRFToken": "{{csrf_token}}" }
+      var formElement = document.getElementById("meuForm");
+      var arquivoInput = document.getElementById("arquivo");
+
+      if (arquivoInput && arquivoInput.value && (!arquivoInput.files || arquivoInput.files.length === 0)) {
+        arquivoInput.value = "";
+      }
+
+      if (!formElement.checkValidity()) {
+        formElement.reportValidity();
+        return false;
+      }
+
+      arquivoSelecionadoValido(arquivoInput, function(valido) {
+        if (!valido) {
+          if (arquivoInput) {
+            arquivoInput.value = "";
+          }
+          if (!formElement.checkValidity()) {
+            formElement.reportValidity();
+          }
+          return;
+        }
+
+        enviarFormularioDocumento(formElement);
       });
 
-      var form = $("form#meuForm").closest("form");
-      var data = new FormData(form[0]);
-
-      $.ajax({
-        type: "POST",
-        {% if adiciona == "adiciona_documento" %}
-          {% if documento_id %}
-            url: "{% url adiciona organizacao.id projeto.id tipo.sigla documento_id %}",
-          {% elif tipo %}
-            url: "{% url adiciona organizacao.id projeto.id tipo.sigla %}",
-          {% elif projeto %}
-            url: "{% url adiciona organizacao.id projeto.id %}",
-          {% elif organizacao %}
-            url: "{% url adiciona organizacao.id %}",
-          {% else %}
-            url: "{% url adiciona %}",
-          {% endif %}
-        {% elif adiciona == "edita_documento" %}  
-          url: "{% url adiciona documento_id %}",
-        {% elif adiciona == "adiciona_documento_tipo" %}  
-          url: "{% url adiciona tipo.sigla %}",
-        {% elif adiciona == "adiciona_documento_estudante" %}
-          url: "{% url adiciona tipo.sigla %}",
-        {% endif %}
-        data: data,
-        processData: false,
-        contentType: false,   // verificar se isso é assim mesmo
-        success: function(response){
-          $("#carregando_arquivo").hide();
-          $("#popup").modal("hide");
-          location.reload();
-        },
-        error: function (request, status, error) {
-          $("#carregando_arquivo").hide();
-          $("#popup").modal("hide");
-          {% if user.tipo_de_usuario.eh_admin %} 
-            alert(request.responseText);
-            jQuery("body").html(request.responseText.replace(/\n/g,"<br>"));
-            console.log("error"+request.responseText);
-          {% else %}
-            jQuery("body").html("Erro no servidor. Por favor contactar: <a href='mailto:lpsoares@insper.edu.br'>lpsoares@insper.edu.br</a>");
-          {% endif %}
-        }
-    });
     return false;
   });
 </script> 

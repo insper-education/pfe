@@ -70,17 +70,31 @@
 </div>
 
 <script>
+  function atualizaNomeArquivo(input) {
+    var fileNameContainer = input.nextElementSibling;
+    if (!fileNameContainer) {
+      return;
+    }
+
+    var fileNameElement = fileNameContainer.querySelector(".name");
+    var noNameElements = fileNameContainer.querySelectorAll(".noname");
+    if (!fileNameElement) {
+      return;
+    }
+
+    if (input.files && input.files.length > 0) {
+      fileNameElement.textContent = input.files[0].name;
+      noNameElements.forEach(element => { element.hidden = true; });
+    } else {
+      fileNameElement.textContent = "";
+      noNameElements.forEach(element => { element.hidden = false; });
+    }
+  }
+
   document.querySelectorAll(".file-input").forEach(input => {
     if (!input.dataset.listenerAdded) {
       input.addEventListener("change", function() {
-        if (this.files && this.files.length > 0) {
-          var fileName = this.files[0].name;
-          this.nextElementSibling.querySelector(".name").textContent = fileName;
-          this.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = true;});
-        } else {
-          this.nextElementSibling.querySelector(".name").textContent = "";
-          this.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = false;});
-        }
+        atualizaNomeArquivo(this);
       });
       input.dataset.listenerAdded = "true";
     }
@@ -90,11 +104,7 @@
   // No caso de um page back, retorna o nome do arquivo
   window.addEventListener("pageshow", function(event) {
     document.querySelectorAll(".file-input").forEach(input => {
-        if (input.files.length > 0) {
-            var fileName = input.files[0].name;
-            input.nextElementSibling.querySelector(".name").textContent = fileName;
-            input.nextElementSibling.querySelectorAll(".noname").forEach(element => {element.hidden = true;});
-        }
+      atualizaNomeArquivo(input);
     });
 });
   
