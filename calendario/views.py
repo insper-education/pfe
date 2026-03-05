@@ -9,25 +9,21 @@ Data: 17 de Dezembro de 2020
 import datetime
 import dateutil.parser
 
-from icalendar import Calendar, Event, vCalAddress
-
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.sites.models import Site
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .support import get_calendario_context, adicionar_participante_em_evento
-from .support import gera_descricao_banca, cria_material_documento
+from .support import get_calendario_context, cria_material_documento
 
 from administracao.models import TipoEvento
 
 from documentos.models import TipoDocumento
 
-from projetos.models import Banca, Configuracao, Evento, Organizacao, Documento, Cerimonia
+from projetos.models import Configuracao, Evento, Organizacao, Documento, Cerimonia
 
-from users.models import PFEUser, Aluno
+from users.models import PFEUser
 
 
 @login_required
@@ -62,64 +58,6 @@ def calendario(request):
         return render(request, "calendario/calendario.html", context)
 
     return HttpResponse("Problema ao gerar calendário.", status=401)
-
-
-@login_required
-@permission_required("users.altera_professor", raise_exception=True)
-def export_calendar(request, event_id):
-    """Gera evento de calendário."""
-    banca = get_object_or_404(Banca, pk=event_id)
-
-    cal = Calendar()
-    site = Site.objects.get_current()
-
-    cal.add("prodid", "-//Capstone//Insper//")
-    cal.add("version", "2.0")
-
-    site_token = site.domain.split('.')
-    site_token.reverse()
-    site_token = '.'.join(site_token)
-
-    ical_event = Event()
-
-    ical_event["uid"] = "Banca{0}{1}{2}".format(
-        banca.startDate.strftime("%Y%m%d%H%M%S"),
-        banca.get_projeto().pk,
-        banca.sigla)
-    ical_event.add("summary", "Banca {0}".format(banca.get_projeto()))
-    ical_event.add("dtstart", banca.startDate)
-    ical_event.add("dtend", banca.endDate)
-    ical_event.add("dtstamp", datetime.datetime.now().date())
-    ical_event.add("tzid", "America/Sao_Paulo")
-    ical_event.add("location", banca.location)
-
-    ical_event.add("geo", (-25.598749, -46.676368))
-
-    cal_address = vCalAddress("MAILTO:lpsoares@insper.edu.br")
-    cal_address.params["CN"] = "Luciano Pereira Soares"
-    ical_event.add("organizer", cal_address)
-
-    for membro in banca.membros():
-        adicionar_participante_em_evento(ical_event, membro)
-
-    alunos = Aluno.objects.filter(alocacao__projeto=banca.get_projeto())\
-        .filter(trancado=False)
-
-    for aluno in alunos:
-        adicionar_participante_em_evento(ical_event, aluno.user)
-
-    description = gera_descricao_banca(banca, alunos)
-
-    ical_event.add("description", description)
-
-    cal.add_component(ical_event)
-
-    response = HttpResponse(cal.to_ical())
-    response["Content-Type"] = "text/calendar"
-    response["Content-Disposition"] = \
-        "attachment; filename=Banca{0}.ics".format(banca.pk)
-
-    return response
 
 
 @login_required

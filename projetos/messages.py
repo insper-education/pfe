@@ -11,10 +11,12 @@ from celery import shared_task
 import logging
 
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
+from django.utils.html import strip_tags
 
 from users.models import Opcao
 from projetos.models import Configuracao, Projeto, Banca, Certificado
@@ -50,9 +52,35 @@ def htmlizar(text):
 
 @shared_task
 def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
-    send_mail(subject, message, from_email, recipient_list, **kwargs)
+    calendar_invite = kwargs.pop("calendar_invite", None)
 
-def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0):
+    if not calendar_invite:
+        send_mail(subject, message, from_email, recipient_list, **kwargs)
+        return
+
+    html_message = kwargs.pop("html_message", None)
+    fail_silently = kwargs.pop("fail_silently", True)
+    auth_user = kwargs.pop("auth_user", None)
+
+    connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
+    email_message = EmailMultiAlternatives(
+        subject=subject,
+        body=strip_tags(message),
+        from_email=from_email,
+        to=recipient_list,
+        connection=connection,
+    )
+
+    if html_message:
+        email_message.attach_alternative(html_message, "text/html")
+
+    method = calendar_invite.get("method", "REQUEST")
+    content = calendar_invite.get("content", "")
+    filename = calendar_invite.get("filename", "invite.ics")
+    email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
+    email_message.send(fail_silently=fail_silently)
+
+def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None):
     """Envia e-mail automaticamente (ou com atraso)."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
     auth_user = settings.EMAIL_HOST_USER
@@ -70,12 +98,18 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
         if delay_seconds == 0:
             # Envia e-mail imediatamente
             send_mail_task.delay(subject, message, email_from, recipient_list,
-                                fail_silently=True, auth_user=auth_user, html_message=message)
+                                fail_silently=True, auth_user=auth_user, html_message=message,
+                                calendar_invite=calendar_invite)
         else:
             # Agenda tarefa para enviar e-mail com possibilidade de atraso
             send_mail_task.apply_async(
                 args=[subject, message, email_from, recipient_list],
-                kwargs={"fail_silently": True, "auth_user": auth_user, "html_message": message},
+                kwargs={
+                    "fail_silently": True,
+                    "auth_user": auth_user,
+                    "html_message": message,
+                    "calendar_invite": calendar_invite,
+                },
                 countdown=delay_seconds
             )
 
