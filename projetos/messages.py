@@ -53,8 +53,11 @@ def htmlizar(text):
 @shared_task
 def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     calendar_invite = kwargs.pop("calendar_invite", None)
+    reply_to = kwargs.pop("reply_to", None)
 
     if not calendar_invite:
+        if reply_to:
+            kwargs["reply_to"] = reply_to
         send_mail(subject, message, from_email, recipient_list, **kwargs)
         return
 
@@ -68,6 +71,7 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
         body=strip_tags(message),
         from_email=from_email,
         to=recipient_list,
+        reply_to=reply_to,
         connection=connection,
     )
 
@@ -80,7 +84,7 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
     email_message.send(fail_silently=fail_silently)
 
-def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None):
+def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None, reply_to=None):
     """Envia e-mail automaticamente (ou com atraso)."""
     email_from = settings.EMAIL_USER + " <" + settings.EMAIL_HOST_USER + ">"
     auth_user = settings.EMAIL_HOST_USER
@@ -99,7 +103,7 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
             # Envia e-mail imediatamente
             send_mail_task.delay(subject, message, email_from, recipient_list,
                                 fail_silently=True, auth_user=auth_user, html_message=message,
-                                calendar_invite=calendar_invite)
+                                calendar_invite=calendar_invite, reply_to=reply_to)
         else:
             # Agenda tarefa para enviar e-mail com possibilidade de atraso
             send_mail_task.apply_async(
@@ -109,6 +113,7 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
                     "auth_user": auth_user,
                     "html_message": message,
                     "calendar_invite": calendar_invite,
+                    "reply_to": reply_to,
                 },
                 countdown=delay_seconds
             )

@@ -60,13 +60,16 @@ def _ics_format_dt(dt):
     return dt_utc.strftime("%Y%m%dT%H%M%SZ")
 
 
-def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=False, excluida=False):
+def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=False, excluida=False,
+                           organizer_email=None, organizer_name=None):
     projeto = banca.get_projeto()
 
     domain = settings.EMAIL_HOST_USER.split("@")[-1] if "@" in settings.EMAIL_HOST_USER else "localhost"
     uid = banca.calendar_uid or f"banca-{banca.id}@{domain}"
     method = "CANCEL" if excluida else "REQUEST"
     status = "CANCELLED" if excluida else "CONFIRMED"
+    organizer_mail = organizer_email or settings.EMAIL_HOST_USER
+    organizer_cn = organizer_name or "Capstone"
 
     start_dt = _ics_format_dt(banca.startDate)
     end_reference = banca.endDate
@@ -158,7 +161,7 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
         f"LOCATION:{_ics_escape(location)}",
         f"STATUS:{status}",
         f"URL:{_ics_escape(link_projeto)}",
-        f"ORGANIZER;CN=Capstone PFE:mailto:{settings.EMAIL_HOST_USER}",
+        f"ORGANIZER;CN={_ics_escape(organizer_cn)}:mailto:{organizer_mail}",
         *attendees,
         "END:VEVENT",
         "END:VCALENDAR",
@@ -785,6 +788,14 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     mensagem = render_message("Agendamento Banca", context_carta, urlize=False)
 
     if enviar:
+        reply_to = None
+        organizer_email = None
+        organizer_name = None
+        if projeto.orientador and projeto.orientador.user and projeto.orientador.user.email:
+            organizer_email = projeto.orientador.user.email
+            organizer_name = projeto.orientador.user.get_full_name()
+            reply_to = [organizer_email]
+
         calendar_invite = _calendar_invite_banca(
             banca=banca,
             subject=subject,
@@ -792,8 +803,10 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
             mensagem=mensagem,
             atualizada=atualizada,
             excluida=excluida,
+            organizer_email=organizer_email,
+            organizer_name=organizer_name,
         )
-        email(subject, recipient_list, mensagem, calendar_invite=calendar_invite)
+        email(subject, recipient_list, mensagem, calendar_invite=calendar_invite, reply_to=reply_to)
         if calendar_invite:
             banca.calendar_uid = calendar_invite.get("uid")
             banca.calendar_sequence = calendar_invite.get("sequence", banca.calendar_sequence)
