@@ -982,6 +982,7 @@ def pedir_recursos(request, primarykey=None):
             email_subject = f"Pedido de Recurso: {tipo.capitalize()} - Projeto {projeto.proposta.titulo}"
             email_recipients = [request.user.email]
             email_recipients += [configuracao.coordenacao.user.email]
+            email_recipients += [configuracao.tecnico.email]
             email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
             for alocacao in Alocacao.objects.filter(projeto=projeto):
                 email_recipients.append(alocacao.aluno.user.email)
@@ -1004,7 +1005,7 @@ def pedir_recursos(request, primarykey=None):
                 </div>
             """
 
-            email(email_subject, email_recipients, email_message)
+            email(email_subject, email_recipients, email_message, reply_to=configuracao.tecnico.email)
 
             return redirect("pedir_recursos")
 

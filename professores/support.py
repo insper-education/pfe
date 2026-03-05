@@ -763,15 +763,15 @@ def mensagem_edicao_banca(banca, atualizada=False, excluida=False, enviar=False)
     recipient_list = []
     membros = banca.membros()
 
-    # recipient_list.extend(membro.email for membro in membros)
-    # if banca.alocacao:  # Probation
-    #     recipient_list.append(banca.alocacao.aluno.user.email)
-    # else:
-    #     recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
+    recipient_list.extend(membro.email for membro in membros)
+    if banca.alocacao:  # Probation
+        recipient_list.append(banca.alocacao.aluno.user.email)
+    else:
+        recipient_list.extend(alocacao.aluno.user.email for alocacao in projeto.alocacao_set.all())
     if configuracao.coordenacao:
         recipient_list.append(configuracao.coordenacao.user.email)
-    # if configuracao.operacao:
-    #     recipient_list.append(configuracao.operacao.email)
+    if configuracao.operacao:
+        recipient_list.append(configuracao.operacao.email)
 
     context_carta = {
         "banca": banca,
