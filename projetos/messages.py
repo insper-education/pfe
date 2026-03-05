@@ -12,7 +12,6 @@ import logging
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.template import Context, Template
 from django.utils import html
@@ -55,17 +54,15 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     calendar_invite = kwargs.pop("calendar_invite", None)
     reply_to = kwargs.pop("reply_to", None)
 
-    if not calendar_invite:
-        if reply_to:
-            kwargs["reply_to"] = reply_to
-        send_mail(subject, message, from_email, recipient_list, **kwargs)
-        return
-
     html_message = kwargs.pop("html_message", None)
     fail_silently = kwargs.pop("fail_silently", True)
     auth_user = kwargs.pop("auth_user", None)
 
-    connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
+    if auth_user:
+        connection = get_connection(username=auth_user, password=settings.EMAIL_HOST_PASSWORD)
+    else:
+        connection = get_connection()
+
     email_message = EmailMultiAlternatives(
         subject=subject,
         body=strip_tags(message),
@@ -78,10 +75,12 @@ def send_mail_task(subject, message, from_email, recipient_list, **kwargs):
     if html_message:
         email_message.attach_alternative(html_message, "text/html")
 
-    method = calendar_invite.get("method", "REQUEST")
-    content = calendar_invite.get("content", "")
-    filename = calendar_invite.get("filename", "invite.ics")
-    email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
+    if calendar_invite:
+        method = calendar_invite.get("method", "REQUEST")
+        content = calendar_invite.get("content", "")
+        filename = calendar_invite.get("filename", "invite.ics")
+        email_message.attach(filename, content, f"text/calendar; method={method}; charset=UTF-8")
+
     email_message.send(fail_silently=fail_silently)
 
 def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds=0, calendar_invite=None, reply_to=None):
