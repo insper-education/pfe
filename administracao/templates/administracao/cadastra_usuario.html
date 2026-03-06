@@ -367,7 +367,7 @@
           <label for="representante_comite" style="margin-left: 1.4rem; {% if not usuario.membro_comite and not usuario.representante_comite %}display: none;{% endif %}" id="representante_comite_label">
             {% lng "Representante Comitê" "Committee Representative" %}
             <textarea class="form-control" id="representante_comite" name="representante_comite" rows="3" cols="60" maxlength="{% max_length PFEUser "representante_comite" %}">{% if usuario.representante_comite %}{{usuario.representante_comite}}{% endif %}</textarea>
-            <small class="form-text text-muted">{% lng "Descreva o curso quem representa e o período (ex: Engenharia de Computação (2020-2022)" "Describe the course they represent and the period (ex: Computer Engineering (2020-2022)" %}</small>
+            <small class="form-text text-muted">{% lng "Descreva o curso quem representa e o período (ex: Engenharia de Computação (2019.1-2023.2)" "Describe the course they represent and the period (ex: Computer Engineering (2019.1-2023.2)" %}</small>
           </label>
         </div>
       
