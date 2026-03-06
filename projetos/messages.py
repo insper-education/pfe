@@ -90,7 +90,7 @@ def email(subject, recipient_list, message, aviso_automatica=True, delay_seconds
 
     if aviso_automatica:
         configuracao = get_object_or_404(Configuracao)
-        message += "<br>\n<br>\n<small style='color: gray'>"
+        message += "<br>\n<br>\n<small style='color: gray; line-height: 1.0;'>"
         message += configuracao.msg_email_automatico
         message += "</small>"
 
