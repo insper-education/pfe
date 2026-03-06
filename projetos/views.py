@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseForbidden
@@ -1139,10 +1140,17 @@ def reembolso_pedir(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def comite(request):
-    """Exibe os professores que estão no comitê do Capstone."""
+    """Exibe as pessoas que estão no comitê do Capstone."""
     context = {
-            "professores": Professor.objects.filter(user__membro_comite=True),
-            "cabecalhos": [{"pt": "Nome", "en": "Name"}, {"pt": "e-mail", "en": "e-mail"}, {"pt": "Lattes", "en": "Lattes"}, ],
+            "pessoas": PFEUser.objects.filter(
+                Q(membro_comite=True) | Q(representante_comite__isnull=False)
+            ).distinct(),
+            "cabecalhos": [
+                {"pt": "Nome", "en": "Name"},
+                {"pt": "e-mail", "en": "e-mail"},
+                {"pt": "Representando", "en": "Representing"},
+                {"pt": "Lattes", "en": "Lattes"},
+            ],
             "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
     return render(request, "projetos/comite.html", context)

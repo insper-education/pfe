@@ -56,7 +56,10 @@ class PFEUser(AbstractUser):
                                help_text="LinkedIn do usuário")
 
     membro_comite = \
-        models.BooleanField("Membro do Comitê", default=False, help_text="caso membro do comitê")
+        models.BooleanField("Membro do Comitê", default=False, help_text="caso membro ativo do comitê")
+    representante_comite = \
+        models.CharField("Representante do Comitê", max_length=100, null=True, blank=True,
+                                 help_text="caso membro do comitê, qual representante do comitê é e período de atuações")
 
     membro_operacional = \
         models.BooleanField("Membro da Equipe Operacional", default=False, help_text="caso membro da equipe operacional")

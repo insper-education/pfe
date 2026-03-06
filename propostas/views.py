@@ -446,12 +446,6 @@ def propostas_lista(request):
     return render(request, "propostas/propostas_lista.html", context)
 
 
-
-
-
-
-
-
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
