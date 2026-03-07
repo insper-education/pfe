@@ -12,7 +12,13 @@ $("#{{tabela}}Table tbody tr").each(function() {   // Garantir que todas as linh
 });
 
 $(document).ready(function () {  
-  var table = $("#{{tabela}}Table").DataTable();
+  function getTable() {
+    var seletor = "#{{tabela}}Table";
+    if ($.fn.dataTable.isDataTable(seletor)) {
+      return $(seletor).DataTable();
+    }
+    return null;
+  }
 
   {% comment %} Somente mostra elemento com mesmo valor que checkbox {% endcomment %}
   function filtro_checkbox(settings, data, dataIndex) {
@@ -31,6 +37,7 @@ $(document).ready(function () {
 
     var val = "true";
     var rowValue = "";
+    var table = getTable();
 
     if (table && typeof table.row === "function") {
       var node = table.row(dataIndex).node();
@@ -45,10 +52,15 @@ $(document).ready(function () {
   }
 
   function mostra_elem_selecionado() {
-    table.draw();
+    var table = getTable();
+    if (table) {
+      table.draw(false);
+    }
   }
 
   $("#{{checkbox}}").on("change", mostra_elem_selecionado);
   document.addEventListener("edicaoEvent", mostra_elem_selecionado);
+
+  $("#{{tabela}}Table").on("init.dt", mostra_elem_selecionado);
   mostra_elem_selecionado();
 });
