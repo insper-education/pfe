@@ -135,7 +135,9 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
 
     attendees = []
     for email_dest, nome in sorted(attendees_by_email.items(), key=lambda item: item[0]):
-        attendees.append(f"ATTENDEE;CN={_ics_escape(nome)};ROLE=REQ-PARTICIPANT:mailto:{email_dest}")
+        attendees.append(
+            f"ATTENDEE;CN={_ics_escape(nome)};ROLE=REQ-PARTICIPANT;RSVP=FALSE:mailto:{email_dest}"
+        )
 
     location_parts = []
     if banca.location:
@@ -162,6 +164,7 @@ def _calendar_invite_banca(banca, subject, recipient_list, mensagem, atualizada=
         f"STATUS:{status}",
         f"URL:{_ics_escape(link_projeto)}",
         f"ORGANIZER;CN={_ics_escape(organizer_cn)}:mailto:{organizer_mail}",
+        "X-MICROSOFT-ISRESPONSEREQUESTED:FALSE",
         *attendees,
         "END:VEVENT",
         "END:VCALENDAR",
