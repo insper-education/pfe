@@ -21,7 +21,9 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+  <link rel="stylesheet" href="{% static 'css/user_details.css' %}">
   <link rel="stylesheet" href="{% static 'css/tab_arrend.css' %}"> {% comment %} SETAS {% endcomment %}
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
   <script src="{% static 'js/Chart.min.js' %}"></script>
   {% include "reload.html" %}
 
@@ -294,310 +296,314 @@
 
 {% block content %}
 
-  <div class="user-info">
-    {% include "usuario.html" with user=aluno.user %}
+  <div class="user-detail-page div_arredondado_100">
 
-    {% if aluno.matricula %}
+    <div class="user-info">
+      {% include "usuario.html" with user=aluno.user %}
+
+      {% if aluno.matricula %}
+        <div class="user-info-row">
+          <label>{% lng "Matrícula" "Student ID" %}:</label>
+          <span>{{ aluno.matricula }}</span>
+        </div>
+      {% endif %}
+
       <div class="user-info-row">
-        <label>{% lng "Matrícula" "Student ID" %}:</label>
-        <span>{{ aluno.matricula }}</span>
+        <label>{% lng "Curso" "Program" %}:</label>
+        <span>{{ aluno.curso2 }}</span>
       </div>
-    {% endif %}
 
-    <div class="user-info-row">
-      <label>{% lng "Curso" "Program" %}:</label>
-      <span>{{ aluno.curso2 }}</span>
-    </div>
+      <div class="user-info-row">
+        <label>{% lng "Período Capstone" "Capstone Semester" %}:</label>
+        <span>
+          {% if aluno.ano and aluno.semestre %}
+            {{ aluno.ano }}.{{ aluno.semestre }}
+          {% else %}
+            {% lng "Período não definido" "Not defined" %}
+          {% endif %}
+        </span>
+      </div>
+      
+      <div class="user-info-row">
+        <label>{% lng "Situação Acadêmica" "Academic Status" %}:</label>
+        <span>
+          {% if aluno.trancado %}
+            {% lng "Trancado" "On leave" %}
+          {% else %}
+            {% lng "Regular" "Regular" %}
+          {% endif %}
+        </span>
+      </div>
 
-    <div class="user-info-row">
-      <label>{% lng "Período Capstone" "Capstone Semester" %}:</label>
-      <span>
-        {% if aluno.ano and aluno.semestre %}
-          {{ aluno.ano }}.{{ aluno.semestre }}
-        {% else %}
-          {% lng "Período não definido" "Not defined" %}
-        {% endif %}
-      </span>
+      {% if not user.eh_estud and aluno.cr %}
+        <div class="user-info-row">
+          <label>{% lng "CR" "GPA" %}:</label>
+          <span>{% lng_4 aluno.cr %}</span>
+        </div>
+      {% endif %}
+
+      {% if not user.eh_estud %}
+        {% include "dados_usuario.html" with user=aluno.user %}
+      {% endif %}
+
     </div>
     
-    <div class="user-info-row">
-      <label>{% lng "Situação Acadêmica" "Academic Status" %}:</label>
-      <span>
-        {% if aluno.trancado %}
-          {% lng "Trancado" "On leave" %}
-        {% else %}
-          {% lng "Regular" "Regular" %}
-        {% endif %}
-      </span>
-    </div>
+    <hr>
 
-    {% if not user.eh_estud and aluno.cr %}
-      <div class="user-info-row">
-        <label>{% lng "CR" "GPA" %}:</label>
-        <span>{% lng_4 aluno.cr %}</span>
-      </div>
+    {% if aluno.trabalhou %}
+      <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
     {% endif %}
 
-    {% if not user.eh_estud %}
-      {% include "dados_usuario.html" with user=aluno.user %}
+    {% if aluno.atividades %}
+      <b>{{aluno.get_atividades_help_text }}</b> {{ aluno.atividades|linebreaks }}<br>
+    {% endif %}
+
+    {% if aluno.familia %}
+      <b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}<br>
+    {% endif %}
+
+    
+    {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True com_borda=True %}
+      {% include "areas.html" %}
+    {% endwith %}
+    <br>
+
+    {% if user.eh_prof_a %}
+
+      {% if aluno.opcao_set.all %}
+        <hr>
+        <h4><i class="fas fa-list-ol"></i> {% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
+
+        {% select_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_regulares %}
+        {% exclude_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_outros %}
+
+        {% if opcoes_regulares %}
+          <div class="propostas-list mt-2">
+            {% for opcao in opcoes_regulares %}
+              <div class="proposta-linha">
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                  <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
+                  <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
+                  <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
+                  <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
+                  <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="alert alert-info mt-2" role="alert">
+            <i class="fas fa-info-circle"></i>
+            {% lng "Nenhuma proposta selecionada para o semestre regular." "No proposal selected for the regular semester." %}
+          </div>
+        {% endif %}
+
+        {% if opcoes_outros %}
+          <div class="proposta-divisor">
+            <span>{% lng "Outros Semestres" "Other Semesters" %}</span>
+          </div>
+          <div class="propostas-list">
+            {% for opcao in opcoes_outros %}
+              <div class="proposta-linha">
+                <a href="{% url 'proposta_completa' opcao.proposta.id %}">
+                  <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
+                  <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
+                  <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
+                  <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
+                  <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if certificados %}
+        <hr>
+        <h4>{% lng "Certificados" "Certificates" %}</h4>
+        <ul>
+          {% for certificado in certificados %}
+            <li>
+              {{certificado.tipo_certificado}}
+              {% if certificado.data %}
+                  em {{certificado.data|date:"DATE_FORMAT"}}
+              {% endif %}
+              {% if certificado.documento %}
+                  - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if alocacoes.count > 0 %}
+        <hr>
+        <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
+
+        {% for alocacao in alocacoes %}
+          <b>{% lng "Projeto" "Project" %}{% if alocacoes.count > 1 %} {{forloop.revcounter}}{% endif %}:</b>
+          <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
+            [{{alocacao.projeto.organizacao.nome}}] {{alocacao.projeto.get_titulo}}
+            ({{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}})
+            {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
+          </a>
+          <br>
+
+          {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao rubricas=True %}
+          {% include "display_graficos_individuais.html" %}
+          <br><br>
+
+          <!-- RELATOS QUINZENAIS -->
+          {% with relatos=alocacao|get_relatos %}
+            {% if alocacao.projeto.ano > 2021 and relatos %}
+              <span class="tit_rel ml-2"><i class="fas fa-clipboard-list"></i> {% lng "Relatos Quinzenais" "Biweekly Reports" %}</span>
+              <div class="relatos-list mt-2">
+                {% for evento, relato, ordem in relatos %}
+                  <div class="relato-linha">
+                    <div class="relato-ordem">{{ ordem|add:1 }}&ordm;</div>
+                    <div class="relato-data">
+                      <i class="far fa-calendar"></i>
+                      <span class="texto-longo">{{ evento.endDate|date:"d/m/Y" }}</span>
+                      <span class="texto-curto">{{ evento.endDate|date:"d/m/y" }}</span>
+                    </div>
+                    <div class="relato-status">
+                      {% if relato %}
+                        <a href="{% url 'relato_visualizar' relato.id %}">
+                          {% lng "Preenchido" "Filled" %} ·
+                          <span class="texto-longo">{{ relato.momento|date:"d/m/Y H:i" }}</span>
+                          <span class="texto-curto">{{ relato.momento|date:"d/m/y H:i" }}</span>
+                        </a>
+                      {% else %}
+                        {% lng "Não preenchido por estudante" "Not filled by student" %}
+                      {% endif %}
+                    </div>
+                    <div class="relato-icone">
+                      {% if relato %}
+                        {% if relato.avaliacao >= 0 %}
+                          {% if relato.avaliacao > 0 %}
+                            <span data-toggle="tooltip" data-html="true" animation="true" title="Adequado">&#128077;</span>
+                          {% else %}
+                            <span data-toggle="tooltip" data-html="true" animation="true" title="Inadequado">&#128078;</span>
+                          {% endif %}
+                        {% else %}
+                          <span data-toggle="tooltip" data-html="true" animation="true" title="Aguardando avaliação">&#x23F3;</span>
+                        {% endif %}
+                      {% else %}
+                        <span data-toggle="tooltip" data-html="true" animation="true" title="Sem preenchimento">—</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+              <br>
+            {% endif %}
+          {% endwith %}
+
+          <!-- REUNIÕES -->
+          {% with reunioes=alocacao|get_reunioes %}
+            {% if reunioes %}
+              <span class="tit_rel ml-2"><i class="fas fa-users"></i> {% lng "Reuniões" "Meetings" %}</span>
+              <div class="reunioes-list mt-2">
+                {% for reuniao in reunioes %}
+                  {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
+                    <div class="reuniao-linha">
+                      <div class="mostra-data-hora">
+                        <div class="mostra-data">
+                          <i class="far fa-calendar"></i>
+                          <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
+                          <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
+                        </div>
+                        <div class="mostra-hora">
+                          <i class="far fa-clock ml-2"></i>
+                          {{ reuniao.data_hora|date:"H:i" }}
+                        </div>
+                      </div>
+                      <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
+                        {{ reuniao.titulo }}
+                      </div>
+                      {% if participacao %}
+                        {% if participacao.situacao == 1 %}
+                          <span class="badge badge-success badge-mini">{% lng "Presente" "Present" %}</span>
+                        {% elif participacao.situacao == 2 %}
+                          <span class="badge badge-danger badge-mini">{% lng "Ausente" "Absent" %}</span>
+                        {% elif participacao.situacao == 3 %}
+                          <span class="badge badge-warning badge-mini text-dark">{% lng "Justificado" "Excused" %}</span>
+                        {% endif %}
+                      {% else %}
+                        <span class="badge badge-secondary badge-mini">—</span>
+                      {% endif %}
+                    </div>
+                  {% endwith %}
+                {% endfor %}
+              </div>
+              <br>
+            {% endif %}
+          {% endwith %}
+
+          <!-- BANCAS -->
+          {% with bancas=alocacao|get_bancas %}
+            {% if bancas %}
+              <span class="tit_rel ml-2"><i class="fas fa-gavel"></i> {% lng "Participação em Bancas" "Examination Boards" %}</span>
+              <div class="bancas-list mt-2">
+                {% for banca in bancas %}
+                  <div class="banca-linha">
+                    <a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">
+                      <div class="mostra-data-hora">
+                        <div class="mostra-data">
+                          <i class="far fa-calendar"></i>
+                          <span class="texto-longo">{{ banca.startDate|date:"d/m/Y" }}</span>
+                          <span class="texto-curto">{{ banca.startDate|date:"d/m/y" }}</span>
+                        </div>
+                        <div class="mostra-hora">
+                          <i class="far fa-clock ml-2"></i>
+                          {{ banca.startDate|date:"H:i" }}
+                        </div>
+                      </div>
+                      <div class="banca-tipo" title="{{ banca.tipo_evento.nome }}">{% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}</div>
+                      <span class="badge badge-info badge-mini">
+                        {% lng "Ver" "View" %}
+                      </span>
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+              <br>
+            {% endif %}
+          {% endwith %}
+
+
+          {% with documentos=alocacao|get_documentos_individuais %}
+            {% if documentos %}
+              <span class="tit_rel ml-2"><i class="fas fa-file-alt"></i> {% lng "Documentos Individuais" "Individual Documents" %}</span>
+              <div class="caixa_rolante">
+                {% include "documentos.html" %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          {% if not forloop.last %}
+            <hr style="border-top: 3px dotted #8c8b8b;">
+          {% endif %}
+        
+        {% endfor %}
+      {% endif %} 
+
+    {% endif %} 
+    
+    <hr>
+    {% include "participacoes_usuario.html" with usuario=aluno.user %}
+    
+    {% include "estudantes/includes/funcionalidade_respostas.html" %}
+    {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
+
+    {% if user.eh_admin %}
+      <a href="{% url 'edita_usuario' aluno.user.id %}">
+        <button class="btn btn-primary mb-1" style="float: right;">
+          {% lng "Editar" "Edit" %}
+        </button>
+      </a>
     {% endif %}
 
   </div>
-  
-  <hr>
-
-  {% if aluno.trabalhou %}
-    <b>{{aluno.get_trabalhou_help_text }}</b> {{ aluno.trabalhou|linebreaks }}<br>
-  {% endif %}
-
-  {% if aluno.atividades %}
-    <b>{{aluno.get_atividades_help_text }}</b> {{ aluno.atividades|linebreaks }}<br>
-  {% endif %}
-
-  {% if aluno.familia %}
-    <b>{{aluno.get_familia_help_text }}</b> {{ aluno.familia|linebreaks }}<br>
-  {% endif %}
-
-  
-  {% with areas_de_interesse_selecionadas=aluno.user.areadeinteresse_set.all vencido=True com_borda=True %}
-    {% include "areas.html" %}
-  {% endwith %}
-  <br>
-
-  {% if user.eh_prof_a %}
-
-    {% if aluno.opcao_set.all %}
-      <hr>
-      <h4><i class="fas fa-list-ol"></i> {% lng "Propostas Selecionadas" "Selected Proposals" %}</h4>
-
-      {% select_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_regulares %}
-      {% exclude_by_periodo aluno.opcao_set.all aluno.ano aluno.semestre as opcoes_outros %}
-
-      {% if opcoes_regulares %}
-        <div class="propostas-list mt-2">
-          {% for opcao in opcoes_regulares %}
-            <div class="proposta-linha">
-              <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
-                <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
-                <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
-                <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
-                <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
-              </a>
-            </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="alert alert-info mt-2" role="alert">
-          <i class="fas fa-info-circle"></i>
-          {% lng "Nenhuma proposta selecionada para o semestre regular." "No proposal selected for the regular semester." %}
-        </div>
-      {% endif %}
-
-      {% if opcoes_outros %}
-        <div class="proposta-divisor">
-          <span>{% lng "Outros Semestres" "Other Semesters" %}</span>
-        </div>
-        <div class="propostas-list">
-          {% for opcao in opcoes_outros %}
-            <div class="proposta-linha">
-              <a href="{% url 'proposta_completa' opcao.proposta.id %}">
-                <div class="proposta-prioridade">{{ opcao.prioridade }}</div>
-                <div class="proposta-org" title="{{ opcao.proposta.organizacao.nome }}">{{ opcao.proposta.organizacao.nome }}</div>
-                <div class="proposta-titulo" title="{{ opcao.proposta.titulo }}">{{ opcao.proposta.titulo }}</div>
-                <div class="proposta-periodo">{{ opcao.proposta.ano }}.{{ opcao.proposta.semestre }}</div>
-                <div class="proposta-aderencia">{% mede_aderencia aluno opcao.proposta %}%</div>
-              </a>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endif %}
-
-    {% if certificados %}
-      <hr>
-      <h4>{% lng "Certificados" "Certificates" %}</h4>
-      <ul>
-        {% for certificado in certificados %}
-          <li>
-            {{certificado.tipo_certificado}}
-            {% if certificado.data %}
-                em {{certificado.data|date:"DATE_FORMAT"}}
-            {% endif %}
-            {% if certificado.documento %}
-                - documento: <a href="{{ certificado.documento.url }}" target="_blank" rel="noopener noreferrer"><span style="word-break: break-all;">{{ certificado.documento.url }}</span></a><br>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-
-    {% if alocacoes.count > 0 %}
-      <hr>
-      <h4>{% lng_n alocacoes.count "Alocação" "Alocações" "Allocation" "Allocation2" %}</h4>
-
-      {% for alocacao in alocacoes %}
-        <b>{% lng "Projeto" "Project" %}{% if alocacoes.count > 1 %} {{forloop.revcounter}}{% endif %}:</b>
-        <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
-          [{{alocacao.projeto.organizacao.nome}}] {{alocacao.projeto.get_titulo}}
-          ({{alocacao.projeto.ano}}.{{alocacao.projeto.semestre}})
-          {% include "tipo_projeto.html" with projeto=alocacao.projeto %}
-        </a>
-        <br>
-
-        {% include "display_notas_individuais.html" with notas=alocacao|get_notas_alocacao:request descontos=alocacao|get_descontos_alocacao rubricas=True %}
-        {% include "display_graficos_individuais.html" %}
-        <br><br>
-
-        <!-- RELATOS QUINZENAIS -->
-        {% with relatos=alocacao|get_relatos %}
-          {% if alocacao.projeto.ano > 2021 and relatos %}
-            <span class="tit_rel ml-2"><i class="fas fa-clipboard-list"></i> {% lng "Relatos Quinzenais" "Biweekly Reports" %}</span>
-            <div class="relatos-list mt-2">
-              {% for evento, relato, ordem in relatos %}
-                <div class="relato-linha">
-                  <div class="relato-ordem">{{ ordem|add:1 }}&ordm;</div>
-                  <div class="relato-data">
-                    <i class="far fa-calendar"></i>
-                    <span class="texto-longo">{{ evento.endDate|date:"d/m/Y" }}</span>
-                    <span class="texto-curto">{{ evento.endDate|date:"d/m/y" }}</span>
-                  </div>
-                  <div class="relato-status">
-                    {% if relato %}
-                      <a href="{% url 'relato_visualizar' relato.id %}">
-                        {% lng "Preenchido" "Filled" %} ·
-                        <span class="texto-longo">{{ relato.momento|date:"d/m/Y H:i" }}</span>
-                        <span class="texto-curto">{{ relato.momento|date:"d/m/y H:i" }}</span>
-                      </a>
-                    {% else %}
-                      {% lng "Não preenchido por estudante" "Not filled by student" %}
-                    {% endif %}
-                  </div>
-                  <div class="relato-icone">
-                    {% if relato %}
-                      {% if relato.avaliacao >= 0 %}
-                        {% if relato.avaliacao > 0 %}
-                          <span data-toggle="tooltip" data-html="true" animation="true" title="Adequado">&#128077;</span>
-                        {% else %}
-                          <span data-toggle="tooltip" data-html="true" animation="true" title="Inadequado">&#128078;</span>
-                        {% endif %}
-                      {% else %}
-                        <span data-toggle="tooltip" data-html="true" animation="true" title="Aguardando avaliação">&#x23F3;</span>
-                      {% endif %}
-                    {% else %}
-                      <span data-toggle="tooltip" data-html="true" animation="true" title="Sem preenchimento">—</span>
-                    {% endif %}
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-            <br>
-          {% endif %}
-        {% endwith %}
-
-        <!-- REUNIÕES -->
-        {% with reunioes=alocacao|get_reunioes %}
-          {% if reunioes %}
-            <span class="tit_rel ml-2"><i class="fas fa-users"></i> {% lng "Reuniões" "Meetings" %}</span>
-            <div class="reunioes-list mt-2">
-              {% for reuniao in reunioes %}
-                {% with participacao=reuniao|get_participacao:alocacao.aluno.user %}
-                  <div class="reuniao-linha">
-                    <div class="mostra-data-hora">
-                      <div class="mostra-data">
-                        <i class="far fa-calendar"></i>
-                        <span class="texto-longo">{{ reuniao.data_hora|date:"d/m/Y" }}</span>
-                        <span class="texto-curto">{{ reuniao.data_hora|date:"d/m/y" }}</span>
-                      </div>
-                      <div class="mostra-hora">
-                        <i class="far fa-clock ml-2"></i>
-                        {{ reuniao.data_hora|date:"H:i" }}
-                      </div>
-                    </div>
-                    <div class="reuniao-titulo-compacto" title="{{ reuniao.titulo }}{% if participacao.observacoes %} - {{ participacao.observacoes }}{% endif %}">
-                      {{ reuniao.titulo }}
-                    </div>
-                    {% if participacao %}
-                      {% if participacao.situacao == 1 %}
-                        <span class="badge badge-success badge-mini">{% lng "Presente" "Present" %}</span>
-                      {% elif participacao.situacao == 2 %}
-                        <span class="badge badge-danger badge-mini">{% lng "Ausente" "Absent" %}</span>
-                      {% elif participacao.situacao == 3 %}
-                        <span class="badge badge-warning badge-mini text-dark">{% lng "Justificado" "Excused" %}</span>
-                      {% endif %}
-                    {% else %}
-                      <span class="badge badge-secondary badge-mini">—</span>
-                    {% endif %}
-                  </div>
-                {% endwith %}
-              {% endfor %}
-            </div>
-            <br>
-          {% endif %}
-        {% endwith %}
-
-        <!-- BANCAS -->
-        {% with bancas=alocacao|get_bancas %}
-          {% if bancas %}
-            <span class="tit_rel ml-2"><i class="fas fa-gavel"></i> {% lng "Participação em Bancas" "Examination Boards" %}</span>
-            <div class="bancas-list mt-2">
-              {% for banca in bancas %}
-                <div class="banca-linha">
-                  <a href="{% url 'resultado_bancas' %}?banca={{banca.id}}">
-                    <div class="mostra-data-hora">
-                      <div class="mostra-data">
-                        <i class="far fa-calendar"></i>
-                        <span class="texto-longo">{{ banca.startDate|date:"d/m/Y" }}</span>
-                        <span class="texto-curto">{{ banca.startDate|date:"d/m/y" }}</span>
-                      </div>
-                      <div class="mostra-hora">
-                        <i class="far fa-clock ml-2"></i>
-                        {{ banca.startDate|date:"H:i" }}
-                      </div>
-                    </div>
-                    <div class="banca-tipo" title="{{ banca.tipo_evento.nome }}">{% lng banca.tipo_evento.nome banca.tipo_evento.nome_en %}</div>
-                    <span class="badge badge-info badge-mini">
-                      {% lng "Ver" "View" %}
-                    </span>
-                  </a>
-                </div>
-              {% endfor %}
-            </div>
-            <br>
-          {% endif %}
-        {% endwith %}
-
-
-        {% with documentos=alocacao|get_documentos_individuais %}
-          {% if documentos %}
-            <span class="tit_rel ml-2"><i class="fas fa-file-alt"></i> {% lng "Documentos Individuais" "Individual Documents" %}</span>
-            <div class="caixa_rolante">
-              {% include "documentos.html" %}
-            </div>
-          {% endif %}
-        {% endwith %}
-
-        {% if not forloop.last %}
-          <hr style="border-top: 3px dotted #8c8b8b;">
-        {% endif %}
-      
-      {% endfor %}
-    {% endif %} 
-
-  {% endif %} 
-  
-  <hr>
-  {% include "participacoes_usuario.html" with usuario=aluno.user %}
-  
-  {% include "estudantes/includes/funcionalidade_respostas.html" %}
-  {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
-
-  {% if user.eh_admin %}
-    <a href="{% url 'edita_usuario' aluno.user.id %}">
-      <button class="btn btn-primary mb-1" style="float: right;">
-        {% lng "Editar" "Edit" %}
-      </button>
-    </a>
-  {% endif %}
 
 {% endblock %}

@@ -12,14 +12,17 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/user_details.css' %}">
   {% include "reload.html" %}
   <link rel="stylesheet" href="{% static 'css/caixa_rolante.css' %}">
 {% endblock %}
 
 {% block content %}
 
-  <div class="user-info">
-    {% include "usuario.html" with user=professor.user %}
+  <div class="user-detail-page div_arredondado_100">
+    <div class="user-info">
+      {% include "usuario.html" with user=professor.user %}
     
     <div class="user-info-row">
       <label>{% lng "Tipo" "Type" %}:</label>
@@ -57,61 +60,83 @@
       </div>
     {% endif %}
     
-    {% include "dados_usuario.html" with user=professor.user %}
+      {% include "dados_usuario.html" with user=professor.user %}
 
-  </div>
+    </div>
 
-  {% if projetos %}
-    <hr>
-    <h4>{% lng_n projetos|length "Projeto Orientado" "Projetos Orientados" "Supervised Project" "Supervised Projects" %}</h4>
-    <ol>
-    {% for projeto in projetos %}
-      {% if projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_infos' projeto.id %}">
-        {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-        {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-        </a>
-        {% with certificado_orientador=projeto|certificado_orientador %}
-          {% if certificado_orientador %}
-            <a href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
-          {% endif %}
-        {% endwith %}
-        {% comment %} {% if projeto.proposta.intercambio %}
-          <sup data-toggle="tooltip" data-html="true" animation="true" title="Professor Responsável">PR</sup>
-        {% endif %} {% endcomment %}
-        </li>
-      {% endif %}
-    {% empty %}
-      {% lng "Projetos não encontrados" "Projects not found" %}
-    {% endfor %}
-    </ol>
-  {% endif %}
+    {% if projetos %}
+      <div class="user-section">
+        <div class="section-title">{% lng_n projetos|length "Projeto Orientado" "Projetos Orientados" "Supervised Project" "Supervised Projects" %}</div>
+        <ol class="projetos-lista">
+        {% for projeto in projetos %}
+          {% with cestud=projeto.alocacao_set.all.count %}
+            {% if cestud > 0 %}
+              <li><a href="{% url 'projeto_infos' projeto.id %}">
+              {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+              <span class="alocacao-chip">
+                <i class="fas fa-user-graduate"></i>
+                {{cestud}} {% lng_n cestud "estudante" "estudantes" "student" "students" %}
+              </span>
+              </a>
+              <span class="certificados-lista">
+                {% with certificado_orientador=projeto|certificado_orientador %}
+                  {% if certificado_orientador %}
+                    <a class="cert-chip" href="{{ certificado_orientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">
+                      <i class="fas fa-certificate"></i>
+                      {% lng "Certificado" "Certificate" %}
+                    </a>
+                  {% endif %}
+                {% endwith %}
+                {% with certificado_falconi=projeto|certificado_falconi %}
+                  {% if certificado_falconi %}
+                    <a class="cert-chip" href="{{ certificado_falconi.documento.url }}" target="_blank" rel="noopener noreferrer">
+                      <i class="fas fa-award"></i>
+                      {% lng "Certificado" "Certificate" %} {{ certificado_falconi.tipo_certificado.titulo }}
+                    </a>
+                  {% endif %}
+                {% endwith %}
+              </span>
 
-  {% if responsavel %}
-    <hr>
-    <h4>{% lng "Professor Responsável" "Professor in charge" %}</h4>
-    <ol>
-      {% for projeto in responsavel %}
-        {% if projeto.alocacao_set.all.count > 0 %}
-          <li><a href="{% url 'projeto_infos' projeto.id %}">
-          {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
-          {% templatetag openbrace %}{{projeto.alocacao_set.all.count}} estudante{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-          </a></li>
-        {% endif %}
-      {% empty %}
-        {% lng "Projetos não encontrados" "Projects not found" %}
-      {% endfor %}
-    </ol>
-  {% endif %}
+              </li>
+            {% endif %}
+          {% endwith %}
+        {% empty %}
+          {% lng "Projetos não encontrados" "Projects not found" %}
+        {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
 
-  {% include "participacoes_usuario.html" with usuario=professor.user %}
+    {% if responsavel %}
+      <div class="user-section">
+        <div class="section-title">{% lng "Professor Responsável" "Professor in charge" %}</div>
+        <ol class="projetos-lista">
+          {% for projeto in responsavel %}
+            {% if projeto.alocacao_set.all.count > 0 %}
+              <li><a href="{% url 'projeto_infos' projeto.id %}">
+              {{projeto.ano}}.{{projeto.semestre}}: [{{projeto.organizacao.nome}}] {{projeto.get_titulo}}
+              <span class="alocacao-chip">
+                <i class="fas fa-user-graduate"></i>
+                {{projeto.alocacao_set.all.count}} {% lng "estudante" "student" %}{% if projeto.alocacao_set.all.count > 1 %}s{% endif %}
+              </span>
+              </a></li>
+            {% endif %}
+          {% empty %}
+            {% lng "Projetos não encontrados" "Projects not found" %}
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
+
+    {% include "participacoes_usuario.html" with usuario=professor.user %}
   
-  {% if user.eh_admin %}
-    <a href="{% url 'edita_usuario' professor.user.id %}">
-      <button class="btn btn-primary mb-1 mt-3">
-        {% lng "Editar" "Edit" %}
-      </button>
-    </a>
-  {% endif %}
+    {% if user.eh_admin %}
+      <a href="{% url 'edita_usuario' professor.user.id %}">
+        <button class="btn btn-primary mb-1 mt-3">
+          {% lng "Editar" "Edit" %}
+        </button>
+      </a>
+    {% endif %}
+  </div>
 
 {% endblock %}

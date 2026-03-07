@@ -11,65 +11,70 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+  <link rel="stylesheet" href="{% static 'css/user_details.css' %}">
   {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
 
-  <div class="user-info">
+  <div class="user-detail-page div_arredondado_100">
+    <div class="user-info">
 
-    {% include "usuario.html" with user=parceiro.user %}
+      {% include "usuario.html" with user=parceiro.user %}
+      
+      {% if parceiro.principal_contato %}
+        <div class="user-info-row">
+          <span>&#x2B50; {% lng "Principal Contato" "Main Contact" %}</span>
+        </div>
+      {% endif %}
+
+      {% if parceiro.organizacao %}
+        <div class="user-info-row">
+          <label>{% lng "Organização:" "Organization:" %}</label>
+          <span>
+            <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">{{ parceiro.organizacao.nome }}</a>
+          </span>
+        </div>
+      {% endif %}
+
+      {% if parceiro.cargo %}
+        <div class="user-info-row">
+          <label>{% lng "Cargo:" "Position:" %}</label>
+          <span>{{ parceiro.cargo }}</span>
+        </div>
+      {% endif %}
+      
+      {% include "dados_usuario.html" with user=parceiro.user %}
+
+    </div>
     
-    {% if parceiro.principal_contato %}
-      <div class="user-info-row">
-        <span>&#x2B50; {% lng "Principal Contato" "Main Contact" %}</span>
+    {% if conexoes %}
+      <div class="user-section">
+        <div class="section-title">{% lng "Conexões com Projetos" "Connections with Projects" %}</div>
+        <ol class="conexoes-lista">
+          {% for conexao in conexoes %}
+            {% if conexao.projeto %}
+              <li><a href="{% url 'projeto_infos' conexao.projeto.id %}">
+              {{conexao.projeto.get_titulo}}
+              ({{conexao.projeto.ano}}.{{conexao.projeto.semestre}}) &#x2192;
+              {% for papel in conexao.get_papeis %}[{% lng papel.nome papel.nome_en %}] {% endfor %}
+              </a></li>
+            {% else %}
+              {% lng "PROBLEMA AO RECUPERAR PROJETO!" "PROBLEM RETRIEVING PROJECT!" %}
+            {% endif %}
+          {% endfor %}
+        </ol>
       </div>
     {% endif %}
 
-    {% if parceiro.organizacao %}
-      <div class="user-info-row">
-        <label>{% lng "Organização:" "Organization:" %}</label>
-        <span>
-          <a href="{% url 'organizacao_completo' parceiro.organizacao.id %}">{{ parceiro.organizacao.nome }}</a>
-        </span>
-      </div>
-    {% endif %}
+    {% include "participacoes_usuario.html" with usuario=parceiro.user %}
 
-    {% if parceiro.cargo %}
-      <div class="user-info-row">
-        <label>{% lng "Cargo:" "Position:" %}</label>
-        <span>{{ parceiro.cargo }}</span>
-      </div>
+    {% if user.eh_admin %}
+      <a href="{% url 'edita_usuario' parceiro.user.id %}">
+        <button class="btn btn-primary">Editar</button>
+      </a>
     {% endif %}
-    
-    {% include "dados_usuario.html" with user=parceiro.user %}
-
   </div>
-  
-  {% if conexoes %}
-    <hr>
-    <h3>{% lng "Conexões com Projetos" "Connections with Projects" %}</h3>
-    <ol>
-      {% for conexao in conexoes %}
-        {% if conexao.projeto %}
-          <li><a href="{% url 'projeto_infos' conexao.projeto.id %}">
-          {{conexao.projeto.get_titulo}}
-          ({{conexao.projeto.ano}}.{{conexao.projeto.semestre}}) &#x2192;
-          {% for papel in conexao.get_papeis %}[{% lng papel.nome papel.nome_en %}] {% endfor %}
-          </a></li>
-        {% else %}
-          {% lng "PROBLEMA AO RECUPERAR PROJETO!" "PROBLEM RETRIEVING PROJECT!" %}
-        {% endif %}
-      {% endfor %}
-    </ol>
-  {% endif %}
-
-  {% include "participacoes_usuario.html" with usuario=parceiro.user %}
-
-  {% if user.eh_admin %}
-    <a href="{% url 'edita_usuario' parceiro.user.id %}">
-      <button class="btn btn-primary" style="float: right;">Editar</button>
-    </a>
-  {% endif %}
   
 {% endblock %}
