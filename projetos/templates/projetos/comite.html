@@ -5,15 +5,34 @@
   Data: 5 de Maio de 2020
 {% endcomment %}
 
+{% load linguas %}
+
 {% block head %}
   {% include "tabelas_includes.html" %}
 {% endblock %}
 
 {% block content %}
 
+  <div class="row align-items-start mb-2" style="display: inline-block; margin-right: 3px;">
+    <div class="ml-3">
+      <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="to_label input-group-text" for="atuais">
+              <span class="to_hide">{% lng "Só Membros Atuais" "Only Current Members" %}</span>
+            </label>
+          </div>
+          <div class="input-group-append">
+            <div class="input-group-text bg-white">
+              <input type="checkbox" id="atuais" class="selectpicker form-control form-control-sm" checked>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
   {% include "tabelas_top_ml.html" with tabela="Membros" cabecalhos=cabecalhos %}
     {% for pessoa in pessoas %} 
-      <tr class="item">
+      <tr class="item" data-valor="{{ pessoa.membro_comite|yesno:'true,false' }}">
         <th scope="row" data-sort="{{pessoa.get_full_name}}"><a href="{% url 'user_detail' pessoa.id %}">{{pessoa.get_full_name}}</a></th>
         <td><a href="mailto:{{pessoa.email}}">{{pessoa.email}}</a></td>
         <td class="text-center">
@@ -32,7 +51,10 @@
       </tr>
     {% endfor %}
   {% include "tabelas_bottom.html" %}
-
+  <script>
+    {% include "check_linha_tabelas.html" with checkbox="atuais" tabela="Membros" data="valor" %}
+  </script>
+  
   <script>
     function carrega_pagina(){
       {% include "tabelas_scripts.html" with tabela="Membros" %}
