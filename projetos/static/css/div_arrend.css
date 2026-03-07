@@ -1,14 +1,20 @@
-.div_arredondado {
-  background: #F0F0F0;
+.div_arredondado,
+.div_arredondado_100,
+.div_arredondado_azulado {
   vertical-align: middle;
-  border: 1px solid grey;
   border-radius: 6px;
   margin-bottom: 12px;
   max-width: 100%;
-  width: 800px;
   padding: 8px;
   overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
   word-break: break-word;  /* fallback */
+}
+
+.div_arredondado {
+  background: #f0f0f0;
+  border: 1px solid grey;
+  max-width: 100%;
+  width: 800px;
 }
 
 .div_arredondado > div {
@@ -30,14 +36,8 @@
   background: #f8fafc; /* azul bem claro */
   border: 1px solid #cfd8dc; /* cinza-azulado claro */
   box-shadow: 0 2px 8px rgba(90, 120, 150, 0.05); /* sombra leve */
-  vertical-align: middle;
-  border-radius: 6px;
-  margin-bottom: 12px;
   max-width: 100%;
   width: 100%;
-  padding: 8px;
-  overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
-  word-break: break-word;  /* fallback */
 }
 
 .div_arredondado_100 > div {
@@ -45,7 +45,7 @@
   max-width: 100%;
   border: 1px solid #e0e0e0;
   border-radius: 6px;
-  background: #FBFBFB;
+  background: #fbfbfb;
   padding: 8px;
   margin-bottom: 10px;
 }
@@ -61,17 +61,11 @@
 }
 
 .div_arredondado_azulado {
-  background: #eff8ffff;
-  vertical-align: middle;
+  background: #eff8ff;
   border: 1.2px dashed #90a4ae;
-  border-radius: 6px;
-  margin-bottom: 12px;
   max-width: 100%;
   width: 800px;
-  padding: 8px;
   box-shadow: none;
-  overflow-wrap: anywhere; /* quebra tokens longos (moderno) */
-  word-break: break-word;  /* fallback */
 }
 
 .div_arredondado_azulado > div {
@@ -93,6 +87,83 @@
   border: 1px solid grey;
   display: block;
   margin: 6px 0px 0px 0px;
-  background-color: #FAFAF3;
+  background-color: #fafaf3;
   padding: 2px 4px;
+}
+
+.botao_pequeno {
+  margin-bottom: 4px;
+  border-radius: 4px;
+}
+
+.meio_separador {margin-right: 4px;}
+
+.emails-page {
+  background: #f7f9fc;
+  border: 1px solid #dbe3ea;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(50, 75, 100, 0.08);
+  padding: 0.9rem;
+  max-width: 100%;
+}
+
+.emails-section {
+  border: 1px solid #e3e8ee;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.emails-section-title {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: #2f3f50;
+  margin-bottom: 0.45rem;
+}
+
+.emails-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.emails-actions .btn {
+  margin-left: 0 !important;
+}
+
+.emails-actions a {
+  text-decoration: none;
+}
+
+.emails-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+}
+
+.emails-warning {
+  border-left: 4px solid #d9534f;
+  background: #fff6f6;
+  color: #7b2e2e;
+  border-radius: 6px;
+  padding: 0.65rem 0.8rem;
+  margin-top: 0.3rem;
+}
+
+@media (max-width: 760px) {
+  .emails-page {
+    padding: 0.65rem;
+  }
+
+  .emails-section {
+    padding: 0.6rem;
+  }
+
+  .emails-actions .btn {
+    font-size: 0.78rem;
+    padding: 0.2rem 0.55rem;
+  }
 }

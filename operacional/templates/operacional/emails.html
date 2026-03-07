@@ -9,15 +9,163 @@
 {% load escape_emails %}
 {% load linguas %}
 
+
 {% block head %}
-  <style>
-    .botao {
-      margin-bottom: 11px;
-      margin-top: 5px;
-    }
+  <link rel="stylesheet" href="{% static 'css/div_arrend.css' %}">
+{% endblock %}
 
-  {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
+{% block content %}
 
+  <div class="container emails-page">
+  {% if membros_comite %}
+    <div class="emails-section">
+      <div class="emails-section-title">{% lng "Comitês" "Committees" %}</div>
+      <div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+              <span class="input-group-text">
+                {% lng "Comitê Capstone" "Capstone Committee" %}
+              </span>
+          </div>
+          <div class="meio_separador input-group-addon"></div>
+          <div class="input-group-append">
+            <a href="
+              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %}; {% endif %}{% endfor %}?cc={{coordenacao.user.email}}
+              &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
+              atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
+            " target="_blank">
+              <button class="btn btn-outline-secondary btn-sm" type="button">
+                {% lng "todos" "all" %}
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="emails-section">
+    <div class="emails-section-title">{% lng "Por semestre" "By semester" %}</div>
+    <div>
+      <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="filterEdicaoSemestre">
+            {% lng "Edição" "Edition" %}
+          </label>
+        </div>
+        <div class="input-group-sm">
+          <select class="custom-select" id="filterEdicaoSemestre">
+            {% for edicao in edicoes %}
+              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="spinnerSemestre" class="ml-2 input-group-append" style="display:none">
+          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+            <span class="sr-only input-group-text">Carregando...</span>
+          </div>
+        </div>
+        <div class="meio_separador input-group-addon"></div>
+
+        <div class="input-group-append table-responsive mt-2 emails-actions" style="overflow-x: auto; display: block;">
+          <a id="Estudantes" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Estudantes" "Students" %}
+            </button>
+          </a>
+
+          <a id="EstudantesInsper" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Só Estudantes Insper" "Only Insper Students" %}
+            </button>
+          </a>
+
+          <a id="EstudantesNaoAlocados" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Estudantes não alocados" "Students not allocated" %}
+            </button>
+          </a>
+
+          <a id="Orientadores" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Orientadores" "Advisors" %}
+            </button>
+          </a>
+          <a id="Parceiros" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Parceiros" "Partners" %}
+            </button>
+          </a>
+          <a id="Bancas" href="" target="_blank">
+            <button class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno" type="button">
+              {% lng "Bancas" "Examination Boards" %}
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="emails-section">
+    <div class="emails-section-title">{% lng "Por projeto" "By project" %}</div>
+    <small>
+      <b>{% lng "Copiados:" "Copied:" %}</b>
+      <span class="emails-choices">
+        <span class="form-check form-check-inline mr-1">
+          <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
+          <label class="form-check-label" for="estudantes">
+            {% lng "Estudantes" "Students" %}
+          </label>
+        </span>
+        <span class="form-check form-check-inline mr-1">
+          <input class="form-check-input" type="checkbox" id="orientador" value="orientador" checked>
+          <label class="form-check-label" for="orientador">
+            {% lng "Orientador" "Advisor" %}
+          </label>
+        </span>
+        <span class="form-check form-check-inline mr-0">
+          <input class="form-check-input" type="checkbox" id="parceiros" value="parceiros" checked>
+          <label class="form-check-label" for="parceiros">
+            {% lng "Parceiros" "Partners" %}
+          </label>
+        </span>
+      </span>
+    </small>
+
+    <div>
+      <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="filterEdicaoProjetos">
+            {% lng "Edição" "Edition" %}
+          </label>
+        </div>
+        <div class="input-group-sm">
+          <select class="custom-select" id="filterEdicaoProjetos">
+            {% for edicao in edicoes %}
+              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div id="spinnerProjetos" class="ml-2 input-group-append" style="display:none">
+          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
+            <span class="sr-only input-group-text">Carregando...</span>
+          </div>
+        </div>
+
+        <div class="meio_separador input-group-addon"></div>
+        <div id="sequenc_projetos" class="input-group-append table-responsive mt-2 emails-actions" style="overflow-x: auto; display: block;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="emails-warning" style="line-height: 1.2em;">
+    {% lng "<b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente, nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail." "<b>Attention:</b> the e-mails are generated automatically and the address line may become too long and not work directly, in these cases, try copying the addresses with the right button and pasting them into your e-mail client." %}
+  </div>
+
+  </div>
+
+  
   <script>
     function manda(estudantes, estudantes_nomes, orientador, orientador_nome, conexoes, conexoes_nomes, projeto, avancado) {
       mailto = "mailto:";
@@ -61,212 +209,6 @@
       avancado = aqui.data("avancado");
       manda(estudantes, estudantes_nomes, orientador, orientador_nome, conexoes, conexoes_nomes, projeto, avancado);
     }
-
-  </script>
-
-  <style>
-    .input-group-text {margin-bottom: 4px;}
-    .meio_separador {margin-right: 4px;}
-  </style>
-
-{% endblock %}
-
-{% block content %}
-
-  <div class="container" style="width: 100%; max-width: 100%;">
-  {% if membros_comite %}
-    <b>{% lng "Comitês" "Committees" %}</b>
-    <div class="row align-items-start mb-2">
-      <div class="ml-3">
-        <div class="input-group input-group-sm">
-          <div class="input-group-prepend">
-              <span class="input-group-text">
-                {% lng "Comitê Capstone" "Capstone Committee" %}
-              </span>
-          </div>
-          <div class="meio_separador input-group-addon"></div>
-          <div class="input-group-append  ml-1">
-            <a href="
-              mailto:{% for membro in membros_comite %}{{membro.email|parse_quote}}{% if not forloop.last %}; {% endif %}{% endfor %}?cc={{coordenacao.user.email}}
-              &amp;subject=Capstone%20Comitê&amp;body=Caros%20membros%20do%20comitê%20do%20Capstone,%0D%0A%0D%0A
-              atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-            " target="_blank">
-              <button class="btn btn-outline-secondary btn-sm" type="button">
-                {% lng "todos" "all" %}
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div> 
-    <br>
-  {% endif %}
-
-  <b>{% lng "Por semestre" "By semester" %}</b>
-  <div class="row align-items-start mb-2">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
-        <div class="input-group-prepend">
-          <label class="input-group-text" for="filterEdicaoSemestre">
-            {% lng "Edição" "Edition" %}
-          </label>
-        </div>
-        <div class="input-group-sm">
-          <select class="custom-select" id="filterEdicaoSemestre">
-            {% for edicao in edicoes %}
-              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div id="spinnerSemestre" class="ml-2 input-group-append" style="display:none">
-          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
-            <span class="sr-only input-group-text">Carregando...</span>
-          </div>
-        </div>
-        <div class="meio_separador input-group-addon"></div>
-
-        <div class="input-group-append table-responsive" style="overflow-x: auto; display: block;">
-          <a id="Estudantes" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Estudantes" "Students" %}
-            </button>
-          </a>
-
-          <a id="EstudantesInsper" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Só Estudantes Insper" "Only Insper Students" %}
-            </button>
-          </a>
-
-          <a id="EstudantesNaoAlocados" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Estudantes não alocados" "Students not allocated" %}
-            </button>
-          </a>
-
-          <a id="Orientadores" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Orientadores" "Advisors" %}
-            </button>
-          </a>
-          <a id="Parceiros" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Parceiros" "Partners" %}
-            </button>
-          </a>
-          <a id="Bancas" href="" target="_blank">
-            <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-              {% lng "Bancas" "Examination Boards" %}
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <br>
-
-  <b>{% lng "Por projeto" "By project" %}</b>
-  <br>
-  <small>
-    &nbsp;&nbsp;<b>
-      {% lng "Copiados:" "Copied:" %}
-    </b>
-    <div class="form-check form-check-inline mr-1">
-      <input class="form-check-input" type="checkbox" id="estudantes" value="estudantes" checked>
-      <label class="form-check-label" for="estudantes">
-        {% lng "Estudantes" "Students" %}
-      </label>
-    </div>
-    <div class="form-check form-check-inline mr-1">
-      <input class="form-check-input" type="checkbox" id="orientador" value="orientador" checked>
-      <label class="form-check-label" for="orientador">
-        {% lng "Orientador" "Advisor" %}
-      </label>
-    </div>
-    <div class="form-check form-check-inline mr-0">
-      <input class="form-check-input" type="checkbox" id="parceiros" value="parceiros" checked>
-      <label class="form-check-label" for="parceiros">
-        {% lng "Parceiros" "Partners" %}
-      </label>
-    </div>
-  </small>
-
-  <div class="row align-items-start mb-2">
-    <div class="ml-3">
-      <div class="input-group input-group-sm">
-        <div class="input-group-prepend">
-          <label class="input-group-text" for="filterEdicaoProjetos">
-            {% lng "Edição" "Edition" %}
-          </label>
-        </div>
-        <div class="input-group-sm">
-          <select class="custom-select" id="filterEdicaoProjetos">
-            {% for edicao in edicoes %}
-              <option value="{{edicao}}" {% if edicao == atual %}selected{% endif %}>{{edicao}}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div id="spinnerProjetos" class="ml-2 input-group-append" style="display:none">
-          <div class="spinner-border text-secondary ml-auto" style="width: 1.8rem; height: 1.8rem;" role="status" aria-hidden="true">
-            <span class="sr-only input-group-text">Carregando...</span>
-          </div>
-        </div>
-
-        <div class="meio_separador input-group-addon"></div>
-        <div id="sequenc_projetos" class="input-group-append table-responsive" style="overflow-x: auto; display: block;"></div>
-      </div>
-    </div>
-  </div>
-
-  <br>
-  {% comment %} Texto em Vermelho {% endcomment %}
-  <div class="text-danger">
-    {% lng "<b>Atenção:</b> os e-mails são gerados automaticamente e a linha de endereços pode ficar grande e não funcionar diretamente, nesses casos, tente copiar os endereços com o botão da direita e colar no seu cliente de e-mail." "<b>Attention:</b> the e-mails are generated automatically and the address line may become too long and not work directly, in these cases, try copying the addresses with the right button and pasting them into your e-mail client." %}
-  </div>
-
-  {% if user.tipo_de_usuario == 4 %}
-    <br>
-    <b>{% lng "Acesso de administração:" "Administration access:" %}</b>
-    <br>
-    {% if todos_alunos %}
-      <a href="
-        mailto:{% for aluno in todos_alunos %}{{ aluno.user.email|parse_quote }}; {% endfor %}
-        ?cc={{coordenacao.user.email}}
-        &amp;subject=Capstone%20&amp;body=Caros%20estudantes,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      ">
-        {% lng "Todos estudantes" "All students" %}
-      </a><br>
-    {% endif %}
-
-    {% if todos_professores %}
-      <a href="
-        mailto:{% for professor in todos_professores %}{{ professor.user.email|parse_quote }}; {% endfor %}
-        ?cc={{coordenacao.user.email}}
-        &amp;subject=Capstone&amp;body=Caros%20professores%20do%Capstone,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      " target="_blank">
-        {% lng "Todos professores" "All professors" %}
-      </a><br>
-    {% endif %}
-
-    {% if todos_parceiros %}
-      <a href="
-        mailto:{% for parceiro in todos_parceiros %}{{ parceiro.user.email|parse_quote }}; {% endfor %}
-        ?cc={{coordenacao.user.email}}
-        &amp;subject=Capstone&amp;body=Caros%20parceiro%20do%Capstone,%0D%0A%0D%0A
-        atenciosamente,%20{{coordenacao.user.get_full_name}}%20(coordenação%20Capstone)
-      " target="_blank">
-        {% lng "Todos parceiros" "All partners" %}
-      </a><br>
-    {% endif %}
-
-  {% endif %}
-  </div>
-
-  <script>
 
     var request_ajax_e = null;
 

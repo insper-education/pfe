@@ -6,7 +6,7 @@
 
 {% load static %}
 {% load linguas %}
-  
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -50,6 +50,51 @@
   <script src="{% static 'js/pfe.js' %}" defer></script>
   <script src="{% static 'js/tooltip.js' %}" defer></script>
   <script src="{% static 'js/pega_erro.js' %}" defer></script>
+
+  <style>
+    #barra_do_top_nav {
+      position: relative;
+    }
+
+    .maintenance-mode-indicator {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      gap: 6px;
+      margin-left: 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(153, 27, 27, 0.92);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      text-align: center;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .maintenance-mode-indicator i {
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 860px) {
+      .maintenance-mode-indicator {
+        padding: 5px 8px;
+      }
+
+      .maintenance-mode-indicator span {
+        display: none;
+      }
+    }
+  </style>
 
   {% block head %}{% endblock %}
 </head>
@@ -97,6 +142,13 @@
 
         {% comment %} Botão de seleção de idioma {% endcomment %}
         <div id="language_box" aria-label="Seleção de idioma"><div id="language_button"></div></div>
+
+        {% if maintenance_mode_active and user.is_authenticated and user.tipo_de_usuario == 4 %}
+          <div class="maintenance-mode-indicator" title="Modo de manutenção ativo / Maintenance mode active" aria-label="Modo de manutenção ativo">
+            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            <span>Modo Manutenção</span>
+          </div>
+        {% endif %}
 
         {% comment %} Menu lateral {% endcomment %}
         <button id="hamburger" class="icon" aria-label="Menu" aria-expanded="false" aria-controls="links_menu_lat">

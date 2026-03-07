@@ -139,9 +139,6 @@ def emails(request):
     context = {
         "titulo": { "pt": "Listas de e-mails", "en": "Email lists" },
         "membros_comite": PFEUser.objects.filter(membro_comite=True),
-        "todos_alunos": Aluno.objects.filter(trancado=False),
-        "todos_professores": Professor.objects.all(),
-        "todos_parceiros": Parceiro.objects.all(),
         "edicoes": get_edicoes(Aluno)[0],
         "atual": str(configuracao.ano)+"."+str(configuracao.semestre),
         "coordenacao": configuracao.coordenacao,

@@ -12,23 +12,28 @@
 
   {% comment %} Removendo nomes dos e-mails devido a limitações do Outlook. {% endcomment %}
 
-  <div id="sequenc_projetos" class="input-group-append table-responsive">
+  <div id="sequenc_projetos" class="input-group-append table-responsive emails-actions" role="group" aria-label="Ações por projeto">
     {% for projeto in projetos %}
-      <a onclick="event.preventDefault(); coleta_usuario_envia($(this));"
-        data-estudantes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}"        
+      <button
+        class="btn btn-outline-secondary btn-sm ml-1 botao_pequeno"
+        type="button"
+        onclick="coleta_usuario_envia($(this));"
+        data-estudantes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.email|parse_quote}}{% if not forloop.last %},{% endif %}{% endfor %}"
         data-estudantes-nomes="{% for alocacao in projeto.alocacao_set.all %}{{alocacao.aluno.user.get_full_name|parse_quote}}{% if not forloop.last %}, {% endif %}{% endfor %}"
-        data-orientador="{{ projeto.orientador.user.email|parse_quote }}"
-        data-orientador-nome="{{ projeto.orientador.user.get_full_name|parse_quote }}"
+        data-orientador="{% if projeto.orientador %}{{ projeto.orientador.user.email|parse_quote }}{% endif %}"
+        data-orientador-nome="{% if projeto.orientador %}{{ projeto.orientador.user.get_full_name|parse_quote }}{% endif %}"
         data-conexoes="{% for pessoa in projeto.conexao_set.all %}{{ pessoa.parceiro.user.email|parse_quote }}{% if not forloop.last %},{% endif %}{% endfor %}"
         data-conexoes-nomes="{% for pessoa in projeto.conexao_set.all %}{{ pessoa.parceiro.user.get_full_name|parse_quote }}{% if not forloop.last %}, {% endif %}{% endfor %}"
         data-projeto="{{projeto}}"
         data-avancado="{% if projeto.avancado %}true{% else %}false{% endif %}"
-        data-toggle="tooltip" data-html="true" animation="true" title="{{projeto}}"
+        data-toggle="tooltip"
+        data-html="true"
+        animation="true"
+        title="{{projeto}}"
+        aria-label="Projeto {{projeto.pk}}"
       >
-        <button class="btn btn-outline-secondary btn-sm ml-1 botao" type="button">
-          p{{projeto.pk}}
-        </button>
-      </a>
+        p{{projeto.pk}}
+      </button>
     {% endfor %}
   </div>
 
