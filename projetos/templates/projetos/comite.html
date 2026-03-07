@@ -15,8 +15,19 @@
     {% for pessoa in pessoas %} 
       <tr class="item">
         <th scope="row" data-sort="{{pessoa.get_full_name}}"><a href="{% url 'user_detail' pessoa.id %}">{{pessoa.get_full_name}}</a></th>
-        <td class="text-center"><a href="mailto:{{pessoa.email}}">{{pessoa.email}}</a></td>
-        <td class="text-center">{% if pessoa.representante_comite %}{{pessoa.representante_comite}}{% endif %}</td>
+        <td><a href="mailto:{{pessoa.email}}">{{pessoa.email}}</a></td>
+        <td class="text-center">
+          {% if pessoa.membro_comite %}
+            <span class="text-success" title="No comitê" aria-label="No comitê">
+              <i class="fas fa-check-circle"></i>
+            </span>
+          {% else %}
+            <span class="text-muted" title="Fora do comitê" aria-label="Fora do comitê">
+              <i class="far fa-circle"></i>
+            </span>
+          {% endif %}
+        </td>
+        <td>{% if pessoa.representante_comite %}{{pessoa.representante_comite|linebreaks}}{% endif %}</td>
         <td>{% if pessoa.professor.lattes %}<a rel="noopener noreferrer" target="_blank" href="{{pessoa.professor.lattes}}"> {{pessoa.professor.lattes}} </a>{% endif %}</td>
       </tr>
     {% endfor %}

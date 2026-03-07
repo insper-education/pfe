@@ -1148,6 +1148,7 @@ def comite(request):
             "cabecalhos": [
                 {"pt": "Nome", "en": "Name"},
                 {"pt": "e-mail", "en": "e-mail"},
+                {"pt": "Atualmente", "en": "Currently"},
                 {"pt": "Representando", "en": "Representing"},
                 {"pt": "Lattes", "en": "Lattes"},
             ],
