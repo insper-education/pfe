@@ -9,7 +9,7 @@
 {% load certificados %}
 {% load participacoes %}
 
-{% with coorientacoes=usuario|coorientacoes %} 
+{% with coorientacoes=usuario|coorientacoes %}
   {% if coorientacoes %}
     <hr>
     <h4>{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</h4>

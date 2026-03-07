@@ -66,6 +66,7 @@
       $(".email").hide();
       $(".images").hide();
       $("#language_box").hide();
+      $(".caixa_rolante").css("overflow-y", "visible").css("max-height", "fit-content");
 
       // Remove box-shadow effect from class estudante em montar_grupos
       $(".estudante").removeClass("boxshadow");
@@ -92,6 +93,7 @@
       $(".email").show();
       $(".images").show();
       $("#language_box").show();
+      $(".caixa_rolante").css("overflow-y", "").css("max-height", "");
 
       // Add box-shadow effect from class estudante em montar_grupos
       $(".estudante").addClass("boxshadow");
