@@ -9,35 +9,100 @@
 {% load linguas %}
 {% load get_field %}
 
+{% block head %}
+  <style>
+    .disc-form-shell {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 1.25rem;
+      max-width: 980px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .disc-form-header {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      background: var(--primary-gradient);
+      color: #fff;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .form-section {
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #495057;
+    }
+
+    .campo-com-label {
+      margin-bottom: 0.75rem;
+    }
+
+    .campo-com-label label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .disc-actions {
+      margin-top: 0.2rem;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
 
-  <form method="post" id="disciplinaform" enctype="multipart/form-data">{% csrf_token %}
-    
-    <label for="nome">
-      {% lng "Nome da Disciplina" "Course Name" %}:
+  <div class="disc-form-shell">
+    <div class="disc-form-header">
+      {% lng "Cadastro de Disciplina" "Course Registration" %}
+    </div>
 
-    </label> <input type="text" size="48" style="display: block;"
-           maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
-
-    <button class="btn btn-primary mb-1 mt-2" type="submit">
-      {% lng "Cadastrar Disciplina" "Register Course" %}
-    </button>
-
-    {% include "tabelas_top_ml.html" with tabela="Disciplinas" cabecalhos=cabecalhos tabela_simples=True %}
-      {% for disciplina in disciplinas %}
-        <tr id="disciplina{{disciplina.id}}"><td>
-          {{disciplina.nome}}
-          <div class="esconder" style="float: right; margin-left: 1em;">
-            <a onclick="event.preventDefault(); exclui_disciplina($(this));"
-              data-disciplina='{{disciplina.id}}'>
-              <i class="far fa-trash-alt"></i>
-            </a>
+    <form method="post" id="disciplinaform" enctype="multipart/form-data">{% csrf_token %}
+      <div class="form-section">
+        <div class="section-title">{% lng "Nova disciplina" "New course" %}</div>
+        <div class="row">
+          <div class="col-md-8 campo-com-label">
+            <label for="nome">{% lng "Nome da Disciplina" "Course Name" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
           </div>
-        </td></tr>
-      {% endfor %}
-    {% include "tabelas_bottom.html" %}
+          <div class="col-md-4 d-flex align-items-end disc-actions">
+            <button class="btn btn-primary mb-1" type="submit">
+              {% lng "Cadastrar Disciplina" "Register Course" %}
+            </button>
+          </div>
+        </div>
+      </div>
 
-  </form>
+      <div class="form-section">
+        <div class="section-title">{% lng "Disciplinas cadastradas" "Registered courses" %}</div>
+
+        {% include "tabelas_top_ml.html" with tabela="Disciplinas" cabecalhos=cabecalhos tabela_simples=True %}
+          {% for disciplina in disciplinas %}
+            <tr id="disciplina{{disciplina.id}}"><td>
+              {{disciplina.nome}}
+              <div class="esconder" style="float: right; margin-left: 1em;">
+                <a onclick="event.preventDefault(); exclui_disciplina($(this));"
+                  data-disciplina='{{disciplina.id}}'>
+                  <i class="far fa-trash-alt"></i>
+                </a>
+              </div>
+            </td></tr>
+          {% endfor %}
+        {% include "tabelas_bottom.html" %}
+      </div>
+    </form>
+  </div>
 
   <script>
     function exclui_disciplina(aqui) {
