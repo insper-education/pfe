@@ -328,19 +328,26 @@ def get_EstudantesResource(field_names=None):
                                                                 email=email.strip(),
                                                                 tipo_de_usuario=1)
 
-                nome_compl = get_row_value(row, "nome_compl")
-                if (nome_compl is not None) and (nome_compl != ""):
-                    nome_compl_txt = nome_compl.split(" ",1)
-                    user.first_name = nome_compl_txt[0].strip()
-                    user.last_name = nome_compl_txt[1].strip()
+                if "nome" in row and "sobrenome" in row:
+                    atualizar_campo(user, "first_name", get_row_value(row, "nome"))
+                    atualizar_campo(user, "last_name", get_row_value(row, "sobrenome"))
+                elif "nome_compl" in row:
+                    nome_compl = get_row_value(row, "nome_compl")
+                    if (nome_compl is not None) and (nome_compl != ""):
+                        nome_compl_txt = nome_compl.split(" ",1)
+                        user.first_name = nome_compl_txt[0].strip()
+                        user.last_name = nome_compl_txt[1].strip()
+                else:
+                    raise ValueError(f"Erro ao recuperar o nome/sobrenome ou nome_compl do estudante {username}. É necessário ter as colunas 'nome' e 'sobrenome' ou a coluna 'nome_compl'.")
 
-                atualizar_campo(user, "first_name", get_row_value(row, "nome"))
-                atualizar_campo(user, "last_name", get_row_value(row, "sobrenome"))
 
-                genero = get_row_value(row, "gênero").upper().strip()
-                if genero not in ("M", "F", ""):
-                    raise ValueError(f"Gênero informado inválido: {genero}. Só pode ser M, F ou vazio.")
-                atualizar_campo(user, "genero", genero)
+
+                genero_raw = get_row_value(row, "gênero")
+                if genero_raw is not None:
+                    genero = genero_raw.upper().strip()
+                    if genero not in ("M", "F", ""):
+                        raise ValueError(f"Gênero informado inválido: {genero}. Só pode ser M, F ou vazio.")
+                    atualizar_campo(user, "genero", genero)
 
                 atualizar_campo(user, "nome_social", get_row_value(row, "nome_social"))
                 atualizar_campo(user, "pronome_tratamento", get_row_value(row, "pronome_tratamento"))
@@ -358,21 +365,23 @@ def get_EstudantesResource(field_names=None):
 
                 try:
                     aluno.curso2 = Curso.objects.get(sigla=row.get("curso").upper().strip())
-                except Curso.DoesNotExist: # Não encontrou o curso, deixa vazio
+                except Exception:
                     aluno.curso2 = None
 
                 atualizar_campo(aluno, "matricula", get_row_value(row, "matrícula"))
                 atualizar_campo(aluno, "cr", get_row_value(row, "cr"))
 
-                ano = get_row_value(row, "ano")[:4]  # só os 4 primeiros dígitos
-                if not ano.isdigit() or len(ano) != 4:
-                    raise ValueError(f"Ano informado inválido: {ano}. Deve ser um ano com 4 dígitos.")
-                atualizar_campo(aluno, "ano", ano)
-
-                semestre = get_row_value(row, "semestre")[:1]  # só o primeiro dígito
-                if semestre not in ('1', '2'):
-                    raise ValueError(f"Semestre informado inválido: {semestre}. Só pode ser 1 ou 2.")
-                atualizar_campo(aluno, "semestre", semestre)
+                try:
+                    ano = get_row_value(row, "ano")[:4]  # só os 4 primeiros dígitos
+                    semestre = get_row_value(row, "semestre")[:1]  # só o primeiro dígito
+                    if not ano.isdigit() or len(ano) != 4:
+                        raise ValueError(f"Ano informado inválido: {ano}. Deve ser um ano com 4 dígitos.")
+                    if semestre not in ('1', '2'):
+                        raise ValueError(f"Semestre informado inválido: {semestre}. Só pode ser 1 ou 2.")
+                    atualizar_campo(aluno, "ano", ano)
+                    atualizar_campo(aluno, "semestre", semestre)
+                except Exception:
+                    raise ValueError(f"Erro ao processar o ano/semestre para o estudante {username}.")
 
                 if "familia" in row:
                     aluno.familia = row["familia"]
