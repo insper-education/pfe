@@ -366,7 +366,7 @@ def get_EstudantesResource(field_names=None):
                 try:
                     aluno.curso2 = Curso.objects.get(sigla=row.get("curso").upper().strip())
                 except Exception:
-                    aluno.curso2 = None
+                    raise ValueError(f"Curso informado inválido para o estudante {username}.")
 
                 atualizar_campo(aluno, "matricula", get_row_value(row, "matrícula"))
                 atualizar_campo(aluno, "cr", get_row_value(row, "cr"))
