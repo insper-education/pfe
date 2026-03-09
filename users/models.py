@@ -343,6 +343,12 @@ class Aluno(models.Model):
             ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
             alocacoes[ano_semestre] = alocacao
         return alocacoes
+    
+    def periodo(self):
+        """Retorna o período do estudante."""
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "SEM PERÍODO DEFINIDO"
 
     class Meta:
         """Meta para Aluno."""
