@@ -856,32 +856,28 @@ def pedir_recursos(request, primarykey=None):
     """Mostra o projeto do próprio estudante, se for estudante."""
     configuracao = get_object_or_404(Configuracao)
     
-    projeto = None
+    projetos = []
     
     # Caso seja Professor ou Administrador
     if request.user.eh_prof_a:
-        # Pegando um estudante de um projeto quando orientador
         if primarykey:
-            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+            projetos = Projeto.objects.filter(pk=primarykey, orientador=request.user.professor)
+        elif request.user.eh_admin:
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
         else:
-            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
-        if not projeto:
-            # Criando projeto vazio para mostrar a tela, caso não tenha nenhum projeto com orientador
-            projeto = Projeto(
-                proposta=Proposta(titulo="Projeto Exemplo", organizacao=Organizacao(nome="Organização Exemplo"), ano=configuracao.ano, semestre=configuracao.semestre),
-                ano=configuracao.ano, semestre=configuracao.semestre
-            )
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, orientador=request.user.professor)
     elif request.user.eh_estud:  # Caso seja estudante
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
-        if not projeto:
-            return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
-    else:
-        return HttpResponse("Acesso negado.", status=401)
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, alocacao__aluno=request.user.aluno)
+    if not projetos:
+        return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
 
     if request.method == "POST":
 
         # Check if projeto is valid before creating Pedido
-        if projeto.pk is None:
+        projeto_id = request.POST.get("projeto", None)
+
+        #if projeto.pk is None:
+        if not projeto_id or projeto_id==0:
             context = {
                 "mensagem": {
                     "pt": "Projeto inválido ou não encontrado.",
@@ -889,8 +885,9 @@ def pedir_recursos(request, primarykey=None):
                 }
             }
             return render(request, "generic_ml.html", context=context)
+        else:
+            projeto = projetos.get(pk=projeto_id)
         
-
         tipo = request.POST.get("tipo_recurso")
         dados = {}
         
@@ -1011,26 +1008,18 @@ def pedir_recursos(request, primarykey=None):
             return redirect("pedir_recursos")
 
     # Recupera pedidos anteriores
-    pedidos = Pedido.objects.filter(projeto=projeto).order_by("-data_solicitacao")
+    pedidos = Pedido.objects.filter(projeto=projetos.last()).order_by("-data_solicitacao")
 
     context = {
         "titulo": {"pt": "Pedir Recursos", "en": "Request Resources"},
         "configuracao": configuracao,
         "Projeto": Projeto,
-        "projeto": projeto,
+        "projetos": projetos,
         "pedidos": pedidos,
         "tipos_pedido_menu": Pedido.get_tipos_menu(),
     }
 
-    # Caso seja Professor ou Administrador
-    if request.user.eh_prof_a:
-        context["mensagem_aviso"] = {
-            "pt": "Mostrando como é a tela, usando qualquer estudante de exemplo.",
-            "en": "Showing how the screen looks, using any example student.",
-        }
-
     return render(request, "projetos/pedir_recursos.html", context=context)
-
 
 
 
