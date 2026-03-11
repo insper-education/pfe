@@ -5,21 +5,189 @@
   Data: 15 de Maio de 2019
 {% endcomment %}
 
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Site em Manutenção</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Maintenance | Capstone</title>
     <style>
-      body { text-align: center; padding: 150px; }
-      h1 { font-size: 50px; }
-      body { font: 20px Helvetica, sans-serif; color: #333; }
+      :root {
+        --bg-1: #0f172a;
+        --bg-2: #1e293b;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #64748b;
+        --danger: #dc2626;
+        --danger-soft: #fee2e2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% 20%, rgba(220, 38, 38, 0.25), transparent 40%),
+          radial-gradient(circle at 88% 80%, rgba(59, 130, 246, 0.22), transparent 36%),
+          linear-gradient(140deg, var(--bg-1), var(--bg-2));
+      }
+
+      .maintenance-card {
+        width: min(760px, 100%);
+        background: var(--card);
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .banner {
+        background: linear-gradient(90deg, #b91c1c, #ef4444);
+        color: #fff;
+        text-align: center;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .content {
+        padding: 28px 28px 24px;
+        text-align: center;
+      }
+
+      .icon-wrap {
+        width: 92px;
+        height: 92px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: var(--danger-soft);
+        border: 2px solid #fecaca;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-wrap svg {
+        width: 48px;
+        height: 48px;
+        fill: var(--danger);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+        color: #b91c1c;
+      }
+
+      .subtitle {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .messages {
+        margin-top: 22px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .msg-box {
+        text-align: left;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: #f8fafc;
+      }
+
+      .msg-title {
+        display: inline-block;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #334155;
+        background: #e2e8f0;
+        border-radius: 999px;
+        padding: 3px 8px;
+        margin-bottom: 8px;
+      }
+
+      .msg-box p {
+        margin: 0;
+        line-height: 1.45;
+      }
+
+      .contact {
+        margin-top: 18px;
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        font-size: 0.96rem;
+      }
+
+      .contact a {
+        color: #c2410c;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .contact a:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        margin-top: 12px;
+        color: #94a3b8;
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 520px) {
+        .content {
+          padding: 22px 16px 18px;
+        }
+      }
     </style>
   </head>
   <body>
-    <h1 class="red-bold">Site em Manutenção</h1>
-    <div>
-      <p>Sistema foi posto em manutenção</p>
-      <p>Para qualquer emergência contactar: <a href="mailto:lucianops@insper.edu.br">lucianops@insper.edu.br</a>.</p>
-    </div>
+    <main class="maintenance-card" role="main" aria-labelledby="maintenance-title">
+      <div class="banner">Maintenance in Progress • Manutenção em andamento</div>
+      <div class="content">
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.25a1.85 1.85 0 0 1 1.6.93l8.32 14.36a1.85 1.85 0 0 1-1.6 2.78H3.68a1.85 1.85 0 0 1-1.6-2.78L10.4 3.18A1.85 1.85 0 0 1 12 2.25Zm0 4.5a.75.75 0 0 0-.75.75v5.25a.75.75 0 0 0 1.5 0V7.5a.75.75 0 0 0-.75-.75Zm0 10.75a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2Z"/>
+          </svg>
+        </div>
+
+        <h1 id="maintenance-title">Sistema em Manutenção</h1>
+        <p class="subtitle">System Under Maintenance</p>
+
+        <section class="messages" aria-label="Maintenance messages">
+          <article class="msg-box">
+            <span class="msg-title">Português</span>
+            <p>O sistema está temporariamente indisponível para manutenção de emergência. Tente novamente mais tarde.</p>
+          </article>
+
+          <article class="msg-box">
+            <span class="msg-title">English</span>
+            <p>The system is temporarily unavailable due to emergency maintenance. Please try again later.</p>
+          </article>
+        </section>
+
+        <div class="contact">
+          Emergência / Emergency: <a href="mailto:lucianops@insper.edu.br">lucianops@insper.edu.br</a>
+        </div>
+
+        <div class="footer">Capstone • Insper</div>
+      </div>
+    </main>
   </body>
 </html>

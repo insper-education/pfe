@@ -928,6 +928,15 @@ class Banca(models.Model):
 
     data_marcacao = models.DateField(default=datetime.date.today, blank=True,
                                      help_text="Data em que a banca foi marcada")
+
+
+    ### Dados para integração com calendário (iCal, Google Calendar, etc.) ###
+    calendar_uid = models.CharField(max_length=255, null=True, blank=True, help_text="UID persistente para convites de calendário")
+    calendar_sequence = models.PositiveIntegerField(default=0, help_text="Sequência de atualização do convite de calendário")
+    calendar_last_sent_at = models.DateTimeField(null=True, blank=True, help_text="Data e hora do último envio de convite")
+    calendar_last_method = models.CharField(max_length=10, null=True, blank=True, help_text="Último método do convite enviado (REQUEST/CANCEL)")
+    ### ------------------------------------------------------------------ ###
+
     class Meta:
         ordering = ["startDate"]
 

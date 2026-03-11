@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseForbidden
@@ -855,32 +856,28 @@ def pedir_recursos(request, primarykey=None):
     """Mostra o projeto do próprio estudante, se for estudante."""
     configuracao = get_object_or_404(Configuracao)
     
-    projeto = None
+    projetos = []
     
     # Caso seja Professor ou Administrador
     if request.user.eh_prof_a:
-        # Pegando um estudante de um projeto quando orientador
         if primarykey:
-            projeto = get_object_or_404(Projeto, pk=primarykey, orientador=request.user.professor)
+            projetos = Projeto.objects.filter(pk=primarykey, orientador=request.user.professor)
+        elif request.user.eh_admin:
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre)
         else:
-            projeto = Projeto.objects.filter(orientador=request.user.professor).last()
-        if not projeto:
-            # Criando projeto vazio para mostrar a tela, caso não tenha nenhum projeto com orientador
-            projeto = Projeto(
-                proposta=Proposta(titulo="Projeto Exemplo", organizacao=Organizacao(nome="Organização Exemplo"), ano=configuracao.ano, semestre=configuracao.semestre),
-                ano=configuracao.ano, semestre=configuracao.semestre
-            )
+            projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, orientador=request.user.professor)
     elif request.user.eh_estud:  # Caso seja estudante
-        projeto = Projeto.objects.filter(alocacao__aluno=request.user.aluno).last()
-        if not projeto:
-            return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
-    else:
-        return HttpResponse("Acesso negado.", status=401)
+        projetos = Projeto.objects.filter(ano=configuracao.ano, semestre=configuracao.semestre, alocacao__aluno=request.user.aluno)
+    if not projetos:
+        return HttpResponse("Acesso negado ou projeto não encontrado.", status=401)
 
     if request.method == "POST":
 
         # Check if projeto is valid before creating Pedido
-        if projeto.pk is None:
+        projeto_id = request.POST.get("projeto", None)
+
+        #if projeto.pk is None:
+        if not projeto_id or projeto_id==0:
             context = {
                 "mensagem": {
                     "pt": "Projeto inválido ou não encontrado.",
@@ -888,8 +885,9 @@ def pedir_recursos(request, primarykey=None):
                 }
             }
             return render(request, "generic_ml.html", context=context)
+        else:
+            projeto = projetos.get(pk=projeto_id)
         
-
         tipo = request.POST.get("tipo_recurso")
         dados = {}
         
@@ -982,6 +980,7 @@ def pedir_recursos(request, primarykey=None):
             email_subject = f"Pedido de Recurso: {tipo.capitalize()} - Projeto {projeto.proposta.titulo}"
             email_recipients = [request.user.email]
             email_recipients += [configuracao.coordenacao.user.email]
+            email_recipients += [configuracao.tecnico.email]
             email_recipients += [projeto.orientador.user.email] if projeto.orientador else []
             for alocacao in Alocacao.objects.filter(projeto=projeto):
                 email_recipients.append(alocacao.aluno.user.email)
@@ -1004,31 +1003,23 @@ def pedir_recursos(request, primarykey=None):
                 </div>
             """
 
-            email(email_subject, email_recipients, email_message)
+            email(email_subject, email_recipients, email_message, reply_to=configuracao.tecnico.email)
 
             return redirect("pedir_recursos")
 
     # Recupera pedidos anteriores
-    pedidos = Pedido.objects.filter(projeto=projeto).order_by("-data_solicitacao")
+    pedidos = Pedido.objects.filter(projeto=projetos.last()).order_by("-data_solicitacao")
 
     context = {
         "titulo": {"pt": "Pedir Recursos", "en": "Request Resources"},
         "configuracao": configuracao,
         "Projeto": Projeto,
-        "projeto": projeto,
+        "projetos": projetos,
         "pedidos": pedidos,
         "tipos_pedido_menu": Pedido.get_tipos_menu(),
     }
 
-    # Caso seja Professor ou Administrador
-    if request.user.eh_prof_a:
-        context["mensagem_aviso"] = {
-            "pt": "Mostrando como é a tela, usando qualquer estudante de exemplo.",
-            "en": "Showing how the screen looks, using any example student.",
-        }
-
     return render(request, "projetos/pedir_recursos.html", context=context)
-
 
 
 
@@ -1138,10 +1129,18 @@ def reembolso_pedir(request):
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def comite(request):
-    """Exibe os professores que estão no comitê do Capstone."""
+    """Exibe as pessoas que estão no comitê do Capstone."""
     context = {
-            "professores": Professor.objects.filter(user__membro_comite=True),
-            "cabecalhos": [{"pt": "Nome", "en": "Name"}, {"pt": "e-mail", "en": "e-mail"}, {"pt": "Lattes", "en": "Lattes"}, ],
+            "pessoas": PFEUser.objects.filter(
+                Q(membro_comite=True) | Q(representante_comite__isnull=False)
+            ).distinct(),
+            "cabecalhos": [
+                {"pt": "Nome", "en": "Name"},
+                {"pt": "e-mail", "en": "e-mail"},
+                {"pt": "Atualmente", "en": "Currently"},
+                {"pt": "Representando", "en": "Representing"},
+                {"pt": "Lattes", "en": "Lattes"},
+            ],
             "titulo": {"pt": "Comitê do Capstone", "en": "Capstone Committee"},
         }
     return render(request, "projetos/comite.html", context)

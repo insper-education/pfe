@@ -191,6 +191,61 @@
       grid-template-columns: 1fr;
     }
   }
+
+  .manutencao-page {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .manutencao-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    padding: 1rem 1.1rem;
+  }
+
+  .manutencao-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: #2f3f50;
+  }
+
+  .manutencao-help {
+    color: #5f6b77;
+    margin-bottom: 0.8rem;
+  }
+
+  .manutencao-toggle {
+    border: 1px solid #e6eaef;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .manutencao-status {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.16rem 0.55rem;
+    margin-left: 0.45rem;
+  }
+
+  .status-on {
+    background: #ffe8e8;
+    color: #9a2f2f;
+    border: 1px solid #ffd0d0;
+  }
+
+  .status-off {
+    background: #e8f8ec;
+    color: #2f7a4a;
+    border: 1px solid #cdeed7;
+  }
+  
 </style>
 {% endblock %}
 
@@ -206,6 +261,31 @@
   </div>
 
   <form class="config-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+    <div class="manutencao-card">
+      <div class="manutencao-title">
+        {% lng "Manutenção Geral do Sistema" "System Maintenance Mode" %}
+      </div>
+      <div class="manutencao-help">
+        {% lng "Ative para exibir aviso de manutenção para todos os usuários." "Enable to show a maintenance notice to all users." %}
+      </div>
+
+      <div class="manutencao-toggle">
+        <div class="form-check mb-0">
+          <input class="form-check-input" type="checkbox" id="manutencao" name="selection" value="manutencao" {% if manutencao %}checked{% endif %}>
+          <label class="form-check-label" for="manutencao">
+            {% lng "Habilitar aviso de manutenção" "Enable maintenance notice" %}
+          </label>
+
+          {% if manutencao %}
+            <span class="manutencao-status status-on">{% lng "Ativo" "Active" %}</span>
+          {% else %}
+            <span class="manutencao-status status-off">{% lng "Inativo" "Inactive" %}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
     <section class="config-card">
       <div class="config-card-header">📅 {% lng "Calendário e Período" "Calendar and Period" %}</div>
 

@@ -45,6 +45,12 @@ def certificado_banca(banca, usuario):
 
 
 @register.filter
+def certificado_falconi(projeto):
+    """Retorna alguma certificação Falconi de um projeto."""
+    certificado = Certificado.objects.filter(projeto=projeto, tipo_certificado__sigla__in=["DF", "EF"]).last()
+    return certificado
+
+@register.filter
 def certificado_mentoria(mentoria, usuario):
     """Retorna o certificado de um membro de banca."""
     tipo = get_object_or_404(TipoCertificado, titulo="Mentoria Profissional")

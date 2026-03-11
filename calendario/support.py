@@ -6,7 +6,6 @@ Data: 23 de Janeiro de 2025
 """
 
 import datetime
-from icalendar import vCalAddress
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -61,33 +60,6 @@ def get_calendario_context(user=None):
     }
 
     return context  # TAMBÉM ESTOU USANDO NO CELERY PARA AVISAR DOS EVENTOS
-
-
-def adicionar_participante_em_evento(ical_event, usuario):
-    """Adiciona um usuario em um evento."""
-    # REMOVER OS xx DOS EMAILS
-    atnd = vCalAddress("MAILTO:{}".format(usuario.email))
-    atnd.params["CN"] = "{0}".format(usuario.get_full_name())
-    atnd.params["ROLE"] = "REQ-PARTICIPANT"
-    ical_event.add("attendee", atnd, encode=0)
-
-
-def gera_descricao_banca(banca, estudantes):
-    """Gera um descrição para colocar no aviso do agendamento."""
-    description = "Banca do Projeto {0}".format(banca.get_projeto())
-    if banca.link:
-        description += "\n\nLink: {0}".format(banca.link)
-    description += "\n\nOrientador:\n- {0}".format(banca.get_projeto().orientador)
-    if banca.membros():
-        description += "\n\nMembros da Banca:"
-    for membro in banca.membros():
-        description += "\n- {0}".format(membro.get_full_name())
-        if membro == banca.projeto.orientador.user:
-            description += " [orientador]"
-    description += "\n\nEstudantes:"
-    for estudante in estudantes:
-        description += "\n- {0}".format(estudante.user.get_full_name())
-    return description
 
 
 def cria_material_documento(request, campo_arquivo, campo_link=None, sigla="MAS", confidencial=True, projeto=None, prefix="", usuario=None):

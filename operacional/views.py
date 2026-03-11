@@ -139,9 +139,6 @@ def emails(request):
     context = {
         "titulo": { "pt": "Listas de e-mails", "en": "Email lists" },
         "membros_comite": PFEUser.objects.filter(membro_comite=True),
-        "todos_alunos": Aluno.objects.filter(trancado=False),
-        "todos_professores": Professor.objects.all(),
-        "todos_parceiros": Parceiro.objects.all(),
         "edicoes": get_edicoes(Aluno)[0],
         "atual": str(configuracao.ano)+"."+str(configuracao.semestre),
         "coordenacao": configuracao.coordenacao,
@@ -511,7 +508,7 @@ def gerir_pedidos(request):
             </div>
         """
 
-        email(email_subject, email_recipients, email_message)
+        email(email_subject, email_recipients, email_message, reply_to=configuracao.tecnico.email)
 
         
         return redirect("gerir_pedidos")

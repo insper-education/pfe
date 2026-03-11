@@ -56,7 +56,10 @@ class PFEUser(AbstractUser):
                                help_text="LinkedIn do usuário")
 
     membro_comite = \
-        models.BooleanField("Membro do Comitê", default=False, help_text="caso membro do comitê")
+        models.BooleanField("Membro do Comitê", default=False, help_text="caso membro ativo do comitê")
+    representante_comite = \
+        models.CharField("Representante do Comitê", max_length=100, null=True, blank=True,
+                                 help_text="caso membro do comitê, qual representante do comitê é e período de atuações")
 
     membro_operacional = \
         models.BooleanField("Membro da Equipe Operacional", default=False, help_text="caso membro da equipe operacional")
@@ -340,6 +343,12 @@ class Aluno(models.Model):
             ano_semestre = str(alocacao.projeto.ano) + "." + str(alocacao.projeto.semestre)
             alocacoes[ano_semestre] = alocacao
         return alocacoes
+    
+    def periodo(self):
+        """Retorna o período do estudante."""
+        if self.ano and self.semestre:
+            return str(self.ano)+"."+str(self.semestre)
+        return "SEM PERÍODO DEFINIDO"
 
     class Meta:
         """Meta para Aluno."""

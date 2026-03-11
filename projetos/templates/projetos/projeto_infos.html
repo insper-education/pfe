@@ -273,7 +273,7 @@
       <strong>{% lng "Conexões" "Connections" %}:</strong>
       {% if conexoes %}
         <span class="emails esconder">
-          <a href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+          <a href="mailto:{% for conexao in conexoes %}{{conexao.parceiro.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if conexoes|length > 1 %}s{% endif %}%20{% for conexao in conexoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{conexao.parceiro.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.user.get_full_name}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </span>
@@ -423,7 +423,7 @@
     </h5>
     {% if alocacoes %}
       <span class="emails esconder">
-        <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+        <a href="mailto:{% for alocacao in alocacoes %}{{alocacao.aluno.user.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if alocacoes|length > 1 %}s{% endif %}%20{% for alocacao in alocacoes %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{alocacao.aluno.user.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.user.get_full_name}}%20(coordenação%20Capstone)" target="_blank">
           <i class="fas fa-mail-bulk"></i>
         </a>
       </span>
@@ -542,7 +542,7 @@
           {% lng_n associados.count "Estudante associado" "Estudantes associados" "Associated student" "Associated students" %}:
         </h5>
         <span class="emails esconder">
-          <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.coordenador_email}}%20(coordenação%20Capstone)" target="_blank">
+          <a href="mailto:{% for associado in associados %}{{associado.usuario.email}}{% if not forloop.last %};{% endif %}{% endfor %}?subject=Capstone%20Insper%20-%20Projeto:%20{{projeto}}&body=Caro{% if associados|length > 1 %}s{% endif %}%20{% for associado in associados %}{% if not forloop.first %}{% if forloop.last %}%20e{% else %},{% endif %}%20{% endif %}{{associado.usuario.get_full_name}}{% endfor %},%0D%0A%0D%0Aatenciosamente,%20{{configuracao.coordenacao.user.get_full_name}}%20(coordenação%20Capstone)" target="_blank">
             <i class="fas fa-mail-bulk"></i>
           </a>
         </span>
@@ -723,103 +723,103 @@
     {% endwith %}
 
     {% if user.eh_prof_a %}
-    {% if projeto.encontro_set.all %}
-        <hr>
-        <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
-        <ul class="mentoria-timeline">
-          {% for dinamica in projeto.encontro_set.all %}
-            <li class="mentoria-item">
-              
-              <div class="mentoria-card">
-                <div class="mentoria-header">
-                  <div class="mentoria-when">
-                    <i class="far fa-calendar-alt"></i>
-                    {{dinamica.startDate|date:'j \\d\\e F \\d\\e Y'}}
-                    <span class="ml-1">
-                      <i class="far fa-clock"></i>
-                      {{dinamica.startDate|date:'H:i'}}–{{dinamica.endDate|date:'H:i'}}
+      <hr>
+      <h4>{% lng "Mentorias" "Mentorships" %}:</h4>
+      <ul class="mentoria-timeline">
+        {% for dinamica in projeto.encontro_set.all %}
+          <li class="mentoria-item">
+            
+            <div class="mentoria-card">
+              <div class="mentoria-header">
+                <div class="mentoria-when">
+                  <i class="far fa-calendar-alt"></i>
+                  {{dinamica.startDate|date:'j \\d\\e F \\d\\e Y'}}
+                  <span class="ml-1">
+                    <i class="far fa-clock"></i>
+                    {{dinamica.startDate|date:'H:i'}}–{{dinamica.endDate|date:'H:i'}}
+                  </span>
+                </div>
+                <div class="mentoria-chips">
+                  {% if dinamica.tematica %}
+                    <span class="badge badge-pill badge-light border" title="Tem">  
+                      {% comment %} {% lng 'Temática' 'Theme' %} {% endcomment %}
+                      <i class="fas fa-tags"></i> {{dinamica.tematica.nome}}
                     </span>
-                  </div>
-                  <div class="mentoria-chips">
-                    {% if dinamica.tematica %}
-                      <span class="badge badge-pill badge-light border" title="Tem">  
-                        {% comment %} {% lng 'Temática' 'Theme' %} {% endcomment %}
-                        <i class="fas fa-tags"></i> {{dinamica.tematica.nome}}
+                  {% endif %}
+                  {% if dinamica.location %}
+                    {% if dinamica.url_location %}
+                      <a class="badge badge-pill badge-light border" href="{{dinamica.location}}" title="Link de videoconferência">
+                        {% comment %} {% lng 'Link de vídeo' 'Video link' %} {% endcomment %}
+                        <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
+                      </a>
+                    {% else %}
+                      <span class="badge badge-pill badge-light border" title="Localização">
+                        {% comment %} {% lng 'Local' 'Location' %} {% endcomment %}
+                        <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
                       </span>
                     {% endif %}
-                    {% if dinamica.location %}
-                      {% if dinamica.url_location %}
-                        <a class="badge badge-pill badge-light border" href="{{dinamica.location}}" title="Link de videoconferência">
-                          {% comment %} {% lng 'Link de vídeo' 'Video link' %} {% endcomment %}
-                          <i class="fas fa-video"></i> {% lng "videoconferência" "videoconference" %}
-                        </a>
-                      {% else %}
-                        <span class="badge badge-pill badge-light border" title="Localização">
-                          {% comment %} {% lng 'Local' 'Location' %} {% endcomment %}
-                          <i class="fas fa-map-marker-alt"></i> {{dinamica.location}}
-                        </span>
-                      {% endif %}
-                    {% endif %}
-                    {% if dinamica.facilitador %}
-                      <a class="badge badge-pill badge-light border" href="{% url 'user_detail' dinamica.facilitador.id %}" title="Facilitador(a)">
-                        {% comment %} {% lng 'Facilitador(a)' 'Facilitator' %} {% endcomment %}
-                        <i class="fas fa-user"></i> {{dinamica.facilitador}}
-                      </a>
-                    {% endif %}
-                    {% if dinamica.documento %}
-                      <a class="badge badge-pill badge-light border" href="{{dinamica.documento.url}}">
-                        <i class="fas fa-file-alt"></i> {% lng "Documento" "Document" %}
-                      </a>
-                    {% endif %}
-                    {% if dinamica.link %}
-                      <a class="badge badge-pill badge-light border" href="{{dinamica.link}}">
-                        <i class="fas fa-link"></i> {% lng "Link" "Link" %}
-                      </a>
-                    {% endif %}
-                  </div>
-                </div>
-
-                <div class="mentoria-body">
-                  {% if dinamica.observacoes_estudantes %}
-                    <div class="section">
-                      <span class="title"><i class="fas fa-user-graduate"></i> {% lng "Observações para Estudantes" "Observations for Students" %}</span>
-                      <div class="content">{{dinamica.observacoes_estudantes|safe|linebreaks}}</div>
-                    </div>
                   {% endif %}
-
-                  {% if dinamica.observacoes_orientador %}
-                    <div class="section">
-                      <span class="title"><i class="fas fa-chalkboard-teacher"></i> {% lng "Observações para Orientador" "Observations for Advisor" %}</span>
-                      <div class="content">{{dinamica.observacoes_orientador|safe|linebreaks}}</div>
-                    </div>
+                  {% if dinamica.facilitador %}
+                    <a class="badge badge-pill badge-light border" href="{% url 'user_detail' dinamica.facilitador.id %}" title="Facilitador(a)">
+                      {% comment %} {% lng 'Facilitador(a)' 'Facilitator' %} {% endcomment %}
+                      <i class="fas fa-user"></i> {{dinamica.facilitador}}
+                    </a>
                   {% endif %}
-
-                  {% if dinamica.feedback %}
-                    <div class="section">
-                      <span class="title"><i class="far fa-comment-dots"></i> {% lng "Feedback" "Feedback" %}</span>
-                      <div class="content">{{dinamica.feedback|linebreaks}}</div>
-                    </div>
+                  {% if dinamica.documento %}
+                    <a class="badge badge-pill badge-light border" href="{{dinamica.documento.url}}">
+                      <i class="fas fa-file-alt"></i> {% lng "Documento" "Document" %}
+                    </a>
                   {% endif %}
-
-                  {% if dinamica.feedback_estudantes %}
-                    <div class="section">
-                      <span class="title"><i class="far fa-comments"></i> {% lng "Feedback dos Estudantes" "Students Feedback" %}</span>
-                      <div class="content">{{dinamica.feedback_estudantes|linebreaks}}</div>
-                    </div>
-                  {% endif %}
-
-                  {% if dinamica.feedback_orientador %}
-                    <div class="section">
-                      <span class="title"><i class="far fa-comment"></i> {% lng "Feedback do Orientador" "Advisor Feedback" %}</span>
-                      <div class="content">{{dinamica.feedback_orientador|linebreaks}}</div>
-                    </div>
+                  {% if dinamica.link %}
+                    <a class="badge badge-pill badge-light border" href="{{dinamica.link}}">
+                      <i class="fas fa-link"></i> {% lng "Link" "Link" %}
+                    </a>
                   {% endif %}
                 </div>
               </div>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+
+              <div class="mentoria-body">
+                {% if dinamica.observacoes_estudantes %}
+                  <div class="section">
+                    <span class="title"><i class="fas fa-user-graduate"></i> {% lng "Observações para Estudantes" "Observations for Students" %}</span>
+                    <div class="content">{{dinamica.observacoes_estudantes|safe|linebreaks}}</div>
+                  </div>
+                {% endif %}
+
+                {% if dinamica.observacoes_orientador %}
+                  <div class="section">
+                    <span class="title"><i class="fas fa-chalkboard-teacher"></i> {% lng "Observações para Orientador" "Observations for Advisor" %}</span>
+                    <div class="content">{{dinamica.observacoes_orientador|safe|linebreaks}}</div>
+                  </div>
+                {% endif %}
+
+                {% if dinamica.feedback %}
+                  <div class="section">
+                    <span class="title"><i class="far fa-comment-dots"></i> {% lng "Feedback" "Feedback" %}</span>
+                    <div class="content">{{dinamica.feedback|linebreaks}}</div>
+                  </div>
+                {% endif %}
+
+                {% if dinamica.feedback_estudantes %}
+                  <div class="section">
+                    <span class="title"><i class="far fa-comments"></i> {% lng "Feedback dos Estudantes" "Students Feedback" %}</span>
+                    <div class="content">{{dinamica.feedback_estudantes|linebreaks}}</div>
+                  </div>
+                {% endif %}
+
+                {% if dinamica.feedback_orientador %}
+                  <div class="section">
+                    <span class="title"><i class="far fa-comment"></i> {% lng "Feedback do Orientador" "Advisor Feedback" %}</span>
+                    <div class="content">{{dinamica.feedback_orientador|linebreaks}}</div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </li>
+        {% empty %}
+          <p>{% lng "Nenhuma mentoria agendada ou realizada" "No mentorship scheduled or held" %}</p>
+        {% endfor %}
+      </ul>
     {% endif %}
 
     {% if user.eh_prof_a %}

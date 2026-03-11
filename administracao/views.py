@@ -530,6 +530,7 @@ def carrega_arquivo(request, dado):
     return render(request, "administracao/import.html", context)
 
 
+
 @login_required
 @transaction.atomic
 @permission_required("users.altera_professor", raise_exception=True)
@@ -540,7 +541,11 @@ def configurar(request):
     if request.method == "POST":
 
         if "periodo_ano" and "periodo_semestre" in request.POST:
+    
             try:
+
+                check_values = request.POST.getlist("selection")
+                settings.MAINTENANCE_MODE = 1 if "manutencao" in check_values else 0
                 
                 configuracao.ano = int(request.POST["periodo_ano"])
                 configuracao.semestre = int(request.POST["periodo_semestre"])
@@ -583,6 +588,7 @@ def configurar(request):
         "administradores": Administrador.objects.all(),
         "administrador": Administrador,
         "operacionalizadores": operacionalizadores,
+        "manutencao": settings.MAINTENANCE_MODE,
     }
 
     return render(request, "administracao/configurar.html", context)
@@ -1090,22 +1096,6 @@ def fechar_conexoes(request):
     }
 
     return render(request, "administracao/fechar_conexoes.html", context=context)
-
-
-@login_required
-@transaction.atomic
-@permission_required("users.altera_professor", raise_exception=True)
-def servico(request):
-    """Caso servidor esteja em manutenção."""
-    if request.method == "POST":
-        check_values = request.POST.getlist("selection")
-        settings.MAINTENANCE_MODE = 1 if "manutencao" in check_values else 0
-        return redirect("/administracao")
-    context = {
-        "titulo": { "pt": "Manutenção do Servidor", "en": "Server Maintenance" },
-        "manutencao": settings.MAINTENANCE_MODE,
-        }
-    return render(request, "administracao/servico.html", context)
 
 
 @login_required

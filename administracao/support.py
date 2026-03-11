@@ -39,7 +39,9 @@ logger = logging.getLogger("django")
 
 def limpa_texto(texto):
     """Remove caracteres especiais do texto."""
-    return texto.replace("\x00", "\uFFFD") if texto else None
+    if texto is not None and isinstance(texto, str):
+        return texto.replace("\x00", "\uFFFD") if texto else None
+    return None
 
 def get_limite_propostas(configuracao):
     evento = Evento.get_evento(sigla="IIPE", configuracao=configuracao)
@@ -194,6 +196,9 @@ def registro_usuario(request, user=None):
             usuario.membro_comite = True
         else:
             usuario.membro_comite = False
+
+    if "representante_comite" in request.POST:
+        usuario.representante_comite = limpa_texto(request.POST.get("representante_comite", None))
 
     usuario.save()
 

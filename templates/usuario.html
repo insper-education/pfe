@@ -13,13 +13,22 @@
 
 <div class="user-info-row">
   <label>{% lng "Usuário" "User" %}:</label>
-  <span>
-    {{ user.username }}
-    {% if user.membro_comite %}
-      <span class="badge badge-info">{% lng "Membro do Comitê" "Committee Member" %}</span>
-    {% endif %}
-  </span>
+  <span>{{ user.username }}</span>
 </div>
+
+{% if user.membro_comite or user.representante_comite %}
+  <div class="user-info-row">
+    <label>{% lng "Membro do Comitê" "Committee Member" %}:</label>
+    <span>
+      {% if user.membro_comite %}
+        <span class="badge badge-info">{% lng "Membro Atual do Comitê" "Current Committee Member" %}</span>
+      {% endif %}
+      {% if user.representante_comite %}
+        [{{ user.representante_comite }}]
+      {% endif %}
+    </span>
+  </div>
+{% endif %}
 
 {% if not user.is_active %}
   <div class="user-info-row user-info-inactive">

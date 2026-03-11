@@ -7,6 +7,7 @@ Data: 23 de Setembro de 2025
 """
 
 from .support import get_navigation_items
+from django.conf import settings
 
 def navigation_menu(request):
     if not request.user.is_authenticated:
@@ -41,3 +42,7 @@ def navigation_menu(request):
             visible_items.append(item)
     
     return {"nav_menu_items": visible_items}
+
+
+def maintenance_status(request):
+    return {"maintenance_mode_active": bool(settings.MAINTENANCE_MODE)}

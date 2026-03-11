@@ -43,9 +43,9 @@
           {% else %}
             <td>{% lng "Indefinido" "Undefined" %}</td>
           {% endif %}
-          {% with alocacoes=aluno.alocacao_set.all %}
+          {% with alocacoes=aluno.get_alocacoes %}
             <td>
-              {% for alocacao in alocacoes %}
+              {% for periodo, alocacao in alocacoes.items %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   <a href="{% url 'projeto_infos' alocacao.projeto.id %}">
                     {% if alocacao.projeto.avancado %}<u>{% endif %}
@@ -54,20 +54,17 @@
                     <br>
                   </a>
                 {% endif %}
-              {% empty %}
-                {% if aluno.ano and aluno.semestre %}
-                  {{aluno.ano}}.{{aluno.semestre}}
-                {% else %}
-                  {% lng "Indefinido" "Undefined" %}
-                {% endif %}
               {% endfor %}
+              {% if aluno.periodo not in alocacoes %}
+                {{aluno.periodo}}
+              {% endif %}
             </td>
             <td class="{% if configuracao.ano == aluno.ano and configuracao.semestre == aluno.semestre %}text-success{% endif %}">
-              {% for alocacao in alocacoes %}
+              {% for periodo, alocacao in alocacoes.items %}
                 {% if ano == 0 or alocacao.projeto.ano == ano and alocacao.projeto.semestre == semestre %}
                   {% if alocacao.projeto and alocacao.projeto.organizacao %}
                     <a href="{% url 'organizacao_completo' alocacao.projeto.organizacao.id %}">
-                      ({{alocacao.projeto.organizacao}})
+                      [{{alocacao.projeto.organizacao}}]
                     </a>
                   {% endif %}
                   <a href="{% url 'projeto_infos' alocacao.projeto.id %}">

@@ -9,37 +9,48 @@
 {% load certificados %}
 {% load participacoes %}
 
-{% with coorientacoes=usuario|coorientacoes %} 
+{% with coorientacoes=usuario|coorientacoes %}
   {% if coorientacoes %}
-    <hr>
-    <h4>{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</h4>
-    <ol>
-    {% for coorientacao in coorientacoes %}
-      {% if coorientacao.projeto.alocacao_set.all.count > 0 %}
-        <li><a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
-          {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
-          {% templatetag openbrace %}{{coorientacao.projeto.alocacao_set.all.count}} estudante{% if coorientacao.projeto.alocacao_set.all.count > 1 %}s{% endif %}{% templatetag closebrace %}
-          </a>
-          {% with certificado_coorientador=coorientacao|certificado_coorientador %}
-            {% if certificado_coorientador %}
-              <a href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a>
-            {% endif %}
-          {% endwith %}
-        </li>
-      {% endif %}
-    {% empty %}
-      {% lng "Projetos não encontrados" "Projects not found" %}
-    {% endfor %}
-    </ol>
+    <div class="user-section">
+      <div class="section-title">{% lng_n coorientacoes|length "Projeto Coorientado" "Projetos Coorientados" "Co-supervised Project" "Co-supervised Projects" %}</div>
+      <ol class="projetos-lista">
+      {% for coorientacao in coorientacoes %}
+        {% with cestud=coorientacao.projeto.alocacao_set.all.count %}
+          {% if cestud > 0 %}
+            <li><a href="{% url 'projeto_infos' coorientacao.projeto.id %}">
+              {{coorientacao.projeto.ano}}.{{coorientacao.projeto.semestre}}: [{{coorientacao.projeto.organizacao.nome}}] {{coorientacao.projeto.get_titulo}}
+              <span class="alocacao-chip">
+                <i class="fas fa-user-graduate"></i>
+                {{cestud}} {% lng_n cestud "estudante" "estudantes" "student" "students" %}
+              </span>
+              </a>
+              {% with certificado_coorientador=coorientacao|certificado_coorientador %}
+                {% if certificado_coorientador %}
+                  <span class="certificados-lista">
+                    <a class="cert-chip" href="{{ certificado_coorientador.last.documento.url }}" target="_blank" rel="noopener noreferrer">
+                      <i class="fas fa-certificate"></i>
+                      {% lng "Certificado" "Certificate" %}
+                    </a>
+                  </span>
+                {% endif %}
+              {% endwith %}
+            </li>
+          {% endif %}
+        {% endwith %}
+      {% empty %}
+        {% lng "Projetos não encontrados" "Projects not found" %}
+      {% endfor %}
+      </ol>
+    </div>
   {% endif %}
 {% endwith %}
 
 {% with bancas=usuario|bancas %}
   {% if bancas %}
-    <hr>
-    <h4>{% lng_n bancas|length "Participação em Banca" "Participação em Bancas" "Participation in Examination Board" "Participation in Examination Boards" %}</h4>
-    <div class="caixa_rolante">
-      <ol>
+    <div class="user-section">
+      <div class="section-title">{% lng_n bancas|length "Participação em Banca" "Participação em Bancas" "Participation in Examination Board" "Participation in Examination Boards" %}</div>
+      <div class="caixa_rolante">
+        <ol class="projetos-lista">
       {% for banca in bancas %}
         <li>
           <a href="{% url 'banca_ver' banca.id %}">
@@ -55,22 +66,28 @@
           {% endif %}
           {% with certificado=banca|certificado_banca:usuario %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
+              <span class="certificados-lista">
+                <a class="cert-chip" href="{{certificado}}" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-certificate"></i>
+                  {% lng "Certificado" "Certificate" %}
+                </a>
+              </span>
             {% endif %}
           {% endwith %}
         </li>
       {% endfor %}
-      </ol>
+        </ol>
+      </div>
     </div>
   {% endif %}
 {% endwith %}
 
 {% with mentorias=usuario|mentorias %}
   {% if mentorias %}
-    <hr>
-    <h4>{% lng_n mentorias|length "Mentoria" "Mentorias" "Mentorship" "Mentorships" %}</h4>
-    <div class="caixa_rolante">
-      <ol>
+    <div class="user-section">
+      <div class="section-title">{% lng_n mentorias|length "Mentoria" "Mentorias" "Mentorship" "Mentorships" %}</div>
+      <div class="caixa_rolante">
+        <ol class="projetos-lista">
       {% for mentoria in mentorias %}
         <li>
           {% lng "Mentoria" "Mentorship" %}
@@ -83,22 +100,28 @@
           {% endif %}
           {% with certificado=mentoria|certificado_mentoria:usuario %}
             {% if certificado %}
-              <a href="{{certificado}}" target="_blank" rel="noopener noreferrer">{% lng "[CERTIFICADO]" "[CERTIFICATE]" %}</a><br>
+              <span class="certificados-lista">
+                <a class="cert-chip" href="{{certificado}}" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-certificate"></i>
+                  {% lng "Certificado" "Certificate" %}
+                </a>
+              </span>
             {% endif %}
           {% endwith %}
         </li>
       {% endfor %}
-      </ol>
+        </ol>
+      </div>
     </div>
   {% endif %}
 {% endwith %}
 
 {% with aulas=usuario|aulas %}
   {% if aulas %}
-    <hr>
-    <h4>{% lng_n aulas|length "Aula Ministrada" "Aulas Ministradas" "Class Taught" "Classes Taught" %}</h4>
-    <div class="caixa_rolante">
-      <ol>{% for aula in aulas %}
+    <div class="user-section">
+      <div class="section-title">{% lng_n aulas|length "Aula Ministrada" "Aulas Ministradas" "Class Taught" "Classes Taught" %}</div>
+      <div class="caixa_rolante">
+        <ol class="projetos-lista">{% for aula in aulas %}
           <li>
             {% if aula.documento.documento %}<a href="{{request.scheme}}://{{request.get_host}}{{aula.documento.documento.url}}" target="_blank" rel="noopener noreferrer">{% endif %}
               <span class="texto-longo">{% lng_dl aula.startDate %}</span>
@@ -106,7 +129,8 @@
               - {{aula.atividade}}
             {% if aula.documento.documento %}</a>{% endif %}
           </li>  
-      {% endfor %}</ol>
+        {% endfor %}</ol>
+      </div>
     </div>
   {% endif %}
 {% endwith %}

@@ -443,10 +443,9 @@
   <div id="div_botao" class="modal-footer" style="display: flex; justify-content: space-between; gap: 20px;">
 
     <div id="mensagens" style="font-size: small; flex: 1;">
-      <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem"
-      {% if user.tipo_de_usuario != 4 %}checked{% endif %}>
+      <input type="checkbox" name="enviar_mensagem" value="sim" id="enviar_mensagem" checked>
       <label for="enviar_mensagem">
-        {% lng "Enviar mensagem para envolvidos" "Send message to involved people" %}
+        {% lng "Enviar mensagem e agendamento para envolvidos" "Send message and schedule to involved parties" %}
       </label>
     </div>
     

@@ -5,65 +5,97 @@
   Data: 28 de Maio de 2019
 {% endcomment %}
 
+{% load static %}
 {% load linguas %}
 
 {% block head %}
+  <link rel="stylesheet" href="{% static 'css/user_details.css' %}">
   {% include "reload.html" %}
 {% endblock %}
 
 {% block content %}
 
-  <form action="{% url 'password_change' %}">
-    <b>{% lng "Nome" "Name" %}:</b> {{ user.get_full_name }}<br>
-    <b>{% lng "Usuário" "Username" %}:</b> {{ user.username }}<br>
-    <b>{% lng "Perfil" "Profile" %}:</b>
-    {% if user.eh_estud %} {% comment %} estudante {% endcomment %}
-      {% lng "Estudante" "Student" %}<br>
-      <b>{% lng "Curso" "Program" %}:</b> {{ user.aluno.curso2 }}<br>
-      <b>{% lng "Ano e Semestre do Capstone" "Capstone Year and Semester" %}:</b> {{ user.aluno.ano }}.{{ user.aluno.semestre }}
-      <small>{% lng "(ou posterior)" "(or later)" %}</small><br>
-    {% elif user.eh_admin %} {% comment %} administrador {% endcomment %}
-      {% lng "Administrador" "Administrator" %}<br>
-    {% elif user.eh_prof %} {% comment %} professor {% endcomment %}
-      {% lng "Professor" "Professor" %}<br>
-    {% elif user.eh_parc %} {% comment %} parceiro {% endcomment %}
-      {% lng "Parceiro" "Partner" %}<b>
-    {% else %}
-      {% lng "Seu perfil não foi encontrado!" "Your profile was not found!" %}<br>
-    {% endif %}
-
-    <div class="mt-1">
-      {% if user.linkedin %}
-        <strong>LinkedIn:</strong> <a href="{{user.linkedin}}" target="_blank">{{user.linkedin}}</a><br>
-      {% endif %}
-      {% if user.email %}
-        <strong>e-mail:</strong> <a href="mailto:{{user.email}}">{{user.email}}</a><br>
-      {% endif %}
-    </div>
-
-    <div class="text-center py-3">
-      <h4>{% lng "Código QR de Identificação" "Identification QR Code" %}</h4>
-      <div id="qrContainer" class="mt-1">
-          <div id="loadingSpinner">
-              <div class="spinner-border text-primary" role="status"></div>
-              <p class="mt-2">Gerando token...</p>
+  <div class="user-detail-page">
+    <div class="user-panel">
+      <form action="{% url 'password_change' %}">
+        <div class="profile-grid">
+          <div class="profile-row">
+            <strong>{% lng "Nome" "Name" %}:</strong>
+            <span>{{ user.get_full_name }}</span>
           </div>
-          <img id="qrImage" src="" alt="QR Code" class="img-fluid d-none" style="max-height: 300px;">
-      </div>
-    </div>
 
-    <div class="mt-3">
-      {% if not user.eh_parc %} 
-        <a class="btn btn-primary mb-1" href="{% url 'user_detail' user.id %}">
-          {% lng "Meus Detalhes" "My Details" %}
-        </a>
-      {% endif %}
-      <button type="submit" class="btn btn-primary mb-1">
-        {% lng "Atualizar Senha" "Update Password" %}
-      </button>
+          <div class="profile-row">
+            <strong>{% lng "Usuário" "Username" %}:</strong>
+            <span>{{ user.username }}</span>
+          </div>
+
+          <div class="profile-row">
+            <strong>{% lng "Perfil" "Profile" %}:</strong>
+            <span>
+              {% if user.eh_estud %}
+                {% lng "Estudante" "Student" %}
+              {% elif user.eh_admin %}
+                {% lng "Administrador" "Administrator" %}
+              {% elif user.eh_prof %}
+                {% lng "Professor" "Professor" %}
+              {% elif user.eh_parc %}
+                {% lng "Parceiro" "Partner" %}
+              {% else %}
+                {% lng "Seu perfil não foi encontrado!" "Your profile was not found!" %}
+              {% endif %}
+            </span>
+          </div>
+
+          {% if user.eh_estud %}
+            <div class="profile-row">
+              <strong>{% lng "Curso" "Program" %}:</strong>
+              <span>{{ user.aluno.curso2 }}</span>
+            </div>
+            <div class="profile-row">
+              <strong>{% lng "Ano e Semestre do Capstone" "Capstone Year and Semester" %}:</strong>
+              <span>{{ user.aluno.ano }}.{{ user.aluno.semestre }} <small>{% lng "(ou posterior)" "(or later)" %}</small></span>
+            </div>
+          {% endif %}
+
+          {% if user.linkedin %}
+            <div class="profile-row">
+              <strong>LinkedIn:</strong>
+              <span><a href="{{user.linkedin}}" target="_blank" rel="noopener noreferrer">{{user.linkedin}}</a></span>
+            </div>
+          {% endif %}
+
+          {% if user.email %}
+            <div class="profile-row">
+              <strong>e-mail:</strong>
+              <span><a href="mailto:{{user.email}}">{{user.email}}</a></span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="qr-card mt-3">
+          <h4>{% lng "Código QR de Identificação" "Identification QR Code" %}</h4>
+          <div id="qrContainer" class="mt-1">
+            <div id="loadingSpinner">
+              <div class="spinner-border text-primary" role="status"></div>
+              <p class="mt-2 mb-0">Gerando token...</p>
+            </div>
+            <img id="qrImage" src="" alt="QR Code" class="img-fluid d-none" style="max-height: 300px;">
+          </div>
+        </div>
+
+        <div class="profile-actions mt-3">
+          {% if not user.eh_parc %}
+            <a class="btn btn-primary" href="{% url 'user_detail' user.id %}">
+              {% lng "Meus Detalhes" "My Details" %}
+            </a>
+          {% endif %}
+          <button type="submit" class="btn btn-primary">
+            {% lng "Atualizar Senha" "Update Password" %}
+          </button>
+        </div>
+      </form>
     </div>
-    
-  </form>
+  </div>
 
 
   <script>

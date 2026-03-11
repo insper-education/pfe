@@ -1,0 +1,66 @@
+{% comment %}
+  Desenvolvido para o Projeto Final de Engenharia
+  Autor: Luciano Pereira Soares <lpsoares@insper.edu.br>
+  Data: 26 de Março de 2025
+{% endcomment %}
+
+{% comment %} Somente mostra elemento com mesmo valor que checkbox {% endcomment %}
+$("#{{tabela}}Table tbody tr").each(function() {   // Garantir que todas as linhas tenham o atributo data-{{data}}
+  if (!$(this).attr("data-{{data}}")) {
+    $(this).attr("data-{{data}}", "default");
+  }
+});
+
+$(document).ready(function () {  
+  function getTable() {
+    var seletor = "#{{tabela}}Table";
+    if ($.fn.dataTable.isDataTable(seletor)) {
+      return $(seletor).DataTable();
+    }
+    return null;
+  }
+
+  {% comment %} Somente mostra elemento com mesmo valor que checkbox {% endcomment %}
+  function filtro_checkbox(settings, data, dataIndex) {
+    if (!settings || settings.nTable.id !== "{{tabela}}Table") {
+      return true;
+    }
+
+    var checkboxval = $("#{{checkbox}}");
+    if (checkboxval.length === 0) {
+      return true;
+    }
+
+    if (!checkboxval.prop("checked")) {
+      return true;
+    }
+
+    var val = "true";
+    var rowValue = "";
+    var table = getTable();
+
+    if (table && typeof table.row === "function") {
+      var node = table.row(dataIndex).node();
+      rowValue = String($(node).attr("data-{{data}}") || "").trim().toLowerCase();
+    }
+
+    return rowValue === val;
+  }
+
+  if (!$.fn.dataTable.ext.search.includes(filtro_checkbox)) {
+    $.fn.dataTable.ext.search.push(filtro_checkbox);
+  }
+
+  function mostra_elem_selecionado() {
+    var table = getTable();
+    if (table) {
+      table.draw(false);
+    }
+  }
+
+  $("#{{checkbox}}").on("change", mostra_elem_selecionado);
+  document.addEventListener("edicaoEvent", mostra_elem_selecionado);
+
+  $("#{{tabela}}Table").on("init.dt", mostra_elem_selecionado);
+  mostra_elem_selecionado();
+});

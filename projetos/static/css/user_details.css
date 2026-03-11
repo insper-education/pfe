@@ -1,0 +1,153 @@
+.user-detail-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.user-detail-page .user-panel,
+.user-detail-page .user-info,
+.user-detail-page .user-section {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.user-detail-page .user-panel,
+.user-detail-page .user-info {
+  padding: 1rem 1.1rem;
+}
+
+.user-detail-page .user-section {
+  padding: 0.9rem 1rem;
+  margin-top: 0.95rem;
+}
+
+.user-detail-page .section-title {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 0.55rem;
+  color: #34495e;
+}
+
+.user-detail-page hr {
+  border-top: 1px solid #e4e8ee;
+  margin: 1rem 0;
+}
+
+.user-detail-page .btn {
+  border-radius: 9px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-grid .profile-row {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  line-height: 1.35;
+}
+
+.profile-grid .profile-row strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.qr-card {
+  text-align: center;
+  border: 1px dashed #ced4da;
+  border-radius: 10px;
+  padding: 0.9rem;
+  background: #fbfdff;
+}
+
+.user-detail-page ol,
+.user-detail-page ul {
+  margin-bottom: 0.35rem;
+}
+
+.user-detail-page ol li,
+.user-detail-page ul li {
+  margin-bottom: 0.3rem;
+}
+
+.user-detail-page .projetos-lista,
+.user-detail-page .conexoes-lista {
+  margin: 0;
+  padding-left: 2.15rem;
+}
+
+.user-detail-page .tit_rel {
+  color: #34495e;
+}
+
+.certificados-lista {
+  margin: 0.35rem;
+}
+
+.cert-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.16rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid #d7e3ff;
+  background: #f4f8ff;
+  color: #2f5ea8;
+  text-decoration: none;
+  transition: 0.15s ease;
+}
+
+.cert-chip:hover {
+  text-decoration: none;
+  background: #e8f0ff;
+  border-color: #bcd2ff;
+  color: #1d4f99;
+}
+
+.alocacao-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.35rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  background: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+@media (max-width: 840px) {
+  .profile-grid .profile-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .profile-grid .profile-row strong {
+    font-size: 0.9rem;
+  }
+
+  .user-detail-page .user-panel,
+  .user-detail-page .user-info,
+  .user-detail-page .user-section {
+    border-radius: 10px;
+    padding: 0.8rem;
+  }
+}

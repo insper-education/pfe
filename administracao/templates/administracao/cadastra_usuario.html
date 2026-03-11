@@ -10,341 +10,475 @@
 {% load get_field %}
 {% load linguas %}
 
-{% block head %}  
+{% block head %}
   <link rel="stylesheet" href="{% static 'bootstrap-select-1.13.14/dist/css/bootstrap-select.min.css' %}">
   <script src="{% static 'bootstrap-select-1.13.14/dist/js/bootstrap-select.min.js' %}"></script>
+
+  <style>
+    .user-form-shell {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .user-form-header {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      background: var(--primary-gradient);
+      color: #fff;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .form-section {
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #495057;
+    }
+
+    .tipo-opcoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    .tipo-opcoes label {
+      margin-bottom: 0;
+      border: 1px solid #ced4da;
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      background: #fff;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .tipo-opcoes label:hover {
+      border-color: #adb5bd;
+      background: #f8f9fa;
+    }
+
+    .tipo-opcoes input[type="radio"] {
+      margin-right: 0.35rem;
+    }
+
+    .campo-com-label {
+      margin-bottom: 0.75rem;
+    }
+
+    .campo-com-label label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .type-panel {
+      background: #fbfcff;
+      border: 1px solid #dfe7ff;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .inline-radio-group label,
+    .inline-check-group label {
+      margin-right: 1rem;
+      font-weight: 500;
+    }
+
+    .inline-radio-group input,
+    .inline-check-group input {
+      margin-right: 0.35rem;
+    }
+
+    #representante_comite {
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .bootstrap-select > .dropdown-toggle {
+      border: 1px solid #ced4da;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-
-  <form method="post" enctype="multipart/form-data">{% csrf_token %}
-
-    {% lng "Selecione o tipo de usuário:" "Select the type of user:" %}
-    <br>
-    <label class="mr-2" for="estudante"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>&nbsp;{% lng "Estudante" "Student" %}</label>
-    <label class="mr-2" for="professor"><input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}>&nbsp;{% lng "Professor" "Professor" %}</label>
-    <label class="mr-2" for="funcionario"><input type="radio" class="tipo" name="tipo_de_usuario" id="funcionario" value="funcionario" required {% if tipo == "funcionario"%}checked="checked"{% endif %}>&nbsp;{% lng "Funcionário" "Employee" %}</label>
-    <label class="mr-2" for="parceiro"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>&nbsp;{% lng "Parceiro" "Partner" %}</label>
-    <br><br>
-
-    <label for="nome">
-      {% lng "Nome do Usuário" "User Name" %}
-    </label><br>
-    <input type="text" size="77" maxlength="120" id="nome" name="nome" {% if usuario %}value="{{usuario.first_name}} {{usuario.last_name}}"{% elif nome %}value="{{nome}}"{% endif %}
-      pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required>
-    <br>
-    
-    <div style="margin: 6px 4px 6px 24px;">
-      <label for="pronome_tratamento" style="margin-top: 6px;">
-        {% lng "Pronome de Tratamento (opcional)" "Treatment Pronoun (optional)" %}      
-      </label>
-      <input type="text" size="8" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}><br>
-      
-      <label for="nome_social" style="margin-top: 6px;">
-        {% lng "Nome Social (opcional)" "Social Name (optional)" %}
-      </label>
-      <input type="text" size="57" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}><br>
+  <div class="user-form-shell">
+    <div class="user-form-header">
+      {% lng "Cadastro de Usuário" "User Registration" %}
     </div>
-    <br>
 
-    <label for="email">e-mail:</label> <input type="email" size="70" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% elif email %}value="{{email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required>
-    <br><br>
-    
-    <label style="width: 4rem;" for="telefone">
-      {% lng "telefone:" "phone:" %}
-    </label> <input type="text" size="20" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% elif telefone %}value="{{telefone}}"{% endif %}><br>
-    
-    {% comment %} Celular {% endcomment %}
-    <label style="width: 4rem;" for="celular">
-      {% lng "celular:" "mobile:" %}
-    </label> <input type="text" size="20" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}><br>
-    <label style="width: 4rem;" for="instant_messaging">IM:</label> <input type="text" size="32" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}>
-    <br><br>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
-    <label for="masculino"><input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}>
-      {% lng "Masculino" "Male" %}
-    </label>
-    <label for="feminino"><input type="radio" name="genero" id="feminino" value="feminino" {% if usuario.genero == 'F'%}checked{% endif %}>
-      {% lng "Feminino" "Female" %}
-    </label>
-    <br><br>
-    
-    <label for="linkedin">LinkedIn:</label> <input type="text" size="68" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/">
-    <br><br>
+      <div class="form-section">
+        <div class="section-title">{% lng "Tipo de usuário" "User type" %}</div>
+        <div>{% lng "Selecione o tipo de usuário:" "Select the type of user:" %}</div>
+        <div class="tipo-opcoes">
+          <label for="estudante"><input type="radio" class="tipo" name="tipo_de_usuario" id="estudante" value="estudante" required {% if tipo == "estudante"%}checked="checked"{% endif %}>{% lng "Estudante" "Student" %}</label>
+          <label for="professor"><input type="radio" class="tipo" name="tipo_de_usuario" id="professor" value="professor" required {% if tipo == "professor"%}checked="checked"{% endif %}>{% lng "Professor" "Professor" %}</label>
+          <label for="funcionario"><input type="radio" class="tipo" name="tipo_de_usuario" id="funcionario" value="funcionario" required {% if tipo == "funcionario"%}checked="checked"{% endif %}>{% lng "Funcionário" "Employee" %}</label>
+          <label for="parceiro"><input type="radio" class="tipo" name="tipo_de_usuario" id="parceiro" value="parceiro" required {% if tipo == "parceiro"%}checked="checked"{% endif %}>{% lng "Parceiro" "Partner" %}</label>
+        </div>
+      </div>
 
-    <label for="lingua">
-      {% lng "Língua:" "Language:" %}
-    </label>
-    <select name="lingua" id="lingua" title="Linguagem">
-      <option value=1 selected>Português</option>  
-      <option value=2>Inglês</option>  
-    </select>
-    <br><br>
+      <div class="form-section">
+        <div class="section-title">{% lng "Dados básicos" "Basic data" %}</div>
 
-    <label for="conta_github">
-      {% lng "Conta GitHub:" "GitHub Account:" %}
-    </label> <input type="text" size="40" maxlength="{% max_length PFEUser "conta_github" %}" id="conta_github" name="conta_github" {% if usuario.conta_github %}value="{{usuario.conta_github}}"{% endif %}>
-    <br><br>
-    
-    <label for="observacao">
-      {% lng "Observações:" "Observations:" %}
-    </label><br>
-    <textarea id="observacao" name="observacao" rows="4" cols="80" maxlength="500">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea>
-    <br><br>
+        <div class="row">
+          <div class="col-md-12 campo-com-label">
+            <label for="email">e-mail</label>
+            <input class="form-control" type="email" maxlength="{% max_length PFEUser "email" %}" id="email" name="email" {% if usuario.email %}value="{{usuario.email}}"{% elif email %}value="{{email}}"{% endif %} oninvalid="this.setCustomValidity('Digite um e-mail válido')" oninput="this.setCustomValidity('')" required>
+          </div>
+        </div>
 
-    {% comment %} Estudante {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row_tipo" data-type="estudante">
+        <div class="row">
+          <div class="col-12 campo-com-label">
+            <label for="nome">{% lng "Nome do Usuário" "User Name" %}</label>
+            <input class="form-control" type="text" maxlength="120" id="nome" name="nome" {% if usuario %}value="{{usuario.first_name}} {{usuario.last_name}}"{% elif nome %}value="{{nome}}"{% endif %}
+              pattern="^[\s]*\S+(?:[\s]+\S+){1,99}[\s]*$" oninvalid="this.setCustomValidity('Digite o nome completo')" oninput="this.setCustomValidity('')" required>
+          </div>
+        </div>
 
-      <label for="matricula">
-        {% lng "Matrícula:" "Student ID:" %}
-      </label> <input type="text" size="8" maxlength="{% max_length Estudante 'matricula' %}" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}><br>
- 
-      <label for="curso">
-        {% lng "Curso:" "Program:" %}
-      </label>
-      <select id="curso" name="curso" title="Curso">
-        <option disabled selected value class="troca_lingua" data-pt="-- selecione curso --" data-en="-- select program --">
-          -- selecione curso --
-        </option>
-        {% for curso in cursos %}
-          <option value="{{curso.sigla}}" {% if usuario.aluno.curso2.sigla == curso.sigla %}selected{% endif %}>{{curso.nome}}</option>  
-        {% endfor %}
-      </select>
+        <div class="row">
+          <div class="col-md-4 campo-com-label">
+            <label for="pronome_tratamento">{% lng "Pronome de Tratamento (opcional)" "Treatment Pronoun (optional)" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "pronome_tratamento" %}" id="pronome_tratamento" name="pronome_tratamento" {% if usuario.pronome_tratamento %}value="{{usuario.pronome_tratamento}}"{% endif %}>
+          </div>
+          <div class="col-md-8 campo-com-label">
+            <label for="nome_social">{% lng "Nome Social (opcional)" "Social Name (optional)" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "nome_social" %}" id="nome_social" name="nome_social" {% if usuario.nome_social %}value="{{usuario.nome_social}}"{% endif %}>
+          </div>
+        </div>
 
-      <br>
-      <label for="ano">
-        {% lng "Ano Capstone:" "Capstone Year:" %}
-        <input type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.ano %}value="{{usuario.aluno.ano}}"{% endif %}>
-      </label> &nbsp;&nbsp;&nbsp;
-      <label for="semestre">
-        {% lng "Semestre Capstone:" "Capstone Semester:" %}
-        <input type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestre %}value="{{usuario.aluno.semestre}}"{% endif %}>
-      </label>
-      
-      <br>
-      <label for="cr">
-        {% lng "CR:" "GPA:" %}
-      </label> <input type="number" style="width: 5em; text-align: right;" min="0" max="10" step="0.0001" id="cr" name="cr" {% if usuario.aluno.cr %}value="{{usuario.aluno.cr|unlocalize}}"{% endif %}>
+        <div class="row">
+          <div class="col-md-4 campo-com-label">
+            <label for="telefone">{% lng "Telefone:" "Phone:" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "telefone" %}" id="telefone" name="telefone" {% if usuario.telefone %}value="{{usuario.telefone}}"{% elif telefone %}value="{{telefone}}"{% endif %}>
+          </div>
+          <div class="col-md-4 campo-com-label">
+            <label for="celular">{% lng "Celular:" "Mobile:" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "celular" %}" id="celular" name="celular" {% if usuario.celular %}value="{{usuario.celular}}"{% endif %}>
+          </div>
+          <div class="col-md-4 campo-com-label">
+            <label for="instant_messaging">Instant Messaging</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "instant_messaging" %}" id="instant_messaging" name="instant_messaging" {% if usuario.instant_messaging %}value="{{usuario.instant_messaging}}"{% endif %}>
+          </div>
+        </div>
 
-      <br>
-      {% with externo=usuario.aluno.externo %}
-        
-        <label for="externo_check">
-          {% lng "Estudante Externo" "External Student" %}
-          <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
-        </label>
+        <div class="row">
+          <div class="col-md-6 campo-com-label">
+            <label>{% lng "Gênero" "Gender" %}</label>
+            <div class="inline-radio-group">
+              <label for="masculino"><input type="radio" name="genero" id="masculino" value="masculino" {% if usuario.genero == 'M'%}checked{% endif %}>{% lng "Masculino" "Male" %}</label>
+              <label for="feminino"><input type="radio" name="genero" id="feminino" value="feminino" {% if usuario.genero == 'F'%}checked{% endif %}>{% lng "Feminino" "Female" %}</label>
+            </div>
+          </div>
+          <div class="col-md-4 campo-com-label">
+            <label for="lingua">{% lng "Língua:" "Language:" %}</label>
+            <select class="form-control" name="lingua" id="lingua" title="Linguagem">
+              <option value="1" selected>Português</option>
+              <option value="2">Inglês</option>
+            </select>
+          </div>
+        </div>
 
-        <label for="externo" id="externo_label" {% if not externo %}style="display: none;"{% endif %}>
-          &rarr; 
-          {% lng "Instituição:" "Institution:" %}
-          <input type="text" size="20" maxlength="{% max_length Estudante 'externo' %}" id="externo" name="externo" {% if externo %}value="{{externo}}"{% endif %}>
+        <div class="row">
+          <div class="col-md-6 campo-com-label">
+            <label for="linkedin">LinkedIn</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "linkedin" %}" id="linkedin" name="linkedin" {% if usuario.linkedin %}value="{{usuario.linkedin}}"{% endif %} placeholder="https://www.linkedin.com/">
+          </div>
+          <div class="col-md-6 campo-com-label">
+            <label for="conta_github">{% lng "Conta GitHub:" "GitHub Account:" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length PFEUser "conta_github" %}" id="conta_github" name="conta_github" {% if usuario.conta_github %}value="{{usuario.conta_github}}"{% endif %}>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 campo-com-label">
+            <label for="observacao">{% lng "Observações:" "Observations:" %}</label>
+            <textarea class="form-control" id="observacao" name="observacao" rows="4" maxlength="{% max_length PFEUser "observacao" %}">{% if usuario.observacoes %}{{usuario.observacoes}}{% endif %}</textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-section row_tipo type-panel" data-type="estudante">
+        <div class="section-title">{% lng "Dados de Estudante" "Student data" %}</div>
+
+        <div class="row">
+          <div class="col-md-3 campo-com-label">
+            <label for="matricula">{% lng "Matrícula:" "Student ID:" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length Estudante 'matricula' %}" id="matricula" name="matricula" {% if usuario and usuario.aluno and usuario.aluno.matricula %}value="{{usuario.aluno.matricula}}"{% endif %}>
+          </div>
+          <div class="col-md-5 campo-com-label">
+            <label for="curso">{% lng "Curso:" "Program:" %}</label>
+            <select class="form-control" id="curso" name="curso" title="Curso">
+              <option disabled selected value class="troca_lingua" data-pt="-- selecione curso --" data-en="-- select program --">-- selecione curso --</option>
+              {% for curso in cursos %}
+                <option value="{{curso.sigla}}" {% if usuario.aluno.curso2.sigla == curso.sigla %}selected{% endif %}>{{curso.nome}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2 campo-com-label">
+            <label for="ano">{% lng "Ano Capstone:" "Capstone Year:" %}</label>
+            <input class="form-control" type="number" id="ano" name="ano" min="2018" max="3018" {% if usuario.aluno.ano %}value="{{usuario.aluno.ano}}"{% endif %}>
+          </div>
+          <div class="col-md-2 campo-com-label">
+            <label for="semestre">{% lng "Semestre:" "Semester:" %}</label>
+            <input class="form-control" type="number" id="semestre" name="semestre" min="1" max="2" {% if usuario.aluno.semestre %}value="{{usuario.aluno.semestre}}"{% endif %}>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2 campo-com-label">
+            <label for="cr">{% lng "CR:" "GPA:" %}</label>
+            <input class="form-control" type="number" min="0" max="10" step="0.0001" id="cr" name="cr" {% if usuario.aluno.cr %}value="{{usuario.aluno.cr|unlocalize}}"{% endif %}>
+          </div>
+
+          {% with externo=usuario.aluno.externo %}
+            <div class="col-md-10 campo-com-label inline-check-group" style="padding-top: 2rem;">
+              <label for="externo_check">
+                <input type="checkbox" id="externo_check" name="externo_check" value="True" {% if externo %}checked{% endif %}>
+                {% lng "Estudante Externo" "External Student" %}
+              </label>
+
+              <label for="externo" id="externo_label" {% if not externo %}style="display: none;"{% endif %}>
+                &rarr; {% lng "Instituição:" "Institution:" %}
+                <input class="form-control d-inline-block" style="max-width: 280px; margin-left: 0.35rem;" type="text" maxlength="{% max_length Estudante 'externo' %}" id="externo" name="externo" {% if externo %}value="{{externo}}"{% endif %}>
+              </label>
+            </div>
+          {% endwith %}
+        </div>
+
+        <div class="inline-check-group">
+          <label for="estudante_trancado">
+            <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
+            {% lng "Estudante Trancado" "Student on Leave" %}
+          </label>
+        </div>
+
+        {% include "estudantes/includes/trab_ativ_famil.html" with estudante=usuario.aluno %}
+      </div>
+
+      <div class="form-section row_tipo type-panel" data-type="professor">
+        <div class="section-title">{% lng "Dados de Professor" "Professor data" %}</div>
+
+        <div class="campo-com-label">
+          <label>{% lng "Tipo:" "Type:" %}</label>
+          <div class="inline-radio-group">
+            <label for="TI"><input type="radio" name="dedicacao" id="TI" value="TI" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %}>{% lng "Prof. Tempo Integral" "Full Time Professor" %}</label>
+            <label for="TP"><input type="radio" name="dedicacao" id="TP" value="TP" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %}>{% lng "Prof. Tempo Parcial" "Part Time Professor" %}</label>
+            <label for="V"><input type="radio" name="dedicacao" id="V" value="V" {% if usuario.professor.dedicacao == "V" %}checked{% endif %}>{% lng "Prof. Visitante" "Visiting Professor" %}</label>
+            <label for="E"><input type="radio" name="dedicacao" id="E" value="E" {% if usuario.professor.dedicacao == "E" %}checked{% endif %}>{% lng "Prof. Externo" "External Professor" %}</label>
+            <label for="O"><input type="radio" name="dedicacao" id="O" value="O" {% if usuario.professor.dedicacao == "O" %}checked{% endif %}>{% lng "Outro" "Other" %}</label>
+          </div>
+        </div>
+
+        <div class="campo-com-label">
+          <label for="areas">{% lng "Áreas de interesse:" "Areas of interest:" %}</label>
+          <input class="form-control" type="text" maxlength="{% max_length Professor "areas" %}" id="areas" name="areas" {% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %}>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 campo-com-label">
+            <label for="website">website</label>
+            <input class="form-control" type="text" maxlength="{% max_length Professor "website" %}" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/">
+          </div>
+          <div class="col-md-6 campo-com-label">
+            <label for="lattes">lattes</label>
+            <input class="form-control" type="text" maxlength="{% max_length Professor "lattes" %}" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section row_tipo type-panel" data-type="funcionario">
+        <div class="section-title">{% lng "Dados de Funcionário" "Employee data" %}</div>
+        <div class="campo-com-label">
+          <label for="departamento">{% lng "Departamento:" "Department:" %}</label>
+          <input class="form-control" type="text" maxlength="{% max_length Professor "departamento" %}" id="departamento" name="departamento" {% if usuario.professor.departamento %} value="{{usuario.professor.departamento}}" {% endif %}>
+        </div>
+      </div>
+
+      <div id="parceiro_div" class="form-section row_tipo type-panel" data-type="parceiro">
+        <div class="section-title">{% lng "Dados de Parceiro" "Partner data" %}</div>
+
+        <div class="campo-com-label">
+          <label for="organizacao">{% lng "Organização" "Organization" %}</label>
+          <div class="d-flex align-items-center" style="gap: 0.5rem;">
+            <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="90%" data-size="10">
+              <option disabled value="" class="troca_lingua" data-pt="-- selecione uma organização --" data-en="-- select an organization --">-- selecione uma organização --</option>
+              {% for organizacao in organizacoes %}
+                <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %}>{{organizacao.nome}} ({{organizacao.sigla}})</option>
+              {% endfor %}
+            </select>
+            <a class="btn btn-light btn-sm" href="{% url 'cadastrar_organizacao' %}" title="{% lng 'Cadastrar organização' 'Register organization' %}">&#10133;</a>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8 campo-com-label">
+            <label for="cargo">{% lng "Cargo:" "Position:" %}</label>
+            <input class="form-control" type="text" maxlength="{% max_length Parceiro 'cargo' %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% elif cargo %}value="{{cargo}}"{% endif %}>
+          </div>
+          <div class="col-md-4 campo-com-label inline-check-group" style="padding-top: 2rem;">
+            <label for="principal_contato"><input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>{% lng "Principal Contato" "Main Contact" %}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div id="ativo_div">
+            {% if usuario %}
+            <input type="hidden" value="0" name="ativo">
+            <label for="ativo" class="mb-0 inline-check-group">
+                <input type="checkbox" id="ativo" value="1" name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
+                {% lng "Ativo (ainda está trabalhando no" "Active (still working at the " %}<span id="org_text">local</span>)
+            </label>
+            {% endif %}
+        </div>
+
+        <div class="mt-2">
+          <input type="hidden" value="0" name="comite">
+          <label for="comite" class="inline-check-group">
+            <input type="checkbox" id="comite" value="1" name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
+            {% lng "Membro Atual do Comitê" "Current Committee Member" %}
+          </label>
           <br>
-        </label> 
-        
-      {% endwith %}
-
-      <script>
-        $("#externo_check").change(function() {
-          if ($(this).is(":checked")) { $("#externo_label").show();
-          } else { $("#externo_label").hide(); }
-        });
-      </script>
-      <br>
+          <label for="representante_comite" style="margin-left: 1.4rem; {% if not usuario.membro_comite and not usuario.representante_comite %}display: none;{% endif %}" id="representante_comite_label">
+            {% lng "Representante Comitê" "Committee Representative" %}
+            <textarea class="form-control" id="representante_comite" name="representante_comite" rows="3" cols="60" maxlength="{% max_length PFEUser "representante_comite" %}">{% if usuario.representante_comite %}{{usuario.representante_comite}}{% endif %}</textarea>
+            <small class="form-text text-muted">{% lng "Descreva o curso quem representa e o período (ex: Engenharia de Computação (2019.1-2023.2)" "Describe the course they represent and the period (ex: Computer Engineering (2019.1-2023.2)" %}</small>
+          </label>
+        </div>
       
-      <label for="estudante_trancado">
-        {% lng "Estudante Trancado" "Student on Leave" %}
-        <input type="checkbox" id="estudante_trancado" name="estudante_trancado" value="True" {% if usuario.aluno.trancado %}checked{% endif %}>
-      </label><br>
+      </div>
 
-      {% include "estudantes/includes/trab_ativ_famil.html" with estudante=usuario.aluno %}
+      <div class="actions-row mt-2">
+        <button class="btn btn-primary mb-1" type="submit">
+          {% lng_b usuario "Atualiza Usuário" "Cadastrar Usuário" "Update User" "Register User" %}
+        </button>
 
-    </div>
-
-    {% comment %} Professor {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row_tipo" data-type="professor">
-
-      {% lng "Tipo:" "Type:" %}
-      <label for="TI" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TI" value="TI" {% if usuario.professor.dedicacao == "TI" %}checked{% endif %}>
-        {% lng "Prof. Tempo Integral" "Full Time Professor" %}
-      </label>
-      <label for="TP" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="TP" value="TP" {% if usuario.professor.dedicacao == "TP" %}checked{% endif %}>
-        {% lng "Prof. Tempo Parcial" "Part Time Professor" %}
-      </label>
-      <label for="V" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="V" value="V" {% if usuario.professor.dedicacao == "V" %}checked{% endif %}>
-        {% lng "Prof. Visitante" "Visiting Professor" %}
-      </label>
-      <label for="E" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="E" value="E" {% if usuario.professor.dedicacao == "E" %}checked{% endif %}>
-        {% lng "Prof. Externo" "External Professor" %}
-      </label>
-      <label for="O" style="margin-left: 8px;"><input type="radio" name="dedicacao" id="O" value="O" {% if usuario.professor.dedicacao == "O" %}checked{% endif %}>
-        {% lng "Outro" "Other" %}
-      </label>
-      <br>
-
-      <label for="areas">
-        {% lng "Áreas de interesse:" "Areas of interest:" %}
-      </label> <input type="text" size="75" maxlength="{% max_length Professor "areas" %}" style="max-width: 95%;" id="areas" name="areas" {% if usuario.professor.areas %} value="{{usuario.professor.areas}}" {% endif %} ><br>
- 
-      <label for="website">website:</label><input type="text" size="73" maxlength="{% max_length Professor "website" %}" style="max-width: 95%;" id="website" name="website" {% if usuario.professor.website %} value="{{usuario.professor.website}}" {% endif %} placeholder="https://www.insper.edu.br/"><br>
-      <label for="lattes">lattes:</label><input type="text" size="73" maxlength="{% max_length Professor "lattes" %}" style="max-width: 95%;" id="lattes" name="lattes" {% if usuario.professor.lattes %} value="{{usuario.professor.lattes}}" {% endif %} placeholder="https://lattes.cnpq.br/"><br>
-
-    </div>
-
-    {% comment %} Funcionário {% endcomment %}
-    <div style="display: block; padding-left: 32px" class="row_tipo" data-type="funcionario">
-
-      <label for="departamento">
-        {% lng "Departamento:" "Department:" %}
-      </label> <input type="text" size="75" maxlength="{% max_length Professor "departamento" %}" style="max-width: 95%;" id="departamento" name="departamento" {% if usuario.professor.departamento %} value="{{usuario.professor.departamento}}" {% endif %} ><br>
-
-    </div>
-
-    {% comment %} Parceiro {% endcomment %}
-    <div id="parceiro_div" style="display: block; padding-left: 32px" class="row_tipo" data-type="parceiro">
-
-      <br><b><label for="organizacao">
-        {% lng "Organização" "Organization" %}
-      </label></b>:
-      <select name="organizacao" id="organizacao" class="selectpicker" title="Selecione organização" data-live-search="true" data-width="42%" data-size="10" >
-          <option disabled value="" class="troca_lingua" data-pt="-- selecione uma organização --" data-en="-- select an organization --">
-            -- selecione uma organização --
-          </option>
-          {% for organizacao in organizacoes %}
-            <option value="{{organizacao.id}}" {% if organizacao_selecionada.id == organizacao.id %}selected="selected"{% endif %} >
-              {{organizacao.nome}} ({{organizacao.sigla}})
-            </option>  
-          {% endfor %}
-      </select>
-      <a href="{% url 'cadastrar_organizacao' %}">&#10133;</a>
-      <br>
-      
-      <label style="margin-top: 10px;" for="cargo">
-        {% lng "Cargo:" "Position:" %}
-      </label> <input style="max-width: 95%;" type="text" size="50" maxlength="{% max_length Parceiro 'cargo' %}" id="cargo" name="cargo" {% if usuario.parceiro.cargo %}value="{{usuario.parceiro.cargo}}"{% elif cargo %}value="{{cargo}}"{% endif %}><br>
-
-      <input type="checkbox" id="principal_contato" name="principal_contato" value="True" {% if usuario.parceiro.principal_contato %}checked{% endif %}>
-      <label for="principal_contato">
-        {% lng "Principal Contato" "Main Contact" %}
-      </label><br>
-
-    </div>
-    <br>
-
-    <div id="ativo_div">
-      {% if usuario %}
-        <br>
-        <input type="hidden" value='0' name="ativo">
-        <label for="ativo"><input type="checkbox" id="ativo" value='1' name="ativo" {% if usuario.is_active %}checked="checked"{% endif %}>
-          {% lng "Ativo (ainda está trabalhando no" "Active (still working at the " %}
-          <span id="org_text">local</span>)
+        <label for="envia" class="mb-0 inline-check-group">
+          <input type="checkbox" id="envia" name="envia">
+          {% lng "Cria nova senha e envia mensagem (e-mail) de conta" "Create new password and send account message (e-mail)" %}
         </label>
-        </label>
-      {% endif %}
-    </div>
+      </div>
 
-    {% if usuario %}
-      <input type="hidden" value='0' name="comite">
-      <label for="comite">
-        {% lng "Membro Comitê" "Committee Member" %}
-        <input type="checkbox" id="comite" value='1' name="comite" {% if usuario.membro_comite %}checked="checked"{% endif %}>
-      </label>
-      <br>
-    {% endif %}
-
-    <br>
-    <button class="btn btn-primary mb-1" type="submit" style="margin-right: 1em;">
-      {% lng_b usuario "Atualiza Usuário" "Cadastrar Usuário" "Update User" "Register User" %}
-    </button>
-
-    <label for="envia"><input type="checkbox" id="envia" name="envia" style="margin-right: 4px;">
-      {% lng "Cria nova senha e envia mensagem (e-mail) de conta" "Create new password and send account message (e-mail)" %}
-    </label>
-
-  </form>
-</div>
-
+    </form>
+  </div>
 
   <script>
+    $("#externo_check").change(function() {
+      if ($(this).is(":checked")) { $("#externo_label").show();
+      } else { $("#externo_label").hide(); }
+    });
+
+    $("#comite").change(function() {
+      if ($(this).is(":checked") || $("#representante_comite").val().trim() != "") { $("#representante_comite_label").show(); }
+      else { $("#representante_comite_label").hide(); }
+    });
 
     function filtra_data() {
-      var filterValue = $("input:radio[name=tipo_de_usuario]:checked").val()
-      var row = $(".row_tipo"); 
+      var filterValue = $("input:radio[name=tipo_de_usuario]:checked").val();
+      var row = $(".row_tipo");
       row.hide();
 
       row.each(function(i, el) {
-        if( filterValue == $(el).attr("data-type") ) {
-            $(el).show();
+        if(filterValue == $(el).attr("data-type")) {
+          $(el).show();
         }
       });
 
       // Estudante
-      $("#curso").prop("required",false);
-      $("#ano").prop("required",false);
-      $("#semestre").prop("required",false);
+      $("#curso").prop("required", false);
+      $("#ano").prop("required", false);
+      $("#semestre").prop("required", false);
 
       // Professor
-      $("#TI").prop("required",false);
-      $("#TP").prop("required",false);
-      $("#V").prop("required",false);
-      $("#E").prop("required",false);
-      
-      // Funcionário
-      $("#departamento").prop("required",false);
-      
-      // Parceiro
-      $("#organizacao").prop("required",false);
+      $("#TI").prop("required", false);
+      $("#TP").prop("required", false);
+      $("#V").prop("required", false);
+      $("#E").prop("required", false);
+      $("#O").prop("required", false);
 
-      if(filterValue=="professor") {
-        $("#TI").prop("required",true);
-        $("#TP").prop("required",true);
-        $("#V").prop("required",true);
-        $("#E").prop("required",true);
+      // Funcionário
+      $("#departamento").prop("required", false);
+
+      // Parceiro
+      $("#organizacao").prop("required", false);
+
+      if(filterValue == "professor") {
+        $("#TI").prop("required", true);
+        $("#TP").prop("required", true);
+        $("#V").prop("required", true);
+        $("#E").prop("required", true);
+        $("#O").prop("required", true);
         $("#ativo_div").show();
         $("#org_text").html("Insper");
       }
 
-      if(filterValue=="funcionario") {
-        $("#funcionario").prop("required",true);
+      if(filterValue == "funcionario") {
+        $("#departamento").prop("required", true);
         $("#ativo_div").show();
       }
 
-      if(filterValue=="parceiro") {
-        $("#organizacao").prop("required",true);
+      if(filterValue == "parceiro") {
+        $("#organizacao").prop("required", true);
         $("#ativo_div").show();
         $("#org_text").html("local");
       }
 
-      if(filterValue=="estudante") {
-        $("#curso").prop("required",true);
-        $("#ano").prop("required",true);
-        $("#semestre").prop("required",true);
+      if(filterValue == "estudante") {
+        $("#curso").prop("required", true);
+        $("#ano").prop("required", true);
+        $("#semestre").prop("required", true);
         $("#ativo_div").hide();
       }
 
       // Para não validar o que está escondido
-      $("div:hidden").children("input").attr("disabled", true);
-      $("div:hidden").children("select").attr("disabled", true);
-
+      $(".row_tipo:hidden :input").attr("disabled", true);
       // Para validar o que está visível
-      $("div:visible").children("input").attr("disabled", false);
-      $("div:visible").children("select").attr("disabled", false);
+      $(".row_tipo:visible :input").attr("disabled", false);
 
-      // para a busca do nome
+      if($("#ativo_div").is(":hidden")) {
+        $("#ativo_div :input").attr("disabled", true);
+      } else {
+        $("#ativo_div :input").attr("disabled", false);
+      }
+
+      // para a busca do nome (bootstrap-select)
       $("input[type=search]").attr("disabled", false);
       $("#parceiro_div").children("select").attr("disabled", false);
-
     }
 
-    $(".tipo").change(function(){
-      filtra_data();
-    });  
-
-    $(document).ready(function(){
+    $(".tipo").change(function() {
       filtra_data();
     });
-  
+
+    $(document).ready(function() {
+      filtra_data();
+    });
   </script>
 
   {% include "mostra_api.html" with endpoints=endpoints %}
-
 {% endblock %}
