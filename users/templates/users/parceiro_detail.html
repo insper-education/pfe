@@ -71,8 +71,8 @@
     {% include "participacoes_usuario.html" with usuario=parceiro.user %}
 
     {% if user.eh_admin %}
-      <a href="{% url 'edita_usuario' parceiro.user.id %}">
-        <button class="btn btn-primary">Editar</button>
+      <a href="{% url 'edita_usuario' parceiro.user.id %}" class="btn btn-primary mt-3 mb-1 esconder">
+        {% lng "Editar" "Edit" %}
       </a>
     {% endif %}
   </div>

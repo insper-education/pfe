@@ -597,10 +597,8 @@
     {% include "estudantes/includes/conduta_respostas.html" with individual=True %}
 
     {% if user.eh_admin %}
-      <a href="{% url 'edita_usuario' aluno.user.id %}">
-        <button class="btn btn-primary mb-1" style="float: right;">
-          {% lng "Editar" "Edit" %}
-        </button>
+      <a href="{% url 'edita_usuario' aluno.user.id %}" class="btn btn-primary mt-3 mb-1 esconder">
+        {% lng "Editar" "Edit" %}
       </a>
     {% endif %}
 

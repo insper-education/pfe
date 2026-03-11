@@ -254,16 +254,13 @@
     </ul>
   </div>
   
-  <span id="sem_anotacoes" {% if organizacao.anotacao_set.all %}style="visibility: hidden;"{% endif %}>
+  <div id="sem_anotacoes" {% if organizacao.anotacao_set.all %}style="visibility: hidden;"{% endif %}>
     {% lng "Ainda não existem anotações para essa organização." "There are no annotations for this organization yet." %}
-  </span>
+  </div>
   
   {% if user.eh_admin %}
-    <br>
-    <a href="{% url 'edita_organizacao' organizacao.id %}">
-      <button class="btn btn-primary mb-1" style="float: right;">
-        {% lng "Editar" "Edit" %}
-      </button>
+    <a href="{% url 'edita_organizacao' organizacao.id %}" class="btn btn-primary mt-3 mb-1 esconder">
+      {% lng "Editar" "Edit" %}
     </a>
   {% endif %}
 

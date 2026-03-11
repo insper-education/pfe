@@ -56,7 +56,19 @@
     }
 
     .disc-actions {
-      margin-top: 0.2rem;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .disc-actions .btn {
+      margin-bottom: 0;
+    }
+
+    .disc-actions-spacer {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      visibility: hidden;
     }
   </style>
 {% endblock %}
@@ -76,8 +88,9 @@
             <label for="nome">{% lng "Nome da Disciplina" "Course Name" %}</label>
             <input class="form-control" type="text" maxlength="{% max_length Disciplina 'nome' %}" id="nome" name="nome" required>
           </div>
-          <div class="col-md-4 d-flex align-items-end disc-actions">
-            <button class="btn btn-primary mb-1" type="submit">
+          <div class="col-md-4 campo-com-label disc-actions">
+            <span class="disc-actions-spacer" aria-hidden="true">.</span>
+            <button class="btn btn-primary" type="submit">
               {% lng "Cadastrar Disciplina" "Register Course" %}
             </button>
           </div>
