@@ -22,7 +22,9 @@ from estudantes.models import EstiloComunicacao
 from estudantes.models import Relato, Pares
 
 from projetos.models import Documento, Evento, Avaliacao2, Observacao
-from projetos.models import Projeto, Desconto, Configuracao
+from projetos.models import Projeto, Desconto, Configuracao, Encontro
+
+
 
 from users.models import Alocacao, UsuarioEstiloComunicacao
 
@@ -237,6 +239,8 @@ def lanca_descontos(ano=None, semestre=None):
         "apf": Evento.get_evento(sigla="APF", ano=ano, semestre=semestre),  # Avaliação de Pares Final
         "rqs": Evento.get_eventos(sigla="RQ", ano=ano, semestre=semestre),  # Relatos Quinzenais
         "pas": Evento.get_evento(sigla="PAS", ano=ano, semestre=semestre),  # Preenchimento de Alocação Semanal
+        "mas": Evento.get_eventos(sigla="MA", ano=ano, semestre=semestre),  # Mentorias Acadêmicas
+        "mps": Evento.get_eventos(sigla="MP", ano=ano, semestre=semestre),  # Mentorias Profissionais
     }
 
     descontos = []
@@ -246,7 +250,7 @@ def lanca_descontos(ano=None, semestre=None):
         desconto.nota = nota
         desconto.save()
         descontos.append(desconto)
-    
+
     for projeto in projetos:
 
         # Verifica se o relatório preliminar foi entregue
@@ -257,6 +261,18 @@ def lanca_descontos(ano=None, semestre=None):
             semanas_atraso = math.ceil(atraso_dias / 7)
             if semanas_atraso > 0:
                 add_desconto({"projeto": projeto}, eventos["erp"], 0.5 * semanas_atraso)
+
+        # Verificar se grupo agendou mentoria acadêmica e profissional
+        for evento in eventos["mas"]:
+            if hoje > evento.endDate:
+                mentorias_academicas = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
+                if mentorias_academicas.count() == 0:
+                    add_desconto({"projeto": projeto}, evento, 0.25)
+        for evento in eventos["mps"]:
+            if hoje > evento.endDate:
+                mentorias_profissionais = Encontro.objects.filter(projeto=projeto, startDate__gte=evento.startDate, startDate__lte=evento.endDate + datetime.timedelta(days=1))
+                if mentorias_profissionais.count() == 0:
+                    add_desconto({"projeto": projeto}, evento, 0.25)
 
         for alocacao in Alocacao.objects.filter(projeto=projeto, aluno__externo__isnull=True):
 

@@ -176,6 +176,10 @@ def descontos(request):
     """Mostra tabela com os possíveis descontos."""
     
     if request.method == "POST":
+
+        # Lança os descontos para estudantes com algum critério de desconto, caso ainda não tenham sido lançados
+        lanca_descontos()
+
         if "edicao" not in request.POST:
             return HttpResponse("Algum erro não identificado.", status=401)
         
