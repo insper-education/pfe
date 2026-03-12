@@ -508,7 +508,7 @@ def gerir_pedidos(request):
             </div>
         """
 
-        email(email_subject, email_recipients, email_message, reply_to=configuracao.tecnico.email)
+        email(email_subject, email_recipients, email_message, reply_to=[configuracao.tecnico.email])
 
         
         return redirect("gerir_pedidos")
