@@ -184,3 +184,12 @@ def ver_pendencias_estudante(user, ano, semestre):
     context.update(check_avaliacao_pares_final(alocacao))
     return context
 
+
+def filtra_estudantes_por_curso(estudantes, curso, cursos_insper):
+    """Filtra estudantes conforme escopo de curso selecionado."""
+    if curso == "TE": # Todos com os externos
+        return estudantes
+    if curso == "T": # Todos do Insper, sem externos
+        return estudantes.filter(curso2__in=cursos_insper)
+    return estudantes.filter(curso2__sigla_curta=curso)  # Apenas um curso específico
+

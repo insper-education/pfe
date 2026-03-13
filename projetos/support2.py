@@ -11,16 +11,17 @@ import datetime
 from django.shortcuts import get_object_or_404
 
 
-from .models import Area, AreaDeInteresse, Observacao, Coorientador, Conexao
+from .models import Area, AreaDeInteresse, Observacao, Coorientador, Conexao, Proposta, Projeto
 from .models import Participante, ReuniaoParticipante, EncontroParticipante, Desconto
 
 from academica.models import Exame
 
+from estudantes.support import filtra_estudantes_por_curso
 from estudantes.models import Pares, Relato, FeedbackPares
 
 from operacional.models import Curso
 
-from users.models import Alocacao, PFEUser, Alocacao, Associado
+from users.models import Alocacao, PFEUser, Alocacao, Associado, Aluno
 
 
 def get_areas_estudantes(alunos):
@@ -47,6 +48,147 @@ def get_areas_propostas(propostas):
     outras = AreaDeInteresse.objects.filter(proposta__in=propostas, area__isnull=True)
 
     return areaspfe, outras
+
+
+
+def _monta_tabela_areas(areaspfe, campo_origem):
+    """Monta tabela de áreas por origem (usuário ou proposta)."""
+    tabela = {}
+    for _area, objs in areaspfe.items():
+        for obj in objs[0]:
+            origem = getattr(obj, campo_origem)
+            tabela.setdefault(origem, []).append(obj.area)
+    return tabela
+
+
+def contexto_distribuicao_areas(tipo, ano, semestre, todas, areas_ativas, curso="todos", cursos_insper=None):
+    """Monta contexto de distribuicao para estudantes, propostas ou projetos."""
+    context = {"areas": areas_ativas,}
+    if tipo == "estudantes":
+        estudantes = filtra_estudantes_por_curso(Aluno.objects.all(), curso, cursos_insper)
+        if not todas:
+            estudantes = estudantes.filter(ano=ano, semestre=semestre)
+
+        usuarios_ids = estudantes.values_list("user_id", flat=True)
+        total_preenchido = AreaDeInteresse.objects.filter(usuario_id__in=usuarios_ids).values("usuario_id").distinct().count()
+        areaspfe, outras = get_areas_estudantes(estudantes)
+        context.update({
+            "total": estudantes.count(),
+            "total_preenchido": total_preenchido,
+            "areaspfe": areaspfe,
+            "outras": outras,
+            "tabela": _monta_tabela_areas(areaspfe, "usuario"),
+        })
+
+    elif tipo == "propostas":
+        propostas = Proposta.objects.all()
+        if not todas:
+            propostas = propostas.filter(ano=ano, semestre=semestre)
+
+        areaspfe, outras = get_areas_propostas(propostas)
+        context.update({
+            "total": propostas.count(),
+            "areaspfe": areaspfe,
+            "outras": outras,
+            "tabela": _monta_tabela_areas(areaspfe, "proposta"),
+        })
+        
+    elif tipo == "projetos":
+        projetos = Projeto.objects.all()
+        if not todas:
+            projetos = projetos.filter(ano=ano, semestre=semestre)
+
+        propostas_ids = projetos.values_list("proposta_id", flat=True)
+        propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).distinct()
+        areaspfe, outras = get_areas_propostas(propostas_projetos)
+
+        context.update({
+            "total": propostas_projetos.count(),
+            "areaspfe": areaspfe,
+            "outras": outras,
+            "tabela": _monta_tabela_areas(areaspfe, "proposta"),
+        })
+    else:
+        raise ValueError("Tipo inválido para distribuição de áreas")
+
+    return context
+
+
+def _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido):
+    """Atualiza as colunas de áreas para uma edição específica."""
+    for area, objs in areaspfe.items():
+        quantidade = objs[0].count() if objs[0] else 0
+        percentual = 100 * (quantidade / total_preenchido) if total_preenchido > 0 else 0
+        cor = 255 - 180 * (quantidade / total_preenchido) if total_preenchido > 0 else 0
+        tabela_areas[area].append([quantidade, percentual, cor])
+
+    outras_txt = ", ".join([o.outras for o in outras if o.outras])
+    tabela_areas["outras"].append(outras_txt)
+
+
+def contexto_evolucao_areas(tipo, edicoes, curso="todos", cursos_insper=None):
+    """Monta tabela de evolução de áreas para estudantes, propostas ou projetos."""
+    tabela_areas = {
+        "QUANTIDADE": [],
+        "PREENCHIDOS": [],
+        "outras": [],
+    }
+    for area in Area.objects.filter(ativa=True):
+        tabela_areas[area] = []
+
+    if tipo == "estudantes":
+        estudantes = filtra_estudantes_por_curso(Aluno.objects.all(), curso, cursos_insper)
+
+        for edicao in edicoes:
+            ano, semestre = edicao.split('.')
+            estudantes_as = estudantes.filter(ano=ano, semestre=semestre)
+            usuarios_ids = estudantes_as.values_list("user_id", flat=True)
+            total_preenchido = AreaDeInteresse.objects.filter(usuario_id__in=usuarios_ids).values("usuario_id").distinct().count()
+
+            tabela_areas["QUANTIDADE"].append(estudantes_as.count())
+            tabela_areas["PREENCHIDOS"].append(total_preenchido)
+
+            areaspfe, outras = get_areas_estudantes(estudantes_as)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+
+        return tabela_areas
+
+    if tipo == "propostas":
+        propostas = Proposta.objects.all()
+
+        for edicao in edicoes:
+            ano, semestre = edicao.split('.')
+            propostas_as = propostas.filter(ano=ano, semestre=semestre)
+            propostas_ids = propostas_as.values_list("id", flat=True)
+            total_preenchido = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids).values("proposta_id").distinct().count()
+
+            tabela_areas["QUANTIDADE"].append(propostas_as.count())
+            tabela_areas["PREENCHIDOS"].append(total_preenchido)
+
+            areaspfe, outras = get_areas_propostas(propostas_as)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+
+        return tabela_areas
+
+    if tipo == "projetos":
+        projetos = Projeto.objects.all()
+
+        for edicao in edicoes:
+            ano, semestre = edicao.split('.')
+            projetos_as = projetos.filter(ano=ano, semestre=semestre)
+            propostas_ids = projetos_as.values_list("proposta_id", flat=True)
+            propostas_projetos = Proposta.objects.filter(id__in=propostas_ids).distinct()
+            total_preenchido = AreaDeInteresse.objects.filter(proposta_id__in=propostas_ids).values("proposta_id").distinct().count()
+
+            tabela_areas["QUANTIDADE"].append(propostas_projetos.count())
+            tabela_areas["PREENCHIDOS"].append(total_preenchido)
+
+            areaspfe, outras = get_areas_propostas(propostas_projetos)
+            _atualiza_tabela_areas(tabela_areas, areaspfe, outras, total_preenchido)
+
+        return tabela_areas
+
+    raise ValueError("Tipo inválido para evolução de áreas")
 
 
 def get_pares_colegas(projeto, tipo=0):

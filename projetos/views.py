@@ -25,9 +25,6 @@ from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
-from estudantes.views import dinamica_conflitos
-from users.templatetags import alocacao
-
 from .messages import email, message_reembolso
 
 from .models import Projeto, Proposta, Configuracao, Observacao, TematicaEncontro
@@ -38,7 +35,8 @@ from .models import Banco, Reembolso, Aviso, Conexao
 from .models import Area, AreaDeInteresse, Banca, Reuniao, ReuniaoParticipante, Pedido
 
 from .support import simple_upload
-from .support2 import get_areas_propostas, get_areas_estudantes, recupera_envolvidos, anota_participacao
+from .support2 import get_areas_propostas, get_areas_estudantes, recupera_envolvidos
+from .support2 import anota_participacao, contexto_distribuicao_areas, contexto_evolucao_areas
 from .support3 import calcula_objetivos, cap_name, media
 from .support3 import divide57, get_notas_alocacao
 from .support3 import get_medias_oa, is_projeto_liberado
@@ -167,7 +165,6 @@ def dinamicas_infos(request, primarykey):
     return render(request, "projetos/dinamicas_infos.html", context=context)
 
 
-
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
 def distribuicao_areas(request, tipo = "estudantes"):
@@ -182,109 +179,29 @@ def distribuicao_areas(request, tipo = "estudantes"):
     curso = "todos"
 
     if request.method == "POST":
-        if "tipo" in request.POST and "edicao" in request.POST:
+        tipo_post = request.POST.get("tipo")
+        edicao = request.POST.get("edicao")
 
-            tipo = request.POST["tipo"]
-
-            if request.POST["edicao"] == "todas":
-                todas = True
-            else:
-                ano, semestre = request.POST["edicao"].split('.')
-
-            if tipo == "estudantes" and "curso" in request.POST:
-                curso = request.POST["curso"]
-
-        else:
+        if not tipo_post or not edicao:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
 
-        if tipo == "estudantes":
-            alunos = Aluno.objects.all()
-
-            if curso != "T":
-                alunos = alunos.filter(curso2__sigla_curta=curso)
-            
-            # Filtra para estudantes de um curso específico
-            if curso != "TE":
-                if curso != 'T':
-                    alunos = alunos.filter(curso2__sigla_curta=curso)
-                else:
-                    alunos = alunos.filter(curso2__in=cursos_insper)
-
-            if not todas:
-                alunos = alunos.filter(ano=ano, semestre=semestre)
-
-            total_preenchido = 0
-            for aluno in alunos:
-                if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
-                    total_preenchido += 1
-            areaspfe, outras = get_areas_estudantes(alunos)
-
-            tabela = {}
-            for area, objs in areaspfe.items():
-                for o in objs[0]:
-                    if o.usuario not in tabela:
-                        tabela[o.usuario] = []
-                    tabela[o.usuario].append(o.area)
-
-            context = {
-                "total": alunos.count(),
-                "total_preenchido": total_preenchido,
-                "areaspfe": areaspfe,
-                "outras": outras,
-                "tabela": tabela,
-                "areas": Area.objects.filter(ativa=True),
-            }
-
-        elif tipo == "propostas":
-            propostas = Proposta.objects.all()
-            if not todas:
-                propostas = propostas.filter(ano=ano, semestre=semestre)
-            areaspfe, outras = get_areas_propostas(propostas)
-
-            tabela = {}
-            for area, objs in areaspfe.items():
-                for o in objs[0]:
-                    if o.proposta not in tabela:
-                        tabela[o.proposta] = []
-                    tabela[o.proposta].append(o.area)
-            
-            context = {
-                "total": propostas.count(),
-                "areaspfe": areaspfe,
-                "outras": outras,
-                "tabela": tabela,
-                "areas": Area.objects.filter(ativa=True),
-            }
-
-        elif tipo == "projetos":
-
-            projetos = Projeto.objects.all()
-            if not todas:
-                projetos = projetos.filter(ano=ano, semestre=semestre)
-
-            # Estudar forma melhor de fazer isso
-            propostas = [p.proposta.id for p in projetos]
-            propostas_projetos = Proposta.objects.filter(id__in=propostas)
-
-            areaspfe, outras = get_areas_propostas(propostas_projetos)
-
-            tabela = {}
-            for area, objs in areaspfe.items():
-                for o in objs[0]:
-                    if o.proposta not in tabela:
-                        tabela[o.proposta] = []
-                    tabela[o.proposta].append(o.area)
-
-            context = {
-                "total": propostas_projetos.count(),
-                "areaspfe": areaspfe,
-                "outras": outras,
-                "tabela": tabela,
-                "areas": Area.objects.filter(ativa=True),
-            }
-
+        tipo = tipo_post
+        if edicao == "todas":
+            todas = True
         else:
-            return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
+            ano, semestre = edicao.split('.')
+
+        if tipo == "estudantes":
+            curso = request.POST.get("curso", "todos")
+
+        areas_ativas = Area.objects.filter(ativa=True)
+
+        context = contexto_distribuicao_areas(
+            tipo=tipo, todas=todas,
+            ano=ano, semestre=semestre,
+            areas_ativas=areas_ativas,
+            curso=curso, cursos_insper=cursos_insper,
+        )
 
         context["tipo"] = tipo
         return render(request, "projetos/distribuicao_areas.html", context)
@@ -313,116 +230,22 @@ def evolucao_areas(request):
     curso = "todos"
 
     if request.method == "POST":
-        if "tipo" in request.POST:
-            tipo = request.POST["tipo"]
-            if tipo == "estudantes" and "curso" in request.POST:
-                curso = request.POST["curso"]
-
-        else:
+        tipo_post = request.POST.get("tipo")
+        if not tipo_post:
             return HttpResponse("Erro não identificado (POST incompleto)", status=401)
+        tipo = tipo_post
 
-        tabela_areas = {}
-        tabela_areas["QUANTIDADE"] = []
-        tabela_areas["PREENCHIDOS"] = []
-        for a in Area.objects.filter(ativa=True):
-            tabela_areas[a] = []
-        tabela_areas["outras"] = []
-        
         if tipo == "estudantes":
-            
-            alunos = Aluno.objects.all()
+            curso = request.POST.get("curso", "todos")
 
-            if curso != "T":
-                alunos = alunos.filter(curso2__sigla_curta=curso)
-            
-            # Filtra para estudantes de um curso específico
-            if curso != "TE":
-                if curso != 'T':
-                    alunos = alunos.filter(curso2__sigla_curta=curso)
-                else:
-                    alunos = alunos.filter(curso2__in=cursos_insper)
-
-            for edicao in edicoes:
-                ano, semestre = edicao.split('.')
-                alunos_as = alunos.filter(ano=ano, semestre=semestre)
-                total_preenchido = 0
-                for aluno in alunos_as:
-                    if AreaDeInteresse.objects.filter(usuario=aluno.user).count() > 0:
-                        total_preenchido += 1
-
-                tabela_areas["QUANTIDADE"].append(alunos_as.count())
-                tabela_areas["PREENCHIDOS"].append(total_preenchido)
-
-                areaspfe, outras = get_areas_estudantes(alunos_as)
-            
-                for area, objs in areaspfe.items():
-                    q = objs[0].count() if objs[0] else 0
-                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
-                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
-                    tabela_areas[area].append( [q, p, h] )
-                outras_txt = ""
-                for o in outras:
-                    outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
-
-        elif tipo == "propostas":
-            propostas = Proposta.objects.all()
-            for edicao in edicoes:
-                ano, semestre = edicao.split('.')
-                propostas_as = propostas.filter(ano=ano, semestre=semestre)
-                total_preenchido = 0
-                for proposta in propostas_as:
-                    if AreaDeInteresse.objects.filter(proposta=proposta).count() > 0:
-                        total_preenchido += 1
-
-                tabela_areas["QUANTIDADE"].append(propostas_as.count())
-                tabela_areas["PREENCHIDOS"].append(total_preenchido)
-
-                areaspfe, outras = get_areas_propostas(propostas_as)
-            
-                for area, objs in areaspfe.items():
-                    q = objs[0].count() if objs[0] else 0
-                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
-                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
-                    tabela_areas[area].append( [q, p, h] )
-                outras_txt = ""
-                for o in outras:
-                    outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
-
-        elif tipo == "projetos":
-
-            projetos = Projeto.objects.all()
-
-            for edicao in edicoes:
-                ano, semestre = edicao.split('.')
-
-                projetos_as = projetos.filter(ano=ano, semestre=semestre)
-                # Estudar forma melhor de fazer isso
-                propostas = [p.proposta.id for p in projetos_as]
-                propostas_projetos = Proposta.objects.filter(id__in=propostas)
-                total_preenchido = 0
-                for proposta in propostas_projetos:
-                    if AreaDeInteresse.objects.filter(proposta=proposta).count() > 0:
-                        total_preenchido += 1
-                
-                tabela_areas["QUANTIDADE"].append(propostas_projetos.count())
-                tabela_areas["PREENCHIDOS"].append(total_preenchido)
-
-                areaspfe, outras = get_areas_propostas(propostas_projetos)
-
-                for area, objs in areaspfe.items():
-                    q = objs[0].count() if objs[0] else 0
-                    p = 100*(q/total_preenchido) if total_preenchido > 0 else 0
-                    h = (255 - 180*(q/total_preenchido)) if total_preenchido > 0 else 0
-                    tabela_areas[area].append( [q, p, h] )
-
-                outras_txt = ""
-                for o in outras:
-                    outras_txt += o.outras + ", "
-                tabela_areas["outras"].append(outras_txt[:-2])  # Remove última vírgula e espaço
-
-        else:
+        try:
+            tabela_areas = contexto_evolucao_areas(
+                tipo=tipo,
+                edicoes=edicoes,
+                curso=curso,
+                cursos_insper=cursos_insper,
+            )
+        except ValueError:
             return HttpResponse("Erro não identificado (não encontrado tipo)", status=401)
 
         context = {
