@@ -170,7 +170,7 @@ def dinamicas_infos(request, primarykey):
 
 @login_required
 @permission_required("users.altera_professor", raise_exception=True)
-def distribuicao_areas(request):
+def distribuicao_areas(request, tipo = "estudantes"):
     """Distribuição por área de interesse dos alunos/propostas/projetos."""
     configuracao = get_object_or_404(Configuracao)
     ano = configuracao.ano              # Ano atual
@@ -179,7 +179,6 @@ def distribuicao_areas(request):
     cursos_externos = Curso.objects.filter(curso_do_insper=False).order_by("id")
 
     todas = False  # Para mostrar todos os dados de todos os anos e semestres
-    tipo = "estudantes"
     curso = "todos"
 
     if request.method == "POST":
@@ -295,6 +294,7 @@ def distribuicao_areas(request):
         "edicoes": get_edicoes(Aluno)[0],
         "cursos": cursos_insper,
         "cursos_externos": cursos_externos,
+        "sel_tipo": tipo,
     }
 
     return render(request, "projetos/distribuicao_areas.html", context)

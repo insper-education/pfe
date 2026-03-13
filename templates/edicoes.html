@@ -291,13 +291,13 @@
             </span></label>
           </div>
           <select class="to_hide2 filter custom-select w-auto form-control" id="filterTipo" name="tipo">
-            <option class="opt_edi troca_lingua" value="estudantes" data-pt="Estudantes" data-en="Students">
+            <option class="opt_edi troca_lingua" value="estudantes" data-pt="Estudantes" data-en="Students" {% if sel_tipo == "estudantes" %}selected{% endif %}>
               Estudantes
             </option>
-            <option class="opt_edi troca_lingua" value="propostas" data-pt="Propostas" data-en="Proposals">
+            <option class="opt_edi troca_lingua" value="propostas" data-pt="Propostas" data-en="Proposals" {% if sel_tipo == "propostas" %}selected{% endif %}>
               Propostas
             </option>
-            <option class="opt_edi troca_lingua" value="projetos" data-pt="Projetos" data-en="Projects">
+            <option class="opt_edi troca_lingua" value="projetos" data-pt="Projetos" data-en="Projects" {% if sel_tipo == "projetos" %}selected{% endif %}>
               Projetos
             </option>
           </select>

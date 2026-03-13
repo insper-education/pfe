@@ -28,6 +28,7 @@ urlpatterns = [
     path("edita_reuniao/<str:reuniao_id_g>", views.reuniao, name="edita_reuniao"),
     path("despesas/", views.despesas, name="despesas"),
     path("distribuicao_areas/", views.distribuicao_areas, name="distribuicao_areas"),
+    path("distribuicao_areas/<str:tipo>", views.distribuicao_areas, name="distribuicao_areas"),
     path("evolucao_areas/", views.evolucao_areas, name="evolucao_areas"),
     path("editar_projeto/<int:primarykey>", views.editar_projeto, name="editar_projeto"),
     path("evolucao_notas/", views.evolucao_notas, name="evolucao_notas"),
